@@ -16,6 +16,7 @@ export const Root: React.FunctionComponent = ({ children }) => {
             <Head>
               <title>The Guild</title>
               <meta name='theme-color' content={theme.background.color} />
+              <meta name='Description' content='Website of The Guild' />
             </Head>
             <style global jsx>
               {`
