@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Link from 'next/link';
 import styled, { ThemeProvider, ThemeConsumer } from 'styled-components';
 import { BookOpen, Anchor, Power, Calendar, Coffee, Play } from 'react-feather';
 
@@ -55,11 +56,13 @@ const menu: MenuItem[] = [
   {
     text: 'Platform',
     element: () => (
-      <a href='/connected-build'>
-        <Circle size={'normal'}>
-          <Power />
-        </Circle>
-      </a>
+      <Link href='/connected-build' prefetch={true}>
+        <a>
+          <Circle size={'normal'}>
+            <Power />
+          </Circle>
+        </a>
+      </Link>
     ),
   },
   {
