@@ -8,8 +8,8 @@ const {
   GraphQLNonNull,
 } = require('graphql');
 
-const HiResult = new GraphQLObjectType({
-  name: 'HiResult',
+const HiResponse = new GraphQLObjectType({
+  name: 'HiResponse',
   fields: {
     ok: {
       type: GraphQLBoolean,
@@ -33,7 +33,7 @@ const Mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
     sayHi: {
-      type: HiResult,
+      type: HiResponse,
       args: {
         email: {
           type: new GraphQLNonNull(GraphQLString),
@@ -53,7 +53,7 @@ const Mutation = new GraphQLObjectType({
 const schema = new GraphQLSchema({
   query: Query,
   mutation: Mutation,
-  types: [HiResult],
+  types: [HiResponse],
 });
 
 module.exports = async (req, res) => {
