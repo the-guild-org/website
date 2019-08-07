@@ -1,4 +1,5 @@
 import { BookOpen, Anchor, Bell, Calendar, Coffee, Play } from 'react-feather';
+import styled from 'styled-components';
 
 import { Root } from '../ui/Root';
 import { Title } from '../ui/Title';
@@ -68,22 +69,36 @@ const menu: MenuItem[] = [
         </Circle>
       </a>
     ),
-  }
+  },
 ];
+
+const InColumns = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+
+  ${Center} {
+    flex: 1;
+  }
+`;
 
 const Index = () => (
   <Root>
-    <Title>The Guild</Title>
-    <Center>
-      <CircleMenu
-        size={600}
-        itemSize={110}
-        edgeHeight={10}
-        edgeGap={120 * 1.5}
-        menu={menu}
-        edge={props => <Edge width={props.size[0]} />}
-      />
-    </Center>
+    <InColumns>
+      <Title>The Guild</Title>
+      <Center>
+        <CircleMenu
+          size={600}
+          itemSize={110}
+          edgeHeight={10}
+          edgeGap={120 * 1.5}
+          menu={menu}
+          edge={props => <Edge width={props.size[0]} />}
+        />
+      </Center>
+    </InColumns>
   </Root>
 );
 
