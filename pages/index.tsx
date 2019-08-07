@@ -1,4 +1,4 @@
-import { BookOpen, Anchor, Bell, Calendar, Coffee, Play } from 'react-feather';
+import { BookOpen, Anchor, Power, Calendar, Coffee, Play } from 'react-feather';
 import styled from 'styled-components';
 
 import { Root } from '../ui/Root';
@@ -35,7 +35,7 @@ const menu: MenuItem[] = [
     element: () => (
       <a href='/connected-build'>
         <Circle size={'normal'}>
-          <Bell />
+          <Power />
         </Circle>
       </a>
     ),
