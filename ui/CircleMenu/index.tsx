@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
 
 import * as S from './styles';
 import * as T from './types';
@@ -14,6 +14,32 @@ interface CircleMenuProps {
   menu: T.MenuItem[];
   edge: T.EdgeElement;
 }
+
+const Item: React.FunctionComponent<{ item: T.CircleMenuItem }> = ({
+  item,
+}) => {
+  const { setText, resetText } = useContext(MenuContext);
+  const onEnter = useCallback(() => {
+    setText(item.text);
+  }, [setText]);
+  const onLeave = useCallback(() => {
+    resetText();
+  }, [resetText]);
+
+  return (
+    <S.Item
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      point={item.point}
+      noRotation={!item.isEdge}
+    >
+      {item.element({
+        point: item.point,
+        size: item.size,
+      })}
+    </S.Item>
+  );
+};
 
 const CircleMenuInner: React.FunctionComponent<CircleMenuProps> = ({
   size,
@@ -31,33 +57,14 @@ const CircleMenuInner: React.FunctionComponent<CircleMenuProps> = ({
     edge,
     edgeGap,
   });
-  const {text, setText, resetText} = useContext(MenuContext);
+  const { text } = useContext(MenuContext);
 
   return (
     <S.Container size={size} padding={itemSize / 2}>
       <S.Content>
-        {items.map((item, key) => {
-          return (
-            <S.Item
-              key={key}
-              onMouseEnter={e => {
-                e.preventDefault();
-                setText(item.text);
-              }}
-              onMouseLeave={e => {
-                e.preventDefault();
-                resetText();
-              }}
-              point={item.point}
-              noRotation={!item.isEdge}
-            >
-              {item.element({
-                point: item.point,
-                size: item.size,
-              })}
-            </S.Item>
-          );
-        })}
+        {items.map((item, key) => (
+          <Item key={key} item={item} />
+        ))}
         <S.InnerContent>
           <Oval size={150}>{text}</Oval>
         </S.InnerContent>

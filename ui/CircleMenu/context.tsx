@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 
 type SetTextFn = (text: string) => void;
 type ResetFn = () => void;
@@ -21,19 +21,24 @@ export const MenuContext = React.createContext<MenuContextValue>({
 
 export const MenuProvider: React.FunctionComponent = ({ children }) => {
   const [text, setText] = useState(defaults.text);
+  
+  const updateText = useCallback((text: string) => {
+    if (text) {
+      setText(text);
+    }
+  }, [setText]);
+
+  const resetText = useCallback(() => {
+    setText(defaults.text)
+  }, [setText]);
+
   const value = useMemo(() => {
     return {
       text,
-      setText(text: string) {
-        if (text) {
-          setText(text);
-        }
-      },
-      resetText() {
-        setText(defaults.text);
-      },
+      setText: updateText,
+      resetText,
     };
-  }, [text, setText]);
+  }, [text, updateText, resetText]);
 
   return <MenuContext.Provider value={value}>{children}</MenuContext.Provider>;
 };

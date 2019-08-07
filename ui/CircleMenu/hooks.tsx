@@ -1,7 +1,6 @@
 import React from 'react';
 
 import * as T from './types';
-import { MenuContext } from './context';
 
 function calculatePoint(
   radius: number,
