@@ -10,6 +10,11 @@ export const Content = styled.div`
   text-align: center;
   box-sizing: border-box;
   padding: 20px;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: normal;
+  text-transform: uppercase;
 `;
 
 export const InnerOval = styled.div<{ size: number }>`

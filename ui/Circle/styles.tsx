@@ -23,6 +23,10 @@ export const Content = styled.div<{ size?: T.Size }>`
   justify-content: center;
   align-items: center;
   color: ${props => props.theme.circle.content};
+  
+  transition-property: background-color;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
 
   & > * {
     width: ${props => pickSize(props.size) * innerRatio}px;
@@ -39,8 +43,15 @@ export const CircleContainer = styled.div<{ size?: T.Size }>`
   border-radius: 50%;
   justify-content: center;
   align-items: center;
+  transition-property: border-color;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
 
   &:hover {
     border-color: ${props => props.theme.circle.activeColor};
+
+    ${Content} {
+      background-color: ${props => props.theme.circle.activeColor};
+    }
   }
 `;
