@@ -41,6 +41,16 @@ const Item: React.FunctionComponent<{ item: T.CircleMenuItem }> = ({
   );
 };
 
+const Text: React.FunctionComponent = () => {
+  const { text } = useContext(MenuContext);
+  
+  return (
+    <S.InnerContent>
+      <Oval size={150}>{text}</Oval>
+    </S.InnerContent>
+  );
+};
+
 const CircleMenuInner: React.FunctionComponent<CircleMenuProps> = ({
   size,
   menu,
@@ -57,7 +67,6 @@ const CircleMenuInner: React.FunctionComponent<CircleMenuProps> = ({
     edge,
     edgeGap,
   });
-  const { text } = useContext(MenuContext);
 
   return (
     <S.Container size={size} padding={itemSize / 2}>
@@ -65,9 +74,7 @@ const CircleMenuInner: React.FunctionComponent<CircleMenuProps> = ({
         {items.map((item, key) => (
           <Item key={key} item={item} />
         ))}
-        <S.InnerContent>
-          <Oval size={150}>{text}</Oval>
-        </S.InnerContent>
+        <Text />
       </S.Content>
     </S.Container>
   );
