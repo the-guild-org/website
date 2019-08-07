@@ -1,4 +1,4 @@
-import { Users, Github, Power, MessageSquare, Clipboard, TrendingUp } from 'react-feather';
+import { Users, GitHub, Power, MessageSquare, Clipboard, TrendingUp } from 'react-feather';
 import styled from 'styled-components';
 
 import { Root } from '../ui/Root';
@@ -25,7 +25,7 @@ const menu: MenuItem[] = [
     element: () => (
       <a href='https://github.com/the-guild-org/Stack'>
         <Circle size={'normal'}>
-          <Github />
+          <GitHub />
         </Circle>
       </a>
     ),
@@ -49,7 +49,7 @@ const menu: MenuItem[] = [
         </Circle>
       </a>
     ),
-  },  
+  },
   {
     text: 'Blog',
     element: () => (
@@ -69,7 +69,7 @@ const menu: MenuItem[] = [
         </Circle>
       </a>
     ),
-  },  
+  },
 ];
 
 const InColumns = styled.div`
