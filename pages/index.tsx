@@ -1,4 +1,4 @@
-import { BookOpen, Anchor, Power, Calendar, Coffee, Play } from 'react-feather';
+import { Users, GitHub, Power, MessageSquare, Clipboard, TrendingUp } from 'react-feather';
 import styled from 'styled-components';
 
 import { Root } from '../ui/Root';
@@ -15,7 +15,7 @@ const menu: MenuItem[] = [
     element: () => (
       <a href='https://github.com/the-guild-org/'>
         <Circle size={'normal'}>
-          <BookOpen />
+          <Users />
         </Circle>
       </a>
     ),
@@ -25,7 +25,7 @@ const menu: MenuItem[] = [
     element: () => (
       <a href='https://github.com/the-guild-org/Stack'>
         <Circle size={'normal'}>
-          <Anchor />
+          <GitHub />
         </Circle>
       </a>
     ),
@@ -41,11 +41,11 @@ const menu: MenuItem[] = [
     ),
   },
   {
-    text: 'Talk to us',
+    text: 'Start your journey',
     element: () => (
-      <a href='https://github.com/urigo'>
+      <a href='/your-path'>
         <Circle size={'normal'}>
-          <Calendar />
+          <TrendingUp />
         </Circle>
       </a>
     ),
@@ -55,17 +55,17 @@ const menu: MenuItem[] = [
     element: () => (
       <a href='https://medium.com/the-guild'>
         <Circle size={'normal'}>
-          <Coffee />
+          <Clipboard />
         </Circle>
       </a>
     ),
   },
   {
-    text: 'Start your journey',
+    text: 'Talk to us',
     element: () => (
-      <a href='/your-path'>
+      <a href='https://github.com/urigo'>
         <Circle size={'normal'}>
-          <Play />
+          <MessageSquare />
         </Circle>
       </a>
     ),
