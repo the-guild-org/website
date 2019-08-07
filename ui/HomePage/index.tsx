@@ -78,7 +78,7 @@ const menu: MenuItem[] = [
   {
     text: 'Blog',
     element: () => (
-      <a href='/coffee'>
+      <a href='https://medium.com/the-guild'>
         <Circle size={'normal'}>
           <Coffee />
         </Circle>
