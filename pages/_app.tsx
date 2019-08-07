@@ -18,6 +18,9 @@ const THEME = {
     color: '#00eaff',
     content: '#fff',
   },
+  title: {
+    color: '#fff',
+  },
 };
 
 export default class MyApp extends App {

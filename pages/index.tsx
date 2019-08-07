@@ -1,6 +1,7 @@
 import { BookOpen, Anchor, Bell, Calendar, Coffee, Play } from 'react-feather';
 
 import { Root } from '../ui/Root';
+import { Title } from '../ui/Title';
 import { Center } from '../ui/Center';
 import { Circle } from '../ui/Circle';
 import { Edge } from '../ui/Edge';
@@ -72,6 +73,7 @@ const menu: MenuItem[] = [
 
 const Index = () => (
   <Root>
+    <Title>The Guild</Title>
     <Center>
       <CircleMenu
         size={600}
