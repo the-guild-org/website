@@ -7,6 +7,10 @@ const {
   GraphQLBoolean,
   GraphQLNonNull,
 } = require('graphql');
+const { WebClient } = require('@slack/web-api');
+
+const slack = new WebClient(process.env.SLACK_TOKEN);
+const channelID = 'CLZ5BCE7K';
 
 const HiResponse = new GraphQLObjectType({
   name: 'HiResponse',
@@ -39,11 +43,19 @@ const Mutation = new GraphQLObjectType({
           type: new GraphQLNonNull(GraphQLString),
         },
       },
-      resolve(_, { email }) {
-        console.log('Received an email', email);
+      async resolve(_, { email }) {
+        const result = await slack.chat.postMessage({
+          channel: channelID,
+          text: `Someone from Connected Build wants to get in touch \`${email}\``,
+        });
+
+        if (result.error) {
+          console.error(result.error);
+          throw new Error(`Slack failed to send a message`);
+        }
 
         return {
-          ok: true,
+          ok: result.ok,
         };
       },
     },

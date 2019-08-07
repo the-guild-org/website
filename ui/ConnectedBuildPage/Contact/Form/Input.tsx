@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Send } from 'react-feather';
 
 import { useMutation } from './hooks';
 
 const Form = styled.form`
+  position: relative;
   padding: 10px 0;
   display: flex;
   flex-direction: row;
@@ -51,6 +52,23 @@ const Input = styled.input`
   }
 `;
 
+const Status = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  font-size: 12px;
+  font-weight: 300;
+  margin-bottom: -20px;
+`;
+
+const Error = styled(Status)`
+  color: #cc2b14;
+`;
+
+const Success = styled(Status)`
+  color: #00eaff;
+`;
+
 export const InputField: React.FunctionComponent<{ className?: string }> = ({
   className,
 }) => {
@@ -58,32 +76,47 @@ export const InputField: React.FunctionComponent<{ className?: string }> = ({
   const [result, mutate] = useMutation(
     `mutation sayHi($email: String!) { sayHi(email: $email) { ok } }`,
   );
-  const onChange = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      console.log('email', email);
+  const onSubmit = useCallback(
+    (event: React.FormEvent) => {
+      event.preventDefault();
       mutate({ email });
     },
     [email, mutate],
   );
+  const onChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (!result.loading) {
+        setEmail(event.target.value);
+      }
+    },
+    [setEmail, result.loading],
+  );
 
-  console.log({ result });
+  useEffect(() => {
+    if (result.complete) {
+      setEmail('');
+    }
+  }, [result.complete, setEmail]);
 
   return (
     <div className={className}>
-      <Form onSubmit={onChange}>
+      <Form onSubmit={onSubmit}>
         <Input
+          disabled={result.loading}
           type='text'
           value={email}
-          onChange={e => {
-            e.preventDefault();
-            setEmail(e.currentTarget.value);
-          }}
+          onChange={onChange}
           placeholder='Type your email here'
         />
         <Submit type='submit'>
           <Send />
         </Submit>
+        {result.error && (
+          <Error>Something went wrong, please let us know on Slack</Error>
+        )}
+        {result.data && (
+          <Success>We'll contact you soon!</Success>
+        )}
       </Form>
     </div>
   );
