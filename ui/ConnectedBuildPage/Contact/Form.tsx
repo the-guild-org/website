@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {SocialMedias} from './SocialMedia';
-import {InputField} from './Input';
+import { SocialMedias } from './SocialMedia';
+import { InputField } from './Input';
 
 const Container = styled.div`
   display: flex;

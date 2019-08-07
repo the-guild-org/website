@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Send } from 'react-feather';
 
-import { useMutation } from './hooks';
+import { useMutation } from '../../../hooks/use-graphql';
 
 const Form = styled.form`
   position: relative;
@@ -114,9 +114,7 @@ export const InputField: React.FunctionComponent<{ className?: string }> = ({
         {result.error && (
           <Error>Something went wrong, please let us know on Slack</Error>
         )}
-        {result.data && (
-          <Success>We'll contact you soon!</Success>
-        )}
+        {result.data && <Success>We'll contact you soon!</Success>}
       </Form>
     </div>
   );
