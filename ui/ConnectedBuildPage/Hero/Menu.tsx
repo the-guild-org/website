@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import styled from 'styled-components';
 import { MessageSquare } from 'react-feather';
 
@@ -20,7 +21,7 @@ const LeftMenu = styled.div`
   align-items: center;
 `;
 
-const Link = styled.a`
+const MenuLink = styled.a`
   font-size: 14px;
   font-weight: bold;
   color: ${props => props.theme.bar.textColor};
@@ -30,12 +31,16 @@ const Link = styled.a`
 export const Menu: React.FunctionComponent = () => {
   return (
     <Container>
-      <TheGuildLogo />
+      <Link href='/' prefetch={true}>
+        <a>
+          <TheGuildLogo />
+        </a>
+      </Link>
       <LeftMenu>
-        <Link>Let's talk</Link>
-        <Link>
+        <MenuLink>Let's talk</MenuLink>
+        <MenuLink>
           <MessageSquare />
-        </Link>
+        </MenuLink>
       </LeftMenu>
     </Container>
   );
