@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import styled, { ThemeProvider, ThemeConsumer } from 'styled-components';
-import { BookOpen, Anchor, Bell, Calendar, Coffee, Play } from 'react-feather';
+import { BookOpen, Anchor, Power, Calendar, Coffee, Play } from 'react-feather';
 
 import { Background } from './Background';
 import { Title } from './Title';
@@ -33,9 +33,9 @@ const THEME = {
 
 const menu: MenuItem[] = [
   {
-    text: 'Start your journey',
+    text: 'Who are we',
     element: () => (
-      <a href='/start-journey'>
+      <a href='https://github.com/the-guild-org/'>
         <Circle size={'normal'}>
           <BookOpen />
         </Circle>
@@ -43,9 +43,9 @@ const menu: MenuItem[] = [
     ),
   },
   {
-    text: 'End your journey',
+    text: 'Open Source',
     element: () => (
-      <a href='/end-journey'>
+      <a href='https://github.com/the-guild-org/Stack'>
         <Circle size={'normal'}>
           <Anchor />
         </Circle>
@@ -53,19 +53,19 @@ const menu: MenuItem[] = [
     ),
   },
   {
-    text: 'Your journey',
+    text: 'Platform',
     element: () => (
-      <a href='/journey'>
+      <a href='/connected-build'>
         <Circle size={'normal'}>
-          <Bell />
+          <Power />
         </Circle>
       </a>
     ),
   },
   {
-    text: 'More and more',
+    text: 'Talk to us',
     element: () => (
-      <a href='/more'>
+      <a href='https://github.com/urigo'>
         <Circle size={'normal'}>
           <Calendar />
         </Circle>
@@ -73,7 +73,7 @@ const menu: MenuItem[] = [
     ),
   },
   {
-    text: 'Drink coffee',
+    text: 'Blog',
     element: () => (
       <a href='/coffee'>
         <Circle size={'normal'}>
@@ -83,9 +83,9 @@ const menu: MenuItem[] = [
     ),
   },
   {
-    text: 'Visit our YouTube',
+    text: 'Start your journey',
     element: () => (
-      <a href='/play'>
+      <a href='/your-path'>
         <Circle size={'normal'}>
           <Play />
         </Circle>
