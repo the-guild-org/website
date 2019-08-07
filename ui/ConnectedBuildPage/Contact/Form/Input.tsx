@@ -37,6 +37,7 @@ const Submit = styled.button`
 `;
 
 const Input = styled.input`
+  flex: 1;
   font-size: 15px;
   font-weight: 300;
   color: #ffffff;

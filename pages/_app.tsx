@@ -19,6 +19,10 @@ export default class MyApp extends App {
                 height: 100%;
               }
 
+              a {
+                text-decoration: none;
+              }
+
               .roboto {
                 font-family: 'Roboto', sans-serif;
               }

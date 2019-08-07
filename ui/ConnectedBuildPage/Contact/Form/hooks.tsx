@@ -10,6 +10,8 @@ interface GraphQLResult<TResult> {
   };
 }
 
+const url = (process.env.NOW_URL || 'http://localhost:3000') + '/api/graphql';
+
 export function useMutation<TResult, TVariables = {}>(
   query: string,
 ): [GraphQLResult<TResult>, (variables: TVariables) => void] {
@@ -25,7 +27,7 @@ export function useMutation<TResult, TVariables = {}>(
         data: null,
       });
 
-      fetch('https://connected-build.now.sh/api/graphql', {
+      fetch(url, {
         mode: 'no-cors',
         cache: 'no-cache',
         method: 'POST',
