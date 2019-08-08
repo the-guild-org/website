@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { useToggle } from '../../hooks/use-toggle';
-import { useDocumentLoaded } from '../../hooks/use-document-loaded';
 
 const Container = styled.div<{ image: string }>`
   position: absolute;
@@ -41,8 +40,9 @@ export const BackgroundVideo: React.FunctionComponent<{
   type: string;
 }> = ({ image, src, type }) => {
   const [loaded, toggleLoaded] = useToggle(false);
-
-  useDocumentLoaded(toggleLoaded);
+  useEffect(() => {
+    toggleLoaded();
+  }, []);
 
   return (
     <Container image={image}>

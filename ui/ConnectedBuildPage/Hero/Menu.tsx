@@ -35,7 +35,7 @@ export const Menu: React.FunctionComponent = () => {
 
   return (
     <Container>
-      <Link href='/' prefetch={true}>
+      <Link href='/'>
         <a>
           <TheGuildLogo />
         </a>

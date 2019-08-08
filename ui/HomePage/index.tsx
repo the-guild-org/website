@@ -56,7 +56,7 @@ const menu: MenuItem[] = [
   {
     text: 'Platform',
     element: () => (
-      <Link href='/connected-build' prefetch={true}>
+      <Link href='/connected-build'>
         <a>
           <Circle size={'normal'}>
             <Power />
