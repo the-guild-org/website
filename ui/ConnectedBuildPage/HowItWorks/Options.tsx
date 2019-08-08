@@ -75,7 +75,7 @@ const Option: React.FunctionComponent<{
         </Text>
       </Right> */}
       <Header>
-        {indexes[index]}. {title}
+        {indexes[index].toUpperCase()}. {title}
       </Header>
       <Text>{text}</Text>
     </OptionContainer>

@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { device } from '../../media';
+
 const Container = styled.div`
   display: flex;
   flex-shrink: 1;
@@ -15,7 +17,10 @@ const Text = styled.div`
   line-height: 1.14;
   letter-spacing: -0.2px;
   color: ${props => props.theme.hero.titleColor};
-  max-width: 60%;
+  
+  @media ${device.laptop} {
+    max-width: 60%;
+  }
 `;
 
 const ConnectedBuild = styled(Text)`

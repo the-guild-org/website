@@ -1,19 +1,25 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { device } from '../../media';
 import { Title } from './Title';
 
 const Container = styled.div<{ dark: boolean }>`
   height: 100vh;
   padding: 0 160px;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: ${props => props.dark ? 'column-reverse' : 'column'};
+  justify-content: space-around;
   background-color: ${props => (props.dark ? '#0d1126' : '#0b0b17')};
 
-  & > * {
-    width: 35%;
+  @media ${device.laptop} {
+    flex-direction: ${props => props.dark ? 'row-reverse' : 'row'};
+    justify-content: space-between;
+    align-items: center;
+    
+    & > * {
+      width: 35%;
+    }
   }
 `;
 
