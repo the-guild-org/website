@@ -93,7 +93,7 @@ export const Options: React.FunctionComponent = () => {
       <Option
         index={1}
         title='Get a seat at the table'
-        text='You already depend on us but you have no influence. Get the power to decide what we should do. Connect your CI to our libraries so we guarantee not to break your app!'
+        text='You already depend on us but you have no influence. Get the power to decide what we should do. And connect your CI to our libraries so we guarantee not to break your app!'
       />
       <Option
         index={2}
