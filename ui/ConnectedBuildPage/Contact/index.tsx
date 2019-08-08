@@ -9,9 +9,9 @@ export const Contact: React.FunctionComponent = () => {
       on='right'
       anchor='contact'
       subtitle='Join the revolution'
-      description='Get work and real money for your work instead of relaying on charity.'
-      title="Think You're Open Source Maintainer?"
-      highlight='Open Source'
+      description='Get real money for your work instead of relaying on charity.'
+      title="Open Source Maintainer?"
+      highlight='Maintainer'
     >
       <Form />
     </Section>
