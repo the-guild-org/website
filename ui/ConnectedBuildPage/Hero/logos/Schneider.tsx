@@ -2,13 +2,7 @@ import React from 'react';
 
 export const SchneiderLogo: React.FunctionComponent = () => {
   return (
-    <svg
-      xmlns='http://www.w3.org/2000/svg'
-      xmlnsXlink='http://www.w3.org/1999/xlink'
-      width='180'
-      height='75'
-      viewBox='0 0 180 75'
-    >
+    <svg viewBox='0 0 180 75'>
       <defs>
         <path id='a' d='M0 39.838h133.459V.009H0z' />
       </defs>

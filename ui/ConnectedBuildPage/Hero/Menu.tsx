@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { MessageSquare } from 'react-feather';
 
 import { TheGuildLogo } from '../Logo';
+import { useScrollTo } from '../../../hooks/use-scroll-to';
 
 const Container = styled.div`
   display: flex;
@@ -14,11 +15,12 @@ const Container = styled.div`
   justify-content: space-between;
 `;
 
-const LeftMenu = styled.div`
+const LetsTalk = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
+  cursor: pointer;
 `;
 
 const MenuLink = styled.a`
@@ -29,6 +31,8 @@ const MenuLink = styled.a`
 `;
 
 export const Menu: React.FunctionComponent = () => {
+  const scrollTo = useScrollTo();
+
   return (
     <Container>
       <Link href='/' prefetch={true}>
@@ -36,12 +40,17 @@ export const Menu: React.FunctionComponent = () => {
           <TheGuildLogo />
         </a>
       </Link>
-      <LeftMenu>
+      <LetsTalk
+        onClick={e => {
+          e.preventDefault();
+          scrollTo('section-contact');
+        }}
+      >
         <MenuLink>Let's talk</MenuLink>
         <MenuLink>
           <MessageSquare />
         </MenuLink>
-      </LeftMenu>
+      </LetsTalk>
     </Container>
   );
 };

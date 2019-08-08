@@ -2,7 +2,7 @@ import React from 'react';
 
 export const AirFranceLogo: React.FunctionComponent = () => {
   return (
-    <svg width='180' height='75' viewBox='0 0 180 75'>
+    <svg viewBox='0 0 180 75'>
       <defs>
         <path id='a' d='M0 .314h149.83v14.152H0z' />
         <path id='c' d='M.722.373h22.106v14.9H.722z' />

@@ -2,7 +2,7 @@ import React from 'react';
 
 export const KLMLogo: React.FunctionComponent = () => {
   return (
-    <svg width='180' height='75' viewBox='0 0 180 75'>
+    <svg viewBox='0 0 180 75'>
       <path
         fill='#C4D0E4'
         fillRule='evenodd'

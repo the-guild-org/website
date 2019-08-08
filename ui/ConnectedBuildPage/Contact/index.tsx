@@ -1,27 +1,19 @@
 import React from 'react';
-import styled from 'styled-components';
 
+import { Section } from '../Section';
 import { Form } from './Form';
-import { RightPanel } from './RightPanel';
-
-const Container = styled.div`
-  height: 100vh;
-  padding: 0 160px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-
-  & > * {
-    width: 35%;
-  }
-`;
 
 export const Contact: React.FunctionComponent = () => {
   return (
-    <Container>
+    <Section
+      on='right'
+      anchor='contact'
+      subtitle='Join the revolution'
+      description='Get work and real money for your work instead of relaying on charity.'
+      title="Think You're Open Source Maintainer?"
+      highlight='Open Source'
+    >
       <Form />
-      <RightPanel />
-    </Container>
+    </Section>
   );
 };
