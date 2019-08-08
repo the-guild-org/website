@@ -5,15 +5,17 @@ import { device } from '../../media';
 import { Title } from './Title';
 
 const Container = styled.div<{ dark: boolean }>`
-  height: 100vh;
-  padding: 0 160px;
+  min-height: 100vh;
+  padding: 40px 40px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: ${props => props.dark ? 'column-reverse' : 'column'};
   justify-content: space-around;
   background-color: ${props => (props.dark ? '#0d1126' : '#0b0b17')};
 
   @media ${device.laptop} {
-    flex-direction: ${props => props.dark ? 'row-reverse' : 'row'};
+    padding: 40px 160px;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
     
