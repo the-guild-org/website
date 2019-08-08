@@ -9,9 +9,9 @@ export const HowItWorks: React.FunctionComponent = () => {
       on='left'
       anchor='how'
       subtitle='How it works'
-      description='Now you can list a product once, sell it everywhere and grow your sales faster.'
-      title='Manage Your Open Source Updates'
-      highlight='Updates'
+      description='Influence, work and learn from the best open source maintainers out there!'
+      title='Make Open Source dependencies work for you!'
+      highlight='Open Source'
     >
       <Options />
     </Section>
