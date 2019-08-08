@@ -9,9 +9,9 @@ export const Infrastructure: React.FunctionComponent = () => {
       on='right'
       anchor='infra'
       subtitle='Connected Build'
-      description='Now you can list a product once, sell it everywhere and grow your sales faster.'
+      description='Just like the React team is for Facebook, We can be your infrastructure team.'
       title='Infrastructure Team for All of You'
-      highlight='Team'
+      highlight='React team'
     >
       <div/>
     </Section>
