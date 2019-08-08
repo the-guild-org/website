@@ -13,7 +13,7 @@ const Container = styled.div`
   backdrop-filter: blur(10px);
   background-color: rgba(4, 6, 18, 0.7);
 
-  @media ${device.laptop} {
+  @media ${device.min.laptop} {
     padding: 0 160px;
   }
 `;
@@ -23,7 +23,7 @@ const List = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
 
-  @media ${device.tablet} {
+  @media ${device.min.tablet} {
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   }
 `;

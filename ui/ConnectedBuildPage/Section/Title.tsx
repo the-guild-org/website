@@ -1,9 +1,16 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
+import { device } from '../../media';
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  text-align: center;
+
+  @media ${device.min.laptop} {
+    text-align: left;
+  }
 `;
 
 const Subtitle = styled.div`
@@ -20,6 +27,10 @@ const TitleText = styled.span`
   line-height: 1.14;
   letter-spacing: -0.2px;
   color: ${props => props.theme.hero.titleColor};
+
+  @media ${device.max.tablet} {
+    font-size: 40px;
+  }
 `;
 
 const HighlightText = styled(TitleText)`
