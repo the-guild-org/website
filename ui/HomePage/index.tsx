@@ -68,7 +68,7 @@ const menu: MenuItem[] = [
   {
     text: 'Start your journey',
     element: () => (
-      <a href='/your-path'>
+      <a href='https://tortilla.academy/Urigo/WhatsApp-Clone-Tutorial/'>
         <Circle size={'normal'}>
           <TrendingUp />
         </Circle>
