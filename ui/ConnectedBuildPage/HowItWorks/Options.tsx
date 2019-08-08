@@ -52,7 +52,7 @@ const Text = styled.div`
   margin: 15px 0;
   font-size: 16px;
   font-weight: 300;
-  color: #354969;
+  color: #919FB5;
 `;
 
 const indexes = 'abcdefg';

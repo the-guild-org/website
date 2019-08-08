@@ -25,7 +25,7 @@ const Container = styled.div`
 const Copyrights = styled.div`
   font-size: 12px;
   font-weight: 300;
-  color: #354969;
+  color: #919FB5;
   margin-top: 15px;
 
   @media ${device.min.tablet} {

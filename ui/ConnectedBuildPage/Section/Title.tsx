@@ -16,7 +16,7 @@ const Container = styled.div`
 const Subtitle = styled.div`
   font-size: 14px;
   font-weight: bold;
-  color: #354969;
+  color: #919FB5;
   text-transform: uppercase;
   letter-spacing: 1.2px;
 `;
@@ -44,7 +44,7 @@ const TitleContainer = styled.div`
 const Text = styled.div`
   font-size: 20px;
   font-weight: 300;
-  color: #354969;
+  color: #919FB5;
 `;
 
 export const Title: React.FunctionComponent<{

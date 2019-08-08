@@ -9,7 +9,7 @@ const SocialMedia = styled.a`
   margin: 5px 0;
   justify-content: flex-start;
   align-items: center;
-  color: #354969;
+  color: #919FB5;
   text-decoration: none;
 
   &:hover {
@@ -24,7 +24,7 @@ const SocialMedia = styled.a`
     padding-left: 10px;
     font-size: 15px;
     font-weight: 300;
-    color: #354969;
+    color: #919FB5;
   }
 `;
 
