@@ -13,7 +13,7 @@ export const Infrastructure: React.FunctionComponent = () => {
       title='Infrastructure Team for All of You'
       highlight='Team'
     >
-      <div>.</div>
+      <div/>
     </Section>
   );
 };

@@ -19,7 +19,7 @@ const Description = styled.div`
   margin: 10px 0;
   font-size: 14px;
   font-weight: 300;
-  color: #354969;
+  color: #919FB5;
 `;
 
 const Input = styled(InputField)`

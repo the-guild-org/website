@@ -1,15 +1,22 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
+import { device } from '../../media';
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  text-align: center;
+
+  @media ${device.min.laptop} {
+    text-align: left;
+  }
 `;
 
 const Subtitle = styled.div`
   font-size: 14px;
   font-weight: bold;
-  color: #354969;
+  color: #919FB5;
   text-transform: uppercase;
   letter-spacing: 1.2px;
 `;
@@ -20,6 +27,10 @@ const TitleText = styled.span`
   line-height: 1.14;
   letter-spacing: -0.2px;
   color: ${props => props.theme.hero.titleColor};
+
+  @media ${device.max.tablet} {
+    font-size: 40px;
+  }
 `;
 
 const HighlightText = styled(TitleText)`
@@ -33,7 +44,7 @@ const TitleContainer = styled.div`
 const Text = styled.div`
   font-size: 20px;
   font-weight: 300;
-  color: #354969;
+  color: #919FB5;
 `;
 
 export const Title: React.FunctionComponent<{
