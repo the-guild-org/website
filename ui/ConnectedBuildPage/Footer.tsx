@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 import { TheGuildLogo } from './Logo';
 import { device } from '../media';
+import { useFontColor } from './theme';
 
 const Container = styled.div`
   padding: 50px 40px;
@@ -25,7 +26,7 @@ const Container = styled.div`
 const Copyrights = styled.div`
   font-size: 12px;
   font-weight: 300;
-  color: #919FB5;
+  color: ${useFontColor('light')};
   margin-top: 15px;
 
   @media ${device.gt.tablet} {

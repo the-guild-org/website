@@ -3,22 +3,25 @@ import styled from 'styled-components';
 
 import { device } from '../../media';
 import { Title } from './Title';
+import { useTheme } from '../theme';
 
 const Container = styled.div<{ dark: boolean }>`
   min-height: 100vh;
   padding: 40px 40px;
   box-sizing: border-box;
   display: flex;
-  flex-direction: ${props => props.dark ? 'column-reverse' : 'column'};
+  flex-direction: ${props => (props.dark ? 'column-reverse' : 'column')};
   justify-content: space-around;
-  background-color: ${props => (props.dark ? '#0d1126' : '#0b0b17')};
+  background-color: ${useTheme((theme, props) =>
+    props.dark ? theme.background.colors.darker : theme.background.colors.dark,
+  )};
 
   @media ${device.laptop} {
     padding: 40px 160px;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    
+
     & > * {
       width: 35%;
     }
