@@ -29,10 +29,10 @@ const Input = styled(InputField)`
 export const Form: React.FunctionComponent = () => {
   return (
     <Container>
-      <Title>Let's talk</Title>
+      <Title>Join the Connected Build consortium of companies</Title>
       <Description>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor.
+        Make the maintainers of the open source libraries your code is using, work for you!
+        Take control over your infrastructure.
       </Description>
       <Input />
       <SocialMedias />
