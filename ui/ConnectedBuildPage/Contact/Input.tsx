@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Send } from 'react-feather';
 
 import { useMutation } from '../../../hooks/use-graphql';
+import { useFontColor } from '../theme';
 
 const Form = styled.form`
   position: relative;
@@ -33,7 +34,7 @@ const Submit = styled.button`
   cursor: pointer;
 
   &:hover {
-    color: #fff;
+    color: ${useFontColor('white')};
   }
 `;
 

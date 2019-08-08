@@ -2,13 +2,14 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { device } from '../../media';
+import { useFontColor } from '../theme';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   text-align: center;
 
-  @media ${device.min.laptop} {
+  @media ${device.laptop} {
     text-align: left;
   }
 `;
@@ -16,7 +17,7 @@ const Container = styled.div`
 const Subtitle = styled.div`
   font-size: 14px;
   font-weight: bold;
-  color: #919FB5;
+  color: ${useFontColor('light')};
   text-transform: uppercase;
   letter-spacing: 1.2px;
 `;
@@ -28,7 +29,7 @@ const TitleText = styled.span`
   letter-spacing: -0.2px;
   color: ${props => props.theme.hero.titleColor};
 
-  @media ${device.max.tablet} {
+  @media ${device.mobile} {
     font-size: 40px;
   }
 `;
@@ -44,7 +45,7 @@ const TitleContainer = styled.div`
 const Text = styled.div`
   font-size: 20px;
   font-weight: 300;
-  color: #919FB5;
+  color: ${useFontColor('light')};
 `;
 
 export const Title: React.FunctionComponent<{

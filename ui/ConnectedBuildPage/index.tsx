@@ -8,22 +8,7 @@ import { Infrastructure } from './Infrastructure';
 import { HowItWorks } from './HowItWorks';
 import { Contact } from './Contact';
 import { Footer } from './Footer';
-
-const THEME = {
-  background: {
-    color: '#0b0b17',
-  },
-  hero: {
-    titleColor: '#fff',
-    highlightColor: '#00eaff',
-  },
-  logo: {
-    color: '#fff',
-  },
-  bar: {
-    textColor: '#fff',
-  },
-};
+import { THEME } from './theme';
 
 const ConnectedBuildPage: React.FunctionComponent = () => {
   return (

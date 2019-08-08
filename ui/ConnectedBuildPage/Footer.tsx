@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 import { TheGuildLogo } from './Logo';
 import { device } from '../media';
+import { useFontColor } from './theme';
 
 const Container = styled.div`
   padding: 50px 40px;
@@ -11,13 +12,13 @@ const Container = styled.div`
   flex-direction: column;
   background-color: #050713;
 
-  @media ${device.min.tablet} {
+  @media ${device.gt.tablet} {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
 
-  @media ${device.min.laptop} {
+  @media ${device.laptop} {
     padding: 50px 160px;
   }
 `;
@@ -25,10 +26,10 @@ const Container = styled.div`
 const Copyrights = styled.div`
   font-size: 12px;
   font-weight: 300;
-  color: #919FB5;
+  color: ${useFontColor('light')};
   margin-top: 15px;
 
-  @media ${device.min.tablet} {
+  @media ${device.gt.tablet} {
     margin-top: 0;
     font-size: 16px;
     text-align: right;

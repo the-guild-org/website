@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { useFontColor } from '../theme';
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -45,14 +47,14 @@ const Line = styled.div`
 const Header = styled.div`
   font-size: 18px;
   font-weight: bold;
-  color: #ffffff;
+  color: ${useFontColor('white')};
 `;
 
 const Text = styled.div`
   margin: 15px 0;
   font-size: 16px;
   font-weight: 300;
-  color: #919FB5;
+  color: ${useFontColor('light')};
 `;
 
 const indexes = 'abcdefg';
