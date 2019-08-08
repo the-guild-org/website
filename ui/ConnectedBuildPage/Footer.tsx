@@ -11,13 +11,13 @@ const Container = styled.div`
   flex-direction: column;
   background-color: #050713;
 
-  @media ${device.min.tablet} {
+  @media ${device.gt.tablet} {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
 
-  @media ${device.min.laptop} {
+  @media ${device.laptop} {
     padding: 50px 160px;
   }
 `;
@@ -28,7 +28,7 @@ const Copyrights = styled.div`
   color: #919FB5;
   margin-top: 15px;
 
-  @media ${device.min.tablet} {
+  @media ${device.gt.tablet} {
     margin-top: 0;
     font-size: 16px;
     text-align: right;

@@ -8,7 +8,7 @@ import { useScrollTo } from '../../../hooks/use-scroll-to';
 
 const Container = styled.div`
   display: flex;
-  padding: 20px 40px;
+  padding: 40px;
   flex-shrink: 0;
   flex-grow: 0;
   flex-direction: row;

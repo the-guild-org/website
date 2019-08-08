@@ -8,7 +8,7 @@ const Container = styled.div`
   flex-direction: column;
   text-align: center;
 
-  @media ${device.min.laptop} {
+  @media ${device.laptop} {
     text-align: left;
   }
 `;
@@ -28,7 +28,7 @@ const TitleText = styled.span`
   letter-spacing: -0.2px;
   color: ${props => props.theme.hero.titleColor};
 
-  @media ${device.max.tablet} {
+  @media ${device.mobile} {
     font-size: 40px;
   }
 `;

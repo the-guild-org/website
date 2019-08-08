@@ -13,7 +13,7 @@ const Container = styled.div<{ dark: boolean }>`
   justify-content: space-around;
   background-color: ${props => (props.dark ? '#0d1126' : '#0b0b17')};
 
-  @media ${device.min.laptop} {
+  @media ${device.laptop} {
     padding: 40px 160px;
     flex-direction: row;
     justify-content: space-between;
@@ -22,6 +22,10 @@ const Container = styled.div<{ dark: boolean }>`
     & > * {
       width: 35%;
     }
+  }
+
+  @media ${device.lt.laptop} {
+    align-items: center;
   }
 `;
 

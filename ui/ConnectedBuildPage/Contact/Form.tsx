@@ -3,10 +3,16 @@ import styled from 'styled-components';
 
 import { SocialMedias } from './SocialMedia';
 import { InputField } from './Input';
+import { device } from '../../media';
+
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+
+  @media ${device.mobile} {
+    max-width: 90%;
+  }
 `;
 
 const Title = styled.div`

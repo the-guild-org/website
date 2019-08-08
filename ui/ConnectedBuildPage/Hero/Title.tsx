@@ -10,7 +10,7 @@ const Container = styled.div`
   padding: 0 40px;
   justify-content: center;
 
-  @media ${device.min.laptop} {
+  @media ${device.laptop} {
     padding: 0 160px;
   }
 `;
@@ -22,11 +22,11 @@ const Text = styled.div`
   letter-spacing: -0.2px;
   color: ${props => props.theme.hero.titleColor};
 
-  @media ${device.min.laptop} {
+  @media ${device.laptop} {
     max-width: 60%;
   }
 
-  @media ${device.max.tablet} {
+  @media ${device.mobile} {
     font-size: 40px;
   }
 `;

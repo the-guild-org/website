@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Section } from './Section';
-import { BackgroundVideo } from './BackgroundVideo';
 
 export const Infrastructure: React.FunctionComponent = () => {
   return (
@@ -13,8 +12,6 @@ export const Infrastructure: React.FunctionComponent = () => {
                    We do the same for your company and many other companies.'
       title='Infrastructure Team for All of You'
       highlight='You'
-    >
-      <div/>
-    </Section>
+    />
   );
 };
