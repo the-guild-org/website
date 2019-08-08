@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Section } from './Section';
+import { BackgroundVideo } from './BackgroundVideo';
 
 export const Infrastructure: React.FunctionComponent = () => {
   return (
