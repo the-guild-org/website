@@ -8,7 +8,7 @@ const Container = styled.div<{ dark: boolean }>`
   padding: 0 160px;
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
   background-color: ${props => (props.dark ? '#0d1126' : '#0b0b17')};
 
@@ -20,13 +20,23 @@ const Container = styled.div<{ dark: boolean }>`
 type Position = 'left' | 'right';
 
 export const Section: React.FunctionComponent<{
+  anchor: string;
   subtitle: string;
   title: string;
   highlight: string;
   description: string;
   on: Position;
   className?: string;
-}> = ({ className, on, subtitle, title, highlight, description, children }) => {
+}> = ({
+  className,
+  on,
+  subtitle,
+  title,
+  highlight,
+  description,
+  children,
+  anchor,
+}) => {
   const titleElement = (
     <Title
       subtitle={subtitle}
@@ -37,7 +47,11 @@ export const Section: React.FunctionComponent<{
   );
 
   return (
-    <Container dark={on === 'right'} className={className}>
+    <Container
+      dark={on === 'right'}
+      className={className}
+      id={`section-${anchor}`}
+    >
       {on === 'left' && titleElement}
       {children}
       {on === 'right' && titleElement}

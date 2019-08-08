@@ -7,6 +7,7 @@ import { Hero } from './Hero';
 import { Infrastructure } from './Infrastructure';
 import { HowItWorks } from './HowItWorks';
 import { Contact } from './Contact';
+import { Footer } from './Footer';
 
 const THEME = {
   background: {
@@ -44,6 +45,7 @@ const ConnectedBuildPage: React.FunctionComponent = () => {
                 <Infrastructure />
                 <HowItWorks />
                 <Contact />
+                <Footer />
               </Background>
             </>
           );
