@@ -10,7 +10,7 @@ export const HowItWorks: React.FunctionComponent = () => {
       anchor='how'
       subtitle='How it works'
       description='Influence, work and learn from the best open source maintainers out there!'
-      title='Make Open Source dependencies work for you!'
+      title='Make Open Source libraries and maintainers work for you!'
       highlight='Open Source'
     >
       <Options />
