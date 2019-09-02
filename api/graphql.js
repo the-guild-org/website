@@ -8,7 +8,7 @@ const { WebClient } = require('@slack/web-api');
 const bugsnagClient = bugsnag(process.env.BUGSNAG_API);
 const slack = new WebClient(process.env.SLACK_TOKEN);
 const channelID = 'CLZ5BCE7K';
-const cors = microCors({ allowMethods: ['POST'] });
+const cors = microCors();
 
 const typeDefs = /* GraphQL */ `
   type HiResponse {
