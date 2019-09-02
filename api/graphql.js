@@ -102,6 +102,13 @@ const schema = makeExecutableSchema({
 });
 
 module.exports = cors(async (req, res) => {
+  if (req.method === 'OPTIONS') {
+    res.statusCode = 200;
+    res.statusMessage = 'OK';
+    res.end();
+    return;
+  }
+
   const { query, variables } =
     typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
