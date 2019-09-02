@@ -60,12 +60,8 @@ const resolvers = {
         text.push(`> ${message}`);
       }
 
-      const result = await slack.chat.postMessage({
-        channel: channelID,
-        text: text.join(' '),
-      });
-
-      const meta = {
+      bugsnagClient.metaData = {
+        ...bugsnagClient.metaData,
         author,
         message,
         email,
@@ -74,18 +70,25 @@ const resolvers = {
         mappedProject,
       };
 
+      const result = await slack.chat.postMessage({
+        channel: channelID,
+        text: text.join(' '),
+      });
+
       if (!mappedProject) {
-        throw new Error(`Failed to match the project ${JSON.stringify(meta)}`);
+        throw new Error(`Failed to match the project`);
       }
 
       if (result.error) {
         console.error(result.error);
 
+        bugsnagClient.metaData = {
+          ...bugsnagClient.metaData,
+          slack: result,
+        };
+
         throw new Error(
-          `Slack failed to send a message ${JSON.stringify({
-            ...meta,
-            error: result.error,
-          })}`,
+          `Slack failed to send a message`,
         );
       }
 
@@ -112,6 +115,11 @@ module.exports = cors(async (req, res) => {
   const { query, variables } =
     typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
+  bugsnagClient.metaData = {
+    query,
+    variables: JSON.stringify(variables),
+  };
+
   const result = await execute({
     schema,
     document: parse(query),
@@ -120,10 +128,7 @@ module.exports = cors(async (req, res) => {
 
   if (result.errors && result.errors.length) {
     result.errors.forEach(error => {
-      bugsnagClient.notify(error, {
-        query,
-        variables: JSON.stringify(variables),
-      });
+      bugsnagClient.notify(error);
     });
   }
 
