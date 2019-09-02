@@ -90,7 +90,7 @@ const schema = makeExecutableSchema({
 });
 
 module.exports = async (req, res) => {
-  const { query, variables } = JSON.parse(req.body);
+  const { query, variables } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
   const result = await execute({
     schema,
