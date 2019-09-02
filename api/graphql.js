@@ -23,7 +23,12 @@ const typeDefs = /* GraphQL */ `
   }
 
   type Mutation {
-    sayHi(email: String!, project: Project!): HiResponse!
+    sayHi(
+      email: String!
+      project: Project!
+      name: String
+      message: String
+    ): HiResponse!
   }
 `;
 
@@ -39,22 +44,36 @@ const resolvers = {
     },
   },
   Mutation: {
-    async sayHi(_, { email, project }) {
+    async sayHi(_, { email, project, name, message }) {
       const mappedProject = projectMap[project];
+      const author = name || 'Someone';
+
+      const text = [
+        author,
+        `from ${mappedProject} wants to get in touch \`${email}\``,
+      ];
+
+      if (message) {
+        text.push('\n');
+        text.push(message);
+      }
+
       const result = await slack.chat.postMessage({
         channel: channelID,
-        text: `Someone from ${mappedProject} wants to get in touch \`${email}\``,
+        text: text.join(' '),
       });
 
+      const meta = {
+        author,
+        message,
+        email,
+        project,
+        projectMap,
+        mappedProject,
+      };
+
       if (!mappedProject) {
-        throw new Error(
-          `Failed to match the project ${JSON.stringify({
-            email,
-            project,
-            projectMap,
-            mappedProject,
-          })}`,
-        );
+        throw new Error(`Failed to match the project ${JSON.stringify(meta)}`);
       }
 
       if (result.error) {
@@ -62,9 +81,8 @@ const resolvers = {
 
         throw new Error(
           `Slack failed to send a message ${JSON.stringify({
+            ...meta,
             error: result.error,
-            channelID,
-            email,
           })}`,
         );
       }
