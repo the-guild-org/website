@@ -55,7 +55,7 @@ const resolvers = {
 
       if (message) {
         text.push('\n');
-        text.push(message);
+        text.push(`> ${message}`);
       }
 
       const result = await slack.chat.postMessage({
