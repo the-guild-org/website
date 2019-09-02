@@ -4,8 +4,6 @@ const Sentry = require('@sentry/node');
 
 const { WebClient } = require('@slack/web-api');
 
-console.log(process.env.SENTRY_API);
-
 Sentry.init({ dsn: process.env.SENTRY_API });
 
 const slack = new WebClient(process.env.SLACK_TOKEN);
@@ -43,6 +41,7 @@ const resolvers = {
   },
   Mutation: {
     async sayHi(_, { email, project }) {
+      console.log(process.env.SENTRY_API);
       const mappedProject = projectMap[project];
       const result = await slack.chat.postMessage({
         channel: channelID,
