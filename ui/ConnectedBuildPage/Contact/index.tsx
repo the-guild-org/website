@@ -9,7 +9,7 @@ export const Contact: React.FunctionComponent = () => {
       on='right'
       anchor='contact'
       subtitle='Join the revolution'
-      description='Get real money for your work instead of relaying on charity.'
+      description='Get real money for your work instead of relying on charity.'
       title="Open Source Maintainer?"
       highlight='Maintainer'
     >
