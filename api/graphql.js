@@ -48,46 +48,27 @@ const resolvers = {
       });
 
       if (!mappedProject) {
-        Sentry.addBreadcrumb({
-          category: 'sayHi',
-          message: `Slack failed to match the project`,
-          level: Sentry.Severity.Error,
-          data: {
+        throw new Error(
+          `Failed to match the project ${JSON.stringify({
             email,
             project,
             projectMap,
             mappedProject,
-          },
-        });
+          })}`,
+        );
       }
 
       if (result.error) {
         console.error(result.error);
 
-        Sentry.addBreadcrumb({
-          category: 'sayHi',
-          message: `Slack failed to send a message`,
-          level: Sentry.Severity.Error,
-          data: {
+        throw new Error(
+          `Slack failed to send a message ${JSON.stringify({
             error: result.error,
-            result,
+            channelID,
             email,
-            project,
-          },
-        });
-
-        throw new Error(`Slack failed to send a message`);
+          })}`,
+        );
       }
-
-      Sentry.addBreadcrumb({
-        category: 'sayHi',
-        message: `Someone says hi ${email} from ${project}`,
-        level: Sentry.Severity.Info,
-        data: {
-          email,
-          project,
-        },
-      });
 
       return {
         ok: result.ok,
@@ -113,16 +94,7 @@ module.exports = async (req, res) => {
 
   if (result.errors && result.errors.length) {
     result.errors.forEach(error => {
-      Sentry.addBreadcrumb({
-        category: 'sayHi',
-        message: error.message,
-        level: Sentry.Severity.Info,
-        data: {
-          error,
-          query,
-          variables,
-        },
-      });
+      Sentry.captureException(error);
     });
   }
 
