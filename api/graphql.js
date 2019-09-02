@@ -19,15 +19,10 @@ const typeDefs = /* GraphQL */ `
     ping: String!
   }
 
-  enum Project {
-    CONNECTED_BUILD
-    GRAPHQL_CODE_GENERATOR
-  }
-
   type Mutation {
     sayHi(
       email: String!
-      project: Project!
+      project: String!
       name: String
       message: String
     ): HiResponse!
@@ -76,7 +71,7 @@ const resolvers = {
       });
 
       if (!mappedProject) {
-        throw new Error(`Failed to match the project`);
+        throw new Error(`Failed to match the project ${project}`);
       }
 
       if (result.error) {
