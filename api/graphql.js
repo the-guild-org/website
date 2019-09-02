@@ -1,11 +1,10 @@
 const { execute, parse } = require('graphql');
 const { makeExecutableSchema } = require('graphql-tools');
-const Sentry = require('@sentry/node');
+const bugsnag = require('@bugsnag/js');
 
 const { WebClient } = require('@slack/web-api');
 
-Sentry.init({ dsn: process.env.SENTRY_API });
-
+const bugsnagClient = bugsnag(process.env.BUGSNAG_API);
 const slack = new WebClient(process.env.SLACK_TOKEN);
 const channelID = 'CLZ5BCE7K';
 
@@ -41,7 +40,6 @@ const resolvers = {
   },
   Mutation: {
     async sayHi(_, { email, project }) {
-      console.log(process.env.SENTRY_API);
       const mappedProject = projectMap[project];
       const result = await slack.chat.postMessage({
         channel: channelID,
@@ -95,7 +93,10 @@ module.exports = async (req, res) => {
 
   if (result.errors && result.errors.length) {
     result.errors.forEach(error => {
-      Sentry.captureException(error);
+      bugsnagClient.notify(error, {
+        query,
+        variables: JSON.stringify(variables),
+      });
     });
   }
 
