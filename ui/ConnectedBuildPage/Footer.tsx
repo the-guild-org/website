@@ -44,7 +44,7 @@ export const Footer: React.FunctionComponent = () => {
           <TheGuildLogo />
         </a>
       </Link>
-      <Copyrights>&copy; 2019 Connected Build by The Guild ltd.</Copyrights>
+      <Copyrights>&copy; 2019 Connected Built by The Guild LTD</Copyrights>
     </Container>
   );
 };
