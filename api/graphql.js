@@ -1,5 +1,6 @@
 const { execute, parse } = require('graphql');
 const { makeExecutableSchema } = require('graphql-tools');
+const microCors = require('micro-cors');
 const bugsnag = require('@bugsnag/js');
 
 const { WebClient } = require('@slack/web-api');
@@ -7,6 +8,7 @@ const { WebClient } = require('@slack/web-api');
 const bugsnagClient = bugsnag(process.env.BUGSNAG_API);
 const slack = new WebClient(process.env.SLACK_TOKEN);
 const channelID = 'CLZ5BCE7K';
+const cors = microCors({ allowMethods: ['POST'] });
 
 const typeDefs = /* GraphQL */ `
   type HiResponse {
@@ -99,7 +101,7 @@ const schema = makeExecutableSchema({
   resolvers,
 });
 
-module.exports = async (req, res) => {
+module.exports = cors(async (req, res) => {
   const { query, variables } =
     typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
@@ -119,4 +121,4 @@ module.exports = async (req, res) => {
   }
 
   res.json(result);
-};
+});
