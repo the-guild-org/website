@@ -1,12 +1,11 @@
 import App, { Container } from 'next/app';
-import React from 'react';
-import Router from 'next/router'
+import React, { Component } from 'react';
+import Router from 'next/router';
 
 import { Root } from '../ui/Root';
-import * as gtag from '../lib/gtag'
+import * as gtag from '../lib/gtag';
 
-Router.events.on('routeChangeComplete', url => gtag.pageview(url))
-
+Router.events.on('routeChangeComplete', url => gtag.pageview(url));
 
 export default class MyApp extends App {
   render() {
