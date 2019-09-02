@@ -1,7 +1,7 @@
 import App, { Container } from 'next/app';
 import React, { Component } from 'react';
 import Router from 'next/router';
-import Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/browser';
 
 import { Root } from '../ui/Root';
 import * as gtag from '../lib/gtag';
