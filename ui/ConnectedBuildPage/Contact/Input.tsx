@@ -75,7 +75,7 @@ export const InputField: React.FunctionComponent<{ className?: string }> = ({
 }) => {
   const [email, setEmail] = useState<string>();
   const [result, mutate] = useMutation(
-    `mutation sayHi($email: String!, $project: Project!) { sayHi(email: $email, project: $project) { ok } }`,
+    `mutation sayHi($email: String!, $project: String!) { sayHi(email: $email, project: $project) { ok } }`,
   );
   const onSubmit = useCallback(
     (event: React.FormEvent) => {
