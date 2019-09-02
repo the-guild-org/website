@@ -98,6 +98,7 @@ const schema = makeExecutableSchema({
 });
 
 function isAllowed(req) {
+  console.error(req.headers)
   return [
     'https://graphql-code-generator.com',
     'https://the-guild.dev',
@@ -106,9 +107,9 @@ function isAllowed(req) {
 
 module.exports = cors(async (req, res) => {
   if (!isAllowed(req)) {
-    req.statusCode = 500;
-    req.statusMessage = 'Not Allowed by CORS';
-    req.end();
+    res.statusCode = 500;
+    res.statusMessage = 'Not Allowed by CORS';
+    res.end();
     return;
   }
 
