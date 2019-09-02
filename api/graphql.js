@@ -15,10 +15,20 @@ const typeDefs = /* GraphQL */ `
     ping: String!
   }
 
+  enum Project {
+    CONNECTED_BUILD
+    GRAPHQL_CODE_GENERATOR
+  }
+
   type Mutation {
-    sayHi(email: String!): HiResponse!
+    sayHi(email: String!, project: Project!): HiResponse!
   }
 `;
+
+const projectMap = {
+  CONNECTED_BUILD: 'Connected Build',
+  GRAPHQL_CODE_GENERATOR: 'GraphQL Code Generator',
+};
 
 const resolvers = {
   Query: {
@@ -27,10 +37,10 @@ const resolvers = {
     },
   },
   Mutation: {
-    async sayHi(_, { email }) {
+    async sayHi(_, { email, project }) {
       const result = await slack.chat.postMessage({
         channel: channelID,
-        text: `Someone from Connected Build wants to get in touch \`${email}\``,
+        text: `Someone from ${projectMap[project]} wants to get in touch \`${email}\``,
       });
 
       if (result.error) {
