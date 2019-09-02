@@ -98,7 +98,8 @@ const schema = makeExecutableSchema({
 });
 
 function isAllowed(req) {
-  console.error(req.headers)
+  console.error(req.headers);
+  
   return [
     'https://graphql-code-generator.com',
     'https://the-guild.dev',
