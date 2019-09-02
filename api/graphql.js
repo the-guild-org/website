@@ -1,10 +1,11 @@
 const { execute, parse } = require('graphql');
 const { makeExecutableSchema } = require('graphql-tools');
-const bugsnag = require('@bugsnag/js');
+const Sentry = require('@sentry/node');
 
 const { WebClient } = require('@slack/web-api');
 
-const bugsnagClient = bugsnag(process.env.BUGSNAG_API);
+Sentry.init({ dsn: process.env.SENTRY_API });
+
 const slack = new WebClient(process.env.SLACK_TOKEN);
 const channelID = 'CLZ5BCE7K';
 
@@ -40,41 +41,52 @@ const resolvers = {
   },
   Mutation: {
     async sayHi(_, { email, project }) {
+      const mappedProject = projectMap[project];
       const result = await slack.chat.postMessage({
         channel: channelID,
-        text: `Someone from ${projectMap[project]} wants to get in touch \`${email}\``,
+        text: `Someone from ${mappedProject} wants to get in touch \`${email}\``,
       });
 
-      if (!projectMap[project]) {
-        bugsnagClient.leaveBreadcrumb('Could not match the project', {
-          channelID,
-          email,
-          project,
-          projectMap,
-          mappedProject: projectMap[project],
+      if (!mappedProject) {
+        Sentry.addBreadcrumb({
+          category: 'sayHi',
+          message: `Slack failed to match the project`,
+          level: Sentry.Severity.Error,
+          data: {
+            email,
+            project,
+            projectMap,
+            mappedProject,
+          },
         });
       }
 
       if (result.error) {
         console.error(result.error);
 
-        bugsnagClient.notify(result.error, {
-          metaData: {
-            channelID,
+        Sentry.addBreadcrumb({
+          category: 'sayHi',
+          message: `Slack failed to send a message`,
+          level: Sentry.Severity.Error,
+          data: {
+            error: result.error,
+            result,
             email,
             project,
-            mappedProject: projectMap[project],
-            result,
           },
         });
 
         throw new Error(`Slack failed to send a message`);
       }
 
-      bugsnagClient.leaveBreadcrumb('Someone says hi', {
-        email,
-        project,
-        mappedProject: projectMap[project],
+      Sentry.addBreadcrumb({
+        category: 'sayHi',
+        message: `Someone says hi ${email} from ${project}`,
+        level: Sentry.Severity.Info,
+        data: {
+          email,
+          project,
+        },
       });
 
       return {
@@ -90,7 +102,8 @@ const schema = makeExecutableSchema({
 });
 
 module.exports = async (req, res) => {
-  const { query, variables } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  const { query, variables } =
+    typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
   const result = await execute({
     schema,
@@ -100,8 +113,12 @@ module.exports = async (req, res) => {
 
   if (result.errors && result.errors.length) {
     result.errors.forEach(error => {
-      bugsnagClient.notify(error, {
-        metaData: {
+      Sentry.addBreadcrumb({
+        category: 'sayHi',
+        message: error.message,
+        level: Sentry.Severity.Info,
+        data: {
+          error,
           query,
           variables,
         },

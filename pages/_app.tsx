@@ -1,26 +1,36 @@
 import App, { Container } from 'next/app';
-import React from 'react';
+import React, { Component } from 'react';
 import Router from 'next/router';
-import bugsnag from '@bugsnag/js';
-import bugsnagReact from '@bugsnag/plugin-react';
+import Sentry from '@sentry/browser';
 
 import { Root } from '../ui/Root';
 import * as gtag from '../lib/gtag';
 
-const bugsnagClient = bugsnag(process.env.BUGSNAG_API);
-
-bugsnagClient.use(bugsnagReact, React);
-
-const ErrorBoundary = bugsnagClient.getPlugin('react');
+Sentry.init({
+  dsn: process.env.SENTRY_API,
+});
 
 Router.events.on('routeChangeComplete', url => gtag.pageview(url));
+
+class ErrorSentryBoundary extends Component<any, any> {
+  componentDidCatch(error: any, errorInfo: any) {
+    Sentry.withScope(scope => {
+      scope.setExtras(errorInfo);
+      Sentry.captureException(error);
+    });
+  }
+
+  render() {
+    return this.props.children;
+  }
+}
 
 export default class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props;
     return (
       <Container>
-        <ErrorBoundary>
+        <ErrorSentryBoundary>
           <Root>
             <style global jsx>
               {`
@@ -43,7 +53,7 @@ export default class MyApp extends App {
             </style>
             <Component {...pageProps} />
           </Root>
-        </ErrorBoundary>
+        </ErrorSentryBoundary>
       </Container>
     );
   }
