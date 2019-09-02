@@ -4,6 +4,8 @@ const Sentry = require('@sentry/node');
 
 const { WebClient } = require('@slack/web-api');
 
+console.log(process.env.SENTRY_API);
+
 Sentry.init({ dsn: process.env.SENTRY_API });
 
 const slack = new WebClient(process.env.SLACK_TOKEN);
