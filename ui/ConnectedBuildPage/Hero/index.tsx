@@ -27,7 +27,7 @@ export const Hero: React.FunctionComponent = () => {
         type='video/webm'
       />
       <Menu />
-      <Title text='We Proud to Present' />
+      <Title text="We're Proud to Present" />
       <Clients />
     </Container>
   );
