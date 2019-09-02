@@ -1,40 +1,49 @@
 import App, { Container } from 'next/app';
 import React from 'react';
-import Router from 'next/router'
+import Router from 'next/router';
+import bugsnag from '@bugsnag/js';
+import bugsnagReact from '@bugsnag/plugin-react';
 
 import { Root } from '../ui/Root';
-import * as gtag from '../lib/gtag'
+import * as gtag from '../lib/gtag';
 
-Router.events.on('routeChangeComplete', url => gtag.pageview(url))
+const bugsnagClient = bugsnag(process.env.BUGSNAG_API);
 
+bugsnagClient.use(bugsnagReact, React);
+
+const ErrorBoundary = bugsnagClient.getPlugin('react');
+
+Router.events.on('routeChangeComplete', url => gtag.pageview(url));
 
 export default class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props;
     return (
       <Container>
-        <Root>
-          <style global jsx>
-            {`
-              html,
-              body,
-              #__next {
-                margin: 0;
-                width: 100%;
-                height: 100%;
-              }
+        <ErrorBoundary>
+          <Root>
+            <style global jsx>
+              {`
+                html,
+                body,
+                #__next {
+                  margin: 0;
+                  width: 100%;
+                  height: 100%;
+                }
 
-              a {
-                text-decoration: none;
-              }
+                a {
+                  text-decoration: none;
+                }
 
-              .roboto {
-                font-family: 'Roboto', sans-serif;
-              }
-            `}
-          </style>
-          <Component {...pageProps} />
-        </Root>
+                .roboto {
+                  font-family: 'Roboto', sans-serif;
+                }
+              `}
+            </style>
+            <Component {...pageProps} />
+          </Root>
+        </ErrorBoundary>
       </Container>
     );
   }
