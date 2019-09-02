@@ -82,9 +82,7 @@ const resolvers = {
           slack: result,
         };
 
-        throw new Error(
-          `Slack failed to send a message`,
-        );
+        throw new Error(`Slack failed to send a message`);
       }
 
       return {
@@ -99,7 +97,23 @@ const schema = makeExecutableSchema({
   resolvers,
 });
 
+function isAllowed(req) {
+  console.error(req.headers);
+  
+  return [
+    'https://graphql-code-generator.com',
+    'https://the-guild.dev',
+  ].includes(req.headers.origin);
+}
+
 module.exports = cors(async (req, res) => {
+  if (!isAllowed(req)) {
+    res.statusCode = 500;
+    res.statusMessage = 'Not Allowed by CORS';
+    res.end();
+    return;
+  }
+
   if (req.method === 'OPTIONS') {
     res.statusCode = 200;
     res.statusMessage = 'OK';
