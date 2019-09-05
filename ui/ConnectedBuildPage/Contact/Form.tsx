@@ -38,7 +38,7 @@ export const Form: React.FunctionComponent = () => {
       <Title>Join the Connected Build consortium of companies</Title>
       <Description>
         Make the maintainers of the open source libraries your code is using,
-        work for you! Take control over your infrastructure.
+        work for you! Take control of your infrastructure.
       </Description>
       <Input />
       <SocialMedias />
