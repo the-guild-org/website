@@ -32,6 +32,7 @@ const typeDefs = /* GraphQL */ `
 const projectMap = {
   CONNECTED_BUILD: 'Connected Build',
   GRAPHQL_CODE_GENERATOR: 'GraphQL Code Generator',
+  GRAPHQL_INSPECTOR: 'GraphQL Inspector',
 };
 
 const resolvers = {
@@ -103,6 +104,7 @@ function isAllowed(req) {
   return [
     'https://graphql-code-generator.com',
     'https://the-guild.dev',
+    'https://graphql-inspector.com',
   ].includes(req.headers.origin);
 }
 
