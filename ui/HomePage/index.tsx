@@ -88,7 +88,7 @@ const menu: MenuItem[] = [
   {
     text: 'Talk to us',
     element: () => (
-      <a href='https://github.com/urigo'>
+      <a href='https://discord.gg/xud7bH9'>
         <Circle size={'normal'}>
           <MessageSquare />
         </Circle>
