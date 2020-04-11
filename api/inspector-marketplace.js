@@ -12,11 +12,17 @@ const cors = microCors();
 function isAllowed(req) {
   console.error(req.headers);
 
-  const signature = req.headers["X-Hub-Signature"];
+  const signature = (req.headers["x-hub-signature"] || "").replace("sha1=", "");
+
+  console.log("Received signature:", signature);
+
   const ourSignature = crypto
     .createHmac("sha1", process.env.MARKETPLACE_INSPECTOR_SECRET)
     .update(typeof req.body === "string" ? req.body : JSON.stringify(req.body))
     .digest("hex");
+
+  console.log("Our signature:", ourSignature);
+  console.log("Both equal:", ourSignature === signature);
 
   return ourSignature === signature;
 }
