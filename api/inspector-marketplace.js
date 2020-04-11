@@ -12,8 +12,6 @@ const cors = microCors();
 function isAllowed(req) {
   console.error(req.headers);
 
-  console.log("typeof MARKETPLACE_INSPECTOR_SECRET", typeof process.env.MARKETPLACE_INSPECTOR_SECRET)
-
   const signature = req.headers["X-Hub-Signature"];
   const ourSignature = crypto
     .createHmac("sha1", process.env.MARKETPLACE_INSPECTOR_SECRET)
