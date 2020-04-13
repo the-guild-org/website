@@ -69,12 +69,12 @@ module.exports = cors(async (req, res) => {
   const result = await slack.chat.postMessage({
     channel: channelID,
     text: [
-      "**Inspector App**",
-      `Action: ${action}`,
-      `Is organization: ${isOrg ? "yes" : "no"}`,
-      `Login: ${login}`,
-      `Email: ${email}`,
-      `Url: ${url}`,
+      "*Inspector App*",
+      `_Action:_ ${action}`,
+      `_Is organization:_ ${isOrg ? "yes" : "no"}`,
+      `_Login:_ ${login}`,
+      `_Email:_ ${email}`,
+      `_Url:_ ${url}`,
     ].join("\n"),
   });
 
