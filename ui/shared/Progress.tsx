@@ -25,7 +25,7 @@ export function Progress() {
           pointer-events: none;
         }
         #nprogress .bar {
-          background: #0070f3;
+          background: #04BFAD;
           position: fixed;
           z-index: 1031;
           top: 0;
@@ -40,7 +40,7 @@ export function Progress() {
           right: 0px;
           width: 100px;
           height: 100%;
-          box-shadow: 0 0 10px #0070f3, 0 0 5px #0070f3;
+          box-shadow: 0 0 10px #04BFAD, 0 0 5px #04BFAD;
           opacity: 1;
           -webkit-transform: rotate(3deg) translate(0px, -4px);
           -ms-transform: rotate(3deg) translate(0px, -4px);

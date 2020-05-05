@@ -20,8 +20,8 @@ const Header = styled.header`
   align-items: center;
 
   background-color: rgba(255, 255, 255, 0.9);
-
   box-sizing: border-box;
+  z-index: 1;
 `;
 
 const Nav = styled.nav`
@@ -134,30 +134,33 @@ export const Layout: React.FC = ({ children }) => {
 };
 
 export const Section = styled.section`
-  background: #000;
+  position: relative;
+  background: #f1f1f1;
+  color: #000;
 
   &::before {
     content: "";
     position: absolute;
-    bottom: 0;
+    top: -40px;
     width: 0;
     height: 0;
     border-style: solid;
     border-width: 0 40px 40px 40px;
-    border-color: transparent transparent #000 transparent;
+    border-color: transparent transparent #f1f1f1 transparent;
     left: 50%;
     transform: translateX(-50%);
   }
 `;
 
-const HeroContainer = styled.div`
+const HeroContainer = styled.div<{ shrink?: boolean }>`
   width: 100%;
-  height: 100vh;
+  height: ${(props) => (props.shrink ? "50vh" : "100vh")};
+  min-height: 300px;
 `;
 
 const FirstBackground = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
 
   background-image: url(/img/tiles-lb.png);
   background-position: left bottom;
@@ -166,7 +169,7 @@ const FirstBackground = styled.div`
 
 const SecondBackground = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
 
   background-image: url(/img/tiles-rt.png);
   background-position: right top;
@@ -176,7 +179,7 @@ const SecondBackground = styled.div`
 const HeroHeader = styled.div`
   display: flex;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -193,16 +196,20 @@ const HeroHeader = styled.div`
   }
 `;
 
-export const Hero: React.FC = ({ children }) => {
+const FullContainer = styled(Container)`
+  height: 100%;
+`;
+
+export const Hero: React.FC<{ shrink?: boolean }> = ({ shrink, children }) => {
   return (
-    <HeroContainer>
+    <HeroContainer shrink={shrink}>
       <FirstBackground>
         <SecondBackground>
-          <Container>
+          <FullContainer>
             <HeroHeader>
               <h1>{children}</h1>
             </HeroHeader>
-          </Container>
+          </FullContainer>
         </SecondBackground>
       </FirstBackground>
     </HeroContainer>

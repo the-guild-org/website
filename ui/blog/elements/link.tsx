@@ -6,18 +6,24 @@ export const ExternalLink = styled.a.attrs((props) => ({
   target: "_blank",
   rel: "noopener noreferrer",
 }))`
-  text-decoration: underline;
+  text-decoration: none;
   font-size: inherit;
-  color: inherit;
+  color: #03a6a6;
+
+  &:hover {
+    color: #04bfad;
+    text-decoration: none;
+  }
 `;
 
 const AnchorLink = styled.a`
-  color: inherit;
+  color: #03a6a6;
   font-size: inherit;
+  text-decoration: none;
   border-bottom: 1px dotted;
 
   &:hover {
-    color: gray;
+    color: #04bfad;
     text-decoration: none;
   }
 `;
@@ -41,10 +47,12 @@ export const InternalLink = ({ href, as, children }) => (
 
       <style jsx>{`
         a {
-          text-decoration: underline;
+          text-decoration: none;
           font-size: inherit;
+          color: #03a6a6;
         }
         a:hover {
+          color: #04bfad;
           text-decoration: none;
         }
       `}</style>

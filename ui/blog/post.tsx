@@ -6,6 +6,7 @@ import format from "date-fns/format";
 import { components, H1 } from "./elements";
 import { Layout } from "../shared/Layout";
 import { Newsletter } from "./newsletter";
+import { Page } from "../shared/Page";
 
 interface Meta {
   title: string;
@@ -59,19 +60,7 @@ export default (meta: Meta): React.FC => {
 
     return (
       <MDXProvider components={components}>
-        <Head>
-          <meta property="og:description" content={meta.description} />
-          <meta charSet="utf-8" />
-          <meta property="og:image" content={meta.image} />
-          <meta property="twitter:image" content={meta.image} />
-          <meta name="twitter:image:alt" content={title} />
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta property="og:title" content={title} />
-          <meta name="description" content={meta.description} />
-          <meta property="og:description" content={meta.description} />
-          <title>{title}</title>
-        </Head>
-        <Layout>
+        <Page title={title} image={meta.image} description={meta.description}>
           <Container>
             <Main>
               <Title>{meta.title}</Title>
@@ -85,7 +74,7 @@ export default (meta: Meta): React.FC => {
               <Newsletter />
             </Main>
           </Container>
-        </Layout>
+        </Page>
       </MDXProvider>
     );
   };
