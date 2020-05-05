@@ -1,20 +1,11 @@
 import React from "react";
-import Head from "next/head";
 import { MDXProvider } from "@mdx-js/react";
 import styled from "styled-components";
 import format from "date-fns/format";
 import { components, H1 } from "./elements";
-import { Layout } from "../shared/Layout";
 import { Newsletter } from "./newsletter";
 import { Page } from "../shared/Page";
-
-interface Meta {
-  title: string;
-  tags: string[];
-  date: string;
-  description: string;
-  image: string;
-}
+import { Meta } from "../../lib/types";
 
 const Container = styled.div`
   max-width: 690px;

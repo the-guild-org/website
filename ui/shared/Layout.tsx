@@ -7,6 +7,11 @@ import { TheGuildLogo } from "./Logo";
 export const Container = styled.div`
   max-width: 960px;
   margin: 0 auto;
+  box-sizing: border-box;
+
+  @media (max-width: 960px) {
+    margin: 0 15px;
+  }
 `;
 
 const Header = styled.header`
