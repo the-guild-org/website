@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import NativeLink from "next/link";
+import format from "date-fns/format";
 
 const Link = styled(NativeLink)`
   box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
@@ -35,16 +36,25 @@ const Description = styled.p`
   color: #777;
 `;
 
+const Time = styled.time`
+  color: #777;
+  font-size: 0.8rem;
+`;
+
 export const ArticleCard: React.FC<{
   title: string;
   description: string;
   image: string;
   link: string;
-}> = ({ title, description, image, link }) => {
+  date: string;
+}> = ({ title, description, image, link, date: rawDate }) => {
+  const date = new Date(rawDate);
+  
   return (
     <Link href={link} as="a" title={title}>
       <Cover src={image} />
       <Content>
+        <Time dateTime={date.toString()}>{format(date, "EEEE, LLL do y")}</Time>
         <Title>{title}</Title>
         <Description>{description}</Description>
       </Content>

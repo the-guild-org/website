@@ -68,6 +68,7 @@ const Blog: React.FC<Props> = ({ posts }) => {
               description={post.description}
               image={post.image}
               link={post.link}
+              date={post.date}
             />
           );
         })}

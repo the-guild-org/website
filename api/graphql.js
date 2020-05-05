@@ -1,13 +1,14 @@
-const { execute, parse } = require('graphql');
-const { makeExecutableSchema } = require('graphql-tools');
-const microCors = require('micro-cors');
-const bugsnag = require('@bugsnag/js');
+const { execute, parse } = require("graphql");
+const { makeExecutableSchema } = require("graphql-tools");
+const microCors = require("micro-cors");
+const bugsnag = require("@bugsnag/js");
+const axios = require("axios").default;
 
-const { WebClient } = require('@slack/web-api');
+const { WebClient } = require("@slack/web-api");
 
 const bugsnagClient = bugsnag(process.env.BUGSNAG_API);
 const slack = new WebClient(process.env.SLACK_TOKEN);
-const channelID = 'CLZ5BCE7K';
+const channelID = "CLZ5BCE7K";
 const cors = microCors();
 
 const typeDefs = /* GraphQL */ `
@@ -26,25 +27,26 @@ const typeDefs = /* GraphQL */ `
       name: String
       message: String
     ): HiResponse!
+    subscribe(email: String!): HiResponse!
   }
 `;
 
 const projectMap = {
-  CONNECTED_BUILD: 'Connected Build',
-  GRAPHQL_CODE_GENERATOR: 'GraphQL Code Generator',
-  GRAPHQL_INSPECTOR: 'GraphQL Inspector',
+  CONNECTED_BUILD: "Connected Build",
+  GRAPHQL_CODE_GENERATOR: "GraphQL Code Generator",
+  GRAPHQL_INSPECTOR: "GraphQL Inspector",
 };
 
 const resolvers = {
   Query: {
     ping() {
-      return 'pong';
+      return "pong";
     },
   },
   Mutation: {
     async sayHi(_, { email, project, name, message }) {
       const mappedProject = projectMap[project];
-      const author = name || 'Someone';
+      const author = name || "Someone";
 
       const text = [
         author,
@@ -52,7 +54,7 @@ const resolvers = {
       ];
 
       if (message) {
-        text.push('\n');
+        text.push("\n");
         text.push(`> ${message}`);
       }
 
@@ -68,7 +70,7 @@ const resolvers = {
 
       const result = await slack.chat.postMessage({
         channel: channelID,
-        text: text.join(' '),
+        text: text.join(" "),
       });
 
       if (!mappedProject) {
@@ -90,6 +92,31 @@ const resolvers = {
         ok: result.ok,
       };
     },
+    async subscribe(_, { email }) {
+      const listId = "837601";
+      const result = await axios.post(
+        `https://us8.api.mailchimp.com/3.0/lists/${listId}/members`,
+        {
+          email_address: email,
+          status: "subscribed",
+          tags: ["website"],
+        },
+        {
+          auth: {
+            username: "the-guild-dev",
+            password: process.env.MAILCHIMP_API_KEY,
+          },
+        }
+      );
+
+      if (!result.data || !resul.data.id) {
+        throw new Error(`Failed to subscribe ${email}`);
+      }
+
+      return {
+        ok: true,
+      };
+    },
   },
 };
 
@@ -100,31 +127,32 @@ const schema = makeExecutableSchema({
 
 function isAllowed(req) {
   console.error(req.headers);
-  
+
   return [
-    'https://graphql-code-generator.com',
-    'https://the-guild.dev',
-    'https://graphql-inspector.com',
+    "https://graphql-code-generator.com",
+    "https://the-guild.dev",
+    "https://graphql-inspector.com",
+    "https://the-guild-website-kamilkisiela.theguild.now.sh",
   ].includes(req.headers.origin);
 }
 
 module.exports = cors(async (req, res) => {
   if (!isAllowed(req)) {
     res.statusCode = 500;
-    res.statusMessage = 'Not Allowed by CORS';
+    res.statusMessage = "Not Allowed by CORS";
     res.end();
     return;
   }
 
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     res.statusCode = 200;
-    res.statusMessage = 'OK';
+    res.statusMessage = "OK";
     res.end();
     return;
   }
 
   const { query, variables } =
-    typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 
   bugsnagClient.metaData = {
     query,
@@ -138,7 +166,7 @@ module.exports = cors(async (req, res) => {
   });
 
   if (result.errors && result.errors.length) {
-    result.errors.forEach(error => {
+    result.errors.forEach((error) => {
       bugsnagClient.notify(error);
     });
   }

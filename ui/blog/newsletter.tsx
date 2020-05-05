@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import styled from "styled-components";
+import { useMutation } from "../../hooks/use-graphql";
 
 const Container = styled.div`
   margin-top: 125px;
@@ -68,14 +69,14 @@ const Submit = styled.button`
   font-weight: 700;
   border: 1px solid transparent;
   border-radius: 0.375rem;
-  background-color: #03A6A6;
+  background-color: #03a6a6;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
   cursor: pointer;
 
   &:hover {
-    background-color: #04BFAD;
+    background-color: #04bfad;
   }
 
   &:focus {
@@ -94,26 +95,42 @@ const Submit = styled.button`
 `;
 
 export const Newsletter: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
+  const [result, mutate] = useMutation(
+    `mutation subscribe($email: String!) { subscribe(email: $email) { ok } }`
+  );
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
       setLoading(true);
 
-      setTimeout(() => {
-        setLoading(false);
-
-        if (Math.random() > 0.5) {
-          setSuccess(true);
-        } else {
-          setError(true);
-        }
-      }, 3000);
+      mutate({ email });
     },
-    [setLoading, setSuccess, setError]
+    [setLoading, setSuccess, setError, mutate, email]
   );
+
+  const onChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setEmail(event.target.value);
+    },
+    [setEmail, email]
+  );
+
+  useEffect(() => {
+    if (result.complete) {
+      setLoading(false);
+
+      if (result.error) {
+        setError(true);
+      } else {
+        setSuccess(true);
+        setEmail("");
+      }
+    }
+  }, [result.complete, setEmail]);
 
   const showForm = !success;
 
@@ -124,7 +141,7 @@ export const Newsletter: React.FC = () => {
         {success
           ? "Thank you for joining!"
           : error
-          ? `Something went wrong, please try again or contact us directly`
+          ? <><b>Something went wrong</b>, please try again or contact us directly</>
           : `Want to hear from us when there's something new? Sign up and stay up to
         date!`}
       </Subheader>
@@ -135,6 +152,8 @@ export const Newsletter: React.FC = () => {
             required={true}
             disabled={loading}
             placeholder="Enter your email"
+            value={email}
+            onChange={onChange}
           />
           <Submit type="submit" disabled={loading}>
             Subscribe
