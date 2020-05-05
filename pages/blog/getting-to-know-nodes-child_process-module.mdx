@@ -2,11 +2,11 @@
 import withPost from "../../ui/blog/post";
 
 export const meta = {
-  title: "Getting to know Node’s child_process module",
+  title: "Getting to know Node's child_process module",
   tags: [],
   date: "2018-9-27",
   description: "TODO:",
-  image: "",
+  image: "https://github.com/the-guild-org/oneblog/blob/master/img/704/1*kPek5-1mNCLi91X0BAA8VQ.png?raw=true",
 };
       
 export default withPost({ ...meta });
@@ -32,7 +32,7 @@ Accordingly, if until this very day you’ve been writing Node scripts which don
 Why is this module called `child_process` and not just `process`? First of all, not to confuse with the main process instance `global.process`, and second, the child process is derived from the main process, which means that both can communicate - the main process will hold streams for the child process’s std types and they will both share an `ipc` channel (“Inter Process Communication” channel; more on that further this article).
 
 
-# The child_process API
+## The child_process API
 
 The `child_process` module provides us with utility functions whose logics are stacked on top of one another. The most basic function is `spawn()`:
 
@@ -265,8 +265,3 @@ So eventually, it all comes down to the `spawn()` method; everything that node p
 
 
 There’s definitely more digging to do when it comes to the world of processes, in relation to Node’s internals and outside of it in relation to the OS. But after reading this you can make a practical use of one of Node’s greatest features and unleash its full potential. Keep on reading the docs and investigating because it can definitely elevate your backed skills, and if you have any further questions or topics that you would like me to write about (in the JavaScript world) do tell.
-
-
-```backmatter
-{"source":"medium","postId":"8ed63038f3fa","publishedDate":1538044855318,"url":"https://medium.com/the-guild/getting-to-know-nodes-child-process-module-8ed63038f3fa"}
-```

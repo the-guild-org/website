@@ -65,7 +65,9 @@ const Img = styled.img.attrs((props) => ({
   ...props,
   alt: props.alt || "",
 }))`
+  display: block;
   max-width: 100%;
+  margin: 0 auto;
 `;
 
 export const components = {
