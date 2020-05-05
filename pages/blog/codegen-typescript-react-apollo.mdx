@@ -5,7 +5,7 @@ export const meta = {
   title: "GraphQL Code Generator for Typescript React Apollo",
   tags: [],
   date: "2018-8-21",
-  description: "TODO:",
+  description: "Generate React Apollo Query, Mutation and Subscription components and hook. All completely typed by TypeScript.",
   image: "https://github.com/the-guild-org/oneblog/blob/master/img/704/1*e9-8DMsw80IYIaK1cf3odg.png?raw=true",
 };
       
@@ -30,11 +30,9 @@ Based on a GraphQL static schema and a GraphQL query, the [**GraphQL Codegen - T
 Using **_React_**, **_TypeScript_** and **_GraphQL_** in a coordinated way, gives us new level of simplicity and power for our developer experience:
 
 
--   **Less code to write** — no need to create a network call, no need to create Typescript typings, no need to create a dedicated React Component
-
--   **Strongly typed out of the box** — all types are being generated, no need to write any Typescript definitions and struggle to keep them updated
-
--   **Full developer experience of tools and IDEs** — development time autocomplete and error checking, not only across your frontend app but also with your API teams!
+- **Less code to write** — no need to create a network call, no need to create Typescript typings, no need to create a dedicated React Component
+- **Strongly typed out of the box** — all types are being generated, no need to write any Typescript definitions and struggle to keep them updated
+- **Full developer experience of tools and IDEs** — development time autocomplete and error checking, not only across your frontend app but also with your API teams!
 
 
 ## Play with it
@@ -65,19 +63,16 @@ gql-gen --schema https://fakerql.com/graphql --template graphql-codegen-typescri
 
 It might seem like a lot but lets split it into smaller pieces and explain each one of them it will make things easier.
 
--   **— schema** — path of a file with schema or an URL
-
--   **— template** — name of a template, equals name of a package
-
--   **— out** — path of a file for an output
-
+-   **-- schema** — path of a file with schema or an URL
+-   **-- template** — name of a template, equals name of a package
+-   **-- out** — path of a file for an output
 -   **glob** based on which GraphQL Codegen will try to find documents
 
 
 Then, define a `.graphql` file with a document that you’d like to use in a component:
 
 
-```
+```graphql
 query UserQuery($id: ID!) {
     User(id: $id) {
         id
@@ -93,12 +88,14 @@ Next, you need to run GraphQL Code Generator to generate Typescript types and Re
 
 Then, you simply import and use it like any React Apollo API component (Query, Mutation or Subscription):
 
-```
+```javascript
 import { UserQuery } from './generated-models';
-...
+
+// ...
+
 <UserQuery.Component>
  {({ loading, error, data }) => {
-  ...
+  // ...
  }
 </UserQuery.Component>
 ```
@@ -141,8 +138,3 @@ This is just one template out of many, check out more things you can generate wi
 
 [https://github.com/dotansimha/graphql-code-generator#available-templates](https://github.com/dotansimha/graphql-code-generator#available-templates "dotansimha/graphql-code-generator
 graphql-code-generator - GraphQL code generator with flexible support for custom templatesgithub.com")
-
----
-
-> Follow us on **_GitHub_** and **_Medium_**, we are planning to release many more posts in the next couple of weeks about what we’ve learned using **_GraphQL_** in recent years.
->

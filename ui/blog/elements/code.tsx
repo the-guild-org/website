@@ -24,7 +24,7 @@ export const InlineCode = styled.code.attrs<{ wrap?: boolean }>(({ wrap }) => ({
   className: wrap ? "wrap" : "",
 }))`
   background-color: rgba(0, 0, 0, 0.05);
-  font-size: 0.875em;
+  font-size: 1.2rem;
   white-space: pre-wrap;
   padding: 3px 4px;
   margin: 0 2px;

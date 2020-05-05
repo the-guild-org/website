@@ -1,6 +1,7 @@
 import App from "next/app";
 import React from "react";
 import Router from "next/router";
+import "prism-theme-night-owl";
 
 import { Root } from "../ui/Root";
 import * as gtag from "../lib/gtag";

@@ -70,6 +70,11 @@ const Img = styled.img.attrs((props) => ({
   margin: 0 auto;
 `;
 
+const Iframe = styled.iframe`
+  display: block;
+  margin: 0 auto;
+`;
+
 export const components = {
   h1: H1,
   h2: H2,
@@ -82,4 +87,5 @@ export const components = {
   p: P,
   hr: Hr,
   img: Img,
+  iframe: Iframe,
 };
