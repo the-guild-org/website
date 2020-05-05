@@ -1,0 +1,145 @@
+
+import withPost from "../../ui/blog/post";
+
+export const meta = {
+  title: "Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects? — GraphQL Modules is your savior!",
+  tags: [],
+  date: "2019-1-7",
+  description: "TODO:",
+  image: "https://github.com/the-guild-org/oneblog/blob/master/img/704/1*F9zPdgtNF9oL3IG0eL4NTg.png",
+};
+      
+export default withPost({ ...meta });
+  
+
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*F9zPdgtNF9oL3IG0eL4NTg.png?raw=true "Encapsulation matters in large-scale projects")
+
+**TL;DR**: If you are writing a large-scale project, it’s necessary to understand the relations between your pieces of code, and how they effect each other. Otherwise, it might be difficult to deal with changes later.
+
+
+While developing a **large-scale project**, removing, changing and modifying parts of the project can become a very time consuming and risky task, because understanding the full side-effects of those changes is very hard.
+
+
+In [**GraphQL-Modules**](https://graphql-modules.com/), you can declare your modules in a feature-based structure, with clear enforced boundaries and avoid unexpected side-effects during development.
+
+
+Each module can declare it’s own scope of the complete schema:
+
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*ZtOhO2PCRh6FDQanTk_yug.png?raw=true "Every module has its own schema, context and DI container. Here you can see AuthModule is appended to UserModule. But, other modules don’t import AuthModule. So, they cannot access directly AuthModule DI container or context.")
+
+Each module has its own **_schema_**, **_context_**, **_typeDefs_**, **_resolvers,_** and business-logic and each module is encapsulated, which limits the module’s access to only its own parts of the schema.
+
+
+**So, what’s the real benefit of this?**
+
+
+Let’s assume you have an authentication module;
+
+After a while, you decided to use **_AccountsJS_** in your **_GraphQL_** project which has completely different implementation than the existing one.
+
+
+This can be a risky change, because you’re afraid of breaking a lot of things and you can’t be sure about the all the places in your code that uses values affected by the authentication module, for example the global context.
+
+With GraphQL-Modules’s approach of encapsulation, even the context is completely encapsulated, so every module that uses your existing **_AuthenticationModule_**’s **_context_** in defined on the`imports` of the dependent modules, and its interface is already extended by **_AuthenticationModule_**’s **_context_** if you’re using _TypeScript_. When it is removed, you will notice that change on compile-time immediately.
+
+
+Let’s take a look at some code, to show how GraphQL Modules makes you create those dependencies explicitly.
+
+`AppModule` is our top Application Module;
+
+
+```typescript
+import { GraphQLModule } from '@graphql-modules/core';
+import { AuthenticationModule } from './modules/auth.module';
+
+const AppModule = new GraphQLModule({
+    imports: [
+        AuthenticationModule, //this module has `user` in its context
+        SomeImportantModuleThatUsesAuthenticatedContext,
+        ...
+    ],
+});
+
+```
+
+And there is another module that tries to use `AuthenticationModule`’s context, but it doesn’t import `AuthenticationModule`. In this case, it is not possible to get anything from `AuthenticationModule` in the resolvers, because it is not imported. The following module doesn’t know anything about `AuthenticationModule`.
+
+
+```typescript
+const SomeImportantModuleThatUsesAuthenticatedContext = new GraphQLModule({
+    typeDefs: SOME_TYPE_DEFS_HERE
+    imports: [
+        ...,
+        // This module doesn't import AuthenticationModule
+        ...
+    ],
+    resolvers: {
+        ...,
+        Query: {
+            getUser: (root, args, context) => {
+                return context.user; // Oops! Undefined!
+            }
+        }
+        ...
+    }
+});
+```
+
+To fix this, we need to import `AuthenticationModule` into that ‘important’ module to make it able to access `AuthenticationModule`’s context like below;
+
+
+```typescript
+const SomeImportantModuleThatUsesAuthenticatedContext = new GraphQLModule({
+    typeDefs: SOME_TYPE_DEFS_HERE
+    imports: [
+        ...,
+        // This module imports AuthenticationModule
+        AuthenticationModule,
+        ...
+    ],
+    resolvers: {
+        ...,
+        Query: {
+            getUser: (root, args, context) => {
+                return context.user; // Yes, we have that user HERE!
+            }
+        }
+        ...,
+    }
+});
+```
+
+So, these examples above show us that the encapsulation can be very important in the long term of our project development.
+
+**We think modular approach is not just merging schemas and concatenate context factory functions to each other.**
+
+
+Having a tool that knows how to **encapsulate modules** and **force this policy**, makes it much easier to write modular schema, and later, even reuse existing modules and share them across multiple projects.
+
+
+# All posts about GraphQL Modules
+
+1.  [GraphQL Modules — Feature based GraphQL Modules at scale](https://medium.com/the-guild/graphql-modules-feature-based-graphql-modules-at-scale-2d7b2b0da6da)
+
+1.  [Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?](https://medium.com/the-guild/why-is-true-modular-encapsulation-so-important-in-large-scale-graphql-projects-ed1778b03600)
+
+1.  [Why did we implement our own Dependency Injection library for GraphQL-Modules?](https://medium.com/p/f25a234a9762)
+
+1.  [Scoped Providers in GraphQL-Modules Dependency Injection](https://medium.com/p/949cd2588e0)
+
+1.  [Writing a GraphQL TypeScript project w/ GraphQL-Modules and GraphQL-Code-Generator](https://medium.com/the-guild/writing-strict-typed-graphql-typescript-project-w-graphql-modules-and-graphql-code-generator-c22f6caa17b8)
+
+1.  [Authentication and Authorization in GraphQL (and how GraphQL-Modules can help)](https://medium.com/the-guild/authentication-and-authorization-in-graphql-and-how-graphql-modules-can-help-fadc1ee5b0c2)
+
+1.  [Authentication with AccountsJS & GraphQL Modules](https://medium.com/the-guild/authentication-with-accountsjs-graphql-modules-e0fb9799a9da)
+
+1.  [Manage Circular Imports Hell with GraphQL-Modules](https://medium.com/the-guild/manage-circular-imports-hell-with-graphql-modules-4b1611dee781)
+
+
+> _Follow us on [**GitHub**](https://github.com/Urigo/graphql-modules) and [**Medium**](https://medium.com/the-guild), we are planning to release many more posts in the next couple of weeks about what we’ve learned using **GraphQL** in recent years._
+>
+
+
+```backmatter
+{"source":"medium","postId":"ed1778b03600","publishedDate":1546861733955,"url":"https://medium.com/the-guild/why-is-true-modular-encapsulation-so-important-in-large-scale-graphql-projects-ed1778b03600"}
+```

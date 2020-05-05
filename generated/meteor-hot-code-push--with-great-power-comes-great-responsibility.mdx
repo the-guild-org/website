@@ -1,0 +1,39 @@
+
+import withPost from "../../ui/blog/post";
+
+export const meta = {
+  title: "Meteor hot code push — with great power comes great responsibility",
+  tags: [],
+  date: "2015-9-15",
+  description: "TODO:",
+  image: "",
+};
+      
+export default withPost({ ...meta });
+  
+
+Out of the box, Meteor comes with an amazing ability called ‘hot code push’. Hot code push lets you update all of your connected clients, browsers and mobile apps when the server is updated, without going through any app reviews. It’s the dream of every mobile developer who has waited 14 days to update their iOS app through Apple’s app store. But with this awesome power comes great responsibility. If handled incorrectly, hot code push can cause user experience issues in your app, like a reload of the app when the user doesn’t expect it.
+
+Here are some best practices and tips for working with Meteor’s hot code push:
+
+1.  Release to the App Store **as** often as possible. When a Meteor PhoneGap application starts, it first runs the code shipped through the App Store or Play Store and then checks for an update from the server. If there is an updated version, it is being downloaded to application’s internal storage and then the app reloads. If the initial code shipped by the App Stores is up to date, we can prevent that process from our users.
+
+1.  If you need to push new code fast, you can **control when the app reloads** with the help of the `mdg:reload-on-resume` package. The package will apply the update **only when the user closes the app and reopens it again**, without interrupting the user in the middle of his work.
+
+1.  To avoid slowing down your local development process with the reload on resume package, you can use the `arsnebula:appupdate` community package so you can still use the regular **instant hot code push while developing** your app locally.
+
+1.  Remember, you still need to handle breaking changes very carefully. Even after you have pushed a new update, there might be users who are running **older versions of your code** with different routes or schemas. So when introducing breaking changes to your schema, routes, and methods, keep in mind that you might need to support both versions of the frontend code until all users migrate.
+
+1.  Remember, **Cordova plugins are not updated by hot code push** so you will need to update your store listings in order to use the new cordova plugins. You will need to be aware of this when writing your code, and add conditionals to detect if the user has the new plugins installed.
+
+1.  To make mobile hot code push faster, try to **limit the size of files in your project**. Meteor pushes all files in the app’s client folder to the mobile device, so if you have a web app, landing page, or admin dashboard on the same meteor app, you should try to separate those into different packages where can control whether the files are built for the web browser, Cordova, or both.
+
+1.  Last but not least, you should know about `nucleuside:live-update`, which lets you hot code push specific files without reloading the whole app.
+
+
+Now you are ready to master the Hot Code Push magic! Meteor 1.2 will introduce a lot of improvements to the Cordova integration, so this workflow is going to get even better soon.
+
+
+```backmatter
+{"source":"medium","postId":"7e9e8f7312d5","publishedDate":1442300400000,"url":"https://blog.meteor.com/meteor-hot-code-push-with-great-power-comes-great-responsibility-7e9e8f7312d5"}
+```

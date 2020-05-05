@@ -1,0 +1,127 @@
+
+import withPost from "../../ui/blog/post";
+
+export const meta = {
+  title: "How to Use Subscriptions in GraphiQL",
+  tags: [],
+  date: "2017-4-11",
+  description: "TODO:",
+  image: "",
+};
+      
+export default withPost({ ...meta });
+  
+
+## Easily test GraphQL subscriptions from your browser
+
+There has been a lot of buzz about GraphQL Subscriptions in the community recently, and a lot of people are excited about the [subscriptions RFC](https://dev-blog.apollodata.com/the-next-step-for-realtime-data-in-graphql-b564b72eb07b#.w9zvvcjbh) opened by Rob Zhu from Facebook.
+
+
+If you haven’t tried GraphQL subscriptions yet, check out our docs to learn how to [add subscriptions to your existing Node.js GraphQL server](http://dev.apollodata.com/tools/graphql-subscriptions/index.html). You can also easily try building a React app with them by following [Graphcool’s tutorial](https://www.graph.cool/docs/tutorials/worldchat-subscriptions-example-ui0eizishe/).
+
+
+Today, I want to tell you about something else that’s really cool: **Did you know that [Graph_i_QL](https://github.com/graphql/graphiql) already supports subscriptions today?** Don’t believe me? Here’s a demo so you can see for yourself:
+
+
+[https://www.youtube.com/watch?v=aAwZrBgmnho](https://www.youtube.com/watch?v=aAwZrBgmnho "GraphQL Subscriptions with GraphiQL over Githunt Demonstrating GraphQL Subscriptions support in GraphiQL over the Githunt React example.")
+
+> Check out the working example of GitHunt with Graph**i**QL [here](https://github.com/apollographql/githunt-API) (and the React frontend [here](http://github.com/apollographql/githunt-react)).
+>
+
+## How it works
+
+The standard GraphiQL library already supports passing in a fetcher that returns an observable _or_ promise. That means that anyone can configure it with their own transport, even if it supports multiple results. We’ve already done that for you, using a new[`graphql-subscriptions-fetcher`](https://github.com/apollographql/GraphiQL-Subscriptions-Fetcher), so you don’t have to.
+
+
+The following steps are all you need to do. (We’re using `graphql-server-express` for the example.)
+
+
+First, make sure you have the latest `graphql-server-express` package:
+
+
+```
+npm install —-save graphql-server-express
+```
+
+Now, all you need to do is to set a new field we added to `graphqlExpress` config, called `subscriptionsEndpoint`, with the Websocket URL subscriptions endpoint (this is the same endpoint you use in your `SubscriptionClient`). For example:
+
+
+```
+app.use(‘/graphiql’, graphiqlExpress({
+  endpointURL: ‘/graphql’,
+  subscriptionsEndpoint: `ws://localhost:3000/subscriptions`,
+}));
+```
+
+That’s it! Finally, all you have to do is start your server, open your browser in [http://localhost:3000/graph_i_ql](http://api.githunt.com/graphiql), write a GraphQL subscriptions query inside, and the published data from the server will be pushed into your Graph_i_QL client and displayed in the result screen of Graph_i_QL.
+
+
+> This example uses GraphQL server with express — but it also works with graphql-server-hapi, Koa, Restify and Lambda. Just add the `_subscriptionsEndpoint_` field to your GraphiQL configuration and you are good to go! You can also check out the live GitHunt example [here](http://api.githunt.com/graphiql).
+>
+
+## What if you don’t use [graphql-server](http://dev.apollodata.com/tools/graphql-server/index.html)?
+
+
+We added the new Graph_i_QL subscriptions support to [graphql-server](http://dev.apollodata.com/tools/graphql-server/index.html) by default, but in case you’re not using it, it’s still very easy to add that support to your own server.
+
+
+Graph_i_QL is usually served as static HTML ([here’s how we do it in graphql-server](https://github.com/apollographql/graphql-server/blob/master/packages/graphql-server-module-graphiql/src/renderGraphiQL.ts#L39)), so first you need to load [`subscriptions-transport-ws`](https://github.com/apollographql/subscriptions-transport-ws) and [`graphql-subscriptions-fetcher`](https://github.com/apollographql/GraphiQL-Subscriptions-Fetcher)  inside the tag. We’ve published the transport client so that it’s easy to use in a script tag from [Unpkg](https://unpkg.com/):
+
+
+```
+<script src=”//unpkg.com/subscriptions-transport-ws@0.5.4/browser/client.js”></script>
+```
+
+```
+<script src="//unpkg.com/graphiql-subscriptions-fetcher@0.0.2/browser/client.js"></script>
+```
+
+Next, you need to create a `SubscriptionClient` with your subscriptions endpoint:
+
+
+```
+var subscriptionsClient = new window.SubscriptionsTransportWs.SubscriptionClient(‘YOUR_SUBSCRIPTIONS_ENDPOINT_HERE’, { reconnect: true });
+```
+
+```
+var subscriptionsFetcher = window.SubscriptionsTransportWs.graphQLFetcher(subscriptionsClient, graphQLFetcher);
+```
+
+Finally, replace the regular `graphqlFetcher` you use in Graph_i_QL with the one that uses the fetcher from [`graphql-subscriptions-fetcher`](https://github.com/apollographql/GraphiQL-Subscriptions-Fetcher)  when creating your Graph_i_QL instance:
+
+
+```
+ReactDOM.render(
+  React.createElement(GraphiQL, {
+    fetcher: subscriptionsFetcher,
+    onEditQuery: onEditQuery,
+    onEditVariables: onEditVariables,
+    onEditOperationName: onEditOperationName,
+    query: ${safeSerialize(queryString)},
+    response: ${safeSerialize(resultString)},
+    variables: ${safeSerialize(variablesString)},
+    operationName: ${safeSerialize(operationName)},
+}), document.body);
+```
+
+[Here](https://github.com/urigo/graphql-server/blob/feat/subscriptions-graphiql/packages/graphql-server-module-graphiql/src/renderGraphiQL.ts) is a complete example of how it should look.
+
+
+## What’s happening behind the scenes?
+
+[`subscriptions-transport-ws`](https://github.com/apollographql/subscriptions-transport-ws)is a GraphQL subscriptions network transport. Loading it into Graph_i_QL client and replacing the `graphQLFetcher` function with [`graphql-subscriptions-fetcher`](https://github.com/apollographql/GraphiQL-Subscriptions-Fetcher)’s fetcher will give you a plug-and-play solution for live-stream subscriptions into your app’s Graph_i_QL editor!
+
+
+> Note that we are still using the original `_graphQLFetcher_` inside the new fetcher. We fall back to the original for GraphQL operations that aren’t subscriptions (queries and mutations).
+>
+
+## Try it today!
+
+Even though GraphQL subscriptions are still at the RFC stage, it is already being used by many companies in production, and the libraries and tools have been evolving to support a wide range of use cases. So try GraphQL subscriptions in order to add real time ability to your apps today!
+
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*tVIRc087V_7VlSs46TwlYQ.png?raw=true)
+
+
+```backmatter
+{"source":"medium","postId":"1d6ab8dbd74b","publishedDate":1491940559569,"url":"https://blog.apollographql.com/how-to-use-subscriptions-in-graphiql-1d6ab8dbd74b"}
+```

@@ -1,0 +1,365 @@
+
+import withPost from "../../ui/blog/post";
+
+export const meta = {
+  title: "Data management and AJAX server fetching for Angular Component based apps",
+  tags: [],
+  date: "2016-9-9",
+  description: "TODO:",
+  image: "",
+};
+      
+export default withPost({ ...meta });
+  
+
+One of the most powerful concepts introduced by Angular 2 is the move to a Component based architecture.
+
+Components are pieces of UI and logic bound together into **reusable** and **self contained** units.
+
+
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*-xibJG0BNHwXZxEvOwadIQ.png?raw=true "Components in Angular 2 and data flow between them")
+
+There are two important benefits about Components:
+
+1.  We can **reuse** Components throughout our apps
+
+1.  When something changes in the inner logic and UI of a Component, it **shouldn’t affect** the other Components outside of it
+
+
+Those are great benefits, but are they still valid when we start interacting with the server?
+
+I’ll argue in this article that the current way of calling the server with REST API through central Angular services is not a good fit and that co-locating queries with view logic is the natural extension to the component based architecture.
+
+## Calling the server with REST API through central services
+
+Currently in Angular apps, in order to fetch data from the server, we usually import a service that handle the fetching logic for us:
+
+```
+var app = angular.module('myApp', ['ngResource']);
+```
+
+```
+app.factory("Friend", function($resource) {
+  return $resource("/api/friend/:id");
+});
+```
+
+```
+app.controller("FriendListItemCtrl", function($scope, Friend) {
+  Friend.get({ id: 1 }, function(data) {
+    $scope.friend = data;
+  });
+});
+```
+
+When we moved to Component based architecture, we switched the Controller to the Component class, but in most examples out there, the way we fetch data hasn’t really changed.
+
+```
+...
+import { Headers, Http } from '@angular/http';
+import 'rxjs/add/operator/toPromise';
+```
+
+```
+import { Friend } from ‘./friend’;
+```
+
+```
+@Injectable()
+export class FriendService {
+  constructor(private http: Http) { }
+```
+
+```
+  getFriend(id: string): Promise<Friend[]> {
+    return this.http.get(`/api/friend/${id}`)
+                    .toPromise()
+                    .then(res => res.json().data as Friend[]);
+  }
+}
+```
+
+```
+........................
+```
+
+```
+import { Component } from ‘@angular/core’;
+import { FriendService } from ‘./friend.service’;
+```
+
+```
+...
+```
+
+```
+@Component({
+  selector: ‘friend’,
+  templateUrl: ......
+})
+export class FriendComponent implements OnInit {
+  friend: Friend;
+```
+
+```
+  constructor(private friendService: FriendService){
+    this.friendService.getFriend(id)
+                      .then(friend => this.friend = friend);
+  }
+}
+```
+
+And that introduces an issue — What happens if now we need to get different data from the server?
+
+**Let’s look at an example of the issue,** we’ll use this Component tree as an example:
+
+
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*FBqKwp2v4wvhFEGYtUGDgg.jpeg?raw=true)
+
+and let’s say the we call a service on the parent \`FriendsList\` Component that fetches all the data for the Component tree.
+
+Now let’s ask two simple questions:
+
+1.  **What happens when we need to change Component to display new fields?**
+
+1.  **How do we reuse Component in a different place in our app and still fetch the data it needs?**
+
+
+**For the first question**, we will need to change the server endpoint to either:
+
+
+-   Change the existing one to fetch the new data (might change other Components who use the same endpoint and service)
+
+or
+
+-   Add a new endpoint with the new data structure we want and change the service to support the new endpoint
+
+In either of those solutions — Our Components are no longer **self contained**
+
+
+**As for the second question**, we would need to create or change the service to support the new Component tree that in under, making it **not reusable!**
+
+
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*zOY5GybNa8FxdBiLQCa9pw.png?raw=true "A diagram I stole from a talk (referenced at the end) that shows that if child component’s AJAX requirements has changed, it will change the whole tree and the server as well")
+
+## Needed solution
+
+So what do we need that is missing with current solutions:
+
+1.  Each Component could **specify its own data dependencies** without knowing a central service or another parent Component in the current render tree
+
+1.  When we render a tree of Components, we will **fetch exactly** the information that this Component tree needs which is a **combination of the requirements of each Component**
+
+1.  We would do that in **one single request**
+
+1.  We need an **API layer** that will bring us **new fields without changing** existing and exposing new endpoint
+
+
+## Solution — GraphQL Client
+
+With GraphQL, we can **co-locate the server data requirements** for each Component, and then use a GraphQL Client like [angular2-apollo](https://github.com/apollostack/angular2-apollo) to handle the merging of those needs into one single request that gets exactly what we need.
+
+
+Let’s have a look:
+
+
+
+
+```
+import { Component } from '@angular/core';
+import { Angular2Apollo } from 'angular2-apollo';
+import gql from 'graphql-tag';
+
+const FriendsQuery = gql`
+  query getFriends {
+    friends {
+      id
+    }
+  }
+`;
+
+@Component({
+  selector: 'friends-list',
+  template: `
+    <div *ngFor="let friend of friends">
+      <friends-list-item [friendId]="friend.id"></friends-list-item>
+    </div>
+  `
+})
+export class FriendsListComponent {
+  friends: FriendId[];
+
+  constructor(private apollo: Angular2Apollo) {
+    this.friends = this.apollo.watchQuery({
+      query: FriendsQuery
+    });
+  }
+}
+```
+
+
+
+
+```
+import { Component, Input } from '@angular/core';
+import { Angular2Apollo } from 'angular2-apollo';
+import gql from 'graphql-tag';
+
+const FriendItemQuery = gql`
+  query getFriendItem($id: Int!) {
+    Friend(id: $id) {
+      id
+      is_viewer_friend
+      profilePicture {
+        url      
+      }
+    }
+  }
+`;
+
+@Component({
+  selector: 'friends-list-item',
+  template: `
+    <div>
+      <img src="friend.profilePicture.url"/>
+      <friend-info [friendId]="friend.id"></friend-info>
+      {{friend.is_viewer_friend}}       
+    </div>
+  `
+})
+export class FriendListItemComponent {
+  @Input() friendId: number;
+  friend: FriendListItem;
+```
+
+```
+constructor(private  apollo: Angular2Apollo) {
+    this.friend = this.apollo.watchQuery({
+      query: FriendItemQuery,
+      variables: {id: this.friendId}
+    });
+  }  
+}
+```
+
+
+
+
+```
+import { Component, Input } from '@angular/core';
+import { Angular2Apollo } from 'angular2-apollo';
+import gql from 'graphql-tag';
+
+const FriendInfoQuery = gql`
+  query getFriendInfo($id: Int!) {
+    Friend(id: $id) {
+      id
+      name
+      mutual_friends {
+        count      
+      }
+    }
+  }
+`;
+
+@Component({
+  selector: 'friends-info',
+  template: `
+    <div>
+      <p>{{friend.name}}</p>
+      <p>{{friend.mutual_friends.count}} mutual friends</p>
+    </div>
+  `
+})
+export class FriendInfoComponent {
+  @Input() friendId: number;
+  friend: FriendInfo;
+
+  constructor(private  apollo: Angular2Apollo) {
+    this.friend = this.apollo.watchQuery({
+      query: FriendInfoQuery,
+      variables: {id: this.friendId}
+    });
+  }  
+}
+```
+
+> this is of course not a full working app, I’ll add links to full implementation at the end
+
+Now let’s get back to our original questions:
+
+1.  **What happens when we need to change Component to display new fields?**
+
+1.  **How do we reuse Component in a different place in our app and still fetch the data it needs?**
+
+
+The answer now, is that you only need to change \<FriendInfo> Component itself and that’s it:
+
+```
+const FriendInfoQuery = gql`
+  query getFriendInfo($id: Int!) {
+    Friend(id: $id) {
+      id
+      name
+      mutual_friends {
+        count      
+      }
+      age
+    }
+  }
+`;
+...
+  template: `
+    <div>
+      <p>{{friend.name}}</p>
+      <p>{{friend.mutual_friends.count}} mutual friends</p>
+      <p>{{friend.age}} years old</p>
+    </div>
+  `
+})
+export class FriendInfoComponent {
+...  
+}
+```
+
+That’s it!
+
+-   We don’t need to change any of its parent Components
+-   We don’t need to change the API endpoint
+-   We can move it around and reuse it in any Component tree
+
+It is now a true **reusable, self contained** Component.
+
+
+## Summary
+
+In this article I’ve tried to make the point that we should adjust our way of fetching data from the server to the new paradigms Angular 2.0 introduced.
+
+It’s Important to note that those concepts and solutions are also true and valid in an **Angular 1.x** app that is Component based (and Apollo Client work with it as well).
+
+
+Also, an important point is that you can use this solution alongside your regular REST services and not instead of them, add it where it fits and make sense to you.
+
+> There are many more benefits for this type of architecture and more details about how we manage those queries and app state which I’ll touch on [later posts](https://medium.com/apollo-stack/)
+>
+
+Here are few notable talks and resources about those techniques, some are for React but the concepts are still the same:
+
+-   [Data fetching for React applications at Facebook](https://www.youtube.com/watch?v=9sc8Pyc51uU)
+
+-   [Modernize your Angular apps with GraphQL](https://www.youtube.com/watch?v=qpGnPbpkcZM&index=3&list=PLhCf3AUOg4PgQoY_A6xWDQ70yaNtPYtZd)
+
+-   [Angular2-Githunt example](https://github.com/apollostack/GitHunt-angular2)
+
+
+---
+
+_To learn more about how Angular works with GraphQL, hear directly from Angular core team member Jeff Cross at the upcoming [GraphQL Summit](http://graphqlsummit.com) in San Francisco on October 26th!_
+
+
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*LJ-QIT-8DRycuYjPnQnkvA.png?raw=true)
+
+
+```backmatter
+{"source":"medium","postId":"70aedb98244b","publishedDate":1473444565891,"url":"https://blog.apollographql.com/data-management-and-ajax-server-fetching-for-angular-components-70aedb98244b"}
+```

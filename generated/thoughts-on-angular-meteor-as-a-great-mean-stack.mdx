@@ -1,0 +1,157 @@
+
+import withPost from "../../ui/blog/post";
+
+export const meta = {
+  title: "Thoughts on angular-meteor as a great MEAN Stack",
+  tags: [],
+  date: "2015-5-21",
+  description: "TODO:",
+  image: "",
+};
+      
+export default withPost({ ...meta });
+  
+
+_We’re delighted to announce that Uri Goldshtein, creator of the popular [angular-meteor](http://angular-meteor.com/) package — which lets Angular developers use Meteor within their new or existing Angular applications — has joined Meteor Development Group. Uri will be working to continue to drive integration between Meteor and Angular as part of his role to make Meteor home for Angular developers. Welcome Uri and take it away…_
+
+
+Hi! I’m excited to join Meteor so I can make my dream of Angular and Meteor working together a reality! I’m very passionate about this dream because I think `angular-meteor` is a great MEAN stack and an option I wish I had long time ago.
+
+
+In this post, I’ll share with you why I think using Angular within the Meteor platform is a great MEAN stack for building web and mobile applications.
+
+To get started right away just go to <http://angular-meteor.com/tutorial> and follow the tutorial.
+
+
+## What’s in a MEAN Stack?
+
+Many people look at the MEAN stack as what the acronym actually means — Mongo, Express, AngularJS and Node. But since it was [first suggested on the MongoDB blog](http://blog.mongodb.org/post/49262866911/the-mean-stack-mongodb-expressjs-angularjs-and), a lot has changed.
+
+
+While Angular, Mongo and Node are getting more popular and the communities keep growing, it seems like Express’ trend is going on the opposite direction. For example, hapi.js is taking a more dominant role.
+
+On top of that, there is an increasing demand for:
+
+-   Real time updates through sockets
+-   Built-in local storage support
+-   Mobile
+
+So perhaps today a MEAN stack is more about “The best Angular, Mongo, and Node stack” than strictly the acronym per se.
+
+Let’s compare angular-meteor with the most popular implementation in the followings areas:
+
+## 1. Simplicity
+
+Using `angular-meteor` can dramatically simplify and shorten your coding. For example I’ve taken the first MEAN stack tutorial result from Google - [Thinkster’s tutorial](https://thinkster.io/mean-stack-tutorial/) and implemented it with angular-meteor.
+
+
+Here is the angular-meteor version on Github — <https://github.com/Urigo/Thinkster-MEAN-Tutorial-in-angular-meteor>
+
+
+Let’s compare number of code lines, client and server (with the same HTML templates):
+
+Thinkster’s Javascript lines: 532
+
+angular-meteor’s Javascript lines: 80
+
+So how does Meteor creates that big difference between the other MEAN solutions?
+
+Full stack data binding
+
+It starts with the way Angular syncs its data with the server. One of the best things about Angular is data binding, with no need for explicitly updating the UI like jQuery. That’s amazing, but when we begin to communicate with the server side, things become more complex. We need to explicitly Get, Update and Delete, write specific functions and services for that.
+
+Then, once we define those actions in the client, we need to do exactly the same on the server and handle those actions for each Model we change, again and again.. This doesn’t sound like the Angular way. It feels like jQuery all over again!
+
+Wouldn’t it be easier to bind our Angular data all the way to the server and then reactively sync everything, in real time? Thats exactly what Meteor does for you when you use angular-meteor.
+
+Let’s look at this angular-meteor one liner:
+
+```
+$scope.cars = $meteor.collection(“Cars”);
+```
+
+That’s all you need to know about http, websockets, getting, updating, and deleting data. All you need to do now is to continue updating the $scope array in Angular exactly like you did before.
+
+All that with a single line of server code:
+
+```
+Cars = new Mongo.Collection(“cars”);
+```
+
+User Authentication
+
+Some of the existing MEAN stack solutions offer pre defined Passport.js support. Passport.js take a lot of configuration and code and works only for the server’s middleware. With angular-meteor you get full support for the Meteor accounts system.
+
+All you need to do is to add a package with a single command, and your entire system, from UI to Model to Database, will be ready for a User facing application with Login, Logout, Signup and Reset password, all with Email support. That’s closer to Rails’ devise gem than to Passport.js.
+
+Since in MEAN it’s not that simple, there are a few services that offer Authentication services to developers but in the price of not owning your data. angular-meteor is as simple as those solutions but it’s all open source and you have full control over everything.
+
+Mobile Development
+
+There is no specific methods to support mobile and PhoneGap apps in the existing stacks.
+
+Meteor has a built in PhoneGap integration for installing, running and deploying PhoneGap apps and updating them automatically, even through the app stores. And again with just a few command lines.
+
+Moreover, Angular-Meteor allows you to use any 3rd party libraries like [Ionic](https://github.com/Urigo/meteor-ionic).
+
+
+## 2. Architecture
+
+A good way to see the how Meteor’s architecture differs from the main MEAN stacks solutions is how those stacks handle real time applications. Most of the MEAN stack solutions are built on a REST architecture and not an architecture that fits real time applications. You can add sockets support to them but there is more to real time than that.
+
+Let’s look at the 4 layers comprising Meteor’s architecture — Database, Communication, Local Storage and UI.
+
+Database
+
+In order to respond to changes in real time, you have to watch the database in real time.
+
+The other MEAN stacks don’t offer anything for recursively watching over the database.
+
+Meteor’s [‘Live Query’ package](https://www.meteor.com/livequery) creates a reactive database cursor that updates in real time and notifies the server and the clients about those changes in a performant way.
+
+
+Communication layer
+
+While the MEAN solutions offer some tools for real time communication like socket.io, Meteor is built upon an open, real-time communication protocol named [DDP](https://www.meteor.com/ddp). That means that you get a standard for real time communication, it’s open and simple as REST but for real time.
+
+
+There are DDP clients in almost every major technology out there — Javascript, Objective C, Android, C#, Go, Ruby etc.. ([More here](http://meteorpedia.com/read/DDP_Clients)) and you can easily work with them.
+
+
+Local Storage
+
+The MEAN solutions just offers you to choose your own solution and handle the syncing yourself. In Meteor, the whole architecture is built to support that out of the box, including making local changes in real time and later syncing them automatically over the wire in case the network is slow, which is very important for mobile apps.
+
+There are a lot of considerations and cases to handle and most developers just don’t take care of those while Meteor takes care of that for you.
+
+UI layer
+
+While in the other solutions the UI communicates straight to the server, angular-meteor knows how to listen to DDP changes from the local cache and to listen to Angular changes and transmit them to the local cache for a true latency compensation architecture.
+
+Meteor’s architecture is similar to the architecture that large scale applications like Gmail, Facebook and Trello use. Angular 2.0 is built on top of those ideas because they want to better support large scale applications.
+
+The reason why most smaller applications don’t use that architecture is because it was very expensive until now and you had to assemble those solutions yourself, but Meteor gives you that without any development cost or time.
+
+Isomorphic JavaScript and [Angular-Server](http://angular-meteor.com/server) — Sharing code between the client and the server
+
+
+Although the MEAN stack is built with technologies that are based on Javascript, the solutions don’t use the Isomorphic capabilities that it brings with it. Meteor is built from the ground up taking that into consideration and gives you the ability to write lots of your code (Model, Methods and packages) once and use it both on the client and on the server.
+
+For example, in Meteor, you define your model in a single file and that model object is available for you to use both on the client and then server.
+
+You can also use exactly the same API to update the model both on the client and the server and write your functions once and use them everywhere. In `angular-meteor` we’ve taken it one step further and let you write regular Angular code on the server, so you can use your existing knowledge and code to write server side logic.
+
+
+## Getting Started with Angular and Meteor for a MEAN Stack
+
+I believe that the biggest promise of angular-meteor is to enable Angular Front-End developers to become full stack developers.
+
+Even as an Angular developer, Meteor always made sense to me. We created `angular-meteor` so that you can use Angular, your existing applications and your 3rd party libraries (Ionic, ui-bootstrap etc.)
+
+
+So now, if you’re an Angular developer, you can easily dive into Meteor too. Get started here: <http://angular-meteor.com/>
+
+
+```backmatter
+{"source":"medium","postId":"1b441ad0d303","publishedDate":1432191600000,"url":"https://blog.meteor.com/thoughts-on-angular-meteor-as-a-great-mean-stack-1b441ad0d303"}
+```
