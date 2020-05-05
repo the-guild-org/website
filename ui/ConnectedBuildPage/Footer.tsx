@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
-import { TheGuildLogo } from './Logo';
+import { TheGuildLogo } from '../shared/Logo';
 import { device } from '../media';
 import { useFontColor } from './theme';
 

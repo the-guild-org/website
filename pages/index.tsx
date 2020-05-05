@@ -1,6 +1,13 @@
-import React from 'react';
-import HomePage from '../ui/HomePage';
+import React from "react";
+import { Layout, Section, Hero } from "../ui/shared/Layout";
 
-const Index = () => <HomePage />;
+const Index = () => (
+  <Layout>
+    <Hero>
+      We are <span>The Guild</span>
+    </Hero>
+    <Section>asd</Section>
+  </Layout>
+);
 
 export default Index;

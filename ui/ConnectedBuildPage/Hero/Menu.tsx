@@ -3,7 +3,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { MessageSquare } from 'react-feather';
 
-import { TheGuildLogo } from '../Logo';
+import { TheGuildLogo } from '../../shared/Logo';
 import { useScrollTo } from '../../../hooks/use-scroll-to';
 
 const Container = styled.div`
