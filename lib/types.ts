@@ -4,6 +4,7 @@ export interface Meta {
   date: string;
   description: string;
   image: string;
+  thumbnail?: string;
 }
 
 export interface MetaWithLink extends Meta {

@@ -53,7 +53,7 @@ const Blog: React.FC<Props> = ({ articles }) => {
           <LastArticle
             title={recentArticle.title}
             description={recentArticle.description}
-            image={recentArticle.image}
+            image={recentArticle.thumbnail || recentArticle.image}
             link={recentArticle.link}
           />
         </SectionContainer>
@@ -70,7 +70,7 @@ const Blog: React.FC<Props> = ({ articles }) => {
               key={article.link}
               title={article.title}
               description={article.description}
-              image={article.image}
+              image={article.thumbnail || article.image}
               link={article.link}
               date={article.date}
             />

@@ -9,6 +9,7 @@ import { Newsletter } from './newsletter';
 import { Page } from '../shared/Page';
 import { Button } from '../shared/Layout';
 import { Meta } from '../../lib/types';
+import { Image } from './image';
 
 const Container = styled.div`
   max-width: 690px;
@@ -40,11 +41,16 @@ const Time = styled.time`
   font-size: 0.8rem;
 `;
 
-const Cover = styled.img`
+const Cover = styled.div`
   padding-top: 75px;
   margin: 0 auto;
   width: 100%;
   height: auto;
+
+  & > * {
+    width: 100%;
+    height: auto;
+  }
 `;
 
 const BackButton = styled(Button)`
@@ -84,7 +90,9 @@ export default (meta: Meta): React.FC => {
                   {format(date, 'EEEE, LLL do y')}
                 </Time>
               </Details>
-              <Cover src={meta.image} alt={title} />
+              <Cover>
+                <Image src={meta.image} alt={title} />
+              </Cover>
               <Content>{content}</Content>
               <Newsletter />
               <Back>

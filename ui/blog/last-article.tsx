@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import NativeLink from 'next/link';
+import { Image } from './image';
 
 const Title = styled.h2`
   color: var(--colors-text);
@@ -16,7 +17,7 @@ const Link = styled(NativeLink)`
   }
 `;
 
-const Cover = styled.img`
+const Cover = styled(Image)`
   max-width: 100%;
   height: auto;
   border-radius: 5px;
@@ -87,7 +88,7 @@ export const LastArticle: React.FC<{
         <Description>{description}</Description>
       </Link>
       <Link href={link} as="a" title={title}>
-        <Cover src={image} />
+        <Cover src={image} alt={title} />
       </Link>
     </Container>
   );

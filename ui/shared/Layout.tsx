@@ -44,7 +44,8 @@ const Nav = styled.nav`
   }
 
   & > a:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    color: var(--colors-accent);
   }
 `;
 
@@ -224,10 +225,10 @@ const HeroHeader = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-  color: #777;
+  color: var(--colors-primary);
 
   span {
-    color: var(--colors-primary);
+    color: var(--colors-accent);
   }
 
   & > h1 {
