@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
+import Confetti from 'react-confetti';
 import { Button } from '../shared/Layout';
 import { useMutation } from '../../hooks/use-graphql';
 
@@ -67,11 +68,16 @@ const Submit = styled(Button)`
   }
 `;
 
+const FixedConfetti = styled(Confetti)`
+  position: fixed !important;
+`;
+
 export const Newsletter: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
+  const [confetti, setConfetti] = useState(false);
   const [result, mutate] = useMutation(
     `mutation subscribe($email: String!) { subscribe(email: $email) { ok } }`
   );
@@ -101,14 +107,23 @@ export const Newsletter: React.FC = () => {
       } else {
         setSuccess(true);
         setEmail('');
+        setConfetti(true);
+
+        setTimeout(() => {
+          setConfetti(false);
+        }, 5000);
       }
     }
   }, [result.complete, setEmail]);
 
   const showForm = !success;
+  const isClient = typeof window === 'object';
 
   return (
     <Container>
+      {isClient && confetti && (
+        <FixedConfetti width={window.innerWidth} height={window.innerHeight} />
+      )}
       <Header>Join our newsletter</Header>
       <Subheader>
         {success ? (
