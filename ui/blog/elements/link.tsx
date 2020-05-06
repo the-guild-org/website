@@ -8,22 +8,22 @@ export const ExternalLink = styled.a.attrs((props) => ({
 }))`
   text-decoration: none;
   font-size: inherit;
-  color: #03a6a6;
+  color: var(--colors-accent);
 
   &:hover {
-    color: #04bfad;
+    color: var(--colors-accent-light);
     text-decoration: none;
   }
 `;
 
 const AnchorLink = styled.a`
-  color: #03a6a6;
+  color: var(--colors-accent);
   font-size: inherit;
   text-decoration: none;
   border-bottom: 1px dotted;
 
   &:hover {
-    color: #04bfad;
+    color: var(--colors-accent-light);
     text-decoration: none;
   }
 `;
@@ -49,10 +49,10 @@ export const InternalLink = ({ href, as, children }) => (
         a {
           text-decoration: none;
           font-size: inherit;
-          color: #03a6a6;
+          color: var(--colors-accent);
         }
         a:hover {
-          color: #04bfad;
+          color: var(--colors-accent-light);
           text-decoration: none;
         }
       `}</style>

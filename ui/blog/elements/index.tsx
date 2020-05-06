@@ -6,11 +6,13 @@ export const H1 = styled.h1`
   text-align: center;
   margin-top: 0;
   font-size: 2rem;
+  color: var(--colors-primary);
 `;
 
 export const H2 = styled.h1`
   margin-top: 2.5rem;
   font-size: 1.5rem;
+  color: var(--colors-primary);
 `;
 
 const P = styled.p`
@@ -38,7 +40,7 @@ const Li = styled.li`
 const Blockquote = styled.blockquote`
   margin: 2rem 0;
   padding-left: 3rem;
-  color: #777;
+  color: var(--colors-dim);
   font-size: 1.5rem;
   font-weight: 400;
   font-style: italic;

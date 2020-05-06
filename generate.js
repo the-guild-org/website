@@ -25,7 +25,7 @@ data.repository.issues.edges.forEach((edge) => {
     `generated/${urlSlug}.mdx`,
     [
       `
-import withPost from "../../ui/blog/post";
+import withArticle from "../../ui/blog/article";
 
 export const meta = {
   title: "${title}",
@@ -35,7 +35,7 @@ export const meta = {
   image: "${meta.image}",
 };
       
-export default withPost({ ...meta });
+export default withArticle({ ...meta });
   `,
       body,
     ].join('\n\n'),

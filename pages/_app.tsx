@@ -23,20 +23,32 @@ export default class MyApp extends App {
               height: 100%;
             }
 
-            .Moda-1-hex {
-              color: #010326;
+            :root {
+              --colors-text: #292929;
+              --colors-dim: #777;
+              --colors-dim-dark: #555;
+              --colors-accent: #03a6a6;
+              --colors-accent-light: #04bfad;
+              --colors-primary: #000;
+              --colors-background: #fff;
             }
-            .Moda-2-hex {
-              color: #022859;
+
+            /*
+            @media (prefers-color-scheme: dark) {
+              :root {
+                --colors-text: #dedede;
+                --colors-dim: #9a9a9a;
+                --colors-dim-dark: #666;
+                --colors-accent: #03a6a6;
+                --colors-accent-light: #04bfad;
+                --colors-primary: #fff;
+                --colors-background: #000;
+              }
             }
-            .Moda-3-hex {
-              color: #03a6a6;
-            }
-            .Moda-4-hex {
-              color: #5fd9d9;
-            }
-            .Moda-5-hex {
-              color: #04bfad;
+            */
+
+            body {
+              background-color: var(--colors-background);
             }
 
             a {

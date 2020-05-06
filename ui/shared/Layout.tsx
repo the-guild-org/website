@@ -27,6 +27,10 @@ const Header = styled.header`
   background-color: rgba(255, 255, 255, 0.9);
   box-sizing: border-box;
   z-index: 1;
+
+  /* @media (prefers-color-scheme: dark) {
+    background-color: rgba(0, 0, 0, 0.9);
+  } */
 `;
 
 const Nav = styled.nav`
@@ -35,7 +39,7 @@ const Nav = styled.nav`
 
   & > a {
     margin-left: 25px;
-    color: #000;
+    color: var(--colors-primary);
     font-weight: 500;
   }
 
@@ -141,7 +145,7 @@ export const Layout: React.FC = ({ children }) => {
 export const Section = styled.section`
   position: relative;
   background: #f1f1f1;
-  color: #000;
+  color: var(--colors-primary);
 
   &::before {
     content: '';
@@ -192,7 +196,7 @@ const HeroHeader = styled.div`
   color: #777;
 
   span {
-    color: #000;
+    color: var(--colors-primary);
   }
 
   & > h1 {

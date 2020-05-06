@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import NativeLink from 'next/link';
 
 const Title = styled.h2`
-  color: #292929;
+  color: var(--colors-text);
 `;
 
 const Description = styled.p`
-  color: #777;
+  color: var(--colors-dim);
 `;
 
 const Link = styled(NativeLink)`

@@ -29,15 +29,15 @@ const Content = styled.div`
 `;
 
 const Title = styled.h3`
-  color: #292929;
+  color: var(--colors-text);
 `;
 
 const Description = styled.p`
-  color: #777;
+  color: var(--colors-dim);
 `;
 
 const Time = styled.time`
-  color: #777;
+  color: var(--colors-dim);
   font-size: 0.8rem;
 `;
 

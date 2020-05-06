@@ -7,18 +7,18 @@ import { MetaWithLink } from './types';
 /**
  * Based on the files found in `pages/blog/*.mdx`
  */
-export async function getAllPosts(): Promise<MetaWithLink[]> {
+export async function getAllArticles(): Promise<MetaWithLink[]> {
   const blogDir = join(process.cwd(), 'pages/blog');
   const filenames = await globby('*.mdx', {
     cwd: blogDir,
     absolute: false,
   });
 
-  const posts = await Promise.all(
+  const articles = await Promise.all(
     filenames.map((file) => readMeta(blogDir, file))
   );
 
-  return posts.sort(sortByDateDesc);
+  return articles.sort(sortByDateDesc);
 }
 
 /**

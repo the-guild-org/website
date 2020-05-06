@@ -17,7 +17,7 @@ const Header = styled.div`
 const Subheader = styled.p`
   font-size: 1rem;
   font-weight: 400;
-  color: #555;
+  color: var(--colors-dim-dark);
 `;
 
 const Form = styled.form`

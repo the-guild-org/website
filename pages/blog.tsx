@@ -7,19 +7,11 @@ import { LastArticle } from '../ui/blog/last-article';
 import { ArticleCard } from '../ui/blog/article-card';
 import { Newsletter } from '../ui/blog/newsletter';
 import { MetaWithLink } from '../lib/types';
-import { getAllPosts } from '../lib/get-all-posts';
+import { getAllArticles } from '../lib/get-all-articles';
 
 interface Props {
-  posts: MetaWithLink[];
+  articles: MetaWithLink[];
 }
-
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  return {
-    props: {
-      posts: await getAllPosts(),
-    },
-  };
-};
 
 const SectionContainer = styled(Container)`
   padding: 75px 0;
@@ -33,8 +25,16 @@ const AllArticles = styled(Container)`
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
 `;
 
-const Blog: React.FC<Props> = ({ posts }) => {
-  const recentPost = posts[0];
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  return {
+    props: {
+      articles: await getAllArticles(),
+    },
+  };
+};
+
+const Blog: React.FC<Props> = ({ articles }) => {
+  const recentArticle = articles[0];
 
   return (
     <Page
@@ -47,10 +47,10 @@ const Blog: React.FC<Props> = ({ posts }) => {
       <Section>
         <SectionContainer>
           <LastArticle
-            title={recentPost.title}
-            description={recentPost.description}
-            image={recentPost.image}
-            link={recentPost.link}
+            title={recentArticle.title}
+            description={recentArticle.description}
+            image={recentArticle.image}
+            link={recentArticle.link}
           />
         </SectionContainer>
       </Section>
@@ -60,15 +60,15 @@ const Blog: React.FC<Props> = ({ posts }) => {
       </Container>
 
       <AllArticles>
-        {posts.map((post) => {
+        {articles.map((article) => {
           return (
             <ArticleCard
-              key={post.link}
-              title={post.title}
-              description={post.description}
-              image={post.image}
-              link={post.link}
-              date={post.date}
+              key={article.link}
+              title={article.title}
+              description={article.description}
+              image={article.image}
+              link={article.link}
+              date={article.date}
             />
           );
         })}

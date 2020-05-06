@@ -21,7 +21,7 @@ const Content = styled.div`
   font-family: 'PT Serif', serif;
   font-size: 1.2rem;
   font-weight: 400;
-  color: #292929;
+  color: var(--colors-text);
   line-height: 2rem;
 `;
 
@@ -33,7 +33,7 @@ const Details = styled.div`
 `;
 
 const Time = styled.time`
-  color: #777;
+  color: var(--colors-dim);
   font-size: 0.8rem;
 `;
 
