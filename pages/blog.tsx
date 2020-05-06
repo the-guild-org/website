@@ -17,6 +17,10 @@ const SectionContainer = styled(Container)`
   padding: 75px 0;
 `;
 
+const NewsletterContainer = styled(Container)`
+  padding-top: 50px;
+`;
+
 const AllArticles = styled(Container)`
   padding: 125px 0;
   display: grid;
@@ -55,9 +59,9 @@ const Blog: React.FC<Props> = ({ articles }) => {
         </SectionContainer>
       </Section>
 
-      <Container>
+      <NewsletterContainer>
         <Newsletter />
-      </Container>
+      </NewsletterContainer>
 
       <AllArticles>
         {articles.map((article) => {

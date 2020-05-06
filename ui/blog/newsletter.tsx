@@ -1,9 +1,10 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { Button } from '../shared/Layout';
 import { useMutation } from '../../hooks/use-graphql';
 
 const Container = styled.div`
-  margin-top: 125px;
+  margin-top: 75px;
   padding: 25px;
   border-radius: 3px;
   background-color: #f1f1f1;
@@ -55,38 +56,10 @@ const Input = styled.input`
   }
 `;
 
-const Submit = styled.button`
-  width: auto;
-  height: auto;
+const Submit = styled(Button)`
   flex-shrink: 0;
   flex-grow: 0;
-  padding: 0.75rem 1.5rem;
   margin-left: 1rem;
-  transition-duration: 0.15s;
-  color: #fff;
-  line-height: 1.375;
-  font-size: 1rem;
-  font-weight: 700;
-  border: 1px solid transparent;
-  border-radius: 0.375rem;
-  background-color: #03a6a6;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  box-sizing: border-box;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #04bfad;
-  }
-
-  &:focus {
-    outline: 0;
-  }
-
-  &:disabled {
-    opacity: 0.7;
-    cursor: progress;
-  }
 
   @media (max-width: 640px) {
     margin-top: 1rem;

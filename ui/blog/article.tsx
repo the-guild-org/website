@@ -1,10 +1,13 @@
 import React from 'react';
 import { MDXProvider } from '@mdx-js/react';
+import Link from 'next/link';
 import styled from 'styled-components';
 import format from 'date-fns/format';
+import { ArrowLeft } from 'react-feather';
 import { components, H1 } from './elements';
 import { Newsletter } from './newsletter';
 import { Page } from '../shared/Page';
+import { Button } from '../shared/Layout';
 import { Meta } from '../../lib/types';
 
 const Container = styled.div`
@@ -44,6 +47,27 @@ const Cover = styled.img`
   height: auto;
 `;
 
+const BackButton = styled(Button)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--colors-primary);
+  margin: 0 auto;
+
+  &:hover {
+    background-color: var(--colors-dim-dark);
+  }
+
+  & > * {
+    margin-right: 1.3rem;
+  }
+`;
+
+const Back = styled.div`
+  margin: 0 auto;
+  margin: 125px auto 0 auto;
+`;
+
 export default (meta: Meta): React.FC => {
   return ({ children: content }) => {
     const title = `${meta.title} - The Guild Blog`;
@@ -63,6 +87,13 @@ export default (meta: Meta): React.FC => {
               <Cover src={meta.image} alt={title} />
               <Content>{content}</Content>
               <Newsletter />
+              <Back>
+                <Link href="/blog">
+                  <BackButton title="Go back to blog">
+                    <ArrowLeft /> Back to blog
+                  </BackButton>
+                </Link>
+              </Back>
             </Main>
           </Container>
         </Page>

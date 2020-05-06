@@ -52,6 +52,37 @@ const Logo = styled.div`
   height: 34px;
 `;
 
+export const Button = styled.button`
+  width: auto;
+  height: auto;
+  padding: 0.75rem 1.5rem;
+  transition-duration: 0.15s;
+  color: #fff;
+  line-height: 1.375;
+  font-size: 1rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  background-color: var(--colors-accent);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--colors-accent-light);
+  }
+
+  &:focus {
+    outline: 0;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: progress;
+  }
+`;
+
 const Footer = styled.footer`
   width: 100%;
   padding: 35px 0;
