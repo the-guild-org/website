@@ -93,23 +93,28 @@ const resolvers = {
       };
     },
     async subscribe(_, { email }) {
-      const listId = '837601';
+      const listId = '6da08f478f';
+      const dc = 'us8';
       const result = await axios.post(
-        `https://us8.api.mailchimp.com/3.0/lists/${listId}/members`,
+        `https://${dc}.api.mailchimp.com/3.0/lists/${listId}/members`,
         {
           email_address: email,
           status: 'subscribed',
           tags: ['website'],
         },
         {
-          auth: {
-            username: 'the-guild-dev',
-            password: process.env.MAILCHIMP_API_KEY,
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            authorization:
+              'Basic ' +
+              new Buffer('any:' + process.env.MAILCHIMP_API_KEY).toString(
+                'base64'
+              ),
           },
         }
       );
 
-      if (!result.data || !resul.data.id) {
+      if (!result.data || !result.data.id) {
         throw new Error(`Failed to subscribe ${email}`);
       }
 

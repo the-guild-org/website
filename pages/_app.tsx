@@ -3,7 +3,6 @@ import React from 'react';
 import Router from 'next/router';
 import 'prism-theme-night-owl';
 
-import { Root } from '../ui/Root';
 import * as gtag from '../lib/gtag';
 
 Router.events.on('routeChangeComplete', (url) => gtag.pageview(url));
@@ -12,7 +11,7 @@ export default class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props;
     return (
-      <Root>
+      <>
         <style global jsx>
           {`
             html,
@@ -49,20 +48,17 @@ export default class MyApp extends App {
 
             body {
               background-color: var(--colors-background);
+              font-family: 'Roboto', sans-serif;
             }
 
             a {
               text-decoration: none;
               transition: all 0.2s ease 0s;
             }
-
-            .roboto {
-              font-family: 'Roboto', sans-serif;
-            }
           `}
         </style>
         <Component {...pageProps} />
-      </Root>
+      </>
     );
   }
 }

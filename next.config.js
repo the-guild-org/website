@@ -17,5 +17,20 @@ const withMDX = nextMDX({
 module.exports = withBundleAnalyzer(
   withMDX({
     pageExtensions: ['tsx', 'md', 'mdx'],
+    experimental: {
+      modern: true,
+      rewrites() {
+        return [
+          {
+            source: '/feed.xml',
+            destination: '/_next/static/feed.xml',
+          },
+          {
+            source: '/sitemap.xml',
+            destination: '/_next/static/sitemap.xml',
+          },
+        ];
+      },
+    },
   })
 );
