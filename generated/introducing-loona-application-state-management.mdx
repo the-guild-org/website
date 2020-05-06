@@ -1,16 +1,14 @@
-
-import withPost from "../../ui/blog/post";
+import withPost from '../../ui/blog/post';
 
 export const meta = {
-  title: "Introducing Loona: Application State Management",
+  title: 'Introducing Loona: Application State Management',
   tags: [],
-  date: "2018-11-6",
-  description: "TODO:",
-  image: "",
+  date: '2018-11-6',
+  description: 'TODO:',
+  image: '',
 };
-      
+
 export default withPost({ ...meta });
-  
 
 ## Loona is an application state management library for React and Angular. It helps you manage the local and remote data in a single store. It’s built with GraphQL and Apollo.
 
@@ -18,16 +16,14 @@ export default withPost({ ...meta });
 
 Me and [**The Guild**](https://medium.com/the-guild) are very excited to introduce a library that dramatically improves and simplifies **managing your local and remote data**, both in **React** and **Angular**.
 
-
 > ### Hi, my name is Loona!
 
 # TL;DR
 
--   State Management done with GraphQL and Apollo
--   We took the best concepts from the Redux and Apollo worlds
--   React and Angular
--   [Website](https://loonajs.com/) and [Documentation](https://loonajs.com/)
-
+- State Management done with GraphQL and Apollo
+- We took the best concepts from the Redux and Apollo worlds
+- React and Angular
+- [Website](https://loonajs.com/) and [Documentation](https://loonajs.com/)
 
 ---
 
@@ -39,40 +35,33 @@ Me and [**The Guild**](https://medium.com/the-guild) are very excited to introdu
 
 Loona is a state management library built with **GraphQL** and [**Apollo**](https://apollographql.com). It takes some the of **Redux** / **NGRX** concepts and combines them with **Apollo Client.**
 
-
 > ### Loona works side by side with Apollo
 
 So while you still get all the benefits from Apollo Client like _caching_, _offline persistence, normalized cache_ and more, on top of that you gain other benefits like **stream of actions** and **better separation** between executing a mutation and updating the store.
 
-
 Instead of having a second store for your local data, **keep everything in just one space**.
 
-
 Works out of the box with [**React Native**](https://facebook.github.io/react-native/) and [**NativeScript**](https://www.nativescript.org/). It also supports [**Create React App**](https://github.com/facebook/create-react-app) and [**Angular CLI**](https://cli.angular.io/) (_has its own collection of schematics_).
-
 
 > ### We built it on top of Apollo Client which means setting everything up, including Links or even Cache, stays exactly the same.
 
 Loona can be described by few core concepts:
 
--   [**Queries**](https://loonajs.com/docs/react/essentials/queries) — ask for what you need
+- [**Queries**](https://loonajs.com/docs/react/essentials/queries) — ask for what you need
 
--   [**Mutations**](https://loonajs.com/docs/react/essentials/mutations)  — a way to modify your remote and local data
+- [**Mutations**](https://loonajs.com/docs/react/essentials/mutations) — a way to modify your remote and local data
 
--   **Store** — a single source of truth of all your data
-
+- **Store** — a single source of truth of all your data
 
 It also defines:
 
--   [**Actions**](https://loonajs.com/docs/react/essentials/actions) — declarative way to call a mutation or trigger an action
+- [**Actions**](https://loonajs.com/docs/react/essentials/actions) — declarative way to call a mutation or trigger an action
 
--   [**Updates**](https://loonajs.com/docs/react/essentials/updates) — modify the store after a mutation
-
+- [**Updates**](https://loonajs.com/docs/react/essentials/updates) — modify the store after a mutation
 
 It helps you to **keep every piece of your data’s flow separated**.
 
-
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*4zBAz2BmiRp3JbkkqXeUaA.png?raw=true "Loona lives between the UI and the Apollo Client and intercepts queries and mutations through the Apollo Link.")
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*4zBAz2BmiRp3JbkkqXeUaA.png?raw=true 'Loona lives between the UI and the Apollo Client and intercepts queries and mutations through the Apollo Link.')
 
 ## How to get started
 
@@ -117,7 +106,7 @@ ReactDOM.render(
       <App />
     </LoonaProvider>
   </ApolloProvider>,
-  document.getElementById('root'),
+  document.getElementById('root')
 );
 ```
 
@@ -130,23 +119,19 @@ In fact, the logic behind Effects (middleware) opened up Loona for all kinds of 
 
 It also provide some helpers that are based on `Immer` so the whole experience is much better.
 
-
 By keeping Loona close with Apollo Link State we are able to collaborate and improve both of them.
 
 # Play with Loona
 
 You can find few examples in [our repository](https://github.com/kamilkisiela/loona/tree/master/examples) but we prepared a simple application that you can run and play with in the browser.
 
-
 One written with **React**:
 
-
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*1DKdAbZxbgad-RTa1qaocA.png?raw=true "Click to play with Loona and React")
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*1DKdAbZxbgad-RTa1qaocA.png?raw=true 'Click to play with Loona and React')
 
 **Angular** version:
 
-
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*NjQuoW139Gjt75c3FNBaFg.png?raw=true "Click to play with Loona and Angular")
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*NjQuoW139Gjt75c3FNBaFg.png?raw=true 'Click to play with Loona and Angular')
 
 ---
 
@@ -159,14 +144,13 @@ Now since everything is ready, let’s take a closer look on what Loona does and
 State is a model that describes slice of your application’s state, with all possible mutations, queries and others. It’s important to keep it simple and easy to read.
 
 ```typescript
-import {state} from '@loona/react';
+import { state } from '@loona/react';
 
 @state()
 export class BooksState {}
 ```
 
 As you can see, we use `state` decorator and a class to define a state.
-
 
 ---
 
@@ -204,23 +188,20 @@ export function BooksList() {
 
 We used a `Query` component but Loona also allows to use the HoC.
 
-
 ```javascript
-import {state} from '@loona/react';
+import { state } from '@loona/react';
 
 @state({
   defaults: {
-    books: []
-  }
+    books: [],
+  },
 })
 export class BooksState {}
 ```
 
 Now when `BooksList` component asks for data, it gets an empty array.
 
-
 > We also support Higher Order Components. [Learn more about queries](https://loonajs.com/docs/react/essentials/queries).
->
 
 ---
 
@@ -251,7 +232,6 @@ const NewBook = () => (
 
 And here’s how you might update the store. Loona uses [`Immer`](https://www.npmjs.com/package/immer) and has few helpers to make writes and updates easier.
 
-
 ```javascript
 import { mutation } from '@loona/react';
 
@@ -275,9 +255,9 @@ export class BooksState {
           }
         }
       `,
-      data => {
+      (data) => {
         data.books.push(book);
-      },
+      }
     );
 
     return book;
@@ -286,7 +266,6 @@ export class BooksState {
 ```
 
 > [Read more about Mutations on our website](https://loonajs.com/docs/react/essentials/mutations)
->
 
 ---
 
@@ -295,7 +274,6 @@ export class BooksState {
 Think of an Action as a declarative way to call a mutation or to trigger a different action based on some behavior.
 
 Let’s take a look at the example. Here’s our action called `AddBook`:
-
 
 ```javascript
 export class AddBook {
@@ -307,17 +285,16 @@ export class AddBook {
 
 Loona has an `Action` and `connect` components:
 
-
 ```javascript
 //
 // Using Action component
-// 
+//
 
 import { Action } from '@loona/react';
 
 export const NewBook = () => (
   <Action>
-    {dispatch => (
+    {(dispatch) => (
       <button onClick={() => dispatch(new AddBook('Harry Potter'))}>
         Add Harry Potter
       </button>
@@ -325,19 +302,18 @@ export const NewBook = () => (
   </Action>
 );
 
-
 //
 // Using connect HOC
 //
 
-import {connect} from '@loona/react';
+import { connect } from '@loona/react';
 
-const NewBookView = ({addBook}) => (
+const NewBookView = ({ addBook }) => (
   <button onClick={() => addBook('Harry Potter')}>Add Harry Potter</button>
 );
 
-const actions = dispatch => ({
-  addBook: title => dispatch(new AddBook(title)),
+const actions = (dispatch) => ({
+  addBook: (title) => dispatch(new AddBook(title)),
 });
 
 export const NewBook = connect(actions)(NewBookView);
@@ -345,13 +321,11 @@ export const NewBook = connect(actions)(NewBookView);
 
 In the example above, we dispatched an action and as the `type` says, it should somehow add a new book to the list.
 
-
 ## Effect
 
-To listen for an action we have a concept called [**effects**](https://loonajs.com/docs/react/essentials/effects)  (works for both, actions and mutations).
+To listen for an action we have a concept called [**effects**](https://loonajs.com/docs/react/essentials/effects) (works for both, actions and mutations).
 
-
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*aDAYavALDVgLLgAy8Q-vIg.png?raw=true "UI dispatches an Action and Effects are called. An effect can mutate / update the store or even dispatch another action. UI gets updated too.")
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*aDAYavALDVgLLgAy8Q-vIg.png?raw=true 'UI dispatches an Action and Effects are called. An effect can mutate / update the store or even dispatch another action. UI gets updated too.')
 
 ```typescript
 import {effect} from '@loona/react';
@@ -366,7 +340,7 @@ export class BooksState {
     //   title: '...'
     // }
 
-    // Update the store: 
+    // Update the store:
     context.patchQuery(...);
 
     // Dispatch another action:
@@ -376,7 +350,6 @@ export class BooksState {
 ```
 
 > It’s also possible to [dispatch a mutation](https://loonajs.com/docs/react/advanced/mutation-as-action). [More about Actions on the website](https://loonajs.com/docs/react/essentials/actions).
->
 
 ---
 
@@ -386,18 +359,16 @@ Update allows to modify the data based on a mutation.
 
 The whole idea behind Updates is to keep store updates separated from mutations. Updates work for remote and local mutations.
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*OuyCtBqAMq_G9WYzQi4IYg.png?raw=true "Update runs synchronously, every time mutation happens. They work also for remote calls.")
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*OuyCtBqAMq_G9WYzQi4IYg.png?raw=true 'Update runs synchronously, every time mutation happens. They work also for remote calls.')
 
 **What are the benefits of using Updates?**
 
-
--   you no longer keep the code responsible for store updates inside of your components
--   it scales easier
--   keeps the code clean
--   allows to execute them even after mutation that has been persisted, did run again
+- you no longer keep the code responsible for store updates inside of your components
+- it scales easier
+- keeps the code clean
+- allows to execute them even after mutation that has been persisted, did run again
 
 > ### This is probably **the most important piece** of Loona’s data flow.
->
 
 ```javascript
 export class BooksState {
@@ -425,7 +396,7 @@ export class BooksState {
       },
     );
   }
-  
+
   // you can add more updates
   @update('addBook')
   anotherUpdate({result}, context) {
@@ -436,29 +407,23 @@ export class BooksState {
 
 In the example above, we separated two things:
 
--   creation of a book _(happens in the mutation)_
+- creation of a book _(happens in the mutation)_
 
--   adding a book to the list _(happens in the update)_
-
+- adding a book to the list _(happens in the update)_
 
 **Why would we need _many_ Updates?**
-
 
 Imagine a state that not only has a list of books but also holds a recently added one. Instead of having two updates in the mutation resolver we can scale that and pass the book to any function.
 
 > [We covered Updates](https://loonajs.com/docs/react/essentials/updates) in the documentation.
->
 
 # About the API
 
 Loona **doesn’t require decorators**, it provides an API to consume the state without them.
 
-
 If it comes to consuming data in the UI, we decided to enhance and reuse `Query`, `Mutation` and `Subscription` components of `react-apollo` and also provide two helpful Higher Order Components: `graphql` and `connect`.
 
-
 To learn how to use those components, we prepared a chapter in our [documentation](https://loonajs.com/docs/react/api/components).
-
 
 # How does it compare with other libraries?
 
@@ -466,23 +431,29 @@ To learn how to use those components, we prepared a chapter in our [documentatio
 
 With Loona and Apollo you’re able to **persist the cache** and restore it on every page load.
 
-
 ```jsx
 import React from 'react';
 import { Mutation } from '@loona/react';
 
-export default props => (
+export default (props) => (
   <Mutation mutation={ADD_BOOK}>
-    {addBook => (
-      <button onClick={() => addBook({
-        variables: {
-          title: props.title
-        },
-        // update() {
-        //   we keep it all inside of the state class
-        //   otherwise it would be hard to persist those store updates
-        // }
-      })}> Submit </button>
+    {(addBook) => (
+      <button
+        onClick={() =>
+          addBook({
+            variables: {
+              title: props.title,
+            },
+            // update() {
+            //   we keep it all inside of the state class
+            //   otherwise it would be hard to persist those store updates
+            // }
+          })
+        }
+      >
+        {' '}
+        Submit{' '}
+      </button>
     )}
   </Mutation>
 );
@@ -490,11 +461,9 @@ export default props => (
 
 Thanks to keeping the logic responsible of store updates, outside of a component, we’re able to **persist mutations across page reloads** or while an app is offline and rerun them once it’s up again. The whole chain of actions and updates will then continue.
 
-
 ## Smart store
 
 The store is smart enough to re-render only components affected by an update. Thanks to **keeping data normalized** you can mutate an entity and the store will update every reference.
-
 
 ```javascript
 const bookFragment = gql`
@@ -524,8 +493,8 @@ const LIBRARY = gql`
 
 export class BooksState {
   @mutation(TOGGLE_LIKE_BOOK)
-  likeBook({ id }, {patchFragment}) {
-    return patchFragment(book, {id}, book => {
+  likeBook({ id }, { patchFragment }) {
+    return patchFragment(book, { id }, (book) => {
       book.liked = !book.liked;
     });
   }
@@ -536,7 +505,6 @@ It would be hard to keep a list of books and their authors in a structure as sho
 
 Because the data is **normalized** **stored flat** it is super straightforward to do it in Loona. Having helpers like `patchQuery` and `patchFragment` that uses [`immer`](http://npmjs.com/package/immer) internally helps a lot too.
 
-
 ## Single source of truth
 
 When using GraphQL with Redux or any other state management library it’s hard to keep two stores in sync. With Loona you keep everything in one place and local data can enhance the remote one.
@@ -545,13 +513,11 @@ When using GraphQL with Redux or any other state management library it’s hard 
 
 You access data in the same way across the whole application and thanks to Apollo Link, for example `apollo-link-rest`, you can include other source of data too.
 
-
 You can even enhance the server-side operations with your local state and fetch everything in a single query.
 
 ## Built-in solutions
 
 No need to implement things like **Caching** or **Optimistic UI** yourself, it’s part of Apollo and Loona.
-
 
 ## Lazy loading
 
@@ -560,7 +526,6 @@ It’s also possible to provide a lazy loaded state when using code-splitting
 ## Easy static type generation
 
 Tools like [GraphQL Code Generator](https://github.com/dotansimha/graphql-code-generator) produce interfaces for every piece of data making your application **strongly typed**.
-
 
 ## Share the same tools
 
@@ -572,32 +537,26 @@ Thanks to Apollo Dev Tools you can see your remote schema stitched together with
 
 **Works with other Apollo Links** Loona wraps Apollo Client and has its own Apollo Link. Thanks to that it’s easy to use Loona with other Apollo Links.
 
-
 ---
 
 # We’re open for your feedback!
 
 We’d be happy to hear your feedback so we could improve Loona and figure out the direction of using GraphQL for local state management **together, with the whole community,** not only React’s but from other frameworks like Angular or Vue.
 
-
 We also want to collaborate with the **Apollo Team** on shaping the best way to manage local state with GraphQL and maybe even add parts of our solution into a future Apollo Client release.
 
+- [Website](https://loonajs.com)
 
--   [Website](https://loonajs.com)
+- [GitHub repository](https://github.com/kamilkisiela/loona)
 
--   [GitHub repository](https://github.com/kamilkisiela/loona)
-
--   Examples for [React](https://github.com/kamilkisiela/loona/tree/master/examples/react/) and [Angular](https://github.com/kamilkisiela/loona/tree/master/examples/angular/)
-
+- Examples for [React](https://github.com/kamilkisiela/loona/tree/master/examples/react/) and [Angular](https://github.com/kamilkisiela/loona/tree/master/examples/angular/)
 
 ---
 
-[https://medium.com/the-guild](https://medium.com/the-guild "The Guild
-The Guild on medium.com")
+[https://medium.com/the-guild](https://medium.com/the-guild 'The Guild
+The Guild on medium.com')
 
 > _Follow us on [**GitHub**](https://github.com/the-guild-org) (check each person individually) and [**Medium**](https://medium.com/the-guild)**.** we are planning to release many more posts in the next couple of weeks about what we’ve learned using **GraphQL** in recent years._
->
-
 
 ```backmatter
 {"source":"medium","postId":"77baf6734f1","publishedDate":1541520469757,"url":"https://medium.com/the-guild/loona-state-management-graphql-77baf6734f1"}

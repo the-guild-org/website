@@ -1,15 +1,15 @@
-import globby from "globby";
-import { join } from "path";
-import { promises } from "fs";
-import JSON5 from "json5";
-import { MetaWithLink } from "./types";
+import globby from 'globby';
+import { join } from 'path';
+import { promises } from 'fs';
+import JSON5 from 'json5';
+import { MetaWithLink } from './types';
 
 /**
  * Based on the files found in `pages/blog/*.mdx`
  */
 export async function getAllPosts(): Promise<MetaWithLink[]> {
-  const blogDir = join(process.cwd(), "pages/blog");
-  const filenames = await globby("*.mdx", {
+  const blogDir = join(process.cwd(), 'pages/blog');
+  const filenames = await globby('*.mdx', {
     cwd: blogDir,
     absolute: false,
   });
@@ -26,13 +26,13 @@ export async function getAllPosts(): Promise<MetaWithLink[]> {
  */
 async function readMeta(dir: string, file: string): Promise<MetaWithLink> {
   const filepath = join(dir, file);
-  const raw = await promises.readFile(filepath, "utf-8");
+  const raw = await promises.readFile(filepath, 'utf-8');
 
   const [, result] = raw.match(/export const meta \= \{([^\}]+)\};/);
 
   return {
-    ...JSON5.parse(`{ ${result.trim().replace(/,$/, "")} }`),
-    link: `/blog/${file.replace(/\.mdx?/, "")}`,
+    ...JSON5.parse(`{ ${result.trim().replace(/,$/, '')} }`),
+    link: `/blog/${file.replace(/\.mdx?/, '')}`,
   };
 }
 

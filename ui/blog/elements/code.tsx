@@ -1,7 +1,7 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Code = styled.pre.attrs<{ syntax?: string }>(({ syntax }) => ({
-  className: syntax ? ` ${syntax}` : "",
+  className: syntax ? ` ${syntax}` : '',
 }))`
   background: #1d1f21;
   color: #f8f8f2;
@@ -21,7 +21,7 @@ export const Code = styled.pre.attrs<{ syntax?: string }>(({ syntax }) => ({
 `;
 
 export const InlineCode = styled.code.attrs<{ wrap?: boolean }>(({ wrap }) => ({
-  className: wrap ? "wrap" : "",
+  className: wrap ? 'wrap' : '',
 }))`
   background-color: rgba(0, 0, 0, 0.05);
   font-size: 1.2rem;

@@ -1,25 +1,21 @@
-
-import withPost from "../../ui/blog/post";
+import withPost from '../../ui/blog/post';
 
 export const meta = {
-  title: "How to create a React app out of a Webflow project",
+  title: 'How to create a React app out of a Webflow project',
   tags: [],
-  date: "2018-9-7",
-  description: "TODO:",
-  image: "https://github.com/the-guild-org/oneblog/blob/master/img/704/0*U_GfqaDPrEX8cD7x.jpg?raw=true",
+  date: '2018-9-7',
+  description: 'TODO:',
+  image:
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/0*U_GfqaDPrEX8cD7x.jpg?raw=true',
 };
-      
+
 export default withPost({ ...meta });
-  
 
 _tl;dr: It can be transpiled with a single command._
 
-
 As a freelancer I get to work with designers many times. Not once and not twice I have stumbled upon [Webflow](https://webflow.com/) — a web design studio, where the designer can assmble all his assets into responsive demonstrable webpages. These webpages look neat and responsive and can be downloaded as HTML/CSS files along with their scripts, images and fonts.
 
-
 At a glance, this can ease the process of getting an app done; after all we’re provided with a working website, so surely binding some logic to it with React shouldn’t be too complicated, right? All we need to do is take the HTML, put under a `render()`method of of a `React.Component`, and `import` its corresponding style with an external CSS file. Well, this is nothing but a walk in the park.
-
 
 When Webflow was first presented to me by a client of mine, I assumed the above. He showed me his website, which looked quiet complete, and we’ve proceeded to composing a plan sheet, with all the desired behavioral features of the future application and a matching price for each of that feature. I was quiet happy with our deal.
 
@@ -31,7 +27,6 @@ The HTML files were big and massive, with lots of duplicated parts in it, the CS
 
 > _Above: A Webflow page whose HTML file can be found [here](https://gist.github.com/DAB0mB/1979ac9cfa5fbe52e6375d80841200ae). Credit: [campaignkit.co](https://www.campaignkit.co/)._
 >
->
 > ### “What shall I do then?!” — A React developer
 
 ---
@@ -42,27 +37,22 @@ Appfairy is a CLI tool which can be easily installed using NPM and can integrate
 
 To get started, first install `appfairy` globally:
 
-
 ```
 $ sudo npm install appfairy -g
 ```
 
 Now let’s think of what React components should exist in our application besides the main pages. Once we identify them we should select their corresponding element in the Webflow project and set a new attribute; the key’s gonna be `af-el` (Appfairy element) and the value should be set to the name of the component e.g. `consult-form`:
 
-
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/0*mSriYEAcT8cB1gAQ.jpg?raw=true)
 
 > _Above: Selecting the element and setting its attribute_
->
 
 At this point we’re one step away from generating a functional `ConsultForm` React component; But before proceeding to the next step I would like to explain an important principle regards Appfairy’s generated code’s design pattern.
 
-
 Since Webflow’s code is machine generated and for the most part is not optimal, we might encounter potential maintenance issues for 2 main reasons:
 
--   The target element we would like to update / attach event listeners to is hard to identify due to complexity of the HTML tree.
--   When updating the design, we should also update our code by re-identifying the target elements and reattaching the React logic into them, e.g. mapping functions and event handlers like `onClick()`.
-
+- The target element we would like to update / attach event listeners to is hard to identify due to complexity of the HTML tree.
+- When updating the design, we should also update our code by re-identifying the target elements and reattaching the React logic into them, e.g. mapping functions and event handlers like `onClick()`.
 
 To solve that problem, Appfairy takes on an old school approach where we separate the component into a view and a controller, where we treat the view as a black-box and don’t touch it while the controller is controlling what’s going on in there; it would tell the view what to render, when to render, and how to render.
 
@@ -70,13 +60,11 @@ To solve that problem, Appfairy takes on an old school approach where we separat
 
 In the picture above we have a schematic description which shows the view/controller flow. In a brief, the controller holds elements which are proxies to the real elements, so whatever we pass to the proxy will be forwarded automatically to the real element. A proxy and an element can be matched based on the socket name (`af-sock`), which opens an interfacing point to the view by any given controller.
 
-
 So back to our ConsultantForm in our Webflow project example, let’s think which elements should be bound to a certain logic. Generally speaking, a form has several input fields and a submit button, which will submit the data received by the inputs, therefore we would probably apply logic to these elements in our React controller components. Accordingly, we will define socket attributes to each of the elements with distinct names:
 
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/0*QpTeFHeu0_b7eYNI.jpg?raw=true)
 
 Our Webflow project is now ready for migration! To do so, we will first need to create a directory named `.appfairy` in the root of our project:
-
 
 ```
 $ mkdir .appfairy
@@ -91,10 +79,8 @@ $ unzip ~/Downloads/project.webflow.zip -d .appfairy
 ```
 
 > _Above: Exporting the project and unzipping it to `.appfairy` dir_
->
 
 All is left to do now is to run `appfairy` and our Webflow React components will be created and ready to use!
-
 
 ```
 $ appfairy
@@ -115,22 +101,18 @@ As a result a message will be printed to the terminal signifying that a new git 
 
 The reason for the modifications to be laid out this way is because `create-react-app` (which is the most common app starter for React) uses this folders structure. The output can be mapped differently using a config file - more details about that can be found in the official [README.md](http://readme.md/) file over [here](https://github.com/DAB0mB/Appfairy).
 
-
 Non of these files should be edited or removed and should only be managed by the `appfairy` command, so whenever we update the Webflow project we should simply repeat the recent process and the files should updated accordingly.
-
 
 If you’ll take a look at the `views` folder you’ll see that it contains a file named `ConsultFormView.js`. As I already mentioned, Appfairy’s design pattern consists of a view and a controller, therefore the exported ConsultFormView component needs to be bound to a controller.
 
-
 To define a controller simply create a new file named `ConsultFormController.js` under the `controllers` folder where the corresponding controller’s gonna be exported as a React component. The controller should contain proxies to the original elements and each proxy should forward the necessary props. Rather than giving further explanation I would like to give you an example of a possible implementation of a ConsultFormController:
 
-
 ```javascript
-import React from 'react'
-import ConsultFormView from '../views/ConsultFormView'
+import React from 'react';
+import ConsultFormView from '../views/ConsultFormView';
 
 class ConsultFormController extends React.Component {
-  state = {}
+  state = {};
 
   render() {
     return (
@@ -141,31 +123,31 @@ class ConsultFormController extends React.Component {
         <description onChange={this.setDescription} />
         <submit onClick={this.submit} />
       </ConsultFormView>
-    )
+    );
   }
 
   setName = (e) => {
     this.setState({
-      name: e.target.value
-    })
-  }
+      name: e.target.value,
+    });
+  };
   setPhone = (e) => {
     this.setState({
-      phone: e.target.value
-    })
-  }
+      phone: e.target.value,
+    });
+  };
 
   setEmail = (e) => {
     this.setState({
-      email: e.target.value
-    })
-  }
+      email: e.target.value,
+    });
+  };
 
   setDescription = (e) => {
     this.setState({
-      description: e.target.value
-    })
-  }
+      description: e.target.value,
+    });
+  };
 
   submit = () => {
     alert(`
@@ -173,28 +155,25 @@ class ConsultFormController extends React.Component {
       ${this.phone}
       ${this.email}
       ${this.description}
-    `)
-  }
+    `);
+  };
 }
 
-export default ConsultFormController
+export default ConsultFormController;
 ```
 
 That’s it! Now you can just import the controller and use it anywhere and anytime you want, without having to deal with the hustle of maintaining a complex machine generated Webflow code; and any time you update the design just update your code using the `appfairy` command.
 
-
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/0*jCE2BBPMnd7LI769.gif?raw=true)
 
 > _Above: An example usage of an Appfairy generated React component_
->
 
 References:
 
--   The full app’s source code can be [found here](https://github.com/DAB0mB/Appfairy/tree/master/examples/prefetch).
+- The full app’s source code can be [found here](https://github.com/DAB0mB/Appfairy/tree/master/examples/prefetch).
 
--   For an in-depth tutorial check out [this video](https://youtu.be/6hJe6pZld0o).
+- For an in-depth tutorial check out [this video](https://youtu.be/6hJe6pZld0o).
 
--   API docs can be found in [the official Github repo](https://github.com/DAB0mB/Appfairy).
-
+- API docs can be found in [the official Github repo](https://github.com/DAB0mB/Appfairy).
 
 Have fun designing/coding 🙂

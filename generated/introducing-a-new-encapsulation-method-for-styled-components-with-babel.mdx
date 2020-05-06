@@ -1,18 +1,18 @@
-
-import withPost from "../../ui/blog/post";
+import withPost from '../../ui/blog/post';
 
 export const meta = {
-  title: "<💅> Introducing a new encapsulation method for Styled-Components with Babel",
+  title:
+    '<💅> Introducing a new encapsulation method for Styled-Components with Babel',
   tags: [],
-  date: "2019-3-4",
-  description: "TODO:",
-  image: "https://github.com/the-guild-org/oneblog/blob/master/img/704/1*mlEERn6nS_ulsxBbXjfMng.png",
+  date: '2019-3-4',
+  description: 'TODO:',
+  image:
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*mlEERn6nS_ulsxBbXjfMng.png',
 };
-      
-export default withPost({ ...meta });
-  
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*mlEERn6nS_ulsxBbXjfMng.png?raw=true "babel-plugin-scoped-styled-components")
+export default withPost({ ...meta });
+
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*mlEERn6nS_ulsxBbXjfMng.png?raw=true 'babel-plugin-scoped-styled-components')
 
 # \<💅> Introducing a new encapsulation method for Styled-Components with Babel
 
@@ -20,27 +20,26 @@ export default withPost({ ...meta });
 
 [Styled-Components](https://www.styled-components.com/) has brought something new to the table when in was first introduced and is one of the most popular CSS-related libraries out there with over 20k stars on GitHub. Style encapsulation has always been an issue in the web world, and people tried to solve it in many ways, of which [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM) and [Angular’s emulated view encapsulation](https://angular.io/api/core/ViewEncapsulation).
 
-
 I like the approach of Styled-Components, mostly because it’s compatible with React which seems to be the leading UI library in the echo system as for now, but also because of how nicely it sits in the virtual DOM tree.
 
 For those who aren’t familiar with Styled-Components, here’s a quick example of how you would apply style on a React.Component:
 
 ```jsx
-const Button = styled.button `
+const Button = styled.button`
   border-radius: 999px;
-`
+`;
 
-const RedButton = styled(Button) `
+const RedButton = styled(Button)`
   color: red;
-`
+`;
 
-const GreenButton = styled(Button) `
+const GreenButton = styled(Button)`
   color: green;
-`
+`;
 
-const BlueButton = styled(Button) `
+const BlueButton = styled(Button)`
   color: blue;
-`
+`;
 
 const Dashboard = (
   <div>
@@ -48,22 +47,20 @@ const Dashboard = (
     <GreenButton />
     <BlueButton />
   </div>
-)
+);
 ```
 
 However, as good as it is, there are some major drawbacks for creating a dedicated component for each styled element:
 
--   It’s longer to write than defining a class.
--   It’s less efficient, because it has to go through the rendering phase of React.
--   It breaks the HTML naming conventions and we can’t differentiate between a regular element and a React.Component anymore.
--   IMHO, combining multiple styles with Styled-Components mixins is less elegant and not as easy as specifying multiple classes per single element (see [issue on GitHub as reference](https://github.com/styled-components/styled-components/issues/773)).
-
+- It’s longer to write than defining a class.
+- It’s less efficient, because it has to go through the rendering phase of React.
+- It breaks the HTML naming conventions and we can’t differentiate between a regular element and a React.Component anymore.
+- IMHO, combining multiple styles with Styled-Components mixins is less elegant and not as easy as specifying multiple classes per single element (see [issue on GitHub as reference](https://github.com/styled-components/styled-components/issues/773)).
 
 When I was writing the [WhatsApp-Clone](https://github.com/Urigo/WhatsApp-Clone-Client-React) I used a different approach to overcome the problems mentioned above. Instead of creating a dedicated component for each styled element, I used a container that has all the CSS rules with private classes. By private classes I mean, classes which start with an underscore (e.g. `_my-class`). This way I’m less likely to collide globally defined CSS rules:
 
-
 ```jsx
-const DashboardStyle = styled.div `
+const DashboardStyle = styled.div`
   ._btn {
     border-radius: 999px;
   }
@@ -79,7 +76,7 @@ const DashboardStyle = styled.div `
   ._blue-btn {
     color: blue;
   }
-`
+`;
 
 const Dashboard = (
   <DashboardStyle>
@@ -87,7 +84,7 @@ const Dashboard = (
     <button className="_btn _green-btn" />
     <button className="_btn _blue-btn" />
   </DashboardStyle>
-)
+);
 ```
 
 As much as I love this approach, it doesn’t achieve full encapsulation. A nested child component which has a similar class selector as its parent will result in a merged style, which is not necessarily what we want. Each component should leave independently of its ancestors, which is what Styled-Components are all about.
@@ -99,23 +96,23 @@ Indeed, this problem is solvable with a transpiler. Not only we can achieve full
 So by loading a single plug-in, the recent code snippet I just showed you would be transformed into the following code:
 
 ```jsx
-const DashboardStyle = styled.div `
-  .${props => props.__scopename}-btn {
+const DashboardStyle = styled.div`
+  .${(props) => props.__scopename}-btn {
     border-radius: 999px;
   }
 
-  .${props => props.__scopename}-red-btn {
+  .${(props) => props.__scopename}-red-btn {
     color: red;
   }
 
-  .${props => props.__scopename}-green-btn {
+  .${(props) => props.__scopename}-green-btn {
     color: green;
   }
 
-  .${props => props.__scopename}-blue-btn {
+  .${(props) => props.__scopename}-blue-btn {
     color: blue;
   }
-`
+`;
 
 const Dashboard = (
   <DashboardStyle __scopename="__scope0">
@@ -123,27 +120,24 @@ const Dashboard = (
     <button className="__scope0-green-btn" />
     <button className="__scope0-blue-btn" />
   </DashboardStyle>
-)
+);
 ```
 
 I also thought of creating a runtime wrapper around Styled-Components where I basically iterate through `props.children` and edit their class names, but there are some advantages for using an AOT compiler over a runtime solution:
 
+- You don’t have to import a library different than `styled-components` and it’s easily integratable with existing projects.
 
--   You don’t have to import a library different than `styled-components` and it’s easily integratable with existing projects.
-
--   It’s more efficient.
--   Encapsulation can be done based on the module you’re currently at and not based on the virtual DOM tree. This behavior is not craved in stone as it can be easily modified by specifying certain attributes, but at-least the option is there.
--   It’s more strict and declarative.
+- It’s more efficient.
+- Encapsulation can be done based on the module you’re currently at and not based on the virtual DOM tree. This behavior is not craved in stone as it can be easily modified by specifying certain attributes, but at-least the option is there.
+- It’s more strict and declarative.
 
 The source code is available on [GitHub](https://github.com/DAB0mB/babel-plugin-scoped-styled-components), or it can be downloaded via NPM (or Yarn):
-
 
 ```
 $ npm install babel-plugin-scoped-styled-components
 ```
 
 Once you install it, be sure to load it in your `.babelrc`:
-
 
 ```
 {
@@ -152,7 +146,6 @@ Once you install it, be sure to load it in your `.babelrc`:
 ```
 
 I’m aware that there are certain limitations to that approach as for now, but I would like to see more interest and contribution before I continue any further with the development. Please share your thoughts everyone, let me know what do you think by commenting below or by [opening an issue on GitHub](https://github.com/DAB0mB/babel-plugin-scoped-styled-components/issues).
-
 
 ```backmatter
 {"source":"medium","postId":"bec5cbb671dd","publishedDate":1551715188900,"url":"https://medium.com/the-guild/introducing-a-new-encapsulation-method-for-styled-components-with-babel-bec5cbb671dd"}

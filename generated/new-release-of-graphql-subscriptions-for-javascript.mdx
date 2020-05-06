@@ -1,31 +1,26 @@
-
-import withPost from "../../ui/blog/post";
+import withPost from '../../ui/blog/post';
 
 export const meta = {
-  title: "New release of GraphQL Subscriptions for Javascript",
+  title: 'New release of GraphQL Subscriptions for Javascript',
   tags: [],
-  date: "2017-2-17",
-  description: "TODO:",
-  image: "",
+  date: '2017-2-17',
+  description: 'TODO:',
+  image: '',
 };
-      
+
 export default withPost({ ...meta });
-  
 
 ## Lifecycle events, async configuration, MQTT/Redis integrations and feedback from the community
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*OI8unw4F2B2NF37jeRaypw.png?raw=true "Try it today from npm!")
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*OI8unw4F2B2NF37jeRaypw.png?raw=true 'Try it today from npm!')
 
 GraphQL subscriptions are a way to add realtime data streaming to your GraphQL API. Yesterday, we wrote about an exciting new development for the community: [the new RFC to add GraphQL subscriptions to the spec](https://dev-blog.apollodata.com/the-next-step-for-realtime-data-in-graphql-b564b72eb07b#.1dax8i99c). Today, we’ll talk about the new versions we recently released for our GraphQL subscriptions implementation, and the work we’ve done to get to this exciting place.
-
 
 ## Where subscriptions started
 
 On the Apollo team, we’ve been passionate about realtime data in GraphQL, and subscriptions in particular, for a long time. We [released the first version of our GraphQL subscriptions library](https://dev-blog.apollodata.com/graphql-subscriptions-in-apollo-client-9a2457f015fb#.lg5kcvr7u), which was the start of our exploration, almost 6 months ago in September.
 
-
 While we initially launched this as a feature for Apollo Client, we quickly realized there was a lot of demand for this across the community, so we put together [a proposal for a subscriptions architecture](https://dev-blog.apollodata.com/a-proposal-for-graphql-subscriptions-1d89b1934c18) that could work with any client or server.
-
 
 Since then, we’ve been hard at work improving the implementation libraries, using GraphQL subscriptions internally and getting feedback from the community.
 
@@ -33,17 +28,16 @@ Since then, we’ve been hard at work improving the implementation libraries, us
 
 In this post I want to talk about the latest releases:
 
--   [graphql-subscriptions](https://github.com/apollographql/graphql-subscriptions) 0.3.0
+- [graphql-subscriptions](https://github.com/apollographql/graphql-subscriptions) 0.3.0
 
--   [subscriptions-transport-ws](https://github.com/apollographql/subscriptions-transport-ws) 0.5.0
-
+- [subscriptions-transport-ws](https://github.com/apollographql/subscriptions-transport-ws) 0.5.0
 
 These releases included lots of merged PRs and issues fixed from community members who use GraphQL subscriptions in production. We put most of the effort into areas where we had received a lot of feedback from the community:
 
--   Improvements for authorization flows
--   More lifecycle hooks for the client, giving more control and expression with the connection
--   Improved websockets implementation
--   Integration with the MQTT protocol in addition to Redis
+- Improvements for authorization flows
+- More lifecycle hooks for the client, giving more control and expression with the connection
+- Improved websockets implementation
+- Integration with the MQTT protocol in addition to Redis
 
 The goal was to make a flexible implementation while keeping the app-specific code easier. On top of that, we wanted to create smaller and more modular package by splitting the subscriptions client and subscriptions server into separate bundles.
 
@@ -53,11 +47,9 @@ One of the features most requested by the community was more lifecycle events to
 
 With the new version of [subscriptions-transport-ws](https://github.com/apollographql/subscriptions-transport-ws) you can subscribe for client lifecycle events: _connect_, _disconnect_, and _reconnect_.
 
-
 This gives client developers the ability to respond to those network changes. For example, you can let the user know the app is offline, clear state after logout, disconnect the websocket, or initiate a retry after the connection has reconnected.
 
 The new version also adds server lifecycle events: _connect_, _disconnect_, _subscribe_, and _unsubscribe_.
-
 
 This gives the server developer easier control over authentication logic and the ability to clean up state on the client if the server decides to terminate the connection.
 
@@ -65,14 +57,11 @@ This gives the server developer easier control over authentication logic and the
 
 In addition to independent life cycle events, in the new version of [subscriptions-transport-ws](https://github.com/apollographql/subscriptions-transport-ws), we added a new type of WebSocket message, called `INIT` , which gives developers the ability to pass custom arguments from the client to the server. You can think of this as a way to pass information would have been a header in HTTP.
 
-
 Using this new type of message, you can create an authorized WebSocket by passing your authorization data in the initial request and writing code that accepts or rejects the connection before accepting subscriptions from the client using the `onConnect` callback.
-
 
 The following example creates a GraphQL subscriptions client and server, using the new initialization feature and lifecycle events:
 
 ## **client.js**
-
 
 ```
 import { SubscriptionClient } from ‘subscriptions-transport-ws’;
@@ -107,7 +96,6 @@ wsClient.subscribe({ query: `...` }, (errors, result) => {
 
 ## **server.js**
 
-
 ```
 import { SubscriptionManager, PubSub } from ‘graphql-subscriptions’;
 import { SubscriptionServer } from ‘subscriptions-transport-ws’;
@@ -133,7 +121,7 @@ const subscriptionServer = new SubscriptionServer({
     const user = await validateUser(authToken);
     if (!user) {
       throw new Error(‘Unauthorized!’);
-    } else { 
+    } else {
       // The returned value will be part of the `context`
       // for the filter functions and resolvers
       return {
@@ -152,40 +140,33 @@ We also did some code refactor and made the API more flexible. For example, you 
 
 Also, there is now a `addGraphQLSubscriptions` method in the client side bundle of [subscriptions-transport-ws](https://github.com/apollographql/subscriptions-transport-ws) so that developers using Apollo Client no longer need to write this code every time. This method allows you to extend your Apollo network interface to execute GraphQL subscriptions over the WebSocket transport, while using the regular network interface for queries and mutations.
 
-
 We updated our implementation to use the [ws](https://www.npmjs.com/package/ws) package for the server side websocket implementation. This means you can also use the client if your subscriptions client is in a server-side NodeJS environment (in browser environment, it’s better to use the native implementation of your browser).
 
-
 The new `ws` dependency is much [faster](http://websockets.github.io/ws/benchmarks.html) than our previous websocket library. It’s also smaller library and adds less overhead over the websocket standard, which means it’s easier to abstract out and change the implementation if you need to.
-
 
 # MQTT and Redis support
 
 [graphql-subscriptions](https://github.com/apollostack/graphql-subscriptions) package exports a default in-process pub/sub implementation, but for the best result in production it’s better to use an external pub/sub product, such as Redis or an MQTT service.
 
-
 We worked with David Yahalomi to create the [graphql-redis-subscriptions](https://github.com/davidyaha/graphql-redis-subscriptions) and [graphql-mqtt-subscriptions](https://github.com/davidyaha/graphql-mqtt-subscriptions) packages, which can be easily dropped in as a replacement for the default PubSub object without making any changes to the rest of your code. Using an external pub/sub system gives you more publication features — such as persistence, caching, delivery guarantees and other optimizations.
-
 
 # What’s next
 
 Though we’ve been working on subscriptions for a while, there’s still a lot to be done. In the near future, we’re going to be making the experience of using GraphQL subscriptions a lot better:
 
--   **GraphQL subscriptions specification.** Sashko Stubailo has been [working closely](https://dev-blog.apollodata.com/the-next-step-for-realtime-data-in-graphql-b564b72eb07b#.1dax8i99c) with the GraphQL team from Facebook to add subscriptions to the official spec. We’re incorporating the lessons we learned from using subscriptions in production and the feedback we hear from the community.
+- **GraphQL subscriptions specification.** Sashko Stubailo has been [working closely](https://dev-blog.apollodata.com/the-next-step-for-realtime-data-in-graphql-b564b72eb07b#.1dax8i99c) with the GraphQL team from Facebook to add subscriptions to the official spec. We’re incorporating the lessons we learned from using subscriptions in production and the feedback we hear from the community.
 
--   **Documentation.** We are working on adding more documentation to our official docs site about how to add subscriptions to your app. In the meantime, the best place to read and learn about setting up GraphQL subscriptions are the [readme](https://github.com/apollographql/graphql-subscriptions/blob/master/README.md) [files](https://github.com/apollographql/subscriptions-transport-ws/blob/master/README.md) of the libraries and the [GitHunt example](https://github.com/apollographql/?utf8=%E2%9C%93&q=githunt&type=&language=) apps. **Update**: check out our new docs for [Subscriptions with React](http://dev.apollodata.com/react/subscriptions.html) and [Subscriptions with GraphQL Server](http://dev.apollodata.com/tools/graphql-subscriptions/index.html)
+- **Documentation.** We are working on adding more documentation to our official docs site about how to add subscriptions to your app. In the meantime, the best place to read and learn about setting up GraphQL subscriptions are the [readme](https://github.com/apollographql/graphql-subscriptions/blob/master/README.md) [files](https://github.com/apollographql/subscriptions-transport-ws/blob/master/README.md) of the libraries and the [GitHunt example](https://github.com/apollographql/?utf8=%E2%9C%93&q=githunt&type=&language=) apps. **Update**: check out our new docs for [Subscriptions with React](http://dev.apollodata.com/react/subscriptions.html) and [Subscriptions with GraphQL Server](http://dev.apollodata.com/tools/graphql-subscriptions/index.html)
 
--   **Making it easier to use subscriptions with Apollo Client.** We [plan to improve](https://github.com/apollographql/apollo-client/issues/1224) \`updateQuery\` and \`updateQueries\` and expose a simpler, yet flexible, API for updating the store when data arrives from subscriptions.
+- **Making it easier to use subscriptions with Apollo Client.** We [plan to improve](https://github.com/apollographql/apollo-client/issues/1224) \`updateQuery\` and \`updateQueries\` and expose a simpler, yet flexible, API for updating the store when data arrives from subscriptions.
 
--   **Real-life case studies.** Many of the improvements described in this post came from working on our internal apps that use these libraries, while also getting feedback from developers in the community who are using subscriptions in production. We’re going to tell that story in more detail soon.
-
+- **Real-life case studies.** Many of the improvements described in this post came from working on our internal apps that use these libraries, while also getting feedback from developers in the community who are using subscriptions in production. We’re going to tell that story in more detail soon.
 
 We’re going to write many more blog posts about those experiences and lessons we learned from using GraphQL subscriptions in production. Make sure to follow our publication so you won’t miss it!
 
 ---
 
 We also want to hear more from you! Try out GraphQL subscriptions with our libraries and tell us what we should do next, and where we can best improve! And if you are _really_ interested in GraphQL subscriptions and real-time features, did you know [we’re hiring](https://www.meteor.com/careers#open-source-engineer)?
-
 
 ```backmatter
 {"source":"medium","postId":"f11be19e6569","publishedDate":1487355315387,"url":"https://blog.apollographql.com/new-release-of-graphql-subscriptions-for-javascript-f11be19e6569"}

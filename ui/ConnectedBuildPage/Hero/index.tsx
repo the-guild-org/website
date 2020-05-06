@@ -22,9 +22,9 @@ export const Hero: React.FunctionComponent = () => {
   return (
     <Container>
       <BackgroundVideo
-        image='/static/hero.jpg'
-        src='/static/hero.webm'
-        type='video/webm'
+        image="/static/hero.jpg"
+        src="/static/hero.webm"
+        type="video/webm"
       />
       <Menu />
       <Title text="We're Proud to Present" />

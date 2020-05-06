@@ -14,15 +14,15 @@ const ConnectedBuildPage: React.FunctionComponent = () => {
   return (
     <ThemeProvider theme={THEME}>
       <ThemeConsumer>
-        {theme => {
+        {(theme) => {
           return (
             <>
               <Head>
                 <title>Connected Build - The Guild</title>
-                <meta name='theme-color' content={theme.background.color} />
+                <meta name="theme-color" content={theme.background.color} />
                 <meta
-                  name='Description'
-                  content='Connected Build - The Guild'
+                  name="Description"
+                  content="Connected Build - The Guild"
                 />
               </Head>
               <Background>

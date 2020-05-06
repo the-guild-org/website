@@ -6,12 +6,12 @@ import { Form } from './Form';
 export const Contact: React.FunctionComponent = () => {
   return (
     <Section
-      on='right'
-      anchor='contact'
-      subtitle='Join the revolution'
-      description='Get real money for your work instead of relying on charity.'
+      on="right"
+      anchor="contact"
+      subtitle="Join the revolution"
+      description="Get real money for your work instead of relying on charity."
       title="Open Source Maintainer?"
-      highlight='Maintainer'
+      highlight="Maintainer"
     >
       <Form />
     </Section>

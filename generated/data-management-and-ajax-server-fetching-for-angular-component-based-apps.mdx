@@ -1,30 +1,27 @@
-
-import withPost from "../../ui/blog/post";
+import withPost from '../../ui/blog/post';
 
 export const meta = {
-  title: "Data management and AJAX server fetching for Angular Component based apps",
+  title:
+    'Data management and AJAX server fetching for Angular Component based apps',
   tags: [],
-  date: "2016-9-9",
-  description: "TODO:",
-  image: "",
+  date: '2016-9-9',
+  description: 'TODO:',
+  image: '',
 };
-      
+
 export default withPost({ ...meta });
-  
 
 One of the most powerful concepts introduced by Angular 2 is the move to a Component based architecture.
 
 Components are pieces of UI and logic bound together into **reusable** and **self contained** units.
 
-
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*-xibJG0BNHwXZxEvOwadIQ.png?raw=true "Components in Angular 2 and data flow between them")
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*-xibJG0BNHwXZxEvOwadIQ.png?raw=true 'Components in Angular 2 and data flow between them')
 
 There are two important benefits about Components:
 
 1.  We can **reuse** Components throughout our apps
 
 1.  When something changes in the inner logic and UI of a Component, it **shouldn’t affect** the other Components outside of it
-
 
 Those are great benefits, but are they still valid when we start interacting with the server?
 
@@ -113,7 +110,6 @@ And that introduces an issue — What happens if now we need to get different da
 
 **Let’s look at an example of the issue,** we’ll use this Component tree as an example:
 
-
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*FBqKwp2v4wvhFEGYtUGDgg.jpeg?raw=true)
 
 and let’s say the we call a service on the parent \`FriendsList\` Component that fetches all the data for the Component tree.
@@ -124,23 +120,19 @@ Now let’s ask two simple questions:
 
 1.  **How do we reuse Component in a different place in our app and still fetch the data it needs?**
 
-
 **For the first question**, we will need to change the server endpoint to either:
 
-
--   Change the existing one to fetch the new data (might change other Components who use the same endpoint and service)
+- Change the existing one to fetch the new data (might change other Components who use the same endpoint and service)
 
 or
 
--   Add a new endpoint with the new data structure we want and change the service to support the new endpoint
+- Add a new endpoint with the new data structure we want and change the service to support the new endpoint
 
 In either of those solutions — Our Components are no longer **self contained**
 
-
 **As for the second question**, we would need to create or change the service to support the new Component tree that in under, making it **not reusable!**
 
-
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*zOY5GybNa8FxdBiLQCa9pw.png?raw=true "A diagram I stole from a talk (referenced at the end) that shows that if child component’s AJAX requirements has changed, it will change the whole tree and the server as well")
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*zOY5GybNa8FxdBiLQCa9pw.png?raw=true 'A diagram I stole from a talk (referenced at the end) that shows that if child component’s AJAX requirements has changed, it will change the whole tree and the server as well')
 
 ## Needed solution
 
@@ -154,16 +146,11 @@ So what do we need that is missing with current solutions:
 
 1.  We need an **API layer** that will bring us **new fields without changing** existing and exposing new endpoint
 
-
 ## Solution — GraphQL Client
 
 With GraphQL, we can **co-locate the server data requirements** for each Component, and then use a GraphQL Client like [angular2-apollo](https://github.com/apollostack/angular2-apollo) to handle the merging of those needs into one single request that gets exactly what we need.
 
-
 Let’s have a look:
-
-
-
 
 ```
 import { Component } from '@angular/core';
@@ -197,9 +184,6 @@ export class FriendsListComponent {
 }
 ```
 
-
-
-
 ```
 import { Component, Input } from '@angular/core';
 import { Angular2Apollo } from 'angular2-apollo';
@@ -211,7 +195,7 @@ const FriendItemQuery = gql`
       id
       is_viewer_friend
       profilePicture {
-        url      
+        url
       }
     }
   }
@@ -223,7 +207,7 @@ const FriendItemQuery = gql`
     <div>
       <img src="friend.profilePicture.url"/>
       <friend-info [friendId]="friend.id"></friend-info>
-      {{friend.is_viewer_friend}}       
+      {{friend.is_viewer_friend}}
     </div>
   `
 })
@@ -238,12 +222,9 @@ constructor(private  apollo: Angular2Apollo) {
       query: FriendItemQuery,
       variables: {id: this.friendId}
     });
-  }  
+  }
 }
 ```
-
-
-
 
 ```
 import { Component, Input } from '@angular/core';
@@ -256,7 +237,7 @@ const FriendInfoQuery = gql`
       id
       name
       mutual_friends {
-        count      
+        count
       }
     }
   }
@@ -280,7 +261,7 @@ export class FriendInfoComponent {
       query: FriendInfoQuery,
       variables: {id: this.friendId}
     });
-  }  
+  }
 }
 ```
 
@@ -292,7 +273,6 @@ Now let’s get back to our original questions:
 
 1.  **How do we reuse Component in a different place in our app and still fetch the data it needs?**
 
-
 The answer now, is that you only need to change \<FriendInfo> Component itself and that’s it:
 
 ```
@@ -302,7 +282,7 @@ const FriendInfoQuery = gql`
       id
       name
       mutual_friends {
-        count      
+        count
       }
       age
     }
@@ -318,18 +298,17 @@ const FriendInfoQuery = gql`
   `
 })
 export class FriendInfoComponent {
-...  
+...
 }
 ```
 
 That’s it!
 
--   We don’t need to change any of its parent Components
--   We don’t need to change the API endpoint
--   We can move it around and reuse it in any Component tree
+- We don’t need to change any of its parent Components
+- We don’t need to change the API endpoint
+- We can move it around and reuse it in any Component tree
 
 It is now a true **reusable, self contained** Component.
-
 
 ## Summary
 
@@ -337,28 +316,23 @@ In this article I’ve tried to make the point that we should adjust our way of 
 
 It’s Important to note that those concepts and solutions are also true and valid in an **Angular 1.x** app that is Component based (and Apollo Client work with it as well).
 
-
 Also, an important point is that you can use this solution alongside your regular REST services and not instead of them, add it where it fits and make sense to you.
 
 > There are many more benefits for this type of architecture and more details about how we manage those queries and app state which I’ll touch on [later posts](https://medium.com/apollo-stack/)
->
 
 Here are few notable talks and resources about those techniques, some are for React but the concepts are still the same:
 
--   [Data fetching for React applications at Facebook](https://www.youtube.com/watch?v=9sc8Pyc51uU)
+- [Data fetching for React applications at Facebook](https://www.youtube.com/watch?v=9sc8Pyc51uU)
 
--   [Modernize your Angular apps with GraphQL](https://www.youtube.com/watch?v=qpGnPbpkcZM&index=3&list=PLhCf3AUOg4PgQoY_A6xWDQ70yaNtPYtZd)
+- [Modernize your Angular apps with GraphQL](https://www.youtube.com/watch?v=qpGnPbpkcZM&index=3&list=PLhCf3AUOg4PgQoY_A6xWDQ70yaNtPYtZd)
 
--   [Angular2-Githunt example](https://github.com/apollostack/GitHunt-angular2)
-
+- [Angular2-Githunt example](https://github.com/apollostack/GitHunt-angular2)
 
 ---
 
 _To learn more about how Angular works with GraphQL, hear directly from Angular core team member Jeff Cross at the upcoming [GraphQL Summit](http://graphqlsummit.com) in San Francisco on October 26th!_
 
-
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*LJ-QIT-8DRycuYjPnQnkvA.png?raw=true)
-
 
 ```backmatter
 {"source":"medium","postId":"70aedb98244b","publishedDate":1473444565891,"url":"https://blog.apollographql.com/data-management-and-ajax-server-fetching-for-angular-components-70aedb98244b"}

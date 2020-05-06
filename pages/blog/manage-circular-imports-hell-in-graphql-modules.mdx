@@ -1,74 +1,69 @@
-
-import withPost from "../../ui/blog/post";
+import withPost from '../../ui/blog/post';
 
 export const meta = {
-  title: "Manage Circular Imports Hell in GraphQL-Modules",
+  title: 'Manage Circular Imports Hell in GraphQL-Modules',
   tags: [],
-  date: "2019-3-18",
-  description: "TODO:",
-  image: "https://github.com/the-guild-org/oneblog/blob/master/img/704/0*GtvTnhPxwZKLWiO1.png?raw=true",
+  date: '2019-3-18',
+  description: 'TODO:',
+  image:
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/0*GtvTnhPxwZKLWiO1.png?raw=true',
 };
-      
+
 export default withPost({ ...meta });
 
 Designing and building modular GraphQL API may not look straight-forward the first time you start. It is hard to keep a perfect modularity with standalone and encapsulated modules.
 
 It is really easy to appeal to the circular imports, but that’s exactly what you shouldn’t do in any case. You might say while reading this; **_I DON’T HAVE ANY WAY OF NOT CREATING CIRCULAR IMPORTS_**!
 
-
 In a previous versions of GraphQL-Modules, we used to allow users to have circular imports in their GraphQL-Modules applications. However, it created a lot of extra logic which slows down the initial schema generation speed, because we always need to check if there is circular imports between modules.
 
 Then, if GraphQL-Modules found some, it would **merge** all the members of this **circular import** into a one **LARGE MODULE** which was **breaking almost every principle of encapsulation and modularity** we mentioned in previous blog-posts of our GraphQL-Modules series.
 
-
 Finally, we decided to **remove this** support; then **force** people to have **strict modularity** in their projects.
 
-
-[https://medium.com/the-guild/why-is-true-modular-encapsulation-so-important-in-large-scale-graphql-projects-ed1778b03600](https://medium.com/the-guild/why-is-true-modular-encapsulation-so-important-in-large-scale-graphql-projects-ed1778b03600 "Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?
-How GraphQL Modules helps you encapsulate the different parts of your code, so it will be easier to manage when your…medium.com")
+[https://medium.com/the-guild/why-is-true-modular-encapsulation-so-important-in-large-scale-graphql-projects-ed1778b03600](https://medium.com/the-guild/why-is-true-modular-encapsulation-so-important-in-large-scale-graphql-projects-ed1778b03600 'Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?
+How GraphQL Modules helps you encapsulate the different parts of your code, so it will be easier to manage when your…medium.com')
 
 Forcing people out of a way of developing is always hard and we’ve got [questions from you](https://github.com/Urigo/graphql-modules/issues/317) about how to solve some specific issues — so in this blog post and new doc section we will help you understand why this was a bad practice and how to migrate from it with different use cases.
-
 
 ## The Problem
 
 Let’s assume we have 3 different entities in our database;
 
--   User
--   Post
--   Comment
+- User
+- Post
+- Comment
 
 Then, if we create three different modules for these three entities;
 
 ```graphql
 type User {
- id: ID
- name: String
- username: String
- email: String
- ## Some other fields
- posts: [Post]
- comments: [Comment]
+  id: ID
+  name: String
+  username: String
+  email: String
+  ## Some other fields
+  posts: [Post]
+  comments: [Comment]
 }
 ```
 
 ```graphql
 type Post {
- id: ID
- title: String
- content: String
- user: User
- comments: [Comment]
+  id: ID
+  title: String
+  content: String
+  user: User
+  comments: [Comment]
 }
-
 ```
 
 ```graphql
 type Comment {
- id: ID
- content: String
- user: User
- post: Post
+  id: ID
+  content: String
+  user: User
+  post: Post
 }
 ```
 
@@ -82,9 +77,7 @@ You might ask if this is the only way to implement modules for these entities; b
 
 Let’s see what we have in terms of relationship; - `User` doesn’t depend on `Post` and `Comment` - `Post` doesn’t depend on `Comment`.
 
-
 \- `Comment` depends on `User` and `Post`, because it has `userId` and `postId` fields - `Post` also depends on `User` because it has `userId` field
-
 
 So let’s create modules in that way,
 
@@ -126,10 +119,8 @@ extend type User {
 ```
 
 > Using this approach, you will have standalone modules; otherwise will create a big module which contains all of them like we used to handle circular deps in this way (**merging all circular imports**).
->
 
 Also `extend` says that it needs a main definition from imported modules which makes the connection more readable in terms of entity relations.
-
 
 ---
 

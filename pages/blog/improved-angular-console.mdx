@@ -1,40 +1,35 @@
-
-import withPost from "../../ui/blog/post";
+import withPost from '../../ui/blog/post';
 
 export const meta = {
-  title: "How I helped improve Angular Console",
+  title: 'How I helped improve Angular Console',
   tags: [],
-  date: "2018-11-30",
-  description: "TODO:",
-  image: "https://github.com/the-guild-org/oneblog/blob/master/img/704/1*xBk9L_j521FRuqLTLjyFkg@2x.png?raw=true",
+  date: '2018-11-30',
+  description: 'TODO:',
+  image:
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*xBk9L_j521FRuqLTLjyFkg@2x.png?raw=true',
 };
-      
+
 export default withPost({ ...meta });
-  
 
 ## By doing GraphQL right
 
 In this guest blog post by Kamil Kisiela for the [blog of Nrwl](https://blog.nrwl.io/) , Kamil covers the topic of the new Angular Console product. Nrwl is an Angular consulting, training and developer product firm.
 
-_If you like this, click the_ 👏 s_o other people will see it. Follow [@​nrwl_io](https://medium.com/@nrwl_io) to read more!_
+_If you like this, click the_ 👏 s*o other people will see it. Follow [@​nrwl_io](https://medium.com/@nrwl_io) to read more!*
 
 Did you know that **Angular Console** uses **GraphQL** under the hood? I want to tell about how it used it and how I helped to improve it because that might be useful for people trying to implement GraphQL in their applications, both on client and server.
 
-
 > [Angular Console](http://angularconsole.com) is a user interface for Angular CLI created by [Nrwl](http://medium.com/nrwl), supported by [Angular](http://medium.com/angular-blog) team. It’s widely used in Angular Community.
->
 >
 > I will link to the PRs I’ve made to Angular Console throughout the article so you could see everything I recommend in practice.
 
 After reading [the announcement](https://blog.nrwl.io/angular-console-the-ui-for-the-angular-cli-a5d0924240b7) of **Angular Console** I got very excited about the tool and immediately decided to explore the codebase. I noticed **Electron** and that the project is based on **Angular CLI** and Nrwl’s **NX**.
-
 
 That’s super cool but what I found the most interesting was
 
 > ### GraphQL.
 
 As a freelancer, I work on daily basis with [The Guild](http://medium.com/the-guild). Most of our projects are built with GraphQL. Throughout the 3 years of adopting it, our team **tested practices and developed open source tools that helped to improve our workflow**.
-
 
 So when I saw the first implementation, I thought it would be nice to share some ideas and implement some code that might help to improve the GraphQL part of Angular Console.
 
@@ -44,17 +39,13 @@ So when I saw the first implementation, I thought it would be nice to share some
 
 I was hoping to find [**Apollo Angular**](https://github.com/apollographql/apollo-angular) as one of dependencies. I might be a bit bias as the author of that library but our team used it in all of our angular based projects with huge success.
 
-
 > KLM and AirFrance runs on Apollo Angular
 
 Okay, but just like in REST, you don’t need sophisticated tools to communicate with the API. Simple `fetch` or Angular’s `HttpClient` is far enough. Why then the GraphQL client?
 
-
 Having a client, like Apollo, allows you to easily execute GraphQL operations and by having a cache layer, fetched data stays consistent across all components. Dhaivat Pandya explains it well in his [_“Why you might want a GraphQL client_](https://blog.apollographql.com/why-you-might-want-a-graphql-client-e864050f789c)_” post_.
 
-
 Apollo has a comprehensive [documentation](https://www.apollographql.com/docs/angular/) that covers a lot of use cases and I highly recommend to read it.
-
 
 ---
 
@@ -62,9 +53,8 @@ Apollo has a comprehensive [documentation](https://www.apollographql.com/docs/an
 
 Angular Console used an old way of initializing Apollo. In one of the recent versions of Apollo Angular I introduced `APOLLO_OPTIONS`, an InjectionToken that provides a configuration object to Apollo service. The old API caused an issue with a race condition where a service tried to use Apollo before it got created.
 
-
-[https://github.com/nrwl/angular-console/pull/158](https://github.com/nrwl/angular-console/pull/158 "Use APOLLO_OPTIONS by kamilkisiela · Pull Request #158 · nrwl/angular-console
-Hi guys, thanks for using Apollo! :) I refactored a bit the way you initialize Apollo. There’s a InjectionToken for it…github.com")
+[https://github.com/nrwl/angular-console/pull/158](https://github.com/nrwl/angular-console/pull/158 'Use APOLLO_OPTIONS by kamilkisiela · Pull Request #158 · nrwl/angular-console
+Hi guys, thanks for using Apollo! :) I refactored a bit the way you initialize Apollo. There’s a InjectionToken for it…github.com')
 
 That was the first, very small PR. Next PR brought more changes and was focused only on the server.
 
@@ -72,25 +62,23 @@ That was the first, very small PR. Next PR brought more changes and was focused 
 
 I replaced `express-graphql` with a more complete solution, Apollo Server. This move helped to improve developer experience by having a **built-in support for GraphQL Subscription**, file uploading and error handling. I’m pretty sure the team behind Angular Console have plans to take advantage of it and implement subscriptions in the app, for example to replace currently used polling technique.
 
-
 ## Schema Definition Language
 
 SDL, in short, is a syntax that allows to define GraphQL Schema, so instead of using GraphQL’s API, you simply write everything as string.
 
 For example, using `GraphQLObjectType` might look like this:
 
-
 ```typescript
 new GraphQLObjectType({
   name: 'Post',
   fields: {
     id: {
-      type: GraphQLString
+      type: GraphQLString,
     },
     text: {
-      type: GraphQLString
-    }
-  }
+      type: GraphQLString,
+    },
+  },
 });
 ```
 
@@ -111,20 +99,19 @@ In our projects, we try to group resolvers by GraphQL type and have them nearby 
 
 Having both, type definition and resolve functions in the `GraphQLObjectType` looks like that:
 
-
 ```typescript
 new GraphQLObjectType({
   name: 'Post',
   fields: {
     id: {
       type: GraphQLString,
-      resolve: (parent) => parent._id
+      resolve: (parent) => parent._id,
     },
     text: {
       type: GraphQLString,
-      resolve: (parent) => parent.content
-    }
-  }
+      resolve: (parent) => parent.content,
+    },
+  },
 });
 ```
 
@@ -142,19 +129,18 @@ const PostType = gql`
 
 const Post = {
   id: (parent) => parent._id,
-  text: (parent) => parent.content
+  text: (parent) => parent.content,
 };
 ```
 
 Here are the relevant changes that I’ve mentioned above, that allowed me to introduce something really interesting in the next PR.
 
-[https://github.com/nrwl/angular-console/pull/175](https://github.com/nrwl/angular-console/pull/175 "Apollo Server 2.0, latest Apollo Angular, refactoring, SDL by kamilkisiela · Pull Request #175 ·…
-Apollo Server 2.0 Latest Apollo Angular refactoring — moved files under /api directory used SDL instead of classes from…github.com")
+[https://github.com/nrwl/angular-console/pull/175](https://github.com/nrwl/angular-console/pull/175 'Apollo Server 2.0, latest Apollo Angular, refactoring, SDL by kamilkisiela · Pull Request #175 ·…
+Apollo Server 2.0 Latest Apollo Angular refactoring — moved files under /api directory used SDL instead of classes from…github.com')
 
 ## Strongly typed resolvers
 
 We love [TypeScript](https://typescriptlang.org) and we saw an opportunity to take our GraphQL servers to the next level. Instead of having `any` or defining interfaces for each resolver by hand, we decided to take advantage of one of our tools, called [GraphQL Code Generator](https://graphql-code-generator.com/) (thanks Dotan Simha for creating it).
-
 
 In short, it’s a tool to generate pretty much any piece of code, based on a GraphQL Schema. We use it a lot, mostly for types (server and client) but also to create MongoDB models, introspection files, Angular components and more.
 
@@ -167,7 +153,7 @@ import { PostResolvers } from './generated-types';
 
 const Post: PostResolvers.Resolvers = {
   id: (parent) => parent._id,
-  text: (parent) => parent.content
+  text: (parent) => parent.content,
 };
 ```
 
@@ -180,13 +166,13 @@ export interface PostParent {
 
 If you want to take a look at the changes and read about GraphQL Code Generator:
 
-[https://github.com/nrwl/angular-console/pull/185](https://github.com/nrwl/angular-console/pull/185 "Use code generation to generate types for resolver and whole schema by kamilkisiela · Pull Request…
-It makes resolvers strongly typed. You can also use it on the client side, to generate types for each GraphQL query and…github.com")
+[https://github.com/nrwl/angular-console/pull/185](https://github.com/nrwl/angular-console/pull/185 'Use code generation to generate types for resolver and whole schema by kamilkisiela · Pull Request…
+It makes resolvers strongly typed. You can also use it on the client side, to generate types for each GraphQL query and…github.com')
 
 We recently released another new version of the GraphQL Code Generator that fixed a lot of issues, introduced a feature called Mappers, made signatures of resolve functions more strict and handles multiple results in parallel.
 
-[https://github.com/nrwl/angular-console/pull/413](https://github.com/nrwl/angular-console/pull/413 "\[WIP] New GraphQL Code Generator by kamilkisiela · Pull Request #413 · nrwl/angular-console
-New GraphQL Code Generator We changed the API a bit. It’s no longer required to use — flags with CLI, the codegen…github.com")
+[https://github.com/nrwl/angular-console/pull/413](https://github.com/nrwl/angular-console/pull/413 '[WIP] New GraphQL Code Generator by kamilkisiela · Pull Request #413 · nrwl/angular-console
+New GraphQL Code Generator We changed the API a bit. It’s no longer required to use — flags with CLI, the codegen…github.com')
 
 The GraphQL Code Generator is one powerful beast that enables any kind of code generation based just on GraphQL Schema (you can create your own custom generation templates).
 
@@ -198,13 +184,12 @@ GraphQL in most cases allows to use a shorthand syntax but putting a type and a 
 
 Fetching data with Apollo Angular, requires few steps:
 
--   Import `Apollo` service
--   Inject the service in a component
--   Define GraphQL operation
--   Wrap the operation with the `gql` tag
--   Call `Apollo.watchQuery` with the operation
--   Get an `Observable` with data
-
+- Import `Apollo` service
+- Inject the service in a component
+- Define GraphQL operation
+- Wrap the operation with the `gql` tag
+- Call `Apollo.watchQuery` with the operation
+- Get an `Observable` with data
 
 That’s a lot, and in order to have everything strongly typed you even have to define extra interfaces that are specific for each operation.
 
@@ -225,9 +210,9 @@ interface PostQuery {
 export class PostComponent {
   @Input() postId: string;
   post: Observable<Post>;
-  
+
   constructor(private apollo: Apollo) {}
-  
+
   ngOnInit() {
     this.post = this.apollo.watchQuery<PostQuery>({
       query: gql`
@@ -254,20 +239,18 @@ I wanted to share with Angular Console, something that we use and what helped to
 
 One interesting thing that we’re able to achieve is the [`apollo-angular` code-generator plugin](https://graphql-code-generator.com/docs/plugins/typescript-apollo-angular).
 
-
 Its main purpose is to generate strongly typed services for each GraphQL operation. Take a look at the following scientific visualization:
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*m0Qci4KAiAjj075wn5PJLw.gif?raw=true "This is how magic happens.")
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*m0Qci4KAiAjj075wn5PJLw.gif?raw=true 'This is how magic happens.')
 
 Given the example I previously used, this is how it might look like with Apollo Angular plugin now.
 
--   Write a query in a `.graphql` file
--   Run the codegen _(has watch mode)_
--   Use a **fully typed generated Angular service** directly in your component
-
+- Write a query in a `.graphql` file
+- Run the codegen _(has watch mode)_
+- Use a **fully typed generated Angular service** directly in your component
 
 ```graphql
-query getPost ($id: String!) {
+query getPost($id: String!) {
   post(id: $id) {
     id
     text
@@ -281,12 +264,12 @@ import { GetPostGQL, Post } from './generated/graphql';
 @Component({...})
 export class PostComponent {
   @Input() postId: string;
-  post: Observable<Post>;  
-  
+  post: Observable<Post>;
+
   constructor(
    private getPostGQL: GetPostGQL
   ) {}
-  
+
   ngOnInit() {
     this.post = this.getPostGQL
       .watch({ id: this.postId })
@@ -302,22 +285,22 @@ As you can see, we no longer use Apollo service directly (it’s used under the 
 
 It wouldn’t be possible without introducing this new API. I highly recommend to read an article linked below, it explains what it is and how it could be used with the codegen.
 
-[https://medium.com/the-guild/apollo-angular-code-generation-7903da1f8559](https://medium.com/the-guild/apollo-angular-code-generation-7903da1f8559 "Apollo-Angular 1.2 — using GraphQL in your apps just got a whole lot easier!
-Check what’s new in Apollo Angular and how to get the full potential benefits of using Angular + GraphQL + TypeScript…medium.com")
+[https://medium.com/the-guild/apollo-angular-code-generation-7903da1f8559](https://medium.com/the-guild/apollo-angular-code-generation-7903da1f8559 'Apollo-Angular 1.2 — using GraphQL in your apps just got a whole lot easier!
+Check what’s new in Apollo Angular and how to get the full potential benefits of using Angular + GraphQL + TypeScript…medium.com')
 
 I also prepared an explanation video that might help you to learn step by step, what code generation is and how to use it in a project.
 
-[https://www.youtube.com/watch?v=KGBPODrjtKA](https://www.youtube.com/watch?v=KGBPODrjtKA "GraphQL Code Generator  -  Angular Apollo Template get the full potential benefits of using Angular + GraphQL + TypeScript combined thanks to GraphQL-Code-Generator. Generate a strongly typed Angular service, for every defined query, mutation or subscription, ready to use in your components!")
+[https://www.youtube.com/watch?v=KGBPODrjtKA](https://www.youtube.com/watch?v=KGBPODrjtKA 'GraphQL Code Generator  -  Angular Apollo Template get the full potential benefits of using Angular + GraphQL + TypeScript combined thanks to GraphQL-Code-Generator. Generate a strongly typed Angular service, for every defined query, mutation or subscription, ready to use in your components!')
 
 Here is the relevant PR introducing this change into Angular Console:
 
-[https://github.com/nrwl/angular-console/pull/219](https://github.com/nrwl/angular-console/pull/219 "Use GraphQL Code Generator and Apollo Angular template by kamilkisiela · Pull Request #219 ·…
-Adds apollo-angular template of GraphQL Code Generator to produce strongly typed services with more convenient API and…github.com")
+[https://github.com/nrwl/angular-console/pull/219](https://github.com/nrwl/angular-console/pull/219 'Use GraphQL Code Generator and Apollo Angular template by kamilkisiela · Pull Request #219 ·…
+Adds apollo-angular template of GraphQL Code Generator to produce strongly typed services with more convenient API and…github.com')
 
 ---
 
-[https://github.com/nrwl/angular-console/pull/263](https://github.com/nrwl/angular-console/pull/263 "Renovate by kamilkisiela · Pull Request #263 · nrwl/angular-console
-We use renovate in all of our projects, super helpful to update dependencies. One PR per monorepos, for example…github.com")
+[https://github.com/nrwl/angular-console/pull/263](https://github.com/nrwl/angular-console/pull/263 'Renovate by kamilkisiela · Pull Request #263 · nrwl/angular-console
+We use renovate in all of our projects, super helpful to update dependencies. One PR per monorepos, for example…github.com')
 
 ## Summary
 

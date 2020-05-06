@@ -1,16 +1,14 @@
-
-import withPost from "../../ui/blog/post";
+import withPost from '../../ui/blog/post';
 
 export const meta = {
-  title: "NodeJS Advanced — How to create a native add-on using C++",
+  title: 'NodeJS Advanced — How to create a native add-on using C++',
   tags: [],
-  date: "2017-5-8",
-  description: "TODO:",
-  image: "",
+  date: '2017-5-8',
+  description: 'TODO:',
+  image: '',
 };
-      
+
 export default withPost({ ...meta });
-  
 
 In this tutorial we gonna go through the basics on how to write a native add-on to NodeJS using C++, one of the platform’s most powerful capabilities of which most web/JS developers now a days are not even familiar with.
 
@@ -18,16 +16,13 @@ For somewhat there is a vacuum which got created around C++ in the recent years,
 
 We will create a very small and simple module which calculates the distance between two dots, it can do it either synchronously or asynchronously. The algorithm for calculating the distance between a given `pointA` and `pointB` in a 2D [Cartesian coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system) looks like this:
 
-
 ```
 √[(pointAX - pointBX)^2 + (pointAY - pointBY)^2]
 ```
 
 Probably not too complicated, kicks me back to the glamorous days in high-school. If put in JavaScript it should take around 10 seconds right? Well in a native NodeJS add-on it should be a bit longer. Of-course when it comes to small logics you shouldn’t make too much effort, because it will consume more power only converting all JS objects into C++ native structures. But imagine you would like to run a [blob-detection](https://en.wikipedia.org/wiki/Blob_detection) algorithm and you would like to calculate the [center of mass](https://en.wikipedia.org/wiki/Center_of_mass) of multiple blobs, in C++ it would be much faster, especially when using [shaders](https://en.wikipedia.org/wiki/Shader). Anyways that’s not the point of this tutorial, the point is that you will be provided with the necessary tools so next time if you would like to write some heavy logic, you will know how to do it.
 
-
-We will start with a brief introduction for Google’s [v8 engine](https://en.wikipedia.org/wiki/V8_(JavaScript_engine)) and some practical examples on how to use it, this will help us getting start, and then we will write our add-on. Let’s begin then shall we?
-
+We will start with a brief introduction for Google’s [v8 engine](<https://en.wikipedia.org/wiki/V8_(JavaScript_engine)>) and some practical examples on how to use it, this will help us getting start, and then we will write our add-on. Let’s begin then shall we?
 
 ---
 
@@ -37,17 +32,13 @@ We will start with a brief introduction for Google’s [v8 engine](https://en.wi
 
 The v8 JavaScript Engine is an open source JavaScript engine developed by The [Chromium Project](https://www.chromium.org/) for the [Google Chrome web browser](https://www.google.com/chrome/). It is intended to be used both in a browser and as a standalone high-performance engine that can be integrated into independent projects like [Couchbase](http://www.couchbase.com/), [MongoDB](https://www.mongodb.com/) and [Node.js](https://nodejs.org/). There lots of benchmarks out there but I will not bore you with diagrams, we all know that that this engine has proven itself to be worthy and it is being used world-widely and probably for a good reason.
 
-
 > _“Ambition is a dream with a v8 engine” -Elvis Presley._
->
 
 If you’re a JavaScript developer you must be familiar with the event-loop and the scoping system of v8, so it’s a good thing that you understand the concept, but you never got to actually look at its source code and explicitly use it. A detailed documentation for v8’s different API versions is available [here](https://v8docs.nodesource.com/). I assume that you don’t bother reading any of my references that I provide along this tutorial (As a lazy blog-reader myself), I will post here that first thing you gonna see once you enter v8’s documentation web-site:
-
 
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/0*8N8p0fg0MCipBfyW.jpg?raw=true)
 
 Throughout history v8 have changed a lot and it wore many forms. As a result, add-ons are not usable across different versions of the platform since each one supports a different API, which will break our process during run-time. In NodeJS team they came up with a very convenient solution called [Nan](https://github.com/nodejs/nan). Nan stands for “Native Abstractions for NodeJS” and is basically a header file filled with macro and utility goodness for making add-on development for NodeJS easier across all versions of v8, without inspecting `NODE_MODULE_VERSION` macro all the time. In this tutorial I'm gonna refer both of them as if they are bundled in a single framework.
-
 
 Eventually JavaScript is just a rehash of v8, everything you know so far is still valid but it uses a different idiom. To prevent some misconceptions, here are some important points regards JavaScript’s equivalents which I think you should follow:
 
@@ -55,9 +46,7 @@ Eventually JavaScript is just a rehash of v8, everything you know so far is stil
 
 In v8 a scope is referred as `Isolate` (`v8::Isolate`) and a variable is referred as `Local` (`v8::Local`). A local is a pointer to an object. All v8 objects are accessed using locals, they are necessary because of the way the v8 garbage collector works. An isolate can be thought of as a container for any number of locals. When you've finished with your locals, instead of deleting each one individually you can simply delete their scope.
 
-
 **JavaScript**
-
 
 ```
 let obj = {
@@ -74,7 +63,6 @@ console.log(obj.baz);
 ```
 
 **C++**
-
 
 ```
 using Nan::New;
@@ -105,9 +93,7 @@ cout << obj->Get(New<String>("baz").ToLocalChecked()) << cendl;
 
 Asynchronous logic can be implemented using the `AsyncWorker` (`Nan::AsyncWorker`) and invoked by `AsyncQueueWorker` (`Nan::AsyncQueueWorker`). Thanks to these two you can have much of the annoying asynchronous queuing and handling taken care of for you. It can even store arbitrary V8 objects for you and have them persist while the asynchronous work is in progress.
 
-
 **JavaScript**
-
 
 ```
 setImmediate(() => {
@@ -116,7 +102,6 @@ setImmediate(() => {
 ```
 
 **C++**
-
 
 ```
 using Nan::AsyncQueueWorker;
@@ -185,16 +170,13 @@ AsyncQueueWorker(new ResultWorker(callback));
 
 v8 and Nan provide us with some handy macros (`NODE_MODULE`, `NAN_MODULE_INIT`, `NAN_METHOD` and `NODE_SET_METHOD`) which will help us register a new NodeJS module and define its methods. This might be confusing for some, since we can't see the function's signature it would appear as if variables are just being magically created in the stack, but once the macros are being pre-processed they will just turn into ordinary functions. In the example below I commented the original signature so you can have more clew on what's going on.
 
-
 **JavaScript**
-
 
 ```
 exports.fn = (a, b) => a + b;
 ```
 
 **C++**
-
 
 ```
 using Nan::To;
@@ -228,9 +210,7 @@ NODE_MODULE(addon, Init);
 
 As you can see when dealing with v8 explicitly is a time consuming process which requires you to do lots of extra-work. With that said, keep in mind that only a small portion of your code is gonna interact with the engine since the core logic should be written using native C++ and other third-party libraries. You always need to find the right balance. Always make sure that your add-on doesn’t require too much data to be passed otherwise the conversion process is gonna be hard and inefficient, and think twice before you choose this approach for the sake of simplicity. Overall the estimated optimization should be around 150% and up, depends on the task, first check your JavaScript code snippet, check for unnecessary logic and optimize it, and if you’re really sure that it is fully optimized and you’re still striving for more performance, _only then_ move to C++.
 
-
 So far I went through the very basics which will help you create this bridge between the two platforms. The v8 lacks of detailed documentation, tutorials and examples. [Nan](https://github.com/nodejs/nan) however is a bit more documented IMHO, so when I approach the API documentation I would start from there, and if I didn’t find anything useful I would look at v8’s [latest API docs](https://v8docs.nodesource.com/). It’s not a hard material to learn but it’s different so it might be a bit challenging for some, but remember, practice practice practice.
-
 
 Speaking of practice, let’s move on to the next step where we gonna implement our first add-on for distance calculation between two points.
 
@@ -242,9 +222,7 @@ In this step we will base our development process on the TDD methodology, so you
 
 ## [Add test file](https://github.com/DAB0mB/node-distance-addon/commit/823f652)
 
-
 **Added .npmignore**
-
 
 ```
 ╔══════╗
@@ -254,7 +232,6 @@ In this step we will base our development process on the TDD methodology, so you
 ```
 
 **Added test.js**
-
 
 ```
 ╔══════╗
@@ -289,9 +266,7 @@ And the following NPM script should execute it:
 
 ## [Add npm test script](https://github.com/DAB0mB/node-distance-addon/commit/35b20fd)
 
-
 **Changed package.json**
-
 
 ```
 ╔══════╗
@@ -309,9 +284,7 @@ And the following NPM script should execute it:
 
 Like I said in the introduction, it’s a simple module which can calculate the distance between 2 given points. `calculate.sync` can do it synchronously and `calculate.async` can do it asynchronously. Now that you got the idea we will start configuring our add-on.
 
-
 The first thing you’ll need to do is to make sure that you have `node-gyp` installed:
-
 
 ```
 $ sudo npm install -g node-gyp
@@ -319,15 +292,11 @@ $ sudo npm install -g node-gyp
 
 `node-gyp` is also dependent on many other packages, so before you go any further please take a look at the official installation instructions in their [README.md file](https://github.com/nodejs/node-gyp).
 
-
 Assuming that you have installed everything properly, we will now need to create a `binding.gyp` file:
-
 
 ## [Create ‘binding.gyp’ file](https://github.com/DAB0mB/node-distance-addon/commit/ff44399)
 
-
 **Added binding.gyp**
-
 
 ```
 ╔══════╗
@@ -348,24 +317,19 @@ Assuming that you have installed everything properly, we will now need to create
 
 GYP stands for ‘Generate Your Project’ and was created by the Chromium team as a configuration file for building native projects. The configuration show above should be a good template for any future add-on you’re looking to develop. Let’s take a deeper look at it:
 
--   `target_name` - Specifies the output dir of our add-on, in which case it should be `build/Release/distance`.
+- `target_name` - Specifies the output dir of our add-on, in which case it should be `build/Release/distance`.
 
--   `sources` - Should include all the cpp files that are associated with you add-on.
+- `sources` - Should include all the cpp files that are associated with you add-on.
 
--   `include_dirs` - Additional dirs that should be included when building the add-on. If you'll run the given script in the terminal you'll get the node-module path for Nan, a library which we're interested in during the build process.
-
+- `include_dirs` - Additional dirs that should be included when building the add-on. If you'll run the given script in the terminal you'll get the node-module path for Nan, a library which we're interested in during the build process.
 
 More information about GYP configuration can be found [here](https://gyp.gsrc.io/docs/UserDocumentation.md).
 
-
 Be sure to also add the specified flag to the `package.json` which basically says 'Hey, I have a GYP file which should be taken into consideration as well':
-
 
 ## [Create ‘binding.gyp’ file](https://github.com/DAB0mB/node-distance-addon/commit/ff44399)
 
-
 **Changed package.json**
-
 
 ```
 ╔══════╗
@@ -382,12 +346,9 @@ Be sure to also add the specified flag to the `package.json` which basically say
 
 Now we will add the following NPM scripts so whenever we run `npm run build` our project will be built:
 
-
 ## [Add npm build scripts](https://github.com/DAB0mB/node-distance-addon/commit/a9a8815)
 
-
 **Changed .gitignore**
-
 
 ```
 ╔══════╗
@@ -398,7 +359,6 @@ Now we will add the following NPM scripts so whenever we run `npm run build` our
 ```
 
 **Changed package.json**
-
 
 ```
 ╔══════╗
@@ -424,9 +384,7 @@ The basis for build process is set. We will create the entry file for our add-on
 
 ## [Create add-on entry file](https://github.com/DAB0mB/node-distance-addon/commit/793e892)
 
-
 **Added src/distance.cc**
-
 
 ```
 ╔══════╗
@@ -444,12 +402,9 @@ The basis for build process is set. We will create the entry file for our add-on
 
 Every add-on should start with these two macro calls. They are both compiled into a piece of code which will register our module with ease. The `NODE_MODULE` macro template accepts the name of the target as the first argument (That one we set as `target_name` in the GYP file, remember?) and the initialization method for our module. The `NAN_MODULE_INIT`generates a function with the given name. It accepts `target` as the first argument which is equivalent to NodeJS's `exports`. Now we will create our first method stub for a synchronous distance calculation:
 
-
 ## [Create ‘CalculateSync’ method stub](https://github.com/DAB0mB/node-distance-addon/commit/90e3c72)
 
-
 **Changed src/distance.cc**
-
 
 ```
 ╔══════╗
@@ -471,12 +426,9 @@ Every add-on should start with these two macro calls. They are both compiled int
 
 We exported the `CalculateSync` by using the `NAN_EXPORT` macro, and we used `NAN_METHOD` to define a new node-valid function. It accepts `info` as the first argument and it is the same as JavaScript's `arguments` vector. We already know which arguments this function should accept, that's why I followed TDD methodology from the first place:
 
-
 ## [Destructure arguments vector](https://github.com/DAB0mB/node-distance-addon/commit/ee1d560)
 
-
 **Changed src/distance.cc**
-
 
 ```
 ╔══════╗
@@ -499,12 +451,9 @@ We exported the `CalculateSync` by using the `NAN_EXPORT` macro, and we used `NA
 
 We use the `To()` function to convert the first argument into the desired type, and then we call the method `ToLocalChecked()`. This method is simply going to convert the result into v8's Local, unless the argument is undefined, in which case an error is going to be thrown. I like to prefix JS object with a `js_` so I know with what kind variable I'm dealing with. We should have two points containing `x` and `y` fields. Let's try to extract them out of the arguments vector and convert them into native C++ structures:
 
-
 ## [Convert JS objects to native C++ structures](https://github.com/DAB0mB/node-distance-addon/commit/81998eb)
 
-
 **Changed src/distance.cc**
-
 
 ```
 ╔══════╗
@@ -542,15 +491,11 @@ We use the `To()` function to convert the first argument into the desired type, 
 
 Then again we convert the `To()` function to convert the result into the desired data-type, only this time it's a primitive, so we use `FromJust()` instead of `ToLocalChecked()`. Note that v8 only uses double precision rather than a floating point. We can fetch properties from a given JS object with ease using the `Get()` method. Pay attention to use the `->` rather than a period because remember, a Local is actually a pointer! It is not the actual object.
 
-
 Now all is left to do is defining the return value. Keep in mind that the value should be returned through v8’s current scope, not natively, so using the `return` keyword would be useless. The return value can actually be defined through the provided `info` argument, like this:
-
 
 ## [Add return value to ‘CalculateSync’ method](https://github.com/DAB0mB/node-distance-addon/commit/1d6a7f6)
 
-
 **Changed src/distance.cc**
-
 
 ```
 ╔══════╗
@@ -570,9 +515,7 @@ And of-course it requires us to add the core distance calculation method:
 
 ## [Add core distance calculation method](https://github.com/DAB0mB/node-distance-addon/commit/5af3b3d)
 
-
 **Changed src/distance.cc**
-
 
 ```
 ╔══════╗
@@ -612,9 +555,7 @@ This is it for the synchronous calculation. Now we will add an async version of 
 
 ## [Create ‘CalculateAsync’ method with basic deconstructuring](https://github.com/DAB0mB/node-distance-addon/commit/2711bf5)
 
-
 **Changed src/distance.cc**
-
 
 ```
 ╔══════╗
@@ -648,9 +589,7 @@ Here’s the different part. We don’t wanna simply return the value, we want t
 
 ## [Queue distance worker](https://github.com/DAB0mB/node-distance-addon/commit/34f4a5d)
 
-
 **Changed src/distance.cc**
-
 
 ```
 ╔══════╗
@@ -701,12 +640,9 @@ Here’s the different part. We don’t wanna simply return the value, we want t
 
 Here we fetch the third argument which is the callback. We wrap it with Nan’s Callback, which will make sure it is not garbage collected once the scope is being deleted, we want it to keep living until it’s not relevant. At the bottom of the method, instead of returning a value explicitly, we queue our `DistanceWorker` into the workers queue. On that note, let's implement the DistanceWorker:
 
-
 ## [Create ‘DistanceWorker’ with a constructor and a deconstructor](https://github.com/DAB0mB/node-distance-addon/commit/8bbd87f)
 
-
 **Changed src/distance.cc**
-
 
 ```
 ╔══════╗
@@ -745,12 +681,9 @@ Here we fetch the third argument which is the callback. We wrap it with Nan’s 
 
 `AsyncWorker` is an abstract class that you can subclass to have much of the annoying asynchronous queuing and handling taken care of for you. It can even store arbitrary v8 objects for you and have them persist while the asynchronous work is in progress. The `execute()` method is being executed inside the worker-thread. It is not safe to access V8, or V8 data structures there, so everything we need for input and output should go on 'this'. The `HandleOKCallback()` method is executed when the async work is complete. This function will be run inside the main event loop so it is safe to use v8 again. Let's implement the core distance calculation on the worker thread:
 
-
 ## [Execute distance calculation](https://github.com/DAB0mB/node-distance-addon/commit/9cd18e8)
 
-
 **Changed src/distance.cc**
-
 
 ```
 ╔══════╗
@@ -782,9 +715,7 @@ And handle a successful invocation once the calculation is finished:
 
 ## [Handle successful invokation](https://github.com/DAB0mB/node-distance-addon/commit/8dd60ff)
 
-
 **Changed src/distance.cc**
-
 
 ```
 ╔══════╗
@@ -831,14 +762,11 @@ And handle a successful invocation once the calculation is finished:
 
 Normally, when defining a NodeJS method (`NAN_METHOD` macro) a scope will be created for us automatically. In this function's context there is no scope exist, so we will have to create it using the `HandleScope` deceleration (The current scope is stored globally so even though we don't use it explicitly, v8 and Nan know what to do). We also created an arguments vector as the return value, following NodeJS's conventions, the first argument would be the error and the second argument would be the result.
 
-
 This is it! Finally we will transform the add-on into a nicer looking node-module:
 
 ## [Transform add-on into a nicer looking node-module](https://github.com/DAB0mB/node-distance-addon/commit/a250013)
 
-
 **Added index.js**
-
 
 ```
 ╔══════╗
@@ -871,11 +799,9 @@ async calculation passed
 
 You’ve just learned the very basics of how to use C++ within NodeJS. There’s a lot more to learn when it comes to building an add-on, and I’m not just talking about learning v8 and Nan’s API. Think about the possibilities, the C++ community have been developed for years and there are so much great libraries out there that are not necessarily relevant to NodeJS due to its efficiency, like [Boost](http://www.boost.org/), [OpenCV](http://opencv.org/), [CGAL](http://www.cgal.org/) and many more.
 
+- Check out the full project of this tutorial: <https://github.com/DAB0mB/node-distance-addon>
 
--   Check out the full project of this tutorial: <https://github.com/DAB0mB/node-distance-addon>
-
--   Check out this awesome framework for creating tutorials by Urigo, which helped me making this nicely structured tutorial: <https://github.com/Urigo/tortilla>
-
+- Check out this awesome framework for creating tutorials by Urigo, which helped me making this nicely structured tutorial: <https://github.com/Urigo/tortilla>
 
 ```backmatter
 {"source":"medium","postId":"588b4f2248cc","publishedDate":1494261412332,"url":"https://medium.com/the-guild/nodejs-advanced-how-to-create-a-native-add-on-using-c-588b4f2248cc"}

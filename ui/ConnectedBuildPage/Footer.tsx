@@ -39,7 +39,7 @@ const Copyrights = styled.div`
 export const Footer: React.FunctionComponent = () => {
   return (
     <Container>
-      <Link href='/'>
+      <Link href="/">
         <a>
           <TheGuildLogo />
         </a>

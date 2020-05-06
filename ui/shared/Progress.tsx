@@ -1,5 +1,5 @@
-import NProgress from "nprogress";
-import Router from "next/router";
+import NProgress from 'nprogress';
+import Router from 'next/router';
 
 let timeout;
 
@@ -12,9 +12,9 @@ const done = () => {
   NProgress.done();
 };
 
-Router.events.on("routeChangeStart", start);
-Router.events.on("routeChangeComplete", done);
-Router.events.on("routeChangeError", done);
+Router.events.on('routeChangeStart', start);
+Router.events.on('routeChangeComplete', done);
+Router.events.on('routeChangeError', done);
 
 export function Progress() {
   return (
@@ -25,7 +25,7 @@ export function Progress() {
           pointer-events: none;
         }
         #nprogress .bar {
-          background: #04BFAD;
+          background: #04bfad;
           position: fixed;
           z-index: 1031;
           top: 0;
@@ -40,7 +40,7 @@ export function Progress() {
           right: 0px;
           width: 100px;
           height: 100%;
-          box-shadow: 0 0 10px #04BFAD, 0 0 5px #04BFAD;
+          box-shadow: 0 0 10px #04bfad, 0 0 5px #04bfad;
           opacity: 1;
           -webkit-transform: rotate(3deg) translate(0px, -4px);
           -ms-transform: rotate(3deg) translate(0px, -4px);

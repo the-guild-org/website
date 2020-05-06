@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import NativeLink from "next/link";
+import React from 'react';
+import styled from 'styled-components';
+import NativeLink from 'next/link';
 
 const Title = styled.h2`
   color: #292929;

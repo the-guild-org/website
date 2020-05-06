@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import { Code, InlineCode } from "./code";
-import { GenericLink } from "./link";
+import styled from 'styled-components';
+import { Code, InlineCode } from './code';
+import { GenericLink } from './link';
 
 export const H1 = styled.h1`
   text-align: center;
@@ -27,7 +27,7 @@ const Li = styled.li`
   margin-bottom: 0.35rem;
 
   &:before {
-    content: "-";
+    content: '-';
     display: inline-block;
     color: #6d6d6d;
     position: absolute;
@@ -63,7 +63,7 @@ const Hr = () => (
 
 const Img = styled.img.attrs((props) => ({
   ...props,
-  alt: props.alt || "",
+  alt: props.alt || '',
 }))`
   display: block;
   max-width: 100%;

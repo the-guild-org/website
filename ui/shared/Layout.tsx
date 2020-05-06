@@ -1,8 +1,8 @@
-import React from "react";
-import styled from "styled-components";
-import Link from "next/link";
-import { GitHub, Twitter, Linkedin } from "react-feather";
-import { TheGuildLogo } from "./Logo";
+import React from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
+import { GitHub, Twitter, Linkedin } from 'react-feather';
+import { TheGuildLogo } from './Logo';
 
 export const Container = styled.div`
   max-width: 960px;
@@ -144,7 +144,7 @@ export const Section = styled.section`
   color: #000;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: -40px;
     width: 0;
@@ -159,7 +159,7 @@ export const Section = styled.section`
 
 const HeroContainer = styled.div<{ shrink?: boolean }>`
   width: 100%;
-  height: ${(props) => (props.shrink ? "50vh" : "100vh")};
+  height: ${(props) => (props.shrink ? '50vh' : '100vh')};
   min-height: 300px;
 `;
 

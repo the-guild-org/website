@@ -1,33 +1,29 @@
-
-import withPost from "../../ui/blog/post";
+import withPost from '../../ui/blog/post';
 
 export const meta = {
-  title: "Authentication with AccountsJS & GraphQL Modules",
+  title: 'Authentication with AccountsJS & GraphQL Modules',
   tags: [],
-  date: "2018-11-16",
-  description: "TODO:",
-  image: "https://github.com/the-guild-org/oneblog/blob/master/img/704/1*emrpS_BYaLltTGadD6GaIw.png?raw=true",
+  date: '2018-11-16',
+  description: 'TODO:',
+  image:
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*emrpS_BYaLltTGadD6GaIw.png?raw=true',
 };
-      
+
 export default withPost({ ...meta });
 
 When starting a backend project, two of the biggest concerns will usually be the right structure of the project and authentication. If you could skip thinking and planning about these two, starting a new backend project can be much easier.
 
 > If you haven’t checked out our [blog post about authentication and authorization in GraphQL Modules](https://medium.com/the-guild/authentication-and-authorization-in-graphql-and-how-graphql-modules-can-help-fadc1ee5b0c2), please read that before!
->
 
 Internally, we use [GraphQL-Modules](https://graphql-modules.com/) and [AccountsJS](https://github.com/accounts-js/accounts) to help us with those two decisions, GraphQL-Modules helps us solve our architectural problems in modular, schema-first approaches with the power of GraphQL and AccountsJS helps us create our authentication solutions by providing a simple API together with client and server libraries that saves us a lot of the ground work around authentication.
 
-
 If you haven’t heard about [AccountsJS](https://github.com/accounts-js/accounts) before, it is a set of libraries to provide a full-stack authentication and accounts-management solutions for Javascript.
-
 
 It is really customizable; so you can write any plugins for your own authentication methods or use the already existing email-password or the Facebook and Twitter OAuth integration packages.
 
 AccountsJS has connector libraries for MongoDB and Redis, but you can write your own database handler by implementing a simple interface.
 
 Accounts JS provide a ready to use GraphQL API if you install their GraphQL library and **we are happy to announce that the GraphQL library is now internally built using GraphQL-Modules**!
-
 
 It doesn’t affect people who are not using GraphQL Modules, but it helps the maintainers of AccountsJS and simplifies the integration for GraphQL-Modules-based projects.
 
@@ -55,7 +51,7 @@ import { resolvers } from './resolvers';
 
 const PORT = process.env['MONGO_URI'] || 4000;
 const MONGO_URI = process.env['MONGO_URI'] || 'mongodb://localhost:27017/myDb';
-const TOKEN_SECRET = process.env['TOKEN_SECRET'] || 'myTokenSecret'; 
+const TOKEN_SECRET = process.env['TOKEN_SECRET'] || 'myTokenSecret';
 
 async function main() {
     const mongoClient = await MongoClient.connect(MONGO_URI, {
@@ -73,9 +69,9 @@ async function main() {
     });
         // Create accounts server that holds a lower level of all accounts operations
     const accountsServer = new AccountsServer(
-            { 
-                db: accountsDb, 
-                tokenSecret: TOKEN_SECRET 
+            {
+                db: accountsDb,
+                tokenSecret: TOKEN_SECRET
             },
             {
                 password: new AccountsPassword(),
@@ -139,7 +135,7 @@ export const resolvers = {
     posts: ({ _id }, args, { injector }) => {
       const db = injector.get(Db);
       const Posts = db.collection('posts');
-      return Posts.find({ userId: _id }).toArray(); 
+      return Posts.find({ userId: _id }).toArray();
     }
   },
   Post: {
@@ -164,7 +160,7 @@ export const resolvers = {
       return insertedId;
     }
   }
-  
+
 ```
 
 When you print the whole app’s schema, you would see something like above;
@@ -286,17 +282,17 @@ import gql from 'graphql-tag';
 import ReactDOM from 'react-dom';
 
 const apolloClient = new ApolloClient({
-    request: async operation => {
-        const tokens = await accountsClient.getTokens();
-        if (tokens) {
-            operation.setContext({
-                headers: {
-                    'accounts-access-token': tokens.accessToken
-                }
-            });
-        }
-    },
-    uri: 'http://localhost:4000/graphql',
+  request: async (operation) => {
+    const tokens = await accountsClient.getTokens();
+    if (tokens) {
+      operation.setContext({
+        headers: {
+          'accounts-access-token': tokens.accessToken,
+        },
+      });
+    }
+  },
+  uri: 'http://localhost:4000/graphql',
 });
 
 const accountsGraphQL = new GraphQLClient({ graphQLClient: apolloClient });
@@ -304,203 +300,226 @@ const accountsClient = new AccountsClient({}, accountsGraphQL);
 const accountsPassword = new AccountsClientPassword(accountsClient);
 
 const ALL_POSTS_QUERY = gql`
-    query AllPosts {
-        allPosts{
-            id
-            title
-            content
-            author {
-                username
-            }
-        }
+  query AllPosts {
+    allPosts {
+      id
+      title
+      content
+      author {
+        username
+      }
     }
+  }
 `;
 
 const ADD_POST_MUTATION = gql`
-    mutation AddPost($title: String, $content: String) {
-        addPost(title: $title, content: $content)
-    }
+  mutation AddPost($title: String, $content: String) {
+    addPost(title: $title, content: $content)
+  }
 `;
 
 class App extends Component {
-    state = {
-        credentials: {
-            username: '',
-            password: ''
-        },
-        newPost: {
-            title: '',
-            content: ''
-        },
-        user: null
+  state = {
+    credentials: {
+      username: '',
+      password: '',
+    },
+    newPost: {
+      title: '',
+      content: '',
+    },
+    user: null,
+  };
+  componentDidMount() {
+    return this.updateUserState();
+  }
+  async updateUserState() {
+    const tokens = await accountsClient.refreshSession();
+    if (tokens) {
+      const user = await accountsGraphQL.getUser();
+      await this.setState({ user });
     }
-    componentDidMount() {
-        return this.updateUserState();
-    }
-    async updateUserState() {
-        const tokens = await accountsClient.refreshSession();
-        if (tokens) {
-            const user = await accountsGraphQL.getUser();
-            await this.setState({ user });
-        }
-    }
-    renderAllPosts() {
-        return (
-            <Query query={ALL_POSTS_QUERY}>
-                {({ data, loading, error }) => {
-                    if (loading) {
-                        return <p>Loading...</p>;
-                    }
-                    if (error) {
-                        return <p>Error: {error}</p>
-                    }
-                    return data.allPosts.map((post: any) => (
-                        <li>
-                            <p>
-                                {post.title}
-                            </p>
-                            <p>
-                                {post.content}
-                            </p>
-                            <p>
-                                Author: {post.author.username}
-                            </p>
-                        </li>
-                    ))
-                }}
-            </Query>
-        );
-    }
-    renderLoginRegister() {
-        return (
+  }
+  renderAllPosts() {
+    return (
+      <Query query={ALL_POSTS_QUERY}>
+        {({ data, loading, error }) => {
+          if (loading) {
+            return <p>Loading...</p>;
+          }
+          if (error) {
+            return <p>Error: {error}</p>;
+          }
+          return data.allPosts.map((post: any) => (
+            <li>
+              <p>{post.title}</p>
+              <p>{post.content}</p>
+              <p>Author: {post.author.username}</p>
+            </li>
+          ));
+        }}
+      </Query>
+    );
+  }
+  renderLoginRegister() {
+    return (
+      <fieldset>
+        <legend>Login - Register</legend>
+        <form>
+          <p>
+            <label>
+              Username:
+              <input
+                value={this.state.credentials.username}
+                onChange={(e) =>
+                  this.setState({
+                    credentials: {
+                      ...this.state.credentials,
+                      username: e.target.value,
+                    },
+                  })
+                }
+              />
+            </label>
+          </p>
+          <p>
+            <label>
+              Password:
+              <input
+                value={this.state.credentials.password}
+                onChange={(e) =>
+                  this.setState({
+                    credentials: {
+                      ...this.state.credentials,
+                      password: e.target.value,
+                    },
+                  })
+                }
+              />
+            </label>
+          </p>
+          <p>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                accountsPassword
+                  .login({
+                    password: this.state.credentials.password,
+                    user: {
+                      username: this.state.credentials.username,
+                    },
+                  })
+                  .then(() => this.updateUserState());
+              }}
+            >
+              Login
+            </button>
+          </p>
+          <p>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                accountsPassword
+                  .createUser({
+                    password: this.state.credentials.password,
+                    username: this.state.credentials.username,
+                  })
+                  .then(() => {
+                    alert('Please login with your new credentials');
+                    this.setState({
+                      credentials: {
+                        username: '',
+                        password: '',
+                      },
+                    });
+                  });
+              }}
+            >
+              Register
+            </button>
+          </p>
+        </form>
+      </fieldset>
+    );
+  }
+  renderAddPost() {
+    return (
+      <Mutation mutation={ADD_POST_MUTATION}>
+        {(addPost) => {
+          return (
             <fieldset>
-                <legend>
-                    Login - Register
-                </legend>
-                <form>
-                    <p>
-                        <label>
-                            Username:
-                          <input value={this.state.credentials.username} onChange={e => this.setState({
-                                credentials: {
-                                    ...this.state.credentials,
-                                    username: e.target.value
-                                }
-                            })} />
-                        </label>
-                    </p>
-                    <p>
-                        <label>
-                            Password:
-                          <input value={this.state.credentials.password} onChange={e => this.setState({
-                                credentials: {
-                                    ...this.state.credentials,
-                                    password: e.target.value
-                                }
-                            })} />
-                        </label>
-                    </p>
-                    <p>
-                        <button onClick={e => {
-                            e.preventDefault();
-                            accountsPassword.login({
-                                password: this.state.credentials.password,
-                                user: {
-                                    username: this.state.credentials.username,
-                                },
-                            }).then(() => this.updateUserState());
-                        }}>
-                            Login
-                      </button>
-                    </p>
-                    <p>
-                        <button onClick={e => {
-                            e.preventDefault();
-                            accountsPassword.createUser({
-                                password: this.state.credentials.password,
-                                username: this.state.credentials.username,
-                            }).then(() => {
-                                alert('Please login with your new credentials');
-                                this.setState({
-                                    credentials: {
-                                        username: '',
-                                        password: '',
-                                    }
-                                });
-                            });
-                        }}>
-                            Register
-                      </button>
-                    </p>
-                </form>
+              <legend>Add Post</legend>
+              <form>
+                <p>
+                  <label>
+                    Title:
+                    <input
+                      value={this.state.newPost.title}
+                      onChange={(e) =>
+                        this.setState({
+                          newPost: {
+                            ...this.state.newPost,
+                            title: e.target.value,
+                          },
+                        })
+                      }
+                    />
+                  </label>
+                </p>
+                <p>
+                  <label>
+                    Content:
+                    <input
+                      value={this.state.newPost.content}
+                      onChange={(e) =>
+                        this.setState({
+                          newPost: {
+                            ...this.state.newPost,
+                            content: e.target.value,
+                          },
+                        })
+                      }
+                    />
+                  </label>
+                </p>
+                <p>
+                  <input
+                    type="submit"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      addPost({
+                        variables: {
+                          title: this.state.newPost.title,
+                          content: this.state.newPost.content,
+                        },
+                      });
+                    }}
+                  />
+                </p>
+              </form>
             </fieldset>
-        );
-    }
-    renderAddPost() {
-        return (
-            <Mutation mutation={ADD_POST_MUTATION}>
-                {addPost => {
-                    return (
-                        <fieldset>
-                            <legend>Add Post</legend>
-                            <form>
-                                <p>
-                                    <label>
-                                        Title:
-                                  <input value={this.state.newPost.title} onChange={e => this.setState({
-                                            newPost: {
-                                                ...this.state.newPost,
-                                                title: e.target.value
-                                            }
-                                        })} />
-                                    </label>
-                                </p>
-                                <p>
-                                    <label>
-                                        Content:
-                                  <input value={this.state.newPost.content} onChange={e => this.setState({
-                                            newPost: {
-                                                ...this.state.newPost,
-                                                content: e.target.value
-                                            }
-                                        })} />
-                                    </label>
-                                </p>
-                                <p>
-                                    <input type='submit' onClick={e => {
-                                        e.preventDefault();
-                                        addPost({
-                                            variables: {
-                                                title: this.state.newPost.title,
-                                                content: this.state.newPost.content
-                                            }
-                                        })
-                                    }} />
-                                </p>
-                            </form>
-                        </fieldset>
-                    );
-                }}
-            </Mutation>
-        );
-    }
-    render() {
-        return (
-            <div>
-                <h2>All Posts</h2>
-                {this.renderAllPosts()}
-                {!this.state.user && this.renderLoginRegister()}
-                {this.state.user && this.renderAddPost()}
-            </div>
-        );
-    }
+          );
+        }}
+      </Mutation>
+    );
+  }
+  render() {
+    return (
+      <div>
+        <h2>All Posts</h2>
+        {this.renderAllPosts()}
+        {!this.state.user && this.renderLoginRegister()}
+        {this.state.user && this.renderAddPost()}
+      </div>
+    );
+  }
 }
 
 ReactDOM.render(
-    <ApolloProvider client={apolloClient}>
-        <App />
-    </ApolloProvider>,
-    document.getElementById('root')
+  <ApolloProvider client={apolloClient}>
+    <App />
+  </ApolloProvider>,
+  document.getElementById('root')
 );
 ```
 
@@ -508,15 +527,11 @@ As you can see from the example, it can be really easy to create an application 
 
 You can learn more about AccountsJS from the [docs](https://accounts-js.netlify.com/docs/getting-started.html) of this great library for more features such as Two-Factor Authentication and Facebook and Twitter integration using OAuth.
 
-
 Also you can learn more about GraphQL-Modules on the [website](https://graphql-modules.com/) and see how you can add GraphQL Modules features into your system in a gradual and selective way.
 
-
-If you want strict types based on GraphQL Schema, for each module, GraphQL Code Generator has built-in support for GraphQL-Modules based projects. [**See the docs**](https://github.com/Urigo/graphql-modules#graphql-code-generator-integration)  for more details.
-
+If you want strict types based on GraphQL Schema, for each module, GraphQL Code Generator has built-in support for GraphQL-Modules based projects. [**See the docs**](https://github.com/Urigo/graphql-modules#graphql-code-generator-integration) for more details.
 
 You can check out our example about this integration; [**https://github.com/ardatan/graphql-modules-accountsjs-boilerplate**](https://github.com/ardatan/graphql-modules-accountsjs-boilerplate)
-
 
 ## All posts about GraphQL Modules
 
@@ -536,6 +551,4 @@ You can check out our example about this integration; [**https://github.com/arda
 
 1.  [Manage Circular Imports Hell with GraphQL-Modules](https://medium.com/the-guild/manage-circular-imports-hell-with-graphql-modules-4b1611dee781)
 
-
 > _Follow us on [**GitHub**](https://github.com/Urigo/graphql-modules) and [**Medium**](https://medium.com/the-guild), we are planning to release many more posts in the next couple of weeks about what we’ve learned using **GraphQL** in recent years._
->

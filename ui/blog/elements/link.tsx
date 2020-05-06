@@ -1,10 +1,10 @@
-import NativeLink from "next/link";
-import styled from "styled-components";
+import NativeLink from 'next/link';
+import styled from 'styled-components';
 
 export const ExternalLink = styled.a.attrs((props) => ({
   href: props.href,
-  target: "_blank",
-  rel: "noopener noreferrer",
+  target: '_blank',
+  rel: 'noopener noreferrer',
 }))`
   text-decoration: none;
   font-size: inherit;
@@ -29,11 +29,11 @@ const AnchorLink = styled.a`
 `;
 
 export const GenericLink = (props) => {
-  if (props.href.startsWith("/") && !props.href.startsWith("/blog")) {
+  if (props.href.startsWith('/') && !props.href.startsWith('/blog')) {
     return <InternalLink {...props} />;
   }
 
-  if (props.href.startsWith("#")) {
+  if (props.href.startsWith('#')) {
     return <AnchorLink {...props} />;
   }
 

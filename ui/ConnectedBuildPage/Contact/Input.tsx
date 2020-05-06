@@ -75,14 +75,14 @@ export const InputField: React.FunctionComponent<{ className?: string }> = ({
 }) => {
   const [email, setEmail] = useState<string>();
   const [result, mutate] = useMutation(
-    `mutation sayHi($email: String!, $project: String!) { sayHi(email: $email, project: $project) { ok } }`,
+    `mutation sayHi($email: String!, $project: String!) { sayHi(email: $email, project: $project) { ok } }`
   );
   const onSubmit = useCallback(
     (event: React.FormEvent) => {
       event.preventDefault();
       mutate({ email, project: 'CONNECTED_BUILD' });
     },
-    [email, mutate],
+    [email, mutate]
   );
   const onChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,7 +90,7 @@ export const InputField: React.FunctionComponent<{ className?: string }> = ({
         setEmail(event.target.value);
       }
     },
-    [setEmail, result.loading],
+    [setEmail, result.loading]
   );
 
   useEffect(() => {
@@ -104,12 +104,12 @@ export const InputField: React.FunctionComponent<{ className?: string }> = ({
       <Form onSubmit={onSubmit}>
         <Input
           disabled={result.loading}
-          type='text'
+          type="text"
           value={email}
           onChange={onChange}
-          placeholder='Type your email here'
+          placeholder="Type your email here"
         />
-        <Submit type='submit'>
+        <Submit type="submit">
           <Send />
         </Submit>
         {result.error && (

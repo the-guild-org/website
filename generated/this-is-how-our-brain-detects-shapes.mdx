@@ -1,48 +1,44 @@
-
-import withPost from "../../ui/blog/post";
+import withPost from '../../ui/blog/post';
 
 export const meta = {
-  title: "This is how our brain detects shapes",
+  title: 'This is how our brain detects shapes',
   tags: [],
-  date: "2018-12-11",
-  description: "TODO:",
-  image: "",
+  date: '2018-12-11',
+  description: 'TODO:',
+  image: '',
 };
-      
+
 export default withPost({ ...meta });
-  
 
 ## And so shall the computer…
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*4ZlUc2Lu3EL91aF6ha3AIA.gif?raw=true "A demonstration of the algorithm.")
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*4ZlUc2Lu3EL91aF6ha3AIA.gif?raw=true 'A demonstration of the algorithm.')
 
 There was this time I was trying to create a studio where you can sketch primitives and transform them with touch gestures (credit to [Guy Manor](https://www.linkedin.com/in/guy-manor-519099143/) for the idea ❤). As part of my work I had to create an algorithm that could normalize drawn shapes, because there’s no use to a set of dozens of vertices which together look like nothing but one big mess. The result can be seen in the GIF above. Looks pretty nice right?
 
-
 In this article I’m gonna go through the algorithm that I used to detect shapes. I’m aware of the fact that in the real world there are much more parameters and it can be much harder sometimes to detect certain shapes, especially the abstract ones which are made out of arcs, but this algorithm still works well and is useful for most use cases. The algorithm assumes that we work in a 2D space and will produce a set of normalized vectors, a cricle, a rectangle, or any pre-defined shape in a given shapes atlas. **If you wanna cut straight to the chase then a JS implementation of the algorithm is consumable in the following Git repo:** [github.com/Appfairy/shapeit](https://github.com/Appfairy/shapeit/).
-
 
 Without further or do let’s go through the algorithm!
 
 ---
 
--   If a given sketch is open, try to lengthen first and last vectors in hope to find intersection and create a closed area.
+- If a given sketch is open, try to lengthen first and last vectors in hope to find intersection and create a closed area.
 
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*JVE3PxJrTI8cvYtQWom8zw.jpeg?raw=true)
 
--   Look for all the closed areas within the given sketch and reduce all the areas which don’t pass a certain threshold. If the area is less than a constant value, splice its vertices.
+- Look for all the closed areas within the given sketch and reduce all the areas which don’t pass a certain threshold. If the area is less than a constant value, splice its vertices.
 
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*VdRCW27D7MZ3KT9qKzoPcg.jpeg?raw=true)
 
--   Assuming that we‘re down to only a single area, try to match it with a circle by calculating the standard deviation of each radius from the center of the shape to one of its vertices. If standard deviation is less than a constant value, it must be a circle.
+- Assuming that we‘re down to only a single area, try to match it with a circle by calculating the standard deviation of each radius from the center of the shape to one of its vertices. If standard deviation is less than a constant value, it must be a circle.
 
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*I_WGi4aihZbzRKD6dAWcXw.jpeg?raw=true)
 
--   If a circle was not found, reduce the level of detail of the polygon by splicing vertices which cause an insignificant angle change.
+- If a circle was not found, reduce the level of detail of the polygon by splicing vertices which cause an insignificant angle change.
 
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*jN89DwaL1awNs78DilkeZA.jpeg?raw=true)
 
--   Sometimes we might be down to a single vector or a set of vectors in case there was no closed area in the given sketch.
+- Sometimes we might be down to a single vector or a set of vectors in case there was no closed area in the given sketch.
 
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*Lz9JlQylZmH6I8_RgbaCVA.jpeg?raw=true)
 
@@ -52,23 +48,22 @@ Shape matching is done with score calculation based on different parameters. The
 
 **Note that order matters.** It doesn’t matter where the series starts or ends, as long as there’s consistency between the values, that’s how we’re gonna evaluate the score.
 
-
 Since shapes with more vectors are more likely to receive a lower score, in nearly all cases, we will use a dynamic threshold which will increase or decrease itself based on the target amount of vectors. After testing different variations of the calculation method, starting with the most naive one — a linear method, I’ve reached a conclusion that a radial-exponential one would be the most accurate for the use case:
 
 ```javascript
 function getScoreThreshold(edgesNumber) {
-  return Math.sin((Math.PI / 2) * (thresholds.minShapeScore ** (edgesNumber)));
+  return Math.sin((Math.PI / 2) * thresholds.minShapeScore ** edgesNumber);
 }
 ```
 
 Once we’ve determined what shape does the polygon match to, we will start a process of trying to transforming the pre-defined shape to have properties as closely as possible to the polygon’s: Scale, angle, direction and position.
 
--   For the scale we will simply calculate the average length of all vectors and divide the 2 values to find the right multiplication.
--   For the angle, we will repeat the same process, but in addition, we will try different variations of radians (_let r the average radian of the polygon_): `r, -r, π + r, π - r, r + .5π, -r - .5π, .5π - r, 1.5π + r` .
+- For the scale we will simply calculate the average length of all vectors and divide the 2 values to find the right multiplication.
+- For the angle, we will repeat the same process, but in addition, we will try different variations of radians (_let r the average radian of the polygon_): `r, -r, π + r, π - r, r + .5π, -r - .5π, .5π - r, 1.5π + r` .
 
--   We will repeat angle matching for a mirrored version of the shape aka a different “direction”.
--   We will position the scaled, rotated and (potentially) mirrored shape and position its center on top of the drawn polygon’s center.
--   Out of all transformed shapes with different angle variations, we will take the one whose average vertices deviation is the smallest compared to the drawn polygon’s vertices.
+- We will repeat angle matching for a mirrored version of the shape aka a different “direction”.
+- We will position the scaled, rotated and (potentially) mirrored shape and position its center on top of the drawn polygon’s center.
+- Out of all transformed shapes with different angle variations, we will take the one whose average vertices deviation is the smallest compared to the drawn polygon’s vertices.
 
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*9a3EKlnMyR8-lUZtKbpYDA.jpeg?raw=true)
 
@@ -81,7 +76,6 @@ First we will try to determine whether the polygon is intended to have 4 right a
 ---
 
 So that was the shape detection algorithm in a nutshell. All I did to come up with it was putting the process that goes through my brain in to code, and the result is detailed above. If we would to add another layer to the algorithm to make it more life-like, it would probably be a deep learning algorithm to detect new base-shapes to fill out the atlas. Maybe I will write about it in my next article ;-)
-
 
 ```backmatter
 {"source":"medium","postId":"10cadefc8134","publishedDate":1544539655101,"url":"https://medium.com/the-guild/this-is-how-our-brain-detects-shapes-10cadefc8134"}

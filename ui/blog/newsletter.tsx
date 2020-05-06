@@ -1,6 +1,6 @@
-import React, { useCallback, useState, useEffect } from "react";
-import styled from "styled-components";
-import { useMutation } from "../../hooks/use-graphql";
+import React, { useCallback, useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { useMutation } from '../../hooks/use-graphql';
 
 const Container = styled.div`
   margin-top: 125px;
@@ -127,7 +127,7 @@ export const Newsletter: React.FC = () => {
         setError(true);
       } else {
         setSuccess(true);
-        setEmail("");
+        setEmail('');
       }
     }
   }, [result.complete, setEmail]);
@@ -138,12 +138,16 @@ export const Newsletter: React.FC = () => {
     <Container>
       <Header>Join our newsletter</Header>
       <Subheader>
-        {success
-          ? "Thank you for joining!"
-          : error
-          ? <><b>Something went wrong</b>, please try again or contact us directly</>
-          : `Want to hear from us when there's something new? Sign up and stay up to
-        date!`}
+        {success ? (
+          'Thank you for joining!'
+        ) : error ? (
+          <>
+            <b>Something went wrong</b>, please try again or contact us directly
+          </>
+        ) : (
+          `Want to hear from us when there's something new? Sign up and stay up to
+        date!`
+        )}
       </Subheader>
       {showForm && (
         <Form onSubmit={onSubmit}>

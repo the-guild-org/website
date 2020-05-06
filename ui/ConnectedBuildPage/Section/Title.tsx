@@ -27,7 +27,7 @@ const TitleText = styled.span`
   font-weight: bold;
   line-height: 1.14;
   letter-spacing: -0.2px;
-  color: ${props => props.theme.hero.titleColor};
+  color: ${(props) => props.theme.hero.titleColor};
 
   @media ${device.mobile} {
     font-size: 40px;
@@ -35,7 +35,7 @@ const TitleText = styled.span`
 `;
 
 const HighlightText = styled(TitleText)`
-  color: ${props => props.theme.hero.highlightColor};
+  color: ${(props) => props.theme.hero.highlightColor};
 `;
 
 const TitleContainer = styled.div`

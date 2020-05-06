@@ -1,11 +1,11 @@
-import React from "react";
-import { MDXProvider } from "@mdx-js/react";
-import styled from "styled-components";
-import format from "date-fns/format";
-import { components, H1 } from "./elements";
-import { Newsletter } from "./newsletter";
-import { Page } from "../shared/Page";
-import { Meta } from "../../lib/types";
+import React from 'react';
+import { MDXProvider } from '@mdx-js/react';
+import styled from 'styled-components';
+import format from 'date-fns/format';
+import { components, H1 } from './elements';
+import { Newsletter } from './newsletter';
+import { Page } from '../shared/Page';
+import { Meta } from '../../lib/types';
 
 const Container = styled.div`
   max-width: 690px;
@@ -18,7 +18,7 @@ const Main = styled.main`
 
 const Content = styled.div`
   padding-top: 75px;
-  font-family: "PT Serif", serif;
+  font-family: 'PT Serif', serif;
   font-size: 1.2rem;
   font-weight: 400;
   color: #292929;
@@ -57,7 +57,7 @@ export default (meta: Meta): React.FC => {
               <Title>{meta.title}</Title>
               <Details>
                 <Time dateTime={date.toString()}>
-                  {format(date, "EEEE, LLL do y")}
+                  {format(date, 'EEEE, LLL do y')}
                 </Time>
               </Details>
               <Cover src={meta.image} alt={title} />

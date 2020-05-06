@@ -1,6 +1,6 @@
-import React from "react";
-import Head from "next/head";
-import { Layout } from "./Layout";
+import React from 'react';
+import Head from 'next/head';
+import { Layout } from './Layout';
 
 export const Page: React.FC<{
   description: string;

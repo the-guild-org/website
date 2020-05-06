@@ -1,6 +1,6 @@
-import React from "react";
-import { Section, Hero } from "../ui/shared/Layout";
-import { Page } from "../ui/shared/Page";
+import React from 'react';
+import { Section, Hero } from '../ui/shared/Layout';
+import { Page } from '../ui/shared/Page';
 
 const Index = () => (
   <Page title="The Guild - Open Source" description="Open Source Developers">

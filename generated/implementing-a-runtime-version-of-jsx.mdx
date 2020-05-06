@@ -1,21 +1,18 @@
-
-import withPost from "../../ui/blog/post";
+import withPost from '../../ui/blog/post';
 
 export const meta = {
-  title: "Implementing a runtime version of JSX",
+  title: 'Implementing a runtime version of JSX',
   tags: [],
-  date: "2018-11-12",
-  description: "TODO:",
-  image: "",
+  date: '2018-11-12',
+  description: 'TODO:',
+  image: '',
 };
-      
+
 export default withPost({ ...meta });
-  
 
 ## Learning how to think like a JSX parser and building an AST
 
 JSX is one of the most commonly used syntax extensions out there. Originally JSX was parsed via a [Facebook fork of Esprima](https://github.com/facebookarchive/esprima) — a JavaScript syntax parser developed by jQuery. As it gained momentum, [Acorn](https://github.com/acornjs/acorn) took things to their hands and decided to make their own version of the parser which ended up being 1.5–2x faster than Esprima-fb, and is now being used by officially Babel.
-
 
 It definitely went through an evolution, but regardless of its phase, all parsers had a similar output — which is an AST. Once we have an AST representation of the JSX code, interpretation is extremely easy.
 
@@ -28,88 +25,81 @@ Below is an example of the final product:
 ```javascript
 class Hello extends React.Component {
   render() {
-    return jsx `<div>Hello ${this.props.name}</div>`
+    return jsx`<div>Hello ${this.props.name}</div>`;
   }
 }
 
 ReactDOM.render(
-  jsx `<${Hello} name="World" />`,
+  jsx`<${Hello} name="World" />`,
   document.getElementById('container')
-)
+);
 ```
 
 Before we go ahead and rush to implementing the parser let’s understand what we’re aiming for. JSX simply takes an HTML-like syntax and transforms it into nested `React.createElement()` calls. What makes JSX unique is that we can use string interpolation within our HTML templates, so we can provide it with data which doesn’t necessarily has to be serialized, things like functions, arrays, or objects.
-
 
 So given the following code:
 
 ```jsx
 const el = (props) => (
   <div onClick={props.onClick}>
-    <Icon src={props.icon} /><span>{props.text}</span>
+    <Icon src={props.icon} />
+    <span>{props.text}</span>
   </div>
-)
+);
 ```
 
 We should get the following output once compiling it with Babel:
 
 ```javascript
-const el = (props) => (
+const el = (props) =>
   React.createElement(
-    "div",
+    'div',
     { onClick: props.onClick },
     React.createElement(Icon, { src: props.icon }),
-    React.createElement(
-      "span",
-      null,
-      props.text
-    )
-  )
-)
+    React.createElement('span', null, props.text)
+  );
 ```
 
 Just aquick reminder — the compiled result should be used internally by ReactDOM to differentiate changes in the virtual DOM and then render them. This is something which is React specific and has nothing to do with JSX, so at this point we have achieved our goal.
 
 Essentially there are 3 things we should figure out when parsing a JSX code:
 
--   The name / component of the React element.
--   The props of the React element.
--   The children of the React element, for each this process should repeat itself recursively.
+- The name / component of the React element.
+- The props of the React element.
+- The children of the React element, for each this process should repeat itself recursively.
 
 As I mentioned earlier, it would be best if we could break down the code into nodes first and represent it as an AST. Looking at the input of the example above, we can roughly visualize how we would pluck the nodes from the code:
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*AqTHDuxX5NNCI3iLycVfxA.png?raw=true "Analyzing the JSX code.")
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*AqTHDuxX5NNCI3iLycVfxA.png?raw=true 'Analyzing the JSX code.')
 
 And to put things simple, here’s a schematic representation of the analysis above:
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*i8h2MocLHni8mTuPaakwBQ.png?raw=true "A schematic representation of the analysis.")
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*i8h2MocLHni8mTuPaakwBQ.png?raw=true 'A schematic representation of the analysis.')
 
 Accordingly, we’re gonna have 3 types of nodes:
 
--   Element node.
--   Props node.
--   Value node.
+- Element node.
+- Props node.
+- Value node.
 
 Let’s decide that each node has a base schema with the following properties:
 
--   node.type — which will represent the type name of the node, e.g. `element`, `props` and `value`. Based on the node type we can also determine that additional properties that the node’s gonna carry. In our parser, each node type should have the following additional properties:
+- node.type — which will represent the type name of the node, e.g. `element`, `props` and `value`. Based on the node type we can also determine that additional properties that the node’s gonna carry. In our parser, each node type should have the following additional properties:
 
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*dgAy6Zbj6ttfNqgppWIjug.png?raw=true 'Node type schemas.')
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*dgAy6Zbj6ttfNqgppWIjug.png?raw=true "Node type schemas.")
+- node.length —which represents the length of the sub-string in the code that the node occupies. This will help us trim the code string as we go with the parsing process so we can always focus on relevant parts of the string for the current node:
 
--   node.length —which represents the length of the sub-string in the code that the node occupies. This will help us trim the code string as we go with the parsing process so we can always focus on relevant parts of the string for the current node:
-
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*PeiZnuBTKfLlDiaL24dgHw.png?raw=true "Any time we parse a small part of the string, we slice the part we’ve just parsed.")
+![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*PeiZnuBTKfLlDiaL24dgHw.png?raw=true 'Any time we parse a small part of the string, we slice the part we’ve just parsed.')
 
 In the function that we’re gonna build we’ll be taking advantage of ES6’s tagged templates. Tagged templates are string literals which can be processed by a custom handler according to our needs (see [MDN docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#Tagged_templates)).
-
 
 So essentially the signature of our function should look like this:
 
 ```javascript
 const jsx = (splits, ...values) => {
   // ...
-}
+};
 ```
 
 Since we’re gonna heavily rely on regular expression, it will be much easier to deal with a consistent string, so we can unleash the regexp full potential. For now let’s focus on the string part without the literal, and parse regular HTML string. Once we have that logic, we can implement string interpolation handling on top of it.
@@ -117,7 +107,6 @@ Since we’re gonna heavily rely on regular expression, it will be much easier t
 ## Starting with the core — an HTML parser
 
 As I already mentioned, our AST will be consisted of 3 node types, which means that we will have to create an ENUM that will contain the values `element`, `props` and `value`. This way the node types won't be hardcoded and patching the code can be very easy:
-
 
 ```diff
 @@ -0,0 +1,5 @@
@@ -177,13 +166,11 @@ Since we had 3 node types, it means that for each of them we should have a dedic
 
 Each function creates the basic node type and returns it. Note that at the begnning of the scope of each function I’ve defined a couple of variables:
 
--   `let match` - which will be used to store regular expression matches on the fly.
+- `let match` - which will be used to store regular expression matches on the fly.
 
--   `let length` - which will be used to store the length of the match so we can trim the JSX code string right after and accumulate it in `node.length`.
-
+- `let length` - which will be used to store the length of the match so we can trim the JSX code string right after and accumulate it in `node.length`.
 
 For now the `parseValue()` function is pretty straight forward and just returns a node which wraps the given string.
-
 
 We will begin with the implementation of the element node and we will branch out to other nodes as we go. First we will try to figure out the name of the element. If an element tag opener was not found, we will assume that the current part of the code is a value:
 
@@ -211,7 +198,6 @@ We will begin with the implementation of the element node and we will branch out
 
 Up next, we need to parse the props. To make things more efficient, we will need to first find the tag closer so we can provide the `parseProps()` method the relevant part of the string:
 
-
 ```diff
 @@ -29,6 +29,15 @@
  ┊29┊29┊  str = str.slice(length)
@@ -231,7 +217,6 @@ Up next, we need to parse the props. To make things more efficient, we will need
 ```
 
 Now that we’ve plucked the right substring, we can go ahead and implement the `parseProps()` function logic:
-
 
 ```diff
 @@ -51,6 +51,27 @@
@@ -264,7 +249,6 @@ Now that we’ve plucked the right substring, we can go ahead and implement the 
 ```
 
 The logic is pretty straight forward — we iterate through the string, and each time we try match the next key->value pair. Once a pair wasn’t found, we return the node with the accumulated props. Note that providing only an attribute with no value is also a valid syntax which will set its value to `true` by default, thus the `/ *\w+/` regexp. Let's proceed where we left of with the element parsing implementation.
-
 
 We need to figure out whether the current element is self closing or not. If it is, we will return the node, and otherwise we will continue to parsing its children:
 
@@ -316,7 +300,6 @@ Accordingly, we’re gonna implement the children parsing logic:
 
 Children parsing is recursive. We keep calling the `parseElement()` method for the current substring until there's no more match. Once we've gone through all the children, we can finish the process by finding the closing tag:
 
-
 ```diff
 @@ -64,6 +64,12 @@
  ┊64┊64┊    child = parseElement(str)
@@ -333,7 +316,6 @@ Children parsing is recursive. We keep calling the `parseElement()` method for t
 ```
 
 The HTML parsing part is finished! Now we can call the `parseElement()` for any given HTML string and we should get a JSON output which represents an AST, like the following:
-
 
 ```
 {
@@ -465,9 +447,7 @@ Accordingly, we will update the parsing functions’ signature and their calls, 
 
 Note how I used the `Date.now()` function to define a postfix for the placeholder. This we can be sure that the same value won't be given by the user as a string (possible, very unlikely). Now we will go through each parsing function and we'll make sure that it knows how to deal with placeholders correctly. We will start with the `parseElement()` function.
 
-
 We will add an additional property to the node called: `node.tag`. The tag property is the component that will be used to create the React element. It can either be a string or a React.Component. If `node.name` is a placeholder, we will be taking the next value in the given values stack:
-
 
 ```diff
 @@ -27,6 +27,7 @@
@@ -518,7 +498,6 @@ Up next would be the props node. This is fairly simple, we’re only gonna add a
 ```
 
 Last but not least, would be the value node. This is the most complex to handle out of the 3 nodes, since it requires us to split the input string and create a dedicated value node out of each split. So now, instead of returning a single node value, we will return an array of them. Accordingly, we will also be changing the name of the function from `parseValue()` to `parseValues()`:
-
 
 ```diff
 @@ -23,7 +23,7 @@
@@ -615,17 +594,13 @@ Last but not least, would be the value node. This is the most complex to handle 
 
 The reason why I’ve decided to return an array of nodes and not a singe node which contains an array of values, just like the props node, is because it matches the signature of `React.createElement()` perfectly. The values will be passed as children with a spread operator (`...`), and you should see further this tutorial how this well it fits.
 
-
 Note that we’ve also changed the way we accumulate children in the `parseElement()` function. Since `parseValues()`returns an array now, and not a single node, we flatten it using an empty array concatenation (`[].concat()`), and we only push the children whose contents are not empty.
 
-
 ## **The grand finale — execution**
-
 
 At this point we should have a function which can transform a JSX code into an AST, including string interpolation. The only thing which is left to do now is build a function which will recursively create React elements out of the nodes in the tree.
 
 The main function of the module should be called with a template tag. If you went through the previous step, you should know that a consistent string has an advantage over an array of splits of strings, since we can unleash the full potential of a regexp with ease. Accordingly, we will take all the given splits and join them with the `placeholder` constant.
-
 
 ```
 ['<', '> Hello ', '</', '>'] -> '<__jsxPlaceholder>Hello __jsxPlaceholder</__jsxPlaceholder>'
@@ -675,21 +650,17 @@ Once we join the string we can create React elements recursively:
 
 Note that if a node of value type is being iterated, we will just return the raw string, otherwise we will try to address its `node.children` property which doesn't exist.
 
-
 ---
 
 Our JSX runtime function is now ready to use!
 
 If you wonder how did I structure this tutorial so nicely with steps and beautiful diffs — check out [tortilla.academy](https://tortilla.academy/) by [Uri Goldshtein](https://medium.com/@urigo).
 
-
 Lastly, you can view the source code at the official [Github repository](https://github.com/DAB0mB/jsx-runtime) or you can download a Node.JS package using NPM:
-
 
 ```
 $ npm install jsx-runtime
 ```
-
 
 ```backmatter
 {"source":"medium","postId":"78e004bf432e","publishedDate":1542049983211,"url":"https://medium.com/the-guild/implementing-a-runtime-version-of-jsx-78e004bf432e"}

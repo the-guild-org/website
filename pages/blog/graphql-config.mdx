@@ -1,12 +1,12 @@
-import withPost from "../../ui/blog/post";
+import withPost from '../../ui/blog/post';
 
 export const meta = {
-  title: "GraphQL Config",
+  title: 'GraphQL Config',
   tags: [],
-  date: "2019-10-25",
-  description: "One configuration for all your tools",
+  date: '2019-10-25',
+  description: 'One configuration for all your tools',
   image:
-    "https://github.com/the-guild-org/oneblog/blob/master/img/704/1*3ow-Coz2GhxfmNY447Wacw.gif?raw=true",
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*3ow-Coz2GhxfmNY447Wacw.gif?raw=true',
 };
 
 export default withPost({ ...meta });
@@ -86,8 +86,8 @@ It also accepts a config defined under `graphql` property in your `package.json`
 GraphQL Config allowed to indicate a single graphql file, an introspection file or a URL to an endpoint. That’s the past!
 
 ```yaml
-schema: "./schema.graphql"
-documents: "./my/app/**/*.graphql"
+schema: './schema.graphql'
+documents: './my/app/**/*.graphql'
 extensions:
   customConfig:
     value: true
@@ -119,9 +119,9 @@ Majority of the GraphQL tools depend not only on Schema but Operations and Fragm
 GraphQL Config accepts not only `.graphql` files but also extracts documents from **TypeScript and JavaScript files, including JSX and TSX**.
 
 ```jsx
-import React from "react";
-import gql from "graphql-tag";
-import { useQuery } from "@apollo/react-hooks";
+import React from 'react';
+import gql from 'graphql-tag';
+import { useQuery } from '@apollo/react-hooks';
 
 // GraphQL Config is able to extract it!
 const GET_USERS = gql`
@@ -157,7 +157,7 @@ Files covered by schema or documents options are automatically included, there�
 We also kept `extensions` and turned them into a first class citizen in GraphQL Config, **making them way more powerful than before**.
 
 ```yaml
-schema: "./schema/*.graphql"
+schema: './schema/*.graphql'
 extensions:
   codegen:
     generates:
@@ -193,7 +193,7 @@ It also simplifies the codebase of GraphQL tools as they don’t need to take ca
 ```typescript
 export const RelayLoader = {
   loaderId() {
-    return "relay-loader";
+    return 'relay-loader';
   },
   canLoad(pointer) {
     return isReactFile(pointer);
@@ -234,7 +234,7 @@ const RelayExtension = (api) => {
   api.loaders.documents.register(RelayLoader);
 
   return {
-    name: "relay",
+    name: 'relay',
   };
 };
 ```
@@ -252,7 +252,7 @@ It’s not currently available but with your help and suggestions we could make 
 In the new GraphQL Config, we’ve decided to support environment variables. **It was a long time hanging and highly requested issue**. Now the usage in JS config file is straightforward. It’s also very easy to use environment variables in YAML and JSON files.
 
 ```yaml
-schema: "./schema.graphql"
+schema: './schema.graphql'
 include: ${INCLUDE_GLOB}
 ```
 

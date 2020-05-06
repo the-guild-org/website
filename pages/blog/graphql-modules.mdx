@@ -1,12 +1,12 @@
-import withPost from "../../ui/blog/post";
+import withPost from '../../ui/blog/post';
 
 export const meta = {
-  title: "GraphQL Modules  —  Feature based GraphQL Modules at scale",
+  title: 'GraphQL Modules  —  Feature based GraphQL Modules at scale',
   tags: [],
-  date: "2018-11-5",
-  description: "Feature based GraphQL Modules at scale",
+  date: '2018-11-5',
+  description: 'Feature based GraphQL Modules at scale',
   image:
-    "https://github.com/the-guild-org/oneblog/blob/master/img/704/1*44e5SD72vLOc9h_Nz_Aqhg.png?raw=true",
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*44e5SD72vLOc9h_Nz_Aqhg.png?raw=true',
 };
 
 export default withPost({ ...meta });
@@ -62,9 +62,9 @@ In the following example, you can see a basic implementation for GraphQL Modules
 So when `User` module is loaded, the `type User` is created, and when `Chat` module is loaded, the `type User` being extended with more fields.
 
 ```typescript
-import { GraphQLModule } from "@graphql-modules/core";
-import { UserModule } from "./user-module";
-import { ChatModule } from "./chat-module";
+import { GraphQLModule } from '@graphql-modules/core';
+import { UserModule } from './user-module';
+import { ChatModule } from './chat-module';
 
 export const appModule = new GraphQLModule({
   imports: [UserModule, ChatModule],
@@ -112,8 +112,8 @@ export const ChatModule = new GraphQLModule({
 ```
 
 ```typescript
-import { appModule } from "./modules/app";
-import { ApolloServer } from "apollo-server";
+import { appModule } from './modules/app';
+import { ApolloServer } from 'apollo-server';
 
 const { schema, context } = appModule;
 
@@ -292,10 +292,10 @@ So let’s say that we have the schema — how can we make this module generic a
 This is how you declare this module:
 
 ```typescript
-import { GraphQLModule } from "@graphql-modules/core";
-import gql from "graphql-tag";
-import { UserModule } from "../user";
-import { Users } from "../user/users.provider";
+import { GraphQLModule } from '@graphql-modules/core';
+import gql from 'graphql-tag';
+import { UserModule } from '../user';
+import { Users } from '../user/users.provider';
 
 export interface IUserProfileModuleConfig {
   profilePictureFields?: string;
@@ -315,7 +315,7 @@ export const UserProfileModule = new GraphQLModule<IUserProfileModuleConfig>({
   resolvers: (config) => ({
     User: {
       profilePicture: (user: User, args: never, context: ModuleContext) => {
-        const fieldName = config.profilePictureField || "profilePic";
+        const fieldName = config.profilePictureField || 'profilePic';
 
         return user[fieldName] || null;
       },
@@ -333,7 +333,7 @@ export const UserProfileModule = new GraphQLModule<IUserProfileModuleConfig>({
         const imageUrl = config.uploadProfilePicture(stream);
 
         // Get the field name
-        const fieldName = config.profilePictureField || "profilePic";
+        const fieldName = config.profilePictureField || 'profilePic';
 
         // Ask the injector for "Users" token, we are assuming that `user` module exposes it for us,
         // then, update the user with the uploaded url.

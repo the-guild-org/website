@@ -10,10 +10,10 @@ const Container = styled.div<{ dark: boolean }>`
   padding: 40px 40px;
   box-sizing: border-box;
   display: flex;
-  flex-direction: ${props => (props.dark ? 'column-reverse' : 'column')};
+  flex-direction: ${(props) => (props.dark ? 'column-reverse' : 'column')};
   justify-content: space-around;
   background-color: ${useTheme((theme, props) =>
-    props.dark ? theme.background.colors.darker : theme.background.colors.dark,
+    props.dark ? theme.background.colors.darker : theme.background.colors.dark
   )};
 
   @media ${device.laptop} {

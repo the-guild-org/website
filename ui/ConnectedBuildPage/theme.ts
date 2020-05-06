@@ -30,7 +30,7 @@ export function useTheme<T>(picker: (theme: typeof THEME, props: T) => string) {
 }
 
 export function useFontColor<T, K extends keyof typeof THEME['font']['colors']>(
-  color: K,
+  color: K
 ) {
   return (props: T & { theme: typeof THEME }) => props.theme.font.colors[color];
 }

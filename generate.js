@@ -1,12 +1,12 @@
-const { slug } = require("github-slugger");
-const { data } = require("./blogposts.json");
-const { writeFileSync } = require("fs");
+const { slug } = require('github-slugger');
+const { data } = require('./blogposts.json');
+const { writeFileSync } = require('fs');
 
 const slugs = [];
 
 data.repository.issues.edges.forEach((edge) => {
   const { body, title } = edge.node;
-  const urlSlug = slug(title).replace(/(^-)|(-$)/, "");
+  const urlSlug = slug(title).replace(/(^-)|(-$)/, '');
 
   if (slugs.includes(urlSlug)) {
     console.warn(urlSlug);
@@ -15,7 +15,7 @@ data.repository.issues.edges.forEach((edge) => {
   const meta = {
     date: extractPublishDate(body),
     title,
-    description: "TODO:",
+    description: 'TODO:',
     image: extractImage(body),
   };
 
@@ -38,24 +38,24 @@ export const meta = {
 export default withPost({ ...meta });
   `,
       body,
-    ].join("\n\n"),
-    "utf-8"
+    ].join('\n\n'),
+    'utf-8'
   );
 });
 
 console.log(slugs);
 
 function extractPublishDate(body) {
-  const [, meta] = body.split("```backmatter");
+  const [, meta] = body.split('```backmatter');
 
-  const date = new Date(JSON.parse(meta.replace("```", "")).publishedDate);
+  const date = new Date(JSON.parse(meta.replace('```', '')).publishedDate);
 
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 }
 
 function extractImage(body) {
-  if (!body.startsWith("![](")) {
-    return "";
+  if (!body.startsWith('![](')) {
+    return '';
   }
 
   const [, img] = body.match(/\!\[\]\((.*)\?raw=true/);
