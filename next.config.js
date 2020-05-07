@@ -21,7 +21,7 @@ module.exports = withBundleAnalyzer(
     withOptimizedImages({
       optimizeImagesInDev: false,
       handleImages: ['jpeg', 'png', 'svg', 'webp'],
-      inlineImageLimit: 0, //
+      inlineImageLimit: 1000,
       pageExtensions: ['tsx', 'md', 'mdx'],
       experimental: {
         modern: true,

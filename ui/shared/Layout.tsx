@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { GitHub, Twitter, Linkedin } from 'react-feather';
@@ -15,7 +15,12 @@ export const Container = styled.div`
   }
 `;
 
-const Header = styled.header`
+const Wrapper = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const Header = styled.header<{ sticky?: boolean }>`
   position: fixed;
   top: 0;
   width: 100%;
@@ -25,9 +30,15 @@ const Header = styled.header`
   justify-content: space-between;
   align-items: center;
 
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: ${(props) =>
+    props.sticky ? 'rgba(255, 255, 255, 0.9)' : 'transparent'};
   box-sizing: border-box;
   z-index: 1;
+
+  box-shadow: ${(props) =>
+    props.sticky ? 'rgba(0, 0, 0, 0.05) 0px 0px 15px 0px' : 'none'};
+
+  transition: all 0.5s ease 0s;
 
   /* @media (prefers-color-scheme: dark) {
     background-color: rgba(0, 0, 0, 0.9);
@@ -116,9 +127,27 @@ const FooterLinks = styled.div`
 `;
 
 export const Layout: React.FC = ({ children }) => {
+  const [sticky, setSticky] = useState(false);
+  const ref = useRef(null);
+  const handleScroll = useCallback(() => {
+    if (ref.current) {
+      setSticky(ref.current.getBoundingClientRect().top < 0);
+    }
+  }, [ref.current, setSticky]);
+
+  useEffect(() => {
+    if (typeof window === 'object') {
+      window.addEventListener('scroll', handleScroll);
+
+      return () => {
+        window.removeEventListener('scroll', () => handleScroll);
+      };
+    }
+  }, []);
+
   return (
-    <>
-      <Header>
+    <Wrapper ref={ref}>
+      <Header sticky={sticky}>
         <Logo>
           <Link href="/">
             <a title="The Guild - home page">
@@ -189,7 +218,7 @@ export const Layout: React.FC = ({ children }) => {
           © {new Date().getFullYear()} The Guild, All Rights Reserved
         </FooterText>
       </Footer>
-    </>
+    </Wrapper>
   );
 };
 
@@ -213,27 +242,38 @@ export const Section = styled.section`
 `;
 
 const HeroContainer = styled.div<{ shrink?: boolean }>`
+  position: relative;
+  overflow: hidden;
   width: 100%;
   height: ${(props) => (props.shrink ? '50vh' : '100vh')};
   min-height: 300px;
-`;
 
-const FirstBackground = styled.div`
-  width: 100%;
-  height: 100%;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url(/img/tiles-lb.png);
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    z-index: -1;
+  }
 
-  background-image: url(/img/tiles-lb.png);
-  background-position: left bottom;
-  background-repeat: no-repeat;
-`;
-
-const SecondBackground = styled.div`
-  width: 100%;
-  height: 100%;
-
-  background-image: url(/img/tiles-rt.png);
-  background-position: right top;
-  background-repeat: no-repeat;
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url(/img/tiles-lb.png);
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    transform: rotate(-180deg);
+    z-index: -2;
+  }
 `;
 
 const HeroHeader = styled.div`
@@ -263,15 +303,11 @@ const FullContainer = styled(Container)`
 export const Hero: React.FC<{ shrink?: boolean }> = ({ shrink, children }) => {
   return (
     <HeroContainer shrink={shrink}>
-      <FirstBackground>
-        <SecondBackground>
-          <FullContainer>
-            <HeroHeader>
-              <h1>{children}</h1>
-            </HeroHeader>
-          </FullContainer>
-        </SecondBackground>
-      </FirstBackground>
+      <FullContainer>
+        <HeroHeader>
+          <h1>{children}</h1>
+        </HeroHeader>
+      </FullContainer>
     </HeroContainer>
   );
 };
