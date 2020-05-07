@@ -44,6 +44,14 @@ const Details = styled.div`
 const Time = styled.time`
   color: var(--colors-dim);
   font-size: 0.8rem;
+
+  & > a {
+    color: var(--colors-accent);
+  }
+
+  & > a:hover {
+    color: var(--colors-accent-light);
+  }
 `;
 
 const Cover = styled.div`
@@ -111,6 +119,15 @@ export default (meta: Meta): React.FC => {
     const date = meta.date ? new Date(meta.date) : new Date();
     const author = meta.author && authors[meta.author];
 
+    const authorLink = author ? (
+      <>
+        <span> - </span>
+        <a href={author.link} title={author.name}>
+          {author.name}
+        </a>
+      </>
+    ) : null;
+
     return (
       <MDXProvider components={components}>
         <Page title={title} image={meta.image} description={meta.description}>
@@ -120,7 +137,7 @@ export default (meta: Meta): React.FC => {
               <Details>
                 <Time dateTime={date.toString()}>
                   {format(date, 'EEEE, LLL do y')}
-                  {author ? ` - ${author.name}` : ''}
+                  {authorLink}
                 </Time>
               </Details>
               <Cover>
