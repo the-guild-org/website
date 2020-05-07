@@ -1,11 +1,13 @@
 import withArticle from '../../ui/blog/article';
 
 export const meta = {
-  title: 'NodeJS Advanced — How to create a native add-on using C++',
+  title: 'How to create a native add-on using C++',
+  author: 'eytan',
   tags: [],
   date: '2017-5-8',
-  description: 'TODO:',
-  image: '',
+  description: 'NodeJS Advanced — How to create a native add-on using C++',
+  image:
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/0*AC2NN-3b7sIXmtyT.png?raw=true',
 };
 
 export default withArticle({ ...meta });
@@ -48,15 +50,15 @@ In v8 a scope is referred as `Isolate` (`v8::Isolate`) and a variable is referre
 
 **JavaScript**
 
-```
+```javascript
 let obj = {
   foo: 'foo',
   bar: 'bar',
-  baz: 'baz'
+  baz: 'baz',
 };
 ```
 
-```
+```javascript
 console.log(obj.foo);
 console.log(obj.bar);
 console.log(obj.baz);
@@ -64,26 +66,20 @@ console.log(obj.baz);
 
 **C++**
 
-```
+```cpp
 using Nan::New;
 using std::cendl;
 using std::cout;
 using v8::Local;
 using v8::Object;
 using v8::String;
-```
 
-```
 Local<Object> obj = New<Object>();
-```
 
-```
 obj->Set(New<String>("foo").ToLocalChecked(), New<String>("foo").ToLocalChecked());
 obj->Set(New<String>("bar").ToLocalChecked(), New<String>("bar").ToLocalChecked());
 obj->Set(New<String>("baz").ToLocalChecked(), New<String>("baz").ToLocalChecked());
-```
 
-```
 cout << obj->Get(New<String>("foo").ToLocalChecked()) << cendl;
 cout << obj->Get(New<String>("bar").ToLocalChecked()) << cendl;
 cout << obj->Get(New<String>("baz").ToLocalChecked()) << cendl;
@@ -95,7 +91,7 @@ Asynchronous logic can be implemented using the `AsyncWorker` (`Nan::AsyncWorker
 
 **JavaScript**
 
-```
+```javascript
 setImmediate(() => {
   callback(null, 'result');
 });
@@ -103,7 +99,7 @@ setImmediate(() => {
 
 **C++**
 
-```
+```cpp
 using Nan::AsyncQueueWorker;
 using Nan::AsyncWorker;
 using Nan::HandleScope;
@@ -112,26 +108,18 @@ using Nan::Null;
 using std::string;
 using v8::Local;
 using v8::String;
-```
 
-```
 class ResultWorker : AsyncWorker {
  private:
   string* result
-```
 
-```
  public:
   ResultWorker(Callback* callback) : AsyncWorker(callback) {}
-```
 
-```
   ~ResultDistance() {
     delete result;
   }
-```
 
-```
   // Executed inside the worker-thread.
   // It is not safe to access V8, or V8 data structures
   // here, so everything we need for input and output
@@ -139,30 +127,20 @@ class ResultWorker : AsyncWorker {
   void Execute () {
     result = new string("result");
   }
-```
 
-```
   // Executed when the async work is complete.
   // This function will be run inside the main event loop
   // so it is safe to use V8 again.
   void HandleOKCallback () {
     HandleScope scope;
-```
-
-```
     Local<Value> argv[] = {
       Null(),
       New<String>(result).ToLocalChecked()
     };
-```
-
-```
     callback->Call(2, argv);
   }
 };
-```
 
-```
 AsyncQueueWorker(new ResultWorker(callback));
 ```
 
@@ -172,38 +150,30 @@ v8 and Nan provide us with some handy macros (`NODE_MODULE`, `NAN_MODULE_INIT`, 
 
 **JavaScript**
 
-```
+```javascript
 exports.fn = (a, b) => a + b;
 ```
 
 **C++**
 
-```
+```cpp
 using Nan::To;
 using v8::Local;
 using v8::Object;
-```
 
-```
 // void Fn(FunctionCallbackInfo<Value>& info)
 NAN_METHOD(Fn) {
   double a = To<double>(info[0]).FromJust();
   double b = To<double>(info[1]).FromJust();
-```
 
-```
   info.GetReturnValue().Set(a + b);
 }
-```
 
-```
 // void Init(Local<Object> target)
 NAN_MODULE_INIT(Init) {
   NODE_SET_METHOD(target, Fn);
 }
-```
 
-```
 // First argument would be the entry file's name
 NODE_MODULE(addon, Init);
 ```
@@ -224,19 +194,13 @@ In this step we will base our development process on the TDD methodology, so you
 
 **Added .npmignore**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
-+┊ ┊1┊test.js🚫↵
+```diff
++┊ ┊1┊test.js
 ```
 
 **Added test.js**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
 +┊  ┊ 1┊const Distance = require('.');
 +┊  ┊ 2┊
 +┊  ┊ 3┊let result;
@@ -268,10 +232,7 @@ And the following NPM script should execute it:
 
 **Changed package.json**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊ 6┊ 6┊  "repository": {
  ┊ 7┊ 7┊    "type": "git",
  ┊ 8┊ 8┊    "url": "https://github.com/DAB0mB/node-distance-addon.git"
@@ -286,8 +247,8 @@ Like I said in the introduction, it’s a simple module which can calculate the 
 
 The first thing you’ll need to do is to make sure that you have `node-gyp` installed:
 
-```
-$ sudo npm install -g node-gyp
+```bash
+sudo npm install -g node-gyp
 ```
 
 `node-gyp` is also dependent on many other packages, so before you go any further please take a look at the official installation instructions in their [README.md file](https://github.com/nodejs/node-gyp).
@@ -298,10 +259,7 @@ Assuming that you have installed everything properly, we will now need to create
 
 **Added binding.gyp**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
 +┊  ┊ 1┊{
 +┊  ┊ 2┊  "targets": [
 +┊  ┊ 3┊    {
@@ -317,10 +275,8 @@ Assuming that you have installed everything properly, we will now need to create
 
 GYP stands for ‘Generate Your Project’ and was created by the Chromium team as a configuration file for building native projects. The configuration show above should be a good template for any future add-on you’re looking to develop. Let’s take a deeper look at it:
 
-- `target_name` - Specifies the output dir of our add-on, in which case it should be `build/Release/distance`.
-
+- `target_name` - Specifies the output dir of our add-on, in which case it should be `build/Release/distance`
 - `sources` - Should include all the cpp files that are associated with you add-on.
-
 - `include_dirs` - Additional dirs that should be included when building the add-on. If you'll run the given script in the terminal you'll get the node-module path for Nan, a library which we're interested in during the build process.
 
 More information about GYP configuration can be found [here](https://gyp.gsrc.io/docs/UserDocumentation.md).
@@ -331,10 +287,7 @@ Be sure to also add the specified flag to the `package.json` which basically say
 
 **Changed package.json**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊ 7┊ 7┊    "type": "git",
  ┊ 8┊ 8┊    "url": "https://github.com/DAB0mB/node-distance-addon.git"
  ┊ 9┊ 9┊  },
@@ -350,20 +303,14 @@ Now we will add the following NPM scripts so whenever we run `npm run build` our
 
 **Changed .gitignore**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
 +┊ ┊1┊build
  ┊1┊2┊node_modules🚫↵
 ```
 
 **Changed package.json**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊ 9┊ 9┊  },
  ┊10┊10┊  "gypfile": true,
  ┊11┊11┊  "scripts": {
@@ -376,8 +323,8 @@ Now we will add the following NPM scripts so whenever we run `npm run build` our
 
 The only thing left to do before jumping into implementation would be installing Nan:
 
-```
-$ npm install nan --save
+```bash
+npm install nan --save
 ```
 
 The basis for build process is set. We will create the entry file for our add-on:
@@ -386,10 +333,7 @@ The basis for build process is set. We will create the entry file for our add-on
 
 **Added src/distance.cc**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
 +┊ ┊1┊#include <nan.h>
 +┊ ┊2┊#include <v8.h>
 +┊ ┊3┊
@@ -406,10 +350,7 @@ Every add-on should start with these two macro calls. They are both compiled int
 
 **Changed src/distance.cc**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊ 1┊ 1┊#include <nan.h>
  ┊ 2┊ 2┊#include <v8.h>
  ┊ 3┊ 3┊
@@ -430,10 +371,7 @@ We exported the `CalculateSync` by using the `NAN_EXPORT` macro, and we used `NA
 
 **Changed src/distance.cc**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊ 1┊ 1┊#include <nan.h>
  ┊ 2┊ 2┊#include <v8.h>
  ┊ 3┊ 3┊
@@ -455,10 +393,7 @@ We use the `To()` function to convert the first argument into the desired type, 
 
 **Changed src/distance.cc**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊ 1┊ 1┊#include <nan.h>
  ┊ 2┊ 2┊#include <v8.h>
  ┊ 3┊ 3┊
@@ -497,10 +432,7 @@ Now all is left to do is defining the return value. Keep in mind that the value 
 
 **Changed src/distance.cc**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊23┊23┊  Point* pointB = new Point();
  ┊24┊24┊  pointB->x = To<double>(js_pointB->Get(New<String>("x").ToLocalChecked())).FromJust();
  ┊25┊25┊  pointB->y = To<double>(js_pointB->Get(New<String>("y").ToLocalChecked())).FromJust();
@@ -517,10 +449,7 @@ And of-course it requires us to add the core distance calculation method:
 
 **Changed src/distance.cc**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
 +┊  ┊ 1┊#include <cstdlib>
 +┊  ┊ 2┊#include <cmath>
  ┊ 1┊ 3┊#include <nan.h>
@@ -535,10 +464,7 @@ And of-course it requires us to add the core distance calculation method:
  ┊ 8┊12┊using v8::String;
 ```
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊12┊16┊  double y;
  ┊13┊17┊};
  ┊14┊18┊
@@ -557,10 +483,7 @@ This is it for the synchronous calculation. Now we will add an async version of 
 
 **Changed src/distance.cc**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊35┊35┊  info.GetReturnValue().Set(CalculateDistance(pointA, pointB));
  ┊36┊36┊}
  ┊37┊37┊
@@ -591,10 +514,7 @@ Here’s the different part. We don’t wanna simply return the value, we want t
 
 **Changed src/distance.cc**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊ 3┊ 3┊#include <nan.h>
  ┊ 4┊ 4┊#include <v8.h>
  ┊ 5┊ 5┊
@@ -611,10 +531,7 @@ Here’s the different part. We don’t wanna simply return the value, we want t
  ┊12┊16┊using v8::String;
 ```
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊38┊42┊NAN_METHOD(CalculateAsync) {
  ┊39┊43┊  Local<Object> js_pointA = To<Object>(info[0]).ToLocalChecked();
  ┊40┊44┊  Local<Object> js_pointB = To<Object>(info[1]).ToLocalChecked();
@@ -624,10 +541,7 @@ Here’s the different part. We don’t wanna simply return the value, we want t
  ┊43┊48┊  pointA->x = To<double>(js_pointA->Get(New<String>("x").ToLocalChecked())).FromJust();
 ```
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊46┊51┊  Point* pointB = new Point();
  ┊47┊52┊  pointB->x = To<double>(js_pointB->Get(New<String>("x").ToLocalChecked())).FromJust();
  ┊48┊53┊  pointB->y = To<double>(js_pointB->Get(New<String>("y").ToLocalChecked())).FromJust();
@@ -644,10 +558,7 @@ Here we fetch the third argument which is the callback. We wrap it with Nan’s 
 
 **Changed src/distance.cc**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊24┊24┊  return sqrt(pow(pointA->x - pointB->x, 2) + pow(pointA->y - pointB->y, 2));
  ┊25┊25┊}
  ┊26┊26┊
@@ -685,10 +596,7 @@ Here we fetch the third argument which is the callback. We wrap it with Nan’s 
 
 **Changed src/distance.cc**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊26┊26┊
  ┊27┊27┊class DistanceWorker : public AsyncWorker {
  ┊28┊28┊ private:
@@ -698,10 +606,7 @@ Here we fetch the third argument which is the callback. We wrap it with Nan’s 
  ┊31┊32┊
 ```
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊39┊40┊  }
  ┊40┊41┊
  ┊41┊42┊  void Execute () {
@@ -717,10 +622,7 @@ And handle a successful invocation once the calculation is finished:
 
 **Changed src/distance.cc**
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊ 6┊ 6┊using Nan::AsyncQueueWorker;
  ┊ 7┊ 7┊using Nan::AsyncWorker;
  ┊ 8┊ 8┊using Nan::Callback;
@@ -741,10 +643,7 @@ And handle a successful invocation once the calculation is finished:
  ┊19┊23┊  double x;
 ```
 
-```
-╔══════╗
-║ diff ║
-╚══════╝
+```diff
  ┊44┊48┊  }
  ┊45┊49┊
  ┊46┊50┊  void HandleOKCallback () {
@@ -769,9 +668,6 @@ This is it! Finally we will transform the add-on into a nicer looking node-modul
 **Added index.js**
 
 ```
-╔══════╗
-║ diff ║
-╚══════╝
 +┊ ┊1┊const Distance = require('./build/Release/distance');
 +┊ ┊2┊
 +┊ ┊3┊exports.calculate = {
@@ -782,8 +678,8 @@ This is it! Finally we will transform the add-on into a nicer looking node-modul
 
 And now, let’s run our small test to see that it works, using the following command:
 
-```
-$ npm run test
+```bash
+npm run test
 ```
 
 If everything went well, you should have the following messages printed to the terminal:
@@ -800,9 +696,4 @@ async calculation passed
 You’ve just learned the very basics of how to use C++ within NodeJS. There’s a lot more to learn when it comes to building an add-on, and I’m not just talking about learning v8 and Nan’s API. Think about the possibilities, the C++ community have been developed for years and there are so much great libraries out there that are not necessarily relevant to NodeJS due to its efficiency, like [Boost](http://www.boost.org/), [OpenCV](http://opencv.org/), [CGAL](http://www.cgal.org/) and many more.
 
 - Check out the full project of this tutorial: <https://github.com/DAB0mB/node-distance-addon>
-
 - Check out this awesome framework for creating tutorials by Urigo, which helped me making this nicely structured tutorial: <https://github.com/Urigo/tortilla>
-
-```backmatter
-{"source":"medium","postId":"588b4f2248cc","publishedDate":1494261412332,"url":"https://medium.com/the-guild/nodejs-advanced-how-to-create-a-native-add-on-using-c-588b4f2248cc"}
-```

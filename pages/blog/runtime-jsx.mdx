@@ -2,10 +2,12 @@ import withArticle from '../../ui/blog/article';
 
 export const meta = {
   title: 'Implementing a runtime version of JSX',
+  author: 'eytan',
   tags: [],
   date: '2018-11-12',
-  description: 'TODO:',
-  image: '',
+  description: 'Learning how to think like a JSX parser and building an AST',
+  image:
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*AqTHDuxX5NNCI3iLycVfxA.png?raw=true',
 };
 
 export default withArticle({ ...meta });
@@ -167,7 +169,6 @@ Since we had 3 node types, it means that for each of them we should have a dedic
 Each function creates the basic node type and returns it. Note that at the begnning of the scope of each function I’ve defined a couple of variables:
 
 - `let match` - which will be used to store regular expression matches on the fly.
-
 - `let length` - which will be used to store the length of the match so we can trim the JSX code string right after and accumulate it in `node.length`.
 
 For now the `parseValue()` function is pretty straight forward and just returns a node which wraps the given string.
@@ -317,7 +318,7 @@ Children parsing is recursive. We keep calling the `parseElement()` method for t
 
 The HTML parsing part is finished! Now we can call the `parseElement()` for any given HTML string and we should get a JSON output which represents an AST, like the following:
 
-```
+```json
 {
   "type": "element",
   "props": {
@@ -368,11 +369,11 @@ The HTML parsing part is finished! Now we can call the `parseElement()` for any 
 
 Now we’re gonna add string interpolation on top of the HTML string parsing logic. Since we still wanna use the power of regexp at its full potential, we’re gonna assume that the given string would be a template with placeholders, where each of them should be replaced with a value. That would be the easiest and most efficient way, rather than accepting an array of string splits.
 
-```
+```javascript
 [
-  "<__jsxPlaceholder>Hello __jsxPlaceholder</__jsxPlaceholder>",
-  [MyComponent, "World", MyComponent]
-]
+  '<__jsxPlaceholder>Hello __jsxPlaceholder</__jsxPlaceholder>',
+  [MyComponent, 'World', MyComponent],
+];
 ```
 
 Accordingly, we will update the parsing functions’ signature and their calls, and we will define a placeholder constant:
@@ -602,7 +603,7 @@ At this point we should have a function which can transform a JSX code into an A
 
 The main function of the module should be called with a template tag. If you went through the previous step, you should know that a consistent string has an advantage over an array of splits of strings, since we can unleash the full potential of a regexp with ease. Accordingly, we will take all the given splits and join them with the `placeholder` constant.
 
-```
+```javascript
 ['<', '> Hello ', '</', '>'] -> '<__jsxPlaceholder>Hello __jsxPlaceholder</__jsxPlaceholder>'
 ```
 
@@ -658,10 +659,6 @@ If you wonder how did I structure this tutorial so nicely with steps and beautif
 
 Lastly, you can view the source code at the official [Github repository](https://github.com/DAB0mB/jsx-runtime) or you can download a Node.JS package using NPM:
 
-```
-$ npm install jsx-runtime
-```
-
-```backmatter
-{"source":"medium","postId":"78e004bf432e","publishedDate":1542049983211,"url":"https://medium.com/the-guild/implementing-a-runtime-version-of-jsx-78e004bf432e"}
+```bash
+npm install jsx-runtime
 ```
