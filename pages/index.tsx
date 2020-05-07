@@ -139,7 +139,7 @@ const Index: React.FC<Props> = ({ articles }) => {
           />
           <Separator />
           <FeaturedProduct
-            title="Consistency and Analysis of GraphQL"
+            title="Maintenance and Analysis of GraphQL API"
             image="https://graphql-inspector.com/img/logo.svg"
             link="https://graphql-inspector.com/"
             description={
