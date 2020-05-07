@@ -1,6 +1,11 @@
 import styled from 'styled-components';
 import { Code, InlineCode } from './code';
 import { GenericLink } from './link';
+import { CodeSandbox } from '../../shared/embed/CodeSandbox';
+import { StackBlitz } from '../../shared/embed/StackBlitz';
+import { Tweet } from '../../shared/embed/Tweet';
+import { YouTube } from '../../shared/embed/YouTube';
+import { LinkPreview } from '../../shared/embed/LinkPreview';
 
 const H1 = styled.h2`
   text-align: left;
@@ -97,4 +102,9 @@ export const components = {
   hr: Hr,
   img: Img,
   iframe: Iframe,
+  CodeSandbox,
+  StackBlitz,
+  Tweet,
+  YouTube,
+  LinkPreview,
 };

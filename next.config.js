@@ -1,6 +1,5 @@
 const nextMDX = require('@next/mdx');
 const rehypePrism = require('@mapbox/rehype-prism');
-const oembed = require('@agentofuser/remark-oembed').default;
 const withOptimizedImages = require('next-optimized-images');
 const path = require('path');
 
@@ -11,7 +10,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const withMDX = nextMDX({
   extension: /\.mdx?$/,
   options: {
-    remarkPlugins: [oembed],
+    remarkPlugins: [],
     rehypePlugins: [rehypePrism],
   },
 });
