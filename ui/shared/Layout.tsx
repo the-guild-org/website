@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { GitHub, Twitter, Linkedin } from 'react-feather';
+import { Discord } from './logos/Discord';
 import { TheGuildLogo } from './Logo';
 
 export const Container = styled.div`
@@ -140,8 +141,11 @@ export const Layout: React.FC = ({ children }) => {
           <Link href="/blog">
             <a title="Read our blog">Blog</a>
           </Link>
-          <Link href="/projects">
-            <a title="Explore our projects">Projects</a>
+          <Link href="https://github.com/the-guild-org/Stack">
+            <a title="Explore our projects">Open Source</a>
+          </Link>
+          <Link href="https://github.com/the-guild-org/community-meetings">
+            <a title="Join our Community Meetings">Community Meetings</a>
           </Link>
           <Link href="/contact">
             <a title="Get in touch">Contact</a>
@@ -149,19 +153,24 @@ export const Layout: React.FC = ({ children }) => {
         </FooterLinks>
 
         <FooterLinks>
-          <Link href="">
+          <Link href="https://github.com/the-guild-org">
             <a title="See our GitHub profile">
               <GitHub />
             </a>
           </Link>
-          <Link href="">
+          <Link href="https://twitter.com/TheGuildDev">
             <a title="Visit our Twitter">
               <Twitter />
             </a>
           </Link>
-          <Link href="">
+          <Link href="https://www.linkedin.com/company/the-guild-software">
             <a title="Visit our LinkedIn">
               <Linkedin />
+            </a>
+          </Link>
+          <Link href="https://discord.gg/xud7bH9">
+            <a title="Visit our Discord">
+              <Discord />
             </a>
           </Link>
         </FooterLinks>

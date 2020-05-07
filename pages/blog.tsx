@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { GetStaticProps } from 'next/types';
 import { Page } from '../ui/shared/Page';
 import { Hero, Section, Container } from '../ui/shared/Layout';
-import { LastArticle } from '../ui/blog/last-article';
+import { Featured } from '../ui/shared/Featured';
 import { ArticleCard } from '../ui/blog/article-card';
 import { Newsletter } from '../ui/blog/newsletter';
 import { MetaWithLink } from '../lib/types';
@@ -50,7 +50,7 @@ const Blog: React.FC<Props> = ({ articles }) => {
       </Hero>
       <Section>
         <SectionContainer>
-          <LastArticle
+          <Featured
             title={recentArticle.title}
             description={recentArticle.description}
             image={recentArticle.thumbnail || recentArticle.image}

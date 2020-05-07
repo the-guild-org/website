@@ -44,6 +44,7 @@ const Placeholder = styled.div`
 
 const Content = styled.div`
   padding: 1rem 1.5rem;
+  text-align: left;
 `;
 
 const Title = styled.h3`

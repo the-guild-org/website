@@ -72,7 +72,7 @@ const FixedConfetti = styled(Confetti)`
   position: fixed !important;
 `;
 
-export const Newsletter: React.FC = () => {
+export const Newsletter: React.FC<{ className?: string }> = ({ className }) => {
   const [email, setEmail] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -120,7 +120,7 @@ export const Newsletter: React.FC = () => {
   const isClient = typeof window === 'object';
 
   return (
-    <Container>
+    <Container className={className}>
       {isClient && confetti && (
         <FixedConfetti width={window.innerWidth} height={window.innerHeight} />
       )}

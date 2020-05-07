@@ -33,6 +33,7 @@ const typeDefs = /* GraphQL */ `
 
 const projectMap = {
   CONNECTED_BUILD: 'Connected Build',
+  WEBSITE: 'Website',
   GRAPHQL_CODE_GENERATOR: 'GraphQL Code Generator',
   GRAPHQL_INSPECTOR: 'GraphQL Inspector',
 };
