@@ -3,8 +3,8 @@ import { Code, InlineCode } from './code';
 import { GenericLink } from './link';
 
 const H1 = styled.h2`
-  text-align: center;
-  margin-top: 0;
+  text-align: left;
+  margin-top: 2.5rem;
   font-size: 2rem;
   color: var(--colors-primary);
 `;
