@@ -12,7 +12,7 @@ export const meta = {
 
 export default withArticle({ ...meta });
 
-[**GraphQL Code Generator**](https://github.com/dotansimha/graphql-code-generator/) is a template based generator that lets you generate anything out of your GraphQL schemas and queries.
+[GraphQL Code Generator](https://github.com/dotansimha/graphql-code-generator/) is a template based generator that lets you generate anything out of your GraphQL schemas and queries.
 
 So we’ve created a new template that generates **React Apollo**’s **_Query_**, **_Mutation_** and **_Subscription_** components, as well as **_HOC_** components, all completely typed by **_TypeScript_**, so you won’t have to do that work manually!
 
@@ -20,7 +20,7 @@ So we’ve created a new template that generates **React Apollo**’s **_Query_*
 
 Whether you use the new **React Apollo API** or you prefer to use **HOC**, there is really no need to write those wrapper components again and again!
 
-Based on a GraphQL static schema and a GraphQL query, the [**GraphQL Codegen - Typescript React Apollo Template**](https://github.com/dotansimha/graphql-code-generator/tree/master/packages/templates/typescript-react-apollo) will generate a ready to use, fully typed components. All you need to do is to write your query, mutation or subscription and just use those components in your application.
+Based on a GraphQL static schema and a GraphQL query, the [GraphQL Codegen - Typescript React Apollo Template](https://github.com/dotansimha/graphql-code-generator/tree/master/packages/templates/typescript-react-apollo) will generate a ready to use, fully typed components. All you need to do is to write your query, mutation or subscription and just use those components in your application.
 
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/0*tEGsG1VbNTHCBfAo?raw=true)
 
@@ -34,7 +34,7 @@ Using **_React_**, **_TypeScript_** and **_GraphQL_** in a coordinated way, give
 
 We prepared an example of how to use those auto generated components, [it’s available on StackBlitz](https://stackblitz.com/edit/react-apollo-code-generator-example).
 
-[https://stackblitz.com/edit/react-apollo-code-generator-example?embed=1&file=List.tsx](https://stackblitz.com/edit/react-apollo-code-generator-example?embed=1&file=List.tsx 'react-apollo-code-generator-example - StackBlitz Auto generated react-apollo components GraphiQL: https://launchpad.graphql.com/1jzxrj179')
+https://stackblitz.com/edit/react-apollo-code-generator-example?embed=1&file=List.tsx
 
 And another example on exist on this repository:
 
@@ -110,7 +110,15 @@ A higher-order component (HOC) is an advanced technique in React for reusing com
 
 React-Apollo template works for you as well, it generates HOC functions with generated typings. So, the only thing you do is to import the HOC functions from your query’s namespace like the component version.
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/0*zPsA5FLnJa0UszBk?raw=true 'HOC Function Example Usage')
+```typescript
+import { ExampleQuery } from './generated';
+
+const withExample = ExampleQuery.HOC({
+  options: { variables: {...} }
+});
+
+export default withExample(...);
+```
 
 ---
 
