@@ -25,7 +25,7 @@ const SectionTitle = styled.h2`
   }
 `;
 
-const BlogLastArticle = styled(LastArticles)`
+const BlogLastArticles = styled(LastArticles)`
   margin-top: 50px !important;
   margin-bottom: 50px !important;
   padding: 0 !important;
@@ -105,7 +105,7 @@ const Index: React.FC<Props> = ({ articles }) => {
           <SectionTitle>
             We have a <span>blog</span>
           </SectionTitle>
-          <BlogLastArticle articles={recentArticles} />
+          <BlogLastArticles articles={recentArticles} />
           <Link href="/blog" passHref={true}>
             <BlogButton as="a" title="Read our blog">
               View all posts

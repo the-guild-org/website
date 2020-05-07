@@ -30,7 +30,7 @@ const Cover = styled.div<{ src: string; isPlaceholder?: boolean }>`
     background-position: center center;
     background-repeat: no-repeat;
     background-image: url(${(props) => props.src});
-    ${(props) => (props.isPlaceholder ? 'filter: blur(5px);' : '')}
+    ${(props) => (props.isPlaceholder ? 'filter: blur(25px);' : '')}
   }
 `;
 

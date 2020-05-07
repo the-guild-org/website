@@ -4,8 +4,8 @@ export function withPlaceholder(src: string) {
   if (!isVideo && src.startsWith('/')) {
     return {
       hasPlaceholder: true,
-      placeholder: `${src}?lqip`,
-      large: src,
+      placeholder: require(`Public/${src.substr(1)}?lqip`),
+      large: require(`Public/${src.substr(1)}`),
     };
   }
 
