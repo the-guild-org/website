@@ -118,7 +118,7 @@ const Index: React.FC<Props> = ({ articles }) => {
       <ProductsSection>
         <Container>
           <SectionTitle>
-            We do <span>Open-Source</span>
+            We do <span>Open Source</span>
           </SectionTitle>
           <FeaturedProduct
             title="Code Generation and Type Safety"

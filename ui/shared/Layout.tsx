@@ -130,6 +130,9 @@ export const Layout: React.FC = ({ children }) => {
           <Link href="/blog">
             <a title="The Guild - Blog">Blog</a>
           </Link>
+          <Link href="https://github.com/the-guild-org/Stack">
+            <a title="The Guild - Open Source projects">Open Source</a>
+          </Link>
           <Link href="/contact">
             <a title="The Guild - Contact us">Contact</a>
           </Link>
