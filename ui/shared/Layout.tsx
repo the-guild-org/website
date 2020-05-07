@@ -130,9 +130,12 @@ export const Layout: React.FC = ({ children }) => {
           <Link href="/blog">
             <a title="The Guild - Blog">Blog</a>
           </Link>
-          <Link href="https://github.com/the-guild-org/Stack">
-            <a title="The Guild - Open Source projects">Open Source</a>
-          </Link>
+          <a
+            href="https://github.com/the-guild-org/Stack"
+            title="The Guild - Open Source projects"
+          >
+            Open Source
+          </a>
           <Link href="/contact">
             <a title="The Guild - Contact us">Contact</a>
           </Link>
@@ -144,38 +147,42 @@ export const Layout: React.FC = ({ children }) => {
           <Link href="/blog">
             <a title="Read our blog">Blog</a>
           </Link>
-          <Link href="https://github.com/the-guild-org/Stack">
-            <a title="Explore our projects">Open Source</a>
-          </Link>
-          <Link href="https://github.com/the-guild-org/community-meetings">
-            <a title="Join our Community Meetings">Community Meetings</a>
-          </Link>
+          <a
+            href="https://github.com/the-guild-org/Stack"
+            title="Explore our projects"
+          >
+            Open Source
+          </a>
+          <a
+            href="https://github.com/the-guild-org/community-meetings"
+            title="Join our Community Meetings"
+          >
+            Community Meetings
+          </a>
           <Link href="/contact">
             <a title="Get in touch">Contact</a>
           </Link>
         </FooterLinks>
 
         <FooterLinks>
-          <Link href="https://github.com/the-guild-org">
-            <a title="See our GitHub profile">
-              <GitHub />
-            </a>
-          </Link>
-          <Link href="https://twitter.com/TheGuildDev">
-            <a title="Visit our Twitter">
-              <Twitter />
-            </a>
-          </Link>
-          <Link href="https://www.linkedin.com/company/the-guild-software">
-            <a title="Visit our LinkedIn">
-              <Linkedin />
-            </a>
-          </Link>
-          <Link href="https://discord.gg/xud7bH9">
-            <a title="Visit our Discord">
-              <Discord />
-            </a>
-          </Link>
+          <a
+            href="https://github.com/the-guild-org"
+            title="See our GitHub profile"
+          >
+            <GitHub />
+          </a>
+          <a href="https://twitter.com/TheGuildDev" title="Visit our Twitter">
+            <Twitter />
+          </a>
+          <a
+            href="https://www.linkedin.com/company/the-guild-software"
+            title="Visit our LinkedIn"
+          >
+            <Linkedin />
+          </a>
+          <a href="https://discord.gg/xud7bH9" title="Visit our Discord">
+            <Discord />
+          </a>
         </FooterLinks>
 
         <FooterText>

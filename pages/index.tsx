@@ -170,11 +170,13 @@ const Index: React.FC<Props> = ({ articles }) => {
               </p>
             }
           />
-          <Link href="https://github.com/the-guild-org/Stack" passHref={true}>
-            <BlogButton as="a" title="View our Tech Stack">
-              View all projects
-            </BlogButton>
-          </Link>
+          <BlogButton
+            as="a"
+            href="https://github.com/the-guild-org/Stack"
+            title="View our Tech Stack"
+          >
+            View all projects
+          </BlogButton>
         </Container>
       </ProductsSection>
 

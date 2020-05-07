@@ -118,10 +118,14 @@ export const Newsletter: React.FC<{ className?: string }> = ({ className }) => {
 
   const showForm = !success;
   const isClient = typeof window === 'object';
+  const hasPower =
+    isClient &&
+    typeof navigator.hardwareConcurrency === 'number' &&
+    navigator.hardwareConcurrency > 1;
 
   return (
     <Container className={className}>
-      {isClient && confetti && (
+      {hasPower && confetti && (
         <FixedConfetti width={window.innerWidth} height={window.innerHeight} />
       )}
       <Header>Join our newsletter</Header>
