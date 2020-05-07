@@ -1,5 +1,6 @@
 export interface Meta {
   title: string;
+  author: string;
   tags: string[];
   date: string;
   description: string;

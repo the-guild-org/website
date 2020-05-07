@@ -2,6 +2,7 @@ import withArticle from '../../ui/blog/article';
 
 export const meta = {
   title: 'git rebase (not) --interactive',
+  author: 'eytan',
   tags: [],
   date: '2018-9-3',
   description:
@@ -14,15 +15,13 @@ export default withArticle({ ...meta });
 
 _tl;dr: How to build a Node.JS script to re-write history. pre-requisites: Familiarity with git rebase --interacitve._
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/0*2ArsqHco6GT-ZYSi?raw=true)
-
 Once upon a time, there was a [Whatsapp clone tutorial](https://github.com/Urigo/whatsapp-textrepo-angularcli-express) was born. Since then it has been through different incantations, but they all shared a common principle — the tutorial used git as a version control.
 
 What’s special about this tutorial is its commits history — every commit represents a step in the tutorial; this way it’s very easy to navigate through it and reference a specific part of it.
 
 For the end user it was all cakes and ale, but maintenance was hell. To put things simple, imagine you had the following git-log:
 
-```
+```bash
 Step 100: description of step 100th
 .
 .
@@ -34,7 +33,7 @@ Step 1: description of first step
 
 Now let’s say that you would like to remove step 2. The only solution for that would be using a git-rebase --interactive starting step 2 and save the following file:
 
-```
+```bash
 reword xxxxxxx Step 100: description of step 100th
 .
 .

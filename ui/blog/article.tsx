@@ -82,10 +82,34 @@ const Back = styled.div`
   margin: 125px auto 0 auto;
 `;
 
+const authors: Record<string, { name: string; link: string }> = {
+  eytan: {
+    name: 'Eytan Manor',
+    link: 'https://twitter.com/eytan_manor',
+  },
+  kamil: {
+    name: 'Kamil Kisiela',
+    link: 'https://twitter.com/kamilkisiela',
+  },
+  dotan: {
+    name: 'Dotan Simha',
+    link: 'https://twitter.com/dotansimha',
+  },
+  uri: {
+    name: 'Uri Goldshtein',
+    link: 'https://twitter.com/UriGoldshtein',
+  },
+  arda: {
+    name: 'Arda Tanrikulu',
+    link: 'https://twitter.comm/ardatanrikulu',
+  },
+};
+
 export default (meta: Meta): React.FC => {
   return ({ children: content }) => {
     const title = `${meta.title} - The Guild Blog`;
     const date = meta.date ? new Date(meta.date) : new Date();
+    const author = meta.author && authors[meta.author];
 
     return (
       <MDXProvider components={components}>
@@ -96,6 +120,7 @@ export default (meta: Meta): React.FC => {
               <Details>
                 <Time dateTime={date.toString()}>
                   {format(date, 'EEEE, LLL do y')}
+                  {author ? ` - ${author.name}` : ''}
                 </Time>
               </Details>
               <Cover>

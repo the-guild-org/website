@@ -2,15 +2,17 @@ import withArticle from '../../ui/blog/article';
 
 export const meta = {
   title: 'This is how I build Babel plug-ins',
+  author: 'eytan',
   tags: [],
   date: '2018-10-8',
-  description: 'TODO:',
-  image: '',
+  description: 'The basics of AOT compilers and how to write Babel plug-ins',
+  image:
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*WmUiQJ4b0f2XaEzdKH6uLg.png?raw=true',
 };
 
 export default withArticle({ ...meta });
 
-[https://youtu.be/67DmVvjAdJU](https://youtu.be/67DmVvjAdJU 'The basics of AOT compilers and how to write Babel plug-ins Similar information can be found in an article that I published on Medium: https://medium.com/the-guild/this-is-how-i-build-babel-plug-ins-b0a13dcd0352 links: AST explorer: https://astexplorer.net/ Babel docs: https://babeljs.io/docs/en/ Babel plug-in handbook: https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md example plug-in I: https://github.com/DAB0mB/babel-plugin-scoped-styled-components example plug-in II: https://github.com/DAB0mB/babel-plugin-react-persist Social media: Follow me on GitHub: https://github.com/DAB0mB Twitter: https://twitter.com/eytan_manor Medium: https://medium.com/@eytanmanor')
+https://youtu.be/67DmVvjAdJU
 
 The idea of writing such article popped into my mind while working on my [Webflow/React transpiler](https://github.com/DAB0mB/Appfairy). All I wanted to do was to take a JS code string and transform it in such way that globals won’t be redefined if already so:
 
@@ -58,9 +60,7 @@ Babel is made out of numerous components which work together to bring the latest
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*cW9IvHMO5fBRNbjw2NW44Q.png?raw=true)
 
 - The parser parses the code string into a data representational structure called AST (abstract syntax tree) using [`@babel/parser`](http://github.com/babel/babel/tree/master/packages/babel-parser).
-
 - The AST is being manipulated by pre-defined plug-ins which use[`@babel/traverse`](http://github.com/babel/babel/tree/master/packages/babel-traverse).
-
 - The AST is being transformed back into code using [`@babel/generator`](http://github.com/babel/babel/tree/master/packages/babel-generator).
 
 Now you have a better understanding of Babel and you can actually understand what’s happening when you build a plug-in; and speaking of which, how do we do that?
@@ -78,17 +78,14 @@ Now let’s say that we would like to change the value `"foo"` to `"bar"`, hypot
 I’ve prepared a quick template project that you can use to quickly write plug-ins and test them by transforming them. The project can be downloaded by cloning [this repository](https://github.com/DAB0mB/babel-plugin-tester). The project contains the following files:
 
 - `in.js` - includes the input code that we would like to transform.
-
 - `out.js` - includes the output of the code we’ve just transformed.
-
 - `transform.js` - takes the code in `in.js`, transforms it, and writes the new code to `out.js`.
-
 - `plugin.js` - the transformation plug-in that will be applied throughout transformation.
 
 To implement our plug-in, copy the following content and paste it in the `in.js` file:
 
-```
-foo = "foo"
+```javascript
+foo = 'foo';
 ```
 
 and the following content to the `transform.js` file:
@@ -114,8 +111,8 @@ module.exports = () => {
 
 To initiate the transformation, simply run `$ node transform.js`. Now open the `out.js` file and you should see the following content:
 
-```
-foo = "bar"
+```javascript
+foo = 'bar';
 ```
 
 The `visitor` property is where the actual manipulation of the AST should be done. It walks through the tree and runs the handlers for each specified node type. In our case, whenever the visitor has encountered a node of type `AssignmentExpression` node, it will replace the right operand with `"bar"` in case we assign the the `"foo"` value to `foo`. We can add a manipulation handler for any node type that we want, it can be `AssignmentExpression`, `Identifier`, `Literal`, or even `Program`, which is the root node of the AST.
@@ -161,27 +158,24 @@ module.exports = ({ types: t }) => {
 I will now introduce you to 2 new concepts that I haven’t mention before but are being used in the plug-in above:
 
 - The `types` object is a Lodash-esque utility library for AST nodes. It contains methods for building, validating, and converting AST nodes. It’s useful for cleaning up AST logic with well thought out utility methods. Its methods should all start be equivalent to camel cased node types. All types are defined in [`@babel/types`](http://github.com/babel/babel/tree/master/packages/babel-types), and further more, I recommend you to look at the source code as you build the plug-in in order to define the desired node creators’ signatures, since most of it is not documented. More information regards `types` can be found [here](http://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#babel-types).
-
 - Just like the `types` object, the `scope` object contains utilities which are related to the current node’s scope. It can check whether a variable is defined or not, generate unique variable IDs, or rename variables. In the plug-in above, we used the `hasBinding()` method to check whether the identifier has a corresponding declared variable or not by climbing up the AST. More information regards `scope` can be found [here](http://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#scope).
 
 Now we will add the missing peace to the puzzle which is transforming assignment expressions into conditional assignment expressions. So we wanna turn this code:
 
-```
-window.foo = 'foo'
+```javascript
+window.foo = 'foo';
 ```
 
 Into this code:
 
-```
-if (typeof window.foo === 'undefined') window.foo = 'foo'
+```javascript
+if (typeof window.foo === 'undefined') window.foo = 'foo';
 ```
 
 If you’ll investigate that code’s AST you’ll see that we’re dealing with 3 new node types:
 
 - UnaryExpression — `typeof window.foo`
-
 - BinaryExpression — `... === 'undefined'`
-
 - IfStatement — `if (...)`
 
 Notice how each node is composed out of the one above it. Accordingly, we will update our plug-in. We will keep the old logic, where we turn global variables into members of `window`, and on top of that, we will make it conditional with the `IfStatement`:
@@ -227,15 +221,9 @@ module.exports = ({ types: t }) => {
 So basically what we do here is checking whether we deal with a `window` member assignment expression, and if so we will create the conditional statement and replace it with the current node. Few notes:
 
 - Without getting fancy with the explenation, I’ve created a nested `ExpressionStatement` inside the `IfStatement` simply because this is what is expected of me, according to the AST.
-
 - I’ve used the `replaceWith` method to replace the current node with the newly created one. More about manipulation methods like `replaceWith` be found [here](https://dillinger.io/github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#manipulation).
-
 - Normally the `AssignmentExpression` handler should be called again, because technically I’ve created a new node of that type when we called the `replaceWith` method, but since I don’t wanna run another traversal for newly created nodes, I’ve called the `skip` method, otherwise I would have had an infinite recursion. More about visiting methods like `skip` can be found [here](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#manipulation).
 
 So there you go, by now the plug-in should be complete. It’s not the most complex plug-in out there but it’s definitely a good example for this intro that will give you a good basis for further plug-ins that you’ll build down the road.
 
 As a recap, whenever you forget for any reason how a plug-in works, go through this article. As you work on the plug-in itself, investigate through the desired AST outcome at [astexplorer.net](http://astexplorer.net) and for API docs I recommend you to work with this wonderful [handbook](http://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md).
-
-```backmatter
-{"source":"medium","postId":"b0a13dcd0352","publishedDate":1538994729668,"url":"https://medium.com/the-guild/this-is-how-i-build-babel-plug-ins-b0a13dcd0352"}
-```

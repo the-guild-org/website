@@ -8,6 +8,7 @@ import { withPlaceholder } from '../../lib/images';
 const Link = styled(NativeLink)`
   box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
+  background-color: #fff;
 
   &:hover {
     opacity: 0.75;
