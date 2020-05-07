@@ -2,18 +2,15 @@ import withArticle from '../../ui/blog/article';
 
 export const meta = {
   title: 'The coolest, most underrated design pattern in React',
+  author: 'eytan',
   tags: [],
   date: '2019-7-31',
-  description: 'TODO:',
+  description: 'The coolest, most underrated design pattern in React',
   image:
-    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*CJ1h6vCuTM2RAW25RKw-Sw.png',
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*CJ1h6vCuTM2RAW25RKw-Sw.png?raw=true',
 };
 
 export default withArticle({ ...meta });
-
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*CJ1h6vCuTM2RAW25RKw-Sw.png?raw=true)
-
-# The coolest, most underrated design pattern in React
 
 There will be times when we would like to pass props and control the behavior of child elements. Let me explain. Let’s take the following modal for example:
 
@@ -91,7 +88,7 @@ In Bootstrap they took a very clever approach. Instead of defining props all ove
 
 Great! There’s definitely a progress right there. But we can even take it a step further.
 
-> ### “A step further? What do you mean?” — A confused React developer
+> “A step further? What do you mean?” — A confused React developer
 
 Even though things are very declarative and clear with Bootstrap’s approach, **we’re still obligated to compose the entire modal**. This means that we cannot use the modal’s children to fill-up the missing pieces, as if part of the logic was already implemented. It’s not always that we would like to write the modal’s contents entirely from scratch, right? Sometimes we would like to use it like some sort of a template. Another point to consider, is that there’s no filter or restrictions on the children’s input. Sometimes we would like the user to use only certain elements, and thus make sure that he doesn’t mess things up. If so, what’s the right approach that goes along with it?
 
@@ -165,10 +162,6 @@ const useChildProps = (children, whitelist) => {
 </ModalFromTheFuture>
 ```
 
-> ### “Wait a minute, can’t it cause a confusion with native HTML tag names?” — The developer from before
+> “Wait a minute, can’t it cause a confusion with native HTML tag names?” — The developer from before
 
 True, but that can also be said about any other React component. Ever since the introduction of component based UI (e.g. Angular, React, Vue or even Web components), new tag names aren’t so rare to come across by, therefore you shouldn’t be afraid to use the new design pattern.
-
-```backmatter
-{"source":"medium","postId":"cd6210956203","publishedDate":1564532909353,"url":"https://medium.com/the-guild/the-coolest-most-underrated-design-pattern-in-react-cd6210956203"}
-```

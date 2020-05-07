@@ -2,17 +2,18 @@ import withArticle from '../../ui/blog/article';
 
 export const meta = {
   title: 'This is how our brain detects shapes',
+  author: 'eytan',
   tags: [],
   date: '2018-12-11',
-  description: 'TODO:',
-  image: '',
+  description:
+    'This is how our brain detects shapes. And so shall the computer...',
+  image:
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*4ZlUc2Lu3EL91aF6ha3AIA.gif?raw=true',
 };
 
 export default withArticle({ ...meta });
 
-## And so shall the computer…
-
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*4ZlUc2Lu3EL91aF6ha3AIA.gif?raw=true 'A demonstration of the algorithm.')
+## And so shall the computer...
 
 There was this time I was trying to create a studio where you can sketch primitives and transform them with touch gestures (credit to [Guy Manor](https://www.linkedin.com/in/guy-manor-519099143/) for the idea ❤). As part of my work I had to create an algorithm that could normalize drawn shapes, because there’s no use to a set of dozens of vertices which together look like nothing but one big mess. The result can be seen in the GIF above. Looks pretty nice right?
 
@@ -60,7 +61,6 @@ Once we’ve determined what shape does the polygon match to, we will start a pr
 
 - For the scale we will simply calculate the average length of all vectors and divide the 2 values to find the right multiplication.
 - For the angle, we will repeat the same process, but in addition, we will try different variations of radians (_let r the average radian of the polygon_): `r, -r, π + r, π - r, r + .5π, -r - .5π, .5π - r, 1.5π + r` .
-
 - We will repeat angle matching for a mirrored version of the shape aka a different “direction”.
 - We will position the scaled, rotated and (potentially) mirrored shape and position its center on top of the drawn polygon’s center.
 - Out of all transformed shapes with different angle variations, we will take the one whose average vertices deviation is the smallest compared to the drawn polygon’s vertices.
@@ -76,7 +76,3 @@ First we will try to determine whether the polygon is intended to have 4 right a
 ---
 
 So that was the shape detection algorithm in a nutshell. All I did to come up with it was putting the process that goes through my brain in to code, and the result is detailed above. If we would to add another layer to the algorithm to make it more life-like, it would probably be a deep learning algorithm to detect new base-shapes to fill out the atlas. Maybe I will write about it in my next article ;-)
-
-```backmatter
-{"source":"medium","postId":"10cadefc8134","publishedDate":1544539655101,"url":"https://medium.com/the-guild/this-is-how-our-brain-detects-shapes-10cadefc8134"}
-```
