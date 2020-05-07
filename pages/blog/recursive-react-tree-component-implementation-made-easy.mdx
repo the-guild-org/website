@@ -4,8 +4,9 @@ export const meta = {
   title: 'Recursive React tree component implementation made easy',
   tags: [],
   date: '2018-11-5',
-  description: 'TODO:',
-  image: '',
+  description: 'The challenges that I’ve faced and how I solved them',
+  image:
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*EPgXgphjIBkBrEae8YZ4sw.png?raw=true',
 };
 
 export default withArticle({ ...meta });
@@ -51,11 +52,9 @@ During my implementation of that tree I’ve faced some pretty interesting chall
 
 My tree is made out of 3 internal components:
 
-- **FSRoot** _(see [FSRoot.js](https://github.com/DAB0mB/react-fs-tree/blob/fc0a0b3b2042e312d4238e0660c161f7744dd732/src/index.js))_— This is where the tree starts to grow from. It’s a container that encapsulates internal props which are redundant to the user (like props.rootNode, props.parentNode, etc) and exposes only the relevant parts (like props.childNodes, props.onSelect, etc). It also contains a tag which rules that are relevant nested components.</x-turndown>
-
-- **FSBranch** _(see [FSBranch.js](https://github.com/DAB0mB/react-fs-tree/blob/fc0a0b3b2042e312d4238e0660c161f7744dd732/src/FSBranch.js))_ — A branch contains the list that will iterate through the nodes. The branch is what will give the tree the staircase effect and will get further away from the edge as we go deeper. Any time we reveal the contents of a node with child nodes, a new nested branch should be created.
-
-- **FSNode** _(see [FSNode.js](https://github.com/DAB0mB/react-fs-tree/blob/fc0a0b3b2042e312d4238e0660c161f7744dd732/src/FSNode.js))_ — The node itself. It will present the given node’s metadata: its name, its mode (added, deleted or modified), and its children. This node is also used as a controller to directly control the node’s metadata and update the view right after. More information about that further this article.
+- **FSRoot** (see [FSRoot.js](https://github.com/DAB0mB/react-fs-tree/blob/fc0a0b3b2042e312d4238e0660c161f7744dd732/src/index.js)) - This is where the tree starts to grow from. It’s a container that encapsulates internal props which are redundant to the user (like props.rootNode, props.parentNode, etc) and exposes only the relevant parts (like props.childNodes, props.onSelect, etc). It also contains a tag which rules that are relevant nested components.
+- **FSBranch** (see [FSBranch.js](https://github.com/DAB0mB/react-fs-tree/blob/fc0a0b3b2042e312d4238e0660c161f7744dd732/src/FSBranch.js)) - A branch contains the list that will iterate through the nodes. The branch is what will give the tree the staircase effect and will get further away from the edge as we go deeper. Any time we reveal the contents of a node with child nodes, a new nested branch should be created.
+- **FSNode** (see [FSNode.js](https://github.com/DAB0mB/react-fs-tree/blob/fc0a0b3b2042e312d4238e0660c161f7744dd732/src/FSNode.js)) - The node itself. It will present the given node’s metadata: its name, its mode (added, deleted or modified), and its children. This node is also used as a controller to directly control the node’s metadata and update the view right after. More information about that further this article.
 
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*EPgXgphjIBkBrEae8YZ4sw.png?raw=true 'A relational diagram of the tree')
 
@@ -175,7 +174,3 @@ A program can be written in many ways. I know that my way of implementing a tree
 Below is the final result of the tree that I’ve created. Feel free to visit its [Github page](https://github.com/DAB0mB/react-fs-tree) or grab a copy using NPM.
 
 ![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*k6kq7XS-u9KHiHkie6YwuQ.png?raw=true '$ npm install react-fs-tree')
-
-```backmatter
-{"source":"medium","postId":"466dfce1a008","publishedDate":1541405658024,"url":"https://medium.com/the-guild/recursive-react-tree-component-implementation-made-easy-466dfce1a008"}
-```

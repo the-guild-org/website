@@ -5,16 +5,12 @@ export const meta = {
     '<💅> Introducing a new encapsulation method for Styled-Components with Babel',
   tags: [],
   date: '2019-3-4',
-  description: 'TODO:',
+  description: 'Use private class names instead of a dedicated component',
   image:
-    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*mlEERn6nS_ulsxBbXjfMng.png',
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*mlEERn6nS_ulsxBbXjfMng.png?raw=true',
 };
 
 export default withArticle({ ...meta });
-
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*mlEERn6nS_ulsxBbXjfMng.png?raw=true 'babel-plugin-scoped-styled-components')
-
-# \<💅> Introducing a new encapsulation method for Styled-Components with Babel
 
 ## TL;DR: Use private class names instead of a dedicated component. \*\*experimental\*\*
 
@@ -126,27 +122,22 @@ const Dashboard = (
 I also thought of creating a runtime wrapper around Styled-Components where I basically iterate through `props.children` and edit their class names, but there are some advantages for using an AOT compiler over a runtime solution:
 
 - You don’t have to import a library different than `styled-components` and it’s easily integratable with existing projects.
-
 - It’s more efficient.
 - Encapsulation can be done based on the module you’re currently at and not based on the virtual DOM tree. This behavior is not craved in stone as it can be easily modified by specifying certain attributes, but at-least the option is there.
 - It’s more strict and declarative.
 
 The source code is available on [GitHub](https://github.com/DAB0mB/babel-plugin-scoped-styled-components), or it can be downloaded via NPM (or Yarn):
 
-```
-$ npm install babel-plugin-scoped-styled-components
+```bash
+npm install babel-plugin-scoped-styled-components
 ```
 
 Once you install it, be sure to load it in your `.babelrc`:
 
-```
+```json
 {
   "plugins": ["babel-plugin-scoped-styled-components"]
 }
 ```
 
 I’m aware that there are certain limitations to that approach as for now, but I would like to see more interest and contribution before I continue any further with the development. Please share your thoughts everyone, let me know what do you think by commenting below or by [opening an issue on GitHub](https://github.com/DAB0mB/babel-plugin-scoped-styled-components/issues).
-
-```backmatter
-{"source":"medium","postId":"bec5cbb671dd","publishedDate":1551715188900,"url":"https://medium.com/the-guild/introducing-a-new-encapsulation-method-for-styled-components-with-babel-bec5cbb671dd"}
-```

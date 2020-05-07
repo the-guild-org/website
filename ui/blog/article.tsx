@@ -53,8 +53,11 @@ const Cover = styled.div`
   height: auto;
 
   & > * {
-    width: 100%;
+    max-width: 100%;
     height: auto;
+    max-height: 300px;
+    display: block;
+    margin: 0 auto;
   }
 `;
 
