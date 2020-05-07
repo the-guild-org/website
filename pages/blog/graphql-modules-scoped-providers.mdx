@@ -1,17 +1,16 @@
 import withArticle from '../../ui/blog/article';
 
 export const meta = {
-  title: 'Scoped Providers in GraphQL-Modules Dependency Injection',
+  title: 'Scoped Providers in GraphQL-Modules',
   tags: [],
   date: '2019-1-11',
-  description: 'TODO:',
+  description:
+    'Understand how scoped providers work in GraphQL-Modules Dependency Injection',
   image:
-    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*K2d-IqITJ1CQS5Z0MiyV-w.png',
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*K2d-IqITJ1CQS5Z0MiyV-w.png?raw=true',
 };
 
 export default withArticle({ ...meta });
-
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*K2d-IqITJ1CQS5Z0MiyV-w.png?raw=true 'Understand how scopes work in GraphQL-Modules')
 
 We recently released a new version of GraphQL-Modules with a new feature called Scoped Providers in the dependency injection system of GraphQL-Modules.
 
@@ -182,12 +181,12 @@ mutation ExampleMutation {
 
 In first call, the initial counter value `0` will be incremented . Then the result becomes `1` and this value will be returned as a result of `increment` mutation, but on the same request we have `multiply` as well. So the same counter value will be multiplied by `2` , and this value will be returned as a result of `multiply` mutation.
 
-So, on every request the result will be;
+So, on every request the result will be:
 
-```
+```json
 {
- increment: 1,
- multiply: 2
+  "increment": 1,
+  "multiply": 2
 }
 ```
 
@@ -197,12 +196,12 @@ But if the provider is in ApplicationScope, the result will be `[3,6]` in the se
 
 If you have request-scoped providers in your GraphQL Module, these providers are generated in every injection. This means a request-scoped provider is never kept neither application state, nor session state. So, this type of providers works just like [Factory](https://en.wikipedia.org/wiki/Factory_method_pattern). It creates an instance each time you request from the injector.
 
-Let’s assume we do the similar changes for RequestScope. The results will be like below on each request;
+Let’s assume we do the similar changes for RequestScope. The results will be like below on each request:
 
-```
+```json
 {
-  increment: 1,
-  multiply: 0
+  "increment": 1,
+  "multiply": 0
 }
 ```
 
@@ -251,26 +250,13 @@ However, you can use `onRequest` hook to have `ModuleSessionInfo` in your Applic
 
 We are constantly trying to improve the set of tools provided by **GraphQL-Modules**, and we welcome you to try it and share your experience and thoughts.
 
-# All posts about GraphQL Modules
+## All posts about GraphQL Modules
 
-1.  [GraphQL Modules — Feature based GraphQL Modules at scale](https://medium.com/the-guild/graphql-modules-feature-based-graphql-modules-at-scale-2d7b2b0da6da)
-
-1.  [Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?](https://medium.com/the-guild/why-is-true-modular-encapsulation-so-important-in-large-scale-graphql-projects-ed1778b03600)
-
-1.  [Why did we implement our own Dependency Injection library for GraphQL-Modules?](https://medium.com/p/f25a234a9762)
-
-1.  [Scoped Providers in GraphQL-Modules Dependency Injection](https://medium.com/p/949cd2588e0)
-
-1.  [Writing a GraphQL TypeScript project w/ GraphQL-Modules and GraphQL-Code-Generator](https://medium.com/the-guild/writing-strict-typed-graphql-typescript-project-w-graphql-modules-and-graphql-code-generator-c22f6caa17b8)
-
-1.  [Authentication and Authorization in GraphQL (and how GraphQL-Modules can help)](https://medium.com/the-guild/authentication-and-authorization-in-graphql-and-how-graphql-modules-can-help-fadc1ee5b0c2)
-
-1.  [Authentication with AccountsJS & GraphQL Modules](https://medium.com/the-guild/authentication-with-accountsjs-graphql-modules-e0fb9799a9da)
-
-1.  [Manage Circular Imports Hell with GraphQL-Modules](https://medium.com/the-guild/manage-circular-imports-hell-with-graphql-modules-4b1611dee781)
-
-> _Follow us on [**GitHub**](https://github.com/Urigo/graphql-modules) and [**Medium**](https://medium.com/the-guild), we are planning to release many more posts in the next couple of weeks about what we’ve learned using **GraphQL** in recent years._
-
-```backmatter
-{"source":"medium","postId":"949cd2588e0","publishedDate":1547219984967,"url":"https://medium.com/the-guild/scoped-providers-in-graphql-modules-dependency-injection-system-949cd2588e0"}
-```
+- [GraphQL Modules — Feature based GraphQL Modules at scale](https://medium.com/the-guild/graphql-modules-feature-based-graphql-modules-at-scale-2d7b2b0da6da)
+- [Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?](https://medium.com/the-guild/why-is-true-modular-encapsulation-so-important-in-large-scale-graphql-projects-ed1778b03600)
+- [Why did we implement our own Dependency Injection library for GraphQL-Modules?](https://medium.com/p/f25a234a9762)
+- [Scoped Providers in GraphQL-Modules Dependency Injection](https://medium.com/p/949cd2588e0)
+- [Writing a GraphQL TypeScript project w/ GraphQL-Modules and GraphQL-Code-Generator](https://medium.com/the-guild/writing-strict-typed-graphql-typescript-project-w-graphql-modules-and-graphql-code-generator-c22f6caa17b8)
+- [Authentication and Authorization in GraphQL (and how GraphQL-Modules can help)](https://medium.com/the-guild/authentication-and-authorization-in-graphql-and-how-graphql-modules-can-help-fadc1ee5b0c2)
+- [Authentication with AccountsJS & GraphQL Modules](https://medium.com/the-guild/authentication-with-accountsjs-graphql-modules-e0fb9799a9da)
+- [Manage Circular Imports Hell with GraphQL-Modules](https://medium.com/the-guild/manage-circular-imports-hell-with-graphql-modules-4b1611dee781)

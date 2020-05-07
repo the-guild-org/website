@@ -4,7 +4,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import format from 'date-fns/format';
 import { ArrowLeft } from 'react-feather';
-import { components, H1 } from './elements';
+import { components } from './elements';
 import { Newsletter } from './newsletter';
 import { Page } from '../shared/Page';
 import { Button } from '../shared/Layout';
@@ -29,7 +29,12 @@ const Content = styled.div`
   line-height: 2rem;
 `;
 
-const Title = styled(H1)``;
+const Title = styled.h1`
+  text-align: center;
+  margin-top: 0;
+  font-size: 2rem;
+  color: var(--colors-primary);
+`;
 
 const Details = styled.div`
   margin-top: 2rem;

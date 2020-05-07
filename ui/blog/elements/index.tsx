@@ -2,16 +2,22 @@ import styled from 'styled-components';
 import { Code, InlineCode } from './code';
 import { GenericLink } from './link';
 
-export const H1 = styled.h1`
+const H1 = styled.h2`
   text-align: center;
   margin-top: 0;
   font-size: 2rem;
   color: var(--colors-primary);
 `;
 
-export const H2 = styled.h1`
+const H2 = styled.h3`
   margin-top: 2.5rem;
   font-size: 1.5rem;
+  color: var(--colors-primary);
+`;
+
+const H3 = styled.h4`
+  margin-top: 2.5rem;
+  font-size: 1.2rem;
   color: var(--colors-primary);
 `;
 
@@ -80,6 +86,7 @@ const Iframe = styled.iframe`
 export const components = {
   h1: H1,
   h2: H2,
+  h3: H3,
   li: Li,
   ul: Ul,
   code: Code,

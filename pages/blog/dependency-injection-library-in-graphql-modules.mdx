@@ -1,12 +1,13 @@
 import withArticle from '../../ui/blog/article';
 
 export const meta = {
-  title:
-    'Why did we implement our own Dependency Injection library for GraphQL-Modules?',
+  title: 'Dependency Injection in GraphQL-Modules',
   tags: [],
   date: '2019-1-11',
-  description: 'TODO:',
-  image: '',
+  description:
+    'Why did we implement our own Dependency Injection library for GraphQL-Modules?',
+  image:
+    'https://github.com/the-guild-org/oneblog/blob/master/img/704/0*06GIprgOtbPjalU-.png?raw=true',
 };
 
 export default withArticle({ ...meta });
@@ -15,13 +16,11 @@ export default withArticle({ ...meta });
 
 When designing GraphQL Modules, we tried different approaches to encapsulate modules safely. We created a solution where you won’t need to use Dependency Injection when you start, but after you are getting to a certain scale, you can make use of our separate DI library to ease the separation and make the boundaries stricter, only at the point when it really makes sense and helps you. When you get to that point, DI helps you mostly for ease of mocking providers for testing and encapsulation for less error prone implementation.
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/0*06GIprgOtbPjalU-.png?raw=true)
+In the early stages of GraphQL-Modules, it used to have [Inversify](https://github.com/inversify/InversifyJS) internally for Dependency Injection in GraphQL-Modules. Inversify is a platform-agnostic Dependency Injection library written in JavaScript. Unfortunately, **_Inversify_** didn’t fit our needs for modular DI (Dependency Injection) due to some critical reasons that we’ll expand on this article.
 
-In the early stages of GraphQL-Modules, it used to have [**_Inversify_**](https://github.com/inversify/InversifyJS) internally for Dependency Injection in GraphQL-Modules. [**_Inversify_**](http://inversify.io/) is a platform-agnostic Dependency Injection library written in JavaScript. Unfortunately, **_Inversify_** didn’t fit our needs for modular DI (Dependency Injection) due to some critical reasons that we’ll expand on this article.
+That’s why, we implemented our own platform-agnostic Dependency Injection library called `@graphql-modules/di` which is independent from `@graphql-modules/core`, and it can be used by itself.
 
-That’s why, we implemented our own platform-agnostic Dependency Injection library called `_@graphql-modules/di_` which is independent from `_@graphql-modules/core_`, and it can be used by itself.
-
-It supports factory, class and value providers that can have _Symbol_, _string_, _number_, _function_ and _object_ tokens in a `_provide_` definition, and it can address constructable classes, factory functions and constant values as injected values. It has some features that are similar to [Angular’s Dependency Injection](https://angular.io/guide/dependency-injection) that is mentioned in their documentation. In this article we’ll explain the similarities and differences between those solutions.
+It supports factory, class and value providers that can have _Symbol_, _string_, _number_, _function_ and _object_ tokens in a `provide` definition, and it can address constructable classes, factory functions and constant values as injected values. It has some features that are similar to [Angular’s Dependency Injection](https://angular.io/guide/dependency-injection) that is mentioned in their documentation. In this article we’ll explain the similarities and differences between those solutions.
 
 **Let’s start with the principles we wanted to have in our DI logic, and we will finish with the comparisons with Angular and NestJS.**
 
@@ -75,9 +74,7 @@ const OtherModuleThatUsesDB = new GraphQLModule({
 The three benefits we have with this type of DI and modular system;
 
 - _AppModule_ is protected from an unsafe call without a valid configuration that is needed in the internal process (_DatabaseModule_); thanks to `configRequired` .
-
 - _DatabaseModule_ is protected from an unsafe import without a valid configuration that is needed in the internal process (_SomeDbProvider_); thanks to `configRequired` again!
-
 - _OtherModuleThatUsesDb_ is protected from an unsafe call or import without a definition of a well-configured _DatabaseModule._
 
 # **Hierarchy**
@@ -85,17 +82,11 @@ The three benefits we have with this type of DI and modular system;
 We also have another problem about the hierarchical approach of existing DI implementations. Let me give an example;
 
 - **_A DI Container_** has **_FooProvider_**
-
 - **_B DI Container_** has **_BarProvider_**
-
 - **_C DI Container_** has **_BazProvider_**
-
 - **_D DI Container_** has **_QuxProvider_**
-
 - **A** imports **B**
-
 - **B** imports **D**
-
 - **B** imports **C**
 
 For example the following case will happen in our DI;
@@ -108,7 +99,7 @@ As you can see in the comparison with **_Inversify_**, **_Inversify_** can attac
 
 In contrast with client side application, your DI system wouldn’t need to have different scopes like Application Scope and Session Scope. In our implementation, we can define providers that have a life time during a single GraphQL Network Request and not the whole the application runtime; because some providers needs to belong in a single client. Unfortunately, you need to find tricky ways to manage scoped providers if you use existing DI libraries like **_Inversify_**.
 
-> ### In server-side applications, every client request has its own scope that we call \`**session scope\`**. We think this session scope should be able to have its own providers and DI logic outside of the application scope.
+> In server-side applications, every client request has its own scope that we call \`**session scope\`**. We think this session scope should be able to have its own providers and DI logic outside of the application scope.
 
 You can read more about the different scopes that we have in GraphQL-Modules here:
 
@@ -121,7 +112,7 @@ We recently released a new version of GraphQL-Modules with a new feature called 
 
 To provide _true encapsulation_; we should have an **_injector/container_** with multiple children, and these children must not know each other and even its parent. In **_Inversify_**, they have something like that which is called **_Hierarchical_** **_DI_**. In this feature of **_Inversify_**, the`parent` term can be misunderstood. because an injector seeks for its own providers then looks for the other injector that is being defined as `parent` in that feature. But, we need is more than that. We want to have multiple `parent` according to their logic.
 
-> ### Every module has its own injector together with its children’s injectors. So, every module can interact with its children’s providers with its own injector.
+> Every module has its own injector together with its children’s injectors. So, every module can interact with its children’s providers with its own injector.
 
 You can read more about _Hierarchy_ and _Encapsulation_ in the beginning of this article.
 
@@ -129,7 +120,7 @@ You can read more about _Hierarchy_ and _Encapsulation_ in the beginning of this
 
 In Angular, there is one injector that is shared across all the application while there are different encapsulated injectors belonging to each module in different scope.
 
-> ### Our Dependency Injection implementation is more strict in terms of encapsulation than Angular’s.
+> Our Dependency Injection implementation is more strict in terms of encapsulation than Angular’s.
 
 ```typescript
 import { NgModule } from '@angular/core';
@@ -149,8 +140,6 @@ import { BarModule } from '@bar';
     ]
 })
 export class AppModule {}
-
-
 ```
 
 This is an example top module written in Angular. Let’s assume `FooProvider` originally implemented and defined inside `FooModule` and used by `BarModule` . When `FooProvider` token is replaced by `MyFooProvider` in `AppModule` scope, `BarModule` also uses our `MyFooProvider` inside its logic. This explicitly violates encapsulation in the modular approach, because Angular is supposed to send to `BarModule` `FooModule` ‘s `FooProvider` implementation instead of the one defined outside of `BarModule` ; because it shouldn’t know what is defined in the higher level.
@@ -172,9 +161,6 @@ export const AppModule = new GraphQLModule({
         }
     ]
 });
-
-
-
 ```
 
 However, GraphQL-Modules will send to `BarModule` the correct `FooProvider` , because `BarModule` imports `FooModule` not `AppModule` . So, `MyFooProvider` will be sent if the current injector is inside `AppModule` scope.
@@ -183,7 +169,7 @@ In GraphQL-Modules, if A imports B and B imports C, A can access C’s scope. Bu
 
 Angular doesn’t care about that. it has a single injector for the all application. This may cause some problems for debugging on a large scale backend application.
 
-> ### That ability is not so important for Angular applications; because they are running on the browser, not on the server. But still you can notice the similar behavior to GraphQL-Modules DI’s if you load an Angular module lazily using router’s `loadChildren` property.
+> That ability is not so important for Angular applications; because they are running on the browser, not on the server. But still you can notice the similar behavior to GraphQL-Modules DI’s if you load an Angular module lazily using router’s `loadChildren` property.
 
 And Angular’s DI library doesn’t differentiate _Application and Session scopes_ because it doesn’t need that. An Angular application has a life time until `window` is terminated by closing it or refreshing page; the session and application runtime can be considered same in the client application. That’s why, our DI implementation is more complex than Angular’s as it need to handle multiple clients by running a single application. You can read more about [_Scoped Providers_](https://medium.com/@ardatan/949cd2588e0) in the beginning of this article
 
@@ -191,11 +177,11 @@ And Angular’s DI library doesn’t differentiate _Application and Session scop
 
 NestJS is a server-side model-view-controller full fledged framework that has all the principles of MVC Backend framework. exposing a GraphQL API is only one of its various features. Our goal with GraphQL Modules was to create a set of tools and libraries that answer needs for the GraphQL ecosystem, and can be (and should be) used by NestJS users as well.
 
-> ### The principles and approaches we’re trying to apply in GraphQL Modules is not only for Dependency Injection but also for GraphQL Schemas and Context.
+> The principles and approaches we’re trying to apply in GraphQL Modules is not only for Dependency Injection but also for GraphQL Schemas and Context.
 
 In comparison to Nest’s goals, GraphQL-Modules is a platform agnostic library that can be used even with the plain `graphqljs` package **without a server**; because it was designed to work exactly same in all GraphQL Server platforms such as Apollo, Yoga, graphql-express etc. For example, you can **use _Apollo_’s data sources with graphql-express**; because GraphQL Modules **passes its own cache mechanism into the dataloaders thanks to our independent DI logic**.
 
-> ### The result of a GraphQLModule is a context builder and a schema while NestJS’s GraphQLModule is a NestJS module that exposes an API using Apollo.
+> The result of a GraphQLModule is a context builder and a schema while NestJS’s GraphQLModule is a NestJS module that exposes an API using Apollo.
 
 NestJS has its own dependency injection system which is similar to Angular’s but **more strict**; you can define both global (not by default like Angular) and encapsulated providers at the same time. We preferred not to have global providers like Angular (you can see how it works above in the Angular comparison); because we consider it can be more **error prone** and it has to be done by **passing configuration**. You can read more with an example about passing configuration and keeping safe boundaries between your modules in the [_Encapsulation_](https://medium.com/the-guild/why-is-true-modular-encapsulation-so-important-in-large-scale-graphql-projects-ed1778b03600) article.
 
@@ -209,24 +195,11 @@ That is also one of the reasons we created our DI library as a separate library,
 
 # All posts about GraphQL Modules
 
-1.  [GraphQL Modules — Feature based GraphQL Modules at scale](https://medium.com/the-guild/graphql-modules-feature-based-graphql-modules-at-scale-2d7b2b0da6da)
-
-1.  [Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?](https://medium.com/the-guild/why-is-true-modular-encapsulation-so-important-in-large-scale-graphql-projects-ed1778b03600)
-
-1.  [Why did we implement our own Dependency Injection library for GraphQL-Modules?](https://medium.com/p/f25a234a9762)
-
-1.  [Scoped Providers in GraphQL-Modules Dependency Injection](https://medium.com/p/949cd2588e0)
-
-1.  [Writing a GraphQL TypeScript project w/ GraphQL-Modules and GraphQL-Code-Generator](https://medium.com/the-guild/writing-strict-typed-graphql-typescript-project-w-graphql-modules-and-graphql-code-generator-c22f6caa17b8)
-
-1.  [Authentication and Authorization in GraphQL (and how GraphQL-Modules can help)](https://medium.com/the-guild/authentication-and-authorization-in-graphql-and-how-graphql-modules-can-help-fadc1ee5b0c2)
-
-1.  [Authentication with AccountsJS & GraphQL Modules](https://medium.com/the-guild/authentication-with-accountsjs-graphql-modules-e0fb9799a9da)
-
-1.  [Manage Circular Imports Hell with GraphQL-Modules](https://medium.com/the-guild/manage-circular-imports-hell-with-graphql-modules-4b1611dee781)
-
-> Follow us on [**GitHub**](https://github.com/Urigo/graphql-modules) and [**Medium**](https://medium.com/the-guild), we are planning to release many more posts in the next couple of weeks about what we’ve learned using **GraphQL** in recent years.
-
-```backmatter
-{"source":"medium","postId":"f25a234a9762","publishedDate":1547219980544,"url":"https://medium.com/the-guild/why-did-we-implement-our-own-dependency-injection-library-for-graphql-modules-f25a234a9762"}
-```
+- [GraphQL Modules — Feature based GraphQL Modules at scale](https://medium.com/the-guild/graphql-modules-feature-based-graphql-modules-at-scale-2d7b2b0da6da)
+- [Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?](https://medium.com/the-guild/why-is-true-modular-encapsulation-so-important-in-large-scale-graphql-projects-ed1778b03600)
+- [Why did we implement our own Dependency Injection library for GraphQL-Modules?](https://medium.com/p/f25a234a9762)
+- [Scoped Providers in GraphQL-Modules Dependency Injection](https://medium.com/p/949cd2588e0)
+- [Writing a GraphQL TypeScript project w/ GraphQL-Modules and GraphQL-Code-Generator](https://medium.com/the-guild/writing-strict-typed-graphql-typescript-project-w-graphql-modules-and-graphql-code-generator-c22f6caa17b8)
+- [Authentication and Authorization in GraphQL (and how GraphQL-Modules can help)](https://medium.com/the-guild/authentication-and-authorization-in-graphql-and-how-graphql-modules-can-help-fadc1ee5b0c2)
+- [Authentication with AccountsJS & GraphQL Modules](https://medium.com/the-guild/authentication-with-accountsjs-graphql-modules-e0fb9799a9da)
+- [Manage Circular Imports Hell with GraphQL-Modules](https://medium.com/the-guild/manage-circular-imports-hell-with-graphql-modules-4b1611dee781)

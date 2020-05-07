@@ -11,7 +11,7 @@ export const meta = {
 
 export default withArticle({ ...meta });
 
-## Tested with React-Native and Firebase Test Lab
+# Tested with React-Native and Firebase Test Lab
 
 Every invention starts with a need. I’ve been working on a personal app for quiet a while now, and as part of the process I hand it out to few people so they can test it (most of them were overseas). One of the major complaints that I got was that the map component didn’t load. On most devices it did, but in many others it didn’t.
 
@@ -27,11 +27,11 @@ Perfect! I was really excited to start testing my app with Test Lab. Oh there’
 
 One of the methods to use Test Lab is by recording a script that essentially guides a robot on how to use the app (known as [Robo](https://firebase.google.com/docs/test-lab/android/robo-ux-test)). The script can be recorded directly from [Android Studio](https://developer.android.com/studio), and it relies heavily on the view XML to fetch elements and attributes. Because React-Native wraps everything with a JavaScript shell, it fails to work as intended (for the most part).
 
-## My eureka moment 💡
+# My eureka moment 💡
 
 I realized that for my specific needs, all I had to do was to navigate to the map screen with a real back-end. It didn’t matter who navigated to the map, a person, a robot, or a script, I just wanted to reproduce the issue. Since my knowledge revolves mainly around JavaScript, I’ve built a solution purely with React hooks, one that could navigate the app and test a desired outcome.
 
-## Introducing Bobcat 😺😼
+# Introducing Bobcat 😺😼
 
 Bobcat is a library for testing navigation flows in React. Its API is heavily inspired by classic testing frameworks like [Mocha](https://mochajs.org/) and [Jest](https://jestjs.io/); it has a similar `describe()` / `it()` type of syntax. Let’s have a look at a simple example script:
 
@@ -231,7 +231,7 @@ Here’s how an actual test run of my early-prototyped app looks like:
 
 https://youtu.be/sFM6iibYT-0
 
-## Reducing bundle size
+# Reducing bundle size
 
 Bobcat is built for development or testing purposes, so one shall ask — “if it’s built into the internals of my app, how can I avoid it in production?”.
 
@@ -259,7 +259,7 @@ module.exports = {
 };
 ```
 
-## Installation
+# Installation
 
 The source is available via [Github](https://github.com/DAB0mB/react-bobcat). Alternatively you can install Bobcat via NPM:
 
@@ -275,6 +275,6 @@ $ yarn add react-bobcat
 
 _\*Be sure to install React@16.8 or greater._
 
-## Call for contributors
+# Call for contributors
 
 The app mentioned in this article is work in progress. It’s an amazing social project that uses the absolute latest dev-stack and has many cool libraries and modules like the one above. If you’re looking for a serious tech challenge, or looking to make a change in the social field, contact me at [emanor6@gmail.com](mailto:emanor6@gmail.com).
