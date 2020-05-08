@@ -93,6 +93,10 @@ export const LinkPreview: React.FC<{ link: string }> = ({ link }) => {
   const [data, setData] = useState<PreviewData>(null);
 
   useIsomorphicLayoutEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     const fetchData = async () => {
       const previewData = await fetchPreview(link);
 
