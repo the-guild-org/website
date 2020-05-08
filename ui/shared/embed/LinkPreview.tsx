@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import fetchPonyfill from 'fetch-ponyfill';
 import styled from 'styled-components';
 import { GenericLink } from '../../blog/elements/link';
+import { Observer } from '../Observer';
 
 const { fetch } = fetchPonyfill();
 
@@ -38,6 +39,12 @@ const Container = styled.div`
   max-height: 280px;
   box-sizing: border-box;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(0, 0, 0, 0.09);
+  border-radius: 5px;
+  font-family: 'Roboto', sans-serif;
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
 const TextLink = styled.a`
@@ -50,23 +57,33 @@ const TextLink = styled.a`
   & > strong {
     display: block;
     margin-bottom: 10px;
-    font-weight: 400;
+    font-weight: 700;
     font-style: normal;
-    font-size: 1.2rem;
+    font-size: 1rem;
     line-height: 1.3;
     color: var(--colors-text);
   }
 
   & > em {
-    font-size: 1rem;
+    font-size: 0.85rem;
     font-style: normal;
     color: var(--colors-dim);
     display: block;
-    margin-bottom: 10px;
     max-height: 120px;
     overflow: hidden;
     word-break: break-word;
     line-height: 1.3;
+  }
+
+  @media (max-width: 640px) {
+    & > strong {
+      margin-bottom: 0;
+    }
+
+    & > em {
+      display: none;
+      visibility: hidden;
+    }
   }
 `;
 
@@ -80,6 +97,12 @@ const ImageLink = styled.a<{ image: string }>`
   background-position: center center;
   background-image: url(${(props) => props.image});
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.09);
+  border-radius: 0px 5px 5px 0px;
+
+  @media (max-width: 640px) {
+    width: 90px;
+    height: 90px;
+  }
 `;
 
 const useIsomorphicLayoutEffect =
@@ -111,13 +134,15 @@ export const LinkPreview: React.FC<{ link: string }> = ({ link }) => {
   }
 
   return (
-    <Container>
-      <TextLink href={link}>
-        <strong>{data.title}</strong>
-        <em>{data.description}</em>
-        {data.url}
-      </TextLink>
-      <ImageLink href={link} image={data.image} />
-    </Container>
+    <Observer>
+      <Container>
+        <TextLink href={link}>
+          <strong>{data.title}</strong>
+          <em>{data.description}</em>
+          {data.url}
+        </TextLink>
+        <ImageLink href={link} image={data.image} />
+      </Container>
+    </Observer>
   );
 };
