@@ -5,10 +5,11 @@
   "license": "MIT",
   "scripts": {
     "dev": "next",
-    "build": "next build && ts-node-transpile-only --project tsconfig.cli.json ./lib/build.ts",
+    "build": "yarn check-links && next build && ts-node-transpile-only --project tsconfig.cli.json ./lib/build.ts",
     "analyze": "ANALYZE=true next build",
     "start": "next start",
     "format": "prettier --write .",
+    "check-links": "node check-links.js",
     "postinstall": "patch-package"
   },
   "dependencies": {

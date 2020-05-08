@@ -31,7 +31,7 @@ While we were still using **_Inversify_**, we used to have a single `GraphQLApp`
 
 If you want to know more about **_encapsulation_** see the blog post about it;
 
-[/blog/modular-encapsulation-graphql-modules](/blog/modular-encapsulation-graphql-modules 'Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?')
+<LinkPreview link="/blog/modular-encapsulation-graphql-modules" />
 
 For example, if you have a **_DatabaseModule_** in your application that has to be shared across the whole application, and it needs to take a custom provider that will be defined by the user. What you will do in those DI implementations is to create a provider by decorating it with a global scoped provider; then put it in **_ApplicationModule_**. However, this would **violate** the **encapsulation principle** of the modular approach.
 
@@ -103,8 +103,7 @@ In contrast with client side application, your DI system wouldn’t need to have
 
 You can read more about the different scopes that we have in GraphQL-Modules here:
 
-[/blog/graphql-modules/scoped-providers](/blog/graphql-modules/scoped-providers 'Scoped Providers in GraphQL-Modules Dependency Injection System
-We recently released a new version of GraphQL-Modules with a new feature called Scoped Providers in the dependency…')
+<LinkPreview link="/blog/graphql-modules-scoped-providers" />
 
 # Comparisons with Other DI Implementations of frameworks
 
@@ -171,7 +170,7 @@ Angular doesn’t care about that. it has a single injector for the all applicat
 
 > That ability is not so important for Angular applications; because they are running on the browser, not on the server. But still you can notice the similar behavior to GraphQL-Modules DI’s if you load an Angular module lazily using router’s `loadChildren` property.
 
-And Angular’s DI library doesn’t differentiate _Application and Session scopes_ because it doesn’t need that. An Angular application has a life time until `window` is terminated by closing it or refreshing page; the session and application runtime can be considered same in the client application. That’s why, our DI implementation is more complex than Angular’s as it need to handle multiple clients by running a single application. You can read more about [_Scoped Providers_](/blog/graphql-modules/scoped-providers) in the beginning of this article
+And Angular’s DI library doesn’t differentiate _Application and Session scopes_ because it doesn’t need that. An Angular application has a life time until `window` is terminated by closing it or refreshing page; the session and application runtime can be considered same in the client application. That’s why, our DI implementation is more complex than Angular’s as it need to handle multiple clients by running a single application. You can read more about [_Scoped Providers_](/blog/graphql-modules-scoped-providers) in the beginning of this article
 
 ## Comparison with NestJS’s DI implementation
 
@@ -185,7 +184,7 @@ In comparison to Nest’s goals, GraphQL-Modules is a platform agnostic library 
 
 NestJS has its own dependency injection system which is similar to Angular’s but **more strict**; you can define both global (not by default like Angular) and encapsulated providers at the same time. We preferred not to have global providers like Angular (you can see how it works above in the Angular comparison); because we consider it can be more **error prone** and it has to be done by **passing configuration**. You can read more with an example about passing configuration and keeping safe boundaries between your modules in the [_Encapsulation_](/blog/modular-encapsulation-graphql-modules) article.
 
-Also, NestJS DI system doesn’t share the important feature of defining providers that has the life-time of the client request (we call it **session scope**). We think a backend system would need to differentiate DI containers according to these different scopes. You can read more about it in [_Scoped Providers_](/blog/graphql-modules/scoped-providers) part of this article above.
+Also, NestJS DI system doesn’t share the important feature of defining providers that has the life-time of the client request (we call it **session scope**). We think a backend system would need to differentiate DI containers according to these different scopes. You can read more about it in [_Scoped Providers_](/blog/graphql-modules-scoped-providers) part of this article above.
 
 # Working together
 
@@ -198,7 +197,7 @@ That is also one of the reasons we created our DI library as a separate library,
 - [GraphQL Modules — Feature based GraphQL Modules at scale](/blog/graphql-modules)
 - [Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?](/blog/modular-encapsulation-graphql-modules)
 - [Why did we implement our own Dependency Injection library for GraphQL-Modules?](/blog/dependency-injection-library-in-graphql-modules)
-- [Scoped Providers in GraphQL-Modules Dependency Injection](/blog/graphql-modules/scoped-providers)
+- [Scoped Providers in GraphQL-Modules Dependency Injection](/blog/graphql-modules-scoped-providers)
 - [Writing a GraphQL TypeScript project w/ GraphQL-Modules and GraphQL-Code-Generator](/blog/graphql-typescript-modules-codegen)
 - [Authentication and Authorization in GraphQL (and how GraphQL-Modules can help)](/blog/graphql-modules-auth)
 - [Authentication with AccountsJS & GraphQL Modules](/blog/accountsjs-graphql-modules)
