@@ -114,6 +114,9 @@ const useIsomorphicLayoutEffect =
 
 export const LinkPreview: React.FC<{ link: string }> = ({ link }) => {
   const [data, setData] = useState<PreviewData>(null);
+  const absoluteLink = link.startsWith('/')
+    ? `https://the-guild.dev${link}`
+    : link;
 
   useIsomorphicLayoutEffect(() => {
     if (typeof window === 'undefined') {
@@ -121,7 +124,7 @@ export const LinkPreview: React.FC<{ link: string }> = ({ link }) => {
     }
 
     const fetchData = async () => {
-      const previewData = await fetchPreview(link);
+      const previewData = await fetchPreview(absoluteLink);
 
       setData(previewData);
     };
