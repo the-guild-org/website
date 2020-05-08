@@ -80,18 +80,106 @@ const NewsletterSignUp = styled(Newsletter)`
 
 interface Props {
   articles: MetaWithLink[];
+  projectsOrder: string[];
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
+  const projectsOrder = [
+    'codegen',
+    'inspector',
+    'mesh',
+    'tools',
+    'modules',
+  ].sort(() => 0.5 - Math.random());
+
   return {
     props: {
       articles: await getAllArticles(),
+      projectsOrder,
     },
   };
 };
 
-const Index: React.FC<Props> = ({ articles }) => {
+const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
   const recentArticles = articles.slice(0, 3);
+
+  const projects = {
+    codegen: {
+      title: 'Code Generation and Type Safety',
+      image: 'https://graphql-code-generator.com/img/gql-codegen-cover.png',
+      link: 'https://graphql-code-generator.com/',
+      description: (
+        <>
+          <p>
+            GraphQL Code Generator is a tool that generates code out of your
+            GraphQL schema and Operations.
+          </p>
+          <p>
+            Official support for TypeScript, Flow, React, Angular, MongoDB,
+            Stencil, Reason, and more.
+          </p>
+        </>
+      ),
+    },
+    inspector: {
+      title: 'Maintenance and Analysis of GraphQL API',
+      image: 'https://graphql-inspector.com/img/logo.svg',
+      link: 'https://graphql-inspector.com',
+      description: (
+        <>
+          <p>
+            GraphQL Inspector is a set of tools to help you better maintain and
+            improve GraphQL API as well as GraphQL consumers.
+          </p>
+          <p>
+            Integrates with GitHub and runs in any Continous Integration and
+            Delivery pipeline.
+          </p>
+        </>
+      ),
+    },
+    mesh: {
+      title: 'GraphQL with any source of data',
+      image: 'https://graphql-mesh.com/img/mesh-text-logo.svg',
+      link: 'https://graphql-mesh.com/',
+      description: (
+        <p>
+          GraphQL Mesh allows you to use GraphQL query language to access data
+          in remote APIs that don't run GraphQL (and also ones that do run
+          GraphQL). It can be used as a gateway to other services, or run as a
+          local GraphQL schema that aggregates data from remote APIs.
+        </p>
+      ),
+    },
+    modules: {
+      title: 'Modularization of GraphQL API',
+      image: '/img/logos/graphql-modules.svg',
+      link: 'https://graphql-modules.com',
+      description: (
+        <p>
+          GraphQL Modules lets you separate your backend implementation to
+          small, reusable, easy-to-implement and easy-to-test pieces.
+        </p>
+      ),
+    },
+    tools: {
+      title: 'Utilities for GraphQL',
+      image: '/img/logos/graphql-tools.svg',
+      link: 'https://graphql-tools.com/',
+      description: (
+        <>
+          <p>
+            A set of utilities to build your JavaScript GraphQL schema in a
+            concise and powerful way.
+          </p>
+          <p>
+            Use GraphQL-first philosophy, mock your API or stitch multiple
+            GraphQL Schemas
+          </p>
+        </>
+      ),
+    },
+  };
 
   return (
     <Page title="The Guild - Open Source" description="Open Source Developers">
@@ -120,68 +208,21 @@ const Index: React.FC<Props> = ({ articles }) => {
           <SectionTitle>
             We do <span>Open Source</span>
           </SectionTitle>
-          <FeaturedProduct
-            title="Code Generation and Type Safety"
-            image="https://graphql-code-generator.com/img/gql-codegen-cover.png"
-            link="https://graphql-code-generator.com/"
-            description={
-              <>
-                <p>
-                  GraphQL Code Generator is a tool that generates code out of
-                  your GraphQL schema and Operations.
-                </p>
-                <p>
-                  Official support for TypeScript, Flow, React, Angular,
-                  MongoDB, Stencil, Reason, and more.
-                </p>
-              </>
-            }
-          />
-          <Separator />
-          <FeaturedProduct
-            title="Maintenance and Analysis of GraphQL API"
-            image="https://graphql-inspector.com/img/logo.svg"
-            link="https://graphql-inspector.com/"
-            description={
-              <>
-                <p>
-                  GraphQL Inspector is a set of tools to help you better
-                  maintain and improve GraphQL API as well as GraphQL consumers.
-                </p>
-                <p>
-                  Integrates with GitHub and runs in any Continous Integration
-                  and Delivery pipeline.
-                </p>
-              </>
-            }
-          />
-          <Separator />
-          <FeaturedProduct
-            title="GraphQL with any source of data"
-            image="https://graphql-mesh.com/img/mesh-text-logo.svg"
-            link="https://graphql-mesh.com/"
-            description={
-              <p>
-                GraphQL Mesh allows you to use GraphQL query language to access
-                data in remote APIs that don't run GraphQL (and also ones that
-                do run GraphQL). It can be used as a gateway to other services,
-                or run as a local GraphQL schema that aggregates data from
-                remote APIs.
-              </p>
-            }
-          />
-          <Separator />
-          <FeaturedProduct
-            title="Modularization of GraphQL API"
-            image="/img/logos/graphql-modules.svg"
-            link="https://graphql-modules.com/"
-            description={
-              <p>
-                GraphQL Modules lets you separate your backend implementation to
-                small, reusable, easy-to-implement and easy-to-test pieces.
-              </p>
-            }
-          />
+          {projectsOrder.map((id, i) => {
+            const project = projects[id];
+
+            return (
+              <div key={id}>
+                {i !== 0 && <Separator />}
+                <FeaturedProduct
+                  title={project.title}
+                  image={project.image}
+                  link={project.link}
+                  description={project.description}
+                />
+              </div>
+            );
+          })}
           <BlogButton
             as="a"
             href="https://github.com/the-guild-org/Stack"
