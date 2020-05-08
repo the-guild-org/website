@@ -157,7 +157,7 @@ const Index: React.FC<Props> = ({ articles }) => {
           />
           <Separator />
           <FeaturedProduct
-            title="Query anything, run everywhere"
+            title="GraphQL with any source of data"
             image="https://graphql-mesh.com/img/mesh-text-logo.svg"
             link="https://graphql-mesh.com/"
             description={
@@ -167,6 +167,18 @@ const Index: React.FC<Props> = ({ articles }) => {
                 do run GraphQL). It can be used as a gateway to other services,
                 or run as a local GraphQL schema that aggregates data from
                 remote APIs.
+              </p>
+            }
+          />
+          <Separator />
+          <FeaturedProduct
+            title="Modularization of GraphQL API"
+            image="/img/logos/graphql-modules.svg"
+            link="https://graphql-modules.com/"
+            description={
+              <p>
+                GraphQL Modules lets you separate your backend implementation to
+                small, reusable, easy-to-implement and easy-to-test pieces.
               </p>
             }
           />
