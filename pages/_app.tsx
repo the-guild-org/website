@@ -28,6 +28,8 @@ export default class MyApp extends App {
               --colors-dim-dark: #555;
               --colors-accent: #03a6a6;
               --colors-accent-light: #04bfad;
+              --colors-error: #bf120d;
+              --colors-error-light: #ff3f38;
               --colors-primary: #000;
               --colors-background: #fff;
             }

@@ -139,6 +139,7 @@ function isAllowed(req) {
     'https://the-guild.dev',
     'https://graphql-inspector.com',
     'https://the-guild-website-kamilkisiela.theguild.now.sh',
+    'https://the-guild-website-git-feat-new.theguild.now.sh',
   ].includes(req.headers.origin);
 }
 
