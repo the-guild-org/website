@@ -2,6 +2,10 @@ import React from 'react';
 import Head from 'next/head';
 import { Layout } from './Layout';
 
+function ensureAbsolute(url: string): string {
+  return url.startsWith('/') ? 'https://the-guild.dev' + url : url;
+}
+
 export const Page: React.FC<{
   description: string;
   image?: string;
@@ -16,8 +20,8 @@ export const Page: React.FC<{
 
         {image && (
           <>
-            <meta property="og:image" content={image} />
-            <meta property="twitter:image" content={image} />
+            <meta property="og:image" content={ensureAbsolute(image)} />
+            <meta property="twitter:image" content={ensureAbsolute(image)} />
           </>
         )}
 
