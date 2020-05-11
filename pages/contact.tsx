@@ -23,6 +23,16 @@ const Main = styled(Container)`
     & > *:first-child {
       margin-bottom: 25px;
     }
+
+    & > * {
+      width: 70%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    & > * {
+      width: 100%;
+    }
   }
 `;
 
