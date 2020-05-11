@@ -32,15 +32,15 @@ const SocialMedia = styled.a`
 export const SocialMedias: React.FunctionComponent = () => {
   return (
     <>
-      <SocialMedia href='https://github.com/the-guild-org'>
+      <SocialMedia href="https://github.com/the-guild-org">
         <GitHub />
         <SocialMediaName>GitHub</SocialMediaName>
       </SocialMedia>
-      <SocialMedia href='https://twitter.com/TheGuildDev'>
+      <SocialMedia href="https://twitter.com/TheGuildDev">
         <Twitter />
         <SocialMediaName>Twitter</SocialMediaName>
       </SocialMedia>
-      <SocialMedia href='https://github.com/urigo'>
+      <SocialMedia href="https://github.com/urigo">
         <Slack />
         <SocialMediaName>Slack</SocialMediaName>
       </SocialMedia>

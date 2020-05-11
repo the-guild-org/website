@@ -15,7 +15,7 @@ interface GraphQLResult<TResult> {
 const endpoint = '/api/graphql';
 
 export function useMutation<TResult, TVariables = {}>(
-  query: string,
+  query: string
 ): [GraphQLResult<TResult>, (variables: TVariables) => void] {
   const [state, setState] = useState<GraphQLResult<TResult>>({
     complete: false,
@@ -42,8 +42,8 @@ export function useMutation<TResult, TVariables = {}>(
           variables,
         }),
       })
-        .then(data => data.json())
-        .then(data => {
+        .then((data) => data.json())
+        .then((data) => {
           if (data.errors) {
             return Promise.reject(new Error('Try Again'));
           }
@@ -55,7 +55,7 @@ export function useMutation<TResult, TVariables = {}>(
             data,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           setState({
             complete: true,
             loading: false,
@@ -64,7 +64,7 @@ export function useMutation<TResult, TVariables = {}>(
           });
         });
     },
-    [query],
+    [query]
   );
 
   return [state, mutate];

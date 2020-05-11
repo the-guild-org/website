@@ -9,7 +9,7 @@ const Container = styled.div<{ image: string }>`
   right: 0;
   bottom: 0;
   left: 0;
-  background-image: url(${props => props.image});
+  background-image: url(${(props) => props.image});
   background-size: cover;
   overflow: hidden;
 

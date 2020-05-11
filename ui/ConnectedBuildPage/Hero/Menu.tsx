@@ -3,7 +3,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { MessageSquare } from 'react-feather';
 
-import { TheGuildLogo } from '../Logo';
+import { TheGuildLogo } from '../../shared/Logo';
 import { useScrollTo } from '../../../hooks/use-scroll-to';
 
 const Container = styled.div`
@@ -26,7 +26,7 @@ const LetsTalk = styled.div`
 const MenuLink = styled.a`
   font-size: 14px;
   font-weight: bold;
-  color: ${props => props.theme.bar.textColor};
+  color: ${(props) => props.theme.bar.textColor};
   margin-left: 30px;
 `;
 
@@ -35,13 +35,13 @@ export const Menu: React.FunctionComponent = () => {
 
   return (
     <Container>
-      <Link href='/'>
+      <Link href="/">
         <a>
           <TheGuildLogo />
         </a>
       </Link>
       <LetsTalk
-        onClick={e => {
+        onClick={(e) => {
           e.preventDefault();
           scrollTo('section-contact');
         }}

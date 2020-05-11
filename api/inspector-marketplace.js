@@ -1,28 +1,28 @@
-const microCors = require("micro-cors");
-const bugsnag = require("@bugsnag/js");
-const crypto = require("crypto");
+const microCors = require('micro-cors');
+const bugsnag = require('@bugsnag/js');
+const crypto = require('crypto');
 
-const { WebClient } = require("@slack/web-api");
+const { WebClient } = require('@slack/web-api');
 
 const bugsnagClient = bugsnag(process.env.BUGSNAG_API);
 const slack = new WebClient(process.env.SLACK_TOKEN);
-const channelID = "CLZ5BCE7K";
+const channelID = 'CLZ5BCE7K';
 const cors = microCors();
 
 function isAllowed(req) {
   console.error(req.headers);
 
-  const signature = (req.headers["x-hub-signature"] || "").replace("sha1=", "");
+  const signature = (req.headers['x-hub-signature'] || '').replace('sha1=', '');
 
-  console.log("Received signature:", signature);
+  console.log('Received signature:', signature);
 
   const ourSignature = crypto
-    .createHmac("sha1", process.env.MARKETPLACE_INSPECTOR_SECRET)
-    .update(typeof req.body === "string" ? req.body : JSON.stringify(req.body))
-    .digest("hex");
+    .createHmac('sha1', process.env.MARKETPLACE_INSPECTOR_SECRET)
+    .update(typeof req.body === 'string' ? req.body : JSON.stringify(req.body))
+    .digest('hex');
 
-  console.log("Our signature:", ourSignature);
-  console.log("Both equal:", ourSignature === signature);
+  console.log('Our signature:', ourSignature);
+  console.log('Both equal:', ourSignature === signature);
 
   return ourSignature === signature;
 }
@@ -30,20 +30,20 @@ function isAllowed(req) {
 module.exports = cors(async (req, res) => {
   if (!isAllowed(req)) {
     res.statusCode = 500;
-    res.statusMessage = "Not Allowed by CORS";
+    res.statusMessage = 'Not Allowed by CORS';
     res.end();
     return;
   }
 
-  if (req.method === "OPTIONS") {
+  if (req.method === 'OPTIONS') {
     res.statusCode = 200;
-    res.statusMessage = "OK";
+    res.statusMessage = 'OK';
     res.end();
     return;
   }
 
   const payload =
-    typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+    typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
   const { action, sender, marketplace_purchase } = payload;
 
   bugsnagClient.metaData = payload;
@@ -56,7 +56,7 @@ module.exports = cors(async (req, res) => {
   if (
     marketplace_purchase &&
     marketplace_purchase.account &&
-    marketplace_purchase.account.type === "Organization"
+    marketplace_purchase.account.type === 'Organization'
   ) {
     login = marketplace_purchase.account.login;
     email = marketplace_purchase.account.organization_billing_email;
@@ -69,13 +69,13 @@ module.exports = cors(async (req, res) => {
   const result = await slack.chat.postMessage({
     channel: channelID,
     text: [
-      "*Inspector App*",
+      '*Inspector App*',
       `_Action:_ ${action}`,
-      `_Is organization:_ ${isOrg ? "yes" : "no"}`,
+      `_Is organization:_ ${isOrg ? 'yes' : 'no'}`,
       `_Login:_ ${login}`,
       `_Email:_ ${email}`,
       `_Url:_ ${url}`,
-    ].join("\n"),
+    ].join('\n'),
   });
 
   if (result.error) {
@@ -90,6 +90,6 @@ module.exports = cors(async (req, res) => {
   }
 
   res.statusCode = 200;
-  res.statusMessage = "OK";
+  res.statusMessage = 'OK';
   res.end();
 });

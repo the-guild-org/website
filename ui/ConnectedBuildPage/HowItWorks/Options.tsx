@@ -89,18 +89,18 @@ export const Options: React.FunctionComponent = () => {
     <Container>
       <Option
         index={0}
-        title='Keeping you up to date'
-        text='Get the library maintainers themselves to keep your code up to date.'
+        title="Keeping you up to date"
+        text="Get the library maintainers themselves to keep your code up to date."
       />
       <Option
         index={1}
-        title='Get a seat at the table'
-        text='You already depend on us but you have no influence. Get the power to decide what we should do. And connect your CI to our libraries so we guarantee not to break your app!'
+        title="Get a seat at the table"
+        text="You already depend on us but you have no influence. Get the power to decide what we should do. And connect your CI to our libraries so we guarantee not to break your app!"
       />
       <Option
         index={2}
-        title='Work with the best'
-        text='Recurring meetings with the maintainers, ask and learn whatever you want!'
+        title="Work with the best"
+        text="Recurring meetings with the maintainers, ask and learn whatever you want!"
       />
     </Container>
   );

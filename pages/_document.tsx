@@ -1,5 +1,5 @@
 import React from 'react';
-import Document, { Head, Main, NextScript } from 'next/document';
+import Document, { Head, Main, NextScript, Html } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
 
 import { GA_TRACKING_ID } from '../lib/gtag';
@@ -12,7 +12,8 @@ export default class MyDocument extends Document {
     try {
       ctx.renderPage = () =>
         originalRenderPage({
-          enhanceApp: App => props => sheet.collectStyles(<App {...props} />),
+          enhanceApp: (App) => (props) =>
+            sheet.collectStyles(<App {...props} />),
         });
 
       const initialProps = await Document.getInitialProps(ctx);
@@ -32,8 +33,9 @@ export default class MyDocument extends Document {
 
   render() {
     return (
-      <html>
+      <Html lang="en">
         <Head>
+          <link rel="shortcut icon" href="/fav.ico" />
           {/* Global Site Tag (gtag.js) - Google Analytics */}
           <script
             async
@@ -49,12 +51,27 @@ export default class MyDocument extends Document {
           `,
             }}
           />
+          <link
+            rel="alternate"
+            type="application/rss+xml"
+            title="RSS Feed for the-guild.dev"
+            href="/feed.xml"
+          />
+
+          <link
+            href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+            rel="stylesheet"
+          />
+          <link
+            href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap"
+            rel="stylesheet"
+          />
         </Head>
         <body>
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     );
   }
 }

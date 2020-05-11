@@ -20,7 +20,7 @@ const Text = styled.div`
   font-weight: bold;
   line-height: 1.14;
   letter-spacing: -0.2px;
-  color: ${props => props.theme.hero.titleColor};
+  color: ${(props) => props.theme.hero.titleColor};
 
   @media ${device.laptop} {
     max-width: 60%;
@@ -32,7 +32,7 @@ const Text = styled.div`
 `;
 
 const ConnectedBuild = styled(Text)`
-  color: ${props => props.theme.hero.highlightColor};
+  color: ${(props) => props.theme.hero.highlightColor};
 `;
 
 export const Title: React.FunctionComponent<{ text: string }> = ({ text }) => {

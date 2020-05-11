@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
-import { TheGuildLogo } from './Logo';
+import { TheGuildLogo } from '../shared/Logo';
 import { device } from '../media';
 import { useFontColor } from './theme';
 
@@ -39,7 +39,7 @@ const Copyrights = styled.div`
 export const Footer: React.FunctionComponent = () => {
   return (
     <Container>
-      <Link href='/'>
+      <Link href="/">
         <a>
           <TheGuildLogo />
         </a>
