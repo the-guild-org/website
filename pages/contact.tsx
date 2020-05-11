@@ -186,8 +186,8 @@ const Blog: React.FC = () => {
               Looking to work with The Guild or to learn more about our
               projects? We will be happy to speak with you!
             </Description>
-            <Email href="mailto:contact@the-guild.dev" title="Our email">
-              contact@the-guild.dev
+            <Email href="mailto:uri.goldshtein@gmail.com" title="Our email">
+              uri.goldshtein@gmail.com
             </Email>
           </div>
           <div>
