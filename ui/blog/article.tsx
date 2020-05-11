@@ -111,6 +111,22 @@ const authors: Record<string, { name: string; link: string }> = {
     name: 'Arda Tanrikulu',
     link: 'https://twitter.comm/ardatanrikulu',
   },
+  laurin: {
+    name: 'Laurin Quast',
+    link: 'https://twitter.com/n1rual',
+  },
+  leonardo: {
+    name: 'Leonardo Ascione',
+    link: 'https://medium.com/@leonardoascione',
+  },
+  niccolo: {
+    name: 'Niccolo Belli',
+    link: 'https://medium.com/@darkbasic',
+  },
+  david: {
+    name: 'David Yahalomi',
+    link: 'https://medium.com/@davidyahalomi',
+  },
 };
 
 export default (meta: Meta): React.FC => {

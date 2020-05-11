@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import styled from 'styled-components';
 import { Observer } from '../Observer';
 import { handleTwttrLoad } from './utils';
 
@@ -11,13 +12,20 @@ export interface ITweetProps {
   align?: 'left' | 'center' | 'right';
 }
 
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+`;
+
 export const Tweet: FunctionComponent<ITweetProps> = ({
   tweetLink,
   theme = 'light',
   align = 'left',
 }: ITweetProps) => (
   <Observer onEnter={() => handleTwttrLoad()}>
-    <div className="twitter-tweet-mdx-embed" style={{ overflow: 'auto' }}>
+    <Container>
       <blockquote
         className="twitter-tweet"
         data-theme={theme}
@@ -29,6 +37,6 @@ export const Tweet: FunctionComponent<ITweetProps> = ({
             : ''}
         </a>
       </blockquote>
-    </div>
+    </Container>
   </Observer>
 );
