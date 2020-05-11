@@ -16,7 +16,7 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 
-const Main = styled.main`
+const Main = styled.article`
   padding: 125px 15px;
 `;
 
