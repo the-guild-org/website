@@ -1,6 +1,6 @@
 const logoUrl = "https://the-guild.dev/static/logo.png";
-const linkUrl = "https://github.com/the-guild-org/Stack";
-const title = "The Guild - Tech Stack";
+const linkUrl = "https://the-guild.dev";
+const title = "The Guild - Open Source";
 const docusaurusId = "__docusaurus";
 
 if (document.getElementById(docusaurusId)) {
