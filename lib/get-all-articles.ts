@@ -2,6 +2,7 @@ import globby from 'globby';
 import { join } from 'path';
 import { promises } from 'fs';
 import JSON5 from 'json5';
+import { format } from 'date-fns';
 import { MetaWithLink } from './types';
 
 /**
@@ -30,9 +31,12 @@ async function readMeta(dir: string, file: string): Promise<MetaWithLink> {
 
   const [, result] = raw.match(/export const meta \= \{([^\}]+)\};/);
 
+  const parsed = JSON5.parse(`{ ${result.trim().replace(/,$/, '')} }`);
+
   return {
-    ...JSON5.parse(`{ ${result.trim().replace(/,$/, '')} }`),
+    ...parsed,
     link: `/blog/${file.replace(/\.mdx?/, '')}`,
+    date: format(new Date(parsed.date), 'y-MM-dd'),
   };
 }
 

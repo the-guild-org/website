@@ -93,7 +93,9 @@ export const ArticleCard: React.FC<{
         </Cover>
       </LazyLoad>
       <Content>
-        <Time dateTime={date.toString()}>{format(date, 'EEEE, LLL do y')}</Time>
+        <Time dateTime={date.toISOString()}>
+          {format(date, 'EEEE, LLL do y')}
+        </Time>
         <Title>{title}</Title>
         <Description>{description}</Description>
       </Content>
