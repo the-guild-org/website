@@ -94,8 +94,8 @@ const resolvers = {
       };
     },
     async subscribe(_, { email }) {
-      const listId = '6da08f478f';
-      const dc = 'us8';
+      const listId = 'aee00763a8';
+      const dc = process.env.MAILCHIMP_API_KEY.split('-')[1];
       const result = await axios.post(
         `https://${dc}.api.mailchimp.com/3.0/lists/${listId}/members`,
         {
