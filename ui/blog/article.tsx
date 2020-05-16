@@ -109,7 +109,7 @@ const authors: Record<string, { name: string; link: string }> = {
   },
   arda: {
     name: 'Arda Tanrikulu',
-    link: 'https://twitter.comm/ardatanrikulu',
+    link: 'https://twitter.com/ardatanrikulu',
   },
   laurin: {
     name: 'Laurin Quast',
