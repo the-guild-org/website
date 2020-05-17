@@ -25,7 +25,7 @@ const Main = styled.article`
 const Content = styled.div`
   padding-top: 75px;
   font-family: 'PT Serif', serif;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 400;
   color: var(--colors-text);
   line-height: 2rem;
