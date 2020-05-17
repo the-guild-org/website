@@ -118,7 +118,7 @@ export const ArticleCard: React.FC<{
         <Title>{title}</Title>
         <TagContainers>
           {tags.map((t) => (
-            <Tag tag={t} key={t} />
+            <Tag tag={t} key={t} as={'span'} />
           ))}
         </TagContainers>
         <Description>{description}</Description>

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Container } from '../shared/Layout';
 import { MetaWithLink } from '../../lib/types';
 import { ArticleCard } from './article-card';
+import { authors } from './authors';
 
 const ArticlesContainer = styled(Container)`
   padding: 125px 0;
@@ -21,6 +22,7 @@ export const LastArticles: React.FC<{
       {articles.map((article) => {
         return (
           <ArticleCard
+            author={authors[article.author]}
             key={article.link}
             title={article.title}
             description={article.description}

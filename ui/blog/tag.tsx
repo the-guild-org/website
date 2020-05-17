@@ -22,10 +22,13 @@ const Link = styled(NativeLink)`
   }
 `;
 
-export const Tag: React.FC<{ tag: string }> = ({ tag }) => {
+export const Tag: React.FC<{
+  tag: string;
+  as?: React.ComponentProps<typeof Link>['as'];
+}> = ({ tag, as = 'a' }) => {
   return (
     <TagContainer>
-      <Link href={`/blog/tag/${tag}`} as="a">
+      <Link href={`/blog/tag/${tag}`} as={as}>
         {tag}
       </Link>
     </TagContainer>

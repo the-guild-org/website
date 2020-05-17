@@ -22,9 +22,12 @@ export const getStaticProps: GetStaticProps<React.ComponentProps<
 };
 
 export async function getStaticPaths() {
+  const allArticles = await getAllArticles();
+  const allTags = Array.from(new Set(allArticles.flatMap((t) => t.tags)));
+
   return {
-    paths: [],
-    fallback: true,
+    paths: allTags.map((tag) => ({ params: { tag } })),
+    fallback: false,
   };
 }
 
