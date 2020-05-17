@@ -47,6 +47,7 @@ const Blog: React.FC<Props> = ({ articles, tagFilter }) => {
     <Page
       title="The Guild Blog"
       description="Announcements about our Open-Source projects"
+      image="/img/ogimage-blog.png"
     >
       <Hero shrink={true}>
         <span>Blog</span>

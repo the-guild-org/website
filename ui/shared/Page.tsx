@@ -14,9 +14,12 @@ export const Page: React.FC<{
   return (
     <Layout>
       <Head>
-        <meta charSet="utf-8" />
-
-        <meta property="og:title" content={title} />
+        <meta
+          property="og:site_name"
+          content="the-guild.dev"
+          key="ogsitename"
+        />
+        <meta property="og:title" content={title} key="ogtitle" />
 
         {image && (
           <>
@@ -27,9 +30,10 @@ export const Page: React.FC<{
 
         <meta name="twitter:image:alt" content={title} />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:creator" content="TheGuildDev" key="twhandle" />
 
         <meta name="description" content={description} />
-        <meta property="og:description" content={description} />
+        <meta property="og:description" content={description} key="ogdesc" />
 
         <title>{title}</title>
       </Head>

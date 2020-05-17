@@ -182,7 +182,11 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
   };
 
   return (
-    <Page title="The Guild - Open Source" description="Open Source Developers">
+    <Page
+      title="The Guild - Open Source"
+      description="Open Source Developers"
+      image="/img/ogimage.png"
+    >
       <Hero>
         We are <span>The Guild</span>
       </Hero>

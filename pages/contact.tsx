@@ -123,14 +123,6 @@ enum State {
   Success,
 }
 
-function send(email: string) {
-  return new Promise<State>((resolve) => {
-    setTimeout(() => {
-      resolve(Math.random() >= 0.5 ? State.Success : State.Error);
-    }, 5000);
-  });
-}
-
 const Blog: React.FC = () => {
   const [state, setState] = useState<State>(State.Idle);
   const [email, setEmail] = useState<string>();
@@ -174,7 +166,11 @@ const Blog: React.FC = () => {
   };
 
   return (
-    <Page title="Contact Us - The Guild" description="Get in touch!">
+    <Page
+      title="Contact Us - The Guild"
+      description="Get in touch!"
+      image="/img/ogimage-contact.png"
+    >
       <Hero shrink={true}>
         <span>Contact us</span>
       </Hero>
