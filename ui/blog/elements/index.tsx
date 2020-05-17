@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { Code, InlineCode } from './code';
 import { GenericLink } from './link';
 import { CodeSandbox } from '../../shared/embed/CodeSandbox';
+import { Gfycat } from '../../shared/embed/Gfycat';
 import { StackBlitz } from '../../shared/embed/StackBlitz';
 import { Tweet } from '../../shared/embed/Tweet';
 import { YouTube } from '../../shared/embed/YouTube';
@@ -106,6 +107,7 @@ export const components = {
   img: Img,
   iframe: Iframe,
   CodeSandbox,
+  Gfycat,
   StackBlitz,
   Tweet,
   YouTube,
