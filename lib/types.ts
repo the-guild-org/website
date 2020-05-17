@@ -3,6 +3,7 @@ export interface Meta {
   author: string;
   tags: string[];
   date: string;
+  updateDate?: string;
   description: string;
   image: string;
   thumbnail?: string;

@@ -10,6 +10,8 @@ import { Page } from '../shared/Page';
 import { Button } from '../shared/Layout';
 import { Meta } from '../../lib/types';
 import { Image } from './image';
+import { Tag } from './tag';
+import { authors } from './authors';
 
 const Container = styled.div`
   max-width: 690px;
@@ -69,6 +71,11 @@ const Cover = styled.div`
   }
 `;
 
+const TagContainers = styled.div`
+  text-align: center;
+  margin-top: 10px;
+`;
+
 const BackButton = styled(Button)`
   display: flex;
   justify-content: space-between;
@@ -90,58 +97,22 @@ const Back = styled.div`
   margin: 125px auto 0 auto;
 `;
 
-const authors: Record<string, { name: string; link: string }> = {
-  eytan: {
-    name: 'Eytan Manor',
-    link: 'https://twitter.com/eytan_manor',
-  },
-  kamil: {
-    name: 'Kamil Kisiela',
-    link: 'https://twitter.com/kamilkisiela',
-  },
-  dotan: {
-    name: 'Dotan Simha',
-    link: 'https://twitter.com/dotansimha',
-  },
-  uri: {
-    name: 'Uri Goldshtein',
-    link: 'https://twitter.com/UriGoldshtein',
-  },
-  arda: {
-    name: 'Arda Tanrikulu',
-    link: 'https://twitter.com/ardatanrikulu',
-  },
-  laurin: {
-    name: 'Laurin Quast',
-    link: 'https://twitter.com/n1rual',
-  },
-  leonardo: {
-    name: 'Leonardo Ascione',
-    link: 'https://medium.com/@leonardoascione',
-  },
-  niccolo: {
-    name: 'Niccolo Belli',
-    link: 'https://medium.com/@darkbasic',
-  },
-  david: {
-    name: 'David Yahalomi',
-    link: 'https://medium.com/@davidyahalomi',
-  },
-};
+const AuthorName = styled.span`
+  margin-left: 10px;
+`;
 
 export default (meta: Meta): React.FC => {
   return ({ children: content }) => {
     const title = `${meta.title} - The Guild Blog`;
     const date = meta.date ? new Date(meta.date) : new Date();
+    const updatedDate = meta.updateDate ? new Date(meta.updateDate) : null;
     const author = meta.author && authors[meta.author];
 
     const authorLink = author ? (
-      <>
-        <span> - </span>
-        <a href={author.link} title={author.name}>
-          {author.name}
-        </a>
-      </>
+      <a href={author.link} title={author.name}>
+        {author.avatar || null}
+        <AuthorName>{author.name}</AuthorName>
+      </a>
     ) : null;
 
     return (
@@ -152,10 +123,22 @@ export default (meta: Meta): React.FC => {
               <Title>{meta.title}</Title>
               <Details>
                 <Time dateTime={date.toString()}>
-                  {format(date, 'EEEE, LLL do y')}
                   {authorLink}
+                  <br />
+                  Posted {format(date, 'EEEE, LLL do y')}
+                  {updatedDate && (
+                    <>
+                      <br />
+                      Updated {format(updatedDate, 'EEEE, LLL do y')}
+                    </>
+                  )}
                 </Time>
               </Details>
+              <TagContainers>
+                {meta.tags.map((t) => (
+                  <Tag tag={t} key={t} />
+                ))}
+              </TagContainers>
               <Cover>
                 <Image src={meta.image} alt={title} />
               </Cover>

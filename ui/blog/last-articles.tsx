@@ -27,6 +27,7 @@ export const LastArticles: React.FC<{
             image={article.thumbnail || article.image}
             link={article.link}
             date={article.date}
+            tags={article.tags}
           />
         );
       })}

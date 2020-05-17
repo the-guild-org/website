@@ -1,7 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
 import { ThemeProvider, ThemeConsumer } from 'styled-components';
-
 import { Background } from './Background';
 import { Hero } from './Hero';
 import { Infrastructure } from './Infrastructure';

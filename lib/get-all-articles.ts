@@ -8,16 +8,26 @@ import { MetaWithLink } from './types';
 /**
  * Based on the files found in `pages/blog/*.mdx`
  */
-export async function getAllArticles(): Promise<MetaWithLink[]> {
+export async function getAllArticles(
+  tagsFilter?: string[]
+): Promise<MetaWithLink[]> {
   const blogDir = join(process.cwd(), 'pages/blog');
   const filenames = await globby('*.mdx', {
     cwd: blogDir,
     absolute: false,
   });
 
-  const articles = await Promise.all(
-    filenames.map((file) => readMeta(blogDir, file))
-  );
+  const articles = (
+    await Promise.all(filenames.map((file) => readMeta(blogDir, file)))
+  ).filter((article) => {
+    if (!tagsFilter || tagsFilter.length === 0) {
+      return true;
+    }
+
+    return (article.tags || []).some((articleTag) =>
+      tagsFilter.includes(articleTag)
+    );
+  });
 
   return articles.sort(sortByDateDesc);
 }
