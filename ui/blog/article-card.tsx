@@ -4,6 +4,8 @@ import NativeLink from 'next/link';
 import format from 'date-fns/format';
 import LazyLoad from 'react-lazyload';
 import { withPlaceholder } from '../../lib/images';
+import { Tag } from '../../ui/blog/tag';
+import { AuthorDetails } from './authors';
 
 const Link = styled(NativeLink)`
   box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
@@ -43,6 +45,8 @@ const Placeholder = styled.div`
   border-radius: 0.5rem 0.5rem 0 0;
 `;
 
+const TagContainers = styled.div``;
+
 const Content = styled.div`
   padding: 1rem 1.5rem;
   text-align: left;
@@ -61,13 +65,21 @@ const Time = styled.time`
   font-size: 0.8rem;
 `;
 
+const AuthorName = styled.time`
+  margin-left: 10px;
+  color: var(--colors-accent);
+  font-size: 0.8rem;
+`;
+
 export const ArticleCard: React.FC<{
   title: string;
   description: string;
+  author?: AuthorDetails;
   image: string;
   link: string;
   date: string;
-}> = ({ title, description, image, link, date: rawDate }) => {
+  tags: string[];
+}> = ({ title, author, description, image, link, date: rawDate, tags }) => {
   const date = new Date(rawDate);
   const { large, placeholder, hasPlaceholder } = withPlaceholder(image);
 
@@ -93,10 +105,22 @@ export const ArticleCard: React.FC<{
         </Cover>
       </LazyLoad>
       <Content>
+        {author && (
+          <>
+            {author.avatar}
+            <AuthorName>{author.name}</AuthorName>
+            <br />
+          </>
+        )}
         <Time dateTime={date.toISOString()}>
           {format(date, 'EEEE, LLL do y')}
         </Time>
         <Title>{title}</Title>
+        <TagContainers>
+          {tags.map((t) => (
+            <Tag tag={t} key={t} />
+          ))}
+        </TagContainers>
         <Description>{description}</Description>
       </Content>
     </Link>

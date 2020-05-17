@@ -8,9 +8,11 @@ import { ArticleCard } from '../ui/blog/article-card';
 import { Newsletter } from '../ui/blog/newsletter';
 import { MetaWithLink } from '../lib/types';
 import { getAllArticles } from '../lib/get-all-articles';
+import { authors } from '../ui/blog/authors';
 
 interface Props {
   articles: MetaWithLink[];
+  tagFilter?: string[];
 }
 
 const SectionContainer = styled(Container)`
@@ -21,7 +23,7 @@ const NewsletterContainer = styled(Container)`
   padding-top: 50px;
 `;
 
-const AllArticles = styled(Container)`
+export const AllArticles = styled(Container)`
   padding: 125px 0;
   display: grid;
   grid-column-gap: 40px;
@@ -37,8 +39,9 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
-const Blog: React.FC<Props> = ({ articles }) => {
-  const recentArticle = articles[0];
+const Blog: React.FC<Props> = ({ articles, tagFilter }) => {
+  const hasTagFilter = tagFilter && tagFilter.length > 0;
+  const recentArticle = (articles || [])[0];
 
   return (
     <Page
@@ -47,32 +50,37 @@ const Blog: React.FC<Props> = ({ articles }) => {
     >
       <Hero shrink={true}>
         <span>Blog</span>
+        {hasTagFilter && <span> (filter by: {tagFilter.join(', ')})</span>}
       </Hero>
-      <Section>
-        <SectionContainer>
-          <Featured
-            title={recentArticle.title}
-            description={recentArticle.description}
-            image={recentArticle.thumbnail || recentArticle.image}
-            link={recentArticle.link}
-          />
-        </SectionContainer>
-      </Section>
-
-      <NewsletterContainer>
-        <Newsletter />
-      </NewsletterContainer>
-
+      {recentArticle && !hasTagFilter && (
+        <Section>
+          <SectionContainer>
+            <Featured
+              title={recentArticle.title}
+              description={recentArticle.description}
+              image={recentArticle.thumbnail || recentArticle.image}
+              link={recentArticle.link}
+            />
+          </SectionContainer>
+        </Section>
+      )}
+      {!hasTagFilter && (
+        <NewsletterContainer>
+          <Newsletter />
+        </NewsletterContainer>
+      )}
       <AllArticles>
-        {articles.map((article) => {
+        {(articles || []).map((article) => {
           return (
             <ArticleCard
+              author={authors[article.author]}
               key={article.link}
               title={article.title}
               description={article.description}
               image={article.thumbnail || article.image}
               link={article.link}
               date={article.date}
+              tags={article.tags || []}
             />
           );
         })}
