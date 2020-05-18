@@ -51,7 +51,7 @@ const Blog: React.FC<Props> = ({ articles, tagFilter }) => {
     >
       <Hero shrink={true}>
         <span>Blog</span>
-        {hasTagFilter && <span> (filter by: {tagFilter.join(', ')})</span>}
+        {hasTagFilter && <span>(filter by: {tagFilter.join(', ')})</span>}
       </Hero>
       {recentArticle && !hasTagFilter && (
         <Section>

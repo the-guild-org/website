@@ -1,8 +1,8 @@
 import React from 'react';
-import { useRouter } from 'next/router';
 import Blog from '../../blog';
 import { GetStaticProps } from 'next/types';
 import { getAllArticles } from '../../../lib/get-all-articles';
+import { unique, flatten } from '../../../lib/utils';
 
 export const getStaticProps: GetStaticProps<React.ComponentProps<
   typeof Blog
@@ -23,7 +23,7 @@ export const getStaticProps: GetStaticProps<React.ComponentProps<
 
 export async function getStaticPaths() {
   const allArticles = await getAllArticles();
-  const allTags = Array.from(new Set(allArticles.flatMap((t) => t.tags)));
+  const allTags = unique(flatten(allArticles.map((art) => art.tags)));
 
   return {
     paths: allTags.map((tag) => ({ params: { tag } })),
