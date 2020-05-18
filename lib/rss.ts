@@ -1,6 +1,7 @@
 import { promises } from 'fs';
 import RSS from 'rss';
 import { MetaWithLink } from './types';
+import { logAsComplete } from './utils';
 
 export async function buildRSS(articles: MetaWithLink[]) {
   const feed = new RSS({
@@ -23,5 +24,5 @@ export async function buildRSS(articles: MetaWithLink[]) {
 
   await promises.writeFile('./.next/static/feed.xml', rss);
 
-  console.log('●  RSS');
+  logAsComplete('RSS');
 }

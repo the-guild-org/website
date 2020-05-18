@@ -1,5 +1,6 @@
 import { promises } from 'fs';
 import { MetaWithLink } from './types';
+import { logAsComplete } from './utils';
 
 const createUrl = (link: string) => {
   return `
@@ -38,5 +39,5 @@ export async function buildSitemap(articles: MetaWithLink[]) {
 
   await promises.writeFile('./.next/static/sitemap.xml', sitemap, 'utf-8');
 
-  console.log('●  Sitemap');
+  logAsComplete('Sitemap');
 }

@@ -7,6 +7,7 @@ import { StackBlitz } from '../../shared/embed/StackBlitz';
 import { Tweet } from '../../shared/embed/Tweet';
 import { YouTube } from '../../shared/embed/YouTube';
 import { LinkPreview } from '../../shared/embed/LinkPreview';
+import { Image } from '../image';
 
 const H1 = styled.h2`
   text-align: left;
@@ -78,7 +79,7 @@ const Hr = () => (
   </div>
 );
 
-const Img = styled.img.attrs((props) => ({
+const Img = styled(Image).attrs((props) => ({
   ...props,
   alt: props.alt || '',
 }))`
