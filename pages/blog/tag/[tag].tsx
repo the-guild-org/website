@@ -27,6 +27,7 @@ export async function getStaticPaths() {
 
   return {
     paths: allTags.map((tag) => ({ params: { tag } })),
+    fallback: false,
   };
 }
 
