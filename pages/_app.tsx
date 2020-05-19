@@ -12,6 +12,7 @@ export default class MyApp extends App {
     const { Component, pageProps } = this.props;
     return (
       <>
+        <script src="/static/crisp.js" />
         <style global jsx>
           {`
             html,
