@@ -3,8 +3,9 @@ import withArticle from '../../ui/blog/article';
 export const meta = {
   title: 'GraphQL Codegen adds new Apollo-Android and Java plugins',
   author: 'dotan',
-  tags: ['graphql', 'codegen', 'apollo-angular', 'java'],
+  tags: ['graphql', 'codegen', 'apollo-android', 'apollo', 'android', 'java'],
   date: '2019-06-19',
+  updateDate: '2020-05-20',
   description:
     'GraphQL Codegen adds a new Apollo-Android and a new Java Backend plugins!',
   image: '/blog-assets/graphql-codegen-java/cover.png',
@@ -59,9 +60,9 @@ Because the current GraphQL Code Generator package is released on NPM, you’ll 
     "postinstall": "graphql-codegen"
   },
   "dependencies": {
-    "graphql": "14.2.1",
-    "@graphql-codegen/cli": "1.2.2-beta.0",
-    "@graphql-codegen/java-apollo-android": "1.2.2-beta.0"
+    "graphql": "15.0.0",
+    "@graphql-codegen/cli": "1.14.0",
+    "@graphql-codegen/java-apollo-android": "1.14.0"
   }
 }
 ```
@@ -115,9 +116,9 @@ Follow the instructions above, but use this `package.json`:
     "postinstall": "graphql-codegen"
   },
   "dependencies": {
-    "graphql": "14.2.1",
-    "@graphql-codegen/cli": "1.2.2-beta.0",
-    "@graphql-codegen/java-resolvers": "1.2.2-beta.0"
+    "graphql": "15.0.0",
+    "@graphql-codegen/cli": "1.14.0",
+    "@graphql-codegen/java-resolvers": "1.14.0"
   }
 }
 ```
@@ -156,7 +157,7 @@ schema: 'src/app/resources/schema.graphql'
 generates:
   src/app/graphql/generated/Resolvers.java:
     plugins:
-      - 'java-resolvers'
+      - java-resolvers
     config:
       mappers:
         User: 'com.myapp.models.UserModel#UserModel'
