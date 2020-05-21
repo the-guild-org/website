@@ -36,21 +36,27 @@ const P = styled.p`
   margin-bottom: 2rem;
 `;
 
+const Li = styled.li`
+  margin-bottom: 0.35rem;
+`;
+
 const Ul = styled.ul`
   list-style: none;
   margin-bottom: 2rem;
+
+  & > ${Li} {
+    &:before {
+      content: '-';
+      display: inline-block;
+      color: #6d6d6d;
+      position: absolute;
+      margin-left: -25px;
+    }
+  }
 `;
 
-const Li = styled.li`
-  margin-bottom: 0.35rem;
-
-  &:before {
-    content: '-';
-    display: inline-block;
-    color: #6d6d6d;
-    position: absolute;
-    margin-left: -25px;
-  }
+const Ol = styled.ol`
+  margin-bottom: 2rem;
 `;
 
 const Blockquote = styled.blockquote`
@@ -99,6 +105,7 @@ export const components = {
   h3: H3,
   li: Li,
   ul: Ul,
+  ol: Ol,
   code: Code,
   inlineCode: InlineCode,
   blockquote: Blockquote,

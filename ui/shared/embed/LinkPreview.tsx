@@ -43,7 +43,7 @@ const Container = styled.div`
   font-family: 'Roboto', sans-serif;
 
   &:hover {
-    opacity: 0.8;
+    opacity: var(--hover-opacity);
   }
 `;
 

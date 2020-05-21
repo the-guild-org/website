@@ -33,6 +33,7 @@ export default class MyApp extends App {
               --colors-error-light: #ff3f38;
               --colors-primary: #000;
               --colors-background: #fff;
+              --hover-opacity: 0.75;
             }
 
             /*

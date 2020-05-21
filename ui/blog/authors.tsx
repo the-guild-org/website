@@ -6,7 +6,7 @@ const AVATAR_SIZE = '40px';
 export type AuthorDetails = {
   name: string;
   link: string;
-  avatar?: React.ReactChild;
+  avatar: React.ReactChild;
 };
 
 export const authors: Record<string, AuthorDetails> = {

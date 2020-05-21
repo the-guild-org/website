@@ -1,5 +1,5 @@
 const { execute, parse } = require('graphql');
-const { makeExecutableSchema } = require('graphql-tools');
+const { makeExecutableSchema } = require('@graphql-tools/schema');
 const microCors = require('micro-cors');
 const bugsnag = require('@bugsnag/js');
 const axios = require('axios').default;

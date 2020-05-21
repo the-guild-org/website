@@ -53,7 +53,7 @@ const Input = styled.input`
   }
 
   &:disabled {
-    opacity: 0.7;
+    opacity: var(--hover-opacity);
   }
 `;
 

@@ -41,19 +41,31 @@ const Title = styled.h1`
 const Details = styled.div`
   margin-top: 2rem;
   text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  font-size: 0.9rem;
+
+  & > div:nth-child(2) {
+    margin-left: 10px;
+    display: flex;
+    text-align: left;
+    flex-direction: column;
+    justify-content: center;
+
+    & > a {
+      color: var(--colors-accent);
+    }
+
+    & > a:hover {
+      color: var(--colors-accent-light);
+    }
+  }
 `;
 
 const Time = styled.time`
   color: var(--colors-dim);
   font-size: 0.8rem;
-
-  & > a {
-    color: var(--colors-accent);
-  }
-
-  & > a:hover {
-    color: var(--colors-accent-light);
-  }
 `;
 
 const Cover = styled.div`
@@ -97,10 +109,6 @@ const Back = styled.div`
   margin: 125px auto 0 auto;
 `;
 
-const AuthorName = styled.span`
-  margin-left: 10px;
-`;
-
 export default (meta: Meta): React.FC => {
   return ({ children: content }) => {
     const title = `${meta.title} - The Guild Blog`;
@@ -114,13 +122,6 @@ export default (meta: Meta): React.FC => {
         ? meta.thumbnail
         : meta.image;
 
-    const authorLink = author ? (
-      <a href={author.link} title={author.name}>
-        {author.avatar || null}
-        <AuthorName>{author.name}</AuthorName>
-      </a>
-    ) : null;
-
     return (
       <MDXProvider components={components}>
         <Page title={title} image={ogImage} description={meta.description}>
@@ -128,21 +129,30 @@ export default (meta: Meta): React.FC => {
             <Main>
               <Title>{meta.title}</Title>
               <Details>
-                <Time dateTime={date.toString()}>
-                  {authorLink}
-                  <br />
-                  Posted {format(date, 'EEEE, LLL do y')}
-                  {updatedDate && (
-                    <>
-                      <br />
-                      Updated {format(updatedDate, 'EEEE, LLL do y')}
-                    </>
-                  )}
-                </Time>
+                <div>
+                  <a href={author.link} title={author.name}>
+                    {author.avatar}
+                  </a>
+                </div>
+                <div>
+                  <a href={author.link} title={author.name}>
+                    {author.name}
+                  </a>
+                  <Time
+                    dateTime={date.toISOString()}
+                    title={
+                      updatedDate
+                        ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
+                        : `Posted ${format(date, 'EEEE, LLL do y')}`
+                    }
+                  >
+                    {format(date, 'EEEE, LLL do y')}
+                  </Time>
+                </div>
               </Details>
               <TagContainers>
                 {meta.tags.map((t) => (
-                  <Tag tag={t} key={t} />
+                  <Tag tag={t} key={t} asLink={true} />
                 ))}
               </TagContainers>
               <Cover>

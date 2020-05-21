@@ -14,7 +14,7 @@ const Description = styled.div`
 
 const Link = styled(NativeLink)`
   &:hover > * {
-    opacity: 0.75;
+    opacity: var(--hover-opacity);
   }
 `;
 

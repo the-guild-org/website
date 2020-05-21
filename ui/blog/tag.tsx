@@ -7,10 +7,11 @@ const TagContainer = styled.span`
   background-color: #f1f1f1;
   padding: 4px;
   margin-right: 8px;
-  font-size: 12px;
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.1);
   margin-bottom: 5px;
   display: inline-block;
+  color: var(--colors-dim);
+  font-size: 0.8rem;
 `;
 
 const Link = styled(NativeLink)`
@@ -18,19 +19,23 @@ const Link = styled(NativeLink)`
   font-size: 0.8rem;
 
   &:hover {
-    opacity: 0.6;
+    opacity: var(--hover-opacity);
   }
 `;
 
 export const Tag: React.FC<{
   tag: string;
-  as?: React.ComponentProps<typeof Link>['as'];
-}> = ({ tag, as = 'a' }) => {
+  asLink: boolean;
+}> = ({ tag, asLink }) => {
   return (
     <TagContainer>
-      <Link href={`/blog/tag/${tag}`} as={as}>
-        {tag}
-      </Link>
+      {asLink ? (
+        <Link href={`/blog/tag/${tag}`} as="a">
+          {tag}
+        </Link>
+      ) : (
+        tag
+      )}
     </TagContainer>
   );
 };

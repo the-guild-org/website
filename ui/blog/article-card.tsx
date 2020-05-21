@@ -13,7 +13,7 @@ const Link = styled(NativeLink)`
   background-color: #fff;
 
   &:hover {
-    opacity: 0.75;
+    opacity: var(--hover-opacity);
   }
 `;
 
@@ -65,10 +65,26 @@ const Time = styled.time`
   font-size: 0.8rem;
 `;
 
-const AuthorName = styled.time`
-  margin-left: 10px;
-  color: var(--colors-accent);
-  font-size: 0.8rem;
+const Details = styled.div`
+  display: flex;
+  flex-direction: row;
+  font-size: 0.9rem;
+
+  & > div:nth-child(2) {
+    margin-left: 10px;
+    display: flex;
+    text-align: left;
+    flex-direction: column;
+    justify-content: center;
+
+    & > a {
+      color: var(--colors-accent);
+    }
+
+    & > a:hover {
+      color: var(--colors-accent-light);
+    }
+  }
 `;
 
 export const ArticleCard: React.FC<{
@@ -105,20 +121,25 @@ export const ArticleCard: React.FC<{
         </Cover>
       </LazyLoad>
       <Content>
-        {author && (
-          <>
-            {author.avatar}
-            <AuthorName>{author.name}</AuthorName>
-            <br />
-          </>
-        )}
-        <Time dateTime={date.toISOString()}>
-          {format(date, 'EEEE, LLL do y')}
-        </Time>
+        <Details>
+          <div>
+            <a href={author.link} title={author.name}>
+              {author.avatar}
+            </a>
+          </div>
+          <div>
+            <a href={author.link} title={author.name}>
+              {author.name}
+            </a>
+            <Time dateTime={date.toISOString()}>
+              {format(date, 'EEEE, LLL do y')}
+            </Time>
+          </div>
+        </Details>
         <Title>{title}</Title>
         <TagContainers>
           {tags.map((t) => (
-            <Tag tag={t} key={t} as={'span'} />
+            <Tag tag={t} key={t} asLink={false} />
           ))}
         </TagContainers>
         <Description>{description}</Description>

@@ -91,7 +91,7 @@ export const Button = styled.button`
   }
 
   &:disabled {
-    opacity: 0.7;
+    opacity: var(--hover-opacity);
     cursor: progress;
   }
 `;
