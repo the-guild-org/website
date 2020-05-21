@@ -108,6 +108,12 @@ export default (meta: Meta): React.FC => {
     const updatedDate = meta.updateDate ? new Date(meta.updateDate) : null;
     const author = meta.author && authors[meta.author];
 
+    const ogImage =
+      (meta.image?.endsWith('.webm') || meta.image?.endsWith('.mp4')) &&
+      meta.thumbnail
+        ? meta.thumbnail
+        : meta.image;
+
     const authorLink = author ? (
       <a href={author.link} title={author.name}>
         {author.avatar || null}
@@ -117,7 +123,7 @@ export default (meta: Meta): React.FC => {
 
     return (
       <MDXProvider components={components}>
-        <Page title={title} image={meta.image} description={meta.description}>
+        <Page title={title} image={ogImage} description={meta.description}>
           <Container>
             <Main>
               <Title>{meta.title}</Title>
