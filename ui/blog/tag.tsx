@@ -3,15 +3,14 @@ import styled from 'styled-components';
 import NativeLink from 'next/link';
 
 const TagContainer = styled.span`
-  border-radius: 5px;
-  background-color: #f1f1f1;
-  padding: 4px;
-  margin-right: 8px;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.1);
-  margin-bottom: 5px;
   display: inline-block;
+  padding: 0.3rem;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  background-color: #f1f1f1;
+  border-radius: 0.3rem;
+  font-size: 0.7rem;
   color: var(--colors-dim);
-  font-size: 0.8rem;
 `;
 
 const Link = styled(NativeLink)`
