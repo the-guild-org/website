@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Page } from '../ui/shared/Page';
 import { Hero, Section, Container, Button } from '../ui/shared/Layout';
 import { useMutation } from '../hooks/use-graphql';
+import { runOnCrisp } from '../lib/crisp';
 
 const Main = styled(Container)`
   display: flex;
@@ -151,6 +152,11 @@ const Blog: React.FC = () => {
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
+
+      runOnCrisp((crisp) => {
+        crisp.push(['set', 'user:email', email]);
+      });
+
       setState(State.Loading);
       mutate({ email, project: 'WEBSITE' });
     },
