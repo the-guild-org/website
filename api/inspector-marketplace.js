@@ -1,11 +1,13 @@
 const microCors = require('micro-cors');
 const bugsnag = require('@bugsnag/js');
 const crypto = require('crypto');
+const axios = require('axios').default;
 
 const { WebClient } = require('@slack/web-api');
 
 const bugsnagClient = bugsnag(process.env.BUGSNAG_API);
 const slack = new WebClient(process.env.SLACK_TOKEN);
+const zapier = process.env.ZAPIER_INSPECTOR_WEBHOOK;
 const channelID = 'CLZ5BCE7K';
 const cors = microCors();
 
@@ -66,28 +68,37 @@ module.exports = cors(async (req, res) => {
     email = sender.email;
   }
 
-  const result = await slack.chat.postMessage({
-    channel: channelID,
-    text: [
-      '*Inspector App*',
-      `_Action:_ ${action}`,
-      `_Is organization:_ ${isOrg ? 'yes' : 'no'}`,
-      `_Login:_ ${login}`,
-      `_Email:_ ${email}`,
-      `_Url:_ ${url}`,
-    ].join('\n'),
-  });
-
-  if (result.error) {
-    console.error(result.error);
-
-    bugsnagClient.metaData = {
-      ...bugsnagClient.metaData,
-      slack: result,
-    };
-
-    throw new Error(`Slack failed to send a message`);
-  }
+  await Promise.all([
+    slack.chat
+      .postMessage({
+        channel: channelID,
+        text: [
+          '*Inspector App*',
+          `_Action:_ ${action}`,
+          `_Is organization:_ ${isOrg ? 'yes' : 'no'}`,
+          `_Login:_ ${login}`,
+          `_Email:_ ${email}`,
+          `_Url:_ ${url}`,
+        ].join('\n'),
+      })
+      .then((result) => {
+        if (result.error) {
+          console.error(result.error);
+          bugsnagClient.metaData = {
+            ...bugsnagClient.metaData,
+            slack: result,
+          };
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        bugsnagClient.notify(error);
+      }),
+    axios.post(zapier, payload).catch((error) => {
+      console.error(error);
+      bugsnagClient.notify(error);
+    }),
+  ]);
 
   res.statusCode = 200;
   res.statusMessage = 'OK';
