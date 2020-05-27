@@ -4,11 +4,12 @@ import Link from 'next/link';
 import { GetStaticProps } from 'next/types';
 import { Section, Hero, Container, Button } from '../ui/shared/Layout';
 import { Page } from '../ui/shared/Page';
-import { Featured } from '../ui/shared/Featured';
+import { Project, ProjectSeparator } from '../ui/shared/Projects';
 import { MetaWithLink } from '../lib/types';
 import { getAllArticles } from '../lib/get-all-articles';
 import { LastArticles } from '../ui/blog/last-articles';
 import { Newsletter } from '../ui/blog/newsletter';
+import { projects } from '../lib/projects';
 
 const BlogSection = styled(Section)`
   padding: 50px 0;
@@ -45,7 +46,7 @@ const BlogButton = styled(Button)`
   }
 `;
 
-const ProductsSection = styled(Section)`
+const ProjectsSection = styled(Section)`
   padding: 50px 0;
   background-color: #fff;
   text-align: center;
@@ -53,21 +54,6 @@ const ProductsSection = styled(Section)`
   &::before {
     border-color: transparent transparent #fff transparent;
   }
-`;
-
-const FeaturedProduct = styled(Featured).attrs({
-  width: 80,
-  noShadow: true,
-  maxCoverSize: 200,
-})`
-  padding: 50px 0;
-`;
-
-const Separator = styled.div`
-  margin: 30px auto;
-  width: 50px;
-  height: 2px;
-  background-color: var(--colors-accent-light);
 `;
 
 const NewsletterContainer = styled(Container)`
@@ -84,13 +70,9 @@ interface Props {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const projectsOrder = [
-    'codegen',
-    'inspector',
-    'mesh',
-    'tools',
-    'modules',
-  ].sort(() => 0.5 - Math.random());
+  const projectsOrder = Object.keys(projects)
+    .filter((name) => projects[name].featured === true)
+    .sort(() => 0.5 - Math.random());
 
   return {
     props: {
@@ -102,84 +84,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
 const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
   const recentArticles = articles.slice(0, 3);
-
-  const projects = {
-    codegen: {
-      title: 'Code Generation and Type Safety',
-      image: 'https://graphql-code-generator.com/img/gql-codegen-cover.png',
-      link: 'https://graphql-code-generator.com/',
-      description: (
-        <>
-          <p>
-            GraphQL Code Generator is a tool that generates code out of your
-            GraphQL schema and Operations.
-          </p>
-          <p>
-            Official support for TypeScript, Flow, React, Angular, MongoDB,
-            Stencil, Reason, and more.
-          </p>
-        </>
-      ),
-    },
-    inspector: {
-      title: 'Maintenance and Analysis of GraphQL API',
-      image: 'https://graphql-inspector.com/img/logo.svg',
-      link: 'https://graphql-inspector.com',
-      description: (
-        <>
-          <p>
-            GraphQL Inspector is a set of tools to help you better maintain and
-            improve GraphQL API as well as GraphQL consumers.
-          </p>
-          <p>
-            Integrates with GitHub and runs in any Continous Integration and
-            Delivery pipeline.
-          </p>
-        </>
-      ),
-    },
-    mesh: {
-      title: 'GraphQL with any source of data',
-      image: 'https://graphql-mesh.com/img/mesh-text-logo.svg',
-      link: 'https://graphql-mesh.com/',
-      description: (
-        <p>
-          GraphQL Mesh allows you to use GraphQL query language to access data
-          in remote APIs that don't run GraphQL (and also ones that do run
-          GraphQL). It can be used as a gateway to other services, or run as a
-          local GraphQL schema that aggregates data from remote APIs.
-        </p>
-      ),
-    },
-    modules: {
-      title: 'Modularization of GraphQL API',
-      image: '/img/logos/graphql-modules.svg',
-      link: 'https://graphql-modules.com',
-      description: (
-        <p>
-          GraphQL Modules lets you separate your backend implementation to
-          small, reusable, easy-to-implement and easy-to-test pieces.
-        </p>
-      ),
-    },
-    tools: {
-      title: 'Utilities for GraphQL',
-      image: '/img/logos/graphql-tools.svg',
-      link: 'https://graphql-tools.com/',
-      description: (
-        <>
-          <p>
-            A set of utilities to build your JavaScript GraphQL schema in a
-            concise and powerful way.
-          </p>
-          <p>
-            Use GraphQL-first philosophy, mock your API or stitch multiple
-            GraphQL Schemas
-          </p>
-        </>
-      ),
-    },
-  };
 
   return (
     <Page
@@ -206,8 +110,8 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
         </Container>
       </BlogSection>
 
-      {/* Products */}
-      <ProductsSection>
+      {/* Projects */}
+      <ProjectsSection>
         <Container>
           <SectionTitle>
             We do <span>Open Source</span>
@@ -217,8 +121,8 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
 
             return (
               <div key={id}>
-                {i !== 0 && <Separator />}
-                <FeaturedProduct
+                {i !== 0 && <ProjectSeparator />}
+                <Project
                   title={project.title}
                   image={project.image}
                   link={project.link}
@@ -227,15 +131,13 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
               </div>
             );
           })}
-          <BlogButton
-            as="a"
-            href="https://github.com/the-guild-org/Stack"
-            title="View our Tech Stack"
-          >
-            View all projects
-          </BlogButton>
+          <Link href="/open-source" passHref={true}>
+            <BlogButton as="a" title="View our Open Source projects">
+              View all projects
+            </BlogButton>
+          </Link>
         </Container>
-      </ProductsSection>
+      </ProjectsSection>
 
       <NewsletterContainer>
         <NewsletterSignUp />

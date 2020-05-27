@@ -174,7 +174,7 @@ const Blog: React.FC = () => {
   return (
     <Page
       title="Contact Us - The Guild"
-      description="Get in touch!"
+      description="Looking to work with The Guild or to learn more about our projects? We will be happy to speak with you!"
       image="/img/ogimage-contact.png"
     >
       <Hero shrink={true}>

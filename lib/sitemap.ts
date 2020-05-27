@@ -29,6 +29,16 @@ export async function buildSitemap(articles: MetaWithLink[]) {
       <priority>0.6</priority>
     </url>
     <url>
+      <loc>https://the-guild.dev/contact</loc>
+      <changefreq>weekly</changefreq>
+      <priority>0.5</priority>
+    </url>
+    <url>
+      <loc>https://the-guild.dev/open-source</loc>
+      <changefreq>weekly</changefreq>
+      <priority>0.5</priority>
+    </url>
+    <url>
       <loc>https://the-guild.dev/blog</loc>
       <changefreq>daily</changefreq>
       <priority>0.8</priority>
