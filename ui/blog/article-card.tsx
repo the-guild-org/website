@@ -77,12 +77,8 @@ const Details = styled.div`
     flex-direction: column;
     justify-content: center;
 
-    & > a {
+    & > span {
       color: var(--colors-accent);
-    }
-
-    & > a:hover {
-      color: var(--colors-accent-light);
     }
   }
 `;
@@ -123,14 +119,10 @@ export const ArticleCard: React.FC<{
       <Content>
         <Details>
           <div>
-            <a href={author.link} title={author.name}>
-              {author.avatar}
-            </a>
+            <span title={author.name}>{author.avatar}</span>
           </div>
           <div>
-            <a href={author.link} title={author.name}>
-              {author.name}
-            </a>
+            <span title={author.name}>{author.name}</span>
             <Time dateTime={date.toISOString()}>
               {format(date, 'EEEE, LLL do y')}
             </Time>
