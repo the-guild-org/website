@@ -212,9 +212,7 @@ Given those Relay superpowers, I now feel even more productive.
 
 For those curious, I also created a sample project: [TodoMVC Apollo](https://github.com/n1ru4l/codegen-relay-transform-experiments/tree/master/packages/todo-app-example) (Converted from the Relay Examples).
 
-Of course, you can also take a look at (and use!) the `@graphql-codegen/relay-optimizer-plugin`.
-
-    yarn add -D -E @graphql-codegen/relay-optimizer-plugin
+Of course, you can also take a look at (and use!) the [Relay Operation Optimizer](https://www.graphql-tools.com/docs/relay-operation-optimizer/)
 
 Example configuration for a react-apollo project:
 
@@ -226,9 +224,11 @@ schema: "schema.graphql"
 generates:
   src/generated-types.tsx:
     documents: "src/documents/**/*.graphql"
+    config:
+      skipDocumentsValidation: true
+      flattenGeneratedTypes: true
     plugins:
       - "typescript"
-      — "relay-optimizer-plugin"
       — "typescript-operations"
       — "typescript-react-apollo"
 ```
