@@ -24,13 +24,20 @@ Let's say you have `/user` endpoint that does all CRUD operations for `User` ent
 type Query {
   user(id: ID): User
 }
+
 type Mutation {
   createUser(input: UserInput): User
   updateUser(id: ID, input: UserInput): User
   deleteUser(id: ID): ID
 }
+
 type User {
    id: ID
+   name: String
+   age: Int
+}
+
+input UserInput {
    name: String
    age: Int
 }
@@ -55,7 +62,7 @@ module.exports = {
     deleteUser:  (root, args) => fetch('https://myrest.com/user' + args.id, {
        method: 'DELETE'
     }).then(res => res.json()),
-}
+};
 ```
 
 This example assumes that you have `/user/:id` endpoint that gets a `User` entity with `HTTP GET`, deletes user with `HTTP DELETE` and updates a `User` that has the given id with the given input. Also `/user` endpoint creates a new `User` with the given input.
@@ -84,33 +91,33 @@ Create a `.meshrc.yml` which is a configuration file for GraphQL Mesh on our new
 
 ```yml
 sources:
-name: MyRest
-handler:
-   jsonSchema:
-      baseUrl: https://myrest.com/
-      operations:
-type: Query
-field: user
-path: /user/{args.id}
-method: GET
-responseSample: ./getUserResponse.json
-type: Mutation
-field: createUser
-path: /user
-method: PUT
-requestSample: ./createUserRequest.json
-responseSample: ./createUserResponse.json
-type: Mutation
-field: updateUser
-path: /user/{args.id}
-method: POST
-requestSample: ./updateUserRequest.json
-responseSample: ./updateUserResponse.json
-type: Mutation
-field: deleteUser
-path: /user/{args.id}
-method: DELETE
-responseSample: ./deleteUserResponse.json
+  - name: MyRest
+    handler:
+       jsonSchema:
+          baseUrl: https://myrest.com/
+          operations:
+            - type: Query
+              field: user
+              path: /user/{args.id}
+              method: GET
+              responseSample: ./getUserResponse.json
+            - type: Mutation
+              field: createUser
+              path: /user
+              method: PUT
+              requestSample: ./createUserRequest.json
+              responseSample: ./createUserResponse.json
+            - type: Mutation
+              field: updateUser
+              path: /user/{args.id}
+              method: POST
+              requestSample: ./updateUserRequest.json
+              responseSample: ./updateUserResponse.json
+            - type: Mutation
+              field: deleteUser
+              path: /user/{args.id}
+              method: DELETE
+              responseSample: ./deleteUserResponse.json
 ```
 
 As you can see in the configuration, we defined our endpoints without a single line of code. After creating this configuration file. We need to get sample request and response files by calling those endpoints on our local.
