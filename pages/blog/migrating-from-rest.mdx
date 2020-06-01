@@ -1,13 +1,12 @@
 import withArticle from '../../ui/blog/article';
 
 export const meta = {
-  title:
-    'Migrating from Schemaless REST API to GraphQL',
+  title: 'Migrating from Schemaless REST API to GraphQL',
   tags: ['graphql', 'rest', 'graphql-mesh'],
   author: 'arda',
   date: '2020-05-31',
   description:
-    "Migrating from Schemaless REST API to GraphQL without writing everything from scratch using GraphQL Mesh",
+    'Migrating from Schemaless REST API to GraphQL without writing everything from scratch using GraphQL Mesh',
   image:
     'https://user-images.githubusercontent.com/20847995/83359027-29c2e000-a380-11ea-82a9-44ee8f257297.png',
 };
@@ -32,18 +31,19 @@ type Mutation {
 }
 
 type User {
-   id: ID
-   name: String
-   age: Int
+  id: ID
+  name: String
+  age: Int
 }
 
 input UserInput {
-   name: String
-   age: Int
+  name: String
+  age: Int
 }
 ```
 
 And you would also need a thin business logic that proxies upcoming GraphQL requests to the REST API using GraphQL resolvers like below;
+
 ```js
 module.exports = {
    Query: {
@@ -93,31 +93,31 @@ Create a `.meshrc.yml` which is a configuration file for GraphQL Mesh on our new
 sources:
   - name: MyRest
     handler:
-       jsonSchema:
-          baseUrl: https://myrest.com/
-          operations:
-            - type: Query
-              field: user
-              path: /user/{args.id}
-              method: GET
-              responseSample: ./getUserResponse.json
-            - type: Mutation
-              field: createUser
-              path: /user
-              method: PUT
-              requestSample: ./createUserRequest.json
-              responseSample: ./createUserResponse.json
-            - type: Mutation
-              field: updateUser
-              path: /user/{args.id}
-              method: POST
-              requestSample: ./updateUserRequest.json
-              responseSample: ./updateUserResponse.json
-            - type: Mutation
-              field: deleteUser
-              path: /user/{args.id}
-              method: DELETE
-              responseSample: ./deleteUserResponse.json
+      jsonSchema:
+        baseUrl: https://myrest.com/
+        operations:
+          - type: Query
+            field: user
+            path: /user/{args.id}
+            method: GET
+            responseSample: ./getUserResponse.json
+          - type: Mutation
+            field: createUser
+            path: /user
+            method: PUT
+            requestSample: ./createUserRequest.json
+            responseSample: ./createUserResponse.json
+          - type: Mutation
+            field: updateUser
+            path: /user/{args.id}
+            method: POST
+            requestSample: ./updateUserRequest.json
+            responseSample: ./updateUserResponse.json
+          - type: Mutation
+            field: deleteUser
+            path: /user/{args.id}
+            method: DELETE
+            responseSample: ./deleteUserResponse.json
 ```
 
 As you can see in the configuration, we defined our endpoints without a single line of code. After creating this configuration file. We need to get sample request and response files by calling those endpoints on our local.
@@ -127,4 +127,3 @@ With a single command, our new GraphQL endpoint is ready to serve;
 ```bash
 $ yarn mesh serve
 ```
-
