@@ -57,6 +57,24 @@ const OpenSource: React.FC<Props> = ({ projectsOrder }) => {
               </div>
             );
           })}
+          <div key="whatsapp">
+            <ProjectSeparator />
+            <Project
+              title="WhatsApp Clone Tutorial"
+              image="/img/logos/whats-app.svg"
+              link="https://github.com/Urigo/WhatsApp-Clone-Tutorial"
+              description={
+                <>
+                  <p>An open-source full-stack example app.</p>
+                  <p>
+                    Using React (Hooks and Suspense), Apollo, TypeScript,
+                    GraphQL-Subscriptions, GraphQL-Codegen, GraphQL-Modules,
+                    PostgreSQL, Styled Components and Material UI
+                  </p>
+                </>
+              }
+            />
+          </div>
         </Container>
       </ProjectsSection>
     </Page>

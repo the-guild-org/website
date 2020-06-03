@@ -54,7 +54,7 @@ export const projects = {
   modules: {
     featured: true,
     title: 'Modularization of GraphQL API',
-    image: '/img/logos/graphql-modules.svg',
+    image: '/img/logos/modules.svg',
     link: 'https://graphql-modules.com',
     description: (
       <p>
@@ -66,7 +66,7 @@ export const projects = {
   tools: {
     featured: true,
     title: 'Utilities for GraphQL',
-    image: '/img/logos/graphql-tools.svg',
+    image: '/img/logos/tools.svg',
     link: 'https://graphql-tools.com/',
     description: (
       <>
@@ -84,7 +84,7 @@ export const projects = {
   cli: {
     featured: false,
     title: 'GraphQL CLI',
-    image: '/img/logos/graphql-tools.svg',
+    image: '/img/logos/cli.svg',
     link: 'https://github.com/Urigo/graphql-cli',
     description: (
       <>
@@ -99,7 +99,7 @@ export const projects = {
   sofa: {
     featured: false,
     title: 'REST API from GraphQL - with SOFA',
-    image: '/img/logos/graphql-tools.svg',
+    image: '/img/logos/sofa.svg',
     link: 'https://sofa-api.com/',
     description: (
       <>
@@ -114,7 +114,7 @@ export const projects = {
   config: {
     featured: false,
     title: 'One Configuration for all Tools - GraphQL Config',
-    image: '/img/logos/graphql-tools.svg',
+    image: '/img/logos/config.svg',
     link: 'https://graphql-config.com',
     description: (
       <>
@@ -129,7 +129,7 @@ export const projects = {
   scalars: {
     featured: false,
     title: 'Collection of GraphQL Scalars',
-    image: '/img/logos/graphql-tools.svg',
+    image: '/img/logos/scalars.svg',
     link: 'https://github.com/Urigo/graphql-scalars',
     description: (
       <>
@@ -169,7 +169,7 @@ export const projects = {
   stencilApollo: {
     featured: false,
     title: 'GraphQL in WebComponents - Stencil Apollo',
-    image: '/img/logos/graphql-tools.svg',
+    image: '/img/logos/stencil-apollo.svg',
     link: 'https://github.com/ardatan/stencil-apollo',
     description: (
       <>
