@@ -159,12 +159,9 @@ export const Layout: React.FC = ({ children }) => {
           <Link href="/blog">
             <a title="The Guild - Blog">Blog</a>
           </Link>
-          <a
-            href="https://github.com/the-guild-org/Stack"
-            title="The Guild - Open Source projects"
-          >
-            Open Source
-          </a>
+          <Link href="/open-source">
+            <a title="The Guild - Open Source projects">Open Source</a>
+          </Link>
           <Link href="/contact">
             <a title="The Guild - Contact us">Contact</a>
           </Link>
@@ -176,12 +173,9 @@ export const Layout: React.FC = ({ children }) => {
           <Link href="/blog">
             <a title="Read our blog">Blog</a>
           </Link>
-          <a
-            href="https://github.com/the-guild-org/Stack"
-            title="Explore our projects"
-          >
-            Open Source
-          </a>
+          <Link href="/open-source">
+            <a title="Explore our projects">Open Source</a>
+          </Link>
           <a
             href="https://github.com/the-guild-org/community-meetings"
             title="Join our Community Meetings"
@@ -209,7 +203,7 @@ export const Layout: React.FC = ({ children }) => {
           >
             <Linkedin />
           </a>
-          <a href="https://discord.gg/xud7bH9" title="Visit our Discord">
+          <a href="https://the-guild.dev/discord" title="Visit our Discord">
             <Discord />
           </a>
         </FooterLinks>
