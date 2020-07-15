@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { GitHub, Twitter, Linkedin } from 'react-feather';
+import { GitHub, Twitter, Linkedin, Youtube } from 'react-feather';
 import { Discord } from './logos/Discord';
 import { TheGuildLogo } from './Logo';
 
@@ -196,6 +196,12 @@ export const Layout: React.FC = ({ children }) => {
           </a>
           <a href="https://twitter.com/TheGuildDev" title="Visit our Twitter">
             <Twitter />
+          </a>
+          <a
+            href="https://www.youtube.com/channel/UCY5MRYIB_x1i4wPZ20aZTvQ"
+            title="Visit our YouTube channel"
+          >
+            <Youtube />
           </a>
           <a
             href="https://www.linkedin.com/company/the-guild-software"
