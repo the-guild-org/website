@@ -1,0 +1,63 @@
+import withArticle from '../../ui/blog/article';
+
+export const meta = {
+  title: 'TypedDocumentNode: the next generation of GraphQL and TypeScript',
+  author: 'dotan',
+  tags: ['graphql', 'codegen', 'typescript', 'react', 'apollo'],
+  date: '2020-07-20',
+  description:
+    "TypedDocumentNode is a simple wrapper on top of GraphQL's DocumentNode. With the power of GraphQL Codegen is can allow better integration of TypeScript and GraphQL",
+  image: '/blog-assets/graphql-code-generator/cover.png',
+};
+
+export default withArticle({ ...meta });
+
+This article will cover a new way to integrate TypeScript and GraphQL for frontend applicaions - [`TypedDocumentNode`](https://github.com/dotansimha/graphql-typed-document-node).
+
+`TypedDocumentNode` is a development tool for creating fully typed `DocumentNode` objects. It means that just by passing the GraphQL query/mutation/subscription/fragment to a supporting GraphQL client library, you'll get a fully type result object and variables object.
+
+It made possible by [TypeScript type inference](https://www.typescriptlang.org/docs/handbook/type-inference.html) and by the fact that [TypeScript allows to do module augmentation](https://www.typescriptlang.org/docs/handbook/declaration-merging.html).
+
+## TL;DR
+
+- [`TypedDocumentNode`](https://github.com/dotansimha/graphql-typed-document-node) is a great solution for having pre-compiled (`DocumentNode`) GraphQL operations with built-in support for TypeScript types.
+- No need to specify types manually in your application code, all types are inferred automatically from your operation object.
+- You can easily extend any GraphQL client library to support it, even without changing the library code.
+- You can intergrate it to your project [using these instructions](https://github.com/dotansimha/graphql-typed-document-node#how-to-use)
+
+## Live Demo
+
+[You can try it live here](https://codesandbox.io/s/github/dotansimha/graphql-typed-document-node/tree/master/examples/apollo-client-3), note the autocomplete and automatic type inference for `result` variable.
+
+## How is works?
+
+This project works in the following way:
+
+1. You write your GraphQL operations (`query` / `mutation` / `subscription` / `fragment`) in any way your prefer (for example - in a `.graphql` file).
+2. [GraphQL Code Generator](https://graphql-code-generator.com/) will generate a `TypedDocumentNode` for your operations (which is a bundle of pre-compiled `DocumentNode` with the operation result type and variables type).
+3. Instead of using your `.graphql` file - import the generated `TypedDocumentNode` and use it with your GraphQL client framework.
+4. You'll get automatic type inference, auto-complete and type checking based on your GraphQL operation.
+
+The definition of `TypedDocumentNode` is super simple - it's all about the TS generics:
+
+```ts
+import { DocumentNode } from 'graphql';
+export interface TypedDocumentNode<Result = {}, Variables = {}>
+  extends DocumentNode {}
+```
+
+### Can I use it now?
+
+This library is already available to use, but it requires you to setup it in your project, since `TypedDocumentNode` isn't supported automatically in all GraphQL client libraries.
+
+That's why we use TypeScript powers to overload existing declarations, and added support to other libraries without effecting it's runtime.
+
+[You can find a list of all supported GraphQL clients here](https://github.com/dotansimha/graphql-typed-document-node#supported-libraries) and [a short getting started tutorial here](https://github.com/dotansimha/graphql-typed-document-node#how-to-use).
+
+If you are using a library that isn't supported yet, [you can always add support to it manually using method overloading](https://github.com/dotansimha/graphql-typed-document-node#how-to-extend-other-libraries-with-this).
+
+## What's next?
+
+GraphQL client libraries [can easily add support](https://github.com/dotansimha/graphql-typed-document-node#how-can-i-support-this-in-my-library) for `TypedDocumentNode`, without breaking any API, allowing developers to have direct support for that, without the need for the supporing libraries.
+
+And, maybe, one day, it will part of the [original GraphQL `DocumentNode` interface](https://github.com/graphql/graphql-js/blob/master/src/language/ast.d.ts#L212-L216) ;)
