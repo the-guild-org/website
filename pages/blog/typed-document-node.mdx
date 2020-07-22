@@ -4,15 +4,24 @@ export const meta = {
   title: 'TypedDocumentNode: the next generation of GraphQL and TypeScript',
   author: 'dotan',
   tags: ['graphql', 'codegen', 'typescript', 'react', 'apollo'],
-  date: '2020-07-20',
+  date: '2020-07-22',
   description:
-    "TypedDocumentNode is a simple wrapper on top of GraphQL's DocumentNode. With the power of GraphQL Codegen is can allow better integration of TypeScript and GraphQL",
+    'Using GraphQL and Typescript on the client just became a whole lot easier!',
   image: '/blog-assets/graphql-code-generator/cover.png',
 };
+// Examples are in: https://codesandbox.io/s/quizzical-browser-1em9r?file=/index.ts
 
 export default withArticle({ ...meta });
 
-This article will cover a new way to integrate TypeScript and GraphQL for frontend applicaions - [`TypedDocumentNode`](https://github.com/dotansimha/graphql-typed-document-node).
+**Using GraphQL and Typescript on the client just became a whole lot easier!**
+
+The [GraphQL Code Generator](https://graphql-code-generator.com/) project has been around for 3 years, and we constantly keep working on it and listening to your feedback!
+
+As we were working and thinking about the next major version of the codegen, we came up with a really awesome tool which didn’t require any breaking change!
+
+So today, after successfully integrating this feature into few of our largest clients, we can proudly share it with you - [`TypedDocumentNode`](https://github.com/dotansimha/graphql-typed-document-node).
+
+A new and easier way to enjoy and integrate GraphQL and Typescript on the client.
 
 `TypedDocumentNode` is a development tool for creating fully typed `DocumentNode` objects. It means that just by passing the GraphQL query/mutation/subscription/fragment to a supporting GraphQL client library, you'll get a fully type result object and variables object.
 
@@ -23,13 +32,47 @@ It made possible by [TypeScript type inference](https://www.typescriptlang.org/d
 - [`TypedDocumentNode`](https://github.com/dotansimha/graphql-typed-document-node) is a great solution for having pre-compiled (`DocumentNode`) GraphQL operations with built-in support for TypeScript types.
 - No need to specify types manually in your application code, all types are inferred automatically from your operation object.
 - You can easily extend any GraphQL client library to support it, even without changing the library code.
-- You can intergrate it to your project [using these instructions](https://github.com/dotansimha/graphql-typed-document-node#how-to-use)
+- You can integrate it to your project [using these instructions](https://github.com/dotansimha/graphql-typed-document-node#how-to-use)
+
+## Client-side applications, TypeScript and GraphQL
+
+The integration of GraphQL and TypeScript with client-side application has evolved in the recent times:
+
+### 2016: Manual Typings
+
+We started with writing down manually TypeScript types for our operations. It worked, but it didn't scale. It needed maintenance to make sure it's following the exact selection set we are fetching.
+
+<Gfycat gifId={'sphericallikelycusimanse'} />
+
+### 2017: Generated Types
+
+We moved to generated TypeScript types, with the power of [GraphQL Code Generator](https://graphql-code-generator.com/) - using `@graphql-codegen/typescript` and `@graphql-codegen/typescript-operations` plugins.
+
+It's simpler, no need to maintain the types manually, but it requires us to manually specify the types each time we use the query.
+
+<Gfycat gifId={'chubbyfrigidargentinehornedfrog'} />
+
+### 2018: Generated Code
+
+The next step of that evolution was to generate code - that means that we can generate React Hooks (`@graphql-codegen/typescript-react-apollo` or `@graphql-codegen/typescript-urql`), Angular Services (`@graphql-codegen/typescript-apollo-angular`) and much more. We can even generate a pre-compiled `DocumentNode` instead of dealing with Webpack loaders.
+
+This generated code takes GraphQL and TypeScript to the next level - because we are getting a ready-to-use code, that has TypeScript types built-in, and allow us to use it directly from our application code, without the need to specify the types or GraphQL document manually:
+
+<Gfycat gifId={'pastfatalirishwaterspaniel'} />
+
+### 2020: _NEW_ `TypedDocumentNode`
+
+Generating code is nice, but we don't always need to wrap hooks, services or similar code with more code. With the power of TypeScript, we can pre-compile the GraphQL operation into a `DocumentNode`, and add burn-in the TypeScript types.
+
+With the support of the client-side libraries, we get automatic type inference and auto-complete - without generating additional code:
+
+<Gfycat gifId={'joyfulableasianwaterbuffalo'} />
 
 ## Live Demo
 
 [You can try it live here](https://codesandbox.io/s/github/dotansimha/graphql-typed-document-node/tree/master/examples/apollo-client-3), note the autocomplete and automatic type inference for `result` variable.
 
-## How is works?
+## How it works?
 
 This project works in the following way:
 
