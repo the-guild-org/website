@@ -5,6 +5,7 @@ export const meta = {
   author: 'dotan',
   tags: ['graphql', 'codegen', 'typescript', 'react', 'apollo'],
   date: '2020-07-22',
+  updateDate: '2020-08-02',
   description:
     'Using GraphQL and Typescript on the client just became a whole lot easier!',
   image: '/blog-assets/graphql-code-generator/cover.png',
@@ -25,7 +26,7 @@ A new and easier way to enjoy and integrate GraphQL and Typescript on the client
 
 `TypedDocumentNode` is a development tool for creating fully typed `DocumentNode` objects. It means that just by passing the GraphQL query/mutation/subscription/fragment to a supporting GraphQL client library, you'll get fully-typed result and variables objects.
 
-This is made possible by [TypeScript type inference](https://www.typescriptlang.org/docs/handbook/type-inference.html) and by the fact that [TypeScript allows you to do module augmentation](https://www.typescriptlang.org/docs/handbook/declaration-merging.html).
+This is made possible by [TypeScript type inference](https://www.typescriptlang.org/docs/handbook/type-inference.html).
 
 ## TL;DR
 
@@ -93,7 +94,7 @@ export interface TypedDocumentNode<Result = {}, Variables = {}>
 
 This library is already available to use, but it requires you to setup it in your project, since `TypedDocumentNode` isn't supported automatically in all GraphQL client libraries.
 
-That's why we used TypeScript powers to overload existing declarations, and added support to other libraries without effecting it's runtime.
+That's why we used `patch-package` to patch existing declarations, and added support to other libraries without effecting it's runtime.
 
 [You can find a list of all supported GraphQL clients here](https://github.com/dotansimha/graphql-typed-document-node#supported-libraries) and [a short getting started tutorial here](https://github.com/dotansimha/graphql-typed-document-node#how-to-use).
 
