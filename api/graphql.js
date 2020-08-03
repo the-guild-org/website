@@ -1,12 +1,12 @@
 const { execute, parse } = require('graphql');
 const { makeExecutableSchema } = require('@graphql-tools/schema');
 const microCors = require('micro-cors');
-const bugsnag = require('@bugsnag/js');
+const Bugsnag = require('@bugsnag/js');
 const axios = require('axios').default;
 
 const { WebClient } = require('@slack/web-api');
 
-const bugsnagClient = bugsnag(process.env.BUGSNAG_API);
+const bugsnagClient = Bugsnag.createClient(process.env.BUGSNAG_API);
 const slack = new WebClient(process.env.SLACK_TOKEN);
 const channelID = 'CLZ5BCE7K';
 const cors = microCors();
@@ -59,15 +59,14 @@ const resolvers = {
         text.push(`> ${message}`);
       }
 
-      bugsnagClient.metaData = {
-        ...bugsnagClient.metaData,
+      bugsnagClient.addMetadata('everything-we-know', {
         author,
         message,
         email,
         project,
         projectMap,
         mappedProject,
-      };
+      });
 
       const result = await slack.chat.postMessage({
         channel: channelID,
@@ -81,10 +80,9 @@ const resolvers = {
       if (result.error) {
         console.error(result.error);
 
-        bugsnagClient.metaData = {
-          ...bugsnagClient.metaData,
-          slack: result,
-        };
+        bugsnagClient.addMetadata('slack', {
+          result,
+        });
 
         throw new Error(`Slack failed to send a message`);
       }
@@ -161,10 +159,10 @@ module.exports = cors(async (req, res) => {
   const { query, variables } =
     typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
-  bugsnagClient.metaData = {
+  bugsnagClient.addMetadata('graphql', {
     query,
     variables: JSON.stringify(variables),
-  };
+  });
 
   const result = await execute({
     schema,
