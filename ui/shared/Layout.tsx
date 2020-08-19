@@ -30,6 +30,8 @@ const Header = styled.header<{ sticky?: boolean }>`
   justify-content: space-between;
   align-items: center;
 
+  ${(props) => (props.sticky ? 'backdrop-filter: blur(5px);' : '')}
+
   background-color: ${(props) =>
     props.sticky ? 'rgba(255, 255, 255, 0.9)' : 'transparent'};
   box-sizing: border-box;

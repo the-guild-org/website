@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Page } from '../ui/shared/Page';
 import { Hero, Section, Container, Arrow } from '../ui/shared/Layout';
 import { Contact } from '../ui/shared/Contact';
+import { services } from '../lib/services';
 
 const logos: Array<{
   name: string;
@@ -27,57 +28,6 @@ const logos: Array<{
   {
     name: 'Air France',
     logo: '/img/logos/companies/air-france-white.png',
-  },
-];
-
-const services: Array<{
-  reversed?: boolean;
-  title: string;
-  image: string;
-  description?: string;
-  list?: string[];
-}> = [
-  {
-    title: 'Consulting',
-    image: 'unicorn.svg',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Magna fringilla urna porttitor rhoncus dolor purus.',
-    list: [
-      'Lorem ipsum',
-      'Dolor sit amet',
-      'Consectetur adipiscing elit',
-      'Sed do eiusmod tempor',
-    ],
-  },
-  {
-    title: 'Architecture',
-    image: 'new-ideas.svg',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Magna fringilla urna porttitor rhoncus dolor purus.',
-  },
-  {
-    title: 'Workshops and Trainings',
-    image: 'quiz.svg',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Magna fringilla urna porttitor rhoncus dolor purus.',
-  },
-  {
-    title: 'Engineering',
-    image: 'work-time.svg',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Magna fringilla urna porttitor rhoncus dolor purus.',
-    list: [
-      'Mentorship',
-      'Coding',
-      'Part of developing process',
-      'Code Reviews',
-    ],
-  },
-  {
-    title: 'Open Source',
-    image: 'developer-activity.svg',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Magna fringilla urna porttitor rhoncus dolor purus.',
   },
 ];
 
@@ -131,16 +81,29 @@ const ServiceContainer = styled(Container)<{ reversed?: boolean }>`
     max-width: 60%;
   }
 
-  & > div:first-child {
-    text-align: ${(props) => (props.reversed ? 'right' : 'left')};
-    flex: 0 0 50%;
-    max-width: 50%;
+  @media (min-width: 960px) {
+    & > div {
+      text-align: left;
+      flex: 0 0 50%;
+      max-width: 50%;
+    }
+
+    & > div:first-child {
+      text-align: ${(props) => (props.reversed ? 'right' : 'left')};
+    }
   }
 
-  & > div:last-child {
-    text-align: left;
-    flex: 0 0 50%;
-    max-width: 50%;
+  @media (max-width: 960px) {
+    flex-direction: column;
+
+    & > div:first-child {
+      margin-bottom: 50px;
+    }
+
+    & > div {
+      text-align: center;
+      flex: 1;
+    }
   }
 `;
 
@@ -160,6 +123,7 @@ const ServiceArrow = styled(Arrow)`
 `;
 
 const ServiceList = styled.ul`
+  display: inline-block;
   padding: 0;
   list-style: none;
 

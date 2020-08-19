@@ -10,6 +10,7 @@ import { getAllArticles } from '../lib/get-all-articles';
 import { LastArticles } from '../ui/blog/last-articles';
 import { Newsletter } from '../ui/blog/newsletter';
 import { projects } from '../lib/projects';
+import { services } from '../lib/services';
 
 const BlogSection = styled(Section)`
   padding: 50px 0;
@@ -144,37 +145,17 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
             <span>Our services</span>
           </SectionTitle>
           <Services>
-            <div>
-              <h3>Consulting</h3>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor
-              </p>
-            </div>
-            <div>
-              <h3>Workshops</h3>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor
-              </p>
-            </div>
-            <div>
-              <h3>Engineering</h3>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor
-              </p>
-            </div>
-            <div>
-              <h3>Open Source</h3>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor
-              </p>
-            </div>
+            {services
+              .filter((s) => s.highlight)
+              .map(({ highlight }, i) => (
+                <div key={`service-${i}`}>
+                  <h3>{highlight.title}</h3>
+                  <p>{highlight.description}</p>
+                </div>
+              ))}
           </Services>
           <Link href="/services" passHref={true}>
-            <ServicesButton as="a" title="Read our blog">
+            <ServicesButton as="a" title="Our services">
               View all services
             </ServicesButton>
           </Link>
