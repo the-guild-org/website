@@ -152,11 +152,11 @@ export const Layout: React.FC = ({ children }) => {
           </Link>
         </Logo>
         <Nav>
-          <Link href="/blog">
-            <a title="The Guild - Blog">Blog</a>
-          </Link>
           <Link href="/services">
             <a title="The Guild - Our Services">Our Services</a>
+          </Link>
+          <Link href="/blog">
+            <a title="The Guild - Blog">Blog</a>
           </Link>
           <Link href="/open-source">
             <a title="The Guild - Open Source projects">Open Source</a>
@@ -169,11 +169,11 @@ export const Layout: React.FC = ({ children }) => {
       {children}
       <Footer>
         <FooterLinks>
-          <Link href="/blog">
-            <a title="Read our blog">Blog</a>
-          </Link>
           <Link href="/services">
             <a title="Work with us">Our Services</a>
+          </Link>
+          <Link href="/blog">
+            <a title="Read our blog">Blog</a>
           </Link>
           <Link href="/open-source">
             <a title="Explore our projects">Open Source</a>

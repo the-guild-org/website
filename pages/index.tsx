@@ -26,6 +26,32 @@ const SectionTitle = styled.h2`
   }
 `;
 
+const ServicesSection = styled(Section)`
+  background-color: #03a6a6;
+  padding: 50px 0;
+  text-align: center;
+
+  & ${SectionTitle} {
+    & > span {
+      color: var(--colors-background);
+    }
+  }
+`;
+
+const Services = styled.div`
+  margin: 0 auto;
+  padding: 50px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-rows: 1fr;
+  gap: 50px 25px;
+  color: #fff;
+
+  & p {
+    color: #005050;
+  }
+`;
+
 const BlogLastArticles = styled(LastArticles)`
   margin-top: 50px !important;
   margin-bottom: 50px !important;
@@ -39,6 +65,22 @@ const BlogButton = styled(Button)`
 
   &:hover {
     background-color: var(--colors-dim-dark);
+  }
+
+  & > * {
+    margin-right: 1.3rem;
+  }
+`;
+
+const ServicesButton = styled(Button)`
+  display: inline-block;
+  margin: 25px 0;
+  background-color: var(--colors-background);
+  color: var(--colors-accent);
+
+  &:hover {
+    background-color: var(--colors-background);
+    opacity: var(--hover-opacity);
   }
 
   & > * {
@@ -95,8 +137,52 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
         We are <span>The Guild</span>
       </Hero>
 
+      {/* Services */}
+      <ServicesSection noNotch>
+        <Container>
+          <SectionTitle>
+            <span>Our services</span>
+          </SectionTitle>
+          <Services>
+            <div>
+              <h3>Consulting</h3>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor
+              </p>
+            </div>
+            <div>
+              <h3>Workshops</h3>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor
+              </p>
+            </div>
+            <div>
+              <h3>Engineering</h3>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor
+              </p>
+            </div>
+            <div>
+              <h3>Open Source</h3>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor
+              </p>
+            </div>
+          </Services>
+          <Link href="/services" passHref={true}>
+            <ServicesButton as="a" title="Read our blog">
+              View all services
+            </ServicesButton>
+          </Link>
+        </Container>
+      </ServicesSection>
+
       {/* Blog */}
-      <BlogSection>
+      <BlogSection noNotch>
         <Container>
           <SectionTitle>
             We have a <span>blog</span>

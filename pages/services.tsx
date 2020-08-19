@@ -62,10 +62,16 @@ const services: Array<{
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Magna fringilla urna porttitor rhoncus dolor purus.',
   },
   {
-    title: 'Development',
+    title: 'Engineering',
     image: 'work-time.svg',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Magna fringilla urna porttitor rhoncus dolor purus.',
+    list: [
+      'Mentorship',
+      'Coding',
+      'Part of developing process',
+      'Code Reviews',
+    ],
   },
   {
     title: 'Open Source',
@@ -219,7 +225,7 @@ const Services: React.FC = () => {
       {services.map((service, i) => {
         const isOdd = i % 2 !== 0;
         return (
-          <MainSection key={`service-${i}`} noNotch={true} light={isOdd}>
+          <MainSection key={`service-${i}`} noNotch={true} light={!isOdd}>
             <Service
               reversed={isOdd}
               title={service.title}
@@ -230,7 +236,7 @@ const Services: React.FC = () => {
           </MainSection>
         );
       })}
-      <Section noNotch={true} light={services.length % 2 !== 0}>
+      <Section noNotch={true} light={services.length % 2 === 0}>
         <Contact />
       </Section>
     </Page>
