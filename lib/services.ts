@@ -29,7 +29,7 @@ export const services: Array<{
     title: 'Workshops and Trainings',
     image: 'quiz.svg',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Magna fringilla urna porttitor rhoncus dolor purus.',
+      'Strengthen, mentor and inspire your team by the leaders of the community. Tailored to your people and mission, aimed to help establish long lasting teams.',
     highlight: {
       title: 'Training',
       description: 'Strengthen your team, tailored to your people and mission.',

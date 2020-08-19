@@ -4,54 +4,44 @@ import { Page } from '../ui/shared/Page';
 import { Hero, Section, Container, Arrow } from '../ui/shared/Layout';
 import { Contact } from '../ui/shared/Contact';
 import { services } from '../lib/services';
+import { logos } from '../lib/logos';
 
-const logos: Array<{
-  name: string;
-  logo: string;
-}> = [
-  {
-    name: 'DFDS',
-    logo: '/img/logos/companies/dfds-white.png',
-  },
-  {
-    name: 'Uber',
-    logo: '/img/logos/companies/uber-white.png',
-  },
-  {
-    name: 'Microsoft',
-    logo: '/img/logos/companies/microsoft-white.png',
-  },
-  {
-    name: 'KLM',
-    logo: '/img/logos/companies/klm-white.png',
-  },
-  {
-    name: 'Air France',
-    logo: '/img/logos/companies/air-france-white.png',
-  },
-];
-
-const LogosContainer = styled.div<{ size: number }>`
+const LogosContainer = styled.div`
   box-sizing: border-box;
   width: 100%;
   max-width: 960px;
   margin: 0 auto;
   padding: 75px 25px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  grid-template-rows: 1fr;
-  gap: 50px 25px;
-  place-items: center;
-`;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
 
-const Logo = styled.img`
-  max-height: 40px;
-  max-width: 160px;
-  transition: opacity 0.2s ease;
-  opacity: 0.7;
+  & > div {
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin: 25px 25px 25px 25px;
+    transition: opacity 0.2s ease;
+    opacity: 0.7;
 
-  &:hover {
-    opacity: 1;
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  & > div > img {
+    display: block;
+    max-height: 40px;
+    max-width: 160px;
+  }
+
+  @media (max-width: 640px) {
+    & > div > img {
+      display: block;
+      max-height: 30px;
+      max-width: 120px;
+    }
   }
 `;
 
@@ -62,9 +52,11 @@ const Logos: React.FC<{
   }>;
 }> = ({ logos }) => {
   return (
-    <LogosContainer size={logos.length}>
+    <LogosContainer>
       {logos.map((item, i) => (
-        <Logo key={`logo-${i}`} src={item.logo} alt={item.name} />
+        <div key={`logo-${i}`}>
+          <img src={`/img/logos/companies/${item.logo}`} alt={item.name} />
+        </div>
       ))}
     </LogosContainer>
   );
@@ -81,28 +73,28 @@ const ServiceContainer = styled(Container)<{ reversed?: boolean }>`
     max-width: 60%;
   }
 
-  @media (min-width: 960px) {
-    & > div {
-      text-align: left;
-      flex: 0 0 50%;
-      max-width: 50%;
-    }
-
-    & > div:first-child {
-      text-align: ${(props) => (props.reversed ? 'right' : 'left')};
-    }
+  & > div {
+    text-align: left;
+    flex: 0 0 50%;
+    max-width: 50%;
   }
 
-  @media (max-width: 960px) {
+  & > div:first-child {
+    text-align: ${(props) => (props.reversed ? 'right' : 'left')};
+  }
+
+  @media (max-width: 640px) {
     flex-direction: column;
 
     & > div:first-child {
       margin-bottom: 50px;
+      text-align: center;
     }
 
     & > div {
       text-align: center;
       flex: 1;
+      max-width: 100%;
     }
   }
 `;
@@ -189,7 +181,7 @@ const Services: React.FC = () => {
       {services.map((service, i) => {
         const isOdd = i % 2 !== 0;
         return (
-          <MainSection key={`service-${i}`} noNotch={true} light={!isOdd}>
+          <MainSection key={`service-${i}`} noNotch={i !== 0} light={!isOdd}>
             <Service
               reversed={isOdd}
               title={service.title}

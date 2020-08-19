@@ -243,7 +243,9 @@ export const Section = styled.section<{ noNotch?: boolean; light?: boolean }>`
         height: 0;
         border-style: solid;
         border-width: 0 40px 40px 40px;
-        border-color: transparent transparent #f1f1f1 transparent;
+        border-color: transparent transparent ${
+          props.light ? '#fff' : '#f1f1f1'
+        } transparent;
         left: 50%;
         transform: translateX(-50%);
       }

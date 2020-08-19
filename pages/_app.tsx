@@ -1,4 +1,4 @@
-import App from 'next/app';
+import App, { NextWebVitalsMetric } from 'next/app';
 import React from 'react';
 import Router from 'next/router';
 import Head from 'next/head';
@@ -9,6 +9,22 @@ import * as gtag from '../lib/gtag';
 import { GA_TRACKING_ID } from '../lib/gtag';
 
 Router.events.on('routeChangeComplete', (url) => gtag.pageview(url));
+
+export function reportWebVitals({
+  id,
+  name,
+  label,
+  value,
+}: NextWebVitalsMetric) {
+  gtag.event({
+    action: name,
+    event_category:
+      label === 'web-vital' ? 'Web Vitals' : 'Next.js custom metric',
+    value: Math.round(name === 'CLS' ? value * 1000 : value), // values must be integers
+    event_label: id,
+    non_interaction: true,
+  });
+}
 
 export default class MyApp extends App {
   render() {

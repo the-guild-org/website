@@ -13,10 +13,12 @@ export function event({
   category,
   label,
   value,
-}: Record<string, string>) {
+  non_interaction,
+}: Record<string, any>) {
   (window as any).gtag('event', action, {
     event_category: category,
     event_label: label,
     value: value,
+    non_interaction,
   });
 }

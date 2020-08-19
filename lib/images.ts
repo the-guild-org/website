@@ -1,7 +1,7 @@
 export function withPlaceholder(src: string) {
   const isVideo = src.endsWith('.mp4') || src.endsWith('.webm');
 
-  if (!isVideo && src.startsWith('/')) {
+  if (!isVideo && src.startsWith('/') && !src.toLowerCase().endsWith('.svg')) {
     return {
       hasPlaceholder: true,
       placeholder: require(`Public/${src.substr(1)}?lqip`),
