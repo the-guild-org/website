@@ -159,6 +159,9 @@ export const Layout: React.FC = ({ children }) => {
           <Link href="/blog">
             <a title="The Guild - Blog">Blog</a>
           </Link>
+          <Link href="/services">
+            <a title="The Guild - Our Services">Our Services</a>
+          </Link>
           <Link href="/open-source">
             <a title="The Guild - Open Source projects">Open Source</a>
           </Link>
@@ -172,6 +175,9 @@ export const Layout: React.FC = ({ children }) => {
         <FooterLinks>
           <Link href="/blog">
             <a title="Read our blog">Blog</a>
+          </Link>
+          <Link href="/services">
+            <a title="Work with us">Our Services</a>
           </Link>
           <Link href="/open-source">
             <a title="Explore our projects">Open Source</a>
@@ -222,23 +228,28 @@ export const Layout: React.FC = ({ children }) => {
   );
 };
 
-export const Section = styled.section`
+export const Section = styled.section<{ noNotch?: boolean }>`
   position: relative;
   background: #f1f1f1;
   color: var(--colors-primary);
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: -40px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 0 40px 40px 40px;
-    border-color: transparent transparent #f1f1f1 transparent;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+  ${(props) =>
+    props.noNotch
+      ? ''
+      : `
+      &::before {
+        content: '';
+        position: absolute;
+        top: -40px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 40px 40px 40px;
+        border-color: transparent transparent #f1f1f1 transparent;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    `}
 `;
 
 const HeroContainer = styled.div<{ shrink?: boolean }>`
