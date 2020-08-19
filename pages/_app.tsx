@@ -1,9 +1,12 @@
 import App from 'next/app';
 import React from 'react';
 import Router from 'next/router';
+import Head from 'next/head';
 import 'prism-theme-night-owl';
 import 'remark-admonitions/styles/classic.css';
 import * as gtag from '../lib/gtag';
+
+import { GA_TRACKING_ID } from '../lib/gtag';
 
 Router.events.on('routeChangeComplete', (url) => gtag.pageview(url));
 
@@ -12,6 +15,41 @@ export default class MyApp extends App {
     const { Component, pageProps } = this.props;
     return (
       <>
+        <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta charSet="utf-8" />
+          <link rel="shortcut icon" href="/fav.ico" />
+          {/* Global Site Tag (gtag.js) - Google Analytics */}
+          <script
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+          />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_TRACKING_ID}');
+          `,
+            }}
+          />
+          <link
+            rel="alternate"
+            type="application/rss+xml"
+            title="RSS Feed for the-guild.dev"
+            href="/feed.xml"
+          />
+
+          <link
+            href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+            rel="stylesheet"
+          />
+          <link
+            href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap"
+            rel="stylesheet"
+          />
+        </Head>
         <script src="/static/crisp.js" />
         <style global jsx>
           {`
