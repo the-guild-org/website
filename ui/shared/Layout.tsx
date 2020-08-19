@@ -39,10 +39,6 @@ const Header = styled.header<{ sticky?: boolean }>`
     props.sticky ? 'rgba(0, 0, 0, 0.05) 0px 0px 15px 0px' : 'none'};
 
   transition: all 0.5s ease 0s;
-
-  /* @media (prefers-color-scheme: dark) {
-    background-color: rgba(0, 0, 0, 0.9);
-  } */
 `;
 
 const Nav = styled.nav`
@@ -228,9 +224,9 @@ export const Layout: React.FC = ({ children }) => {
   );
 };
 
-export const Section = styled.section<{ noNotch?: boolean }>`
+export const Section = styled.section<{ noNotch?: boolean; light?: boolean }>`
   position: relative;
-  background: #f1f1f1;
+  background-color: ${(props) => (props.light ? '#fff' : '#f1f1f1')};
   color: var(--colors-primary);
 
   ${(props) =>
@@ -320,5 +316,24 @@ export const Hero: React.FC<{ shrink?: boolean }> = ({ shrink, children }) => {
         </HeroHeader>
       </FullContainer>
     </HeroContainer>
+  );
+};
+
+export const Arrow: React.FC<{ className?: string }> = ({ className }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      className={className}
+    >
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
   );
 };

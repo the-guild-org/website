@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Page } from '../ui/shared/Page';
-import { Hero, Section, Container } from '../ui/shared/Layout';
+import { Hero, Section, Container, Arrow } from '../ui/shared/Layout';
 import { Contact } from '../ui/shared/Contact';
 
 const logos: Array<{
@@ -42,6 +42,12 @@ const services: Array<{
     image: 'unicorn.svg',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Magna fringilla urna porttitor rhoncus dolor purus.',
+    list: [
+      'Lorem ipsum',
+      'Dolor sit amet',
+      'Consectetur adipiscing elit',
+      'Sed do eiusmod tempor',
+    ],
   },
   {
     title: 'Architecture',
@@ -56,8 +62,14 @@ const services: Array<{
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Magna fringilla urna porttitor rhoncus dolor purus.',
   },
   {
-    title: 'Technical Support',
-    image: 'video-call.svg',
+    title: 'Development',
+    image: 'work-time.svg',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Magna fringilla urna porttitor rhoncus dolor purus.',
+  },
+  {
+    title: 'Open Source',
+    image: 'developer-activity.svg',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Magna fringilla urna porttitor rhoncus dolor purus.',
   },
@@ -115,14 +127,14 @@ const ServiceContainer = styled(Container)<{ reversed?: boolean }>`
 
   & > div:first-child {
     text-align: ${(props) => (props.reversed ? 'right' : 'left')};
-    flex: 0 0 33.33%;
-    max-width: 33.33%;
+    flex: 0 0 50%;
+    max-width: 50%;
   }
 
   & > div:last-child {
     text-align: left;
-    flex: 0 0 66.66%;
-    max-width: 66.66%;
+    flex: 0 0 50%;
+    max-width: 50%;
   }
 `;
 
@@ -136,13 +148,30 @@ const ServiceDescription = styled.div`
   margin: 1rem 0;
 `;
 
+const ServiceArrow = styled(Arrow)`
+  color: #05a5a6;
+  margin-right: 10px;
+`;
+
+const ServiceList = styled.ul`
+  padding: 0;
+  list-style: none;
+
+  & > li {
+    display: flex;
+    color: var(--colors-dim);
+    line-height: 25px;
+    align-items: center;
+  }
+`;
+
 const Service: React.FC<{
   reversed?: boolean;
   title: string;
   image: string;
   description?: string;
   list?: string[];
-}> = ({ title, image, description, reversed }) => {
+}> = ({ title, image, description, list, reversed }) => {
   return (
     <ServiceContainer reversed={reversed}>
       <div>
@@ -151,14 +180,22 @@ const Service: React.FC<{
       <div>
         <ServiceTitle>{title}</ServiceTitle>
         {description && <ServiceDescription>{description}</ServiceDescription>}
+        {list && (
+          <ServiceList>
+            {list.map((item, i) => (
+              <li key={`item-${i}`}>
+                <ServiceArrow /> {item}
+              </li>
+            ))}
+          </ServiceList>
+        )}
       </div>
     </ServiceContainer>
   );
 };
 
-const MainSection = styled(Section)<{ light?: boolean }>`
+const MainSection = styled(Section)`
   padding: 75px 0;
-  background-color: ${(props) => (props.light ? '#fff' : '#f1f1f1')};
   text-align: center;
 `;
 
@@ -182,19 +219,18 @@ const Services: React.FC = () => {
       {services.map((service, i) => {
         const isOdd = i % 2 !== 0;
         return (
-          <MainSection noNotch={true} light={isOdd}>
+          <MainSection key={`service-${i}`} noNotch={true} light={isOdd}>
             <Service
               reversed={isOdd}
               title={service.title}
               image={service.image}
               description={service.description}
               list={service.list}
-              key={`service-${i}`}
             />
           </MainSection>
         );
       })}
-      <Section noNotch={true}>
+      <Section noNotch={true} light={services.length % 2 !== 0}>
         <Contact />
       </Section>
     </Page>

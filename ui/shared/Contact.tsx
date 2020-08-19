@@ -123,7 +123,7 @@ enum State {
   Success,
 }
 
-export const Contact: React.FC = () => {
+export const Contact: React.FC<{ light?: boolean }> = ({ light = false }) => {
   const [state, setState] = useState<State>(State.Idle);
   const [email, setEmail] = useState<string>();
   const [result, mutate] = useMutation(
