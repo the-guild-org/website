@@ -169,7 +169,7 @@ const Services: React.FC = () => {
   return (
     <Page
       title="Our Services - The Guild"
-      description="Consultancy for Enterprise. Trainings and Workshops. Mentorship."
+      description="Open Source developers with experience of working with the largest companies and applications. GraphQL consulting, workshops and trainings"
       image="/img/ogimage.png"
     >
       <Hero shrink={true}>

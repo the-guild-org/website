@@ -157,7 +157,7 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
   return (
     <Page
       title="The Guild - Open Source"
-      description="Open Source Developers"
+      description="Open Source developers with experience of working with the largest companies and applications. GraphQL consulting, workshops and trainings."
       image="/img/ogimage.png"
     >
       <Hero shrink>
