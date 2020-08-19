@@ -156,9 +156,9 @@ const Service: React.FC<{
   );
 };
 
-const MainSection = styled(Section)`
-  padding: 50px 0;
-  background-color: #fff;
+const MainSection = styled(Section)<{ light?: boolean }>`
+  padding: 75px 0;
+  background-color: ${(props) => (props.light ? '#fff' : '#f1f1f1')};
   text-align: center;
 `;
 
@@ -179,18 +179,21 @@ const Services: React.FC = () => {
       <DarkSection noNotch={true}>
         <Logos logos={logos} />
       </DarkSection>
-      {services.map((service, i) => (
-        <MainSection noNotch={true}>
-          <Service
-            reversed={i % 2 !== 0}
-            title={service.title}
-            image={service.image}
-            description={service.description}
-            list={service.list}
-            key={`service-${i}`}
-          />
-        </MainSection>
-      ))}
+      {services.map((service, i) => {
+        const isOdd = i % 2 !== 0;
+        return (
+          <MainSection noNotch={true} light={isOdd}>
+            <Service
+              reversed={isOdd}
+              title={service.title}
+              image={service.image}
+              description={service.description}
+              list={service.list}
+              key={`service-${i}`}
+            />
+          </MainSection>
+        );
+      })}
       <Section noNotch={true}>
         <Contact />
       </Section>

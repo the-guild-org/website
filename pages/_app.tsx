@@ -74,26 +74,13 @@ export default class MyApp extends App {
               --hover-opacity: 0.75;
             }
 
-            /*
-            @media (prefers-color-scheme: dark) {
-              :root {
-                --colors-text: #dedede;
-                --colors-dim: #9a9a9a;
-                --colors-dim-dark: #666;
-                --colors-accent: #03a6a6;
-                --colors-accent-light: #04bfad;
-                --colors-primary: #fff;
-                --colors-background: #000;
-              }
-            }
-            */
-
             body {
               background-color: var(--colors-background);
               font-family: 'Roboto', sans-serif;
             }
 
             a {
+              cursor: pointer;
               text-decoration: none;
               transition: all 0.2s ease 0s;
             }

@@ -91,7 +91,7 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
       description="Open Source Developers"
       image="/img/ogimage.png"
     >
-      <Hero>
+      <Hero shrink>
         We are <span>The Guild</span>
       </Hero>
 
