@@ -43,13 +43,55 @@ const Services = styled.div`
   margin: 0 auto;
   padding: 50px 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   grid-template-rows: 1fr;
-  gap: 50px 25px;
+  gap: 80px 80px;
   color: #fff;
+  text-align: left;
+
+  & > div {
+    background-color: #fff;
+    border-radius: 0.375rem;
+    padding: 10px 25px;
+    display: flex;
+    align-items: flex-start;
+  }
+
+  & > div h3 {
+    color: var(--colors-text);
+  }
+
+  & > div div:last-child {
+    width: 100px;
+    height: 110px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    text-align: center;
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  & > div div:last-child > img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+  }
 
   & p {
-    color: #005050;
+    color: var(--colors-dim);
+  }
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+    grid-row-gap: 120px;
+    text-align: center;
+
+    & > div {
+      align-items: center;
+      flex-direction: column;
+    }
   }
 `;
 
@@ -66,22 +108,6 @@ const BlogButton = styled(Button)`
 
   &:hover {
     background-color: var(--colors-dim-dark);
-  }
-
-  & > * {
-    margin-right: 1.3rem;
-  }
-`;
-
-const ServicesButton = styled(Button)`
-  display: inline-block;
-  margin: 25px 0;
-  background-color: var(--colors-background);
-  color: var(--colors-accent);
-
-  &:hover {
-    background-color: var(--colors-background);
-    opacity: var(--hover-opacity);
   }
 
   & > * {
@@ -147,17 +173,25 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
           <Services>
             {services
               .filter((s) => s.highlight)
-              .map(({ highlight }, i) => (
+              .map(({ highlight, image }, i) => (
                 <div key={`service-${i}`}>
-                  <h3>{highlight.title}</h3>
-                  <p>{highlight.description}</p>
+                  <div>
+                    <h3>{highlight.title}</h3>
+                    <p>{highlight.description}</p>
+                  </div>
+                  <div>
+                    <img
+                      alt={highlight.title}
+                      src={`/img/illustrations/${image}`}
+                    ></img>
+                  </div>
                 </div>
               ))}
           </Services>
           <Link href="/services" passHref={true}>
-            <ServicesButton as="a" title="Our services">
+            <BlogButton as="a" title="Our services">
               View all services
-            </ServicesButton>
+            </BlogButton>
           </Link>
         </Container>
       </ServicesSection>
