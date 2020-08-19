@@ -14,12 +14,12 @@ const logos: Array<{
     logo: '/img/logos/companies/dfds-white.png',
   },
   {
-    name: 'Microsoft',
-    logo: '/img/logos/companies/microsoft-white.png',
-  },
-  {
     name: 'Uber',
     logo: '/img/logos/companies/uber-white.png',
+  },
+  {
+    name: 'Microsoft',
+    logo: '/img/logos/companies/microsoft-white.png',
   },
   {
     name: 'KLM',
