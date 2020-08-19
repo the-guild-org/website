@@ -75,7 +75,7 @@ export const Button = styled.button`
   border: 1px solid transparent;
   border-radius: 0.375rem;
   background-color: var(--colors-accent);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.18);
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
   cursor: pointer;

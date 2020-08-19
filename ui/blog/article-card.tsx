@@ -8,7 +8,7 @@ import { Tag } from '../../ui/blog/tag';
 import { AuthorDetails } from './authors';
 
 const Link = styled(NativeLink)`
-  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.18);
   border-radius: 0.5rem;
   background-color: #fff;
 

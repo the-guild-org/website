@@ -55,6 +55,7 @@ const Services = styled.div`
     padding: 10px 25px;
     display: flex;
     align-items: flex-start;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.18);
   }
 
   & > div h3 {

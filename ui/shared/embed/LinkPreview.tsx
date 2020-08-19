@@ -38,7 +38,7 @@ const Container = styled.div`
   margin-bottom: 45px;
   max-height: 280px;
   box-sizing: border-box;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(0, 0, 0, 0.09);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(0, 0, 0, 0.09);
   border-radius: 5px;
   font-family: 'Roboto', sans-serif;
 
