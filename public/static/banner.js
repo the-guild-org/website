@@ -37,7 +37,7 @@ function init() {
   // link
   stackLink.href = linkUrl;
   stackLink.title = title;
-  stackLink.innerText = "Explore our Tech Stack";
+  stackLink.innerText = "Developed by The Guild - Visit our website";
   stackLink.style.color = "#fff";
   stackLink.style.fontSize = "16px";
   stackLink.style.fontFamily = `-apple-system, 'Roboto', 'Ubuntu', 'Helvetica Neue', sans-serif`;
@@ -55,6 +55,7 @@ const HOST_TO_SEGMENTS = {
   'graphql-inspector.com': ['inspector'],
   'tortilla.academy': ['tortilla'],
   'graphql-mesh.com': ['mesh'],
+  'apollo-angular.com': ['angular']
 };
 
 if (typeof window !== 'undefined') {
