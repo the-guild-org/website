@@ -92,28 +92,46 @@ const resolvers = {
       };
     },
     async subscribe(_, { email }) {
+      try {
+        const result = await slack.chat.postMessage({
+          channel: channelID,
+          text: `New newsletter subscriber: \`${email}\``,
+        });
+        if (result.error) {
+          throw new Error(result.error);
+        }
+      } catch (e) {
+        console.log(e);
+        console.log('Slack failed to send a message');
+      }
+
       const listId = 'aee00763a8';
       const dc = process.env.MAILCHIMP_API_KEY.split('-')[1];
-      const result = await axios.post(
-        `https://${dc}.api.mailchimp.com/3.0/lists/${listId}/members`,
-        {
-          email_address: email,
-          status: 'subscribed',
-          tags: ['website'],
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            authorization:
-              'Basic ' +
-              new Buffer('any:' + process.env.MAILCHIMP_API_KEY).toString(
-                'base64'
-              ),
+      try {
+        const result = await axios.post(
+          `https://${dc}.api.mailchimp.com/3.0/lists/${listId}/members`,
+          {
+            email_address: email,
+            status: 'subscribed',
+            tags: ['website'],
           },
-        }
-      );
+          {
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8',
+              authorization:
+                'Basic ' +
+                new Buffer('any:' + process.env.MAILCHIMP_API_KEY).toString(
+                  'base64'
+                ),
+            },
+          }
+        );
 
-      if (!result.data || !result.data.id) {
+        if (!result.data || !result.data.id) {
+          throw new Error(result.statusText);
+        }
+      } catch (e) {
+        console.log(e);
         throw new Error(`Failed to subscribe ${email}`);
       }
 

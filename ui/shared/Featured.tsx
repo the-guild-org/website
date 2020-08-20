@@ -27,7 +27,7 @@ const Cover = styled(Image)<{ noShadow: boolean; maxSize?: number }>`
   margin: 0 auto;
   border-radius: 5px;
   box-shadow: ${(props) =>
-    props.noShadow ? 'none' : '0 4px 14px 0 rgba(0, 0, 0, 0.1)'};
+    props.noShadow ? 'none' : 'box-shadow: 0 2px 6px 0 rgba(0,0,0,0.18)'};
 `;
 
 const Container = styled.div<{ width: number }>`

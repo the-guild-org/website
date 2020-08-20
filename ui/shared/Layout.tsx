@@ -30,6 +30,8 @@ const Header = styled.header<{ sticky?: boolean }>`
   justify-content: space-between;
   align-items: center;
 
+  ${(props) => (props.sticky ? 'backdrop-filter: blur(5px);' : '')}
+
   background-color: ${(props) =>
     props.sticky ? 'rgba(255, 255, 255, 0.9)' : 'transparent'};
   box-sizing: border-box;
@@ -39,10 +41,6 @@ const Header = styled.header<{ sticky?: boolean }>`
     props.sticky ? 'rgba(0, 0, 0, 0.05) 0px 0px 15px 0px' : 'none'};
 
   transition: all 0.5s ease 0s;
-
-  /* @media (prefers-color-scheme: dark) {
-    background-color: rgba(0, 0, 0, 0.9);
-  } */
 `;
 
 const Nav = styled.nav`
@@ -77,7 +75,7 @@ export const Button = styled.button`
   border: 1px solid transparent;
   border-radius: 0.375rem;
   background-color: var(--colors-accent);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.18);
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
   cursor: pointer;
@@ -156,6 +154,9 @@ export const Layout: React.FC = ({ children }) => {
           </Link>
         </Logo>
         <Nav>
+          <Link href="/services">
+            <a title="The Guild - Our Services">Our Services</a>
+          </Link>
           <Link href="/blog">
             <a title="The Guild - Blog">Blog</a>
           </Link>
@@ -170,6 +171,9 @@ export const Layout: React.FC = ({ children }) => {
       {children}
       <Footer>
         <FooterLinks>
+          <Link href="/services">
+            <a title="Work with us">Our Services</a>
+          </Link>
           <Link href="/blog">
             <a title="Read our blog">Blog</a>
           </Link>
@@ -222,23 +226,30 @@ export const Layout: React.FC = ({ children }) => {
   );
 };
 
-export const Section = styled.section`
+export const Section = styled.section<{ noNotch?: boolean; light?: boolean }>`
   position: relative;
-  background: #f1f1f1;
+  background-color: ${(props) => (props.light ? '#fff' : '#f1f1f1')};
   color: var(--colors-primary);
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: -40px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 0 40px 40px 40px;
-    border-color: transparent transparent #f1f1f1 transparent;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+  ${(props) =>
+    props.noNotch
+      ? ''
+      : `
+      &::before {
+        content: '';
+        position: absolute;
+        top: -40px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 40px 40px 40px;
+        border-color: transparent transparent ${
+          props.light ? '#fff' : '#f1f1f1'
+        } transparent;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    `}
 `;
 
 const HeroContainer = styled.div<{ shrink?: boolean }>`
@@ -309,5 +320,24 @@ export const Hero: React.FC<{ shrink?: boolean }> = ({ shrink, children }) => {
         </HeroHeader>
       </FullContainer>
     </HeroContainer>
+  );
+};
+
+export const Arrow: React.FC<{ className?: string }> = ({ className }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
   );
 };

@@ -20,7 +20,7 @@ module.exports = withBundleAnalyzer(
   withMDX(
     withOptimizedImages({
       optimizeImagesInDev: false,
-      handleImages: ['jpeg', 'png', 'svg', 'webp'],
+      handleImages: ['jpeg', 'jpg', 'png', 'svg'],
       inlineImageLimit: 1000,
       pageExtensions: ['tsx', 'md', 'mdx'],
       experimental: {
