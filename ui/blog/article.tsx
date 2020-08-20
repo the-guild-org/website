@@ -175,7 +175,11 @@ const Article = (meta: Meta): React.FC => {
               <ConsultingInfo>
                 Looking for experts? We offer consulting and trainings.
                 <br />
-                Explore <GenericLink href="/services">
+                Explore{' '}
+                <GenericLink
+                  href="/services"
+                  title="Explore our services. Consulting and Trainings."
+                >
                   our services
                 </GenericLink>{' '}
                 and get in touch.
