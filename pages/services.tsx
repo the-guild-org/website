@@ -55,7 +55,11 @@ const Logos: React.FC<{
     <LogosContainer>
       {logos.map((item, i) => (
         <div key={`logo-${i}`}>
-          <img src={`/img/logos/companies/${item.logo}`} alt={item.name} />
+          <img
+            src={`/img/logos/companies/${item.logo}`}
+            title={item.name}
+            alt={item.name}
+          />
         </div>
       ))}
     </LogosContainer>

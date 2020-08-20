@@ -10,7 +10,7 @@ export const services: Array<{
 }> = [
   {
     title: 'Consulting',
-    image: 'unicorn.svg',
+    image: 'onboarding.svg',
     description:
       'Plan together your next big steps. Get wide and deep perspectives from our experience working with the largest companies and applications in the world, to make sure you reach your ambitions goals with success!',
     list: [
@@ -27,7 +27,7 @@ export const services: Array<{
   },
   {
     title: 'Workshops and Trainings',
-    image: 'quiz.svg',
+    image: 'teaching.svg',
     description:
       'Strengthen, mentor and inspire your team by the leaders of the community. Tailored to your people and mission, aimed to help establish long lasting teams.',
     highlight: {
