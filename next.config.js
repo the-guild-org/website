@@ -19,26 +19,35 @@ const withMDX = nextMDX({
 module.exports = withBundleAnalyzer(
   withMDX(
     withOptimizedImages({
+      target: 'experimental-serverless-trace',
       optimizeImagesInDev: false,
       handleImages: ['jpeg', 'jpg', 'png', 'svg'],
       inlineImageLimit: 1000,
       pageExtensions: ['tsx', 'md', 'mdx'],
-      experimental: {
-        modern: true,
-        rewrites() {
-          return [
-            {
-              source: '/feed.xml',
-              destination: '/_next/static/feed.xml',
-            },
-            {
-              source: '/sitemap.xml',
-              destination: '/_next/static/sitemap.xml',
-            },
-          ];
-        },
+      rewrites() {
+        return [
+          {
+            source: '/feed.xml',
+            destination: '/_next/static/feed.xml',
+          },
+          {
+            source: '/sitemap.xml',
+            destination: '/_next/static/sitemap.xml',
+          },
+        ];
       },
-      webpack(config) {
+      webpack(config, { dev, isServer }) {
+        if (!dev && isServer) {
+          const originalEntry = config.entry;
+
+          config.entry = async () => {
+            const entries = { ...(await originalEntry()) };
+
+            entries['./lib/build.ts'] = './lib/build.ts';
+
+            return entries;
+          };
+        }
         config.resolve.alias['Public'] = path.resolve(__dirname, 'public');
         return config;
       },

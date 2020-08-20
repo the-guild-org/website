@@ -34,6 +34,7 @@ export default class MyApp extends App {
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta charSet="utf-8" />
+          <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
           <link rel="shortcut icon" href="/fav.ico" />
           {/* Global Site Tag (gtag.js) - Google Analytics */}
           <script
