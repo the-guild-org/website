@@ -84,7 +84,7 @@ const Services = styled.div`
     color: var(--colors-dim);
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 760px) {
     grid-template-columns: 1fr;
     grid-row-gap: 120px;
     text-align: center;

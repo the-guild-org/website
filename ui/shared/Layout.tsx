@@ -41,6 +41,15 @@ const Header = styled.header<{ sticky?: boolean }>`
     props.sticky ? 'rgba(0, 0, 0, 0.05) 0px 0px 15px 0px' : 'none'};
 
   transition: all 0.5s ease 0s;
+
+  @media (max-width: 640px) {
+    padding: 15px;
+    flex-direction: column;
+    
+    & > *:first-child {
+      margin-bottom: 15px;
+    }
+  }
 `;
 
 const Nav = styled.nav`
