@@ -12,6 +12,7 @@ import { Meta } from '../../lib/types';
 import { Image } from './image';
 import { Tag } from './tag';
 import { authors } from './authors';
+import { Avatar } from './avatar';
 
 const Container = styled.div`
   max-width: 690px;
@@ -131,7 +132,7 @@ export default (meta: Meta): React.FC => {
               <Details>
                 <div>
                   <a href={author.link} title={author.name}>
-                    {author.avatar}
+                    <Avatar author={author} />
                   </a>
                 </div>
                 <div>

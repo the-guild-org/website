@@ -6,6 +6,7 @@ import LazyLoad from 'react-lazyload';
 import { withPlaceholder } from '../../lib/images';
 import { Tag } from '../../ui/blog/tag';
 import { AuthorDetails } from './authors';
+import { Avatar } from './avatar';
 
 const Link = styled(NativeLink)`
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.18);
@@ -119,7 +120,9 @@ export const ArticleCard: React.FC<{
       <Content>
         <Details>
           <div>
-            <span title={author.name}>{author.avatar}</span>
+            <span title={author.name}>
+              <Avatar author={author} />
+            </span>
           </div>
           <div>
             <span title={author.name}>{author.name}</span>
