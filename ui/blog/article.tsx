@@ -13,6 +13,7 @@ import { Image } from './image';
 import { Tag } from './tag';
 import { authors } from './authors';
 import { Avatar } from './avatar';
+import { GenericLink } from './elements/link';
 
 const Container = styled.div`
   max-width: 690px;
@@ -24,7 +25,7 @@ const Main = styled.article`
 `;
 
 const Content = styled.div`
-  padding-top: 75px;
+  padding-top: 25px;
   font-family: 'PT Serif', serif;
   font-size: 1rem;
   font-weight: 400;
@@ -70,7 +71,7 @@ const Time = styled.time`
 `;
 
 const Cover = styled.div`
-  padding-top: 75px;
+  padding-top: 25px;
   margin: 0 auto;
   width: 100%;
   height: auto;
@@ -110,8 +111,20 @@ const Back = styled.div`
   margin: 125px auto 0 auto;
 `;
 
-export default (meta: Meta): React.FC => {
-  return ({ children: content }) => {
+const ConsultingInfo = styled.div`
+  margin-top: 25px;
+  padding: 25px;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 2rem;
+  font-family: 'PT Serif', serif;
+  color: var(--colors-dim);
+  background-color: #f7f7f7;
+  border-left: 3px solid var(--colors-accent);
+`;
+
+const Article = (meta: Meta): React.FC => {
+  return function ArticleRender({ children: content }) {
     const title = `${meta.title} - The Guild Blog`;
     const date = meta.date ? new Date(meta.date) : new Date();
     const updatedDate = meta.updateDate ? new Date(meta.updateDate) : null;
@@ -159,6 +172,14 @@ export default (meta: Meta): React.FC => {
               <Cover>
                 <Image src={meta.image} alt={title} />
               </Cover>
+              <ConsultingInfo>
+                Looking for experts? We offer consulting and trainings.
+                <br />
+                Explore <GenericLink href="/services">
+                  our services
+                </GenericLink>{' '}
+                and get in touch.
+              </ConsultingInfo>
               <Content>{content}</Content>
               <Newsletter />
               <Back>
@@ -175,3 +196,5 @@ export default (meta: Meta): React.FC => {
     );
   };
 };
+
+export default Article;
