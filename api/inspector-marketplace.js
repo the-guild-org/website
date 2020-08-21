@@ -1,11 +1,11 @@
 const microCors = require('micro-cors');
-const bugsnag = require('@bugsnag/js');
+const Bugsnag = require('@bugsnag/js');
 const crypto = require('crypto');
 const axios = require('axios').default;
 
 const { WebClient } = require('@slack/web-api');
 
-const bugsnagClient = bugsnag(process.env.BUGSNAG_API);
+const bugsnagClient = Bugsnag.createClient(process.env.BUGSNAG_API);
 const slack = new WebClient(process.env.SLACK_TOKEN);
 const zapier = process.env.ZAPIER_INSPECTOR_WEBHOOK;
 const channelID = 'CLZ5BCE7K';
@@ -48,7 +48,7 @@ module.exports = cors(async (req, res) => {
     typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
   const { action, sender, marketplace_purchase } = payload;
 
-  bugsnagClient.metaData = payload;
+  bugsnagClient.addMetadata('payload', payload);
 
   let login;
   let email;
@@ -84,10 +84,9 @@ module.exports = cors(async (req, res) => {
       .then((result) => {
         if (result.error) {
           console.error(result.error);
-          bugsnagClient.metaData = {
-            ...bugsnagClient.metaData,
-            slack: result,
-          };
+          bugsnagClient.addMetadata('slack', {
+            result,
+          });
         }
       })
       .catch((error) => {
