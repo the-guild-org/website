@@ -120,7 +120,7 @@ const resolvers = {
               'Content-Type': 'application/json;charset=utf-8',
               authorization:
                 'Basic ' +
-                new Buffer('any:' + process.env.MAILCHIMP_API_KEY).toString(
+                new Buffer('key:' + process.env.MAILCHIMP_API_KEY).toString(
                   'base64'
                 ),
             },
@@ -148,14 +148,10 @@ const schema = makeExecutableSchema({
 });
 
 function isAllowed(req) {
-  console.error(req.headers);
-
   return [
     'https://graphql-code-generator.com',
     'https://the-guild.dev',
     'https://graphql-inspector.com',
-    'https://the-guild-website-kamilkisiela.theguild.now.sh',
-    'https://the-guild-website-git-feat-new.theguild.now.sh',
   ].includes(req.headers.origin);
 }
 
