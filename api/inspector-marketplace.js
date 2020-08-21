@@ -2,6 +2,7 @@ const microCors = require('micro-cors');
 const Bugsnag = require('@bugsnag/js');
 const crypto = require('crypto');
 const axios = require('axios').default;
+const { ensureContact } = require('../lib/contacts');
 
 const { WebClient } = require('@slack/web-api');
 
@@ -12,8 +13,6 @@ const channelID = 'CLZ5BCE7K';
 const cors = microCors();
 
 function isAllowed(req) {
-  console.error(req.headers);
-
   const signature = (req.headers['x-hub-signature'] || '').replace('sha1=', '');
 
   console.log('Received signature:', signature);
@@ -52,7 +51,7 @@ module.exports = cors(async (req, res) => {
 
   let login;
   let email;
-  let url = sender.url;
+  let url = sender.html_url;
   let isOrg = false;
 
   if (
@@ -94,6 +93,17 @@ module.exports = cors(async (req, res) => {
         bugsnagClient.notify(error);
       }),
     axios.post(zapier, payload).catch((error) => {
+      console.error(error);
+      bugsnagClient.notify(error);
+    }),
+    ensureContact({
+      name: login,
+      email,
+      url,
+      segments: ['inspector', 'inspector-app', isOrg ? 'org' : null].filter(
+        Boolean
+      ),
+    }).catch((error) => {
       console.error(error);
       bugsnagClient.notify(error);
     }),
