@@ -43,12 +43,15 @@ const Blog: React.FC<Props> = ({ articles, tagFilter }) => {
   const hasTagFilter = tagFilter && tagFilter.length > 0;
   const recentArticle = (articles || [])[0];
 
+  const title = hasTagFilter
+    ? `The Guild Blog - ${tagFilter.join(', ')}`
+    : 'The Guild Blog';
+  const description = hasTagFilter
+    ? `List of articles related to ${tagFilter.join(', ')}`
+    : `Announcements about our Open-Source projects`;
+
   return (
-    <Page
-      title="The Guild Blog"
-      description="Announcements about our Open-Source projects"
-      image="/img/ogimage-blog.png"
-    >
+    <Page title={title} description={description} image="/img/ogimage-blog.png">
       <Hero shrink={true}>
         <span>Blog</span>
         {hasTagFilter && <span>(filter by: {tagFilter.join(', ')})</span>}
