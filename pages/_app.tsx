@@ -28,7 +28,7 @@ export function reportWebVitals({
 
 export default class MyApp extends App {
   render() {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, router } = this.props;
     return (
       <>
         <Head>
@@ -36,6 +36,12 @@ export default class MyApp extends App {
           <meta charSet="utf-8" />
           <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
           <link rel="shortcut icon" href="/fav.ico" />
+          {router.route && (
+            <link
+              rel="canonical"
+              href={`https://the-guild.dev${router.route}`}
+            ></link>
+          )}
           {/* Global Site Tag (gtag.js) - Google Analytics */}
           <script
             async
