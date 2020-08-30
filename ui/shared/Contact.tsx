@@ -74,7 +74,7 @@ const Input = styled.input`
   border: 1px solid #d2d6dc;
   background-color: #fff;
   appearance: none;
-  margin: 0;
+  margin: 0 5px 0 0;
   box-sizing: border-box;
 
   &:focus {
@@ -126,14 +126,21 @@ enum State {
 export const Contact: React.FC<{ light?: boolean }> = ({ light = false }) => {
   const [state, setState] = useState<State>(State.Idle);
   const [email, setEmail] = useState<string>();
+  const [name, setName] = useState<string>();
   const [result, mutate] = useMutation(
-    `mutation sayHi($email: String!, $project: String!) { sayHi(email: $email, project: $project) { ok } }`
+    `mutation sayHi($email: String!, $project: String!, $name: String) { sayHi(email: $email, project: $project, name: $name) { ok } }`
   );
-  const onChange = useCallback(
+  const onEmailChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setEmail(event.target.value);
     },
     [setEmail, email]
+  );
+  const onNameChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setName(event.target.value);
+    },
+    [setName, name]
   );
 
   useEffect(() => {
@@ -157,7 +164,7 @@ export const Contact: React.FC<{ light?: boolean }> = ({ light = false }) => {
       });
 
       setState(State.Loading);
-      mutate({ email, project: 'WEBSITE' });
+      mutate({ email, name, project: 'WEBSITE' });
     },
     [setState, email]
   );
@@ -186,12 +193,20 @@ export const Contact: React.FC<{ light?: boolean }> = ({ light = false }) => {
         <FormTitle>Leave us your email, we will contact you soon.</FormTitle>
         <Form onSubmit={onSubmit}>
           <Input
+            type="text"
+            required={true}
+            disabled={isLoading}
+            placeholder="Your name"
+            value={name}
+            onChange={onNameChange}
+          />
+          <Input
             type="email"
             required={true}
             disabled={isLoading}
-            placeholder="Enter your email"
+            placeholder="Your Email"
             value={email}
-            onChange={onChange}
+            onChange={onEmailChange}
           />
           <Submit type="submit" state={state} disabled={isLoading}>
             {buttonTextMap[state]}

@@ -12,7 +12,7 @@ interface GraphQLResult<TResult> {
   };
 }
 
-const endpoint = '/api/graphql';
+const endpoint = 'https://guild-ms-slack-bot.vercel.app/api/graphql';
 
 export function useMutation<TResult, TVariables = {}>(
   query: string
