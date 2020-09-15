@@ -1,0 +1,171 @@
+import withArticle from '../../ui/blog/article';
+
+export const meta = {
+  title: 'GraphQL over WebSockets',
+  tags: [
+    'graphql-transport-ws',
+    'graphql',
+    'graphql-subscriptions',
+    'graphql-over-websocket',
+    'graphql-transport-over-websocket',
+    'subscriptions',
+    'transport',
+    'websocket',
+    'real-time',
+  ],
+  author: 'enisdenjo',
+  date: '2020-09-15',
+  description:
+    'Coherent, zero-dependency, lazy, simple, server and client implementation of the new, security first, GraphQL over WebSocket Protocol.',
+};
+
+export default withArticle({ ...meta });
+
+# GraphQL over WebSockets
+
+## Introduction
+
+At some point in time during your web development journeys, you may’ve been faced with the challenge to add a real-time component. The synonym for realtime in the browser is the WebSocket API. [This is how MDN’s describes it](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API):
+
+> The WebSocket API is an advanced technology that makes it possible to open a two-way interactive communication session between the user’s browser and a server. With this API, you can send messages to a server and receive event-driven responses without having to poll the server for a reply.
+
+Google Chrome was the first browser to support the WebSocket Protocol, adding support in 2009 - two years before it was officially standardised in 2011. As the need for full-duplex server-client communications rose, other browsers followed suit.
+
+As of today, all major browsers support the WebSocket Protocol - see the [Can I Use table](https://caniuse.com/?search=Web%20Sockets).
+
+## WebSockets ❤️ GraphQL
+
+Okay, so, how do I use WebSockets to add support for the [GraphQL `subscription` operation](https://spec.graphql.org/June2018/#sec-Subscription)? Doing a basic Google search, you’d be faced with a single solution, namely [`subscriptions-transport-ws`](https://github.com/apollographql/subscriptions-transport-ws). Looking through the repository, checking recent comments, reading through the issues and open PRs - might have you notice the abundance of bugs and their security implications. [A summary can be found here](https://github.com/enisdenjo/graphql-transport-ws/issues/3).
+
+The authors have done a brilliant job, but unfortunately other projects and needs have reduced their disposable time for maintaining and nurturing this well accomplished, yet needy, idea. But, it did indeed inspire me to take up their legacy and revitalised it! Having faced various WebSocket challenges with GraphQL myself - I jumped in writing a new library from scratch.
+
+With no further ado - I humbly introduce [`graphql-transport-ws`](https://github.com/enisdenjo/graphql-transport-ws). A coherent, feature-full, zero-dependency, plug-n-play, lazy, simple, server and client implementation of the [new, security first GraphQL over WebSocket Protocol](https://github.com/enisdenjo/graphql-transport-ws/blob/master/PROTOCOL.md) with full support for all 3 GraphQL operations: `Queries`, `Mutations` and `Subscriptions`. The protocol aims to be standardised and become a part of GraphQL with the help of the foundation’s [GraphQL over HTTP work group](https://github.com/graphql/graphql-over-http/pull/140).
+
+The library is written in TypeScript and the full implementation totals merely ~1000 lines of well formatted, commented, code. It leverages modern JavaScript primitives and the well established presence of WebSockets.
+
+## How do I get started?
+
+I am glad you asked! This is how:
+
+#### Install
+
+```shell
+$ yarn add graphql-transport-ws
+```
+
+#### Create a GraphQL schema
+
+```ts
+import { GraphQLSchema, GraphQLObjectType, GraphQLString } from 'graphql';
+
+// Construct a schema, using GraphQL schema language
+const schema = buildSchema(`
+  type Query {
+    hello: String
+  }
+  type Subscription {
+    greetings: String
+  }
+`);
+
+// The roots provide resolvers for each GraphQL operation
+const roots = {
+  query: {
+    hello: () => 'Hello World!',
+  },
+  subscription: {
+    greetings: async function* sayHiIn5Languages() {
+      for (const hi of ['Hi', 'Bonjour', 'Hola', 'Ciao', 'Zdravo']) {
+        yield { greetings: hi };
+      }
+    },
+  },
+};
+```
+
+#### Start the server
+
+```ts
+import http from 'http';
+import { execute, subscribe } from 'graphql';
+import { createServer } from 'graphql-transport-ws';
+
+const server = http.createServer(function weServeSocketsOnly(_, res) {
+  res.writeHead(404);
+  res.end();
+});
+
+createServer(
+  {
+    schema, // from the previous step
+    roots, // from the previous step
+    execute,
+    subscribe,
+  },
+  {
+    server,
+    path: '/graphql',
+  }
+);
+
+server.listen(443);
+```
+
+#### Use the client
+
+```ts
+import { createClient } from 'graphql-transport-ws';
+
+const client = createClient({
+  url: 'wss://welcomer.com/graphql',
+});
+
+// query
+(async () => {
+  const result = await new Promise((resolve, reject) => {
+    let result;
+    client.subscribe(
+      {
+        query: '{ hello }',
+      },
+      {
+        next: (data) => (result = data),
+        error: reject,
+        complete: () => resolve(result),
+      }
+    );
+  });
+
+  expect(result).toEqual({ hello: 'Hello World!' });
+})();
+
+// subscription
+(async () => {
+  const onNext = () => {
+    /**/
+  };
+
+  await new Promise((resolve, reject) => {
+    client.subscribe(
+      {
+        query: 'subscription { greetings }',
+      },
+      {
+        next: onNext,
+        error: reject,
+        complete: resolve,
+      }
+    );
+  });
+
+  expect(onNext).toBeCalledTimes(5); // we say "Hi" in 5 languages
+})();
+```
+
+## Want to find out more?
+
+Check the repo out to for [Getting Started](https://github.com/enisdenjo/graphql-transport-ws#getting-started) quickly with some [Recepies](https://github.com/enisdenjo/graphql-transport-ws#recipes) for vanilla usage, or with [Relay](https://relay.dev/) and [Apollo Client](https://www.apollographql.com/docs/react/). Opening issues, contributing with code or simply improving the documentation is always welcome!
+
+I am [@enisdenjo](https://github.com/enisdenjo) and you can chat with me about this topic on the [GraphQL Slack workspace](https://graphql.slack.com/) anytime.
+
+Thanks for reading and happy coding! 👋
