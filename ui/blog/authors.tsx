@@ -51,4 +51,9 @@ export const authors: Record<string, AuthorDetails> = {
     link: 'https://twitter.com/DavidYahalomi',
     twitter: 'davidyaha',
   },
+  enisdenjo: {
+    name: 'Denis Badurina',
+    link: 'https://twitter.com/enisdenjo',
+    github: 'enisdenjo',
+  },
 };
