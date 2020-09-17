@@ -59,7 +59,7 @@ $ yarn add graphql-transport-ws
 #### Create a GraphQL schema
 
 ```ts
-import { GraphQLSchema, GraphQLObjectType, GraphQLString } from 'graphql';
+import { buildSchema } from 'graphql';
 
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(`
@@ -127,14 +127,17 @@ const client = createClient({
 (async () => {
   const result = await new Promise((resolve, reject) => {
     let result;
-    client.subscribe(
+    const dispose = client.subscribe(
       {
         query: '{ hello }',
       },
       {
         next: (data) => (result = data),
         error: reject,
-        complete: () => resolve(result),
+        complete: () => {
+          dispose();
+          resolve(result);
+        },
       }
     );
   });
@@ -149,14 +152,17 @@ const client = createClient({
   };
 
   await new Promise((resolve, reject) => {
-    client.subscribe(
+    const dispose = client.subscribe(
       {
         query: 'subscription { greetings }',
       },
       {
         next: onNext,
         error: reject,
-        complete: resolve,
+        complete: () => {
+          dispose();
+          resolve();
+        },
       }
     );
   });
