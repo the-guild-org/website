@@ -127,18 +127,15 @@ const client = createClient({
 (async () => {
   const result = await new Promise((resolve, reject) => {
     let result;
-    const dispose = client.subscribe(
+    client.subscribe(
       {
         query: '{ hello }',
       },
       {
         next: (data) => (result = data),
         error: reject,
-        complete: () => {
-          dispose();
-          resolve(result);
-        },
-      }
+        complete: () => resolve(result),
+      },
     );
   });
 
@@ -152,18 +149,15 @@ const client = createClient({
   };
 
   await new Promise((resolve, reject) => {
-    const dispose = client.subscribe(
+    client.subscribe(
       {
         query: 'subscription { greetings }',
       },
       {
         next: onNext,
         error: reject,
-        complete: () => {
-          dispose();
-          resolve();
-        },
-      }
+        complete: resolve,
+      },
     );
   });
 
