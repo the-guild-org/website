@@ -1,0 +1,81 @@
+import withArticle from '../../ui/blog/article';
+
+export const meta = {
+  title: 'Introducing GraphQL-ESLint!',
+  author: 'dotan',
+  tags: ['graphql', 'graphql-eslint', 'eslint'],
+  date: '2020-10-03',
+  description:
+    'A new tool by The Guild, for making your GraphQL schema and GraphQL operations more standard and robust!',
+  image: 'https://github.com/dotansimha/graphql-eslint/raw/master/logo.png',
+};
+
+export default withArticle({ ...meta });
+
+**We are super excited to introduce a new development tool by The Guild!**
+
+We recently found noticed a gap in the development flow for GraphQL developers: it's very hard to maintain standards in GraphQL schema and GraphQL operations.
+
+And due to the fact that GraphQL ecosystem is growing quickly, we decided to create a modern integration between GraphQL and ESLint, that supports all the modern needs of a GraphQL developer: [`graphql-eslint`](https://github.com/dotansimha/graphql-eslint).
+
+> Special thanks to [ilyavolodin](https://github.com/ilyavolodin) for his work on a similar project. We've joined forces to bring a new exiting tool for you!
+
+## What it does?
+
+<Gfycat gifId={'actualterrificdog'} />
+
+With `graphql-eslint` you can easily validate and lint your GraphQL schema, and your GraphQL operations, enforce code-style, best practices, and avoid runtime issues.
+
+![GraphQL-ESLint](/blog-assets/graphql-eslint/1.png 'GraphQL ESLint in action')
+
+It can run as a syntax validation tool (without GraphQL schema), or as a complete solution for validation your GraphQL operations (with a schema loaded).
+
+`graphql-eslint` works on your `.graphql` files, but also on your code-files that uses `gql` (or, `graphql` template literal tag), or `/* GraphQL */` magic comments.
+
+It fully integrated with VSCode for visualizing the reported issues, and allow you to customize the rules, and add custom rules easily.
+
+## How does it work?
+
+This package acts as a ESLint parser, and a plugin with rules.
+
+The parser we wrote transforms the [GraphQL AST](https://graphql.org/graphql-js/language/) into [ESTree structure](https://github.com/estree/estree), so it allows you to travel the GraphQL AST tree easily.
+
+If you wish to read more about [how it works, please refer to the docs directory in the repo](https://github.com/dotansimha/graphql-eslint/blob/master/docs/README.md).
+
+## Writing your own rules
+
+Since it's running as a real ESLint parser, [you can easiliy customize it and write your own rules](https://github.com/dotansimha/graphql-eslint/blob/master/docs/custom-rules.md), based on your project's needs and preferences.
+
+If you are familiar with the GraphQL AST structure, you can write custom rules very quickly, since our solution comes with a wrapper that makes it easier to write and test new rules, and have full TypeScript support.
+
+Need a new custom rule? Just create a file in your project, and travel the AST to make sure it matches your needs.
+
+Think it's something that might be valuable for others? [Create a PR!](https://github.com/dotansimha/graphql-eslint#contributing)
+
+```ts
+import { GraphQLESLintRule } from '@graphql-eslint/eslint-plugin';
+
+const rule: GraphQLESLintRule = {
+  create(context) {
+    return {
+      OperationDefinition(node) {
+        if (node && (!node.name || node.name.value === '')) {
+          context.report({
+            node: node,
+            message: `Oops, name is required on GraphQL operations!`,
+          });
+        }
+      },
+    };
+  },
+};
+```
+
+## Compared to similar tools
+
+There are other solutions that offer GraphQL linting.
+
+We decided to write a modern library that fits our clients' needs, intergrates with IDEs, and easily customizable by anyone.
+
+- `apollographql/eslint-plugin-graphql` - offers a similar solution, by designed in a different architecture. But unfortunatly, it's not customizable and extendable, and doesn't work on some modern solution.
+- `cjoudrey/graphql-schema-linter` - works as a standalone tool (without ESLint) and offers rules for linting GraphQL schemas only.
