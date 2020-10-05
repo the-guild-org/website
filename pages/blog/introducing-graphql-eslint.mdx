@@ -14,9 +14,10 @@ export default withArticle({ ...meta });
 
 **We are super excited to introduce a new development tool by The Guild!**
 
-We recently found noticed a gap in the development flow for GraphQL developers: it's very hard to maintain standards in GraphQL schema and GraphQL operations.
+While working on very large codebases (hundreds of developers on a single codebase), we’ve noticed a gap in the current state of the art development flow for GraphQL developers: it's very hard to maintain standards in GraphQL schemas and GraphQL operations.
 
-And due to the fact that GraphQL ecosystem is growing quickly, we decided to create a modern integration between GraphQL and ESLint, that supports all the modern needs of a GraphQL developer: [`graphql-eslint`](https://github.com/dotansimha/graphql-eslint).
+Those could be standards that are specific for a single codebase or shared in the community.
+As the GraphQL ecosystem is growing quickly, we decided it's important to create a modern integration between GraphQL and ESLint, that supports all the modern needs of a GraphQL developer: [`graphql-eslint`](https://github.com/dotansimha/graphql-eslint).
 
 > Special thanks to [ilyavolodin](https://github.com/ilyavolodin) for his work on a similar project. We've joined forces to bring a new exiting tool for you!
 
@@ -24,15 +25,15 @@ And due to the fact that GraphQL ecosystem is growing quickly, we decided to cre
 
 <Gfycat gifId={'actualterrificdog'} />
 
-With `graphql-eslint` you can easily validate and lint your GraphQL schema, and your GraphQL operations, enforce code-style, best practices, and avoid runtime issues.
+With `graphql-eslint` you can easily validate and lint your GraphQL schema and your GraphQL operations, enforce coding-style, best practices, and avoid runtime issues.
 
 ![GraphQL-ESLint](/blog-assets/graphql-eslint/1.png 'GraphQL ESLint in action')
 
-It can run as a syntax validation tool (without GraphQL schema), or as a complete solution for validation your GraphQL operations (with a schema loaded).
+It can run as a syntax validation tool (without a GraphQL schema), or as a complete validation solution for your GraphQL operations (with a schema loaded into it).
 
-`graphql-eslint` works on your `.graphql` files, but also on your code-files that uses `gql` (or, `graphql` template literal tag), or `/* GraphQL */` magic comments.
+`graphql-eslint` works on your `.graphql` files, but also on your code-files that uses `gql` (graphql template literal tag) or `/* GraphQL */` magic comments.
 
-It fully integrated with VSCode for visualizing the reported issues, and allow you to customize the rules, and add custom rules easily.
+It is fully integrated with VSCode for visualizing the reported issues, and allows you to customize the rules, and easily add new custom ones.
 
 ## How does it work?
 
@@ -50,7 +51,7 @@ If you are familiar with the GraphQL AST structure, you can write custom rules v
 
 Need a new custom rule? Just create a file in your project, and travel the AST to make sure it matches your needs.
 
-Think it's something that might be valuable for others? [Create a PR!](https://github.com/dotansimha/graphql-eslint#contributing)
+Think that rule might be valuable for others? [Create a PR!](https://github.com/dotansimha/graphql-eslint#contributing)
 
 ```ts
 import { GraphQLESLintRule } from '@graphql-eslint/eslint-plugin';
@@ -74,8 +75,13 @@ const rule: GraphQLESLintRule = {
 ## Compared to similar tools
 
 There are other solutions that offer GraphQL linting.
+We decided to write a modern library that fits our clients' needs, integrates with IDEs and is easily customizable by anyone.
 
-We decided to write a modern library that fits our clients' needs, intergrates with IDEs, and easily customizable by anyone.
-
-- `apollographql/eslint-plugin-graphql` - offers a similar solution, by designed in a different architecture. But unfortunatly, it's not customizable and extendable, and doesn't work on some modern solution.
+- `apollographql/eslint-plugin-graphql` - offers a similar solution, but is designed in a different architecture and unfortunately, it's not customizable and extendable, and doesn't work on some modern solution.
 - `cjoudrey/graphql-schema-linter` - works as a standalone tool (without ESLint) and offers rules for linting GraphQL schemas only.
+
+## Summary
+
+We hope GraphQL-ESLint becomes a central place for the community to collaborate on best practices and bring them into your team in an automated and easy way.
+
+We already use it in companies like Microsoft on a very large codebases and it helped us share our practices across thousands of developers!
