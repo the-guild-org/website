@@ -19,6 +19,26 @@ export const projects = {
       </>
     ),
   },
+  'graphql-eslint': {
+    featured: true,
+    title: 'GraphQL-ESLint',
+    image:
+      'https://raw.githubusercontent.com/dotansimha/graphql-eslint/master/logo.png',
+    link: 'https://github.com/dotansimha/graphql-eslint/',
+    description: (
+      <>
+        <p>
+          GraphQL-ESLint integrates GraphQL AST in the ESLint core (as a
+          parser).
+        </p>
+        <p>
+          Works on schema and operations, easily customizable, supports custom
+          rules, visualize lint issues in real-time in IDEs. Works on `.graphql`
+          files, and also on code files (with `gql`).
+        </p>
+      </>
+    ),
+  },
   inspector: {
     featured: true,
     title: 'Maintenance and Analysis of GraphQL API',
