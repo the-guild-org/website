@@ -1,0 +1,86 @@
+import withArticle from '../../ui/blog/article';
+
+export const meta = {
+  title: 'Subscriptions in GraphQL Mesh',
+  author: 'arda',
+  tags: ['subscriptions', 'webhooks', 'graphql', 'mesh'],
+  date: '2020-05-10',
+  description:
+    'Consume your legacy webhooks as GraphQL Subscriptions with GraphQL Mesh',
+  image: '/blog-assets/graphql-mesh-subscriptions/cover.png',
+};
+
+export default withArticle({ ...meta });
+
+We're happy to announce the new feature of GraphQL Mesh that allows you to consume your existing HTTP Webhooks in GraphQL Mesh as GraphQL Subscriptions even if your webhooks don't have any schema.
+
+We are already able to consume our existing REST APIs in GraphQL Mesh even if they don't have any schema by using JSON Schema Handler. [See more](https://the-guild.dev/blog/migrating-from-rest)
+
+### Add a new field to our existing configuration for an HTTP Webhook
+
+In the following example configuration, we have a regular GraphQL Mesh configuration for schemaless REST API.
+
+```yml
+sources:
+  - name: Example
+    handler:
+      jsonSchema:
+        baseUrl: http://localhost:4001
+        operationHeaders:
+          Content-Type: application/json
+        operations:
+          - type: Query
+            field: todos
+            path: /todos
+            method: GET
+            responseSample: ./todos.json
+          - type: Mutation
+            field: addTodo
+            path: /todo
+            method: POST
+            requestSample: ./addTodo.json
+            responseSample: ./todo.json
+            responseTypeName: Todo
+```
+
+Assume that we point our REST API to send HTTP requests to our Mesh server’s `/webhooks/todo_added` path, so we need to configure Mesh to listen that path.
+
+```yml
+serve:
+  port: 4000
+  handlers:
+    - path: /webhooks/todo_added
+      pubsubTopic: todoAdded
+```
+
+Under `serve` we define the port we want Mesh to listen and add a handler in declarative way without a single line of code. `pubsubTopic` is the unique name for that webhook. This topic will receive upcoming HTTP requests so that JSON Schema handler will consume it as GraphQL Subscription.
+
+Let’s define a new field under `Subscription` field under `operations` in the handler level;
+
+```yml
+operations:
+  - type: Subscription
+    field: todoAdded
+    pubsubTopic: todoAdded
+    responseSample: ./todo.json
+```
+
+Now we have `todoAdded` field that listens a webhook through Mesh’s PubSub instance and this field has a return type generated based on `todo.json` sample response.
+
+You can start `mesh serve` and start listening for that webhook by the following GraphQL operation;
+
+```graphql
+subscription {
+  todoAdded {
+    id
+    title
+    content
+  }
+}
+```
+
+> [You can find a complete working example on GitHub](https://github.com/Urigo/graphql-mesh/tree/master/examples/subscriptions-example)
+
+### Other methods for Subscriptions such as RabbitMQ or Kafka
+
+It is possible to configure Mesh to handle other schemaless subscription solutions like RabbitMQ and Kafka using JSON Schema handler but this is the topic of another blog post.
