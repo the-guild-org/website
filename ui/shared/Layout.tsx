@@ -45,7 +45,7 @@ const Header = styled.header<{ sticky?: boolean }>`
   @media (max-width: 640px) {
     padding: 15px;
     flex-direction: column;
-    
+
     & > *:first-child {
       margin-bottom: 15px;
     }
@@ -171,6 +171,9 @@ export const Layout: React.FC = ({ children }) => {
           </Link>
           <Link href="/open-source">
             <a title="The Guild - Open Source projects">Open Source</a>
+          </Link>
+          <Link href="/about-us">
+            <a title="The Guild - About Us">About Us</a>
           </Link>
           <Link href="/contact">
             <a title="The Guild - Contact us">Contact</a>
