@@ -1,0 +1,65 @@
+import withArticle from '../../ui/blog/article';
+
+export const meta = {
+  title: "What's new in GraphQL CLI 4.1.0",
+  author: 'ephelan',
+  tags: ['react'],
+  date: '2020-10-12',
+  description: "An overview of what we've added in this release of GraphQL CLI",
+  image:
+    'https://user-images.githubusercontent.com/20847995/67651234-85bf1500-f916-11e9-90e5-cb3bd0e6a338.png',
+};
+
+export default withArticle({ ...meta });
+
+[GraphQL CLI](http://graphql-cli.com) is your one-stop shop for developing full-stack GraphQL applications in Node.js. Since the release of 4.0.0, we have added a number of enhancements which will further elevate your GraphQL development experience.
+
+## GraphQL Code Generator
+
+[Add what is new in GraphQL Codegen]
+
+To use GraphQL Code Generator from the CLI, run `graphql codegen` from your application root:
+
+```shell
+$ graphql codegen
+```
+
+Check out the [codegen command docs](https://graphql-cli.com/codegen) on our new website for configuration and installation instructions.
+
+## GraphQL Config
+
+[Add what is new in GraphQL Config]
+
+All templates come pre-configured to work with the latest version of GraphQL Config.
+
+## Website
+
+Reading docs just got easier. We’ve built a new website to host the GraphQL CLI documentation! Check it out at [graphql-cli.com](https://graphql-cli.com).
+Init command templates
+There are several improvements to all of our templates to make them cleaner and more production-ready. Additionally, we had added two new starter templates: a plain MongoDB template and a MongoDB template with out-of-the-box data synchronization support.
+
+To start using these templates, use the init command:
+
+```shell
+$ graphql init
+```
+
+Check out the [serve command docs](https://graphql-cli.com/serve) for installation and usage guides!
+
+## Serve command
+
+The serve command is now powered by [graphql-serve](https://www.npmjs.com/package/graphql-serve), letting you start up an in-memory GraphQL server and playground in seconds - perfect for mocking and testing!
+
+```shell
+$ graphql serve --port 4000 ./model/datamodel.graphql
+
+Starting server...
+
+Listening at: http://localhost:4000/graphql
+```
+
+## Graphback
+
+All the templates are configured with Graphback, for both runtime and generation capabilities purposes. Graphback 1.0 has recently been released, check out their blog post [Announcing the Release of Graphback 1.0](https://graphback.dev/blog/2020/10/01/announcing-graphback-1.0) that goes into deeper details of Graphback’s features and capabilities.
+
+To generate your schema and documents with Graphback, run `graphql generate` from your application root. See the [generate command docs](https://graphql-cli.com/generate) for a thorough explanation of this command and usage guides.

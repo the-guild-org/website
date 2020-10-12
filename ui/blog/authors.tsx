@@ -56,4 +56,9 @@ export const authors: Record<string, AuthorDetails> = {
     link: 'https://twitter.com/enisdenjo',
     github: 'enisdenjo',
   },
+  ephelan: {
+    name: 'Enda Phelan',
+    link: 'https://twitter.com/PhelanEnda',
+    github: 'craicoverflow',
+  },
 };
