@@ -92,7 +92,6 @@ const Submit = styled(Button)<{ state: State }>`
   flex-shrink: 0;
   flex-grow: 0;
   margin-left: 1rem;
-  min-width: 150px;
 
   background-color: ${(props) =>
     props.state === State.Error
