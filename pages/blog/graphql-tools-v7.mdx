@@ -1,0 +1,139 @@
+import withArticle from '../../ui/blog/article';
+
+export const meta = {
+  title: 'GraphQL Tools v7 delivers the next generation GraphQL API Gateway',
+  author: 'arda',
+  tags: ['graphql', 'graphql-tools', 'schema-first', 'schema-stitching'],
+  date: '2020-10-19',
+  description: 'GraphQL Tools v7',
+  image: '/blog-assets/graphql-tools-v6/cover.webm',
+  thumbnail: '/blog-assets/graphql-tools-v6/cover.png',
+};
+
+export default withArticle({ ...meta });
+
+Ever since [The Guild took over GraphQL Tools](https://the-guild.dev/blog/graphql-tools-v6), we’ve been getting feedback from companies using a variety of industry tools and have been working to transform Schema Stitching into the best GraphQL gateway solution for their needs. Today we are happy to announce GraphQL Tools v7, which brings Schema Stitching to a whole new level thanks to automation and performance enhancements.
+
+> Try out Schema Stitching by following the instructions on the new docs, or follow the migration guides
+
+## Why Schema Stitching
+
+We believe Schema Stitching is the simplest and most extensible way to federate your GraphQL services, building upon some new and existing features:
+
+- **[Type merging](https://www.graphql-tools.com/docs/stitch-type-merging)** allows partial definitions of a type to exist in any subschema, all of which are merged into one unified type in the gateway schema. When querying for a merged type, the gateway smartly delegates portions of a request to each relevant subschema in dependency order, and then combines all results for the final return.
+
+In addition to just merging basic object types, schema stitching allows interfaces, unions, and element descriptions to be merged across services. This merging paradigm encourages [independently valid subschemas](https://www.graphql-tools.com/docs/stitch-type-merging#unidirectional-merges), versus patterns such as Apollo Federation where subservices are left with holes to be backfilled by the top-level gateway service.
+
+- **[Computed fields](https://www.graphql-tools.com/docs/stitch-type-merging#computed-fields)** allow type merging to also implement the [Federation service pattern](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/#resolve-requests-for-entities) for those seeking the best of both worlds. While basic merge patterns are simpler and more durable, you may still find cases where it's useful to send representations of a type into a service (federation pattern), rather than exposing a service's types to other services (merge pattern). Users coming from Apollo Federation may also appreciate how stitching’s decentralized graph allows keys to be selected from anywhere versus just from a dedicated “origin” service.
+
+- **[Batch performance](https://www.graphql-tools.com/docs/stitch-type-merging#batching)** is now a core offering of Schema Stitching thanks to built-in tools for field-level and query-level batching. With the flip of a switch, query batching will consolidate all requests made to a service into a single GraphQL query, thus flattening out both networking and querying costs to a single operation per service per generation of data.
+
+- **Extensibility** remains a core concern of Schema Stitching, so classic schema extensions and transforms remain fully interoperable with the new automated merging features. These features support wrapping, hoisting, and bridging fields in any custom configuration that you may require. This interoperability makes migrating to the newer merge features quite simple – just enable merging, and then replace your classic extensions with merges one at a time. As always, the end product of schema stitching is a gateway schema fully compatible with all of the tools of the JavaScript GraphQL ecosystem.
+
+- **Subscriptions Support** ……
+
+Above all though – Schema Stitching lets you use “Just GraphQL”. No complex DSLs or Node-specific subservice packages are required. This makes Schema Stitching easy to use atop GraphQL services implemented in any language, and easy to explain while onboarding team members. Also (mostly thanks to our wonderful community) we have very detailed docs on all stitching features. Make sure to check them out!
+
+In the upcoming weeks you will see more blog posts from people in the community about their experiences considering Apollo Federation versus the new Schema Stitching. There are many of those companies in the wild and we have been encouraging them to share their Schema Stitching success stories.
+
+## Relationship with GraphQL Mesh
+
+The Guild is also maintaining the popular [GraphQL Mesh](http://graphql-mesh.com) library, and often we get asked about the relationship of GraphQL Mesh with Schema Stitching and Apollo Federation.
+
+The main goal of GraphQL Mesh is to connect **non-GraphQL** services (Swagger/OpenAPI, gRPC, json-schema, SOAP and others) into your gateway, whether your gateway uses Schema Stitching or Apollo Federation as your merging strategies.
+
+In GraphQL Mesh you can pick and choose between Schema Stitching and Apollo Federation. Recently, with all the new improvements to Schema Stitching and the need to support GraphQL Subscriptions in GraphQL Mesh, we have made Schema Stitching the default choice, with merging via Apollo Federation still easily configurable.
+
+Currently you are able to use both Schema Stitching and Apollo Federation merging strategies with the declarative API of GraphQL Mesh without writing single line of code or adding anything in SDL.The idea is to apply necessary transforms and metadata for the gateway by keeping the original source of the services.
+
+Here is an example for Schema Stitching;
+
+```yml
+sources: # Here we have two independent sources
+  - name: Covid
+    handler:
+      graphql:
+        endpoint: https://covid-19.dava.engineer/api/graphql
+  - name: WorldPop
+    handler:
+      jsonSchema:
+        baseUrl: https://datasource.kapsarc.org/api/records/1.0/search
+        operations:
+          - type: Query
+            field: population
+            path: /?dataset=world-population&q={args.country}&rows=1&sort=year&facet=year&facet=country_name
+            method: GET
+            responseSchema: ./src/json-schemas/worldPop.json
+
+# In Schema Stitching, we define how to stitch those schemas on root level instead of source level
+# as in federation
+
+# Also in schema stitching, we extend the unified schema instead of transforming the source schemas.
+additionalTypeDefs: |
+  extend type Case {
+    population: ApiPopulation
+  }
+  extend type Query {
+    stat(country: String!): Stat
+  }
+  type Stat {
+    confirmedRatio: Float
+    deathRatio: Float
+    recoveredRatio: Float
+    case: Case
+    population: ApiPopulation
+  }
+# In here, we define our stitching resolvers without using any single line of code
+additionalResolvers:
+  - type: Case
+    field: population
+    requiredSelectionSet: |
+      { 
+        countryRegion 
+      }
+    targetSource: WorldPop
+    targetMethod: population
+    args:
+      country: '{root.countryRegion}'
+```
+
+Here is an example for Apollo Federation;
+
+```yml
+merger: federation # Apollo Federation is used to merge the following sources as federated services
+sources:
+  - name: accounts
+    handler:
+      graphql:
+        endpoint: http://localhost:4001/graphql # This is a standalone GraphQL API that doesn't have any federation metadata
+    transforms: # Using federation transform, we can convert it to a federated service
+      - federation:
+          types:
+            - name: Query
+              config:
+                extend: true
+            - name: User
+              config:
+                keyFields:
+                  - id
+                resolveReference:
+                  targetSource: accounts
+                  targetMethod: user
+                  args:
+                    id: root.id
+```
+
+## What’s next?
+
+We are working to continuously improve Schema Stitching and the rest of the GraphQL Tools and we want together as much feedback as possible in terms of community experiences, feature requests, bug reports, and even new directions.
+
+That said, our next goal is to improve the overall experience working with multiple services and updating the gateway accordingly.
+
+First, we are aiming for a new schema registry package. We plan on using [GraphQL Inspector](http://graphql-inspector.com) to check for breaking changes on individual services and the schema gateway as a whole.
+And thanks to GraphQL Mesh, that process will work for any type of service schema, not just GraphQL!
+
+Second, we are hoping to simplify type merging configuration via a declarative API -- similar to the work with computed fields -- without losing the power you get today with Schema Stitching’s type merging.
+
+Finally, naming - Naming is hard. While Schema Stitching is a great name, the above improvements have been transformative, and it may be time for a new term to describe this powerful and configurable method of creating a gateway schema.
+
+We are thinking about GraphQL Portal or just GraphQL Gateway to describe this new functionality. As always, we are hoping for your feedback and ideas!
