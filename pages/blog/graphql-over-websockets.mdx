@@ -38,11 +38,11 @@ As of today, all major browsers support the WebSocket Protocol - see the [Can I 
 
 ## WebSockets ❤️ GraphQL
 
-Okay, so, how do I use WebSockets to add support for the [GraphQL `subscription` operation](https://spec.graphql.org/June2018/#sec-Subscription)? Doing a basic Google search, you’d be faced with a single solution, namely [`subscriptions-transport-ws`](https://github.com/apollographql/subscriptions-transport-ws). Looking through the repository, checking recent comments, reading through the issues and open PRs - might have you notice the abundance of bugs and their security implications. [A summary can be found here](https://github.com/enisdenjo/graphql-transport-ws/issues/3).
+Okay, so, how do I use WebSockets to add support for the [GraphQL `subscription` operation](https://spec.graphql.org/June2018/#sec-Subscription)? Doing a basic Google search, you’d be faced with a single solution, namely [`subscriptions-transport-ws`](https://github.com/apollographql/subscriptions-transport-ws). Looking through the repository, checking recent comments, reading through the issues and open PRs - might have you notice the abundance of bugs and their security implications. [A summary can be found here](https://github.com/enisdenjo/graphql-ws/issues/3).
 
 The authors have done a brilliant job, but unfortunately other projects and needs have reduced their disposable time for maintaining and nurturing this well accomplished, yet needy, idea. But, it did indeed inspire me to take up their legacy and revitalised it! Having faced various WebSocket challenges with GraphQL myself - I jumped in writing a new library from scratch.
 
-With no further ado - I humbly introduce [`graphql-transport-ws`](https://github.com/enisdenjo/graphql-transport-ws). A coherent, feature-full, zero-dependency, plug-n-play, lazy, simple, server and client implementation of the [new, security first GraphQL over WebSocket Protocol](https://github.com/enisdenjo/graphql-transport-ws/blob/master/PROTOCOL.md) with full support for all 3 GraphQL operations: `Queries`, `Mutations` and `Subscriptions`. The protocol aims to be standardised and become a part of GraphQL with the help of the foundation’s [GraphQL over HTTP work group](https://github.com/graphql/graphql-over-http/pull/140).
+With no further ado - I humbly introduce [`graphql-ws`](https://github.com/enisdenjo/graphql-ws). A coherent, feature-full, zero-dependency, plug-n-play, lazy, simple, server and client implementation of the [new, security first GraphQL over WebSocket Protocol](https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md) with full support for all 3 GraphQL operations: `Queries`, `Mutations` and `Subscriptions`. The protocol aims to be standardised and become a part of GraphQL with the help of the foundation’s [GraphQL over HTTP work group](https://github.com/graphql/graphql-over-http/pull/140).
 
 The library is written in TypeScript and the full implementation totals merely ~1000 lines of well formatted, commented, code. It leverages modern JavaScript primitives and the well established presence of WebSockets.
 
@@ -53,7 +53,7 @@ I am glad you asked! This is how:
 #### Install
 
 ```shell
-$ yarn add graphql-transport-ws
+$ yarn add graphql-ws
 ```
 
 #### Create a GraphQL schema
@@ -91,7 +91,7 @@ const roots = {
 ```ts
 import http from 'http';
 import { execute, subscribe } from 'graphql';
-import { createServer } from 'graphql-transport-ws';
+import { createServer } from 'graphql-ws';
 
 const server = http.createServer(function weServeSocketsOnly(_, res) {
   res.writeHead(404);
@@ -117,7 +117,7 @@ server.listen(443);
 #### Use the client
 
 ```ts
-import { createClient } from 'graphql-transport-ws';
+import { createClient } from 'graphql-ws';
 
 const client = createClient({
   url: 'wss://welcomer.com/graphql',
@@ -167,7 +167,7 @@ const client = createClient({
 
 ## Want to find out more?
 
-Check the repo out to for [Getting Started](https://github.com/enisdenjo/graphql-transport-ws#getting-started) quickly with some [Recepies](https://github.com/enisdenjo/graphql-transport-ws#recipes) for vanilla usage, or with [Relay](https://relay.dev/) and [Apollo Client](https://www.apollographql.com/docs/react/). Opening issues, contributing with code or simply improving the documentation is always welcome!
+Check the repo out to for [Getting Started](https://github.com/enisdenjo/graphql-ws#getting-started) quickly with some [Recepies](https://github.com/enisdenjo/graphql-ws#recipes) for vanilla usage, or with [Relay](https://relay.dev/) and [Apollo Client](https://www.apollographql.com/docs/react/). Opening issues, contributing with code or simply improving the documentation is always welcome!
 
 I am [@enisdenjo](https://github.com/enisdenjo) and you can chat with me about this topic on the [GraphQL Slack workspace](https://graphql.slack.com/) anytime.
 
