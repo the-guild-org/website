@@ -1,19 +1,24 @@
 import withArticle from '../../ui/blog/article';
 
 export const meta = {
-  title: 'Improve your Apollo-Client v3 type-safety with GraphQL Codegen',
+  title: `What's new with Apollo Client v3 and GraphQL Codegen`,
   author: 'dotan',
   tags: ['graphql', 'codegen', 'typescript', 'react', 'angular', 'apollo'],
   date: '2020-10-26',
-  description: 'Get the most out of your type-system using GraphQL Codegen',
+  description:
+    'All the new features GraphQL Codegen adds to your type-system with the new Apollo Client 3',
   image: '/blog-assets/graphql-code-generator/cover.png',
 };
 
 export default withArticle({ ...meta });
 
-We've recently introduced improvements for GraphQL-Codegen that can quickly improve your workflow and type-safety with Apollo-Client v3.
+While migrating many of our clients codebases from Apollo Client 2 to Apollo Client 3, we've made a lot of improvements to GraphQL Codegen (and also fixed a lot of memory leaks in Apollo Client).
 
-I'll try to cover the popular codegen plugins you can use, that already works with Apollo-Client v3.
+We are happy to share all those new features with everyone in the community.
+
+We hope you would use them to quickly improve your workflow, type-safety and make your migrations easier.
+
+And as usual, we would love to hear your feedback and ideas on how we can further improve the experience of using GraphQL and Typescript in general!
 
 # possibleTypes
 
@@ -44,11 +49,13 @@ export default new ApolloClient({
 });
 ```
 
+Without this, you'll have to define and maintain the `possibleTypes` object manually, which might lead to an incorrect or invalid setup that might effect Apollo-Client runtime.
+
 ## Type Policies
 
-If you are an [advanced configuration for your Apollo-Client cache](https://www.apollographql.com/docs/react/caching/cache-configuration/#data-normalization), you can customize the behaviour of your cache.
+If you are using an [advanced configuration for your Apollo-Client cache](https://www.apollographql.com/docs/react/caching/cache-configuration/#data-normalization), you can customize the behaviour of your cache.
 
-The configuration you pass to Apollo depends on your GraphQL types and their fields, and instead of having an arbitrary object, you can have a fully-typed signature generated based on your GraphQL schema.
+The configuration you pass to Apollo depends on your GraphQL types and their fields, and instead of having an arbitrary object, you can have a fully-typed signature generated based on your GraphQL schema. That would make it much easier to customize and you will catch errors in advance! (during build-time, instead during runtime)
 
 You can use `@graphql-codegen/typescript-apollo-client-helpers` plugin to generate that.
 
