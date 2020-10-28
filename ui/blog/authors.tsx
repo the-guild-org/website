@@ -61,4 +61,9 @@ export const authors: Record<string, AuthorDetails> = {
     link: 'https://twitter.com/PhelanEnda',
     github: 'craicoverflow',
   },
+  croutonn: {
+    name: 'Yuta Haga',
+    link: 'https://twitter.com/croutnn',
+    github: 'croutonn',
+  },
 };
