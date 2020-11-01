@@ -1,0 +1,577 @@
+import withArticle from '../../ui/blog/article';
+
+export const meta = {
+  title: 'Subscriptions and Live Queries - Real Time with GraphQL',
+  author: 'laurin',
+  tags: ['graphql', 'subscription', 'real-time'],
+  date: '2020-10-12',
+  description:
+    "GraphQL subscriptions are used by many. Live Query Adoption, however, has not advanced that much. Let's take a look at both methods for achieving real-time with GraphQL.",
+  image: '',
+};
+
+export default withArticle({ ...meta });
+
+Subscriptions are the goto solution for adding real-time capabilities to a GraphQL powered application. At the same time the term GraphQL Live Query floats around and you can often see it being mentioned in the context of subscriptions.
+
+While [GraphQL Subscriptions are part of the GraphQL Specification](https://spec.graphql.org/draft/#sec-Subscription) for some time, GraphQL Live Queries are not part of the specification and further there is no RFC going on.
+
+However, [discussion about GraphQL Live Queries started way back when GraphQL Subscriptions were designed](https://github.com/graphql/graphql-spec/issues/284).
+
+So let's take a recap of GraphQL Subscriptions, take a look at existing Live Query Solutions today and compare the differences between the two solutions for real-time.
+
+# Subscription Recap
+
+The [GraphQL Subscription RFC was merged back in March 2017](https://github.com/graphql/graphql-spec/pull/267).
+The first major and wide-adopted transport implementation was (and probably is) [`subscriptions-transport-ws`](https://www.npmjs.com/package/subscriptions-transport-ws) developed by Apollo, unfortunately they seem to have abandoned it since then. Fortunately, we now have a successor [`graphql-transport-ws`](https://github.com/enisdenjo/graphql-transport-ws).
+
+A subscription operation looks similar to this.
+
+```graphql
+subscription onPostAddedSubscription {
+  onPostAdded {
+    post {
+      id
+      author {
+        id
+        login
+      }
+    }
+  }
+}
+```
+
+In contrast to GraphQL query operation a subscription operation is only allowed to select a single field on the GraphQL Subscription root type.
+
+Furthermore, executing a subscription operation represents a stream of results where executing a query operation only results in a single result.
+
+Let's take a quick look at the `graphql-js` reference implementation!
+
+Since promises can not represent multiple values over time, the `graphql-js` reference implementations uses [`AsyncIterator`](https://tc39.es/ecma262/#sec-asynciterable-interface), which is a native structure similar to Obserables (which you might already know if you have digged a bit deeper into the most-widely adopted GraphQL client frameworks).
+
+Each subscription root field must provide a `subscribe` function that returns an `AsyncIterator` and optionally has `resolve` function for mapping the values published by the `AsyncIterator`. The default resolver will simply forward the payload.
+
+Behind the curtains the most popular implementations then rely on a event emitter (pubsub) that is wrapped to function as a `AsyncIterator`.
+
+When a subscription operation is executed, the `subscribe` function is called and the `AsyncIterator` returned by it will be used as the source for the `AsyncIterator` result stream.
+
+Once the `subscribe` `AsyncIterator` publishes a value (payload/event), the optional `resolve` function on the selected subscription root field, is called with the value. It serves as a mapper and all following resolvers in the resolver/type tree behave like normal query resolvers.
+
+The most basic implementation for a counter would look similar to this:
+
+```ts
+const sleep = (t = 1000) => new Promise(res => setTimeout(res, t));
+
+const resolvers = {
+    Subscription: {
+        countToNumber: {
+            subscribe: async function (_, args) {
+              for (let counter = 1; counter <= args.toNumber; counter++) {
+                yield { countToNumber }
+                await sleep()
+              }
+            }
+        }
+    }
+}
+```
+
+The above subscription will count up to the number provided via the `toNumber` argument (while having a delay of one second between each message) and then complete.
+
+Of course in a real-world application you would want to subscribe to other event sources instead of some static pre-defined events.
+
+Most people therefore rely on a library that maps a event source to as `AsyncIterator`. The most commonly used one is probably [`graphql-subscriptions`](https://github.com/apollographql/graphql-subscriptions) which uses PubSub.
+There are also adapters available for more distributed systems e.g. via Redis PubSub Events.
+
+Let's take a look at a more "real-world" like example:
+
+```ts
+const resolvers = {
+  Subscription: {
+    onPostAdded: {
+      subscribe: async function* () {
+        for await (const { id } of context.pubSub.subscribe('POST_ADDED')) {
+          const post = await context.postStore.load(id, context.viewer);
+          if (post === null) {
+            continue;
+          }
+          yield { onPostAdded: loadedPost };
+        }
+      },
+    },
+  },
+  Mutation: {
+    postAdd: (_, args, context) => {
+      const post = context.postStore.create(args);
+      // wo don't wanna publish the whole object via our event emitter, the id should be sufficient
+      context.pubSub.emit('POST_ADDED', { id: args.id });
+      return post;
+    },
+  },
+};
+```
+
+Until now we only took a look a the resolvers. Let's also quickly check the `subscribe` function exported from `graphql-js`, which can be used for executing subscriptions.
+
+```ts
+import { subscribe } from 'graphql';
+
+const subscribeResult = await subscribe({
+  schema,
+  document,
+});
+
+if (isAsyncIterable(subscribeResult)) {
+  for await (const executionResult of subscribeResult) {
+    sendToClient(executionResult);
+  }
+} else {
+  sendToClient(subscribeResult);
+}
+```
+
+The `subscribe` function returns either a `AsyncIterable` that publishes `ExecutionResult`s or a single `ExecutionResult`.
+The single `ExecutionResult` is only returned in case something fails while setting up the subscription.
+
+The interesting thing is that you can use any transport you want for delivering the results to client. The most popular implementation (as mentioned before) is `subscriptions-transport-ws`, but you are not forces to use WebSockets at all.
+HTTP Long-Polling (e.g. via SSE) is also a valid transport.
+
+It is actually a shame that the default `express-graphql` reference HTTP transport implementation does not come with a subscription solution.
+
+However, [there is now a reference implementation for GraphQL over WebSockets](https://github.com/enisdenjo/graphql-ws) backed by the GraphQL foundation being developed. I would recommend using that over the `subscription-transport-ws` package.
+
+Fortunately, solutions like [graphql-helix](https://github.com/danielrearden/graphql-helix) have emerged, which in my humble opinion, shouldreplace the reference HTTP implementation, as it is not tied to a http library (express) and also does have a solution for Subscriptions (over SSE).
+
+I also built [my own transport over Socket.io](https://github.com/n1ru4l/graphql-live-queries/tree/main/packages/socket-io-graphql-server), which uses WebSockets by default and HTTP polling as a fallback.
+
+As you can see you are free to choose what kind of transport you want to use depending on your needs!
+
+---
+
+Now that we took a look on how GraphQL Subscription resolvers are implemented server-side, lets also check out how we can consume and use the data client-side!
+
+First of all we need to have the network interface which acts as the glue between the transport layer and the client library.
+
+All major GraphQL client-libraries decided to use Observables for consuming subscriptions, which in contrast to AsyncIterators are not part of the ECMA Spec (as of October 2020).
+
+Like AsyncIterators a Observable can represent multiple values. As each client library and transport has a slightly different interface I will use `graphql-ws` with `relay-runtime` as an example.
+
+The example is taken from the `graphql-ws` section.
+
+```ts
+import {
+  Network,
+  Observable,
+  RequestParameters,
+  Variables,
+} from 'relay-runtime';
+import { createClient } from 'graphql-ws';
+
+const subscriptionsClient = createClient({
+  url: 'wss://i.love/graphql',
+  connectionParams: () => {
+    const session = getSession();
+    if (!session) {
+      return {};
+    }
+    return {
+      Authorization: `Bearer ${session.token}`,
+    };
+  },
+});
+
+// yes, both fetch AND subscribe handled in one implementation
+function fetchOrSubscribe(operation: RequestParameters, variables: Variables) {
+  return Observable.create((sink) => {
+    if (!operation.text) {
+      return sink.error(new Error('Operation text cannot be empty'));
+    }
+    return subscriptionsClient.subscribe(
+      {
+        operationName: operation.name,
+        query: operation.text,
+        variables,
+      },
+      {
+        ...sink,
+        error: (err) => {
+          if (err instanceof Error) {
+            sink.error(err);
+          } else if (err instanceof CloseEvent) {
+            sink.error(
+              new Error(
+                `Socket closed with event ${err.code}` + err.reason
+                  ? `: ${err.reason}` // reason will be available on clean closes
+                  : ''
+              )
+            );
+          } else {
+            // GraphQLError[]
+            sink.error(new Error(err.map(({ message }) => message).join(', ')));
+          }
+        },
+      }
+    );
+  });
+}
+
+const network = Network.create(fetchOrSubscribe, fetchOrSubscribe);
+const store = new Store(new RecordSource());
+export const environment = new Environment({ network, store });
+```
+
+With this configuration relay can now execute subscription operations.
+
+Lets start with a basic subscriptions that should update the amount of likes a post has.
+
+```ts
+const PostQuery = graphql`
+  query PostQuery($postId: ID!) {
+    post(id: $postId) {
+      id
+      title
+      content {
+        text
+      }
+      likes {
+        totalCount
+      }
+    }
+  }
+`;
+
+const PostRenderer = ({ postId }: { postId: string }) => {
+  const { props } = useQuery(PostQuery, /* variables */ { postId });
+
+  return <Post {...props} />;
+};
+```
+
+Now we want to design a subscription that should update the totalCount of the post. We could choose different ways of implementing such a subscription.
+
+1. General Subscription for changed post
+
+```graphql
+subscription PostChanged($postId: ID!) {
+  onPostChanged(postId: $postId) {
+    post {
+      id
+      likes {
+        totalCount
+      }
+    }
+  }
+}
+```
+
+2. Specific Subscription
+
+```graphql
+subscription PostLikeCountChanged($postId: ID!) {
+  onPostLikeCountChanged(postId: $postId) {
+    totalCount
+  }
+}
+```
+
+Both solutions have different implications.
+
+1. General Subscription for changed post
+
+It is not limited to only a change in the `totalCount` but could also be used in case the title of the post changes.
+Also it will automatically update the post record already in the cache as the relay store can identify the post object via id field.
+The drawback is that you could potentially send too much data over the wire. E.g. if we also wanted to subscribe to title changes all additional selected fields are sent to the client each time the underlying event is emitted.
+
+```tsx
+const PostChangedSubscription = graphql`
+  subscription PostChanged($postId: ID!) {
+    onPostChanged(postId: $postId) {
+      post {
+        id
+        likes {
+          totalCount
+        }
+      }
+    }
+  }
+`;
+
+const PostRenderer = ({ postId }: { postId: string }) => {
+  const { props } = useQuery(PostQuery, /* variables */ { postId });
+  // thats all we gotta do
+  useSubscription(PostChangedSubscription, /* variables */ { postId });
+
+  return <Post {...props} />;
+};
+```
+
+2. Specific Subscription
+
+This subscription is specifically designed for only a update of the `totalCount`. However, the subscription result does not subscribe the affected resource (post via id).
+That means we have to additionally define a handler for updating the post in the cache.
+
+```tsx
+const PostLikeCountChangedSubscription = graphql`
+  subscription PostLikeCountChanged($postId: ID!) {
+    onPostLikeCountChanged(postId: $postId) {
+      totalCount
+    }
+  }
+`;
+
+const PostRenderer = ({ postId }: { postId: string }) => {
+  const { props } = useQuery(PostQuery, /* variables */ { postId });
+  useSubscription(
+    PostLikeCountChangedSubscription,
+    /* variables */ { postId },
+    {
+      // we need to manually update the cache :(
+      updater: (payload, cache) => {
+        const record = cache.read(PostQuery, { postId });
+        record.likes.totalCount = payload.onPostLikeCountChanged.totalCount;
+      },
+    }
+  );
+
+  return <Post {...props} />;
+};
+```
+
+Obviously, for this example no sane person would actually want to choose the second solution over the first one.
+
+But as your business requirements might get more complex you will have eventually do manual cache updates.
+
+A very good example for this is lists. The easy solution would be to just refetch a complete list every time a item is added/removed/changed.
+But if the list could contain a lot of items only sending the changed item to the client might be the smarter solution...
+
+```tsx
+const UserListQuery = graphql`
+  query UserListQuery {
+    users {
+      id
+      name
+    }
+  }
+`
+
+const UserListChangeSubscription = graphql`
+  subscription UserListChangeSubscription {
+    onUserListChange {
+      __typename
+      ... on OnUserAdded {
+        user {
+          id
+          name
+        }
+      }
+      ... on OnUserRemoved {
+        userId
+      }
+    }
+  }
+`
+
+const UserListRenderer = ({ postId }: { postId: string}) => {
+  const {props} = useQuery(UserListQuery)
+  useSubscription(UserListChangeSubscription,  /* variables */ { postId }, {
+    // we need to manually update the cache :(
+    updater: (payload, cache) => {
+      const record = cache.readQuery(UserListQuery)
+      switch (payload.onUserListChange.__typename) {
+        case "OnUserAdded": {
+          record.users.push(payload.onUserListChange.user)
+          break;
+        }
+        case "onUserRemoved": {
+          record.users = record.users.filter(user => user.id !=== payload.onUserListChange.userId)
+          break;
+        }
+      }
+    }
+  })
+
+  return <UserList {...props} />
+}
+```
+
+As your application grows the manual cache update code can become so complex and confusing that some might consider opt-in into just refetching the queries again.
+
+In all of the above examples we responded (more or less implicit) to events and thats exactly what Subscriptions are meant for. **Responding to events.**
+
+Subscriptions can be used to apply data changes on the client. But they are probably not the best tool for that.
+
+Before taking a look of what could be a better tool, let's look at a usage example for subscriptions.
+
+```tsx
+const OnPlaySound = graphql`
+  subscription OnPlayChatSound {
+    onPlayChatSound {
+      soundUrl
+    }
+  }
+`;
+
+const ChatRenderer = () => {
+  const chat = useQuery(ChatQuery);
+  useSubscription(OnPlaySound, {
+    onNext: (payload) => {
+      playSound(payload.onPlayChatSound.soundUrl);
+    },
+  });
+
+  return <Chat chat={chat} />;
+};
+```
+
+The difference here is that we are not manipulating our existing data but rather execute a side effect.
+
+In my opinion that is exactly what subscriptions are meant for. Reacting to side-effects that are not tied to (cache-)data.
+
+# Live Queries
+
+What is a live query? Well... There is no specification for that so the term is ambigous. Today, there are several solutions used one could describe as live-queries.
+
+All those solutions have one thing in common: **Trying to keep the Client State in Sync with the Server**.
+
+Which can be paraphrased as **observing data**.
+
+## Polling a Query
+
+The most easily solution for implementing live queries would be to poll a query in intervalls. Most GraphQL clients have such a feature already implemented.
+
+```ts
+const PostQuery = graphql`
+  query PostQuery($postId: ID!) {
+    post(id: $postId) {
+      id
+      title
+      content {
+        text
+      }
+      likes {
+        totalCount
+      }
+    }
+  }
+`;
+
+const PostRenderer = ({ postId }: { postId: string }) => {
+  const { props } = useQuery(
+    PostQuery,
+    /* variables */ { postId },
+    {
+      pollIntervall: 5000,
+    }
+  );
+
+  return <Post {...props} />;
+};
+```
+
+Depending upon the use-case that could be a valid solution.
+
+However, for real-time applications that require instant feedback a delay of the poll intervall could not be precise enough.
+
+Another drawback would be that a lot more data than necessary could be transported over the wire to the client. Even if nothing has changed from the last poll intervall.
+
+## Live Queries over Subscriptions
+
+We already had a "live query over subscription"-like example above.
+
+```tsx
+const PostChangedSubscription = graphql`
+  subscription PostChanged($postId: ID!) {
+    onPostChanged(postId: $postId) {
+      post {
+        id
+        title
+        likes {
+          totalCount
+        }
+      }
+    }
+  }
+`;
+
+const PostRenderer = ({ postId }: { postId: string }) => {
+  const { props } = useQuery(PostQuery, /* variables */ { postId });
+  // thats all we gotta do
+  useSubscription(PostChangedSubscription, /* variables */ { postId });
+
+  return <Post {...props} />;
+};
+```
+
+We could ditch the `PostQuery` completely and instead use a `PostSubscription` that always emits an initial event.
+
+```tsx
+const PostSubscription = graphql`
+  subscription PostSubscription($postId: ID!) {
+    post(id: $postId) {
+      id
+      title
+      likes {
+        totalCount
+      }
+    }
+  }
+`;
+
+const PostRenderer = ({ postId }: { postId: string }) => {
+  const { props } = useSubscription(
+    PostChangedSubscription,
+    /* variables */ { postId }
+  );
+
+  return <Post {...props} />;
+};
+```
+
+A server resolve implementatin could look similar to this:
+
+```tsx
+const resolvers = {
+  Subscription: {
+    post: async function* (_, { id }, context) {
+      let loadPost = () => context.postStore.load(id, context.viewer);
+      yield { post: await loadPost() };
+      for await (const _ of context.pubSub.subscribe(`Post:${id}`)) {
+        yield { post: await loadPost() };
+      }
+    },
+  },
+};
+```
+
+We replace two operations with a single one!
+This approach is used by [Hasure](https://github.com/hasura/graphql-engine/blob/master/architecture/live-queries.md) and also [PostGraphile](https://www.graphile.org/postgraphile/live-queries/).
+
+Those implementations subscribe to all the resources in the execution result and re-execute the subscription operation once any of those resources changes.
+
+This is a neat solution but the main drawback of both platforms is the tie or vendor-lock into using a specific database. Of course that might not be a problem for many people, but having a general solution that works for more use-cases would be nice.
+
+The drawback of subscriptions for live queries is the limitation of only selecting on root subscription field. Subscription operations have that limitation per specification.
+
+Another indicator for subscriptions being designed for observing events first.
+
+Of course there are certain less elegant workarounds possible such as exposing your query object type via a subscription field:
+
+```ts
+const PostSubscription = graphql`
+  subscription PostSubscription($postId: ID!, $userId: ID!) {
+    live {
+      post(id: $postId) {
+        id
+        title
+        likes {
+          totalCount
+        }
+      }
+      user(id: $userId) {
+        id
+        name
+      }
+    }
+  }
+`;
+```
