@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Container } from '../shared/Layout';
-import { MetaWithLink } from '../../lib/types';
+import { MetaWithLink, pickAuthor } from '../../lib/meta';
 import { ArticleCard } from './article-card';
 import { authors } from './authors';
 
@@ -22,7 +22,7 @@ export const LastArticles: React.FC<{
       {articles.map((article) => {
         return (
           <ArticleCard
-            author={authors[article.author]}
+            author={authors[pickAuthor(article)]}
             key={article.link}
             title={article.title}
             description={article.description}

@@ -5,7 +5,7 @@ import { GetStaticProps } from 'next/types';
 import { Section, Hero, Container, Button } from '../ui/shared/Layout';
 import { Page } from '../ui/shared/Page';
 import { Project, ProjectSeparator } from '../ui/shared/Projects';
-import { MetaWithLink } from '../lib/types';
+import { MetaWithLink } from '../lib/meta';
 import { getAllArticles } from '../lib/get-all-articles';
 import { LastArticles } from '../ui/blog/last-articles';
 import { Newsletter } from '../ui/blog/newsletter';
