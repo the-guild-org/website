@@ -147,15 +147,15 @@ As you can see you are free to choose what kind of transport you want to use dep
 
 ---
 
-Now that we took a look on how GraphQL Subscription resolvers are implemented server-side, lets also check out how we can consume and use the data client-side!
+Now that we took a look on how GraphQL Subscription resolvers are implemented on the server-side, lets also check out how we can consume the GraphQL API on the client-side!
 
-First of all we need to have the network interface which acts as the glue between the transport layer and the client library.
+Usually you will have a network interface that is called by you favorite GraphQL client. Every single one has a different naming and approach of how they work. Apollo calls them links, relay calls the fetcher functions, and urql calls them exchanges.
 
-All major GraphQL client-libraries decided to use Observables for consuming subscriptions, which in contrast to AsyncIterators are not part of the ECMA Spec (as of October 2020).
+All of them have one thing in common. They are working with observable like data structures, which basically means all major GraphQL client-libraries decided to use Observables for consuming subscriptions, those in contrast to AsyncIterators are not part of the ECMA Spec (as of October 2020).
 
-Like AsyncIterators a Observable can represent multiple values. As each client library and transport has a slightly different interface I will use `graphql-ws` with `relay-runtime` as an example.
+Like AsyncIterators a Observable can represent multiple values. As already mentioned client library network interface and transport has a slightly different interface I will use `graphql-ws` with `relay-runtime` as an example.
 
-The example is taken from the `graphql-ws` section.
+The example is taken straight from the `graphql-ws` section.
 
 ```ts
 import {
@@ -219,9 +219,11 @@ const store = new Store(new RecordSource());
 export const environment = new Environment({ network, store });
 ```
 
-With this configuration relay can now execute subscription operations.
+With this configuration relay can now execute subscription operations. Because the graphql-ws protocol is way more complex than the GraphQL over HTTP protocol, we use the client exported from teh graphql-ws package instead. Some additional bundle-size we got there. As mentioned before SSE might be a better leight-weight alternative.
 
-Lets start with a basic subscriptions that should update the amount of likes a post has.
+That aside, lets start with a basic subscriptions that should update one of our components.
+
+Our `PostRender` already shows some content.
 
 ```ts
 const PostQuery = graphql`
@@ -232,9 +234,7 @@ const PostQuery = graphql`
       content {
         text
       }
-      likes {
-        totalCount
-      }
+      totalLikeCount
     }
   }
 `;
@@ -246,7 +246,9 @@ const PostRenderer = ({ postId }: { postId: string }) => {
 };
 ```
 
-Now we want to design a subscription that should update the totalCount of the post. We could choose different ways of implementing such a subscription.
+As a new feature requirement the like count of the post should get updated once someone hits the like button.
+
+We could choose different ways of implementing such a subscription.
 
 1. General Subscription for changed post
 
@@ -255,9 +257,7 @@ subscription PostChanged($postId: ID!) {
   onPostChanged(postId: $postId) {
     post {
       id
-      likes {
-        totalCount
-      }
+      totalLikeCount
     }
   }
 }
@@ -268,7 +268,7 @@ subscription PostChanged($postId: ID!) {
 ```graphql
 subscription PostLikeCountChanged($postId: ID!) {
   onPostLikeCountChanged(postId: $postId) {
-    totalCount
+    totalLikeCount
   }
 }
 ```
@@ -277,9 +277,9 @@ Both solutions have different implications.
 
 1. General Subscription for changed post
 
-It is not limited to only a change in the `totalCount` but could also be used in case the title of the post changes.
-Also it will automatically update the post record already in the cache as the relay store can identify the post object via id field.
-The drawback is that you could potentially send too much data over the wire. E.g. if we also wanted to subscribe to title changes all additional selected fields are sent to the client each time the underlying event is emitted.
+It is not limited on notifying whether the `totalLikeCount` of the post likes have changed, in the future we could adjust the selection set on the post field as it also returns a `Post` type similar to our already existing `Query.post` field.
+It will automatically update the post record already in the cache as the relay store (or apollo-store) can identify the post object via the id field.
+The drawback is that you could potentially send too much data over the wire. E.g. if we also wanted to subscribe to title changes all additional selected fields are sent to the client each time the underlying event is emitted, even if only the `totalLikeCount` value has changed.
 
 ```tsx
 const PostChangedSubscription = graphql`
@@ -287,9 +287,7 @@ const PostChangedSubscription = graphql`
     onPostChanged(postId: $postId) {
       post {
         id
-        likes {
-          totalCount
-        }
+        totalLikeCount
       }
     }
   }
@@ -306,8 +304,8 @@ const PostRenderer = ({ postId }: { postId: string }) => {
 
 2. Specific Subscription
 
-This subscription is specifically designed for only a update of the `totalCount`. However, the subscription result does not subscribe the affected resource (post via id).
-That means we have to additionally define a handler for updating the post in the cache.
+This subscription is specifically designed for only a update of the `totalCount`. However, the subscription result returns no `Post` type. Therefore we cannot make use of the automatic cache updates via the `id`.
+We have to additionally define a handler for updating the post in the cache.
 
 ```tsx
 const PostLikeCountChangedSubscription = graphql`
@@ -327,7 +325,9 @@ const PostRenderer = ({ postId }: { postId: string }) => {
       // we need to manually update the cache :(
       updater: (payload, cache) => {
         const record = cache.read(PostQuery, { postId });
-        record.likes.totalCount = payload.onPostLikeCountChanged.totalCount;
+        if (record) {
+          record.likes.totalCount = payload.onPostLikeCountChanged.totalCount;
+        }
       },
     }
   );
@@ -340,8 +340,9 @@ Obviously, for this example no sane person would actually want to choose the sec
 
 But as your business requirements might get more complex you will have eventually do manual cache updates.
 
-A very good example for this is lists. The easy solution would be to just refetch a complete list every time a item is added/removed/changed.
-But if the list could contain a lot of items only sending the changed item to the client might be the smarter solution...
+A very good example for this is lists. Imagine you have a table of data and one item changes.
+The easy solution is to just refetch a complete list every time a single item is added/removed/changed.
+For a list containing hundreds of items only sending the changed item to the client might be the smarter solution...
 
 ```tsx
 const UserListQuery = graphql`
@@ -395,7 +396,9 @@ const UserListRenderer = ({ postId }: { postId: string}) => {
 
 As your application grows the manual cache update code can become so complex and confusing that some might consider opt-in into just refetching the queries again.
 
-In all of the above examples we responded (more or less implicit) to events and thats exactly what Subscriptions are meant for. **Responding to events.**
+Relay contributers have [worked on some nice query directives](https://github.com/facebook/relay/issues/3123) that allow reducing such cache update code. However, for a complex app you will eventually not be able to completly avoid it.
+
+In all of the above examples we responded (more or less implicit) to data change events. **Responding to events.**
 
 Subscriptions can be used to apply data changes on the client. But they are probably not the best tool for that.
 
@@ -424,15 +427,17 @@ const ChatRenderer = () => {
 
 The difference here is that we are not manipulating our existing data but rather execute a side effect.
 
-In my opinion that is exactly what subscriptions are meant for. Reacting to side-effects that are not tied to (cache-)data.
+In my opinion that is exactly what subscriptions are meant for. Subscriptions are best suited for reacting to side-effects that don't affect the data in the cache.
 
 # Live Queries
 
-What is a live query? Well... There is no specification for that so the term is ambigous. Today, there are several solutions used one could describe as live-queries.
+What is a live query? Well... there is no specification for that so the term is ambigous. Today, there are several solutions used one could describe as live-queries.
 
 All those solutions have one thing in common: **Trying to keep the Client State in Sync with the Server**.
 
 Which can be paraphrased as **observing data**.
+
+Lets take a look at all those options!
 
 ## Polling a Query
 
