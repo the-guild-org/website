@@ -49,13 +49,11 @@ Let's take a quick look at the `graphql-js` reference implementation!
 
 Since promises can not represent multiple values over time, the `graphql-js` reference implementations uses [`AsyncIterator`](https://tc39.es/ecma262/#sec-asynciterable-interface), which is a native structure similar to Obserables (which you might already know if you have digged a bit deeper into the most-widely adopted GraphQL client frameworks).
 
-Each subscription root field must provide a `subscribe` function that returns an `AsyncIterator` and optionally has `resolve` function for mapping the values published by the `AsyncIterator`. The default resolver will simply forward the payload.
+Each subscription root field must provide a `subscribe` function that returns an `AsyncIterator` and optionally has `resolve` function for mapping the published events.
 
-Behind the curtains the most popular implementations then rely on a event emitter (pubsub) that is wrapped to function as a `AsyncIterator`.
+When a subscription operation is executed, the `subscribe` function of that field resolver is called and the `AsyncIterator` returned by it will be used as the source for the source of events.
 
-When a subscription operation is executed, the `subscribe` function is called and the `AsyncIterator` returned by it will be used as the source for the `AsyncIterator` result stream.
-
-Once the `subscribe` `AsyncIterator` publishes a value (payload/event), the optional `resolve` function on the selected subscription root field, is called with the value. It serves as a mapper and all following resolvers in the resolver/type tree behave like normal query resolvers.
+Once the `AsyncIterator` publishes a value (payload/event), the optional `resolve` function on the selected subscription root field, is called with the value. All following resolvers in the resolver/type tree behave like normal query resolvers.
 
 The most basic implementation for a counter would look similar to this:
 
@@ -80,8 +78,8 @@ The above subscription will count up to the number provided via the `toNumber` a
 
 Of course in a real-world application you would want to subscribe to other event sources instead of some static pre-defined events.
 
-Most people therefore rely on a library that maps a event source to as `AsyncIterator`. The most commonly used one is probably [`graphql-subscriptions`](https://github.com/apollographql/graphql-subscriptions) which uses PubSub.
-There are also adapters available for more distributed systems e.g. via Redis PubSub Events.
+The most common used library for such a PubSub engine is [`graphql-subscriptions`](https://github.com/apollographql/graphql-subscriptions).
+There are also adapters available for more distributed systems (where all GraphQL API replicas must be notified about the event) e.g. over Redis.
 
 Let's take a look at a more "real-world" like example:
 
@@ -130,17 +128,18 @@ if (isAsyncIterable(subscribeResult)) {
 }
 ```
 
-The `subscribe` function returns either a `AsyncIterable` that publishes `ExecutionResult`s or a single `ExecutionResult`.
-The single `ExecutionResult` is only returned in case something fails while setting up the subscription.
+The `subscribe` function returns either a `AsyncIterable` that publishes multiple `ExecutionResult`s or a single `ExecutionResult` in case the setup of the subscription somehow fails.
 
-The interesting thing is that you can use any transport you want for delivering the results to client. The most popular implementation (as mentioned before) is `subscriptions-transport-ws`, but you are not forces to use WebSockets at all.
-HTTP Long-Polling (e.g. via SSE) is also a valid transport.
+The interesting thing is that you can use any transport you want for delivering the results to client. The most popular implementation (as mentioned before) is `subscriptions-transport-ws`.
+Unfortunately, it is poorly mainted therefore the GraphQL Working Group came up with a new implementation over Websockets, [`graphql-ws`](https://github.com/enisdenjo/graphql-ws)
 
-It is actually a shame that the default `express-graphql` reference HTTP transport implementation does not come with a subscription solution.
+But you are not forced to use WebSockets at all. HTTP Long-Polling (e.g. via [Server Side Events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events)) might be a more lightweigt solution. For both your server and your client.
 
-However, [there is now a reference implementation for GraphQL over WebSockets](https://github.com/enisdenjo/graphql-ws) backed by the GraphQL foundation being developed. I would recommend using that over the `subscription-transport-ws` package.
+It is actually a shame that the default `express-graphql` reference HTTP transport implementation does not come with a built-in subscription solution.
 
-Fortunately, solutions like [graphql-helix](https://github.com/danielrearden/graphql-helix) have emerged, which in my humble opinion, shouldreplace the reference HTTP implementation, as it is not tied to a http library (express) and also does have a solution for Subscriptions (over SSE).
+Fortunately, libraries like [graphql-helix](https://github.com/danielrearden/graphql-helix) have emerged, which in my humble opinion, should replace the reference HTTP implementation, as it is furthermore not tied to any web server framework.
+
+Convince yourself by comparing the client code of [`graphql-ws`](https://github.com/enisdenjo/graphql-ws/blob/master/src/client.ts) to TODO INSERT GRAPHQL HELIX TRANSPORT CODE.
 
 I also built [my own transport over Socket.io](https://github.com/n1ru4l/graphql-live-queries/tree/main/packages/socket-io-graphql-server), which uses WebSockets by default and HTTP polling as a fallback.
 
