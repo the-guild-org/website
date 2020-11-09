@@ -338,11 +338,30 @@ const PostRenderer = ({ postId }: { postId: string }) => {
 
 Obviously, for this example no sane person would actually want to choose the second solution over the first one.
 
-But as your business requirements might get more complex you will have eventually do manual cache updates.
+But as your business requirements might get more complex you might need to do manual cache updates.
 
 A very good example for this is lists. Imagine you have a table of data and one item changes.
 The easy solution is to just refetch a complete list every time a single item is added/removed/changed.
-For a list containing hundreds of items only sending the changed item to the client might be the smarter solution...
+However, For a list containing hundreds of items only sending the changed item to the client might be the smarter solution...
+
+This can be implemented via a union type.
+
+```graphql
+type OnUserAdded {
+  user: User!
+}
+type OnUserRemoved {
+  removedUserId: ID!
+}
+
+union OnUserListChange = OnUserAdded | OnUserRemoved
+
+type Subscription {
+  onUserListChange: OnUserListChange!
+}
+```
+
+The corresponding code, including handling the cache updates:
 
 ```tsx
 const UserListQuery = graphql`
@@ -365,7 +384,7 @@ const UserListChangeSubscription = graphql`
         }
       }
       ... on OnUserRemoved {
-        userId
+        removedUserId
       }
     }
   }
@@ -383,7 +402,7 @@ const UserListRenderer = ({ postId }: { postId: string}) => {
           break;
         }
         case "onUserRemoved": {
-          record.users = record.users.filter(user => user.id !=== payload.onUserListChange.userId)
+          record.users = record.users.filter(user => user.id !=== payload.onUserListChange.removedUserId)
           break;
         }
       }
@@ -394,15 +413,15 @@ const UserListRenderer = ({ postId }: { postId: string}) => {
 }
 ```
 
-As your application grows the manual cache update code can become so complex and confusing that some might consider opt-in into just refetching the queries again.
+As your application grows the manual cache update code can become so complex and confusing that I have considered switching back into simply refetching the queries in some application.
 
-Relay contributers have [worked on some nice query directives](https://github.com/facebook/relay/issues/3123) that allow reducing such cache update code. However, for a complex app you will eventually not be able to completly avoid it.
+Fortunately, Relay contributers have [worked on some nice query directives](https://github.com/facebook/relay/issues/3123) that allow reducing such cache update code. It won't cover all cases though.
 
-In all of the above examples we responded (more or less implicit) to data change events. **Responding to events.**
+In all of the above examples we responded (more or less implicit) to data change events.
 
 Subscriptions can be used to apply data changes on the client. But they are probably not the best tool for that.
 
-Before taking a look of what could be a better tool, let's look at a usage example for subscriptions.
+Before taking a look of what could be a better tool, let's look at another usage example for subscriptions.
 
 ```tsx
 const OnPlaySound = graphql`
@@ -425,9 +444,9 @@ const ChatRenderer = () => {
 };
 ```
 
-The difference here is that we are not manipulating our existing data but rather execute a side effect.
+The difference here is that we are not manipulating our existing data but rather executing a side effect.
 
-In my opinion that is exactly what subscriptions are meant for. Subscriptions are best suited for reacting to side-effects that don't affect the data in the cache.
+Subscriptions can also be used for side-effects that should not alter or touch any data in the cache.
 
 # Live Queries
 
@@ -437,7 +456,15 @@ All those solutions have one thing in common: **Trying to keep the Client State 
 
 Which can be paraphrased as **observing data**.
 
-Lets take a look at all those options!
+Before we take a look at how all of those implementations, let's break down what I would expect from a live query implementation.
+
+1. Automatically update the execution result once the underlying data selected by the operation changes
+
+2. Efficiently send the updates to the client
+
+3. Don't rely on any specific database/vendor lock-in
+
+4. Easy to adopt with existing GraphQL schema
 
 ## Polling a Query
 
@@ -472,11 +499,23 @@ const PostRenderer = ({ postId }: { postId: string }) => {
 };
 ```
 
-Depending upon the use-case that could be a valid solution.
-
-However, for real-time applications that require instant feedback a delay of the poll intervall could not be precise enough.
-
 Another drawback would be that a lot more data than necessary could be transported over the wire to the client. Even if nothing has changed from the last poll intervall.
+
+1. Automatically updates execution result. **No.** ❌
+
+Depending upon the use-case that could be a valid solution, but for true real-time applications that require instant feedback a delay of the poll intervall could not be precise enough.
+
+2. Efficiently send updates to client. **No.** ❌
+
+The whole execution result is sent over to the client for every single time the operation is re-executed.
+
+3. Don't rely on any specific database/vendor lock-in. **Yes.** ✅
+
+Straight forward, as this does not rely needs any changes on the backend.
+
+4. Easy to adopt with existing GraphQL schema. **Yes.** ✅
+
+See above 😊
 
 ## Live Queries over Subscriptions
 
@@ -506,7 +545,7 @@ const PostRenderer = ({ postId }: { postId: string }) => {
 };
 ```
 
-We could ditch the `PostQuery` completely and instead use a `PostSubscription` that always emits an initial event.
+Let's ditch the `PostQuery` completely and instead use a `PostSubscription` that always emits an initial event.
 
 ```tsx
 const PostSubscription = graphql`
@@ -550,11 +589,14 @@ const resolvers = {
 ```
 
 We replace two operations with a single one!
+
 A similar approach is used by [Hasura](https://github.com/hasura/graphql-engine/blob/master/architecture/live-queries.md) and also [PostGraphile](https://www.graphile.org/postgraphile/live-queries/).
+
 The obvious drawback of both platforms is the lock-in into using a specific database. Of course that might not be a problem for most people, but having a general solution that works with any data source would be nice as more complex schema could fetch from different database types or other third party APIs.
+
 Those implementations keep track of all the resources in the execution result and re-execute the subscription operation once any of those resources changes.
 
-The resolver implementation above only responds to emitted post changes. In order keep track of all the resources defined in a operation documents selection set, we will have to come up with a smart abstraction. We will take a look at such a abstraction later!
+The resolver implementation above only responds to emitted post changes. In order keep track of all the resources defined in a operation documents selection set, we will have to come up with a smart abstraction.
 
 Another drawback of subscriptions for live queries is the limitation of only selecting one root subscription field, which is defined by the GraphQL subscription specification. Furthermore, we must also redeclare our query type fields to the subscription type.
 
@@ -591,15 +633,29 @@ const PostSubscription = graphql`
 `;
 ```
 
-Okay, now we can select everything we could have selected with our query operation! Let's further delay the implementation part for one small topic we scratched before.
+Okay, now we can select everything we could have selected with our query operation!
 
-Imagine we already implemented the smart invalidation in the `subscribe` function of our `live` resolver. A resource got invalidated and the new result is derived from calling all those resolvers. We have a potentially huge payload and we send all of that back to the client...
+1. Automatically updates execution result. **Yes.** ✅
 
-Another, flaw existing with the implementations of Hasure and Postgraphile.
+When using services as Postgraphile and Hasura that is the case. However, if you have any additional resolvers that are added on top of the service schema you cannot implement invalidation for those. In user-land you will have to come up with your implementation of resource tracking by yourself. But don't be scared, continue reading, we will explore possible options later!
 
-Ideally, we only wanna send a patch to the client that gives instructions how to get from the previous execution result to the next.
+2. Efficiently send updates to client. **No.** ❌
 
-The RFCs and implementations for the `@defer` and `@stream` introduced ways of sending (delayed) partial results to clients. However, those "patch" operations are currently highly limited to a replace object and append to list operation.
+The whole execution result is sent over to the client for every single time a live query got invalidated.
+
+3. Don't rely on any specific database/vendor lock-in. **Kind of.** ✳️
+
+For Hasure and Postgraphile? Yes. For your own solution? No!
+
+4. Easy to adopt with existing GraphQL schema. **No.** ❌
+
+Switching to a framework like Postgraphile or Hasura is no easy task with an existing schema.
+
+## GraphQL Live Queries over Subscriptions with JSON patch
+
+Ideally, we only wanna send a patch to the client that gives instructions how to get from the previous execution result to the next. That has been a big flaw in the previous two implementations.
+
+The RFCs and implementations for the `@defer` and `@stream` introduced ways of sending (delayed) partial results to clients. However, those "patch" operations are currently highly limited to a "replace at path" and "append to list" operation.
 
 A format such as [JSON Patch](https://tools.ietf.org/html/rfc6902) might be a better alternative for live queries.
 
@@ -633,22 +689,179 @@ const PostSubscription = graphql`
 `;
 ```
 
-The difference is that the type returned by the `live` field has now two field instead of a single one that represents the `Query` object type. A `query` field, which selects the selection set from above and a `patch` field which is a JSON Patch operation. When executing the given operation against the server the first resul will have the data selected by the `query` field selection set included. All following values, will have no `query` value (`null`) but instead a array of patch operations that describe the changes for updating the last result to the next result.
+The difference is that the type returned by the `live` field has now two fields instead of a single one that represents the `Query` object type. A `query` field, which selects the selection set from above and a `patch` field which is a JSON Patch operation. When executing the given operation against the server the first resul will have the data selected by the `query` field selection set included. All following values, will have no `query` value (`null`) but instead a array of patch operations that describe the changes for updating the last result to the next result.
 
 The clients must then implement the logic for [applying the patch operation to their client cache](https://github.com/n1ru4l/graphql-live-chat/blob/master/packages/frontend/src/jsonpatch.ts). [You can find a example app with both backend and frontend over here](https://github.com/n1ru4l/graphql-live-chat).
 
-The server implementation uses a event emitter and a immutable state tree for detecting changes that must be sent to clients. The patch is automatically generated from the next state emitted via the event emitter.
+The server implementation uses a event emitter and a immutable state tree for detecting changes that must be sent to clients. The patch is automatically generated from the next immutable state that is compared against the last which got emitted via an `EventEmitter`.
 
-While the idea is quite nice the implementation is obviously meant for immutable data structures. Having to rewrite our existing GraphQL layer for supporting live queries is a big trade-off. Furthermore, the library is not maintained that well. My PRs for making the library compatible with recent GraphQL versions were not merged. Using unions and interfaces was impossible. Having to patch a library with patchc-package before even being usable is generally a bad sign.
+While the idea is quite nice the implementation is obviously meant for backends that already use reactive or immutable data structures. Having to rewrite our existing GraphQL layer for supporting live queries is a big trade-off.
+Furthermore, the library is not maintained that well. My PRs for making the library compatible with recent GraphQL versions were not merged. Using unions and interfaces was impossible
+Having to patch a library with `patch-package` before even being usable is generally a bad sign.
 
-So after having built an example app with `graphql-live-subscriptsions` from scratch, studing the flaws of that library and being uncomfortable with the vendor lock-in of services such as Postgraphile and Hasura, I decided to approach the problem of live queries in a more pluggable way.
+1. Automatically updates execution result. **Yes.** ✅
 
----
+If you implement your schema conform, this library delivers precise results once the immutable state has changed.
 
-Where full blown solutions give you a full solution that is less flexible I thought instead of solving everything in one library it might be better to seperate the issues into smaller issues.
+2. Efficiently send updates to client. **Yes.** ✅
 
-1. Hava a common definition and set of utilities for determining of a live query
+Initially a result tree is sent to the client. Afterwards, only JSON patches that must be applied to the initial result are sent to the client.
 
-2. How can we keep track and invalidate resources selected by a live query in a efficient, but still generic way?
+3. Don't rely on any specific database/vendor lock-in. **Kind of.** ✳️
 
-3. How can we efficiently send query updates to the clients?
+You don't rely on any third party services, however you are kind of forced into immutability.
+
+4. Easy to adopt with existing GraphQL schema. **It depends.** ✳️
+
+Adding a immutable layer to your existing schema is a big change.
+
+## GraphQL Live Queries via the `@live` directive
+
+There are companies out there, like [Facebook](https://www.youtube.com/watch?v=BSw05rJaCpA), that are already using this approach. There is also a graphql framework available in go that supports live queries out of the box! Check out [thunde](https://github.com/samsarahq/thunder).
+
+The idea behind the `@live` directive is that it is used to mark that the client is interested in keeping that query execution result as up to date as possible. The implementation, however, is up to user-land.
+
+```graphql
+query($id: ID!) @live {
+  post(id: $id) {
+    id
+    title
+    totalLikeCount
+  }
+}
+```
+
+The idea of just making any query with additional overhead a live query is very appealing from the view of a developer. From a backend perspective, however that raises new questions.
+
+So after having built an example app with `graphql-live-subscriptsions` from scratch, studing the flaws of that library and being uncomfortable with the vendor lock-in of services such as Postgraphile and Hasura, I decided to approach the problem of live queries in a more pluggable way, by using the `@live` directive.
+
+## `@n1ru4l/graphql-live-query` A common definition and set of utilities for determining of a live query
+
+This module provides two things.
+
+1. `GraphQLLiveDirective` that can be added to any schema.
+
+```ts
+import { GraphQLSchema, specifiedDirectives } from 'graphql';
+import { GraphQLLiveDirective } from '@n1ru4l/graphql-live-query';
+import { query, mutation, subscription } from './schema';
+
+const schema = new GraphQLSchema({
+  query,
+  mutation,
+  subscription,
+  directives: [
+    GraphQLLiveDirective,
+    /* Keep @defer/@stream/@if/@skip */ ...specifiedDirectives,
+  ],
+});
+```
+
+## `@n1ru4l/in-memory-live-query-store` Keep track and invalidate resources selected by a live query in a efficient, but in generic way
+
+The `InMemoryLiveQueryStore.execute` function is a drop in replacement for the `execute` function provided by the `graphql` package.
+
+When encountering a query operation that is marked with the `@live` directive it will return a `AsyncIterator` instead of a `Promise` that can be used for sending multiple results to the client. Similar to how `subscribe` works.
+
+Internally, the store keeps track of the resources selected in the live query operation selection set.
+That means all root query field coordinates (e.g. `Query.post`) and global resource identifiers (e.g. `Post:1`).
+The store can than be notified to re-execute live query operations that select a given root query field or resource identifier via the `InMemoryLiveQueryStore.invalidate` method with the corresponding resource identifier or field coordinates.
+A resource identifier is composed out of the typename and the actual resolved id value separated by a colon, but can be customized.
+For ensuring that the store keeps track of all your query resources you should always select the id field on your object types. The store will only keep track of fields with the name id and the type `ID!` (`GraphQLNonNull(GraphQLID)`).
+
+```ts
+import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
+import { parse } from 'graphql';
+import { schema } from './schema';
+
+const inMemoryLiveQueryStore = new InMemoryLiveQueryStore();
+
+const rootValue = {
+  todos: [
+    {
+      id: '1',
+      content: 'Foo',
+      isComplete: false,
+    },
+  ],
+};
+
+inMemoryLiveQueryStore
+  .execute({
+    schema,
+    operationDocument: parse(/* GraphQL */ `
+      query todosQuery @live {
+        todos {
+          id
+          content
+          isComplete
+        }
+      }
+    `),
+    rootValue: rootValue,
+    contextValue: {},
+    variableValues: null,
+    operationName: 'todosQuery',
+  })
+  .then(async (result) => {
+    if (isAsyncIterable(result)) {
+      for (const value of result) {
+        // Send to client in real-world app :)
+        console.log(value);
+      }
+    }
+  });
+
+// Invalidate by resource identifier
+rootValue.todos[0].isComplete = true;
+inMemoryLiveQueryStore.invalidate(`Todo:1`);
+
+// Invalidate by root query field coordinate
+rootValue.todos.push({ id: '2', content: 'Baz', isComplete: false });
+inMemoryLiveQueryStore.invalidate(`Query.todos`);
+```
+
+If you are using a ORM library you can simply add a middleware for automatically invalidating resource. Here an example with prisma:
+
+```ts
+// Register Middleware for automatic model invalidation
+prisma.$use(async (params, next) => {
+  const resultPromise = next(params);
+
+  if (params.action === 'update') {
+    resultPromise.then((res) => {
+      if (res?.id) {
+        // invalidate `Post:1` on update
+        liveQueryStore.invalidate(`${params.model}:${res.id}`);
+      }
+    });
+  }
+
+  return resultPromise;
+});
+```
+
+Regarding the transport. Both `graphql-ws` (GraphQL over WebSocket), `graphql-helix` (GraphQL over SEE) and `@n1ru4l/socket-io-graphql-server` (GraphQL over Socket.io), support this library out of the box.
+
+[You can find all libraries and a example todo app that sync across all connected clients over here.](https://github.com/n1ru4l/graphql-live-query)
+
+[More information on how the `InMemoryLiveQueryStore` keeps track of resources here.](https://dev.to/n1ru4l/collecting-graphql-live-query-resource-identifier-with-graphql-tools-5fm5)
+
+So let's take a look at this implementation regarding the aspects we used before.
+
+1. Automatically updates execution result. **Yes.** ✅
+
+The approach of pushing the invalidation responsibility to the user might at first seem like a drawback, but a smart abstraction (such as a ORM middleware), can result in pretty responsive applications.
+
+2. Efficiently send updates to client. **No.** ❌
+
+The execution result published by the AsyncIterator is always a complete execution result. But, a library that can be plugged and create JSON patches from the last to the next execution result is already prototyped and planned to be released soon!
+This approach might be seen as a overhead but is IMHO the easiest pragmatic solution for the time being.
+
+3. Don't rely on any specific database/vendor lock-in. **Yes.** ✅
+
+You can use this with any database or third party api, as long as you can invalidate the resources.
+
+4. Easy to adopt with existing GraphQL schema. **Yes.** ✅
+
+You can add this library to your existing GraphQL schema without hazzle. Add invalidation code to your mutation resolvers or as a ORM middleware and you are good to go!
