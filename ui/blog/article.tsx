@@ -8,7 +8,7 @@ import { components } from './elements';
 import { Newsletter } from './newsletter';
 import { Page } from '../shared/Page';
 import { Button } from '../shared/Layout';
-import { Meta } from '../../lib/types';
+import { Meta, hasAuthor, hasManyAuthors } from '../../lib/meta';
 import { Image } from './image';
 import { Tag } from './tag';
 import { authors } from './authors';
@@ -40,13 +40,27 @@ const Title = styled.h1`
   color: var(--colors-primary);
 `;
 
-const Details = styled.div`
-  margin-top: 2rem;
+const Author = styled.div<{
+  many?: boolean;
+}>`
   text-align: center;
   display: flex;
   flex-direction: row;
   justify-content: center;
   font-size: 0.9rem;
+
+  ${(props) =>
+    props.many
+      ? `
+    &:not(:last-child) {
+      padding-right: 15px;
+    }
+
+    &:not(:first-child) {
+      padding-left: 15px;
+    }
+  `
+      : ''}
 
   & > div:nth-child(2) {
     margin-left: 10px;
@@ -65,9 +79,21 @@ const Details = styled.div`
   }
 `;
 
+const Details = styled.div`
+  margin-top: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+`;
+
 const Time = styled.time`
   color: var(--colors-dim);
   font-size: 0.8rem;
+`;
+
+const CenteredTime = styled.div`
+  text-align: center;
 `;
 
 const Cover = styled.div`
@@ -123,12 +149,85 @@ const ConsultingInfo = styled.div`
   border-left: 3px solid var(--colors-accent);
 `;
 
+function Authors(props: { meta: Meta }) {
+  const { meta } = props;
+  const date = meta.date ? new Date(meta.date) : new Date();
+  const updatedDate = meta.updateDate ? new Date(meta.updateDate) : null;
+
+  if (hasAuthor(meta)) {
+    const author = meta.author && authors[meta.author];
+
+    return (
+      <Details>
+        <Author>
+          <div>
+            <a href={author.link} title={author.name}>
+              <Avatar author={author} />
+            </a>
+          </div>
+          <div>
+            <a href={author.link} title={author.name}>
+              {author.name}
+            </a>
+            <Time
+              dateTime={date.toISOString()}
+              title={
+                updatedDate
+                  ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
+                  : `Posted ${format(date, 'EEEE, LLL do y')}`
+              }
+            >
+              {format(date, 'EEEE, LLL do y')}
+            </Time>
+          </div>
+        </Author>
+      </Details>
+    );
+  }
+
+  if (hasManyAuthors(meta)) {
+    return (
+      <>
+        <CenteredTime>
+          <Time
+            dateTime={date.toISOString()}
+            title={
+              updatedDate
+                ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
+                : `Posted ${format(date, 'EEEE, LLL do y')}`
+            }
+          >
+            {format(date, 'EEEE, LLL do y')}
+          </Time>
+        </CenteredTime>
+        <Details>
+          {meta.authors.map((authorId) => {
+            const author = authors[authorId];
+
+            return (
+              <Author many>
+                <div>
+                  <a href={author.link} title={author.name}>
+                    <Avatar author={author} />
+                  </a>
+                </div>
+                <div>
+                  <a href={author.link} title={author.name}>
+                    {author.name}
+                  </a>
+                </div>
+              </Author>
+            );
+          })}
+        </Details>
+      </>
+    );
+  }
+}
+
 const Article = (meta: Meta): React.FC => {
   return function ArticleRender({ children: content }) {
     const title = `${meta.title} - The Guild Blog`;
-    const date = meta.date ? new Date(meta.date) : new Date();
-    const updatedDate = meta.updateDate ? new Date(meta.updateDate) : null;
-    const author = meta.author && authors[meta.author];
 
     const ogImage =
       (meta.image?.endsWith('.webm') || meta.image?.endsWith('.mp4')) &&
@@ -142,28 +241,7 @@ const Article = (meta: Meta): React.FC => {
           <Container>
             <Main>
               <Title>{meta.title}</Title>
-              <Details>
-                <div>
-                  <a href={author.link} title={author.name}>
-                    <Avatar author={author} />
-                  </a>
-                </div>
-                <div>
-                  <a href={author.link} title={author.name}>
-                    {author.name}
-                  </a>
-                  <Time
-                    dateTime={date.toISOString()}
-                    title={
-                      updatedDate
-                        ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
-                        : `Posted ${format(date, 'EEEE, LLL do y')}`
-                    }
-                  >
-                    {format(date, 'EEEE, LLL do y')}
-                  </Time>
-                </div>
-              </Details>
+              <Authors meta={meta} />
               <TagContainers>
                 {meta.tags.map((t) => (
                   <Tag tag={t} key={t} asLink={true} />
