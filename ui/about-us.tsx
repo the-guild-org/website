@@ -4,9 +4,7 @@ import styled from 'styled-components';
 import { components } from './blog/elements';
 import { Newsletter } from './blog/newsletter';
 import { Page } from './shared/Page';
-import { Button } from './shared/Layout';
-import { Meta } from '../lib/types';
-import { Tag } from './blog/tag';
+import { Meta } from '../lib/meta';
 import { Image } from './blog/image';
 
 const Container = styled.div`
@@ -34,36 +32,6 @@ const Title = styled.h1`
   color: var(--colors-primary);
 `;
 
-const Details = styled.div`
-  margin-top: 2rem;
-  text-align: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  font-size: 0.9rem;
-
-  & > div:nth-child(2) {
-    margin-left: 10px;
-    display: flex;
-    text-align: left;
-    flex-direction: column;
-    justify-content: center;
-
-    & > a {
-      color: var(--colors-accent);
-    }
-
-    & > a:hover {
-      color: var(--colors-accent-light);
-    }
-  }
-`;
-
-const Time = styled.time`
-  color: var(--colors-dim);
-  font-size: 0.8rem;
-`;
-
 const Cover = styled.div`
   padding-top: 25px;
   margin: 0 auto;
@@ -79,46 +47,8 @@ const Cover = styled.div`
   }
 `;
 
-const TagContainers = styled.div`
-  text-align: center;
-  margin-top: 10px;
-`;
-
-const BackButton = styled(Button)`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--colors-primary);
-  margin: 0 auto;
-
-  &:hover {
-    background-color: var(--colors-dim-dark);
-  }
-
-  & > * {
-    margin-right: 1.3rem;
-  }
-`;
-
-const Back = styled.div`
-  margin: 0 auto;
-  margin: 125px auto 0 auto;
-`;
-
-const ConsultingInfo = styled.div`
-  margin-top: 25px;
-  padding: 25px;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 2rem;
-  font-family: 'PT Serif', serif;
-  color: var(--colors-dim);
-  background-color: #f7f7f7;
-  border-left: 3px solid var(--colors-accent);
-`;
-
-const Article = (meta: Meta): React.FC => {
-  return function ArticleRender({ children: content }) {
+const AboutUs = (meta: Meta): React.FC => {
+  return function AboutUsRender({ children: content }) {
     const title = meta.title;
 
     const ogImage =
@@ -148,4 +78,4 @@ const Article = (meta: Meta): React.FC => {
   };
 };
 
-export default Article;
+export default AboutUs;

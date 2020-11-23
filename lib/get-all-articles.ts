@@ -3,7 +3,7 @@ import { join } from 'path';
 import { promises } from 'fs';
 import JSON5 from 'json5';
 import { format } from 'date-fns';
-import { MetaWithLink } from './types';
+import { MetaWithLink } from './meta';
 
 /**
  * Based on the files found in `pages/blog/*.mdx`

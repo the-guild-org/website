@@ -1,6 +1,6 @@
 import { promises } from 'fs';
 import RSS from 'rss';
-import { MetaWithLink } from './types';
+import { MetaWithLink } from './meta';
 import { logAsComplete } from './utils';
 
 export async function buildRSS(articles: MetaWithLink[]) {

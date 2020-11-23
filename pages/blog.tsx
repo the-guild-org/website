@@ -6,7 +6,7 @@ import { Hero, Section, Container } from '../ui/shared/Layout';
 import { Featured } from '../ui/shared/Featured';
 import { ArticleCard } from '../ui/blog/article-card';
 import { Newsletter } from '../ui/blog/newsletter';
-import { MetaWithLink } from '../lib/types';
+import { MetaWithLink, pickAuthor } from '../lib/meta';
 import { getAllArticles } from '../lib/get-all-articles';
 import { authors } from '../ui/blog/authors';
 
@@ -77,7 +77,7 @@ const Blog: React.FC<Props> = ({ articles, tagFilter }) => {
         {(articles || []).map((article) => {
           return (
             <ArticleCard
-              author={authors[article.author]}
+              author={authors[pickAuthor(article)]}
               key={article.link}
               title={article.title}
               description={article.description}
