@@ -848,7 +848,7 @@ When encountering a query operation that is marked with the `@live` directive it
 
 Internally, the store keeps track of the resources selected in the live query operation selection set.
 That means all root query field coordinates (e.g. `Query.post`) and global resource identifiers (e.g. `Post:1`).
-The store can than be notified to re-execute live query operations that select a given root query field or resource identifier via the `InMemoryLiveQueryStore.invalidate` method with the corresponding resource identifier or field coordinates.
+The store can then be notified to re-execute live query operations that select a given root query field or resource identifier via the `InMemoryLiveQueryStore.invalidate` method with the corresponding resource identifier or field coordinates.
 A resource identifier is composed out of the typename and the actual resolved id value separated by a colon, but can be customized.
 For ensuring that the store keeps track of all our query resources we should always select the id field on our object types. The store will only keep track of fields with the name id and the type `ID!` (`GraphQLNonNull(GraphQLID)`).
 
