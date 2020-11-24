@@ -904,7 +904,7 @@ rootValue.todos.push({ id: '2', content: 'Baz', isComplete: false });
 inMemoryLiveQueryStore.invalidate(`Query.todos`);
 ```
 
-When using a ORM library such as prisma we can simply add a middleware for automatically invalidating resource.
+When using a ORM such as prisma we can simply add a middleware for automatically invalidating resources.
 
 **Use prisma middleware for resource invalidation**
 
@@ -927,7 +927,7 @@ prisma.$use(async (params, next) => {
 ```
 
 The transports `graphql-ws` (GraphQL over WebSocket), `graphql-helix` (GraphQL over SEE) and `@n1ru4l/socket-io-graphql-server` (GraphQL over Socket.io), support providing a custom `execute` function that is allowed to return AsyncIterables (thanks to the recent changes required for `@defer` and `@stream`).
-All we have to do is to pass the `InMemoryLiveQueryStore.execute` to our server!
+All we have to do is to pass the `InMemoryLiveQueryStore.execute` to our server factory!
 
 ### `@n1ru4l/graphql-live-query-patch`
 
