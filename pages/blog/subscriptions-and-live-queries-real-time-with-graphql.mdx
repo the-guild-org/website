@@ -792,7 +792,7 @@ Adding a immutable layer to our existing schema might be a pretty big change. Fu
 
 ## GraphQL Live Queries via the `@live` directive
 
-There are companies out there, like [Facebook](https://www.youtube.com/watch?v=BSw05rJaCpA), that are already using this approach. There is also a graphql framework available in go that supports live queries out of the box! Check out [thunde](https://github.com/samsarahq/thunder).
+There are companies out there, like [Facebook](https://www.youtube.com/watch?v=BSw05rJaCpA), that are already using this approach. There is also a graphql framework available in go that supports live queries out of the box! Check out [thunder](https://github.com/samsarahq/thunder).
 
 The idea behind the `@live` directive is that it is used to mark that the client is interested in keeping that query execution result as up to date as possible. The implementation, however, is up to user-land.
 
@@ -808,9 +808,9 @@ query($id: ID!) @live {
 
 The idea of just making any query without additional overhead a live query is very appealing from the view of a frontend developer.
 From a backend perspective, however that raises new questions.
-Just adding adirective on the operation on frontend won't make the whole backend reactive.
+Just adding a directive on the operation on frontend won't make the whole backend reactive.
 
-After having built an example app with `graphql-live-subscriptsions` from scratch, studing the flaws of that library and being uncomfortable with the vendor lock-in of services such as Postgraphile and Hasura, I decided to approach the problem of live queries in a more pluggable way, by using the `@live` directive.
+After having built an example app with `graphql-live-subscriptions` from scratch, studying the flaws of that library and being uncomfortable with the vendor lock-in of services such as PostGraphile and Hasura, I decided to approach the problem of live queries in a more pluggable way, by using the `@live` directive.
 
 ### `@n1ru4l/graphql-live-query` A common definition and set of utilities for determining of a live query
 
@@ -836,11 +836,11 @@ const schema = new GraphQLSchema({
 
 2. `isLiveQueryOperationDefinitionNode`
 
-This is a simple function that takes a `DocumentNode` and returns `true` if it is a live query document.
+This is a simple function that takes a `OperationDefinitionNode` and returns `true` if it is a live query document.
 
 Those two utility functions can be used for any live query implementation.
 
-### `@n1ru4l/in-memory-live-query-store` Keep track and invalidate resources selected by a live query in a efficient, but in generic way
+### `@n1ru4l/in-memory-live-query-store` Keep track and invalidate resources selected by a live query in an efficient, but generic way
 
 The `InMemoryLiveQueryStore.execute` function is a drop in replacement for the `execute` function provided by the `graphql` package.
 
