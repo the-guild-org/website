@@ -929,6 +929,41 @@ prisma.$use(async (params, next) => {
 The transports `graphql-ws` (GraphQL over WebSocket), `graphql-helix` (GraphQL over SEE) and `@n1ru4l/socket-io-graphql-server` (GraphQL over Socket.io), support providing a custom `execute` function that is allowed to return AsyncIterables (thanks to the recent changes required for `@defer` and `@stream`).
 All we have to do is to pass the `InMemoryLiveQueryStore.execute` to our server factory!
 
+**Example with graphql-ws**
+
+```tsx
+import http from 'http';
+import ws from 'ws'; // yarn add ws
+import { useServer } from 'graphql-ws/lib/use/ws';
+import { subscribe } from 'graphql';
+import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store';
+import { parse } from 'graphql';
+import { schema } from './schema';
+
+const inMemoryLiveQueryStore = new InMemoryLiveQueryStore();
+
+const server = http.createServer(function weServeSocketsOnly(_, res) {
+  res.writeHead(404);
+  res.end();
+});
+
+const wsServer = new ws.Server({
+  server,
+  path: '/graphql',
+});
+
+useServer(
+  {
+    schema,
+    execute: inMemoryLiveQueryStore.execute,
+    subscribe,
+  },
+  wsServer
+);
+
+server.listen(443);
+```
+
 ### `@n1ru4l/graphql-live-query-patch`
 
 Optional JSON patch middleware for smaller payloads over the wire.
