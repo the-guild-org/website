@@ -58,20 +58,20 @@ Once the `AsyncIterator` publishes a value (payload/event), the optional `resolv
 The most basic implementation for a counter would look similar to this:
 
 ```ts
-const sleep = (t = 1000) => new Promise(res => setTimeout(res, t));
+const sleep = (t = 1000) => new Promise((res) => setTimeout(res, t));
 
 const resolvers = {
-    Subscription: {
-        countToNumber: {
-            subscribe: async function* (_, args) {
-              for (let counter = 1; counter <= args.toNumber; counter++) {
-                yield { countToNumber }
-                await sleep()
-              }
-            }
+  Subscription: {
+    countToNumber: {
+      subscribe: async function* (_, args) {
+        for (let counter = 1; counter <= args.toNumber; counter++) {
+          yield { countToNumber };
+          await sleep();
         }
-    }
-}
+      },
+    },
+  },
+};
 ```
 
 The above subscription will count up to the number provided via the `toNumber` argument (while having a delay of one second between each message) and then complete.
@@ -972,3 +972,9 @@ E.g. via a ORM middleware, in our mutation code or maybe even on our GraphQL gat
 [GraphQL Live Query libraries and example todo app that sync across all connected clients.](https://github.com/n1ru4l/graphql-live-query)
 
 [More information on how the `InMemoryLiveQueryStore` keeps track of resources here.](https://dev.to/n1ru4l/collecting-graphql-live-query-resource-identifier-with-graphql-tools-5fm5)
+
+## What's next?
+
+I hope that more people will try exploring possibilities with GraphQL live queries. Eventually, we coul even come up with an official RFC for the spec!
+
+If you are a enthusiastic tinkerer and plan to build something with the libraries above, share it with me and everyone else, so we can get more insights into different use-cases and requirements for different applications!
