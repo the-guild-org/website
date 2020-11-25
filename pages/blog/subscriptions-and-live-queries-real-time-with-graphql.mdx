@@ -1007,7 +1007,45 @@ const execute0 = (...args) => applyLiveQueryPatchGenerator(liveQueryStore.execut
 The patches are created by comparing the latest execution result with the previous execution result.
 That means the server will always have to store the latest execution result as long as the live query is active.
 
-On the client applying the middleware is pretty easy as well!
+Here are some example execution results after applying the patch generator
+
+**Initial result**
+
+```json
+{
+  "data": {
+    "post": {
+      "id": "1",
+      "title": "foo",
+      "totalLikeCount": 10
+    },
+    "user": {
+      "id": "10",
+      "name": "Laurin"
+    }
+  },
+  "revision": 1
+}
+```
+
+**Patch result (increase totalLikeCount)**
+
+```json
+{
+  "patch": [
+    {
+      "op": "replace",
+      "path": "post/totalLikeCount",
+      "value": 11
+    }
+  ],
+  "revision": 2
+}
+```
+
+On the client we now need to build a execution result out of the initial result and the patch results, because our clients do not understand the graphql live query json patch protocol!
+
+Applying the middleware is pretty easy as well!
 
 ```ts
 import { flow } from 'io-ts/lib/function';
@@ -1020,7 +1058,7 @@ const execute = flow(networkInterface.execute, applyLiveQueryPatch);
 const execute0 = (...args) => applyLiveQueryPatch(networkInterface.execute(...args));
 ```
 
-The library is optimized for network interfaces that return AsyncIterables, but anything can be easily wrapped into a AsyncIterator!
+The library is optimized for network interfaces that return AsyncIterables. We can easily wrap out favorite network interface in an AsyncIterable!
 
 **Example with `graphql-ws`**
 
