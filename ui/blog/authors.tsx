@@ -61,10 +61,15 @@ export const authors: Record<string, AuthorDetails> = {
     link: 'https://twitter.com/PhelanEnda',
     github: 'craicoverflow',
   },
+  soichi: {
+    name: 'Soichi Takamura',
+    link: 'https://twitter.com/piglovesyou1',
+    github: 'piglovesyou',
+  },
   greg: {
     name: 'Greg MacWilliam',
     link: 'https://github.com/gmac',
-    github: 'gmac'
+    github: 'gmac',
   },
   croutonn: {
     name: 'Yuta Haga',
