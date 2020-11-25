@@ -992,11 +992,16 @@ On the server adding the patch generation middleware is easy function compositon
 
 ```ts
 import { flow } from 'io-ts/lib/function';
-import { applyLiveQueryPatchDeflator } from '@n1ru4l/graphql-live-query-patch';
+import { createApplyLiveQueryPatchGenerator } from '@n1ru4l/graphql-live-query-patch';
 
-const execute = flow(liveQueryStore.execute, execute);
+const applyLiveQueryPatchGenerator = createApplyLiveQueryPatchGenerator()
+
+const execute = flow(
+  liveQueryStore.execute,
+  applyLiveQueryPatchGenerator
+);
 // same as
-const execute0 = (...args) => execute(liveQueryStore.execute(...args));
+const execute0 = (...args) => applyLiveQueryPatchGenerator(liveQueryStore.execute(...args));
 ```
 
 The patches are created by comparing the latest execution result with the previous execution result.
@@ -1006,11 +1011,13 @@ On the client applying the middleware is pretty easy as well!
 
 ```ts
 import { flow } from 'io-ts/lib/function';
-import { createLiveQueryPatchInflator } from '@n1ru4l/graphql-live-query-patch';
+import { createApplyLiveQueryPatch } from '@n1ru4l/graphql-live-query-patch';
 
-const execute = compose(networkInterface.execute, createLiveQueryPatchInflator);
+const applyLiveQueryPatch = createApplyLiveQueryPatch();
+
+const execute = flow(networkInterface.execute, applyLiveQueryPatch);
 // same as
-const execute0 = (...args) => execute(networkInterface.execute(...args));
+const execute0 = (...args) => applyLiveQueryPatch(networkInterface.execute(...args));
 ```
 
 The library is optimized for network interfaces that return AsyncIterables, but anything can be easily wrapped into a AsyncIterator!
@@ -1020,12 +1027,14 @@ The library is optimized for network interfaces that return AsyncIterables, but 
 ```ts
 import { pipe } from 'io-ts/lib/function';
 import { makeAsyncIterableIteratorFromSink } from '@n1ru4l/push-pull-async-iterable-iterator';
-import { applyLiveQueryPatchInflator } from '@n1ru4l/graphql-live-query-patch';
+import { createApplyLiveQueryPatch } from '@n1ru4l/graphql-live-query-patch';
 import { createClient } from 'graphql-ws/lib/use/ws';
 
 const client = createClient({
   url: 'ws://localhost:3000/graphql',
 });
+
+const applyLiveQueryPatch = createApplyLiveQueryPatch()
 
 const asyncIterator = pipe(
   makeAsyncIterableIteratorFromSink((sink) => {
@@ -1041,7 +1050,7 @@ const asyncIterator = pipe(
     );
     return () => dispose();
   }),
-  applyLiveQueryPatchInflator
+  applyLiveQueryPatch
 );
 
 // stop live query after 5 seconds.
