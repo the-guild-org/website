@@ -71,4 +71,9 @@ export const authors: Record<string, AuthorDetails> = {
     link: 'https://github.com/gmac',
     github: 'gmac',
   },
+  croutonn: {
+    name: 'Yuta Haga',
+    link: 'https://twitter.com/croutnn',
+    github: 'croutonn',
+  },
 };
