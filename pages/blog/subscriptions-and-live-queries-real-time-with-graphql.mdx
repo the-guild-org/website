@@ -472,6 +472,9 @@ In general the network overhead should be minimal.
 **Flexibility**
 
 Ideally a solution should not be tied to a specific database or coupled with some SaaS service that won't be around next year.
+
+**Adoptability**
+
 In case we already have some kind of GraphQL schema or server implementation, the live query solution should be adobtable without changing everything and starting new.
 
 ## Polling a Query
@@ -516,13 +519,13 @@ Depending upon the use-case, this could be a valid solution, but for true real-t
 The whole execution result is sent over to the client for every single time the operation is re-executed.
 A lot more data than necessary is transported over the wire to the client even if nothing has changed from the last poll interval.
 
-3. Flexibility. **Yes.** ✅
+3. Flexibility. **High.** ✅
 
-Straight forward, as this does not rely on any changes on the server.
+Straight forward, as this does not rely on any changes on the server and only slight changes on our frontend.
 
-4. Adaptability. **Yes.** ✅
+4. Adoptability. **High.** ✅
 
-Straight forward, again no changes on the server required!
+Straight forward, again almost no changes required.
 
 ## Live Queries over Subscriptions
 
@@ -651,11 +654,11 @@ In user-land we will have to come up with an implementation of resource tracking
 
 The whole execution result is sent over to the client for every single time a live query is invalidated.
 
-3. Flexibility. **No.** ❌
+3. Flexibility. **Low.** ❌
 
 Both Hasura and PostGraphile are tightly coupled to a SQL database. For any custom resolvers, we have to come up with the mechanism for resource tracking and invalidation ourselves.
 
-4. Adaptability. **No.** ❌
+4. Adoptability. **Low.** ❌
 
 Switching to a server powered by PostGraphile or Hasura with an already existing GraphQL schema is no easy task.
 
@@ -786,7 +789,7 @@ Initially a result tree is sent to the client. Afterwards, only JSON patches tha
 
 We don't rely on any third party services, however, we forced into immutability to some extend.
 
-4. Adaptability. **It depends.** ✳️
+4. Adoptability. **It depends.** ✳️
 
 Adding an immutable layer to our existing schema might be a pretty big change. Furthermore, the library does lack support for some GraphQL features such as Interfaces and Unions.
 
@@ -1113,12 +1116,12 @@ In case our execution result payloads are getting too big we can easily enable J
 Furthermore, the middleware is totally live query implementation independent!
 That means if our projects requires a different implementation of the live query engine, the middleware can still be applied as long as the execution result is compatible with the live query execution result format.
 
-3. Flexibility. **Yes.** ✅
+3. Flexibility. **High.** ✅
 
 Any database or third-party API can be used as long as we can somehow invalidate the resource (via some PubSub system etc.).
 As all incorporated libraries are pretty pluggable only a few can be used and others be replaced by something that might make more sense for a specific project.
 
-4. Adaptability. **Yes.** ✅
+4. Adoptability. **High.** ✅
 
 This library can be added to any existing GraphQL.js schema without any hassle. Resource invalidation code can be added to the mutation resolvers over time gradually to reflect the needs of the frontend.
 The possibilities of resource invalidation are endless and the logic for those can be added incrementally.
@@ -1134,8 +1137,8 @@ I hope that more people will try exploring the possibilities of GraphQL live que
 
 There is a lot of more to explore such as
 
-- Partial query re-execution (which is actually already doable today with Relay conform schemas by building an ad-hoc query or by building an ad-hoc schema on the fly)
-- Mechanisms for batching similar query operations (aka prevent executing the same operation multiple times when it is invalidated)
+- Partial query re-execution (e.g. by building ad-hoc queries that only select affected resources)
+- Mechanisms for batching similar query operations (e.g. for preventing execution of same operation multiple times after invalidation)
 - What ever is bothering you while reading this article! 😄
 
 If you are a enthusiastic tinkerer and plan to build something with the libraries above, share it with me and everyone else, so we can get more insights into different use-cases and requirements for different applications!
