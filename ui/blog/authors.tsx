@@ -64,11 +64,16 @@ export const authors: Record<string, AuthorDetails> = {
   greg: {
     name: 'Greg MacWilliam',
     link: 'https://github.com/gmac',
-    github: 'gmac'
+    github: 'gmac',
   },
   croutonn: {
     name: 'Yuta Haga',
     link: 'https://twitter.com/croutnn',
     github: 'croutonn',
+  },
+  jycouet: {
+    name: 'Jean-Yves Couët',
+    link: 'https://twitter.com/jycouet',
+    github: 'jycouet',
   },
 };

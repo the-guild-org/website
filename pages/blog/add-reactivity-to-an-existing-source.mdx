@@ -12,21 +12,159 @@ export const meta = {
 
 export default withArticle({ ...meta });
 
-Working on the code generator for svelte plugin, I was looking for a public graphQL endpoint having gueries, mutation and subscription for nice examples.
-Unfortunatly I didn't find anything out of the box, ready to use.
+# Introduction
 
-> Pimp my graphQL
+Working on the code generator for svelte plugin, I was looking for a public graphQL endpoint having queries, mutation and subscription for nice examples.
+Unfortunatly I didn't find anything out of the box, ready to use for my demos. So I decided to extend an existing source!
 
-> ...
+# Starting point
 
-# How To Implement Server-Side using AccountsJS, GraphQL-Modules and Apollo-Server
+Across my researches I found one cool public endpoint regarding [SpaceX](https://api.spacex.land/graphql/). It has `Queries` and `Mutation` ready to use!
+So I decided to pimp this endpoint, and bring a bit of reactivity with subscriptions.
 
-```tsx
-...
+The idea is to publish the new user when it's inserted with this `mutation`:
+
+```graphql
+mutation addUser {
+  insert_users(objects: { name: "jyc" }) {
+    affected_rows
+    returning {
+      name
+    }
+  }
+}
 ```
 
-You can check out our example about this integration; [https://github.com/ardatan/graphql-modules-accountsjs-boilerplate](https://github.com/ardatan/graphql-modules-accountsjs-boilerplate)
+_How hard is to do this? Let's find out..._
 
-# All posts about GraphQL Modules
+> Let's _Pimp this graphQL_!
 
-- [GraphQL Modules — Feature based GraphQL Modules at scale](/blog/graphql-modules)
+![Pimp my graphQL](/blog-assets/add-reactivity-to-an-existing-source/PimpMyGraphQL.gif)
+
+# Implementation
+
+<details>
+  <summary>Spoiler alert</summary>
+  Thanks to `graphql-mesh`, it's dead easy! 🚀🚀🚀
+</details>
+
+1. Create a new repo
+
+```bash
+mkdir newRepo
+cd newRepo
+yarn init
+```
+
+2. Add `graphql-mesh` packages
+
+```bash
+yarn add @graphql-mesh/cli @graphql-mesh/graphql graphql
+```
+
+3. Add `.meshrc.yaml` file in the root folder with
+
+```yaml
+sources:
+  - name: spacexGQL
+    handler:
+      graphql:
+        endpoint: https://api.spacex.land/graphql/
+
+additionalTypeDefs: |
+  extend type Mutation {
+    insert_users_and_publish(name: String!, rocket: String, twitter: String): users_mutation_response
+  }
+  extend type Subscription {
+    userAdded: users
+  }
+
+additionalResolvers:
+  - type: Subscription
+    field: userAdded
+    pubsubTopic: userAdded
+  - ./src/mutation-insert_users_and_publish.js
+```
+
+Where I
+
+- declare the graphQL source
+- extend `Mutation` to insert and publish the new user
+- extend `Subscription` to listen to user added users
+- add new resolver for `userAdded` listening to `userAdded` message
+- add new resolver for `insert_users_and_publish` in file `./src/mutation-insert_users_and_publish.js`
+
+4. Add `./src/mutation-insert_users_and_publish.js` file with all the logic for this new resolver.
+
+```js
+const resolvers = {
+  Mutation: {
+    insert_users_and_publish: async (
+      root,
+      args,
+      { spacexGQL, pubsub },
+      ast
+    ) => {
+      // transform args to [users_insert_input] type
+      const objInsertUser = {
+        objects: [
+          {
+            name: args.name,
+            rocket: args.rocket,
+            twitter: args.twitter,
+          },
+        ],
+      };
+
+      // use the existing mutation
+      const responseInsertUser = await spacexGQL.api.insert_users(
+        objInsertUser,
+        {
+          fields: {
+            returning: {
+              id: true,
+            },
+          },
+        }
+      );
+
+      // get full user
+      const responseUser = await spacexGQL.api.users(
+        {
+          where: { id: { _eq: responseInsertUser.returning[0].id } },
+        },
+        {
+          fields: {
+            id: true,
+            name: true,
+            rocket: true,
+            timestamp: true,
+            twitter: true,
+          },
+        }
+      );
+
+      // publish the new full user
+      pubsub.publish('userAdded', responseUser.users[0]);
+
+      return responseUser.users[0];
+    },
+  },
+};
+
+module.exports = { resolvers };
+```
+
+That's it!
+
+# Wrap up
+
+- Extending an endpoint with subscription is easy! _Thx to tooling._
+
+- You can find the source on [github](https://github.com/jycouet/space-x-land-with-sub).
+
+- You see all this in action directly in the [playground](https://space-x-land-with-sub.herokuapp.com/)
+
+I'm now ready to work on the demo for **Svelte Codegen**! Stay tunned ;)
+
+//JYC
