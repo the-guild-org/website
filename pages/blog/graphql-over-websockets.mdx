@@ -89,26 +89,29 @@ const roots = {
 #### Start the server
 
 ```ts
-import http from 'http';
+import https from 'https';
+import ws from 'ws'; // yarn add ws
+import { useServer } from 'graphql-ws/lib/use/ws';
 import { execute, subscribe } from 'graphql';
-import { createServer } from 'graphql-ws';
 
-const server = http.createServer(function weServeSocketsOnly(_, res) {
+const server = https.createServer(function weServeSocketsOnly(_, res) {
   res.writeHead(404);
   res.end();
 });
 
-createServer(
+const wsServer = new ws.Server({
+  server,
+  path: '/graphql',
+});
+
+useServer(
   {
     schema, // from the previous step
     roots, // from the previous step
     execute,
     subscribe,
   },
-  {
-    server,
-    path: '/graphql',
-  }
+  wsServer,
 );
 
 server.listen(443);
