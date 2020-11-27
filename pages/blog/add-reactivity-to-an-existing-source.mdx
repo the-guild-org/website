@@ -14,12 +14,12 @@ export default withArticle({ ...meta });
 
 # Introduction
 
-Working on the code generator for svelte plugin, I was looking for a public graphQL endpoint having queries, mutation and subscription for nice examples.
+Working on the code generator for svelte plugin, I was looking for a public graphQL endpoint having queries, mutations and subscriptions for nice examples.
 Unfortunatly I didn't find anything out of the box, ready to use for my demos. So I decided to extend an existing source!
 
 # Starting point
 
-Across my researches I found one cool public endpoint regarding [SpaceX](https://api.spacex.land/graphql/). It has `Queries` and `Mutation` ready to use!
+Across my researches I found one cool public endpoint regarding [SpaceX](https://api.spacex.land/graphql/). It has `Queries` and `Mutations` ready to use!
 So I decided to pimp this endpoint, and bring a bit of reactivity with subscriptions.
 
 The idea is to publish the new user when it's inserted with this `mutation`:
@@ -43,6 +43,8 @@ _How hard is to do this? Let's find out..._
 
 # Implementation
 
+_Multiple ways are possible!_
+
 <details>
   <summary>Spoiler alert</summary>
   Thanks to `graphql-mesh`, it's dead easy! 🚀🚀🚀
@@ -59,7 +61,7 @@ yarn init
 2. Add `graphql-mesh` packages
 
 ```bash
-yarn add @graphql-mesh/cli @graphql-mesh/graphql graphql
+yarn add @graphql-mesh/cli @graphql-mesh/graphql @graphql-mesh/transform-resolvers-composition graphql
 ```
 
 3. Add `.meshrc.yaml` file in the root folder with
@@ -72,87 +74,83 @@ sources:
         endpoint: https://api.spacex.land/graphql/
 
 additionalTypeDefs: |
-  extend type Mutation {
-    insert_users_and_publish(name: String!, rocket: String, twitter: String): users_mutation_response
-  }
   extend type Subscription {
-    userAdded: users
+    usersAdded: [users]
   }
+
+transforms:
+  - resolversComposition:
+      - resolver: 'Mutation.insert_users'
+        composer: ./src/composition/insert_user
 
 additionalResolvers:
   - type: Subscription
-    field: userAdded
-    pubsubTopic: userAdded
-  - ./src/mutation-insert_users_and_publish.js
+    field: usersAdded
+    pubsubTopic: usersAdded
 ```
 
 Where I
 
 - declare the graphQL source
-- extend `Mutation` to insert and publish the new user
 - extend `Subscription` to listen to user added users
-- add new resolver for `userAdded` listening to `userAdded` message
-- add new resolver for `insert_users_and_publish` in file `./src/mutation-insert_users_and_publish.js`
+- compose the existing `Mutation.insert_users`
 
-4. Add `./src/mutation-insert_users_and_publish.js` file with all the logic for this new resolver.
+4. Add `./src/composition/insert_user.js` file with all the logic for this new mutation composition.
 
 ```js
-const resolvers = {
-  Mutation: {
-    insert_users_and_publish: async (
-      root,
-      args,
-      { spacexGQL, pubsub },
-      ast
-    ) => {
-      // transform args to [users_insert_input] type
-      const objInsertUser = {
-        objects: [
-          {
-            name: args.name,
-            rocket: args.rocket,
-            twitter: args.twitter,
-          },
-        ],
-      };
-
-      // use the existing mutation
-      const responseInsertUser = await spacexGQL.api.insert_users(
-        objInsertUser,
-        {
-          fields: {
-            returning: {
-              id: true,
-            },
-          },
-        }
-      );
-
-      // get full user
-      const responseUser = await spacexGQL.api.users(
-        {
-          where: { id: { _eq: responseInsertUser.returning[0].id } },
-        },
-        {
-          fields: {
-            id: true,
-            name: true,
-            rocket: true,
-            timestamp: true,
-            twitter: true,
-          },
-        }
-      );
-
-      // publish the new full user
-      pubsub.publish('userAdded', responseUser.users[0]);
-
-      return responseUser.users[0];
+module.exports = (next) => async (root, args, context, info) => {
+  // add returning.id to the selection
+  info.operation.selectionSet.selections[0].selectionSet.selections.push({
+    kind: 'Field',
+    name: {
+      kind: 'Name',
+      value: 'returning',
     },
-  },
-};
+    arguments: [],
+    directives: [],
+    selectionSet: {
+      kind: 'SelectionSet',
+      selections: [
+        {
+          kind: 'Field',
+          name: {
+            kind: 'Name',
+            value: 'id',
+          },
+          arguments: [],
+          directives: [],
+        },
+      ],
+    },
+  });
 
-module.exports = { resolvers };
+  // send the mutation to the graphQL source
+  const result = await next(root, args, context, info);
+
+  // select returned ids
+  const ids = result.returning.map((c) => c.id);
+
+  // Query users enforcing fields to return
+  const responseUser = await context.spacexGQL.apiQuery.users(
+    {
+      where: { id: { _in: ids } },
+    },
+    {
+      fields: {
+        id: true,
+        name: true,
+        rocket: true,
+        timestamp: true,
+        twitter: true,
+      },
+    }
+  );
+
+  // publish new users
+  context.pubsub.publish('usersAdded', responseUser);
+
+  return result;
+};
 ```
 
 That's it!
@@ -167,4 +165,6 @@ That's it!
 
 I'm now ready to work on the demo for **Svelte Codegen**! Stay tunned ;)
 
-//JYC
+[//JYC](https://twitter.com/jycouet)
+
+_Special thanks to [n1ru4l](https://twitter.com/n1rual) who helped me finding the nicest way to do it ;)_
