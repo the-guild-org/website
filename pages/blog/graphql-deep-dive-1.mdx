@@ -15,9 +15,20 @@ export default withArticle({ ...meta });
 
 _This blog is a part of a series on GraphQL where we will dive deep into GraphQL and its ecosystem one piece at a time_
 
-The GraphQL specification was open sourced in 2015 by Facebook along with some basic implementations with a completely unique approach on how to structure, consume, transmit and process data and data graphs. It was a moment when a lot of people were convinced by its power, utility and promise that the rest became history.
+- Part 1: [**Diving Deep**](/blog/graphql-deep-dive-1)
+- Part 2: [**The Usecase & Architecture**](/blog/graphql-deep-dive-2)
+- Part 3: [**The Stack #1**](/blog/graphql-deep-dive-3)
+- Part 4: [**The Stack #2**](/blog/graphql-deep-dive-4)
 
-And today, there is a [**GraphQL foundation**](https://foundation.graphql.org/) which tries to ensure that GraphQL and the ecosystem thrives over time, [**a huge landscape of projects**](https://github.com/graphql/graphql-landscape) and [**this**](https://github.com/chentsulin/awesome-graphql) can be just one of the examples on how big the ecosystem has grown with a lot of languages, frameworks, tools supporting it as a first class citizen, so much so that even some of the [**huge enterprises**](https://graphql.org/users/) are using it today as part of their stack.
+The GraphQL specification was open sourced in 2015 by Facebook along with some basic implementations with a completely unique approach on how to structure, consume, transmit and process data and data graphs.
+
+Today, the GraphQL spec and its implementations have been donated by Facebook to the GraphQL Foundation with open license for development and governance from the community and it has been great so far.
+And today, the GraphQL foundation comprises not just of companies like Facebook but other organizational members as well.
+
+It was a moment when a lot of people were convinced by its power, utility and promise that the rest became history.
+
+And today, there is a [**GraphQL foundation**](https://foundation.graphql.org/) which tries to ensure that GraphQL and the ecosystem thrives over time, [**a huge landscape of projects**](https://github.com/graphql/graphql-landscape), a huge set of tools like [**this**](https://graphql.org/code/) and [**this**](https://github.com/chentsulin/awesome-graphql)
+and these can just be few of the examples on how big the ecosystem has grown with a lot of languages, frameworks, tools supporting it as a first class citizen, so much so that even some of the [**huge enterprises**](https://graphql.org/users/) are using it today as part of their stack.
 
 GraphQL is at our heart at [Timecampus](https://www.twitter.com/timecampus), the heart of everything we do and we wanted to share the love we have for GraphQL and the ecosystem and also the hard lessons we learnt along the way. And its not just GraphQL, we will be diving deep into a lot of Open Source Tools, Libraries, Frameworks, Software and Practices as we go along.
 
@@ -126,10 +137,13 @@ Again, the front end ecosystem is huge as well with its own set of tooling and l
 In my case, I typically try to work on the frontend without any framework (I use [Lit Elements](https://lit-element.polymer-project.org/) in my case and we will have a separate blog on that soon), the tool you use completely depends on your requirements here.
 
 - Apollo Client does have a good integration with these frameworks including [React](https://www.apollographql.com/docs/react/), [iOS](https://www.apollographql.com/docs/ios/) and [**Android**](https://www.apollographql.com/docs/android/) — so, you might want to check that out
+- Using React? [Relay](https://relay.dev/) can be a [great choice](https://blog.bitsrc.io/apollo-and-relay-side-by-side-adb5e3844935)
 - Using Vue? You can try [**Vue Apollo**](https://apollo.vuejs.org/guide/)
 - Using web components with Apollo Stack for GQL? You might want to check out [**Apollo Elements**](https://github.com/apollo-elements/apollo-elements)
 - Using vanilla JS or TS or using web components and want to have a framework-independent way of doing things? You can stick to the GraphQL codegen itself since it takes care of almost everything underneath. Or if you want, you can also use Apollo Client’s vanilla version `@apollo/client/core`.
   [**Apollo Elements**](https://github.com/apollo-elements/apollo-elements) does come with support for a lot of webcomponent libraries like [Lit](https://lit-element.polymer-project.org/), [Fast](https://www.fast.design/) and [Gluon](https://github.com/ruphin/gluonjs) or even without any of it and hence is quite flexible.
+- Or if you are just looking for a lightweight, performant and extensible GraphQL client, [URQL](https://formidable.com/open-source/urql/) can be great as well.
+- Or if you are looking for a minimal client which runs both in the Browser and Node, you can try [GraphQL Request](https://github.com/prisma-labs/graphql-request)
 
 Well, there are lot of other ways we haven’t talked about and this is just a start.
 
@@ -142,6 +156,10 @@ Ultimately it depends on the degree of the flexibility you want to offer. The mo
 **What are some of the principles or standards to be followed when trying to build my datagraph architecture?**
 
 Some amazing people have already answered this [**here**](https://principledgraphql.com/) and I highly recommend you to go through it before starting off your journey with GraphQL.
+
+And if you are looking for some help with the rules and implementation details with respect to GraphQL, you can find a great doc on this [**here**](https://graphql-rules.com/)
+
+While all of these are principles trying to guide you in the right direction, choose what is best for your usecase and work with it.
 
 **How do I use GraphQL to interact with multiple sources of data?**
 
@@ -220,6 +238,8 @@ These videos can help get some basics (but a lot has changed since these videos 
   allowfullscreen
 ></iframe>
 
+If you are still confused on what to go for, you can also read [**this**](https://product.voxmedia.com/2020/11/2/21494865/to-federate-or-stitch-a-graphql-gateway-revisited) blog about stitching and federation.
+
 **What are some of the GraphQL events/conferences to watch out for?**
 
 Since GraphQL was released, it garnered a huge interest in the community that a lot of conferences, events and meetups are held around the world keeping GraphQL as the main theme. Some of them are:
@@ -241,6 +261,8 @@ Every bit of help really counts since GraphQL foundation is run by a set of volu
 - Contribute to the [**GraphQL spec**](https://github.com/graphql/graphql-spec) with your suggestions (Some suggestions may take years to implement even if it is good, so you may need to have a lot of patience for this)
 - Contribute to the ecosystem of tools leveraging GraphQL be it with documentation, tests, features, bug fixes, feedback and what not. It will definitely help.
 - Facing a challenge with GraphQL which has not been solved before? Build your own tooling and contribute it to the community
+- Create failing tests and reproducible projects
+- Answer and help others on Github Issues, Discord, Stack Overflow, Twitter, Reddit. There are a lot of amazing GraphQL communities out there.
 - Or if you want to take it to the next level and want to align your entire organization to help the GraphQL foundation, [become its member](https://foundation.graphql.org/join/) and contribute.
 
 There are a lot of small ways in which you can give back. Small or big does not matter. Every contribution counts.
@@ -271,7 +293,7 @@ You can have a look at more like these [here](https://github.com/APIs-guru/graph
 This is one of the places where GraphQL really shines. You need not move everything over at one piece. Here are some steps which might help.
 
 - First, build a Datagraph for your entire business without worrying about the underlying logic/implementation. But don’t worry too much since you can always evolve this over time.
-- Next, implement resolvers for every part of the schema in such a way that at phase 1, you just wrap your existing infrastructure with GraphQL. For instance, if your services use SOAP, you can add a GraphQL layer on top of it and calling that can all the SOAP service underneath and the client need not worry about it. You can use something like [GraphQL Mesh](https://graphql-mesh.com/) or [SOFA](https://sofa-api.com/) which can help in abstracting these.
+- Next, implement resolvers for every part of the schema in such a way that at phase 1, you just wrap your existing infrastructure with GraphQL. For instance, if your services use SOAP, you can add a GraphQL layer on top of it and calling that can all the SOAP service underneath and the client need not worry about it. You can use something like [GraphQL Mesh](https://graphql-mesh.com/) or [SOFA](https://sofa-api.com/) which can help in abstracting these. There is a good blog post on how to migrate from REST to GraphQL [**here**](https://the-guild.dev/blog/migrating-from-rest).
 - Change the client implementation one by one to call the GraphQL gateway instead of the legacy service.
 - Now that you have GraphQL working in your ecosystem, you can incrementally move away from legacy implementations like SOAP without having to worry about how it will affect the clients progressively, one component at a time to use a native GraphQL implementation.
 
@@ -298,6 +320,8 @@ There are some options currently to do this.
 - An another way is to use [live queries](https://medium.com/open-graphql/graphql-subscriptions-vs-live-queries-e38302c7ab8e)
 
 Each option comes up with its own set of advantages and disadvantages again. Just remember that it is not often possible to keep your application stateless if you want something like Subscriptions. So, make sure you manage the state well and plan for failures and scaling your app.
+
+And if you are new to subscriptions, you can probably [watch this](https://www.youtube.com/watch?v=Wi7P39sF2nw&feature=youtu.be) to get an idea about the basics of how subscription works.
 
 **What can I even do with introspection?**
 
