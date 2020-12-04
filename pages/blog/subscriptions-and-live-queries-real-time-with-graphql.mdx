@@ -324,10 +324,10 @@ const PostRenderer = ({ postId }: { postId: string }) => {
     /* variables */ { postId },
     {
       // we need to manually update the cache :(
-      updater: (payload, cache) => {
-        const record = cache.read(PostQuery, { postId });
+      updater: (store, payload) => {
+        const record = store.get(postId);
         if (record) {
-          record.likes.totalCount = payload.onPostLikeCountChanged.totalCount;
+          record.setValue("totalLikeCount", payload.onPostLikeCountChanged.totalCount);
         }
       },
     }
@@ -395,16 +395,21 @@ const UserListRenderer = ({ postId }: { postId: string}) => {
   const {props} = useQuery(UserListQuery)
   useSubscription(UserListChangeSubscription,  /* variables */ { postId }, {
     // we need to manually update the cache :(
-    updater: (payload, cache) => {
-      const record = cache.readQuery(UserListQuery)
-      switch (payload.onUserListChange.__typename) {
-        case "OnUserAdded": {
-          record.users.push(payload.onUserListChange.user)
-          break;
-        }
-        case "onUserRemoved": {
-          record.users = record.users.filter(user => user.id !=== payload.onUserListChange.removedUserId)
-          break;
+    updater: (store, payload) => {
+      const record = store.getRootField();
+      const users = rootField.getLinkedRecords("users");
+      if (users) {
+        switch (payload.onUserListChange.__typename) {
+          case "OnUserAdded": {
+            const newUser = store.create(payload.onUserListChange.user.id, "User");
+            newUser.setValue("name", payload.onUserListChange.user.name);
+            rootField.setLinkedRecords("users", [...users, newUser]);
+            break;
+          }
+          case "onUserRemoved": {
+            rootField.setLinkedRecords(users.map(user => user.getDataID() !== payload.onUserListChange.removedUserId))
+            break;
+          }
         }
       }
     }
@@ -435,11 +440,11 @@ const OnPlaySound = graphql`
 
 const ChatRenderer = () => {
   const chat = useQuery(ChatQuery);
-  useSubscription(OnPlaySound, {
+  useSubscription(OnPlaySound, useMemo({
     onNext: (payload) => {
       playSound(payload.onPlayChatSound.soundUrl);
     },
-  });
+  }));
 
   return <Chat chat={chat} />;
 };
