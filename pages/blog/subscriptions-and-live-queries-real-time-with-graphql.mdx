@@ -728,7 +728,7 @@ const PostSubscription = graphql`
 The difference is that the type returned by the `live` field has two fields instead of a single one.
 The `query` field, which selects the selection set from `Query` tyoe and a `patch` field which is a JSON Patch operation.
 When executing the given operation against the server the initial result will have the data selected by the `query` field selection set included.
-All following values, will have no `query` value (`null`), but instead a array of patch operations that describe the changes for updating the last result to the next result.
+All following values will have no `query` value (`null`), but instead an array of patch operations that describe the changes for updating the last result to the next result.
 
 **Initial result**
 
@@ -993,7 +993,7 @@ server.listen(443);
 
 Optional JSON patch middleware for smaller payloads over the wire.
 
-Instead of making JSON patch required be default, it is a totally optional module, that can be applied on the client and the server for deflating (create patches on the server) and inflating (apply patches on the client) the execution results.
+Instead of making JSON patch required by default, it is a totally optional module, that can be applied on the client and the server for deflating (create patches on the server) and inflating (apply patches on the client) the execution results.
 Smaller projects might even be better off not using JSON patch at all, as the patch payload might be bigger as the whole query result.
 
 On the server adding the patch generation middleware is easy function composition:
