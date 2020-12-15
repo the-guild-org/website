@@ -61,6 +61,11 @@ export const authors: Record<string, AuthorDetails> = {
     link: 'https://twitter.com/PhelanEnda',
     github: 'craicoverflow',
   },
+  soichi: {
+    name: 'Soichi Takamura',
+    link: 'https://twitter.com/piglovesyou1',
+    github: 'piglovesyou',
+  },
   greg: {
     name: 'Greg MacWilliam',
     link: 'https://github.com/gmac',
@@ -75,5 +80,10 @@ export const authors: Record<string, AuthorDetails> = {
     name: 'Jean-Yves Couët',
     link: 'https://twitter.com/jycouet',
     github: 'jycouet',
+  },
+  tvvignesh: {
+    name: 'Vignesh T.V.',
+    link: 'https://twitter.com/techahoy',
+    github: 'tvvignesh',
   },
 };

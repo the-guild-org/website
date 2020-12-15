@@ -214,7 +214,7 @@ export const Layout: React.FC = ({ children }) => {
             <Twitter />
           </a>
           <a
-            href="https://www.youtube.com/channel/UCZAO6Kt83pMF-JmdlCsKI8Q/playlists"
+            href="https://www.youtube.com/watch?v=DWBL7GLMVsY&list=PLhCf3AUOg4PgQoY_A6xWDQ70yaNtPYtZd"
             title="Visit our YouTube channel"
           >
             <Youtube />
