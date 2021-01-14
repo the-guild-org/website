@@ -66,9 +66,9 @@ export const authors: Record<string, AuthorDetails> = {
     link: 'https://twitter.com/piglovesyou1',
     github: 'piglovesyou',
   },
-  greg: {
+  gmac: {
     name: 'Greg MacWilliam',
-    link: 'https://github.com/gmac',
+    link: 'https://twitter.com/gmacwilliam',
     github: 'gmac',
   },
   croutonn: {
