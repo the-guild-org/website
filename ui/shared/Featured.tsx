@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import NativeLink from 'next/link';
 import { Image } from '../blog/image';
+import LazyLoad from 'react-lazyload';
+import { withPlaceholder } from '../../lib/images';
 
 const Title = styled.h2`
   color: var(--colors-text);
@@ -18,7 +20,11 @@ const Link = styled(NativeLink)`
   }
 `;
 
-const Cover = styled(Image)<{ noShadow: boolean; maxSize?: number }>`
+const Cover = styled(Image)<{
+  noShadow: boolean;
+  maxSize?: number;
+  isPlaceholder?: boolean;
+}>`
   display: block;
   max-width: ${(props) => (props.maxSize ? props.maxSize + 'px' : '100%')};
   min-width: 200px;
@@ -28,6 +34,18 @@ const Cover = styled(Image)<{ noShadow: boolean; maxSize?: number }>`
   border-radius: 5px;
   box-shadow: ${(props) =>
     props.noShadow ? 'none' : 'box-shadow: 0 2px 6px 0 rgba(0,0,0,0.18)'};
+  ${(props) => (props.isPlaceholder ? 'filter: blur(25px);' : '')}
+`;
+
+const Placeholder = styled.div`
+  display: block;
+  max-width: 100%;
+  min-width: 200px;
+  max-height: 200px; 
+  height: auto;
+  margin: 0 auto;
+  border-radius: 5px;
+  'box-shadow: 0 2px 6px 0 rgba(0,0,0,0.18)';  
 `;
 
 const Container = styled.div<{ width: number }>`
@@ -102,6 +120,7 @@ export const Featured: React.FC<{
   width,
   maxCoverSize,
 }) => {
+  const { large, placeholder, hasPlaceholder } = withPlaceholder(image);
   return (
     <Container className={className} width={width || 40}>
       <Link href={link} as="a" title={title}>
@@ -109,12 +128,34 @@ export const Featured: React.FC<{
         <Description>{description}</Description>
       </Link>
       <Link href={link} as="a" title={title}>
-        <Cover
-          src={image}
-          alt={title}
-          noShadow={!!noShadow}
-          maxSize={maxCoverSize}
-        />
+        <LazyLoad
+          height={150}
+          once
+          offset={300}
+          placeholder={
+            hasPlaceholder ? (
+              <Cover
+                src={placeholder}
+                alt={title}
+                noShadow={!!noShadow}
+                maxSize={maxCoverSize}
+                isPlaceholder={hasPlaceholder}
+              >
+                <div />
+              </Cover>
+            ) : (
+              <Placeholder />
+            )
+          }
+          debounce={500}
+        >
+          <Cover
+            src={image}
+            alt={title}
+            noShadow={!!noShadow}
+            maxSize={maxCoverSize}
+          />
+        </LazyLoad>
       </Link>
     </Container>
   );
