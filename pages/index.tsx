@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
+import Image from 'next/image';
 import { GetStaticProps } from 'next/types';
 import { Section, Hero, Container, Button } from '../ui/shared/Layout';
 import { Page } from '../ui/shared/Page';
@@ -181,10 +182,12 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
                     <p>{highlight.description}</p>
                   </div>
                   <div>
-                    <img
+                    <Image
                       alt={highlight.title}
                       src={`/img/illustrations/${image}`}
-                    ></img>
+                      width={100}
+                      height={110}
+                    />
                   </div>
                 </div>
               ))}
