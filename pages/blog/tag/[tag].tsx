@@ -4,9 +4,9 @@ import { GetStaticProps } from 'next/types';
 import { getAllArticles } from '../../../lib/get-all-articles';
 import { unique, flatten } from '../../../lib/utils';
 
-export const getStaticProps: GetStaticProps<React.ComponentProps<
-  typeof Blog
->> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<
+  React.ComponentProps<typeof Blog>
+> = async ({ params }) => {
   const tagFilter: string[] = !params.tag
     ? []
     : Array.isArray(params.tag)
