@@ -19,6 +19,11 @@ const withMDX = nextMDX({
 module.exports = withBundleAnalyzer(
   withMDX(
     withOptimizedImages({
+      experimental: {
+        optimizeFonts: true,
+        optimizeCss: true,
+        babelMultiThread: true,
+      },
       target: 'experimental-serverless-trace',
       optimizeImagesInDev: false,
       handleImages: ['jpeg', 'jpg', 'png', 'svg'],
