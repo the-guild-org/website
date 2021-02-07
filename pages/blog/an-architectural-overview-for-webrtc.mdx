@@ -1,0 +1,273 @@
+import withArticle from '../../ui/blog/article';
+
+export const meta = {
+  title:
+    'An architectural overview for WebRTC — A protocol for implementing video conferencing',
+  author: 'dab0mb',
+  tags: ['zoom', 'javascript', 'remote working', 'nodejs', 'webrtc'],
+  date: '2021-02-17',
+  description:
+    "Understanding how WebRTC works on the architectural level is important to implement real-time apps. Let's dive in",
+  image: 'https://miro.medium.com/max/2400/1*LjKfTXZu08-1_e751P9uxw.png',
+};
+
+export default withArticle({ ...meta });
+
+It’s no secret that remote work has been getting a lot more popular since the beginning of COVID era, and even though vaccines are already here, many companies and teams have fully embraced the idea of working online and are not planning to let go. As a result, the demand for online collaboration tools has been increasing; especially video conferencing solutions. For reference, Zoom stock price has jumped from 66.64USD in January 2020 to 559.00USD in October 2020, **an increase of ~838% in 10 months**:
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/680/1*DA9dBeXpIFyWf7VVsIEfIA.png"
+/>
+
+> Source: [Google](https://www.google.com/search?q=zoom+stock+price)
+
+Accordingly, I was looking to implement my own video conferencing solution and have my share of contribution. I came up with an idea for a CLI tool that lets you share your screen and code simultaneously, so every change that you make in your project will be reflected live in the call:
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/1000/1*gsg1sF8TGIUlXyh7kLPL5w.png"
+/>
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/1000/1*QkaIn5RF7-SVaw5xeyHe9w.png"
+/>
+
+> See [Git Streamer (Alpha)](https://bit.ly/3oRoOtG)
+
+I didn’t know much of video conferencing when I only got started. After investigating the matter thoroughly, I came across WebRTC — a protocol which is responsible for Real Time Communication (thus, RTC).
+
+WebRTC is not necessarily intended for video conferencing, but was definitely built with that in mind. By today’s standards, a latency of less than a second is considered to be real time. WebRTC is the fastest solution as for today, and to top it all off, it’s open-source, which makes the technology free of charge. Any other solution falls behind in terms of latency, but keep in mind that they weren’t built to give us real time performance, and they serve different purposes. Below is a latency comparison diagram, just so you can understand how fast WebRTC really is:
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/700/1*zWpfOP9NJefUzaGweK7WNw.png"
+/>
+
+> Source: [Wowza](https://www.wowza.com/)
+
+When I started to get into WebRTC, I realized that it’s architecturally complex. To make it work, I needed to setup several applications. It doesn’t sum up with a single methodology like REST or web sockets, many components are involved. When I followed tutorials, I did exactly as I was instructed to, but quickly fell into realization that things just don’t add up. As soon as I tried to make a slight change into the system, like adding the ability to have a call with more than 2 people, things started to fall apart. Knowing what I know now, I came into a very important conclusion: **you have to understand how WebRTC operates on the architectural level, moreso than its API**.
+
+And so, in this article, I would like to talk about how WebRTC works, have an overview about the components involved, and how they communicate with each other. I will not talk about anything specific to its API, as I feel like there are plenty tutorials and docs about it, yet a handful (good) articles about its architecture.
+
+## WebRTC Overview
+
+WebRTC is a protocol that was designed to enable direct communication between browsers. It includes a set of classes and methods to standardize the process, and it is available ever since Chrome 23:
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/700/1*cWY_pWjioXAprrNF0BWtgQ.png"
+/>
+
+> See: [RTCPeerConnection](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection), the most primitive WebRTC class
+
+Beside standardizing the communication process, the browsers give you an easy and secure access to the hardware, which is complementary to WebRTC. You can stream your screen, your microphone, and your camera; which will usually require you to install external plug-ins or binaries, and can get quite complicated, considering that each OS and hardware require different (and complicated!) configs. Originally I was trying to implement screen sharing with [ffmpeg](https://ffmpeg.org/); I did manage to make it work, but ran into many compatibility issues.
+
+We’re really blessed to have that out of the box, but I should probably talk about the media part in another article.
+
+### Peer connections
+
+WebRTC is based on [p2p architecture](https://en.wikipedia.org/wiki/Peer-to-peer) (peer to peer); the participants of the call are responsible for transferring data from one end to another, without relying on a middleman (for the most part, I’ll cover that later). If one participant disconnects for whatever reason, the others will keep broadcasting data; unlike traditional communication, where data is no longer streamed if connection to the server is lost. In addition, peers are geographically much closer to one another, so the data doesn’t have a long distance to travel.
+
+Accordingly, when I enter a conversation, I have to represent each peer with a dedicated instance. So given that I have a total of 4 peers in the conversation, including myself, I’ll have 3 peer instances, where each one is directly linked to a different browser; this is how the mesh would look like:
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/241/1*pnj8W4d8LFihZXblgAR3yA.png"
+/>
+
+> A system of 4 peers
+
+### Signaling server
+
+As the call goes, I’ll have to keep track of people who join or leave the conversation, and create or dispose connections respectively. To keep track of these events, we need to have a **signaling server**.
+
+A signaling server is dedicated to establish the initial connection between 2 or more peers who would like to communicate. Once the connection has been established, you wouldn’t need to use it for the on-going communication. You might use it however if you would like to signal additional events, e.g. a peer has disconnected; it’s up to you.
+
+The signaling server can be implemented in many ways, all you need is a bridge between peer A and peer B. You can use anything from REST, to theoretically copy-pasting via email, but normally you would like to use web sockets for this kind of scenario, because communication can be spontaneously initiated at any time:
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/411/1*L8JiTFIaH3C12gx1xlVzQg.png"
+/>
+
+> When I join a conversation, I broadcast it with the signaling server so everyone can know about it
+
+### SDP
+
+Once we know that someone has joined the conversation, we need exchange information about each other’s systems inorder to establish a connection. This information is based on a protocol called SDP (session description protocol), and it includes details about its belonging peer e.g. what agent is it using, what hardware does it support, what type of media would it like to exchange, etc. The [SDP](https://developer.mozilla.org/en-US/docs/Glossary/SDP) config is a simple key-value object:
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/700/1*7FYyYs-INH5q8cvPFiisCg.png"
+/>
+
+Source: [researchgate.net](https://www.researchgate.net/figure/An-example-SDP-session-description_fig10_2419542)
+
+An SDP config can either represent an **answer**, or an **offer**. Whenever we would like to initiate a connection establishment we make an offer, and in return, we should get an answer. Offer / answer are bi-directional, what I mean by that is that it doesn’t matter which side initiates the connection, the outcome will be the same.
+
+However, it is important to keep track of what end does the SDP config in question represents: us, or the other peer. When initializing a peer instance, we need would need 2 things: a local description, and a remote description. A local description, represents us, and a remote description, represents the other end. Together, we can successfully establish a connection:
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/421/1*D0OSxkLJAPZXnmja2Fvq3A.png"
+/>
+
+> Connecting 2 peers with their SDPs
+
+### ICE candidates
+
+A peer might have many communication transports, not just one. Someone might have multiple private IPs/ports, and/or multiple public IPs/ports, and/or various protocols, and/or one or more reverse proxies, etc. As soon as we create an SDP offer, WebRTC will try to find every possible communication transport to the browser, which is known as [ICE candidate](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity#ice_candidates) (interactive connection establishment):
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/585/1*bum1MRdIK6Wkbu_WJ2uSIA.png"
+/>
+
+> An actual [RTCIceCandidate](https://developer.mozilla.org/en-US/docs/Web/API/RTCIceCandidate) instance
+
+An ICE candidate is just another key-value pair that should be added to the SDP. We can either wait for WebRTC to find every possible candidate and send a complete SDP, or we can send each detected ICE candidate with the signaling server and gradually extend the SDP; both options are valid. WebRTC should know how to alternate between ICEs and pick the most viable option.
+
+By default, WebRTC will give preference to ICEs which are based on [UDP](https://developer.mozilla.org/en-US/docs/Glossary/UDP) (User Datagram Protocol). Unlike [TCP](<https://developer.mozilla.org/en-US/docs/Glossary/Transmission_Control_Protocol_(TCP)>) (Transmission Control Protocol, the traditional one used by HTTP), where packets are not streamed unless prior packets are 100% sent, UDP will keep streaming packets regardless of the state of prior packets, making the communication much faster.
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/421/1*jqBn8HdZFK19wNY2PrpaHA.png"
+/>
+
+> As soon as we create an SDP, WebRTC starts looking for ICE candidates
+
+### NAT
+
+Today, most machines aren’t connected directly to the global network, and they most likely go through a [NAT](https://en.wikipedia.org/wiki/Network_address_translation) layer (Network Address Translation). Your machine’s private IP/port will literally be translated to a different public IP/port when transporting through the router.
+
+Since WebRTC strives to achieve as directly as possible connection between 2 parties, the fact that either of them goes through a proxy arises some complications in the process, such that we should be aware of. Let’s have a look at the different NAT configs, and see how we can establish a direct connection using them (I took the definitions directly from [dh2i.com](https://dh2i.com/kbs/kbs-2961448-understanding-different-nat-types-and-hole-punching/), I couldn’t put it any better myself):
+
+---
+
+#### Normal (Full Cone) NAT
+
+A full cone NAT is one where all requests from the same internal IP address and port are mapped to the same external IP address and port. Furthermore, any external host can send a packet to the internal host, by sending a packet to the mapped external address.
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/289/1*hgb0TD9gEoVd9P3vuMqvvA.png"
+/>
+
+> Illustration: A peer with destination IP/port, tries to establish a connection with us by making a request to one of our router’s public IPs/ports, which will then be translated to our machine’s private IP/port.
+
+#### Restricted Cone NAT
+
+A restricted cone NAT is one where all requests from the same internal IP address and port are mapped to the same external IP address and port. Unlike a full cone NAT, an external host (with IP address X) can send a packet to the internal host only if the internal host had previously sent a packet to IP address X.
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/429/1*y0D0aHURSaRQI_scH0RA6A.png"
+/>
+
+#### Port Restricted Cone NAT
+
+A port restricted cone NAT is like a restricted cone NAT, but the restriction includes port numbers. Specifically, an external host can send a packet, with source IP address X and source port P, to the internal host only if the internal host had previously sent a packet to IP address X and port P.
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/569/1*qrd3mZ6RTyzPuAzowWCugQ.png"
+/>
+
+#### Symmetric NAT
+
+A symmetric NAT is one where all requests from the same internal IP address and port, to a specific destination IP address and port, are mapped to the same external IP address and port. If the same host sends a packet with the same source address and port, but to a different destination, a different mapping is used. Furthermore, only the external host that receives a packet can send a UDP packet back to the internal host.
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/2400/1*pZM6EHpC8c027idJ6tKmxw.png"
+/>
+
+---
+
+I would like to add a small bit to these definitions. The router will manage its state using a NAT table. The table will contain a history of all its transactions; whenever we make a request, an entry will be created and added to the table. The entry will usually contain the following information:
+
+- Private IP/port
+- Public IP/port
+- Destination IP/port
+
+This information is critical so we can better understand the upcoming principles.
+
+### STUN
+
+If our machine is connected to a NAT layer, we need our public IP/port to create ICE candidates. Because of that, WebRTC gives us the ability to specify a **STUN** server URL (Session Traversal Utils for NAT) when initializing a WebRTC connection.
+
+_STUN is a standardized set of methods, including a network protocol, for traversal of network address translator (NAT) gateways in applications of real-time voice, video, messaging, and other interactive communications._ — [Wikipedia](https://en.wikipedia.org/wiki/STUN)
+
+Practically speaking, all it really does is return the public IP/port. So this is what happens when we try to establish a connection between 2 peers:
+
+- Let peer A and peer B will full cone NATs.
+- Peer A will get information about its public IP/port using the STUN server.
+- Peer A will send that information to peer B using the signaling server.
+- Peer B will get that information and will try to establish a connection with peer A.
+- Same goes the other way around.
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/259/1*80Z67TRcEZnqHj3dWSi2cg.png"
+/>
+
+> Source: [MDN](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols)
+
+Because STUN servers don’t do much, they are cheap; they don’t require any authentication and are often offered for free.
+
+If 2 peers are operating on a full cone NAT, the public IP/port is all they need to establish a connection. The router will look at the public IP/port that are attached to an incoming request, and if it can match it with a private IP/port, it will accept the connection.
+
+### Hole punching
+
+The other 2 restricted cone NATs are similar to a full cone NAT in the way they connect with peers, but they impose a small limitation. They need to be aware of their public IPs/ports, and they also need to make sure that the destination IP/port of the incoming request exist in the NAT table. Unlike full cone NAT, where the router basically trusts everyone, the restricted cones will only trust those who it tried to initiate a connection establishment with.
+
+This creates a paradox. If there are 2 peers who have never met each other before, how exactly can they establish a connection?
+
+In order to overcome this issue we use a technique called [hole punching](<https://en.wikipedia.org/wiki/Hole_punching_(networking)>) (aka punch through). Basically it goes like this:
+
+- Let peer A with a restricted cone NAT, and peer B with a full cone NAT.
+- Peer A will get information about its public IP/port using the STUN server.
+- Peer A will send that information to peer B using the signaling server.
+- Peer B will get that information and will try to establish a connection with peer A.
+- Peer B will fail to establish a connection, but it will store peer A public information in its NAT table.
+- Peer A will try to establish a connection with peer B. Since peer A already exists in peer B NAT table, the connection is accepted.
+- Peer A will store public information about peer B.
+- Peer B can now establish a connection with peer A.
+
+### TURN
+
+When we’re dealing with symmetric NAT we can completely throw p2p and direct browser communication to the trash. Let’s observe the connection process first:
+
+- Let peer A with symmetric NAT, and peer B with a full cone NAT.
+- Peer A will get information about its public IP/port using the STUN server.
+- Peer A will send that information to peer B using the signaling server.
+- Peer B will get that information and will try to establish a connection with peer A.
+- Peer B will fail to establish a connection, but it will store peer A public information in its NAT table.
+- Peer A will try to establish a connection with peer B. However, peer B will reject peer A, because the public information stored in its NAT table is actually different than the one it actually received.
+
+You see, when the public IP/port of one peer is not static, there’s no way for us to achieve direct browser communication. This is why WebRTC gives us the ability to specify a TURN server URL (Traversal Using Relays around NAT).
+
+_Traversal Using Relays around NAT (TURN) is a protocol that assists in traversal of network address translators (NAT) or firewalls for multimedia applications._ — [Wikipedia](https://en.wikipedia.org/wiki/Traversal_Using_Relays_around_NAT#:~:text=The%20TURN%20server%20receives%20the%20peer%20UDP%20datagram%2C%20checks%20the,relay%20IP%20address%20for%20communication.)
+
+TURN literally goes around just to avoid direct communication. It uses a reverse proxy, and this way the public IP/port remain constant, and we can establish a connection. Not only this will make the connection slower and less efficient, but it will also make it a lot more expensive. Hence, A TURN ICE will always be prioritized the lowest.
+
+Imagine having a call with dozens of peers where each one of them sends a packet through TURN. You would have to pay for all that data that is being transferred which can get quite costly, especially if the server is not located in the nearest region. This is why TURN servers are never offered for free, and they are always secured behind an authentication mechanism.
+
+<img
+  align="center"
+  src="https://miro.medium.com/max/295/1*WSa3buqCC42Jc4Qygi9jXw.png"
+/>
+
+> Source: [MDN](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols)
+
+---
+
+The circle is closed. 2 or more peers can now establish a connection and communicate with each other. Other topics that are directly related to WebRTC which might interest you are (not actual articles):
+
+- [Media Streams](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) — how can you get data from the camera and microphone and stream it over to your peers using WebRTC.
+- [Data Channels](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Using_data_channels) — how can you send data JSONs across your peers using WebRTC.
+- Reducing latency and costs of TURN transactions with multi-regional deployment.
+
+I hope you enjoyed the article, and I recommend you to look at [Git Streamer](https://bit.ly/3oRoOtG) if you are looking for a quick and easy way to share your screen and code simultaneously.
