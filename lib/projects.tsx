@@ -169,7 +169,7 @@ export const projects = {
     featured: false,
     title: 'GraphQL in Angular - Apollo Angular',
     image: '/img/logos/apollo-angular.svg',
-    link: 'https://github.com/kamilkisiela/apollo-angular',
+    link: 'https://apollo-angular.com',
     description: (
       <>
         <p>
