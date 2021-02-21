@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import styled from 'styled-components';
 import Link from 'next/link';
-import { GitHub, Twitter, Linkedin, Youtube } from 'react-feather';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { GitHub, Linkedin, Twitter, Youtube } from 'react-feather';
+import styled from 'styled-components';
+// import { TheGuildLogo } from './Logo';
+import { HeaderLogo } from './HeaderLogo';
 import { Discord } from './logos/Discord';
-import { TheGuildLogo } from './Logo';
 
 export const Container = styled.div`
   max-width: 960px;
@@ -32,8 +33,10 @@ const Header = styled.header<{ sticky?: boolean }>`
 
   ${(props) => (props.sticky ? 'backdrop-filter: blur(5px);' : '')}
 
-  background-color: ${(props) =>
-    props.sticky ? 'rgba(255, 255, 255, 0.9)' : 'transparent'};
+  background-color: white;
+
+  /* background-color: ${(props) =>
+    props.sticky ? 'rgba(255, 255, 255, 0.9)' : 'transparent'}; */
   box-sizing: border-box;
   z-index: 1;
 
@@ -49,6 +52,37 @@ const Header = styled.header<{ sticky?: boolean }>`
     & > *:first-child {
       margin-bottom: 15px;
     }
+  }
+`;
+
+const StyledInput = styled.div`
+  svg {
+    position: absolute;
+    left: 0;
+    top: 8px;
+    padding: 9px 8px;
+    fill: black;
+    transition: 0.3s;
+  }
+
+  input:focus + svg {
+    fill: dodgerBlue;
+  }
+
+  &.inputWithIcon {
+    position: relative;
+  }
+`;
+
+const SearchInput = styled.input`
+  font-size: 15px;
+  font-weight: 300;
+  border-radius: 5px;
+  margin-left: 10px;
+  padding-left: 20px;
+
+  &::placeholder {
+    color: #334664;
   }
 `;
 
@@ -158,7 +192,7 @@ export const Layout: React.FC = ({ children }) => {
         <Logo>
           <Link href="/">
             <a title="The Guild - home page">
-              <TheGuildLogo />
+              <HeaderLogo />
             </a>
           </Link>
         </Logo>
@@ -178,6 +212,27 @@ export const Layout: React.FC = ({ children }) => {
           <Link href="/contact">
             <a title="The Guild - Contact us">Contact</a>
           </Link>
+
+          <StyledInput className={'inputWithIcon'}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="10px"
+              height="10px"
+              style={{
+                padding: '0px',
+                left: '20px',
+                zIndex: 10,
+              }}
+            >
+              <path d="M 13.261719 14.867188 L 15.742188 17.347656 C 15.363281 18.070313 15.324219 18.789063 15.722656 19.1875 L 20.25 23.714844 C 20.820313 24.285156 22.0625 23.972656 23.015625 23.015625 C 23.972656 22.058594 24.285156 20.820313 23.714844 20.25 L 19.191406 15.722656 C 18.789063 15.324219 18.070313 15.363281 17.347656 15.738281 L 14.867188 13.261719 Z M 8.5 0 C 3.804688 0 0 3.804688 0 8.5 C 0 13.195313 3.804688 17 8.5 17 C 13.195313 17 17 13.195313 17 8.5 C 17 3.804688 13.195313 0 8.5 0 Z M 8.5 15 C 4.910156 15 2 12.089844 2 8.5 C 2 4.910156 4.910156 2 8.5 2 C 12.089844 2 15 4.910156 15 8.5 C 15 12.089844 12.089844 15 8.5 15 Z" />
+            </svg>
+            <SearchInput
+              type="text"
+              id="headerSearchBox"
+              placeholder="Search all our projects"
+            />
+          </StyledInput>
         </Nav>
       </Header>
       {children}

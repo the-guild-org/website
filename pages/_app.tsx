@@ -1,12 +1,12 @@
 import App, { NextWebVitalsMetric } from 'next/app';
-import React from 'react';
-import Router from 'next/router';
 import Head from 'next/head';
+import Router from 'next/router';
 import 'prism-theme-night-owl';
+import React from 'react';
 import 'remark-admonitions/styles/classic.css';
 import * as gtag from '../lib/gtag';
-
 import { GA_TRACKING_ID } from '../lib/gtag';
+import '../public/static/docsearch.min.css';
 
 Router.events.on('routeChangeComplete', (url) => gtag.pageview(url));
 
@@ -36,6 +36,8 @@ export default class MyApp extends App {
           <meta charSet="utf-8" />
           <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
           <link rel="shortcut icon" href="/fav.ico" />
+
+          {/* <link href="/static/docsearch.css" rel="stylesheet"/> */}
           {router.route && (
             <link
               rel="canonical"

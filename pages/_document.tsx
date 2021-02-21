@@ -1,5 +1,5 @@
+import Document, { Head, Html, Main, NextScript } from 'next/document';
 import React from 'react';
-import Document, { Head, Main, NextScript, Html } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
 
 export default class MyDocument extends Document {
@@ -37,6 +37,8 @@ export default class MyDocument extends Document {
           <Main />
           <NextScript />
         </body>
+        <script src="https://cdn.jsdelivr.net/npm/docsearch.js@2.6.3/dist/cdn/docsearch.min.js"></script>
+        <script src="/static/algolia.js"></script>
       </Html>
     );
   }
