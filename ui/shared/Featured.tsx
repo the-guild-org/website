@@ -120,7 +120,7 @@ export const Featured: React.FC<{
   width,
   maxCoverSize,
 }) => {
-  const { large, placeholder, hasPlaceholder } = withPlaceholder(image);
+  const { placeholder, hasPlaceholder } = withPlaceholder(image);
   return (
     <Container className={className} width={width || 40}>
       <Link href={link} as="a" title={title}>

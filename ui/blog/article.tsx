@@ -166,7 +166,7 @@ function Authors(props: { meta: Meta }) {
             </a>
           </div>
           <div>
-            <a href={author.link} title={author.name}>
+            <a href={author.link} itemProp="author" title={author.name}>
               {author.name}
             </a>
             <Time
@@ -212,7 +212,7 @@ function Authors(props: { meta: Meta }) {
                   </a>
                 </div>
                 <div>
-                  <a href={author.link} title={author.name}>
+                  <a href={author.link} itemProp="author" title={author.name}>
                     {author.name}
                   </a>
                 </div>
@@ -239,8 +239,13 @@ const Article = (meta: Meta): React.FC => {
       <MDXProvider components={components}>
         <Page title={title} image={ogImage} description={meta.description}>
           <Container>
-            <Main>
-              <Title>{meta.title}</Title>
+            <Main itemScope itemType="http://schema.org/Article">
+              <meta itemProp="datePublished" content={meta.date} />
+              <meta itemProp="dateModified" content={meta.updateDate} />
+              <meta itemProp="image" content={ogImage} />
+              <meta itemProp="publisher" content="the-guild.dev" />
+
+              <Title itemProp="name healine">{meta.title}</Title>
               <Authors meta={meta} />
               <TagContainers>
                 {meta.tags.map((t) => (
