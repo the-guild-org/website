@@ -134,6 +134,7 @@ function init() {
         float: left;
         padding: 11px;
         margin-right: 5px;
+        background-color: white;
       }
 
       .ossContentCells {
