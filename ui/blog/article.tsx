@@ -1,6 +1,7 @@
 import React from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Link from 'next/link';
+import Head from 'next/head';
 import styled from 'styled-components';
 import format from 'date-fns/format';
 import { ArrowLeft } from 'react-feather';
@@ -166,7 +167,7 @@ function Authors(props: { meta: Meta }) {
             </a>
           </div>
           <div>
-            <a href={author.link} itemProp="author" title={author.name}>
+            <a href={author.link} title={author.name}>
               {author.name}
             </a>
             <Time
@@ -212,7 +213,7 @@ function Authors(props: { meta: Meta }) {
                   </a>
                 </div>
                 <div>
-                  <a href={author.link} itemProp="author" title={author.name}>
+                  <a href={author.link} title={author.name}>
                     {author.name}
                   </a>
                 </div>
@@ -234,18 +235,42 @@ const Article = (meta: Meta): React.FC => {
       meta.thumbnail
         ? meta.thumbnail
         : meta.image;
-
+     
+    const firstAuthor = authors[hasManyAuthors(meta) ? meta.authors[0] : meta.author];
+    const markupData = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": title,
+      "image": [ogImage],
+      "datePublished": new Date(meta.date).toISOString(),
+      "dateModified": meta.updateDate ? new Date(meta.updateDate).toISOString() : new Date(meta.date).toISOString(),
+      "author": {
+        "@type": "Person",
+        "name": author.name
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "The Guild",
+        "email": "contact@the-guild.dev",
+        "url": "https://the-guild.dev",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://the-guild.dev/static/logo.svg"
+        }
+      }
+    };
     return (
       <MDXProvider components={components}>
         <Page title={title} image={ogImage} description={meta.description}>
           <Container>
-            <Main itemScope itemType="http://schema.org/Article">
-              <meta itemProp="datePublished" content={meta.date} />
-              <meta itemProp="dateModified" content={meta.updateDate} />
-              <meta itemProp="image" content={ogImage} />
-              <meta itemProp="publisher" content="the-guild.dev" />
-
-              <Title itemProp="name healine">{meta.title}</Title>
+            <Head>
+              <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(markupData) }}
+              />
+            </Head>
+            <Main>
+              <Title>{meta.title}</Title>
               <Authors meta={meta} />
               <TagContainers>
                 {meta.tags.map((t) => (
