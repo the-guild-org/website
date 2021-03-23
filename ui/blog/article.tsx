@@ -246,7 +246,7 @@ const Article = (meta: Meta): React.FC => {
       "dateModified": meta.updateDate ? new Date(meta.updateDate).toISOString() : new Date(meta.date).toISOString(),
       "author": {
         "@type": "Person",
-        "name": author.name
+        "name": firstAuthor.name
       },
       "publisher": {
         "@type": "Organization",
