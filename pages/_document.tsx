@@ -30,9 +30,20 @@ export default class MyDocument extends Document {
   }
 
   render() {
+    const richData = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "The Guild",
+      "url": "https://the-guild.dev",
+      "email": "contact@the-guild.dev",
+      "logo": "https://the-guild.dev/static/logo.svg"
+    };
+    
     return (
       <Html lang="en">
-        <Head />
+        <Head>
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(richData) }} />
+        </Head>
         <body>
           <Main />
           <NextScript />
