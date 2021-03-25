@@ -253,7 +253,7 @@ function main() {
 
             <div class="flex-item-right">
               <div class="ossCells">
-                <img src="${linkUrl}/img/logos/config.svg" width="100">
+                <img src="${linkUrl}/img/logos/scalars.svg" width="100">
               </div>
               <div class="ossContentCells">
                 <a href="https://github.com/Urigo/graphql-scalars/" target="_blank">
