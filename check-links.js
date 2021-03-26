@@ -140,6 +140,8 @@ function onlyRelative(links) {
   return links.filter(
     (link) =>
       link.href.startsWith('.') ||
-      (link.href.startsWith('/') && !link.href.startsWith('/blog-assets/'))
+      (link.href.startsWith('/') &&
+        !link.href.startsWith('/blog-assets/') &&
+        !link.href.startsWith('/medium/'))
   );
 }
