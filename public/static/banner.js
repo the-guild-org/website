@@ -256,7 +256,7 @@ function main() {
                 <img src="${linkUrl}/img/logos/scalars.svg" width="100">
               </div>
               <div class="ossContentCells">
-                <a href="https://github.com/Urigo/graphql-scalars/" target="_blank">
+                <a href="https://www.graphql-scalars.dev/" target="_blank">
                   <h4>GraphQL Scalars</h4>
                 </a>
                 A library of custom GraphQL Scalars for creating precise type-safe GraphQL schemas.

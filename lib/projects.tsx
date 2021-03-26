@@ -150,7 +150,7 @@ export const projects = {
     featured: false,
     title: 'Collection of GraphQL Scalars',
     image: '/img/logos/scalars.svg',
-    link: 'https://github.com/Urigo/graphql-scalars',
+    link: 'https://www.graphql-scalars.dev',
     description: (
       <>
         <p>
