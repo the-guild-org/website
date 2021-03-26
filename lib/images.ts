@@ -1,7 +1,9 @@
 export function withPlaceholder(src: string) {
-  const isVideo = src.endsWith('.mp4') || src.endsWith('.webm');
+  const ext = last(src.toLowerCase().split('.'));
+  const skipped = ['mp4', 'webm', 'svg', 'gif'];
+  const isSkipped = skipped.includes(ext);
 
-  if (!isVideo && src.startsWith('/') && !src.toLowerCase().endsWith('.svg')) {
+  if (src.startsWith('/') && !isSkipped) {
     return {
       hasPlaceholder: true,
       placeholder: require(`Public/${src.substr(1)}?lqip`),
@@ -14,4 +16,8 @@ export function withPlaceholder(src: string) {
     placeholder: src,
     large: src,
   };
+}
+
+function last<T>(list: T[]): T {
+  return list[list.length - 1];
 }

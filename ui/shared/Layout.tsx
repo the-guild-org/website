@@ -42,7 +42,7 @@ const Header = styled.header<{ sticky?: boolean }>`
 
   transition: all 0.5s ease 0s;
 
-  @media (max-width: 640px) {
+  @media (max-width: 650px) {
     padding: 15px;
     flex-direction: column;
 
@@ -65,6 +65,22 @@ const Nav = styled.nav`
   & > a:hover {
     text-decoration: none;
     color: var(--colors-accent);
+  }
+
+  @media (max-width: 650px) {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    & > a {
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    & > a {
+      font-size: 12px;
+    }
   }
 `;
 
