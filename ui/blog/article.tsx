@@ -235,29 +235,32 @@ const Article = (meta: Meta): React.FC => {
       meta.thumbnail
         ? meta.thumbnail
         : meta.image;
-     
-    const firstAuthor = authors[hasManyAuthors(meta) ? meta.authors[0] : meta.author];
+
+    const firstAuthor =
+      authors[hasManyAuthors(meta) ? meta.authors[0] : meta.author];
     const markupData = {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": title,
-      "image": [ogImage],
-      "datePublished": new Date(meta.date).toISOString(),
-      "dateModified": meta.updateDate ? new Date(meta.updateDate).toISOString() : new Date(meta.date).toISOString(),
-      "author": {
-        "@type": "Person",
-        "name": firstAuthor.name
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: title,
+      image: [ogImage],
+      datePublished: new Date(meta.date).toISOString(),
+      dateModified: meta.updateDate
+        ? new Date(meta.updateDate).toISOString()
+        : new Date(meta.date).toISOString(),
+      author: {
+        '@type': 'Person',
+        name: firstAuthor.name,
       },
-      "publisher": {
-        "@type": "Organization",
-        "name": "The Guild",
-        "email": "contact@the-guild.dev",
-        "url": "https://the-guild.dev",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://the-guild.dev/static/logo.svg"
-        }
-      }
+      publisher: {
+        '@type': 'Organization',
+        name: 'The Guild',
+        email: 'contact@the-guild.dev',
+        url: 'https://the-guild.dev',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://the-guild.dev/static/logo.svg',
+        },
+      },
     };
     return (
       <MDXProvider components={components}>
