@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const qs = require('querystring');
 const algoliasearch = require('algoliasearch/lite');
-const client = algoliasearch('ANRJKXZTRW', '9aea5a81875a92180a742ad87a3a2a20');
 
 const app = express();
 
@@ -16,9 +15,15 @@ app.use(
 );
 app.use(cors());
 app.use((req, res) => {
+  console.log('Hit!');
   const body = JSON.parse(req.rawBody.toString());
+  console.log('Body', body);
   const input = body.requests[0];
-  const index = client.initIndex('theguild');
+  const client = algoliasearch(
+    req.query['x-algolia-application-id'],
+    req.query['x-algolia-api-key']
+  );
+  const index = client.initIndex(input.indexName);
 
   index
     .search(input.query, qs.parse(input.params))
@@ -35,6 +40,7 @@ app.use((req, res) => {
       });
     })
     .catch((reason) => {
+      console.log('reason', reason);
       res.status(500).send(reason);
     });
 });
