@@ -427,7 +427,9 @@ function main() {
     'graphql-inspector.com': ['inspector'],
     'tortilla.academy': ['tortilla'],
     'graphql-mesh.com': ['mesh'],
-    'apollo-angular.com': ['angular']
+    'apollo-angular.com': ['angular'],
+    'graphql-cli.com': ['cli'],
+    'graphql-scalars.dev': ['scalars']
   };
 
   if (typeof window !== 'undefined') {
