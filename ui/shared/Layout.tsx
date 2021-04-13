@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Header } from 'the-guild-components';
 import { GitHub, Twitter, Linkedin, Youtube } from 'react-feather';
+import { Header } from 'the-guild-components';
+
 import { Discord } from './logos/Discord';
-import { TheGuildLogo } from './Logo';
 
 export const Container = styled.div`
   max-width: 960px;
@@ -83,28 +83,9 @@ const FooterLinks = styled.div`
 `;
 
 export const Layout: React.FC = ({ children }) => {
-  const [sticky, setSticky] = useState(false);
-  const ref = useRef(null);
-  const handleScroll = useCallback(() => {
-    if (ref.current) {
-      setSticky(ref.current.getBoundingClientRect().top < 0);
-    }
-  }, [ref.current, setSticky]);
-
-  useEffect(() => {
-    if (typeof window === 'object') {
-      window.addEventListener('scroll', handleScroll);
-
-      return () => {
-        window.removeEventListener('scroll', () => handleScroll);
-      };
-    }
-  }, []);
-
-  console.log(Header);
   return (
-    <Wrapper ref={ref}>
-      {/* <Header accentColor="--colors-accent" /> */}
+    <Wrapper>
+      <Header accentColor="var(--colors-accent)" sameSite themeSwitch />
       {children}
       <Footer>
         <FooterLinks>
