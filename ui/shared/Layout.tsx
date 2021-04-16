@@ -85,7 +85,8 @@ const FooterLinks = styled.div`
 export const Layout: React.FC = ({ children }) => {
   return (
     <Wrapper>
-      <Header accentColor="var(--colors-accent)" sameSite themeSwitch />
+      <Header accentColor="var(--colors-accent)" sameSite />
+
       {children}
       <Footer>
         <FooterLinks>
