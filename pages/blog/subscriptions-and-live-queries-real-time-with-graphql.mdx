@@ -79,10 +79,44 @@ The above subscription will count up to the number provided via the `toNumber` a
 
 Of course, in a real-world application we would like to subscribe to other event sources instead of some static, pre-defined events.
 
-The most common used library for such a PubSub engine is [`graphql-subscriptions`](https://github.com/apollographql/graphql-subscriptions).
+The most common used (but not best maintained) library for such a PubSub engine in the GraphQL context is [`graphql-subscriptions`](https://github.com/apollographql/graphql-subscriptions).
 There are also adapters available for more distributed systems (where all GraphQL API replicas must be notified about the event) e.g. over Redis.
 
-Let's take a look at a more "real-world" example:
+If there is not need for scaling horizontally the `graphql-subscriptions` package can be omitted and be replaced with the Node.js native `events` module:
+
+```tsx
+import { EventEmitter, on } from 'events';
+
+export const createPubSub = <TTopicPayload extends { [key: string]: unknown }>(
+  eventEmitter: EventEmitter
+) => {
+  return {
+    publish: <TTopic extends Extract<keyof TTopicPayload, string>>(
+      topic: TTopic,
+      payload: TTopicPayload[TTopic]
+    ) => void emitter.emit(topic as string, payload),
+    subscribe: async function* <
+      TTopic extends Extract<keyof TTopicPayload, string>
+    >(topic: TTopic): AsyncIterableIterator<TTopicPayload[TTopic]> {
+      const asyncIterator = on(emitter, topic);
+      for await (const [value] of asyncIterator) {
+        yield value;
+      }
+    },
+  };
+};
+
+const emitter = createPubSub(new EventEmitter());
+```
+
+A (type-safe) PubSub implementation in 21 lines of code. We will use this for the example below.
+
+In my opinion the different pub sub implementations should rather be based on EventEmitter instead of `graphql-subscriptions`. A PubSub can but musn't be used together with GraphQL.
+By choosing the name `graphql-subscriptions` it gives the impression that the logic is specific to GraphQL and reduces other possible contributions form people that need a similar event abstraction.
+
+Therefore, I hope the next generation/iteration of Node.js PubSub implementations is less specific.
+
+Having said that, let's take a look at a more "real-world" like example of using subscriptions with PubSub:
 
 ```ts
 const resolvers = {
@@ -102,8 +136,8 @@ const resolvers = {
   Mutation: {
     postAdd: (_, args, context) => {
       const post = context.postStore.create(args);
-      // We don't want to publish the whole object via our event emitter. The id should be sufficient.
-      context.pubSub.emit('POST_ADDED', { id: args.id });
+      // wo don't wanna publish the whole object via our event emitter, the id should be sufficient
+      context.pubSub.publish('POST_ADDED', { id: args.id });
       return post;
     },
   },
@@ -327,7 +361,10 @@ const PostRenderer = ({ postId }: { postId: string }) => {
       updater: (store, payload) => {
         const record = store.get(postId);
         if (record) {
-          record.setValue("totalLikeCount", payload.onPostLikeCountChanged.totalCount);
+          record.setValue(
+            'totalLikeCount',
+            payload.onPostLikeCountChanged.totalCount
+          );
         }
       },
     }
@@ -372,7 +409,7 @@ const UserListQuery = graphql`
       name
     }
   }
-`
+`;
 
 const UserListChangeSubscription = graphql`
   subscription UserListChangeSubscription {
@@ -389,34 +426,46 @@ const UserListChangeSubscription = graphql`
       }
     }
   }
-`
+`;
 
-const UserListRenderer = ({ postId }: { postId: string}) => {
-  const {props} = useQuery(UserListQuery)
-  useSubscription(UserListChangeSubscription,  /* variables */ { postId }, {
-    // we need to manually update the cache :(
-    updater: (store, payload) => {
-      const record = store.getRootField();
-      const users = rootField.getLinkedRecords("users");
-      if (users) {
-        switch (payload.onUserListChange.__typename) {
-          case "OnUserAdded": {
-            const newUser = store.create(payload.onUserListChange.user.id, "User");
-            newUser.setValue("name", payload.onUserListChange.user.name);
-            rootField.setLinkedRecords("users", [...users, newUser]);
-            break;
-          }
-          case "onUserRemoved": {
-            rootField.setLinkedRecords(users.map(user => user.getDataID() !== payload.onUserListChange.removedUserId))
-            break;
+const UserListRenderer = ({ postId }: { postId: string }) => {
+  const { props } = useQuery(UserListQuery);
+  useSubscription(
+    UserListChangeSubscription,
+    /* variables */ { postId },
+    {
+      // we need to manually update the cache :(
+      updater: (store, payload) => {
+        const record = store.getRootField();
+        const users = rootField.getLinkedRecords('users');
+        if (users) {
+          switch (payload.onUserListChange.__typename) {
+            case 'OnUserAdded': {
+              const newUser = store.create(
+                payload.onUserListChange.user.id,
+                'User'
+              );
+              newUser.setValue('name', payload.onUserListChange.user.name);
+              rootField.setLinkedRecords('users', [...users, newUser]);
+              break;
+            }
+            case 'onUserRemoved': {
+              rootField.setLinkedRecords(
+                users.map(
+                  (user) =>
+                    user.getDataID() !== payload.onUserListChange.removedUserId
+                )
+              );
+              break;
+            }
           }
         }
-      }
+      },
     }
-  })
+  );
 
-  return <UserList {...props} />
-}
+  return <UserList {...props} />;
+};
 ```
 
 As our application grows the manual cache update code can become so complex and confusing that I have considered switching back into simply refetching the queries in some applications.
@@ -440,11 +489,14 @@ const OnPlaySound = graphql`
 
 const ChatRenderer = () => {
   const chat = useQuery(ChatQuery);
-  useSubscription(OnPlaySound, useMemo({
-    onNext: (payload) => {
-      playSound(payload.onPlayChatSound.soundUrl);
-    },
-  }));
+  useSubscription(
+    OnPlaySound,
+    useMemo({
+      onNext: (payload) => {
+        playSound(payload.onPlayChatSound.soundUrl);
+      },
+    })
+  );
 
   return <Chat chat={chat} />;
 };
@@ -779,8 +831,7 @@ or for applying the patches on the initial result in the network/fetcher/link la
 The server implementation uses an event emitter and an immutable state tree for detecting changes that must be sent to clients. The patch is automatically generated from the next immutable state that is compared against the last which got emitted via an `EventEmitter`.
 
 While the idea is quite nice, the implementation is obviously meant for backends that already use reactive or immutable data structures. Having to rewrite our existing GraphQL layer to support live queries is a big trade-off.
-Furthermore, the library is not maintained that well. I've made PRs to make the library compatible with recent GraphQL versions, but these have yet to be merged. Using unions and interfaces is not possible.```
-Having to patch a library with `patch-package` before even being usable is generally a bad sign.
+Furthermore, the library is not maintained that well. I've made PRs to make the library compatible with recent GraphQL versions, but these have yet to be merged. Using unions and interfaces is not possible.```Having to patch a library with`patch-package` before even being usable is generally a bad sign.
 
 1. Automatically updates clients. **Yes.** ✅
 
@@ -1002,14 +1053,12 @@ On the server adding the patch generation middleware is easy function compositio
 import { flow } from 'io-ts/lib/function';
 import { createApplyLiveQueryPatchGenerator } from '@n1ru4l/graphql-live-query-patch';
 
-const applyLiveQueryPatchGenerator = createApplyLiveQueryPatchGenerator()
+const applyLiveQueryPatchGenerator = createApplyLiveQueryPatchGenerator();
 
-const execute = flow(
-  liveQueryStore.execute,
-  applyLiveQueryPatchGenerator
-);
+const execute = flow(liveQueryStore.execute, applyLiveQueryPatchGenerator);
 // same as
-const execute0 = (...args) => applyLiveQueryPatchGenerator(liveQueryStore.execute(...args));
+const execute0 = (...args) =>
+  applyLiveQueryPatchGenerator(liveQueryStore.execute(...args));
 ```
 
 The patches are created by comparing the latest execution result with the previous execution result.
@@ -1063,7 +1112,8 @@ const applyLiveQueryPatch = createApplyLiveQueryPatch();
 
 const execute = flow(networkInterface.execute, applyLiveQueryPatch);
 // same as
-const execute0 = (...args) => applyLiveQueryPatch(networkInterface.execute(...args));
+const execute0 = (...args) =>
+  applyLiveQueryPatch(networkInterface.execute(...args));
 ```
 
 The library is optimized for network interfaces that return AsyncIterables. We can easily wrap out favorite network interface in an AsyncIterable!
@@ -1080,7 +1130,7 @@ const client = createClient({
   url: 'ws://localhost:3000/graphql',
 });
 
-const applyLiveQueryPatch = createApplyLiveQueryPatch()
+const applyLiveQueryPatch = createApplyLiveQueryPatch();
 
 const asyncIterator = pipe(
   makeAsyncIterableIteratorFromSink((sink) => {
@@ -1132,19 +1182,25 @@ This library can be added to any existing GraphQL.js schema without any hassle. 
 The possibilities of resource invalidation are endless and the logic for those can be added incrementally.
 E.g. via a ORM middleware, in our mutation code or maybe even on our GraphQL gateway.
 
-[GraphQL Live Query libraries and example todo app that sync across all connected clients.](https://github.com/n1ru4l/graphql-live-query)
-
-[More information on how the `InMemoryLiveQueryStore` keeps track of resources here.](https://dev.to/n1ru4l/collecting-graphql-live-query-resource-identifier-with-graphql-tools-5fm5)
-
 ## What's next?
 
-I hope that more people will try exploring the possibilities of GraphQL live queries. Eventually, we could even come up with an official RFC for the spec!
+I hope that more people will start exploring the possibilities of GraphQL live queries. Eventually, we could even come up with an official RFC for the spec!
 
-There is a lot more to explore such as
+There is a lot more to think about such as
 
 - Partial query re-execution (e.g. by building ad-hoc queries that only select affected resources)
 - Mechanisms for batching similar query operations (e.g. for preventing execution of same operation multiple times after invalidation)
 - What ever is bothering you while reading this article! 😄
-- A better format for patches (as JSON patch performs rather poorly on list diffs)
+- How to proper handle list updates or pagination? Aka a better format for patches (as JSON patch performs rather poorly on list diffs)
 
-If you are a enthusiastic tinkerer and plan to build something with the libraries above, share it with me and everyone else, so we can get more insights into different use-cases and requirements for different applications!
+If you are a enthusiastic tinkerer and plan to build something with the libraries above, share it with me and everyone else, so we can get more insights into different use-cases and requirements for all kind of applications!
+
+Here are some more resource for you to thinker around with:
+
+[GraphQL Live Query libraries and example todo app that sync across all connected clients.](https://github.com/n1ru4l/graphql-live-query)
+
+[More information on how the `InMemoryLiveQueryStore` keeps track of resources.](https://dev.to/n1ru4l/collecting-graphql-live-query-resource-identifier-with-graphql-tools-5fm5)
+
+[Experimental GraphQL Playground that implements RFC features (defer/stream) and live queries.](https://github.com/n1ru4l/graphql-bleeding-edge-playground)
+
+[Further thoughts on how the Relay Spec could help backing a live query system.](https://dev.to/n1ru4l/graphql-live-queries-backed-by-the-relay-specification-3mlo)
