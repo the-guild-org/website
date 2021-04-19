@@ -897,13 +897,16 @@ const schema = new GraphQLSchema({
 
 This is a simple function that takes a `OperationDefinitionNode` and returns `true` if it is a live query document.
 
-Those two utility functions can be used for any live query implementation.
+[These utility functions can be found here on Github](https://github.com/n1ru4l/graphql-live-query/tree/main/packages/graphql-live-query)
+
+Those functions alone might not seem that helpful alone, but they are a contract live query execution engines could built on.
+Such as the package we are talking about next 😇.
 
 ### `@n1ru4l/in-memory-live-query-store` Keep track and invalidate resources selected by a live query in an efficient, but generic way
 
 The `InMemoryLiveQueryStore.execute` function is a drop in replacement for the `execute` function provided by the `graphql` package.
 
-When encountering a query operation that is marked with the `@live` directive it will return a `AsyncIterator` instead of a `Promise` that can be used for sending multiple results to the client. Similar to how `subscribe` works.
+When encountering a query operation that is marked with the `@live` directive it will return a `AsyncIterator` instead of a `Promise` that can be used for sending multiple results to the client. Similar to how `subscribe` (or `defer`/`stream`) works.
 
 Internally, the store keeps track of the resources selected in the live query operation selection set.
 That means all root query field coordinates (e.g. `Query.post`) and global resource identifiers (e.g. `Post:1`).
@@ -1040,26 +1043,15 @@ useServer(
 server.listen(443);
 ```
 
-### `@n1ru4l/graphql-live-query-patch`
+The best thing is you can start playing around with it today! The fully functional implementation is available as [`@n1ru4l/in-memory-live-query-store` on Github](https://github.com/n1ru4l/graphql-live-query/tree/main/packages/in-memory-live-query-store).
+Feel free to create any issues regarding missing features or documentation. Let's shape the future for GraphQL live queries together!
 
-Optional JSON patch middleware for smaller payloads over the wire.
+### `@n1ru4l/graphql-live-query-patch`: Optional JSON patch middleware for smaller payloads over the wire.
 
-Instead of making JSON patch required by default, it is a totally optional module, that can be applied on the client and the server for deflating (create patches on the server) and inflating (apply patches on the client) the execution results.
-Smaller projects might even be better off not using JSON patch at all, as the patch payload might be bigger as the whole query result.
+GraphQL Queries can become quite huge. Sending big payloads over the wire can be exepnsive at some point. JSON patch is a handy standard for only sending change instructions over the wire which can potentially reduce such huge query results.
 
-On the server adding the patch generation middleware is easy function composition:
-
-```ts
-import { flow } from 'io-ts/lib/function';
-import { createApplyLiveQueryPatchGenerator } from '@n1ru4l/graphql-live-query-patch';
-
-const applyLiveQueryPatchGenerator = createApplyLiveQueryPatchGenerator();
-
-const execute = flow(liveQueryStore.execute, applyLiveQueryPatchGenerator);
-// same as
-const execute0 = (...args) =>
-  applyLiveQueryPatchGenerator(liveQueryStore.execute(...args));
-```
+Instead of having JSON patches enabled by default, it is a totally optional module, that can be applied on the client and the server for deflating (create patches on the server) and inflating (apply patches on the client) the execution results.
+Smaller projects might even be better off not using JSON patch at all, as the patch payload might be bigger than the whole query result.
 
 The patches are created by comparing the latest execution result with the previous execution result.
 That means the server will always have to store the latest execution result as long as the live query is active.
@@ -1100,12 +1092,26 @@ Here are some example execution results after applying the patch generator
 }
 ```
 
+On the server adding the patch generation middleware is easy function composition:
+
+```ts
+import { flow } from 'fp-ts/function';
+import { createApplyLiveQueryPatchGenerator } from '@n1ru4l/graphql-live-query-patch';
+
+const applyLiveQueryPatchGenerator = createApplyLiveQueryPatchGenerator();
+
+const execute = flow(liveQueryStore.execute, applyLiveQueryPatchGenerator);
+// same as
+const execute0 = (...args) =>
+  applyLiveQueryPatchGenerator(liveQueryStore.execute(...args));
+```
+
 On the client we now need to build a execution result out of the initial result and the patch results, because our clients do not understand the graphql live query json patch protocol!
 
 Applying the middleware is pretty easy as well!
 
 ```ts
-import { flow } from 'io-ts/lib/function';
+import { flow } from 'fp-ts/function';
 import { createApplyLiveQueryPatch } from '@n1ru4l/graphql-live-query-patch';
 
 const applyLiveQueryPatch = createApplyLiveQueryPatch();
@@ -1116,12 +1122,12 @@ const execute0 = (...args) =>
   applyLiveQueryPatch(networkInterface.execute(...args));
 ```
 
-The library is optimized for network interfaces that return AsyncIterables. We can easily wrap out favorite network interface in an AsyncIterable!
+The library is optimized for network interfaces that return AsyncIterables. We can easily wrap out favorite network interface (that uses observable style sinks) in an AsyncIterable with [`@n1ru4l/push-pull-async-iterable-iterator`](https://github.com/n1ru4l/push-pull-async-iterable-iterator)!
 
 **Example with `graphql-ws`**
 
 ```ts
-import { pipe } from 'io-ts/lib/function';
+import { pipe } from 'fp-ts/function';
 import { makeAsyncIterableIteratorFromSink } from '@n1ru4l/push-pull-async-iterable-iterator';
 import { createApplyLiveQueryPatch } from '@n1ru4l/graphql-live-query-patch';
 import { createClient } from 'graphql-ws/lib/use/ws';
@@ -1159,7 +1165,9 @@ for await (const executionResult of asyncIterator) {
 }
 ```
 
-So let's take a look at this implementation regarding the aspects we used before.
+The whole package can be found [`@n1ru4l/graphql-live-query-patch` on GitHub](https://github.com/n1ru4l/graphql-live-query/tree/main/packages/graphql-live-query-patch). It is also usable and feedback is highly appreciated. It currently has it's flaws with list diffing, so further thoughts and ideas are highly appreciated.
+
+So let's take a look at this modular implementation approach regarding the aspects we used before.
 
 1. Automatically update the clients. **Yes.** ✅
 
@@ -1178,29 +1186,34 @@ As all incorporated libraries are pretty pluggable only a few can be used and ot
 
 4. Adoptability. **High.** ✅
 
-This library can be added to any existing GraphQL.js schema without any hassle. Resource invalidation code can be added to the mutation resolvers over time gradually to reflect the needs of the frontend.
+This library can be added to any existing GraphQL.js schema without any hassle if you use a transport that allows full control over the schema creation and execution phase, such as graphql-helix or graphql-ws which you are hopefully already using! Resource invalidation code can be added to the mutation resolvers over time gradually to reflect the needs of the frontend.
 The possibilities of resource invalidation are endless and the logic for those can be added incrementally.
 E.g. via a ORM middleware, in our mutation code or maybe even on our GraphQL gateway.
 
 ## What's next?
 
-I hope that more people will start exploring the possibilities of GraphQL live queries. Eventually, we could even come up with an official RFC for the spec!
+Summed up this could be the start of a pluggable live query ecosystem that is flexible enough to be compatible with a wide range of databases, graphql transports and schema builders instead of focusing to much on a niche.
+In general, instead of having less flexible and bulky servers that try to be too opinionated and restrictive in their schema -> execution -> transport flow, GraphQL tooling should become more modular. At the same time this, however, should not imply that there is no need for opinionated framework-like approaches (as long as they give enough flexibility, e.g. by being composed out of modular packages).
+
+I hope that more people will start exploring the possibilities of GraphQL live queries and also GraphQL in general! Eventually, we could even come up with an official live RFC for the spec!
 
 There is a lot more to think about such as
 
 - Partial query re-execution (e.g. by building ad-hoc queries that only select affected resources)
 - Mechanisms for batching similar query operations (e.g. for preventing execution of same operation multiple times after invalidation)
+- Better list diffing/format for live query patches (as JSON patch performs rather poorly on list diffs)
 - What ever is bothering you while reading this article! 😄
-- How to proper handle list updates or pagination? Aka a better format for patches (as JSON patch performs rather poorly on list diffs)
 
 If you are a enthusiastic tinkerer and plan to build something with the libraries above, share it with me and everyone else, so we can get more insights into different use-cases and requirements for all kind of applications!
+
+Let's continue the discussion on [Discord](https://the-guild.dev/discord), [Slack](https://slack-invite.graphql.org/) or on [GitHub](https://github.com/n1ru4l/graphql-live-query/issues/14)
 
 Here are some more resource for you to thinker around with:
 
 [GraphQL Live Query libraries and example todo app that sync across all connected clients.](https://github.com/n1ru4l/graphql-live-query)
 
-[More information on how the `InMemoryLiveQueryStore` keeps track of resources.](https://dev.to/n1ru4l/collecting-graphql-live-query-resource-identifier-with-graphql-tools-5fm5)
-
 [Experimental GraphQL Playground that implements RFC features (defer/stream) and live queries.](https://github.com/n1ru4l/graphql-bleeding-edge-playground)
+
+[More information on how the `InMemoryLiveQueryStore` keeps track of resources.](https://dev.to/n1ru4l/collecting-graphql-live-query-resource-identifier-with-graphql-tools-5fm5)
 
 [Further thoughts on how the Relay Spec could help backing a live query system.](https://dev.to/n1ru4l/graphql-live-queries-backed-by-the-relay-specification-3mlo)
