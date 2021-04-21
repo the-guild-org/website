@@ -1,22 +1,35 @@
 import withArticle from '../../ui/blog/article';
 
 export const meta = {
-  title: 'Orchestrating the Open Source Contribution Workflow',
+  title:
+    'Making Open Source Easy - Orchestrating the Open Source Contribution Workflow',
   author: 'tvvignesh',
   tags: ['open source', 'contributor', 'workflow'],
   date: '2021-04-20',
-  description: 'Sharing our journey in making open source contributions easier',
+  description:
+    'Sharing our journey of making it easier for people to participate in open source',
   image: '/blog-assets/oss-contributor-workflow/cover.png',
   thumbnail: '/blog-assets/oss-contributor-workflow/cover.png',
 };
 
 export default withArticle({ ...meta });
 
-## Orchestrating the Open Source Contribution Workflow
+### TLD;R
+
+- We released [The Guild's contributor guide](https://github.com/the-guild-org/Stack/blob/master/CONTRIBUTING.md)
+- [Contributor workflow](https://github.com/the-guild-org/Stack/blob/master/CONTRIBUTING.md#a-typical-contributor-workflow)
+- [Video tutorials on how to contribute](https://github.com/the-guild-org/Stack/blob/master/CONTRIBUTING.md#contributor-videos)
+- [The Guild's tooling](https://github.com/the-guild-org/Stack/blob/master/CONTRIBUTING.md#the-tooling) for maintaining open source libraries
+- A [new system](https://github.com/the-guild-org/shared-resources/) for managing our repositories (Process based labeling system, issue templates)
 
 Open source has revolutionized the way we build, collaborate and release software and there are definitely a lot of instances where the community of contributors and maintainers have taken the lead to make the projects thrive in the ecosystem and this is really exciting to see.
+Making open source more approachable has beneficial for the maintainers, users and the contributors themselves - opening new paths for them that seemed harder before.
 
-But as anything goes, it is not without its own set of challenges which advocates us to think of interesting solutions. This stands true in our case as well.
+## Orchestrating the Open Source Contribution Workflow
+
+But as anything goes, it is not without its own set of challenges. The number of open source contributors is a tiny fracture compared to the number of users of our libraries.
+
+This advocates us to think of interesting solutions, as we believe many developers are missing out on these opportunities to advance themselves and their careers.
 
 After maintaining a huge list of growing open source projects over time being actively used by the community, we, The Guild had quickly come to a realization that we really need a way to standardize our workflows considering everything we do in open source is modular and componentized thus increasing the complexity of managing these projects.
 
@@ -47,11 +60,9 @@ This led us to the creation of the [contributor workflow guide](https://github.c
 
 But does creating a guide suffice to achieve our goal? As you guessed, definitely not, and the guide was just a start to an amazing journey ahead.
 
-The next thing we did was to prepare a set of [standard issue templates](https://github.com/Urigo/graphql-mesh/tree/master/.github/ISSUE_TEMPLATE) which remains almost the same across all our repositories. Again, a work in progress we will tweak this as the need arises. This gives us an ability to suggest a standard template to file issues and PRs to all the new contributors asking for all the important details like the environment and version they use, possible reproductions/screenshots, additional context and also providing them with checklists to be actioned upon when filing an issue.
-
-While all this might seem very simple, doing this has a long term benefit of communicating your expectations as a maintainer to the community when they are looking to contribute. Now, this is something which some of the projects tend to ignore.
-
 Then we started thinking about the next important thing which we can address to make both maintainer's and contributor's lives easier - LABELS
+
+### Process based Github Labels
 
 As simple as this feature may seem, labels/tags are the most important feature in any project management tool, in this case Github because it gives us the ability to track the progress, the next steps to be done and also communicate the same to various stakeholders, be it the maintainer or the collaborator. Not just this, it can also act as a great way to onboard new collaborators who are interested in contributing to the project.
 
@@ -65,7 +76,9 @@ Doing this was pretty simple. You can find the repo [here](https://github.com/th
 
 Now that a technical proof of concept was complete, the next question we had was "What labels should we standardize on as the master labels?"
 
-Now, [Urigo](https://twitter.com/UriGoldshtein) had an interesting thought process - since we had already published the contributor workflow guide, why not we label issues keeping the same in mind? All we needed to do was push an issue towards progress from Step 1 to Step N
+Now, [Urigo](https://twitter.com/UriGoldshtein) had an interesting thought process - since we had already published the [contributor workflow guide](https://github.com/the-guild-org/Stack/blob/master/CONTRIBUTING.md#a-typical-contributor-workflow), why not we label issues keeping the same in mind? All we needed to do was push an issue towards progress from Step 1 to Step N
+
+The goal here was to make it more obvious for anyone who arrives to an issue where exactly it stands and most importantly, what can you do to help advance the solution.
 
 Now, this is when we started putting labels against different stages in the workflow guide standardizing on stages like this to start with:
 
@@ -77,9 +90,13 @@ Now, this is when we started putting labels against different stages in the work
 - `stage/5-alpha-release-testing`
 - `stage/6-released`
 
-which is how almost workflows look like for every project (Guild or even otherwise) - This is again the initial iteration and we will have more room for improvement over time and you may see more/lesser stages over time.
+which is how most workflows look like for every project (Guild or even otherwise) - This is again the initial iteration and we will have more room for improvement over time and you may see more/lesser stages over time.
 
-The next thing which we will be doing is labelling all the issues in all the repositories we manage appropriately against these stages which can give a better sense to both the maintainers and the contributors avoiding any ambiguity in the process.
+The next thing we did was to prepare a set of [standard issue templates](https://github.com/Urigo/graphql-mesh/tree/master/.github/ISSUE_TEMPLATE) which remains almost the same across all our repositories. Again, a work in progress we will tweak this as the need arises. This gives us an ability to suggest a standard template to file issues and PRs to all the new contributors asking for all the important details like the environment and version they use, possible reproductions/screenshots, additional context and also providing them with checklists to be actioned upon when filing an issue.
+
+While all this might seem very simple, doing this has a long term benefit of communicating your expectations as a maintainer to the community when they are looking to contribute. Now, this is something which some of the projects tend to ignore.
+
+This journey has not concluded yet, and the next thing which we will be doing is labelling all the issues in all the repositories we manage appropriately against these stages which can give a better sense to both the maintainers and the contributors avoiding any ambiguity in the process.
 
 Now, these are just some of the ways in which we are looking at streamlining open source contributions and make the projects thrive in addition to providing great docs, great test coverage, active maintainership among other things but we are also exploring other ways which we can use (if you have any tips, do let us know 🙂)
 
