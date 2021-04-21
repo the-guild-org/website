@@ -736,17 +736,19 @@ A format such as [JSON Patch](https://tools.ietf.org/html/rfc6902) might be a be
 scalar JSON
 
 type RFC6902Operation {
-    op: String!
-    path: String!
-    from: String
-    value: JSON
-  }
+  op: String!
+  path: String!
+  from: String
+  value: JSON
+}
+
+type LiveQuery {
+  patch: [RFC6902Operation]
+  query: Query
+}
 
 type Subscription {
-  live: {
-    patch: [RFC6902Operation]
-    query: Query
-  }
+  live: LiveQuery!
 }
 ```
 
@@ -832,7 +834,7 @@ or for applying the patches on the initial result in the network/fetcher/link la
 The server implementation uses an event emitter and an immutable state tree for detecting changes that must be sent to clients. The patch is automatically generated from the next immutable state that is compared against the last which got emitted via an `EventEmitter`.
 
 While the idea is quite nice, the implementation is obviously meant for backends that already use reactive or immutable data structures. Having to rewrite our existing GraphQL layer to support live queries is a big trade-off.
-Furthermore, the library is not maintained that well. I've made PRs to make the library compatible with recent GraphQL versions, but these have yet to be merged. Using unions and interfaces is not possible.```Having to patch a library with`patch-package` before even being usable is generally a bad sign.
+Furthermore, the library is not maintained that well. I've made PRs to make the library compatible with recent GraphQL versions, but these have yet to be merged. Using unions and interfaces is not possible. Having to patch a library with `patch-package` before even being usable is generally a bad sign.
 
 1. Automatically updates clients. **Yes.** ✅
 
