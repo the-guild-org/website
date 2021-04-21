@@ -107,7 +107,7 @@ export const createPubSub = <TTopicPayload extends { [key: string]: unknown }>(
   };
 };
 
-const emitter = createPubSub(new EventEmitter());
+const pubSub = createPubSub(new EventEmitter());
 ```
 
 A (type-safe) PubSub implementation in 21 lines of code. We will use this for the example below.
@@ -123,7 +123,7 @@ Having said that, let's take a look at a more "real-world" like example of using
 const resolvers = {
   Subscription: {
     onPostAdded: {
-      subscribe: async function* () {
+      subscribe: async function* (_, _, context) {
         for await (const { id } of context.pubSub.subscribe('POST_ADDED')) {
           const post = await context.postStore.load(id, context.viewer);
           if (post === null) {
