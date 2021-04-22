@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { GitHub, Twitter, Linkedin, Youtube } from 'react-feather';
+import { useRouter } from 'next/router';
 import { Header } from 'the-guild-components';
+import { GitHub, Twitter, Linkedin, Youtube } from 'react-feather';
 
 import { Discord } from './logos/Discord';
 
@@ -83,10 +84,15 @@ const FooterLinks = styled.div`
 `;
 
 export const Layout: React.FC = ({ children }) => {
+  const router = useRouter();
+
   return (
     <Wrapper>
-      <Header accentColor="var(--colors-accent)" sameSite />
-
+      <Header
+        sameSite
+        activeLink={router.asPath}
+        accentColor="var(--colors-accent)"
+      />
       {children}
       <Footer>
         <FooterLinks>
