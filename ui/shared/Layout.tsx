@@ -1,9 +1,11 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { Header } from 'the-guild-components';
 import { GitHub, Twitter, Linkedin, Youtube } from 'react-feather';
+
 import { Discord } from './logos/Discord';
-import { TheGuildLogo } from './Logo';
 
 export const Container = styled.div`
   max-width: 960px;
@@ -20,74 +22,6 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-const Header = styled.header<{ sticky?: boolean }>`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  padding: 25px;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  ${(props) => (props.sticky ? 'backdrop-filter: blur(5px);' : '')}
-
-  background-color: ${(props) =>
-    props.sticky ? 'rgba(255, 255, 255, 0.9)' : 'transparent'};
-  box-sizing: border-box;
-  z-index: 1;
-
-  box-shadow: ${(props) =>
-    props.sticky ? 'rgba(0, 0, 0, 0.05) 0px 0px 15px 0px' : 'none'};
-
-  transition: all 0.5s ease 0s;
-
-  @media (max-width: 650px) {
-    padding: 15px;
-    flex-direction: column;
-
-    & > *:first-child {
-      margin-bottom: 15px;
-    }
-  }
-`;
-
-const Nav = styled.nav`
-  display: flex;
-  align-items: center;
-
-  & > a {
-    margin-left: 25px;
-    color: var(--colors-primary);
-    font-weight: 500;
-  }
-
-  & > a:hover {
-    text-decoration: none;
-    color: var(--colors-accent);
-  }
-
-  @media (max-width: 650px) {
-    width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
-
-    & > a {
-      margin-left: 0;
-    }
-  }
-
-  @media (max-width: 480px) {
-    & > a {
-      font-size: 12px;
-    }
-  }
-`;
-
-const Logo = styled.div`
-  height: 34px;
-`;
-
 export const Button = styled.button`
   width: auto;
   height: auto;
@@ -100,8 +34,8 @@ export const Button = styled.button`
   border: 1px solid transparent;
   border-radius: 0.375rem;
   background-color: var(--colors-accent);
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.18);
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.18);
+  /* 0 2px 4px -1px rgba(0, 0, 0, 0.06); */
   box-sizing: border-box;
   cursor: pointer;
 
@@ -150,52 +84,15 @@ const FooterLinks = styled.div`
 `;
 
 export const Layout: React.FC = ({ children }) => {
-  const [sticky, setSticky] = useState(false);
-  const ref = useRef(null);
-  const handleScroll = useCallback(() => {
-    if (ref.current) {
-      setSticky(ref.current.getBoundingClientRect().top < 0);
-    }
-  }, [ref.current, setSticky]);
-
-  useEffect(() => {
-    if (typeof window === 'object') {
-      window.addEventListener('scroll', handleScroll);
-
-      return () => {
-        window.removeEventListener('scroll', () => handleScroll);
-      };
-    }
-  }, []);
+  const router = useRouter();
 
   return (
-    <Wrapper ref={ref}>
-      <Header sticky={sticky}>
-        <Logo>
-          <Link href="/">
-            <a title="The Guild - home page">
-              <TheGuildLogo />
-            </a>
-          </Link>
-        </Logo>
-        <Nav>
-          <Link href="/services">
-            <a title="The Guild - Our Services">Our Services</a>
-          </Link>
-          <Link href="/blog">
-            <a title="The Guild - Blog">Blog</a>
-          </Link>
-          <Link href="/open-source">
-            <a title="The Guild - Open Source projects">Open Source</a>
-          </Link>
-          <Link href="/about-us">
-            <a title="The Guild - About Us">About Us</a>
-          </Link>
-          <Link href="/contact">
-            <a title="The Guild - Contact us">Contact</a>
-          </Link>
-        </Nav>
-      </Header>
+    <Wrapper>
+      <Header
+        sameSite
+        activeLink={router.asPath}
+        accentColor="var(--colors-accent)"
+      />
       {children}
       <Footer>
         <FooterLinks>
