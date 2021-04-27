@@ -86,4 +86,9 @@ export const authors: Record<string, AuthorDetails> = {
     link: 'https://twitter.com/techahoy',
     github: 'tvvignesh',
   },
+  charlypoly: {
+    name: 'Charly Poly',
+    link: 'https://charlypoly.com',
+    github: 'wittydeveloper',
+  },
 };
