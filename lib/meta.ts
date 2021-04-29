@@ -8,6 +8,7 @@ interface CommonMeta {
   description: string;
   image: string;
   thumbnail?: string;
+  canonical?: string;
 }
 
 export interface MetaWithAuthor extends CommonMeta {
