@@ -102,7 +102,7 @@ const server = new ws.Server({
 useServer(
   // from the previous step
   { schema, roots },
-  server,
+  server
 );
 
 console.log('Listening to port 80');
@@ -120,8 +120,8 @@ uWS
     '/graphql',
     makeBehavior(
       // from the previous step
-      { schema, roots },
-    ),
+      { schema, roots }
+    )
   )
   .listen(80, (listenSocket) => {
     if (listenSocket) {
@@ -151,7 +151,7 @@ const client = createClient({
         next: (data) => (result = data),
         error: reject,
         complete: () => resolve(result),
-      },
+      }
     );
   });
 
@@ -177,7 +177,7 @@ const client = createClient({
         next: onNext,
         error: reject,
         complete: resolve,
-      },
+      }
     );
   });
 
