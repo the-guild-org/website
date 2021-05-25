@@ -127,6 +127,10 @@ function pickPrefix(url) {
     return 'GraphQL CLI';
   }
 
+  if (url.startsWith('https://graphql-scalars.dev')) {
+    return 'GraphQL Scalars';
+  }
+
   if (url.startsWith('https://the-guild.dev/blog')) {
     return 'The Guild Blog';
   }
