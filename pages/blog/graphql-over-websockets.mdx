@@ -88,33 +88,46 @@ const roots = {
 
 #### Start the server
 
+##### With [ws](https://github.com/websockets/ws)
+
 ```ts
-import https from 'https';
 import ws from 'ws'; // yarn add ws
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { execute, subscribe } from 'graphql';
 
-const server = https.createServer(function weServeSocketsOnly(_, res) {
-  res.writeHead(404);
-  res.end();
-});
-
-const wsServer = new ws.Server({
-  server,
+const server = new ws.Server({
+  port: 80,
   path: '/graphql',
 });
 
 useServer(
-  {
-    schema, // from the previous step
-    roots, // from the previous step
-    execute,
-    subscribe,
-  },
-  wsServer
+  // from the previous step
+  { schema, roots },
+  server
 );
 
-server.listen(443);
+console.log('Listening to port 80');
+```
+
+##### With [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js)
+
+```ts
+import uWS from 'uWebSockets.js'; // yarn add uWebSockets.js@uNetworking/uWebSockets.js#<tag>
+import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets';
+
+uWS
+  .App()
+  .ws(
+    '/graphql',
+    makeBehavior(
+      // from the previous step
+      { schema, roots }
+    )
+  )
+  .listen(80, (listenSocket) => {
+    if (listenSocket) {
+      console.log('Listening to port 80');
+    }
+  });
 ```
 
 #### Use the client
@@ -148,11 +161,15 @@ const client = createClient({
 // subscription
 (async () => {
   const onNext = () => {
-    /**/
+    /* handle incoming values */
+  };
+
+  let unsubscribe = () => {
+    /* complete the subscription */
   };
 
   await new Promise((resolve, reject) => {
-    client.subscribe(
+    unsubscribe = client.subscribe(
       {
         query: 'subscription { greetings }',
       },
