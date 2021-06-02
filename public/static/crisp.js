@@ -1,5 +1,5 @@
-if (typeof window !== 'undefined') {
-    const HOST_TO_SEGMENTS = {
+function guildCrisp() {
+  let HOST_TO_SEGMENTS = {
     'graphql-code-generator.com': ['codegen'],
     'graphql-modules.com': ['modules'],
     'graphql-tools.com': ['tools'],
@@ -15,7 +15,13 @@ if (typeof window !== 'undefined') {
 
   window.$crisp = []; window.CRISP_WEBSITE_ID = "af9adec5-ddfa-4db9-a4a3-25769daf2fc2"; (function () { d = document; s = d.createElement("script"); s.src = "https://client.crisp.chat/l.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })();
 
-  if (HOST_TO_SEGMENTS[window.location.host]) {
-    window.$crisp.push(["set", "session:segments", [HOST_TO_SEGMENTS[window.location.host]]])
+  let normHost = window.location.host.replace(/^www\./, '');
+
+  if (HOST_TO_SEGMENTS[normHost]) {
+    window.$crisp.push(["set", "session:segments", [HOST_TO_SEGMENTS[normHost]]])
   }
+}
+
+if (typeof window !== 'undefined') {
+  guildCrisp();
 }
