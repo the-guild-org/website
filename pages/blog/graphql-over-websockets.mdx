@@ -95,7 +95,7 @@ import ws from 'ws'; // yarn add ws
 import { useServer } from 'graphql-ws/lib/use/ws';
 
 const server = new ws.Server({
-  port: 80,
+  port: 4000,
   path: '/graphql',
 });
 
@@ -105,7 +105,7 @@ useServer(
   server
 );
 
-console.log('Listening to port 80');
+console.log('Listening to port 4000');
 ```
 
 ##### With [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js)
@@ -123,11 +123,39 @@ uWS
       { schema, roots }
     )
   )
-  .listen(80, (listenSocket) => {
+  .listen(4000, (listenSocket) => {
     if (listenSocket) {
-      console.log('Listening to port 80');
+      console.log('Listening to port 4000');
     }
   });
+```
+
+##### With [fastify-websocket](https://github.com/fastify/fastify-websocket)
+
+```ts
+import Fastify from 'fastify'; // yarn add fastify
+import fastifyWebsocket from 'fastify-websocket'; // yarn add fastify-websocket
+import { makeHandler } from 'graphql-ws/lib/use/fastify-websocket';
+
+const fastify = Fastify();
+fastify.register(fastifyWebsocket);
+
+fastify.get(
+  '/graphql',
+  { websocket: true },
+  makeHandler(
+    // from the previous step
+    { schema, roots }
+  )
+);
+
+fastify.listen(4000, (err) => {
+  if (err) {
+    fastify.log.error(err);
+    return process.exit(1);
+  }
+  console.log('Listening to port 4000');
+});
 ```
 
 #### Use the client
@@ -136,7 +164,7 @@ uWS
 import { createClient } from 'graphql-ws';
 
 const client = createClient({
-  url: 'wss://welcomer.com/graphql',
+  url: 'ws://welcomer.com:4000/graphql',
 });
 
 // query
