@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Header } from 'the-guild-components';
+import { Header } from '@theguild/components';
 import { GitHub, Twitter, Linkedin, Youtube } from 'react-feather';
 
 import { Discord } from './logos/Discord';
