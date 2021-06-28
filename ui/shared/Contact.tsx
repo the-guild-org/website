@@ -20,7 +20,7 @@ const Main = styled(Container)`
     flex-direction: column;
     justify-content: center;
 
-    & > *:first-child {
+    & > *:first-of-type {
       margin-bottom: 25px;
     }
 
