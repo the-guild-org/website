@@ -63,7 +63,7 @@ const Container = styled.div<{ width: number }>`
   }
 
   @media (min-width: 640px) {
-    & > *:first-child {
+    & > *:first-of-type {
       width: 70%;
       margin: 0 auto;
     }
@@ -75,7 +75,7 @@ const Container = styled.div<{ width: number }>`
   }
 
   @media (max-width: 640px) {
-    & > *:first-child {
+    & > *:first-of-type {
       width: 70%;
       margin: 0 auto;
     }
@@ -90,7 +90,7 @@ const Container = styled.div<{ width: number }>`
     align-items: center;
     justify-content: space-between;
 
-    & > *:first-child {
+    & > *:first-of-type {
       width: ${(props) => props.width}%;
     }
 

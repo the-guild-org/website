@@ -58,7 +58,7 @@ const Author = styled.div<{
       padding-right: 15px;
     }
 
-    &:not(:first-child) {
+    &:not(:first-of-type) {
       padding-left: 15px;
     }
   `
