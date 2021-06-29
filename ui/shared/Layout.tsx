@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Header } from '@theguild/components';
+import { device } from '../media';
 import { GitHub, Twitter, Linkedin, Youtube } from 'react-feather';
 
 import { Discord } from './logos/Discord';
@@ -57,6 +58,17 @@ const Footer = styled.footer`
   width: 100%;
   padding: 35px 0;
   background-color: #262f3f;
+
+  @media ${device.mobile} {
+    div:first-of-type {
+      flex-direction: column;
+      align-items: center;
+
+      & > a {
+        line-height: 2.2rem;
+      }
+    }
+  }
 `;
 
 const FooterText = styled.div`
