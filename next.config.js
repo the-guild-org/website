@@ -41,6 +41,7 @@ module.exports = withBundleAnalyzer(
           },
         ];
       },
+      webpack5: false,
       webpack(config, { dev, isServer }) {
         if (!dev && isServer) {
           const originalEntry = config.entry;
