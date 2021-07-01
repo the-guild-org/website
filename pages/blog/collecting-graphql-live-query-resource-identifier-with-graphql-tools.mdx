@@ -4,11 +4,11 @@ export const meta = {
   title: 'Collecting GraphQL Live Query Resource Identifier with GraphQL Tools',
   tags: ['graphql', 'graphql-tools', 'real-time', 'live-query'],
   author: 'laurin',
-  date: '2020-09-29',
+  date: '2021-07-01',
   description:
     'GraphQL Tools can help solving a variety of problems. Lean how it can be used for live queries.',
   image:
-    '/blog-assets/collecting-graphql-live-query-resource-identifier-with-graphql-tools/conver.jpg',
+    '/blog-assets/collecting-graphql-live-query-resource-identifier-with-graphql-tools/cover.jpg',
 };
 
 export default withArticle({ ...meta });
@@ -163,15 +163,18 @@ As any other field, the `id` field has a resolver (either the default resolver p
 
 The best library for transforming and modifying GraphQL Schemas is [`graphql-tools`](https://github.com/ardatan/graphql-tools/). Fortunately, it is now maintained by The Guild, as apollo abandoned it and was maintained pretty poorly.
 
-So I dug a bit into the fancy documentation and quickly found what I needed: `@graphql-tools/wrap`.
+So I dug a bit into the fancy documentation and found `@graphql-tools/wrap`.
 
 A quick excerpt from the documentation:
 
 > Schema wrapping is a method of making modified copies of GraphQLSchema objects, without changing the original schema implementation.
 
-As the schema is also used for "normal" queries/mutations/subscription operations. I didn't want the overhead of wrapping all `id` fields for non-live query operations.
+Looks perfect, but since in this specific case I could potentially modify/map an existing schema, I digged a bit further, chatted with [@yaacovCR](https://github.com/yaacovCR) and learned about `mapSchema` from `@graphql-tools/utils`.
+It maps an existing schema into a new schema while applying some rules (kind of similar how array.map works 🤔).
 
-With the `TransformObjectFields` transform, it is pretty straight forward to wrap the schema fields.
+Using `mapSchema` might be slighly faster as there will be no delegation to a second schema.
+
+So the final plan is the following: We map the existing schema and warp the resolver fields append the resource identifiers to a Set.
 
 ```ts
 import {
@@ -181,8 +184,11 @@ import {
   GraphQLOutputType,
   GraphQLScalarType,
   execute,
+  defaultFieldResolver,
 } from 'graphql';
-import { wrapSchema, TransformObjectFields } from '@graphql-tools/wrap';
+import { mapSchema, MapperKind } from '@graphql-tools/utils';
+
+const ORIGINAL_CONTEXT_SYMBOL = Symbol('ORIGINAL_CONTEXT_SYMBOL');
 
 const isNonNullIDScalarType = (
   type: GraphQLOutputType
@@ -193,39 +199,51 @@ const isNonNullIDScalarType = (
   return false;
 };
 
-const addResourceIdentifierCollectorToSchema = (
-  schema: GraphQLSchema
-): GraphQLSchema =>
-  wrapSchema(schema, [
-    new TransformObjectFields((typename, fieldName, fieldConfig) => {
-      let isIDField =
-        fieldName === 'id' && isNonNullIDScalarType(fieldConfig.type);
+// invokes the callback with the resolved or sync input. Handy when you don't know whether the input is a Promise or the actual value you want.
+export const runWith = <T>(
+  input: T | Promise<T>,
+  callback: (value: T) => void
+) => {
+  if (input instanceof Promise) {
+    input.then(callback, () => undefined);
+  } else {
+    callback(input);
+  }
+};
 
-      let resolve = fieldConfig.resolve;
-      fieldConfig.resolve = (src, args, context, info) => {
-        if (!context || !context[ORIGINAL_CONTEXT_SYMBOL]) {
+const addResourceIdentifierCollectorToSchema = (
+  schema: GraphQLSchema,
+  idFieldName: string
+): GraphQLSchema =>
+  mapSchema(schema, {
+    [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typename) => {
+      const newFieldConfig = { ...fieldConfig };
+
+      let isIDField =
+        fieldName === idFieldName && isNonNullIDScalarType(fieldConfig.type);
+      let resolve = fieldConfig.resolve ?? defaultFieldResolver;
+
+      newFieldConfig.resolve = (src, args, context, info) => {
+        if (!context || ORIGINAL_CONTEXT_SYMBOL in context === false) {
           return resolve(src, args, context, info);
         }
 
-        const collectResourceIdentifier = context.collectResourceIdentifier;
+        const collectResourceIdentifier: ResourceIdentifierCollectorFunction =
+          context.collectResourceIdentifier;
         context = context[ORIGINAL_CONTEXT_SYMBOL];
         const result = resolve(src, args, context, info);
+
         if (isIDField) {
-          if (isPromise(result)) {
-            result.then(
-              (value) => collectResourceIdentifier({ typename, value }),
-              () => undefined
-            );
-          } else {
-            collectResourceIdentifier({ typename, result });
-          }
+          runWith(result, (id: string) =>
+            collectResourceIdentifier({ typename, id })
+          );
         }
         return result;
       };
 
-      return fieldConfig;
-    }),
-  ]);
+      return newFieldConfig;
+    },
+  });
 ```
 
 The implementation for executing the operation is similar to the following:
@@ -266,7 +284,7 @@ GraphQL Tools is a super handy library that can be used for solving a huge varie
 
 The implementation probably won't cover all use-cases. What if a client is not authenticated and the `Query.viewer` resolver returns `null`. There is no `User:ID` string available on the live query store operation context once the user has authenticated. Either a `Query.viewer` update must be emitted through the live query store emitter (which will affect ANY client operation that selects the `viewer`), the client must re-execute the operation after login or the live query store must somehow be notified to re-execute all operations of the user that just authenticated.
 
-In case you are interested in the source code for the implementation check out https://github.com/n1ru4l/graphql-live-queries/pull/94
+In case you are interested in the source code for the implementation [check it out on Github](https://github.com/n1ru4l/graphql-live-query/blob/7674745b441201448feb7043290bd2ac7dbdd11c/packages/in-memory-live-query-store/src/InMemoryLiveQueryStore.ts#L44-L87)
 
 **There is still more to discover and build in live query land!**
 
@@ -281,5 +299,3 @@ Re-executing a query operation is nice and smart, but not the most efficient sol
 [Check out this super cool talk about live queries @ Samsara!](https://www.youtube.com/watch?v=g-asVW9JFPw)
 
 [I also wrote an article about my Socket.io GraphQL Server Engine implementation!](https://dev.to/n1ru4l/graphql-live-queries-with-socket-io-4mh6)
-
-If you are interested in discussing live queries or GraphQL in general feel free to contact me on Twitter or by [writing a comment](https://dev.to/n1ru4l/collecting-graphql-live-query-resource-identifier-with-graphql-tools-5fm5#comments). 🙂. Please also consider sharing the article with people that might be interested in it 😉.
