@@ -781,7 +781,7 @@ const PostSubscription = graphql`
 ```
 
 The difference is that the type returned by the `live` field has two fields instead of a single one.
-The `query` field, which selects the selection set from `Query` tyoe and a `patch` field which is a JSON Patch operation.
+The `query` field, which selects the selection set from `Query` type and a `patch` field which is a JSON Patch operation.
 When executing the given operation against the server the initial result will have the data selected by the `query` field selection set included.
 All following values will have no `query` value (`null`), but instead an array of patch operations that describe the changes for updating the last result to the next result.
 
@@ -828,7 +828,7 @@ All following values will have no `query` value (`null`), but instead an array o
 }
 ```
 
-The clients must then implement the logic for [applying the patch operation to their client cache](https://github.com/n1ru4l/graphql-live-chat/blob/master/packages/frontend/src/jsonpatch.ts). [Example app with both backend and frontend](https://github.com/n1ru4l/graphql-live-chat)
+The clients must then implement the logic for [applying the patch operation to their client cache](https://github.com/n1ru4l/graphql-live-chat/blob/27a0b902e9098c7cc0f92ccd6f36f7d7e28a9677/packages/frontend/src/jsonpatch.ts#L10-L72)
 or for applying the patches on the initial result in the network/fetcher/link layer.
 
 The server implementation uses an event emitter and an immutable state tree for detecting changes that must be sent to clients. The patch is automatically generated from the next immutable state that is compared against the last which got emitted via an `EventEmitter`.
@@ -859,7 +859,7 @@ There are companies out there, like [Facebook](https://www.youtube.com/watch?v=B
 The idea behind the `@live` directive is that it is used to mark that the client is interested in keeping that query execution result as up to date as possible. The implementation, however, is up to user-land.
 
 ```graphql
-query($id: ID!) @live {
+query ($id: ID!) @live {
   post(id: $id) {
     id
     title
@@ -1051,7 +1051,7 @@ Feel free to create any issues regarding missing features or documentation. Let'
 
 ### `@n1ru4l/graphql-live-query-patch`: Optional JSON patch middleware for smaller payloads over the wire.
 
-GraphQL Queries can become quite huge. Sending big payloads over the wire can be exepnsive at some point. JSON patch is a handy standard for only sending change instructions over the wire which can potentially reduce such huge query results.
+GraphQL execution result payloads can become quite huge. Sending those over the wire can be expensive at some point. Especially when they are sent often for fast updating state. JSON patch is a handy standard for only sending change instructions over the wire which can potentially reduce such huge payloads.
 
 Instead of having JSON patches enabled by default, it is a totally optional module, that can be applied on the client and the server for deflating (create patches on the server) and inflating (apply patches on the client) the execution results.
 Smaller projects might even be better off not using JSON patch at all, as the patch payload might be bigger than the whole query result.
@@ -1170,6 +1170,8 @@ for await (const executionResult of asyncIterator) {
 
 The whole package can be found [`@n1ru4l/graphql-live-query-patch` on GitHub](https://github.com/n1ru4l/graphql-live-query/tree/main/packages/graphql-live-query-patch). It is also usable and feedback is highly appreciated. It currently has it's flaws with list diffing, so further thoughts and ideas are highly appreciated.
 
+**Note:** We now seperated the `json-patch` package into a seperate `@n1ru4l/graphql-live-query-patch-json-patch` package. `@n1ru4l/graphql-live-query-patch` now only includes common logic shared between patch payload implementations. The reason for this is that there are more efficient patch formats available, such as `jsondiffpatch`, which generate smaller patches for list changes. The latter is now available as the separate package [`@n1ru4l/graphql-live-query-patch-jsondiffpatch`](https://github.com/n1ru4l/graphql-live-query/tree/main/packages/graphql-live-query-patch-json-diff).
+
 So let's take a look at this modular implementation approach regarding the aspects we used before.
 
 1. Automatically update the clients. **Yes.** ✅
@@ -1204,7 +1206,7 @@ There is a lot more to think about such as
 
 - Partial query re-execution (e.g. by building ad-hoc queries that only select affected resources)
 - Mechanisms for batching similar query operations (e.g. for preventing execution of same operation multiple times after invalidation)
-- Better list diffing/format for live query patches (as JSON patch performs rather poorly on list diffs)
+- ~~Better list diffing/format for live query patches (as JSON patch performs rather poorly on list diffs)~~ (Solved by introducing [`@n1ru4l/graphql-live-query-patch-jsondiffpatch`](https://github.com/n1ru4l/graphql-live-query/tree/main/packages/graphql-live-query-patch-json-diff))
 - What ever is bothering you while reading this article! 😄
 
 If you are a enthusiastic tinkerer and plan to build something with the libraries above, share it with me and everyone else, so we can get more insights into different use-cases and requirements for all kind of applications!
