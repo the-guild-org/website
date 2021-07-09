@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import { Header, FooterExtended } from '@theguild/components';
+import { GlobalStyles, Header, FooterExtended } from '@theguild/components';
 
 export const Container = styled.div`
   max-width: 960px;
@@ -54,6 +54,7 @@ export const Layout: React.FC = ({ children }) => {
 
   return (
     <Wrapper>
+      <GlobalStyles includeFonts />
       <Header
         sameSite
         activeLink={router.asPath}
@@ -61,6 +62,7 @@ export const Layout: React.FC = ({ children }) => {
       />
       {children}
       <FooterExtended
+        sameSite
         resources={[
           {
             children: 'Services',
