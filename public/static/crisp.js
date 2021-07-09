@@ -10,7 +10,9 @@ function guildCrisp() {
     'apollo-angular.com': ['angular'],
     'graphql-cli.com': ['cli'],
     'graphql-scalars.dev': ['scalars'],
-    'graphql-hive.com': ['hive']
+    'graphql-hive.com': ['hive'],
+    'graphql-shield.com': ['shield'],
+    'swift-graphql.com': ['swift'],
   };
 
   window.$crisp = []; window.CRISP_WEBSITE_ID = "af9adec5-ddfa-4db9-a4a3-25769daf2fc2"; (function () { d = document; s = d.createElement("script"); s.src = "https://client.crisp.chat/l.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })();
