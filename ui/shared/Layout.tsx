@@ -1,11 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Header } from '@theguild/components';
-import { GitHub, Twitter, Linkedin, Youtube } from 'react-feather';
-
-import { Discord } from './logos/Discord';
+import { GlobalStyles, Header, FooterExtended } from '@theguild/components';
 
 export const Container = styled.div`
   max-width: 960px;
@@ -53,100 +49,47 @@ export const Button = styled.button`
   }
 `;
 
-const Footer = styled.footer`
-  width: 100%;
-  padding: 35px 0;
-  background-color: #262f3f;
-`;
-
-const FooterText = styled.div`
-  padding: 15px 0;
-  text-align: center;
-  color: #b9bec6;
-  font-size: 12px;
-`;
-
-const FooterLinks = styled.div`
-  display: flex;
-  padding: 15px 0;
-  max-width: 960px;
-  margin: 0 auto;
-  justify-content: center;
-
-  & > a {
-    color: #b9bec6;
-    margin: 0 20px;
-  }
-
-  & > a:hover {
-    color: #fff;
-  }
-`;
-
 export const Layout: React.FC = ({ children }) => {
   const router = useRouter();
 
   return (
     <Wrapper>
+      <GlobalStyles includeFonts />
       <Header
         sameSite
         activeLink={router.asPath}
         accentColor="var(--colors-accent)"
       />
       {children}
-      <Footer>
-        <FooterLinks>
-          <Link href="/services">
-            <a title="Work with us">Our Services</a>
-          </Link>
-          <Link href="/blog">
-            <a title="Read our blog">Blog</a>
-          </Link>
-          <Link href="/open-source">
-            <a title="Explore our projects">Open Source</a>
-          </Link>
-          <a
-            href="https://github.com/the-guild-org/community-meetings"
-            title="Join our Community Meetings"
-          >
-            Community Meetings
-          </a>
-          <Link href="/contact">
-            <a title="Get in touch">Contact</a>
-          </Link>
-        </FooterLinks>
-
-        <FooterLinks>
-          <a
-            href="https://github.com/the-guild-org"
-            title="See our GitHub profile"
-          >
-            <GitHub />
-          </a>
-          <a href="https://twitter.com/TheGuildDev" title="Visit our Twitter">
-            <Twitter />
-          </a>
-          <a
-            href="https://www.youtube.com/watch?v=DWBL7GLMVsY&list=PLhCf3AUOg4PgQoY_A6xWDQ70yaNtPYtZd"
-            title="Visit our YouTube channel"
-          >
-            <Youtube />
-          </a>
-          <a
-            href="https://www.linkedin.com/company/the-guild-software"
-            title="Visit our LinkedIn"
-          >
-            <Linkedin />
-          </a>
-          <a href="https://the-guild.dev/discord" title="Visit our Discord">
-            <Discord />
-          </a>
-        </FooterLinks>
-
-        <FooterText>
-          © {new Date().getFullYear()} The Guild, All Rights Reserved
-        </FooterText>
-      </Footer>
+      <FooterExtended
+        sameSite
+        resources={[
+          {
+            children: 'Services',
+            title: 'Work with us',
+            href: '/services',
+            onClick: (e) => {
+              e.preventDefault();
+              router.push('/services');
+            },
+          },
+          {
+            children: 'Open Source',
+            title: 'Explore our projects',
+            href: '/open-source',
+            onClick: (e) => {
+              e.preventDefault();
+              router.push('/open-source');
+            },
+          },
+          {
+            children: 'Community Meetings',
+            title: 'Join our Community Meetings',
+            href: 'https://github.com/the-guild-org/community-meetings',
+            target: '_blank',
+          },
+        ]}
+      />
     </Wrapper>
   );
 };
