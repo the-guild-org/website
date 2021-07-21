@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Container } from '../shared/Layout';
 import { MetaWithLink, pickAuthor } from '../../lib/meta';
 import { ArticleCard } from './article-card';
-import { authors } from './authors';
+import { authors } from '../authors';
 
 const ArticlesContainer = styled(Container)`
   padding: 125px 0;

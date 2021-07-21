@@ -12,7 +12,7 @@ import { Button } from '../shared/Layout';
 import { Meta, hasAuthor, hasManyAuthors } from '../../lib/meta';
 import { Image } from './image';
 import { Tag } from './tag';
-import { authors } from './authors';
+import { authors } from '../authors';
 import { Avatar } from './avatar';
 import { GenericLink } from './elements/link';
 import { useRouter } from 'next/router';

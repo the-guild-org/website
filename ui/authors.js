@@ -1,11 +1,4 @@
-export type AuthorDetails = {
-  name: string;
-  link: string;
-  github?: string;
-  twitter?: string;
-};
-
-export const authors: Record<string, AuthorDetails> = {
+const authors = {
   eytan: {
     name: 'Eytan Manor',
     link: 'https://twitter.com/eytan_manor',
@@ -92,3 +85,5 @@ export const authors: Record<string, AuthorDetails> = {
     github: 'wittydeveloper',
   },
 };
+
+module.exports = { authors };
