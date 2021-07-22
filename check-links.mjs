@@ -7,14 +7,10 @@ import { URL } from 'url';
 const pagesDir = path.join(new URL('.', import.meta.url).pathname, 'pages');
 const cwd = path.join(pagesDir, 'blog');
 
-console.log(pagesDir);
-console.log(cwd);
-
 const files = globbySync('*.mdx', {
   absolute: false,
   cwd,
 });
-console.log(files.length);
 
 const errors = [];
 
