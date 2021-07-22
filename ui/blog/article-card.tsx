@@ -5,7 +5,7 @@ import format from 'date-fns/format';
 import LazyLoad from 'react-lazyload';
 import { withPlaceholder } from '../../lib/images';
 import { Tag } from '../../ui/blog/tag';
-import { AuthorDetails } from './authors';
+import {} from '../authors';
 import { Avatar } from './avatar';
 
 const Link = styled(NativeLink)`
@@ -87,7 +87,7 @@ const Details = styled.div`
 export const ArticleCard: React.FC<{
   title: string;
   description: string;
-  author?: AuthorDetails;
+  author?: any;
   image: string;
   link: string;
   date: string;

@@ -8,8 +8,7 @@ import { ArticleCard } from '../ui/blog/article-card';
 import { Newsletter } from '../ui/blog/newsletter';
 import { MetaWithLink, pickAuthor } from '../lib/meta';
 import { getAllArticles } from '../lib/get-all-articles';
-import { authors } from '../ui/blog/authors';
-
+import { authors } from '../ui/authors';
 interface Props {
   articles: MetaWithLink[];
   tagFilter?: string[];
