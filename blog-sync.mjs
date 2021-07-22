@@ -7,14 +7,14 @@ import { visit } from 'unist-util-visit';
 import { remove } from 'unist-util-remove';
 import { walk } from 'estree-walker';
 import { Client } from 'guild-devto-nodejs-sdk';
-import globby from 'globby';
+import { globbySync } from 'globby';
 import details from './ui/authors.js';
 
 const DEV_TO_TOKEN = process.env.DEV_TO_TOKEN;
 const DEV_TO_ORG_ID = 4467;
 
 const baseDir = './pages/blog/';
-const files = globby.sync('*.mdx', {
+const files = globbySync('*.mdx', {
   absolute: false,
   cwd: baseDir,
 });

@@ -1,15 +1,20 @@
 /// @ts-check
 
-const globby = require('globby');
-const fs = require('fs');
-const path = require('path');
-const pagesDir = path.join(__dirname, 'pages');
+import { globbySync } from 'globby';
+import * as fs from 'fs';
+import * as path from 'path';
+import { URL } from 'url';
+const pagesDir = path.join(new URL('.', import.meta.url).pathname, 'pages');
 const cwd = path.join(pagesDir, 'blog');
 
-const files = globby.sync('*.mdx', {
+console.log(pagesDir);
+console.log(cwd);
+
+const files = globbySync('*.mdx', {
   absolute: false,
   cwd,
 });
+console.log(files.length);
 
 const errors = [];
 
