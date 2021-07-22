@@ -6,6 +6,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
 
     env:
       CI: true
@@ -16,7 +17,7 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@master
         with:
-          node-version: 12
+          node-version: 16
 
       - uses: actions/cache@v2
         name: Cache node_modules
@@ -37,5 +38,7 @@ jobs:
       - name: Install
         run: yarn
 
-      - name: Build
-        run: yarn build
+      - name: Sync Blog
+        run: yarn sync-blog
+        env:
+          DEV_TO_TOKEN: ${{ secrets.DEV_TO_TOKEN }}
