@@ -16,47 +16,51 @@ const withMDX = nextMDX({
   },
 });
 
-module.exports = withBundleAnalyzer(
-  withMDX(
-    withOptimizedImages({
-      experimental: {
-        optimizeFonts: true,
-        optimizeCss: true,
-        babelMultiThread: true,
-      },
-      target: 'experimental-serverless-trace',
-      optimizeImagesInDev: false,
-      handleImages: ['jpeg', 'jpg', 'png', 'svg'],
-      inlineImageLimit: 1000,
-      pageExtensions: ['tsx', 'md', 'mdx'],
-      rewrites() {
-        return [
-          {
-            source: '/feed.xml',
-            destination: '/_next/static/feed.xml',
-          },
-          {
-            source: '/sitemap.xml',
-            destination: '/_next/static/sitemap.xml',
-          },
-        ];
-      },
-      webpack5: false,
-      webpack(config, { dev, isServer }) {
-        if (!dev && isServer) {
-          const originalEntry = config.entry;
+const withTM = require('next-transpile-modules')(['globby']);
 
-          config.entry = async () => {
-            const entries = { ...(await originalEntry()) };
+module.exports = withTM(
+  withBundleAnalyzer(
+    withMDX(
+      withOptimizedImages({
+        experimental: {
+          optimizeFonts: true,
+          optimizeCss: true,
+          babelMultiThread: true,
+        },
+        target: 'experimental-serverless-trace',
+        optimizeImagesInDev: false,
+        handleImages: ['jpeg', 'jpg', 'png', 'svg'],
+        inlineImageLimit: 1000,
+        pageExtensions: ['tsx', 'md', 'mdx'],
+        rewrites() {
+          return [
+            {
+              source: '/feed.xml',
+              destination: '/_next/static/feed.xml',
+            },
+            {
+              source: '/sitemap.xml',
+              destination: '/_next/static/sitemap.xml',
+            },
+          ];
+        },
+        webpack5: false,
+        webpack(config, { dev, isServer }) {
+          if (!dev && isServer) {
+            const originalEntry = config.entry;
 
-            entries['./lib/build.ts'] = './lib/build.ts';
+            config.entry = async () => {
+              const entries = { ...(await originalEntry()) };
 
-            return entries;
-          };
-        }
-        config.resolve.alias['Public'] = path.resolve(__dirname, 'public');
-        return config;
-      },
-    })
+              entries['./lib/build.ts'] = './lib/build.ts';
+
+              return entries;
+            };
+          }
+          config.resolve.alias['Public'] = path.resolve(__dirname, 'public');
+          return config;
+        },
+      })
+    )
   )
 );
