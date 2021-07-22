@@ -1,4 +1,4 @@
-import globby from 'globby';
+import { globby } from 'globby';
 import { join } from 'path';
 import { promises } from 'fs';
 import JSON5 from 'json5';
