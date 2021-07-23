@@ -6,8 +6,7 @@ export const meta = {
   tags: ['react'],
   date: '2018-11-12',
   description: 'Learning how to think like a JSX parser and building an AST',
-  image:
-    'https://github.com/the-guild-org/oneblog/blob/master/img/704/1*AqTHDuxX5NNCI3iLycVfxA.png?raw=true',
+  image: '/medium/fadbe31be89eb8b0be9fc5f035c9617d.png',
 };
 
 export default withArticle({ ...meta });
@@ -72,11 +71,11 @@ Essentially there are 3 things we should figure out when parsing a JSX code:
 
 As I mentioned earlier, it would be best if we could break down the code into nodes first and represent it as an AST. Looking at the input of the example above, we can roughly visualize how we would pluck the nodes from the code:
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*AqTHDuxX5NNCI3iLycVfxA.png?raw=true 'Analyzing the JSX code.')
+![](/medium/fadbe31be89eb8b0be9fc5f035c9617d.png 'Analyzing the JSX code.')
 
 And to put things simple, here’s a schematic representation of the analysis above:
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*i8h2MocLHni8mTuPaakwBQ.png?raw=true 'A schematic representation of the analysis.')
+![](/medium/7c7f8978be94efed4206593bbf067568.png 'A schematic representation of the analysis.')
 
 Accordingly, we’re gonna have 3 types of nodes:
 
@@ -88,11 +87,11 @@ Let’s decide that each node has a base schema with the following properties:
 
 - node.type — which will represent the type name of the node, e.g. `element`, `props` and `value`. Based on the node type we can also determine that additional properties that the node’s gonna carry. In our parser, each node type should have the following additional properties:
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*dgAy6Zbj6ttfNqgppWIjug.png?raw=true 'Node type schemas.')
+![](/medium/55cc9640bbaec3a7b9a5948d71adfd3a.png 'Node type schemas.')
 
 - node.length —which represents the length of the sub-string in the code that the node occupies. This will help us trim the code string as we go with the parsing process so we can always focus on relevant parts of the string for the current node:
 
-![](https://github.com/the-guild-org/oneblog/blob/master/img/704/1*PeiZnuBTKfLlDiaL24dgHw.png?raw=true 'Any time we parse a small part of the string, we slice the part we’ve just parsed.')
+![](/medium/7ba5847a0000df3ef06a6913a79346f2.png 'Any time we parse a small part of the string, we slice the part we’ve just parsed.')
 
 In the function that we’re gonna build we’ll be taking advantage of ES6’s tagged templates. Tagged templates are string literals which can be processed by a custom handler according to our needs (see [MDN docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#Tagged_templates)).
 

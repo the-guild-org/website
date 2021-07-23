@@ -12,9 +12,10 @@ import { Button } from '../shared/Layout';
 import { Meta, hasAuthor, hasManyAuthors } from '../../lib/meta';
 import { Image } from './image';
 import { Tag } from './tag';
-import { authors } from './authors';
+import { authors } from '../authors';
 import { Avatar } from './avatar';
 import { GenericLink } from './elements/link';
+import { useRouter } from 'next/router';
 
 const Container = styled.div`
   max-width: 690px;
@@ -57,7 +58,7 @@ const Author = styled.div<{
       padding-right: 15px;
     }
 
-    &:not(:first-child) {
+    &:not(:first-of-type) {
       padding-left: 15px;
     }
   `
@@ -229,6 +230,7 @@ function Authors(props: { meta: Meta }) {
 const Article = (meta: Meta): React.FC => {
   return function ArticleRender({ children: content }) {
     const title = `${meta.title} - The Guild Blog`;
+    const router = useRouter();
 
     const ogImage =
       (meta.image?.endsWith('.webm') || meta.image?.endsWith('.mp4')) &&
@@ -262,6 +264,7 @@ const Article = (meta: Meta): React.FC => {
         },
       },
     };
+
     return (
       <MDXProvider components={components}>
         <Page title={title} image={ogImage} description={meta.description}>
@@ -270,6 +273,11 @@ const Article = (meta: Meta): React.FC => {
               <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(markupData) }}
+              />
+
+              <link
+                rel="canonical"
+                href={meta.canonical || `https://the-guild.dev${router.route}`}
               />
             </Head>
             <Main>

@@ -83,14 +83,14 @@ const ServiceContainer = styled(Container)<{ reversed?: boolean }>`
     max-width: 50%;
   }
 
-  & > div:first-child {
+  & > div:first-of-type {
     text-align: ${(props) => (props.reversed ? 'right' : 'left')};
   }
 
   @media (max-width: 640px) {
     flex-direction: column;
 
-    & > div:first-child {
+    & > div:first-of-type {
       margin-bottom: 50px;
       text-align: center;
     }

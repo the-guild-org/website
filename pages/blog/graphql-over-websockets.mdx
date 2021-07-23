@@ -88,33 +88,74 @@ const roots = {
 
 #### Start the server
 
+##### With [ws](https://github.com/websockets/ws)
+
 ```ts
-import https from 'https';
 import ws from 'ws'; // yarn add ws
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { execute, subscribe } from 'graphql';
 
-const server = https.createServer(function weServeSocketsOnly(_, res) {
-  res.writeHead(404);
-  res.end();
-});
-
-const wsServer = new ws.Server({
-  server,
+const server = new ws.Server({
+  port: 4000,
   path: '/graphql',
 });
 
 useServer(
-  {
-    schema, // from the previous step
-    roots, // from the previous step
-    execute,
-    subscribe,
-  },
-  wsServer
+  // from the previous step
+  { schema, roots },
+  server
 );
 
-server.listen(443);
+console.log('Listening to port 4000');
+```
+
+##### With [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js)
+
+```ts
+import uWS from 'uWebSockets.js'; // yarn add uWebSockets.js@uNetworking/uWebSockets.js#<tag>
+import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets';
+
+uWS
+  .App()
+  .ws(
+    '/graphql',
+    makeBehavior(
+      // from the previous step
+      { schema, roots }
+    )
+  )
+  .listen(4000, (listenSocket) => {
+    if (listenSocket) {
+      console.log('Listening to port 4000');
+    }
+  });
+```
+
+##### With [fastify-websocket](https://github.com/fastify/fastify-websocket)
+
+```ts
+import Fastify from 'fastify'; // yarn add fastify
+import fastifyWebsocket from 'fastify-websocket'; // yarn add fastify-websocket
+import { makeHandler } from 'graphql-ws/lib/use/fastify-websocket';
+
+const fastify = Fastify();
+fastify.register(fastifyWebsocket);
+
+fastify.get(
+  '/graphql',
+  { websocket: true },
+  makeHandler(
+    // from the previous step
+    { schema, roots }
+  )
+);
+
+fastify.listen(4000, (err) => {
+  if (err) {
+    fastify.log.error(err);
+    return process.exit(1);
+  }
+  console.log('Listening to port 4000');
+});
 ```
 
 #### Use the client
@@ -123,7 +164,7 @@ server.listen(443);
 import { createClient } from 'graphql-ws';
 
 const client = createClient({
-  url: 'wss://welcomer.com/graphql',
+  url: 'ws://welcomer.com:4000/graphql',
 });
 
 // query
@@ -148,11 +189,15 @@ const client = createClient({
 // subscription
 (async () => {
   const onNext = () => {
-    /**/
+    /* handle incoming values */
+  };
+
+  let unsubscribe = () => {
+    /* complete the subscription */
   };
 
   await new Promise((resolve, reject) => {
-    client.subscribe(
+    unsubscribe = client.subscribe(
       {
         query: 'subscription { greetings }',
       },

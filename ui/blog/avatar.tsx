@@ -1,16 +1,13 @@
 import React from 'react';
 import ReactAvatar from 'react-avatar';
-import type { AuthorDetails } from './authors';
 
-const AVATAR_SIZE = '40px';
-
-export const Avatar: React.FC<{ author: AuthorDetails }> = ({ author }) => {
+export const Avatar: React.FC<{ author: any }> = ({ author }) => {
   return (
     <ReactAvatar
       round={true}
       githubHandle={author.github}
       twitterHandle={author.twitter}
-      size={AVATAR_SIZE}
+      size="40"
       title={author.name}
       alt={author.name}
     />

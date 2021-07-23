@@ -253,10 +253,10 @@ function main() {
 
             <div class="flex-item-right">
               <div class="ossCells">
-                <img src="${linkUrl}/img/logos/config.svg" width="100">
+                <img src="${linkUrl}/img/logos/scalars.svg" width="100">
               </div>
               <div class="ossContentCells">
-                <a href="https://github.com/Urigo/graphql-scalars/" target="_blank">
+                <a href="https://www.graphql-scalars.dev/" target="_blank">
                   <h4>GraphQL Scalars</h4>
                 </a>
                 A library of custom GraphQL Scalars for creating precise type-safe GraphQL schemas.
@@ -427,7 +427,9 @@ function main() {
     'graphql-inspector.com': ['inspector'],
     'tortilla.academy': ['tortilla'],
     'graphql-mesh.com': ['mesh'],
-    'apollo-angular.com': ['angular']
+    'apollo-angular.com': ['angular'],
+    'graphql-cli.com': ['cli'],
+    'graphql-scalars.dev': ['scalars']
   };
 
   if (typeof window !== 'undefined') {

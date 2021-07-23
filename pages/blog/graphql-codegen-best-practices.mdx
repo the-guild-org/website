@@ -23,8 +23,6 @@ In this article, we'll cover the development workflow of frontend applications w
 
 Let's start by understanding the need for GraphQL Code Generator in your project.
 
-<!-- GraphQL schema can be defined in many ways, but the output is the same - it's an HTTP endpoint, usually `/graphql`, which you can communicate with by sending `POST` request, with request body that contains a `query` (of type `string`) and `variables` (of type `object`).  -->
-
 If you are using TypeScript for frontend development, you probably aim to get the most out of the TypeScript type-system, that means, that your preference should be to have typed variables all across your application.
 
 It starts with the code you write - UI components, services and business logic. You can also have type safety for your third-party libraries (some built-in, and some with `@types/...` packages).
@@ -100,16 +98,12 @@ In the example above we have a few issues that might be bugs in the future:
 3. We can't count of the fields to be there because they GraphQL query can change, and it's not connected to our code at all.
 4. If you'll try to access `location` of the event - you'll just get `undefined` because it's not part of the selection set.
 
-<!-- [TODO: gif of "any" in the component code] -->
-
 With GraphQL Code Generator, you can have a full type safety, based on your GraphQL schema _and_ your GraphQL operations, and that means:
 
 1. You can tell what is the exact structure of `listEvents`, what could be `null` and enjoy auto-complete in your IDE.
 2. You can tell what is the data type of all fields.
 3. If your selection set changes, it being reflected automatically and you can detect issues while developing or building (instead while running).
 4. Trying to access fields that are not defined in your selection set will show an error in build time and in your IDE.
-
-<!-- [TODO: gif of fully typed api in component code] -->
 
 So those are the basic types that codegen can generate for your, and you can get those by using the `@graphql-codegen/typescript` and `@graphql-codegen/typescript-operations` plugins of GraphQL Code Generator.
 
@@ -118,20 +112,6 @@ But that's not all - you can generate much more - you can get React Hooks, Angul
 ### How do I start?
 
 You can start by [trying GraphQL Code Generator plugin in the live-demo here](https://graphql-code-generator.com/) and with the [Getting started with GraphQL Code Generator](https://graphql-code-generator.com/docs/getting-started/installation).
-
-<!-- ## Working Examples
-
-We created a 2 repositories with a working application, that fetches data from remote service using GraphQL, Apollo and Angular/React.
-
-You can run it and play with it here:
-
-### React (with `react-apollo` and React Hooks)
-
-[TODO: live demo here]
-
-### Angular (with `apollo-angular` and RxJS)
-
-[TODO: live demo here] -->
 
 # Tips & Best Practices when using GraphQL Code Generator and TypeScript
 
@@ -160,7 +140,7 @@ GraphQL Code Generator can generate more than just TypeScript types. It can auto
 
 Beside TypeScript types, here's a list and examples of _part_ of GraphQL Codegen capabilities:
 
-<details><summary>Dump remote schema to a local file</summary>
+#### Dump remote schema to a local file
 
 If your GraphQL schema is only available for you using an HTTP endpoint, you can always get a copy of it locally. This is useful for better IDE experience.
 
@@ -176,9 +156,7 @@ generates:
 
 - [`@graphql-codegen/schema-ast` docs](https://graphql-code-generator.com/docs/plugins/schema-ast)
 
-</details>
-
-<details><summary>Save local GraphQL Introspection</summary>
+#### Save local GraphQL Introspection
 
 GraphQL schema can be represented in many ways. One of the is [introspection](https://graphql.org/learn/introspection/).
 
@@ -194,9 +172,7 @@ generates:
 
 - [`@graphql-codegen/introspection` docs](https://graphql-code-generator.com/docs/plugins/introspection)
 
-</details>
-
-<details><summary>Add custom content to output files</summary>
+#### Add custom content to output files
 
 I you wish to add custom content to the codegen output files, you can use `@graphql-codegen/add` plugin, and add your content this way:
 
@@ -211,9 +187,7 @@ generates:
 
 - [`@graphql-codegen/add` docs](https://graphql-code-generator.com/docs/plugins/add)
 
-</details>
-
-<details><summary>React & Apollo: Generate Hooks</summary>
+#### React & Apollo: Generate Hooks
 
 You can generate ready-to-use React hooks for your GraphQL operations, with the following configuration:
 
@@ -247,9 +221,7 @@ export const MyComponent: React.FC = () => {
 
 - [`@graphql-codegen/typescript-react-apollo` docs](https://graphql-code-generator.com/docs/plugins/typescript-react-apollo)
 
-</details>
-
-<details><summary>React & Apollo: Generate HOC (High-Order-Component)</summary>
+#### React & Apollo: Generate HOC (High-Order-Component)
 
 You can generate ready-to-use React HOC for your GraphQL operations, with the following configuration:
 
@@ -285,9 +257,7 @@ export const MyComponent = withMyQuery({
 
 - [`@graphql-codegen/typescript-react-apollo` docs](https://graphql-code-generator.com/docs/plugins/typescript-react-apollo)
 
-</details>
-
-<details><summary>React & Apollo: Generate Components</summary>
+#### React & Apollo: Generate Components
 
 You can generate ready-to-use React data components for your GraphQL operations, with the following configuration:
 
@@ -328,9 +298,7 @@ export const MyComponent: React.FC = ({ data, loading, error }) => {
 
 - [`@graphql-codegen/typescript-react-apollo` docs](https://graphql-code-generator.com/docs/plugins/typescript-react-apollo)
 
-</details>
-
-<details><summary>Angular & Apollo: Generate Services</summary>
+#### Angular & Apollo: Generate Services
 
 You can generate ready-to-use Angular `Service`s for your GraphQL operations, with the following configuration:
 
@@ -374,9 +342,7 @@ export class FeedComponent {
 
 - [`@graphql-codegen/typescript-apollo-angular` docs](https://graphql-code-generator.com/docs/plugins/typescript-apollo-angular)
 
-</details>
-
-<details><summary>React & Urql: Generate Hooks</summary>
+#### React & Urql: Generate Hooks
 
 If you are using [`urql`](https://github.com/FormidableLabs/urql) as your GraphQL client, you can generate ready-to-use React hooks for your GraphQL operations, with the following configuration:
 
@@ -414,9 +380,7 @@ export const MyComponent: React.FC = () => {
 This plugin can also generate HOC or data Component, based on your preference ;)
 :::
 
-</details>
-
-<details><summary>Vue.js & Apollo: Generate Composition Functions</summary>
+#### Vue.js & Apollo: Generate Composition Functions
 
 If you are using [`Vue.js`](https://vuejs.org) with `@vue/apollo-composable` your GraphQL client, you can generate composition functions based on your GraphQL operations:
 
@@ -460,9 +424,7 @@ export default createComponent({
 
 - [`@graphql-codegen/typescript-vue-apollo` docs](https://graphql-code-generator.com/docs/plugins/typescript-vue-apollo)
 
-</details>
-
-<details><summary>Apollo: type-safe `refetchQueries`</summary>
+#### Apollo: type-safe `refetchQueries`
 
 If you are using Apollo Client, and you wish to refetch a query when a mutation is done, you can do add [`@graphql-codegen/named-operations-object`](https://graphql-code-generator.com/docs/plugins/named-operations-object) plugin to your setup.
 
@@ -503,9 +465,7 @@ You can use it with any other wrapper of Apollo-Client, such as `apollo-angular`
 
 - [`@graphql-codegen/named-operations-object` docs](https://graphql-code-generator.com/docs/plugins/named-operations-object)
 
-</details>
-
-<details><summary>Apollo: auto-generated `fragmentMatcher` / `possibleTypes`</summary>
+#### Apollo: auto-generated `fragmentMatcher` / `possibleTypes`
 
 If you are using Apollo-Client and your schema contains GraphQL `union` or `interface`, you'll need to provide `fragmentMatcher` to your Apollo store instance.
 
@@ -535,8 +495,6 @@ const cache = new InMemoryCache({
 ```
 
 - [`@graphql-codegen/fragment-matcher` docs](https://graphql-code-generator.com/docs/plugins/fragment-matcher)
-
-</details>
 
 ## Name your operations
 

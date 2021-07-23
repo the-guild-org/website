@@ -5,7 +5,6 @@ import { components } from './blog/elements';
 import { Newsletter } from './blog/newsletter';
 import { Page } from './shared/Page';
 import { Meta } from '../lib/meta';
-import { Image } from './blog/image';
 
 const Container = styled.div`
   max-width: 690px;
@@ -51,23 +50,12 @@ const AboutUs = (meta: Meta): React.FC => {
   return function AboutUsRender({ children: content }) {
     const title = meta.title;
 
-    const ogImage =
-      (meta.image?.endsWith('.webm') || meta.image?.endsWith('.mp4')) &&
-      meta.thumbnail
-        ? meta.thumbnail
-        : meta.image;
-
     return (
       <MDXProvider components={components}>
-        <Page title={title} image={ogImage} description={meta.description}>
+        <Page title={title} description={meta.description}>
           <Container>
             <Main>
               <Title>{meta.title}</Title>
-              {meta.image && (
-                <Cover>
-                  <Image src={meta.image} alt={title} />
-                </Cover>
-              )}
               <Content>{content}</Content>
               <Newsletter />
             </Main>
