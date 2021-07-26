@@ -203,4 +203,39 @@ export const projects = {
       </>
     ),
   },
+  swiftGraphql: {
+    featured: true,
+    title: 'SwiftGraphQL - A GraphQL client for Swift lovers',
+    image: '/static/shared-logos/products/swift.svg',
+    link: 'https://github.com/maticzav/swift-graphql',
+    description: (
+      <>
+        <p>SwiftGraphQL - A GraphQL client for Swift lovers.</p>
+        <p>
+          SwiftGraphQL is centred around the core principle that every query you
+          can possibly make is valid. If your project compiles, your queries
+          work. We’ve mirrored all GraphQL structures and made them better by
+          adding type-safety. You have to try it!
+        </p>
+      </>
+    ),
+  },
+  graphqlShield: {
+    featured: true,
+    title:
+      'GraphQLShield - GraphQL Permissions Framework For Complex Authorisation Systems',
+    image: '/static/shared-logos/products/shield.svg',
+    link: 'https://github.com/maticzav/graphql-shield',
+    description: (
+      <>
+        <p>GraphQLShield - GraphQL permissions made easy!</p>
+        <p>
+          Shield is a GraphQL library that helps you create a permission layer
+          for your server. Its main focus is creating a meaningful, well-rounded
+          and scalable API that will make you confident about your permission
+          layer.
+        </p>
+      </>
+    ),
+  },
 };
