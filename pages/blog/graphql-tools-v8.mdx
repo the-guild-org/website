@@ -100,10 +100,10 @@ function myExecutor({ document, variables, operationType }) {
 
 URL Loader from `@graphql-tools/url-loader` package creates executable GraphQLSchema instances for you to call your remote GraphQL APIs by using different protocols;
 
-- Server Side Events ✔️
-- New GraphQL-WS ✔️
+- Server Sent Events ✔️
+- New [GraphQL-WS](https://github.com/enisdenjo/graphql-ws) ✔️
 - Legacy subscriptions-transport-ws ✔️
-- Multipart File Uploads ✔️
+- [Multipart File Uploads](https://github.com/jaydenseric/graphql-multipart-request-spec) ✔️
 
 ```ts
 import { loadSchema } from '@graphql-tools/load';
@@ -148,6 +148,7 @@ const stitchedSchema = await stitchSchemas([mySubschema, myOtherSubschema]);
 - We have removed some functions, methods and stuff that are not widely used by the community;
   - `makeRemoteExecutableSchema`
     - In the new GraphQL Tools, you don’t need this at all. You can write your own executor by following the documentation and use wrapSchema instead. Or you can use UrlLoader directly without the need of writing all the remote execution logic.
+    - This was already being deprecated after v4 in favor of `wrapSchema`. [You can find the new usage in the docs.](https://www.graphql-tools.com/docs/stitch-combining-schemas#stitching-remote-schemas)
   - Legacy Schema Directives, `visitSchema` and `directiveResolvers`
-    - We suggest you to check the new approach for schema directives and schema visiting in the documentation instead of these old approaches.
+    - We suggest you to [check the new approach for schema directives and schema visiting in the documentation instead of these old approaches.](https://www.graphql-tools.com/docs/schema-directives#full-mapschema-api)
   - And there are some other utility functions you might have been using from GraphQL Tools. You can check CHANGELOG to see rest of them.
