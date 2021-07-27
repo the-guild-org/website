@@ -23,6 +23,26 @@ export const logos: Array<{
     logo: 'air-france-white.png',
   },
   {
+    name: 'Outreach',
+    logo: 'outreach-white.png',
+  },
+  {
+    name: 'Klarna',
+    logo: 'Klarna-white.png',
+  },
+  {
+    name: 'The Graph',
+    logo: 'thegraph-white.png',
+  },
+  {
+    name: 'Dalet',
+    logo: 'Dalet-white.png',
+  },
+  {
+    name: 'Lance',
+    logo: 'lance-white.png',
+  },
+  {
     name: 'Schneider Electric',
     logo: 'schneider-electric-white.png',
   },
