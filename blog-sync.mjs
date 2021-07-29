@@ -224,8 +224,6 @@ function extractMeta() {
               })
               .join(' ');
 
-            console.log(`{% codesandbox ${boxId} ${optionsQueryString} %}`);
-
             parent.children.splice(index, 1, {
               type: 'text',
               value: `{% codesandbox ${boxId} ${optionsQueryString} %}`,
