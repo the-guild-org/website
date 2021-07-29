@@ -37,7 +37,8 @@ async function syncToDevTo(items) {
 
   for (const item of items) {
     try {
-      const exists = allArticles.find((t) => t.canonicalUrl === item.canonical);
+      const canonicalUrl = item.meta.canonical || item.canonical;
+      const exists = allArticles.find((t) => t.canonicalUrl === canonicalUrl);
       const author =
         details.authors[
           item.meta.authors && Array.isArray(item.meta.authors)
@@ -50,7 +51,6 @@ async function syncToDevTo(items) {
           ? `https://the-guild.dev${item.meta.image}`
           : item.meta.image
         : undefined;
-      const canonicalUrl = item.meta.canonical || item.canonical;
       const tags = (item.meta.tags || [])
         .map((t) => t.replace(/[-_ ]/g, ''))
         .slice(0, 4);
