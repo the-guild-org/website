@@ -25,6 +25,8 @@ const processor = unified()
   .use(mdx)
   .use(extractMeta);
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 async function syncToDevTo(items) {
   console.log(`=== Syncing ${items.length} articles to dev.to... ===`);
   const client = new Client(DEV_TO_TOKEN);
@@ -34,55 +36,77 @@ async function syncToDevTo(items) {
   });
 
   for (const item of items) {
-    const exists = allArticles.find((t) => t.canonicalUrl === item.canonical);
-    const author = details.authors[item.meta.author];
-    const markdown = `> This article was published on ${item.meta.date} by [${author.name}](${author.link}) @ [The Guild Blog](https://the-guild.dev/)\n\n${item.markdown}`;
+    try {
+      const exists = allArticles.find((t) => t.canonicalUrl === item.canonical);
+      const author =
+        details.authors[
+          item.meta.authors && Array.isArray(item.meta.authors)
+            ? item.meta.authors[0]
+            : item.meta.author
+        ];
+      const markdown = `> This article was published on ${item.meta.date} by [${author.name}](${author.link}) @ [The Guild Blog](https://the-guild.dev/)\n\n${item.markdown} `;
+      const image = item.meta.image
+        ? item.meta.image.startsWith('/')
+          ? `https://the-guild.dev${item.meta.image}`
+          : item.meta.image
+        : undefined;
+      const canonicalUrl = item.meta.canonical || item.canonical;
+      const tags = (item.meta.tags || [])
+        .map((t) => t.replace(/[-_ ]/g, ''))
+        .slice(0, 4);
 
-    if (exists) {
-      console.log(
-        `Article "${item.meta.title}" already exists, updating if needed...`
-      );
+      if (exists) {
+        console.log(
+          `Article "${item.meta.title}" already exists, updating if needed...`
+        );
 
-      if (exists.bodyMarkdown !== markdown) {
-        console.log(`   -> Updating...`);
+        if (exists.bodyMarkdown !== markdown) {
+          console.log(`   -> Updating...`);
 
-        await client.updateArticle(exists.id, {
+          await client.updateArticle(exists.id, {
+            article: {
+              title: item.meta.title,
+              bodyMarkdown: markdown,
+              canonicalUrl,
+              description: item.meta.description,
+              mainImage: image,
+              tags,
+            },
+          });
+          console.log(`   -> Done!`);
+          console.log(
+            `... waiting before next request to avoid rate-limit ...`
+          );
+          await sleep(30 * 1000);
+        } else {
+          console.log(`   -> Up to date!`);
+        }
+      } else {
+        console.log(`Creating article "${item.meta.title}" on DevTo...`);
+
+        await client.createArticle({
           article: {
             title: item.meta.title,
             bodyMarkdown: markdown,
-            canonicalUrl: item.meta.canonical || item.canonical,
+            canonicalUrl,
             description: item.meta.description,
-            mainImage: item.meta.image
-              ? item.meta.image.startsWith('/')
-                ? `https://the-guild.dev${item.meta.image}`
-                : item.meta.image
-              : undefined,
-            tags: (item.meta.tags || []).map((t) => t.replace(/[-_ ]/g, '')),
+            organizationId: DEV_TO_ORG_ID,
+            mainImage: image,
+            published: true,
+            tags,
           },
         });
-        console.log(`   -> Done!`);
-      } else {
-        console.log(`   -> Up to date!`);
+        console.log(`... waiting before next request to avoid rate-limit ...`);
+        await sleep(30 * 1000);
       }
-    } else {
-      console.log(`Creating article "${item.meta.title}" on DevTo...`);
-
-      await client.createArticle({
-        article: {
-          title: item.meta.title,
-          bodyMarkdown: item.markdown,
-          canonicalUrl: item.meta.canonical || item.canonical,
-          description: item.meta.description,
-          organizationId: DEV_TO_ORG_ID,
-          mainImage: item.meta.image
-            ? item.meta.image.startsWith('/')
-              ? `http://the-guild.dev${item.meta.image}`
-              : item.meta.image
-            : undefined,
-          published: true,
-          tags: (item.meta.tags || []).map((t) => t.replace(/[-_ ]/g, '')),
-        },
-      });
+    } catch (e) {
+      console.log(
+        `Failed to send article to dev.to, error: `,
+        e.response?.status || e,
+        e.response?.statusText,
+        e.response?.data
+      );
+      process.exit(1);
     }
   }
 }
@@ -100,12 +124,12 @@ async function main() {
         items.push({
           slug: cleanName,
           canonical: `https://the-guild.dev/blog/${cleanName}`,
-          markdown: value,
+          markdown: value.replace(/\\<img/gi, '<img'),
           meta: data.meta,
         });
       }
     } catch (e) {
-      console.error(`Building clean MD failed for "${blogFile}":`, e);
+      console.error(`Building clean MD failed for "${blogFile}"...`);
       throw e;
     }
   }
@@ -118,9 +142,14 @@ main();
 function extractMeta() {
   return (tree, file) => {
     const meta = {};
+    const embedOptions = {};
 
-    visit(tree, (node) => {
-      if (node.type === 'mdxjsEsm') {
+    visit(tree, (node, index, parent) => {
+      if (node.type === 'image') {
+        if (node.url.startsWith('/')) {
+          node.url = `https://the-guild.dev${node.url}`;
+        }
+      } else if (node.type === 'mdxjsEsm') {
         if (node.value.includes('export const meta')) {
           walk(node.data.estree, {
             enter(node) {
@@ -132,9 +161,149 @@ function extractMeta() {
               }
             },
           });
+        } else if (node.value.includes('export const embedOptions')) {
+          walk(node.data.estree, {
+            enter(node) {
+              if (node.type === 'Property') {
+                embedOptions[node.key.name] =
+                  node.value.type === 'ArrayExpression'
+                    ? node.value.elements.map((n) => n.value)
+                    : node.value.value;
+              }
+            },
+          });
         }
 
         return;
+      } else if (node.type === 'mdxJsxFlowElement') {
+        if (node.name === 'Gfycat') {
+          const gifId = node.attributes
+            .find((a) => a.name === 'gifId')
+            .value.value.replace(/['"]/g, '');
+
+          parent.children.splice(index, 1, {
+            type: 'text',
+            value: `<img width="100%" style="width:100%" src="https://thumbs.gfycat.com/${gifId}-size_restricted.gif" />`,
+            position: node.position,
+          });
+        } else if (node.name === 'iframe') {
+          const src = node.attributes.find((a) => a.name === 'src').value;
+
+          if (src && src.includes('youtube')) {
+            const parts = src.split('/');
+            const videoId = parts[parts.length - 1];
+
+            parent.children.splice(index, 1, {
+              type: 'text',
+              value: `{% youtube ${videoId} %}`,
+              position: node.position,
+            });
+          }
+        } else if (node.name === 'LinkPreview') {
+          const link = node.attributes
+            .find((a) => a.name === 'link')
+            .value.replace(/['"]/g, '');
+
+          parent.children.splice(index, 1, {
+            type: 'text',
+            value: link,
+            position: node.position,
+          });
+        } else if (node.name === 'Tweet') {
+          const tweetLink = node.attributes
+            .find((a) => a.name === 'tweetLink')
+            .value.replace(/['"]/g, '');
+          const parts = tweetLink.split('/');
+          const tweetId = parts[parts.length - 1];
+
+          if (tweetId) {
+            parent.children.splice(index, 1, {
+              type: 'text',
+              value: `{% twitter ${tweetId} %}`,
+              position: node.position,
+            });
+          }
+        } else if (node.name === 'YouTube') {
+          const youTubeId = node.attributes
+            .find((a) => a.name === 'youTubeId')
+            .value.replace(/['"]/g, '');
+
+          parent.children.splice(index, 1, {
+            type: 'text',
+            value: `{% youtube ${youTubeId} %}`,
+            position: node.position,
+          });
+        } else if (node.name === 'StackBlitz') {
+          const stackBlitzId = node.attributes
+            .find((a) => a.name === 'stackBlitzId')
+            .value.replace(/['"]/g, '');
+          const file = node.attributes
+            .find((a) => a.name === 'file')
+            .value?.replace(/['"]/g, '');
+
+          parent.children.splice(index, 1, {
+            type: 'text',
+            value: `{% stackblitz ${stackBlitzId} ${
+              file ? `file=${file}` : ''
+            } %}`,
+            position: node.position,
+          });
+        } else if (node.name === 'CodeSandbox') {
+          const boxId = node.attributes
+            .find((a) => a.name === 'codeSandboxId')
+            .value.value.replace(/['"]/g, '');
+          const childEmbedOptions = {};
+          const childEmbedOptionsNode = node.attributes.find(
+            (a) => a.name === 'embedOptions'
+          );
+
+          if (childEmbedOptionsNode) {
+            walk(childEmbedOptionsNode.value.data.estree, {
+              enter(node) {
+                if (node.type === 'Property') {
+                  childEmbedOptions[node.key.name] =
+                    node.value.type === 'ArrayExpression'
+                      ? node.value.elements.map((n) => n.value)
+                      : node.value.value;
+                }
+              },
+            });
+          }
+
+          const allEmbedOptions = {
+            ...embedOptions,
+            ...childEmbedOptions,
+          };
+
+          if (boxId.startsWith('github/')) {
+            const optionsQueryString = Object.keys(allEmbedOptions)
+              .map((k) => `${k}=${allEmbedOptions[k]}`)
+              .join('&');
+
+            parent.children.splice(index, 1, {
+              type: 'text',
+              value: `https://codesandbox.io/embed/${boxId}?${optionsQueryString}`,
+              position: node.position,
+            });
+          } else {
+            const optionsQueryString = Object.keys(allEmbedOptions)
+              .filter((k) =>
+                ['module', 'runonclick', 'initialpath'].includes(k)
+              )
+              .map((k) => {
+                const [item] = allEmbedOptions[k].split(',');
+
+                return `${k}=${item.startsWith('/') ? item.substr(1) : item}`;
+              })
+              .join(' ');
+
+            parent.children.splice(index, 1, {
+              type: 'text',
+              value: `{% codesandbox ${boxId} ${optionsQueryString} %}`,
+              position: node.position,
+            });
+          }
+        }
       }
     });
 
