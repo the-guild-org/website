@@ -84,6 +84,11 @@ const authors = {
     link: 'https://charlypoly.com',
     github: 'wittydeveloper',
   },
+  maticzav: {
+    name: 'Matic Zavadlal',
+    link: 'https://twitter.com/maticzav',
+    github: 'maticzav',
+  },
 };
 
 module.exports = { authors };
