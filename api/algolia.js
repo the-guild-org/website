@@ -130,6 +130,18 @@ function pickPrefix(url) {
   if (url.startsWith('https://graphql-scalars.dev')) {
     return 'GraphQL Scalars';
   }
+  
+  if (url.startsWith('https://envelop.dev')) {
+    return 'Envelop';
+  }
+  
+  if (url.startsWith('https://swift-graphql.com')) {
+    return 'Swift GraphQL';
+  }
+  
+  if (url.startsWith('https://graphql-shield.com')) {
+    return 'GraphQL Shield';
+  }
 
   if (url.startsWith('https://the-guild.dev/blog')) {
     return 'The Guild Blog';
