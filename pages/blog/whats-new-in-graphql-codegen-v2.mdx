@@ -1,10 +1,10 @@
 import withArticle from '../../ui/blog/article';
 
 export const meta = {
-  title: `What's new with GraphQL-Codegen v2?`,
+  title: "What's new with GraphQL-Codegen v2?",
   author: 'dotan',
   tags: ['graphql', 'codegen', 'typscript'],
-  date: '2020-08-03',
+  date: '2021-08-03',
   description:
     'Human-readable types, improved infrastructure, a new plugin for TypeScript and more!',
   image: '/blog-assets/graphql-code-generator/cover.png',
@@ -18,8 +18,116 @@ We recently decided to revisit and improve some parts of codegen, and we're happ
 
 This release is all about improving the reliability and readability of the generated code, and adding new features (and a new plugin!).
 
-### Why `v2`?
+## Why `v2`?
 
-We are currently working on adding ESM support for all [The Guild](http://the-guild.dev/) tools.
+We are currently working on adding ESM support for all [The Guild](http://the-guild.dev/)'s tools.
 
-In Codegen, we are not there yet ([you can track the progress here](https://github.com/dotansimha/graphql-code-generator/pull/6102), because we need to make sure that plugins, presets, schemas and documents are still being loaded correctly.
+In Codegen, we are not there yet ([you can track the progress here](https://github.com/dotansimha/graphql-code-generator/pull/6102), because we need to make sure that plugins, presets, schemas and documents are still being loaded correctly. But it's coming soon!
+
+But other tools, which we use as a dependency, like `graphql-tools` already support ESM (v8), and dropped support for Node 10, so we are aliging to that.
+
+## Human-readable Generated Types
+
+A few years ago, we changed the output of codegen to use `Pick` in order to build the operation types based on the schema types:
+
+```ts
+// Base types generated based on the schema, from `typescript` plugin:
+type Query = {
+  user: User;
+};
+
+type User = {
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
+// Types generate based on operations, from `typescript-plugins`:
+
+type MyQuery = {
+  user: Pick<User, 'id' | 'name'>;
+};
+```
+
+Some time after, we added `preResolveTypes` configuration flag as experimental, in order to generate more readable types with primitive types resolved directly on the generate types:
+
+```ts
+type MyQuery = {
+  user: {
+    id: string;
+    name: string;
+  };
+};
+```
+
+We are happy to announce that v2 of `typescript-operations` now uses `preResolveTypes: true` by default, so all generated types are more readable.
+
+> This is not a breaking change, and all your types are still fully compatible with `v1` of the tool. You can set `preResolveTypes: false` if you prefer to keep the old behavior.
+
+## Types Accuracy
+
+In addition to more readable types, we also improved the accuracy of the generated types.
+
+A few months ago, [`chrbala`](https://github.com/chrbala) found [a bug in the `typescript-operations` plugin](https://github.com/dotansimha/graphql-code-generator/issues/6149), which was causing the generated types to be incorrect in cases where you use nested and complex fragments.
+
+This bug was caused by the fact that we were combining fragments using `&` operator of TypeScript, and this operator doesn't apply kind of merging for nested types. So when used with multiple fragments (`MyFirstFragment & MySecondArgument`), the nested fields are being overwritten, instead of being merged.
+
+[`n1ru4l`](https://github.com/n1ru4l) picked that up and [fixed the bug](https://github.com/dotansimha/graphql-code-generator/pull/6184) and added support for better handling of these kind of cases.
+
+The new configuration flag (`inlineFragmentTypes: inline`) is used by default, and generates a more accurate types, without introducing breaking changes!
+
+> All your types are still fully compatible with `v1` of the tool. You can set `inlineFragmentTypes: combine` if you prefer to keep the old behavior.
+
+## Removal of deprecations
+
+We also used the need for a major version to remove a few deprecations from the codebase.
+
+#### `typescript-resolvers`
+
+In `typescript-resolvers`, we had a generated signature for `IResolvers` and `IDirectiveResolvers` (which were deprecated 2 years ago), `v2` of this plugin is removing these proxy types.
+
+Also, `noSchemaStitching` flag is now set to `true` by default, so the generated resolvers signature is simpler and matches the needs of most projects.
+
+> If you are using Schema Stitching, you can set `noSchemaStitching: false` to keep the old behavior.
+
+#### `typescript-compatibility`
+
+The `typescript-compatibility` plugin was created to make it easier to migrate from v0 to v1 of codegen, and not being actively developed for a few years now.
+
+With this release, we no longer support or develop `typescript-compatibility` plugin, so if you are using it, please consider to migrate your usage and types to the new form.
+
+## New TypeScript Plugin for Operations!
+
+A month ago, [`Maël Nison`](https://github.com/arcanis) reached out to us with [a new concept](https://github.com/arcanis/graphql-typescript-integration) for matching your actual GraphQL operation string and the generated TypeScript types.
+
+With a few adjustments, [`n1ru4l`](https://github.com/n1ru4l) managed to [turn that amazing idea into a plugin and a preset](https://github.com/dotansimha/graphql-code-generator/pull/6267) that extends the behavior of `typescript-operation` and `TypedDocumentNode`, and allow you to generate TypeScript types that magically matches your GraphQL query strings.
+
+#### So what does it means?
+
+Today, GraphQL Codegen scans your codebase and looks for all the operations that are being used by your components (or, from `.graphql` files), then it generates types and wrapped `TypedDocumentNode` for you.
+
+With this new plugin+preset, you can generate typings for your inline `gql` function usages, without having to manually specify import statements for the documents. All you need to do is import your `gql` function and run codegen in watch mode.
+
+```ts
+import { gql } from '@app/gql';
+
+// TweetFragment is a fully typed document node
+const TweetFragment = gql(/* GraphQL */ `
+  fragment TweetFragment on Tweet {
+    id
+    body
+  }
+`);
+
+const TweetsQueryWithFragment = gql(/* GraphQL */ `
+  query TweetsWithFragmentQuery {
+    Tweets {
+      id
+      ...TweetFragment
+    }
+  }
+`);
+```
+
+You can find [the complete documentation, examples and API reference in codegen website](https://www.graphql-code-generator.com/docs/presets/gql-tag-operations).
+
+> Huge thanks to [Maël Nison](https://github.com/arcanis), who conceptualized the foundation for this preset [over here](https://github.com/arcanis/graphql-typescript-integration).
