@@ -26,6 +26,8 @@ In Codegen, we are not there yet ([you can track the progress here](https://gith
 
 But other tools, which we use as a dependency, like `graphql-tools` already support ESM (v8), and dropped support for Node 10, so we are aliging to that.
 
+We've updated to the latest version of `graphql-tools` (v8) and `graphql-config` (v4) to get some upstream bug fixes.
+
 ## Human-readable Generated Types
 
 A few years ago, we changed the output of codegen to use `Pick` in order to build the operation types based on the schema types:
@@ -99,7 +101,7 @@ With this release, we no longer support or develop `typescript-compatibility` pl
 
 A month ago, [`Maël Nison`](https://github.com/arcanis) reached out to us with [a new concept](https://github.com/arcanis/graphql-typescript-integration) for matching your actual GraphQL operation string and the generated TypeScript types.
 
-With a few adjustments, [`n1ru4l`](https://github.com/n1ru4l) managed to [turn that amazing idea into a plugin and a preset](https://github.com/dotansimha/graphql-code-generator/pull/6267) that extends the behavior of `typescript-operation` and `TypedDocumentNode`, and allow you to generate TypeScript types that magically matches your GraphQL query strings.
+With a few adjustments, [`n1ru4l`](https://github.com/n1ru4l) managed to [turn that amazing idea into a plugin and a preset](https://github.com/dotansimha/graphql-code-generator/pull/6267) that extends the behavior of `typescript-operation` and `TypedDocumentNode`, and allow you to generate TypeScript types that magically matches your GraphQL query strings (this also required a few fixes in `graphql-tools`, so now the Loaders in graphql-tools are better!).
 
 #### So what does it means?
 
