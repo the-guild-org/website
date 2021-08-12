@@ -29,6 +29,7 @@ const Cover = styled(Image)<{
   max-width: ${(props) => (props.maxSize ? props.maxSize + 'px' : '100%')};
   min-width: 200px;
   max-height: 200px;
+  object-fit: contain;
   height: auto;
   margin: 0 auto;
   border-radius: 5px;
@@ -41,11 +42,11 @@ const Placeholder = styled.div`
   display: block;
   max-width: 100%;
   min-width: 200px;
-  max-height: 200px; 
+  max-height: 200px;
   height: auto;
   margin: 0 auto;
   border-radius: 5px;
-  'box-shadow: 0 2px 6px 0 rgba(0,0,0,0.18)';  
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.18);
 `;
 
 const Container = styled.div<{ width: number }>`
