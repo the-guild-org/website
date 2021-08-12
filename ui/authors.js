@@ -89,6 +89,11 @@ const authors = {
     link: 'https://twitter.com/maticzav',
     github: 'maticzav',
   },
+  pablosz: {
+    name: 'Pablo Sáez',
+    link: 'https://twitter.com/PabloSz_',
+    github: 'PabloSzx',
+  },
 };
 
 module.exports = { authors };
