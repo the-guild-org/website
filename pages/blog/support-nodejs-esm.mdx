@@ -12,9 +12,16 @@ export const meta = {
 
 export default withArticle({ ...meta });
 
-If you have been in the Node.js Ecosystem for some time and developing libraries, you have probably encountered the fact that ESM compatibility has been a struggle, behind experimental flags and/or broken for practical usage.
+**ECMAScript modules**, also known as **ESM**, is the [official standard format](https://tc39.es/ecma262/#sec-modules) to package JavaScript, and fortunately [Node.js supports it](https://nodejs.org/api/esm.html#esm_modules_ecmascript_modules) 🎉.
+
+But if you have been in the Node.js Ecosystem for some time and developing libraries, you have probably encountered the fact that ESM compatibility has been a struggle, behind experimental flags and/or broken for practical usage.
 
 Very few libraries actually supported it officially, but since Node.js **v12.20.0** (2020-11-24) and **v14.13.0** (2020-09-29) the latest and finally stable version of `package.exports` is available, and since support for Node.js v10.x is dropped, everything should be fine and supporting ESM shouldn't be that hard.
+
+After working on migrating all **The Guild** libraries, for example [GraphQL Code Generator](https://github.com/dotansimha/graphql-code-generator/pull/6102) or the recently released [Envelop](https://github.com/dotansimha/envelop/pull/259), and contributing in other important libraries in the ecosystem, like [graphql-js](https://github.com/graphql/graphql-js/pull/3217),
+I felt like sharing this experience is really valuable, and the current state of ESM in the Node.js Ecosystem as a whole needs some extra care from everyone.
+
+This post is intended to work as a guide to support both CommonJS **and** ESM and will be updated accordingly in the future as needed, and one key feature to be able to make this happens, is the `package.json` `exports` field.
 
 ## "exports"
 
