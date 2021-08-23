@@ -14,31 +14,31 @@ export default withArticle({ ...meta });
 
 ## Introduction
 
-You've probably been faced with a challenge of making sure your app is up-to-date at all times without user interaction. Yes, [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) are a great fit! But, what if I've told you there is something else? Something "simpler" and [widely supported](https://caniuse.com/?search=server-sent%20events)? Say hello to [Server-Sent Events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events).
+You've probably been faced with a challenge of making sure your app is up-to-date at all times without user interaction. Yes, [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) are a great fit! But, what if I've told you there is something else? Something "simpler" and [widely supported](https://caniuse.com/?search=server-sent%20events)? I humbly present to you: [Server-Sent Events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events).
 
 Server-Sent Events (abbr. SSE) are persisted HTTP connections enabling simplex communication from the server to connected clients. In comparison to WebSockets, which enable full-duplex communication (both connected parties can send information at any time), simplex communication is just a fancy word for channels that send data in one direction only, in this case from the server to the client. You may think that this is a drawback, at least when comparing SSEs to WebSockets; but, think again - is it really?
 
 When subscribing to an information source, you make one descriptive request in order to receive multiple responses. Specifically, when using GraphQL subscriptions or streaming operations (like with [`@defer` and `@stream` directives](https://graphql.org/blog/2020-12-08-improving-latency-with-defer-and-stream-directives)), you do exactly this - you send one request and expect multiple responses (events) in return. Having said this, Server-Sent Events seem like a perfect fit!
 
-Not only do they fit like a glove, but they have one more small leverage over WebSockets - they're firewall-proof. If you've used WebSockets extensively before, you must've faced a situation where WebSocket connections were declined and you have had absolutely no idea why - yes sir, you've most likely faced an outdated corporate firewall that rejects [HTTP Upgrade requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Upgrade) crippling WebSocket's full potential. However, SSEs are plain ol' HTTP requests whose TCP connection is kept alive.
+Not only does it fit like a glove, but it even has one more small leverage over WebSockets - it is firewall-proof. If you've used WebSockets extensively before, you must've been faced with a situation where WebSocket connections were declined and you have had absolutely no idea why - yes sir, you were bamboozled by an outdated corporate firewall that rejects [HTTP Upgrade requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Upgrade) crippling WebSocket's full potential. However, SSEs are plain ol' HTTP requests whose TCP connection is kept alive, they're immune to rogue firewalls.
 
 ## Limitations with SSEs
 
 Ah, if the world was only that simple... There are a few limitations when considering SSEs, some of you might've already discovered them, but I'll go over them briefly.
 
-### Maximum number of open connections
+#### Maximum number of open connections
 
 > When **not used over HTTP/2**, SSE suffers from a limitation to the maximum number of open connections, which can be specially painful when opening various tabs as the limit is per browser and set to a very low number (6). The issue has been marked as "Won't fix" in [Chrome](https://bugs.chromium.org/p/chromium/issues/detail?id=275955) and [Firefox](https://bugzilla.mozilla.org/show_bug.cgi?id=906896). This limit is per browser + domain, so that means that you can open 6 SSE connections across all of the tabs to `www.example1.com` and another 6 SSE connections to `www.example2.com`. (from [Stackoverflow](https://stackoverflow.com/a/5326159/1905229)). When using HTTP/2, the maximum number of simultaneous HTTP streams is negotiated between the server and the client (defaults to 100).
 
-[Reference: WebAPIs | MDN](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)
+_[WebAPIs | MDN](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)_
 
-### Browser's [`EventSource`](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)
+#### Browser's [`EventSource`](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)
 
-No only are you not able to customise the HTTP request by providing custom headers or changing the method, but the [`EventSource.onerror` event handler](https://developer.mozilla.org/en-US/docs/Web/API/EventSource/onerror) will tell you nothing about why the request failed, no status code, no message, no body - you're in the dark.
+Not only are you not able to customise the HTTP request by providing custom headers or changing the request method, but the [`EventSource.onerror` event handler](https://developer.mozilla.org/en-US/docs/Web/API/EventSource/onerror) will tell you nothing about why the request failed, no status code, no message, no body - you're in the dark.
 
-### How to GraphQL over SSE?
+#### How to GraphQL over SSE?
 
-If you've done your Googling, you probably came across hot discussions like ["Does HTTP/2 make websockets obsolete?"](https://stackoverflow.com/questions/28582935/does-http-2-make-websockets-obsolete) or ["WebSockets vs. Server-Sent events/EventSource"](https://stackoverflow.com/questions/5195452/websockets-vs-server-sent-events-eventsource). Or even the harsh ["@deprecate WebSockets: GraphQL Subscriptions using SSE"](https://wundergraph.com/blog/deprecate_graphql_subscriptions_over_websockets) article from WunderGraph.
+If you've done your Googling, you probably came across hot discussions like ["Does HTTP/2 make websockets obsolete?"](https://stackoverflow.com/questions/28582935/does-http-2-make-websockets-obsolete) or ["WebSockets vs. Server-Sent events/EventSource"](https://stackoverflow.com/questions/5195452/websockets-vs-server-sent-events-eventsource). Or even the somewhat harsh ["@deprecate WebSockets: GraphQL Subscriptions using SSE"](https://wundergraph.com/blog/deprecate_graphql_subscriptions_over_websockets) article from WunderGraph.
 
 With all this insightful talking and knowledgable discussions, you'd expect integrating SSE in your next project would be easy? You should have options, not be limited to Socket.IO or WebSockets, right? Absolutely, it _is_ easy and you _do_ have options!
 
@@ -50,7 +50,9 @@ Aforementioned limitations are taken care with a specialised SSE client (inspire
 
 [`graphql-sse`](https://github.com/enisdenjo/graphql-sse) is a reference implementation of the [GraphQL over Server-Sent Events Protocol aiming to become a part of the GraphQL over HTTP standard](https://github.com/graphql/graphql-over-http/pull/163).
 
-## Enough chit-chat, let's get the party started!
+### How can I try it out?
+
+I thought you'd never ask, here is how!
 
 #### Install
 
