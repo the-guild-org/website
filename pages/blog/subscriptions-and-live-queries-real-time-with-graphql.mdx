@@ -437,7 +437,7 @@ const UserListRenderer = ({ postId }: { postId: string }) => {
     {
       // we need to manually update the cache :(
       updater: (store, payload) => {
-        const record = store.getRootField();
+        const rootField = store.getRootField();
         const users = rootField.getLinkedRecords('users');
         if (users) {
           switch (payload.onUserListChange.__typename) {
