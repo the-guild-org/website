@@ -1,0 +1,51 @@
+import withArticle from '../../ui/blog/article';
+export const meta = {
+  title: 'GraphQL Code Generetor with TypeScript and Prisma models',
+  author: 'giladtidhar',
+  tags: ['graphql', 'typescript', 'codegen', 'prisma'],
+  date: '2021-10-06',
+  description: 'How to use Prisma models with GraphQL Code Generator',
+  image: '/blog-assets/graphql-code-generator/cover.png',
+};
+export default withArticle({ ...meta });
+
+Prisma offers an easy solution for working with sqlite, and is amazingly simple to understand.
+
+But, when using it with the GraphQL code generator, it could cause problems with conflicting types.
+
+# How do we fix this?
+
+Well, the code generator, has an option called mappers.
+
+Using a mapper gives you the option to map one type to another. (for exapmle, mapping the prisma model to the corresponding GraphQL type.)
+
+## Using mappers
+
+Mappers are actually really easy to use, all you need to do is add them to your codegen.yml!
+
+For exapmle, lets say I have a Prisma model which is called User, and my GraphQL schema also uses a type User.
+
+For my project to work with its database, it needs to use the Prisma model instead of the GraphQL one, so I should map my User model from prisma to my User type in GraphQL.
+Like this:
+
+```yaml
+schema: http://localhost:3000/graphql
+documents: ./src/graphql/*.graphql
+generates:
+  graphql/generated.ts:
+    plugins:
+      - typescript-operations
+      - typescript-react-apollo
+  config:
+    mappers:
+      User: .prisma/client#User as UserModel
+```
+
+Under the Mappers, you can see we take the User type, and set it to be using the exported type automatically created by Prisma.
+We set it to be named UserModel, so it won't conflict with the GraphQL definition of the User type.
+
+## what now?
+
+Now, if you run `yarn run generate` or `npm run generate`, it will update the genereated file to work with your Prisma model.
+
+Now everything should work currectly.
