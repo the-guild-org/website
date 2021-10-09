@@ -49,3 +49,31 @@ We set it to be named UserModel, so it won't conflict with the GraphQL definitio
 Now, if you run `yarn run generate` or `npm run generate`, it will update the genereated file to work with your Prisma model.
 
 Now everything should work currectly.
+
+# Some problems I ran into
+
+sometime, some prisma operations get arguments which are for filtering and paginating, now, if you have this type of filter in your GraphQL schema, it might look something like this,
+
+```ts
+type Query {
+  feed(filter: String, skip: Int, take: Int): Feed!
+}
+```
+
+as you can see, the arguments filter, skip and take are nullable which means that GraphQL will send them as null if left without value.
+
+## whats the problem with this?
+
+Well, for filtering and paginating prisma takes arguments which either have a value or are undefined, but not null.
+
+This is a problem for us because the type the codegen uses for maybe values (values that are nullable), could be null.
+
+## How do we get around this?
+
+What worked for me is this solution,
+
+```ts
+value: args.value ?? undefined;
+```
+
+This will let TypeScript know that "value" can never be null, because if it is null, it will be set as undefined, meaning it will not cause problems with Prisma which expects a value or undefined.
