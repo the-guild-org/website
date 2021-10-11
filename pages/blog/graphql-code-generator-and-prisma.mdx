@@ -9,17 +9,85 @@ export const meta = {
 };
 export default withArticle({ ...meta });
 
-Prisma offers an easy solution for working with sqlite, and is amazingly simple to understand.
+# Prisma
 
-But, when using it with the GraphQL code generator, it could cause problems with conflicting types.
+## What is Prisma?
 
-# How do we fix this?
+Prisma is an open source fully-typed next-generation ORM. It consists of the following parts:
 
-Well, the code generator, has an option called mappers.
+Prisma Client: Auto-generated and type-safe query builder for Node.js & TypeScript
+Prisma Migrate: Migration system
+Prisma Studio: GUI to view and edit data in your database
 
-Using a mapper gives you the option to map one type to another. (for exapmle, mapping the prisma model to the corresponding GraphQL type.)
+Each Prisma project has a schema, which it uses to define its models.
+Every project that uses a tool from the Prisma toolkit starts with a Prisma schema file.
+The Prisma schema allows developers to define their application models in an intuitive data modeling language.
 
-## Using mappers
+## Why Prisma?
+
+Prisma's main goal is to make application developers more productive when working with databases. Here are a few examples of how Prisma achieves this:
+
+- **Thinking in objects** instead of mapping relational data
+- **Queries not classes** to avoid complex model objects
+- **Single source of truth** for database and application models
+- **Healthy constraints** that prevent common pitfalls and antipatterns
+- **An abstraction that makes the right thing easy** ("pit of success")
+- **Type-safe database queries** that can be validated at compile time
+- **Less boilerplate** so developers can focus on the important parts of their app
+- **Auto-completion in code editors** instead of needing to look up documentation
+
+  [A tutorial about how to get started with Prisma](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch)
+
+# GraphQL code generator
+
+The GraphQL code genereator is an easy way to create type saftey with your GraphQL project.
+It automatically generates a type sheet based on your GraphQL schema. This is very useful because it reduces the chances to write mistakes.
+
+[A tutorial about how to get started with GraphQL codegen](https://www.graphql-code-generator.com/docs/getting-started/index)
+
+# Benefits of writing fully-typed backend
+
+- Better code completion.
+- Better performance (type constraints offer more opportunities for compiler optimizations).
+- You can get hints and documentation inside your IDE while you code. This reduces the likelihood of making incorrect assumptions about the behavior of specific functions/methods.
+- It’s easier to find things. For any variable or function, you can easily jump to its class definition without leaving the IDE and without having to know anything about the directory structure of the project. Conversely, for any class or function definition, you can easily and unambiguously
+- see where that class or function is used in your code and jump to it without leaving the IDE. (Statically typed languages make it easier for IDEs to do this).
+- Static typing makes it easier to work with relational databases and other systems which also rely on static types — It helps you catch type mismatches sooner at compile-time.
+- It can help reduce the likelihood of some kinds of errors. For example, in dynamically typed languages, if you’re not careful with sanitising user input, you can end up doing weird stuff like (for example) trying to add a number 10 with the string “8” and you would get the string “108” as a result instead of the number 18 that you were expecting.
+
+# Using GraphQL codegen and Prisma together
+
+After learning the benefits of Prisma and GraphQL codegen, you might want to use both together! But theres a few problems:
+
+- The Prisma models and the GraphQL models are conflicting with each other. This is because the GraphQL codegen automatically uses the types from the GraphQL schema, and in this case we want it to use the types from Prisma.
+
+-Another problem is that sometime, some prisma operations get arguments which are for filtering and paginating, now, if you have this type of filter in your GraphQL schema, it might look something like this:
+
+```ts
+type Query {
+  feed(filter: String, skip: Int, take: Int): Feed!
+}
+```
+
+as you can see, the arguments filter, skip and take are nullable which means that GraphQL will send them as null if left without value.
+
+### Whats the problem with this?
+
+Well, for filtering and paginating prisma takes arguments which either have a value or are undefined, but not null.
+
+This is a problem for us because the type the codegen uses for maybe values (values that are nullable), could be null (null | undefined | T).
+
+## How do we fix this?
+
+Well, for the first problem, the code generator has an option called mappers.
+
+Using a mapper gives you the option to map one type to another.
+This option helps us with our problem because we can just tell the codegen to use the Prisma models instead of the models from the schema!
+
+The second fix is using something called inputMaybeValue.
+Nullable types are represented by Maybe in the GraphQL codegen. The inputMaybeValue, lets you change the types that arguments can be!
+
+### Using mappers
 
 Mappers are actually really easy to use, all you need to do is add them to your codegen.yml!
 
@@ -35,7 +103,7 @@ generates:
   graphql/generated.ts:
     plugins:
       - typescript-operations
-      - typescript-react-apollo
+      - typescript-resolvers
   config:
     mappers:
       User: .prisma/client#User as UserModel
@@ -44,36 +112,28 @@ generates:
 Under the Mappers, you can see we take the User type, and set it to be using the exported type automatically created by Prisma.
 We set it to be named UserModel, so it won't conflict with the GraphQL definition of the User type.
 
+### using inputMaybeValue
+
+inputMaybeValue is fairly simple to use, just add it under config!
+
+```yaml
+  schema: http://localhost:3000/graphql
+documents: ./src/graphql/*.graphql
+generates:
+  graphql/generated.ts:
+    plugins:
+      - typescript-operations
+      - typescript-resolvers
+  config:
+    mappers:
+      User: .prisma/client#User as UserModel
+    inputMaybeValue: undefined | T
+```
+
+Now, the default value to inputMaybe (The type of nullable arguments) will be either undefined or T.
+
 ## what now?
 
-Now, if you run `yarn run generate` or `npm run generate`, it will update the genereated file to work with your Prisma model.
+Now, if you run `yarn generate` or `npm run generate`, it will update the genereated file to work with your Prisma model.
 
 Now everything should work currectly.
-
-# Some problems I ran into
-
-sometime, some prisma operations get arguments which are for filtering and paginating, now, if you have this type of filter in your GraphQL schema, it might look something like this,
-
-```ts
-type Query {
-  feed(filter: String, skip: Int, take: Int): Feed!
-}
-```
-
-as you can see, the arguments filter, skip and take are nullable which means that GraphQL will send them as null if left without value.
-
-## whats the problem with this?
-
-Well, for filtering and paginating prisma takes arguments which either have a value or are undefined, but not null.
-
-This is a problem for us because the type the codegen uses for maybe values (values that are nullable), could be null.
-
-## How do we get around this?
-
-What worked for me is this solution,
-
-```ts
-value: args.value ?? undefined;
-```
-
-This will let TypeScript know that "value" can never be null, because if it is null, it will be set as undefined, meaning it will not cause problems with Prisma which expects a value or undefined.
