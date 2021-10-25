@@ -49,7 +49,41 @@ Prisma's main goal is to make application developers more productive when workin
 
 The GraphQL code genereator is an easy way to create type saftey with your GraphQL project.
 It automatically generates a type sheet based on your GraphQL schema. This is very useful because it reduces the chances to write mistakes.
+For example, here is an example for a resolver without the codegen, as you can see, we need to give everything a type.
 
+```ts
+const resolver = {
+  Query: {
+    feed: async (
+         parent: unknown,
+         args: {
+         filter?: string;
+         skip?: number;
+         take?: number;
+         },
+         context: GraphQLContext
+       ) => {...}
+  }
+}
+```
+
+But, with the codegen, the types are no longer needed, because it genereates the types, so typescript will now know which types everything uses.
+
+```ts
+import { Resolvers } from "./generated/graphql";
+
+const resolvers: resolvers = {
+  ...
+  Query: {
+    feed: async (parent, args, context) => {
+      ...
+    }
+  }
+  ...
+}
+```
+
+As you can see, now that the resolvers are typed, we don't need to define types for each resolver.
 [A tutorial about how to get started with GraphQL codegen](https://www.graphql-code-generator.com/docs/getting-started/index)
 
 # Benefits of writing fully-typed backend
