@@ -12,6 +12,7 @@ import { LastArticles } from '../ui/blog/last-articles';
 import { Newsletter } from '../ui/blog/newsletter';
 import { projects } from '../lib/projects';
 import { services } from '../lib/services';
+import { Contact } from '../ui/shared/Contact';
 
 const BlogSection = styled(Section)`
   padding: 50px 0;
@@ -192,6 +193,7 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
                 </div>
               ))}
           </Services>
+
           <Link href="/services" passHref={true}>
             <BlogButton as="a" title="Our services">
               View all services
@@ -199,7 +201,9 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
           </Link>
         </Container>
       </ServicesSection>
-
+      <ProjectsSection>
+        <Contact />
+      </ProjectsSection>
       {/* Blog */}
       <BlogSection noNotch>
         <Container>
