@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import Head from 'next/head';
 import { Layout } from './Layout';
 
@@ -6,7 +6,7 @@ function ensureAbsolute(url: string): string {
   return url.startsWith('/') ? 'https://the-guild.dev' + url : url;
 }
 
-export const Page: React.FC<{
+export const Page: FC<{
   description: string;
   image?: string;
   title: string;

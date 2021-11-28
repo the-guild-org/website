@@ -1,9 +1,9 @@
-import React from 'react';
+import { FC } from 'react';
 import { useRouter } from 'next/router';
 import { Page } from '../../ui/shared/Page';
 import { Hero } from '../../ui/shared/Layout';
 
-const MaintenancePage: React.FC = () => {
+const MaintenancePage: FC = () => {
   const router = useRouter();
   const { name, description } = router.query;
 

@@ -5,7 +5,6 @@ import format from 'date-fns/format';
 import LazyLoad from 'react-lazyload';
 import { withPlaceholder } from '../../lib/images';
 import { Tag } from '../../ui/blog/tag';
-import {} from '../authors';
 import { Avatar } from './avatar';
 
 const Link = styled(NativeLink)`

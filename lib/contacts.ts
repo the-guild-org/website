@@ -1,7 +1,7 @@
 /// @ts-check
 const Crisp = require('node-crisp-api');
 const produce = require('immer').default;
-const websiteId = 'af9adec5-ddfa-4db9-a4a3-25769daf2fc2';
+const WEBSITE_ID = 'af9adec5-ddfa-4db9-a4a3-25769daf2fc2';
 
 async function useCatch(fn) {
   try {
@@ -22,14 +22,14 @@ async function useCatch(fn) {
  * @param {Record<string, any>} contact?.data
  * @returns {Promise<string>}
  */
-async function ensureContact(contact) {
+export async function ensureContact(contact) {
   const CrispClient = new Crisp();
   CrispClient.authenticate(process.env.CRISP_ID, process.env.CRISP_TOKEN);
 
   const { email, name, url, segments } = contact;
 
   const [existingAccount] = await useCatch(() =>
-    CrispClient.websitePeople.findByEmail(websiteId, email)
+    CrispClient.websitePeople.findByEmail(WEBSITE_ID, email)
   );
 
   if (existingAccount) {
@@ -51,14 +51,14 @@ async function ensureContact(contact) {
         profile.segments = []
           .concat(segments)
           .concat(existingAccount.segments)
-          .filter(defined)
+          .filter(Boolean)
           .filter(unique);
       });
     }
 
     if (updates.length) {
       await CrispClient.websitePeople.updatePeopleProfile(
-        websiteId,
+        WEBSITE_ID,
         existingAccount.people_id,
         produce(existingAccount, (profile) => {
           updates.forEach((update) => update(profile));
@@ -70,7 +70,7 @@ async function ensureContact(contact) {
   }
 
   const createProfile = await CrispClient.websitePeople.createNewPeopleProfile(
-    websiteId,
+    WEBSITE_ID,
     {
       email,
       person: {
@@ -84,14 +84,6 @@ async function ensureContact(contact) {
   return createProfile.people_id;
 }
 
-module.exports = {
-  ensureContact,
-};
-
 function unique(val, i, all) {
   return all.indexOf(val) === i;
-}
-
-function defined(val) {
-  return !!val;
 }

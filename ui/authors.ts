@@ -1,4 +1,4 @@
-const authors = {
+export const authors = {
   eytan: {
     name: 'Eytan Manor',
     link: 'https://twitter.com/eytan_manor',
@@ -95,5 +95,3 @@ const authors = {
     github: 'PabloSzx',
   },
 };
-
-module.exports = { authors };

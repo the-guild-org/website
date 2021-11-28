@@ -1,5 +1,4 @@
 import App, { NextWebVitalsMetric } from 'next/app';
-import React from 'react';
 import Router from 'next/router';
 import Head from 'next/head';
 import 'prism-theme-night-owl';
@@ -89,6 +88,20 @@ export default class MyApp extends App {
               --colors-primary: #000;
               --colors-background: #fff;
               --hover-opacity: 0.75;
+
+              // After upgrading @theguild/components from 1.7.0 to 1.7.1 Modal is no longer centered
+              // Manually adding below styles fix that issue
+              --tw-translate-x: -50%;
+              --tw-translate-y: 0;
+              --tw-rotate: 0;
+              --tw-skew-x: 0;
+              --tw-skew-y: 0;
+              --tw-scale-x: 1;
+              --tw-scale-y: 1;
+              --tw-transform: translateX(var(--tw-translate-x))
+                translateY(var(--tw-translate-y)) rotate(var(--tw-rotate))
+                skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+                scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
             }
 
             body {
