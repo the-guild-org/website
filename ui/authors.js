@@ -95,4 +95,9 @@ export const authors = {
     link: 'https://twitter.com/PabloSz_',
     github: 'PabloSzx',
   },
+  dimatill: {
+    name: 'Dmitry Til',
+    link: 'https://github.com/dimatill',
+    github: 'dimatill',
+  },
 };

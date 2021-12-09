@@ -1,0 +1,174 @@
+import withArticle from '../../ui/blog/article';
+
+export const meta = {
+  title: 'GraphQL AuthZ - GraphQL Authorization layer',
+  author: 'dimatill',
+  tags: ['graphql', 'authorization', 'graphql-authz'],
+  date: '2021-12-10',
+  description:
+    'GraphQL AuthZ is a flexible modern way to implement an authorization layer for GraphQL microservices or monolith backend systems.',
+  image: '/blog-assets/graphql-authz/cover.png',
+  thumbnail: '/blog-assets/graphql-authz/cover.png',
+};
+
+export default withArticle({ ...meta });
+
+Today we are excited to introduce GraphQL AuthZ - a new open-source library that is an authorization layer for different GraphQL architectures
+
+## Intro
+
+GraphQL AuthZ is a flexible modern way to implement an authorization layer for GraphQL microservices or monolith backend systems.
+
+It plays well with both code-first and schema-first approaches, supports different ways of attaching authorization rules, has zero dependencies of the core package, and keeps schema clean of authorization logic! Also, it has examples of integration with major modern GraphQL technologies. Let’s dig a little deeper to see some of the more robust features and benefits.
+
+## Wrapping execution process
+
+The core idea of GraphQL AuthZ is wrapping the graphql.js execution process to complete a job prior to execution and complete another job after execution ends. The key benefits with this approach includes:
+
+- Compatibility with modern GraphQL technologies providing ways to wrap graphql.js execute function. Here are a few working examples: [Envelop](https://github.com/AstrumU/graphql-authz/tree/main/examples/packages/envelop), [GraphQL Helix](https://github.com/AstrumU/graphql-authz/tree/main/examples/packages/graphql-helix), [Apollo Server](https://github.com/AstrumU/graphql-authz/tree/main/examples/packages/apollo-server-code-first), and [express-graphql](https://github.com/AstrumU/graphql-authz/tree/main/examples/packages/express-graphql).
+- Keeping executable schema clean from authorization logic enabling reuse for internal needs
+- Performing authorization in two phases: pre-execution and post-execution. Each phase has its own features and offers its own capabilities
+
+## Failing early in the pre-execution phase
+
+With GraphQL AuthZ it’s possible to execute authorization logic before any of the resolvers have been executed. This enables it to fail the request in the early stage and reduce server workload while still having the power to call data sources with async js code.
+
+```typescript
+// creating pre-execution rules
+
+const IsAuthenticated = preExecRule()((context) => !!context.user);
+
+const CanPublishPost = preExecRule()(async (context, fieldArgs) => {
+  const post = await db.posts.get(fieldArgs.postId);
+  return post.authorId === context.user?.id;
+});
+```
+
+This technique works well for authorization logic that is not dependent on the data from data sources. For example, checking if the user is authenticated or has some certain role or permission.
+
+Also, this technique perfectly fits authorization for Mutation operations where the possibility to query data sources before executing the resolver is critically important.
+
+## GraphQL Schema as a data source
+
+Since the executable schema is clean from the authorization logic it simplifies use of the executable schema as a data source. For example, instead of calling a database, the graphql function from graphql.js package could be called, while passing the executable schema as an argument along with graphql query. In such a way the authorization layer is not dependent on the underlying database(s), its architecture, and ORM(s). It is dependent only on the GraphQL schema which is a dependency of GraphQL authorization layer by design.
+
+```typescript
+// using schema as a data source inside pre-execution rule
+
+const CanPublishPost = preExecRule()(async (context, fieldArgs) => {
+  const graphQLResult = await graphql({
+    schema: context.schema,
+    source: `query post { post(id: ${fieldArgs.postId}) { author { id } } }`,
+  });
+
+  const post = graphQLResult.data?.post;
+
+  return post && post.author.id === context.user?.id;
+});
+```
+
+This transforms the technique into an extremely powerful addition, specifically for microservice architectures with centralized gateway-level authorization. The authorization logic could require data points resolved by different microservices. Some data points could be resolved by third-party microservices or APIs. Data can be stored in different databases. Resolving certain data points could be moved to different microservice with different data sources. Using GraphQL schema as a data source, authorization rules simply don’t know all of the details and rely only on GraphQL Schema.
+
+## Reducing database calls with post-execution rules
+
+Querying data sources from authorization rules is powerful but it adds workload to data sources and, in most cases, the data needed to perform authorization is closely related to requested entities. There is a possibility to reduce data sources workload by performing data-dependent authorization logic in the post-execution phase.
+
+With GraphQL AuthZ it’s possible for post-execution rules to require the data, related to the rule target, that is necessary for the rule to work. For example, if the rule is attached to some Object Field it could require any information about sibling fields with their relations. Another example is if the rule is attached to Object Type it could require any fields of the object with their relations.
+
+```typescript
+// creating post-execution rule
+
+const CanReadPost = postExecRule({
+  selectionSet: '{ status author { id } }',
+})(
+  (context, fieldArgs, post, parent) =>
+    post.status === 'public' || post.author.id === context.user?.id
+);
+```
+
+This technique helps to avoid additional calls to data sources by executing authorization logic on top of the entire operation result with the related extra data being populated. Since related data is often stored in the same place it can be fetched from a data source in one call instead of making one call for authorization and one call for actual data populating.
+
+## Microservices
+
+With GraphQL AuthZ it is possible to implement a centralized gateway authorization layer as well as microservice level authorization. You can choose between storing the whole authorization schema in a holistic way in a gateway independent of GraphQL schema or let GraphQL schema manage authorization as part of itself.
+
+> “Shifting this configuration out of the gateway makes subschemas autonomous, and allows them to push their own configuration up to the gateway—enabling more sophisticated schema releases.” — [schema stitching handbook](https://github.com/gmac/schema-stitching-handbook/tree/master/stitching-directives-sdl)
+
+The `@graphql-authz/directive` package provides an importable directive that can be used to annotate types and fields within subschemas and a configuration transformer that can be used on the gateway to convert the subschema directives into explicit authorization settings.
+
+```graphql
+# using @authz directive
+
+type User {
+  id: ID!
+  email: String! @authz(rules: [IsAdmin])
+  posts: [Post!]!
+}
+
+type Post @authz(rules: [CanReadPost]) {
+  id: ID!
+  title: String!
+  body: String!
+  status: Status!
+  author: User!
+}
+
+type Query {
+  users: [User!]! @authz(rules: [IsAuthenticated])
+  post(id: ID!): Post
+}
+
+type Mutation {
+  publishPost(postId: ID!): Post! @authz(rules: [CanPublishPost])
+}
+```
+
+Directives could be used in monolith architecture as well.
+
+If directives are not applicable for some reason, plain JSON auth schema could be used to describe which rules should be executed for certain Object, Interface, Field, Query, or Mutation
+
+```typescript
+// defining auth schema
+
+const authSchema = {
+  Post: { __authz: { rules: ['CanReadPost'] } },
+  User: {
+    email: { __authz: { rules: ['IsAdmin'] } },
+  },
+  Mutation: {
+    publishPost: { __authz: { rules: ['CanPublishPost'] } },
+  },
+  Query: {
+    users: { __authz: { rules: ['IsAuthenticated'] } },
+  },
+  // wildcards are supported. read more: https://github.com/AstrumU/graphql-authz#wildcard-rules
+  '*': {
+    __authz: { rules: ['Reject'] },
+    '*': {
+      __authz: { rules: ['IsAuthenticated'] },
+    },
+  },
+};
+```
+
+## Comparison with GraphQL Shield
+
+[GraphQL Shield](https://github.com/maticzav/graphql-shield) is a great tool for creating authorization layers. Actually, GraphQL AuthZ was inspired by GraphQL Shield! However, it incorporates a different approach compared to GraphQL AuthZ in terms of hooking up authorization logic to the execution process.
+
+The main difference is GraphQL Shield uses field middlewares to execute authorization logic while GraphQL AuthZ wraps the entire execution process. The benefits of the wrapping approach are described in previous paragraphs however there are some drawbacks. For example, with GraphQL AuthZ post-execution rules there is no ability to fail the request earlier because post-execution rules are executed after all resolvers are executed. GraphQL Shield, on the other hand, can fail the request during the execution phase which is earlier than the post-execution phase but later than the pre-execution phase. However post-execution rules have the benefit of accessing results of all field resolvers by design. It means that the post-execution rule attached to a certain field has an access to sibling fields even if these fields are resolved by field resolvers. Also, the post-execution rule attached to a certain field which is resolved by the field resolver has an access to the field value. The middleware approach is missing these possibilities because authorization logic is executed in the context of field resolvers and has access only to the parent object which is the result of the parent field resolver or query. Results of field resolvers of the current and sibling fields are not available to authorization logic at this moment.
+
+Another great thing about GraphQL Shield is a great built-in caching mechanism. GraphQL AuthZ has no built-in caching at the moment but you could implement it by yourself outside of GraphQL AuthZ or inside of it (pull requests are more than welcome!)
+
+## Conclusion
+
+Please check out the [GraphQL AuthZ GitHub repo](https://github.com/AstrumU/graphql-authz). You can find a tutorial on how to set it up in different ways and with different technologies. Also, you can find the following working examples:
+
+- [Apollo Server (schema-first, directives)](https://github.com/AstrumU/graphql-authz/tree/main/examples/packages/apollo-server-schema-first)
+- [Apollo Server (code-first, extensions)](https://github.com/AstrumU/graphql-authz/tree/main/examples/packages/apollo-server-code-first)
+- [express-graphql (schema-first, directives)](https://github.com/AstrumU/graphql-authz/tree/main/examples/packages/express-graphql)
+- [GraphQL Helix (schema-first, authSchema)](https://github.com/AstrumU/graphql-authz/tree/main/examples/packages/graphql-helix)
+- [Envelop (schema-first, directives)](https://github.com/AstrumU/graphql-authz/tree/main/examples/packages/envelop)
+- [TypeGraphQL (code-first, extensions)](https://github.com/AstrumU/graphql-authz/tree/main/examples/packages/type-graphql)
+- [NestJS (code-first, directives)](https://github.com/AstrumU/graphql-authz/tree/main/examples/packages/nestjs)
+- [Schema Stitching (gateway, directives)](https://github.com/AstrumU/graphql-authz/tree/main/examples/packages/schema-stitching)
+- [Apollo Federation (gateway, authSchema)](https://github.com/AstrumU/graphql-authz/tree/main/examples/packages/apollo-federation)

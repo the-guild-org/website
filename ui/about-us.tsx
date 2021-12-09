@@ -1,9 +1,8 @@
 import { FC } from 'react';
 import { MDXProvider } from '@mdx-js/react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import tw from 'twin.macro';
 import { components } from './blog/elements';
-import { Newsletter } from './blog/newsletter';
 import { Page } from './shared/Page';
 import { Meta } from '../lib/meta';
 import { Heading } from '../ui';
