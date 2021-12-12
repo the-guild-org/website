@@ -2,7 +2,8 @@ import React from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Link from 'next/link';
 import Head from 'next/head';
-import styled from 'styled-components';
+import { useRouter } from 'next/router';
+import styled, { css } from 'styled-components';
 import format from 'date-fns/format';
 import { ArrowLeft } from 'react-feather';
 import { components } from './elements';
@@ -15,7 +16,6 @@ import { Tag } from './tag';
 import { authors } from '../authors';
 import { Avatar } from './avatar';
 import { GenericLink } from './elements/link';
-import { useRouter } from 'next/router';
 
 const Container = styled.div`
   max-width: 690px;
@@ -52,18 +52,16 @@ const Author = styled.div<{
   font-size: 0.9rem;
 
   ${(props) =>
-    props.many
-      ? `
-    &:not(:last-child) {
-      padding-right: 15px;
-    }
+    props.many &&
+    css`
+      &:not(:last-child) {
+        padding-right: 15px;
+      }
 
-    &:not(:first-of-type) {
-      padding-left: 15px;
-    }
-  `
-      : ''}
-
+      &:not(:first-of-type) {
+        padding-left: 15px;
+      }
+    `}
   & > div:nth-child(2) {
     margin-left: 10px;
     display: flex;
@@ -135,7 +133,6 @@ const BackButton = styled(Button)`
 `;
 
 const Back = styled.div`
-  margin: 0 auto;
   margin: 125px auto 0 auto;
 `;
 
@@ -203,11 +200,11 @@ function Authors(props: { meta: Meta }) {
           </Time>
         </CenteredTime>
         <Details>
-          {meta.authors.map((authorId) => {
+          {meta.authors.map((authorId, i) => {
             const author = authors[authorId];
 
             return (
-              <Author many>
+              <Author many key={`${authorId}_${i}`}>
                 <div>
                   <a href={author.link} title={author.name}>
                     <Avatar author={author} />
@@ -285,7 +282,7 @@ const Article = (meta: Meta): React.FC => {
               <Authors meta={meta} />
               <TagContainers>
                 {meta.tags.map((t) => (
-                  <Tag tag={t} key={t} asLink={true} />
+                  <Tag tag={t} key={t} asLink />
                 ))}
               </TagContainers>
               <Cover>

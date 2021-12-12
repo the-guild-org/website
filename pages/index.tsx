@@ -194,7 +194,7 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
               ))}
           </Services>
 
-          <Link href="/services" passHref={true}>
+          <Link href="/services" passHref>
             <BlogButton as="a" title="Our services">
               View all services
             </BlogButton>
@@ -211,7 +211,7 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
             We have a <span>blog</span>
           </SectionTitle>
           <BlogLastArticles articles={recentArticles} />
-          <Link href="/blog" passHref={true}>
+          <Link href="/blog" passHref>
             <BlogButton as="a" title="Read our blog">
               View all posts
             </BlogButton>
@@ -240,7 +240,7 @@ const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
               </div>
             );
           })}
-          <Link href="/open-source" passHref={true}>
+          <Link href="/open-source" passHref>
             <BlogButton as="a" title="View our Open Source projects">
               View all projects
             </BlogButton>

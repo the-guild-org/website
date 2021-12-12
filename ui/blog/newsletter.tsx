@@ -73,7 +73,7 @@ const FixedConfetti = styled(Confetti)`
 `;
 
 export const Newsletter: React.FC<{ className?: string }> = ({ className }) => {
-  const [email, setEmail] = useState<string>('');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -88,15 +88,12 @@ export const Newsletter: React.FC<{ className?: string }> = ({ className }) => {
 
       mutate({ email });
     },
-    [setLoading, setSuccess, setError, mutate, email]
+    [mutate, email]
   );
 
-  const onChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setEmail(event.target.value);
-    },
-    [setEmail, email]
-  );
+  const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  }, []);
 
   useEffect(() => {
     if (result.complete) {
@@ -114,7 +111,7 @@ export const Newsletter: React.FC<{ className?: string }> = ({ className }) => {
         }, 5000);
       }
     }
-  }, [result.complete, setEmail]);
+  }, [result.complete, result.error]);
 
   const showForm = !success;
   const isClient = typeof window === 'object';
@@ -145,7 +142,7 @@ export const Newsletter: React.FC<{ className?: string }> = ({ className }) => {
         <Form onSubmit={onSubmit}>
           <Input
             type="text"
-            required={true}
+            required
             disabled={loading}
             placeholder="Enter your email"
             value={email}

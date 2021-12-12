@@ -50,7 +50,6 @@ export const getPadding = (aspectRatio: string) => {
       paddingTop: '62.5%',
     },
   };
-  // @ts-ignore
   return config[aspectRatio];
 };
 

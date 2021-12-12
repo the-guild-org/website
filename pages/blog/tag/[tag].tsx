@@ -1,6 +1,6 @@
 import React from 'react';
-import Blog from '../../blog';
 import { GetStaticProps } from 'next/types';
+import Blog from '../../blog';
 import { getAllArticles } from '../../../lib/get-all-articles';
 import { unique, flatten } from '../../../lib/utils';
 

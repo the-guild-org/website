@@ -46,7 +46,7 @@ export const Menu: React.FunctionComponent = () => {
           scrollTo('section-contact');
         }}
       >
-        <MenuLink>Let's talk</MenuLink>
+        <MenuLink>Let&apos;s talk</MenuLink>
         <MenuLink>
           <MessageSquare />
         </MenuLink>

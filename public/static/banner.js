@@ -1,6 +1,7 @@
+/* eslint-env browser */
 /**
  * @param {String} HTML representing any number of sibling elements
- * @return {NodeList} 
+ * @return {NodeList}
  */
  function htmlToElements(html) {
   var template = document.createElement('template');
@@ -9,9 +10,9 @@
 }
 
 function main() {
-  const logoUrl = "https://the-guild.dev/static/logo.png";
+  // const logoUrl = "https://the-guild.dev/static/logo.png";
   const linkUrl = "https://the-guild.dev";
-  const title = "The Guild - Open Source";
+  // const title = "The Guild - Open Source";
   const docusaurusId = "__docusaurus";
 
   if (document.getElementById(docusaurusId)) {
@@ -19,8 +20,6 @@ function main() {
   } else {
     window.addEventListener("load", init);
   }
-  
-  var isModalBound = false;
 
   /**
    * Toggle the OSS modal
@@ -52,7 +51,7 @@ function main() {
     // Get the button that opens the modal
     var btn = document.getElementById("oss-nav");
 
-    // When the user clicks the button, open the modal 
+    // When the user clicks the button, open the modal
     btn.onclick = function() {
       toggleModal();
     }
@@ -123,8 +122,8 @@ function main() {
         }
 
         .productTable h4 {        
-          margin-bottom: 0px;
-          padding-bottom: 0px;
+          margin-bottom: 0;
+          padding-bottom: 0;
         }
 
         #oss-nav {
@@ -145,7 +144,6 @@ function main() {
         }
 
         :root {
-          --logo-bg: url("${linkUrl}/static/white-logo.png") no-repeat;
           --logo-bg: url("${linkUrl}/static/logo.svg") no-repeat;
         }
 
@@ -433,7 +431,9 @@ function main() {
   };
 
   if (typeof window !== 'undefined') {
+    /* eslint-disable */
     window.$crisp = []; window.CRISP_WEBSITE_ID = "af9adec5-ddfa-4db9-a4a3-25769daf2fc2"; (function () { d = document; s = d.createElement("script"); s.src = "https://client.crisp.chat/l.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })();
+    /* eslint-enable */
 
     if (HOST_TO_SEGMENTS[window.location.host]) {
       window.$crisp.push(["set", "session:segments", [HOST_TO_SEGMENTS[window.location.host]]])

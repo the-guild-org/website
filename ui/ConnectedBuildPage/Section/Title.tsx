@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { device } from '../../media';
-import { useFontColor } from '../theme';
+import { getFontColor } from '../theme';
 
 const Container = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const Container = styled.div`
 const Subtitle = styled.div`
   font-size: 14px;
   font-weight: bold;
-  color: ${useFontColor('light')};
+  color: ${getFontColor('light')};
   text-transform: uppercase;
   letter-spacing: 1.2px;
 `;
@@ -45,7 +45,7 @@ const TitleContainer = styled.div`
 const Text = styled.div`
   font-size: 20px;
   font-weight: 300;
-  color: ${useFontColor('light')};
+  color: ${getFontColor('light')};
 `;
 
 export const Title: React.FunctionComponent<{

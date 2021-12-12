@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { SocialMedias } from './SocialMedia';
 import { InputField } from './Input';
 import { device } from '../../media';
-import { useFontColor } from '../theme';
+import { getFontColor } from '../theme';
 
 const Container = styled.div`
   display: flex;
@@ -18,14 +18,14 @@ const Container = styled.div`
 const Title = styled.div`
   font-size: 16px;
   font-weight: bold;
-  color: ${useFontColor('white')};
+  color: ${getFontColor('white')};
 `;
 
 const Description = styled.div`
   margin: 10px 0;
   font-size: 14px;
   font-weight: 300;
-  color: ${useFontColor('light')};
+  color: ${getFontColor('light')};
 `;
 
 const Input = styled(InputField)`

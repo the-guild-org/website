@@ -22,7 +22,7 @@ export const Observer: FunctionComponent<ObserverProps> = ({
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsChildVisible(true);
-          onEnter && onEnter();
+          onEnter?.();
         }
       },
       {
@@ -34,7 +34,7 @@ export const Observer: FunctionComponent<ObserverProps> = ({
     if (ref && ref.current) {
       observer.observe(ref.current);
     }
-  }, [ref]);
+  }, [ref, onEnter]);
 
   return (
     <div ref={ref as RefObject<HTMLDivElement>}>

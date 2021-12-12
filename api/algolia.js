@@ -1,6 +1,6 @@
+const qs = require('querystring');
 const express = require('express');
 const cors = require('cors');
-const qs = require('querystring');
 const algoliasearch = require('algoliasearch/lite');
 
 const app = express();
@@ -130,15 +130,15 @@ function pickPrefix(url) {
   if (url.startsWith('https://graphql-scalars.dev')) {
     return 'GraphQL Scalars';
   }
-  
+
   if (url.startsWith('https://envelop.dev')) {
     return 'Envelop';
   }
-  
+
   if (url.startsWith('https://swift-graphql.com')) {
     return 'Swift GraphQL';
   }
-  
+
   if (url.startsWith('https://graphql-shield.com')) {
     return 'GraphQL Shield';
   }

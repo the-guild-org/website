@@ -1,5 +1,5 @@
-import { Featured } from './Featured';
 import styled from 'styled-components';
+import { Featured } from './Featured';
 
 export const Project = styled(Featured).attrs({
   width: 80,

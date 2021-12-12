@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import NativeLink from 'next/link';
-import { Image } from '../blog/image';
 import LazyLoad from 'react-lazyload';
+import { Image } from '../blog/image';
 import { withPlaceholder } from '../../lib/images';
 
 const Title = styled.h2`

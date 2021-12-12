@@ -31,32 +31,32 @@ const Title = styled.h1`
   color: var(--colors-primary);
 `;
 
-const Cover = styled.div`
-  padding-top: 25px;
-  margin: 0 auto;
-  width: 100%;
-  height: auto;
-
-  & > * {
-    max-width: 100%;
-    height: auto;
-    max-height: 300px;
-    display: block;
-    margin: 0 auto;
-  }
-`;
+// const Cover = styled.div`
+//   padding-top: 25px;
+//   margin: 0 auto;
+//   width: 100%;
+//   height: auto;
+//
+//   & > * {
+//     max-width: 100%;
+//     height: auto;
+//     max-height: 300px;
+//     display: block;
+//     margin: 0 auto;
+//   }
+// `;
 
 const AboutUs = (meta: Meta): React.FC => {
-  return function AboutUsRender({ children: content }) {
-    const title = meta.title;
+  return function AboutUsRender({ children }) {
+    const { title, description } = meta;
 
     return (
       <MDXProvider components={components}>
-        <Page title={title} description={meta.description}>
+        <Page title={title} description={description}>
           <Container>
             <Main>
-              <Title>{meta.title}</Title>
-              <Content>{content}</Content>
+              <Title>{title}</Title>
+              <Content>{children}</Content>
               <Newsletter />
             </Main>
           </Container>

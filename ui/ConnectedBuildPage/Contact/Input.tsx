@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Send } from 'react-feather';
 
 import { useMutation } from '../../../hooks/use-graphql';
-import { useFontColor } from '../theme';
+import { getFontColor } from '../theme';
 
 const Form = styled.form`
   position: relative;
@@ -34,7 +34,7 @@ const Submit = styled.button`
   cursor: pointer;
 
   &:hover {
-    color: ${useFontColor('white')};
+    color: ${getFontColor('white')};
   }
 `;
 
@@ -115,7 +115,7 @@ export const InputField: React.FunctionComponent<{ className?: string }> = ({
         {result.error && (
           <Error>Something went wrong, please let us know on Slack</Error>
         )}
-        {result.data && <Success>We'll contact you soon!</Success>}
+        {result.data && <Success>We&apos;ll contact you soon!</Success>}
       </Form>
     </div>
   );

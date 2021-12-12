@@ -4,7 +4,7 @@ import ReactAvatar from 'react-avatar';
 export const Avatar: React.FC<{ author: any }> = ({ author }) => {
   return (
     <ReactAvatar
-      round={true}
+      round
       githubHandle={author.github}
       twitterHandle={author.twitter}
       size="40"

@@ -10,7 +10,7 @@ const ContactPage: React.FC = () => {
       description="Looking to work with The Guild or to learn more about our projects? We will be happy to speak with you!"
       image="/img/ogimage-contact.png"
     >
-      <Hero shrink={true}>
+      <Hero shrink>
         <span>Contact us</span>
       </Hero>
       <Section>

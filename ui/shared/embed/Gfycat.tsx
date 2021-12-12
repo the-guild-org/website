@@ -25,7 +25,7 @@ export const Gfycat: FunctionComponent<IGfycatProps> = ({
           top: 0,
           left: 0,
         }}
-        allowFullScreen={true}
+        allowFullScreen
         frameBorder={0}
       ></iframe>
     </div>
