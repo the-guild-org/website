@@ -14,7 +14,7 @@ interface GraphQLResult<TResult> {
 
 const endpoint = 'https://guild-ms-slack-bot.vercel.app/api/graphql';
 
-export function useMutation<TResult, TVariables = {}>(
+export function useMutation<TResult, TVariables = Record<string, unknown>>(
   query: string
 ): [GraphQLResult<TResult>, (variables: TVariables) => void] {
   const [state, setState] = useState<GraphQLResult<TResult>>({

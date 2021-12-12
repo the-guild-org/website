@@ -51,7 +51,7 @@ const Blog: React.FC<Props> = ({ articles, tagFilter }) => {
 
   return (
     <Page title={title} description={description} image="/img/ogimage-blog.png">
-      <Hero shrink={true}>
+      <Hero shrink>
         <span>Blog</span>
         {hasTagFilter && <span>(filter by: {tagFilter.join(', ')})</span>}
       </Hero>

@@ -1,8 +1,8 @@
 /// @ts-check
 
-const globby = require('globby');
 const fs = require('fs');
 const path = require('path');
+const globby = require('globby');
 const pagesDir = path.join(__dirname, 'pages');
 const cwd = path.join(pagesDir, 'blog');
 
@@ -86,7 +86,7 @@ function extractLinks(doc) {
  * @returns {Link[]}
  */
 function extractMdLinks(doc) {
-  const links = doc.match(/\[([^\[\]]+)\]\(([^)]+)\)/g);
+  const links = doc.match(/\[([^[\]]+)\]\(([^)]+)\)/g);
 
   if (!links) {
     return [];
@@ -115,7 +115,7 @@ function extractMdLinks(doc) {
  */
 function extractPreviews(doc) {
   const links = doc.match(
-    /\<LinkPreview \s*link=[\"\']{1}([^\"\']+)[\"\']{1}\s*\/\>/g
+    /<LinkPreview \s*link=["']{1}([^"']+)["']{1}\s*\/>/g
   );
 
   if (!links) {
@@ -126,8 +126,8 @@ function extractPreviews(doc) {
     return {
       title: '',
       href: link
-        .replace(/\<LinkPreview \s*link=[\"\']{1}/, '')
-        .replace(/[\"\']{1}\s*\/\>/, ''),
+        .replace(/<LinkPreview \s*link=["']{1}/, '')
+        .replace(/["']{1}\s*\/>/, ''),
     };
   });
 }

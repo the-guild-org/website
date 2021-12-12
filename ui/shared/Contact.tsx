@@ -69,7 +69,6 @@ const Input = styled.input`
   padding: 0.75rem 1rem;
   line-height: 1.5rem;
   font-size: 1rem;
-  border-width: 1px;
   border-radius: 0.375rem;
   border: 1px solid #d2d6dc;
   background-color: #fff;
@@ -122,24 +121,24 @@ enum State {
   Success,
 }
 
-export const Contact: React.FC<{ light?: boolean }> = ({ light = false }) => {
+export const Contact: React.FC = () => {
   const [state, setState] = useState<State>(State.Idle);
-  const [email, setEmail] = useState<string>();
-  const [name, setName] = useState<string>();
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [result, mutate] = useMutation(
-    `mutation sayHi($email: String!, $project: String!, $name: String) { sayHi(email: $email, project: $project, name: $name) { ok } }`
+    `mutation sayHi($email: String!, $name: String) { sayHi(email: $email, name: $name, project: "WEBSITE") { ok } }`
   );
   const onEmailChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setEmail(event.target.value);
     },
-    [setEmail, email]
+    []
   );
   const onNameChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setName(event.target.value);
     },
-    [setName, name]
+    []
   );
 
   useEffect(() => {
@@ -163,9 +162,9 @@ export const Contact: React.FC<{ light?: boolean }> = ({ light = false }) => {
       });
 
       setState(State.Loading);
-      mutate({ email, name, project: 'WEBSITE' });
+      mutate({ email, name });
     },
-    [setState, email]
+    [email, mutate, name]
   );
 
   const isLoading = state === State.Loading;
@@ -193,7 +192,7 @@ export const Contact: React.FC<{ light?: boolean }> = ({ light = false }) => {
         <Form onSubmit={onSubmit}>
           <Input
             type="text"
-            required={true}
+            required
             disabled={isLoading}
             placeholder="Your name"
             value={name}
@@ -201,7 +200,7 @@ export const Contact: React.FC<{ light?: boolean }> = ({ light = false }) => {
           />
           <Input
             type="email"
-            required={true}
+            required
             disabled={isLoading}
             placeholder="Your Email"
             value={email}

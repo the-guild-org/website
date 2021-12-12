@@ -1,6 +1,6 @@
-import globby from 'globby';
 import { join } from 'path';
 import { promises } from 'fs';
+import globby from 'globby';
 import JSON5 from 'json5';
 import { format } from 'date-fns';
 import { MetaWithLink } from './meta';
@@ -39,7 +39,7 @@ async function readMeta(dir: string, file: string): Promise<MetaWithLink> {
   const filepath = join(dir, file);
   const raw = await promises.readFile(filepath, 'utf-8');
 
-  const [, result] = raw.match(/export const meta \= \{([^\}]+)\};/);
+  const [, result] = raw.match(/export const meta = \{([^}]+)\};/);
 
   const parsed = JSON5.parse(`{ ${result.trim().replace(/,$/, '')} }`);
 

@@ -1,10 +1,10 @@
+const crypto = require('crypto');
 const microCors = require('micro-cors');
 const Bugsnag = require('@bugsnag/js');
-const crypto = require('crypto');
 const axios = require('axios').default;
+const { WebClient } = require('@slack/web-api');
 const { ensureContact } = require('../lib/contacts');
 
-const { WebClient } = require('@slack/web-api');
 
 const bugsnagClient = Bugsnag.createClient(process.env.BUGSNAG_API);
 const slack = new WebClient(process.env.SLACK_TOKEN);
@@ -49,8 +49,7 @@ module.exports = cors(async (req, res) => {
 
   bugsnagClient.addMetadata('payload', payload);
 
-  let login;
-  let email;
+  let { login, email } = sender;
   let url = sender.html_url;
   let isOrg = false;
 
@@ -59,12 +58,10 @@ module.exports = cors(async (req, res) => {
     marketplace_purchase.account &&
     marketplace_purchase.account.type === 'Organization'
   ) {
+    // eslint-disable-next-line prefer-destructuring
     login = marketplace_purchase.account.login;
     email = marketplace_purchase.account.organization_billing_email;
     isOrg = true;
-  } else {
-    login = sender.login;
-    email = sender.email;
   }
 
   await Promise.all([

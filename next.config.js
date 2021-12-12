@@ -1,8 +1,8 @@
+const path = require('path');
 const nextMDX = require('@next/mdx');
 const rehypePrism = require('@mapbox/rehype-prism');
 const withOptimizedImages = require('next-optimized-images');
 const admonitions = require('remark-admonitions');
-const path = require('path');
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',

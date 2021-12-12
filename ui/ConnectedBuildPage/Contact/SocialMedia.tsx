@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { GitHub, Twitter, Slack } from 'react-feather';
-import { useFontColor } from '../theme';
+import { getFontColor } from '../theme';
 
 const SocialMediaName = styled.div``;
 
@@ -10,14 +10,14 @@ const SocialMedia = styled.a`
   margin: 5px 0;
   justify-content: flex-start;
   align-items: center;
-  color: ${useFontColor('light')};
+  color: ${getFontColor('light')};
   text-decoration: none;
 
   &:hover {
-    color: ${useFontColor('dim')};
+    color: ${getFontColor('dim')};
 
     ${SocialMediaName} {
-      color: ${useFontColor('dim')};
+      color: ${getFontColor('dim')};
     }
   }
 
@@ -25,7 +25,7 @@ const SocialMedia = styled.a`
     padding-left: 10px;
     font-size: 15px;
     font-weight: 300;
-    color: ${useFontColor('light')};
+    color: ${getFontColor('light')};
   }
 `;
 

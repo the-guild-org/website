@@ -18,10 +18,10 @@ export const Image: React.FC<{
     return (
       <video
         className={className}
-        playsInline={true}
-        autoPlay={true}
-        loop={true}
-        muted={true}
+        playsInline
+        autoPlay
+        loop
+        muted
       >
         <source src={webm} type="video/webm" />
         <source src={mp4} type="video/mp4" />

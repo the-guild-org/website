@@ -37,7 +37,7 @@ const OpenSource: React.FC<Props> = ({ projectsOrder }) => {
       description="Tech Stack developed by us. Every project is Open Source and most of them are focused around GraphQL."
       image="/img/ogimage.png"
     >
-      <Hero shrink={true}>
+      <Hero shrink>
         <span>Open Source</span>
       </Hero>
       <ProjectsSection>

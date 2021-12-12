@@ -176,10 +176,10 @@ const Services: React.FC = () => {
       description="Open Source developers with experience of working with the largest companies and applications. GraphQL consulting, workshops and trainings"
       image="/img/ogimage.png"
     >
-      <Hero shrink={true}>
+      <Hero shrink>
         <span>Our Services</span>
       </Hero>
-      <DarkSection noNotch={true}>
+      <DarkSection noNotch>
         <Logos logos={logos} />
       </DarkSection>
       {services.map((service, i) => {
@@ -196,7 +196,7 @@ const Services: React.FC = () => {
           </MainSection>
         );
       })}
-      <Section noNotch={true} light={services.length % 2 === 0}>
+      <Section noNotch light={services.length % 2 === 0}>
         <Contact />
       </Section>
     </Page>

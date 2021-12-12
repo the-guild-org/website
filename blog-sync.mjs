@@ -10,7 +10,6 @@ import { Client } from 'guild-devto-nodejs-sdk';
 import globby from 'globby';
 import details from './ui/authors.js';
 
-const DEV_TO_TOKEN = process.env.DEV_TO_TOKEN;
 const DEV_TO_ORG_ID = 4467;
 
 const baseDir = './pages/blog/';
@@ -29,7 +28,7 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function syncToDevTo(items) {
   console.log(`=== Syncing ${items.length} articles to dev.to... ===`);
-  const client = new Client(DEV_TO_TOKEN);
+  const client = new Client(process.env.DEV_TO_TOKEN);
   const { data: allArticles } = await client.selfAllArticles({
     per_page: 1000,
     page: 0,

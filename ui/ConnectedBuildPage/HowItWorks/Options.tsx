@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { useFontColor } from '../theme';
+import { getFontColor } from '../theme';
 
 const Container = styled.div`
   display: flex;
@@ -13,48 +13,48 @@ const OptionContainer = styled.div`
   flex-direction: column;
 `;
 
-const Left = styled.div`
-  margin-right: 20px;
-  display: flex;
-  flex-grow: 1;
-  flex-shrink: 0;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Right = styled.div`
-  flex-grow: 0;
-  flex-shrink: 1;
-`;
-
-const Circle = styled.div`
-  width: 43px;
-  height: 43px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  border: solid 2px #00eaff;
-  border-radius: 50%;
-`;
-
-const Line = styled.div`
-  width: 2px;
-  height: 100%;
-  flex-grow: 1;
-  flex-shrink: 1;
-  background-color: #00eaff;
-`;
+// const Left = styled.div`
+//   margin-right: 20px;
+//   display: flex;
+//   flex-grow: 1;
+//   flex-shrink: 0;
+//   flex-direction: column;
+//   align-items: center;
+// `;
+//
+// const Right = styled.div`
+//   flex-grow: 0;
+//   flex-shrink: 1;
+// `;
+//
+// const Circle = styled.div`
+//   width: 43px;
+//   height: 43px;
+//   flex-grow: 0;
+//   flex-shrink: 0;
+//   border: solid 2px #00eaff;
+//   border-radius: 50%;
+// `;
+//
+// const Line = styled.div`
+//   width: 2px;
+//   height: 100%;
+//   flex-grow: 1;
+//   flex-shrink: 1;
+//   background-color: #00eaff;
+// `;
 
 const Header = styled.div`
   font-size: 18px;
   font-weight: bold;
-  color: ${useFontColor('white')};
+  color: ${getFontColor('white')};
 `;
 
 const Text = styled.div`
   margin: 15px 0;
   font-size: 16px;
   font-weight: 300;
-  color: ${useFontColor('light')};
+  color: ${getFontColor('light')};
 `;
 
 const indexes = 'abcdefg';
