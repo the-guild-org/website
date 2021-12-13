@@ -14,7 +14,7 @@ export async function buildRSS(articles: MetaWithLink[]) {
     feed.item({
       title: meta.title,
       guid: meta.link,
-      url: 'https://the-guild.dev' + meta.link,
+      url: `https://the-guild.dev${meta.link}`,
       date: meta.date,
       description: meta.description,
     });

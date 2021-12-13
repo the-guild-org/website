@@ -1,4 +1,4 @@
-export const services: Array<{
+export const services: {
   title: string;
   image: string;
   description?: string;
@@ -7,7 +7,7 @@ export const services: Array<{
     title: string;
   };
   list?: string[];
-}> = [
+}[] = [
   {
     title: 'Consulting',
     image: 'onboarding.svg',

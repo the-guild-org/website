@@ -26,7 +26,7 @@ const Cover = styled(Image)<{
   isPlaceholder?: boolean;
 }>`
   display: block;
-  max-width: ${(props) => (props.maxSize ? props.maxSize + 'px' : '100%')};
+  max-width: ${(props) => (props.maxSize ? `${props.maxSize}px` : '100%')};
   min-width: 200px;
   max-height: 200px;
   object-fit: contain;

@@ -38,7 +38,6 @@ const Input = styled.input`
   padding: 0.75rem 1rem;
   line-height: 1.5rem;
   font-size: 1rem;
-  border-width: 1px;
   border-radius: 0.375rem;
   border: 1px solid #d2d6dc;
   background-color: #fff;

@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FC } from 'react';
 import { Observer } from '../Observer';
 
 export type EmbbedBoolean = '0' | '1';
@@ -31,12 +31,12 @@ export interface ICodeSandboxProps {
   size?: string;
 }
 
-export const CodeSandbox: FunctionComponent<ICodeSandboxProps> = ({
+export const CodeSandbox: FC<ICodeSandboxProps> = ({
   codeSandboxId,
   embedOptions = {},
   readonly,
   size,
-}: ICodeSandboxProps) => {
+}) => {
   const allOptions = {
     fontsize: 11,
     autoresize: '1',

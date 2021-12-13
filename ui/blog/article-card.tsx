@@ -4,7 +4,7 @@ import NativeLink from 'next/link';
 import format from 'date-fns/format';
 import LazyLoad from 'react-lazyload';
 import { withPlaceholder } from '../../lib/images';
-import { Tag } from '../../ui/blog/tag';
+import { Tag } from './tag';
 import { Avatar } from './avatar';
 
 const Link = styled(NativeLink)`

@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Send } from 'react-feather';
-
 import { useMutation } from '../../../hooks/use-graphql';
 import { getFontColor } from '../theme';
 

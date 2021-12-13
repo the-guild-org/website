@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { FC } from 'react';
 
-export const SchneiderLogo: React.FunctionComponent = () => {
+export const SchneiderLogo: FC = () => {
   return (
     <svg viewBox="0 0 180 75">
       <defs>

@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { Section } from '../Section';
 import { Options } from './Options';
 

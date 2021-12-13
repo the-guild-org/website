@@ -1,8 +1,7 @@
-import React from 'react';
-
+import React, { FC } from 'react';
 import { Section } from './Section';
 
-export const Infrastructure: React.FunctionComponent = () => {
+export const Infrastructure: FC = () => {
   return (
     <Section
       on="right"

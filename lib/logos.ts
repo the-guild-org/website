@@ -1,7 +1,7 @@
-export const logos: Array<{
+export const logos: {
   name: string;
   logo: string;
-}> = [
+}[] = [
   {
     name: 'DFDS',
     logo: 'dfds-white.png',

@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-
 import { device } from '../../media';
 import { getFontColor } from '../theme';
 

@@ -1,13 +1,11 @@
-import React, { FunctionComponent } from 'react';
+import React, { FC } from 'react';
 import { Observer } from '../Observer';
 
 export interface IGfycatProps {
   gifId: string;
 }
 
-export const Gfycat: FunctionComponent<IGfycatProps> = ({
-  gifId,
-}: IGfycatProps) => (
+export const Gfycat: FC<IGfycatProps> = ({ gifId }) => (
   <Observer>
     <div
       style={{
@@ -27,7 +25,7 @@ export const Gfycat: FunctionComponent<IGfycatProps> = ({
         }}
         allowFullScreen
         frameBorder={0}
-      ></iframe>
+      />
     </div>
   </Observer>
 );

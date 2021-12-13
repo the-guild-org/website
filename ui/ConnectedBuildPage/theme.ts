@@ -2,7 +2,7 @@ export const THEME = {
   font: {
     colors: {
       white: '#fff',
-      light: '#919FB5',
+      light: '#919fb5',
       dim: '#4d6894',
     },
   },

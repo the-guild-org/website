@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import styled from 'styled-components';
-
 import { useToggle } from '../../hooks/use-toggle';
 
 const Container = styled.div<{ image: string }>`
@@ -34,7 +33,7 @@ const Container = styled.div<{ image: string }>`
   }
 `;
 
-export const BackgroundVideo: React.FunctionComponent<{
+export const BackgroundVideo: FC<{
   image: string;
   src: string;
   type: string;

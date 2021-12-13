@@ -46,10 +46,10 @@ const LogosContainer = styled.div`
 `;
 
 const Logos: FC<{
-  logos: Array<{
+  logos: {
     name: string;
     logo: string;
-  }>;
+  }[];
 }> = ({ logos }) => {
   return (
     <LogosContainer>

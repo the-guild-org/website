@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-
 import { device } from '../../media';
 import { AirFranceLogo } from './logos/AirFrance';
 import { NordeaLogo } from './logos/Nordea';

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { FC } from 'react';
 
-export const KLMLogo: React.FunctionComponent = () => {
+export const KLMLogo: FC = () => {
   return (
     <svg viewBox="0 0 180 75">
       <path

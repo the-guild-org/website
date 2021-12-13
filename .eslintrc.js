@@ -16,6 +16,7 @@ module.exports = {
         es6: true,
       },
       rules: {
+        '@typescript-eslint/array-type': ['error', { readonly: 'generic' }],
         '@typescript-eslint/no-explicit-any': 'off',
         'import/order': [
           'error',
@@ -38,9 +39,11 @@ module.exports = {
         ],
         'object-shorthand': ['error', 'always'],
         'prefer-destructuring': ['error', { object: true }],
+        'prefer-template': 'error',
         'react/jsx-boolean-value': ['error', 'never'],
         'react/jsx-curly-brace-presence': ['error', 'never'],
         'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
+        'react/self-closing-comp': 'error',
       },
     },
     {

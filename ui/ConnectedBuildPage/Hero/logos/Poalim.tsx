@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { FC } from 'react';
 
-export const PoalimLogo: React.FunctionComponent = () => {
+export const PoalimLogo: FC = () => {
   return (
     <svg viewBox="0 0 180 75">
       <g fill="#C4D0E4" fillRule="nonzero">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import Head from 'next/head';
 import { ThemeProvider, ThemeConsumer } from 'styled-components';
 import { Background } from './Background';
@@ -9,31 +9,26 @@ import { Contact } from './Contact';
 import { Footer } from './Footer';
 import { THEME } from './theme';
 
-const ConnectedBuildPage: React.FunctionComponent = () => {
+const ConnectedBuildPage: FC = () => {
   return (
     <ThemeProvider theme={THEME}>
       <ThemeConsumer>
-        {(theme) => {
-          return (
-            <>
-              <Head>
-                <title>Connected Build - The Guild</title>
-                <meta name="theme-color" content={theme.background.color} />
-                <meta
-                  name="Description"
-                  content="Connected Build - The Guild"
-                />
-              </Head>
-              <Background>
-                <Hero />
-                <Infrastructure />
-                <HowItWorks />
-                <Contact />
-                <Footer />
-              </Background>
-            </>
-          );
-        }}
+        {(theme) => (
+          <>
+            <Head>
+              <title>Connected Build - The Guild</title>
+              <meta name="theme-color" content={theme.background.color} />
+              <meta name="Description" content="Connected Build - The Guild" />
+            </Head>
+            <Background>
+              <Hero />
+              <Infrastructure />
+              <HowItWorks />
+              <Contact />
+              <Footer />
+            </Background>
+          </>
+        )}
       </ThemeConsumer>
     </ThemeProvider>
   );

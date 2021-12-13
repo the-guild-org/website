@@ -5,7 +5,6 @@ export const Code = styled.pre.attrs<{ syntax?: string }>(({ syntax }) => ({
 }))`
   background: #1d1f21;
   color: #f8f8f2;
-  white-space: pre;
   overflow: auto;
   padding: 1.5rem;
   margin: 40px 0;
