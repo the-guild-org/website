@@ -1,3 +1,4 @@
+// TODO: convert to `ts` and `blog-sync.mjs` to `ts` also
 export const authors = {
   eytan: {
     name: 'Eytan Manor',

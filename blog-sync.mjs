@@ -8,7 +8,7 @@ import { remove } from 'unist-util-remove';
 import { walk } from 'estree-walker';
 import { Client } from 'guild-devto-nodejs-sdk';
 import globby from 'globby';
-import details from './ui/authors.js';
+import { authors } from './ui/authors';
 
 const DEV_TO_ORG_ID = 4467;
 
@@ -39,7 +39,7 @@ async function syncToDevTo(items) {
       const canonicalUrl = item.meta.canonical || item.canonical;
       const exists = allArticles.find((t) => t.canonicalUrl === canonicalUrl);
       const author =
-        details.authors[
+        authors[
           item.meta.authors && Array.isArray(item.meta.authors)
             ? item.meta.authors[0]
             : item.meta.author
