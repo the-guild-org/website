@@ -1,10 +1,10 @@
-import React from 'react';
+import { FC, ComponentProps } from 'react';
 import { GetStaticProps } from 'next/types';
 import Blog from '../../blog';
 import { getAllArticles } from '../../../lib/get-all-articles';
 import { unique, flatten } from '../../../lib/utils';
 
-export const getStaticProps: GetStaticProps<React.ComponentProps<typeof Blog>> =
+export const getStaticProps: GetStaticProps<ComponentProps<typeof Blog>> =
   async ({ params }) => {
     const tagFilter: string[] = !params.tag
       ? []
@@ -30,7 +30,7 @@ export async function getStaticPaths() {
   };
 }
 
-const BlogTagPage: React.FC<React.ComponentProps<typeof Blog>> = ({
+const BlogTagPage: FC<ComponentProps<typeof Blog>> = ({
   articles,
   tagFilter,
 }) => {

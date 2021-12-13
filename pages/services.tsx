@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { Page } from '../ui/shared/Page';
 import { Hero, Section, Container, Arrow } from '../ui/shared/Layout';
@@ -45,7 +45,7 @@ const LogosContainer = styled.div`
   }
 `;
 
-const Logos: React.FC<{
+const Logos: FC<{
   logos: Array<{
     name: string;
     logo: string;
@@ -131,7 +131,7 @@ const ServiceList = styled.ul`
   }
 `;
 
-const Service: React.FC<{
+const Service: FC<{
   reversed?: boolean;
   title: string;
   image: string;
@@ -169,7 +169,7 @@ const DarkSection = styled(Section)`
   background-color: #03a6a6;
 `;
 
-const Services: React.FC = () => {
+const Services: FC = () => {
   return (
     <Page
       title="Our Services - The Guild"

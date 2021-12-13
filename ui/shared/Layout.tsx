@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import { FC } from 'react';
+import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
 import { GlobalStyles, Header, FooterExtended } from '@theguild/components';
 
@@ -49,7 +49,7 @@ export const Button = styled.button`
   }
 `;
 
-export const Layout: React.FC = ({ children }) => {
+export const Layout: FC = ({ children }) => {
   const router = useRouter();
 
   return (
@@ -102,22 +102,21 @@ export const Section = styled.section<{ noNotch?: boolean; light?: boolean }>`
   ${(props) =>
     props.noNotch
       ? ''
-      : `
-      &::before {
-        content: '';
-        position: absolute;
-        top: -40px;
-        width: 0;
-        height: 0;
-        border-style: solid;
-        border-width: 0 40px 40px 40px;
-        border-color: transparent transparent ${
-          props.light ? '#fff' : '#f1f1f1'
-        } transparent;
-        left: 50%;
-        transform: translateX(-50%);
-      }
-    `}
+      : css`
+          &::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 40px 40px 40px;
+            border-color: transparent transparent
+              ${props.light ? '#fff' : '#f1f1f1'} transparent;
+            left: 50%;
+            transform: translateX(-50%);
+          }
+        `}
 `;
 
 const HeroContainer = styled.div<{ shrink?: boolean }>`
@@ -179,7 +178,7 @@ const FullContainer = styled(Container)`
   height: 100%;
 `;
 
-export const Hero: React.FC<{ shrink?: boolean }> = ({ shrink, children }) => {
+export const Hero: FC<{ shrink?: boolean }> = ({ shrink, children }) => {
   return (
     <HeroContainer shrink={shrink}>
       <FullContainer>
@@ -191,7 +190,7 @@ export const Hero: React.FC<{ shrink?: boolean }> = ({ shrink, children }) => {
   );
 };
 
-export const Arrow: React.FC<{ className?: string }> = ({ className }) => {
+export const Arrow: FC<{ className?: string }> = ({ className }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -205,7 +204,7 @@ export const Arrow: React.FC<{ className?: string }> = ({ className }) => {
       strokeLinejoin="round"
       className={className}
     >
-      <polyline points="20 6 9 17 4 12"></polyline>
+      <polyline points="20 6 9 17 4 12" />
     </svg>
   );
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -154,7 +154,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
-const Index: React.FC<Props> = ({ articles, projectsOrder }) => {
+const Index: FC<Props> = ({ articles, projectsOrder }) => {
   const recentArticles = articles.slice(0, 3);
 
   return (

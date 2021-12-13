@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { GetStaticProps } from 'next/types';
 import { Page } from '../ui/shared/Page';
@@ -30,7 +30,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
-const OpenSource: React.FC<Props> = ({ projectsOrder }) => {
+const OpenSource: FC<Props> = ({ projectsOrder }) => {
   return (
     <Page
       title="Open Source - The Guild"

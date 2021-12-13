@@ -1,9 +1,9 @@
-import React from 'react';
+import { FC } from 'react';
 import { Page } from '../ui/shared/Page';
 import { Hero, Section } from '../ui/shared/Layout';
 import { Contact } from '../ui/shared/Contact';
 
-const ContactPage: React.FC = () => {
+const ContactPage: FC = () => {
   return (
     <Page
       title="Contact Us - The Guild"
