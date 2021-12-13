@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { MessageSquare } from 'react-feather';
@@ -29,7 +29,7 @@ const MenuLink = styled.a`
   margin-left: 30px;
 `;
 
-export const Menu: React.FunctionComponent = () => {
+export const Menu: FC = () => {
   const scrollTo = useScrollTo();
 
   return (

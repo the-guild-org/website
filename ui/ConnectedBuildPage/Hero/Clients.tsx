@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { device } from '../../media';
 import { AirFranceLogo } from './logos/AirFrance';
@@ -28,7 +28,7 @@ const List = styled.div`
   }
 `;
 
-export const Clients: React.FunctionComponent = () => {
+export const Clients: FC = () => {
   return (
     <Container>
       <List>

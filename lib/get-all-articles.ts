@@ -39,7 +39,7 @@ async function readMeta(dir: string, file: string): Promise<MetaWithLink> {
   const filepath = join(dir, file);
   const raw = await promises.readFile(filepath, 'utf-8');
 
-  const [, result] = raw.match(/export const meta = \{([^}]+)\};/);
+  const [, result] = /export const meta = \{([^}]+)\};/.exec(raw);
 
   const parsed = JSON5.parse(`{ ${result.trim().replace(/,$/, '')} }`);
 

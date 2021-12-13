@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import styled from 'styled-components';
 import { components } from './blog/elements';
@@ -46,7 +46,7 @@ const Title = styled.h1`
 //   }
 // `;
 
-const AboutUs = (meta: Meta): React.FC => {
+const AboutUs = (meta: Meta): FC => {
   return function AboutUsRender({ children }) {
     const { title, description } = meta;
 

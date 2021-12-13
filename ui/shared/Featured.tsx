@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, ReactElement } from 'react';
 import styled from 'styled-components';
 import NativeLink from 'next/link';
 import LazyLoad from 'react-lazyload';
@@ -102,9 +102,9 @@ const Container = styled.div<{ width: number }>`
   }
 `;
 
-export const Featured: React.FC<{
+export const Featured: FC<{
   title: string;
-  description: string | React.ReactElement;
+  description: string | ReactElement;
   image: string;
   link: string;
   noShadow?: boolean;

@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { Title } from './Title';
 import { Menu } from './Menu';
@@ -17,7 +17,7 @@ const Container = styled.div`
   }
 `;
 
-export const Hero: React.FunctionComponent = () => {
+export const Hero: FC = () => {
   return (
     <Container>
       <BackgroundVideo

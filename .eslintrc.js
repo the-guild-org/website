@@ -1,4 +1,5 @@
 /* eslint sort-keys: ['error', 'asc', { minKeys: 5 }] */
+
 module.exports = {
   root: true,
   ignorePatterns: ['!.*'],
@@ -36,6 +37,16 @@ module.exports = {
         'no-restricted-globals': [
           'error',
           { name: 'isNaN', message: 'Use Number.isNaN instead' },
+          { name: 'React', message: 'use named import instead' },
+        ],
+        'no-restricted-imports': [
+          'error',
+          {
+            name: 'react',
+            importNames: ['default', 'FunctionComponent'],
+            message:
+              "Use named import if you need import something from react. `import React from 'react'` not need in NextJS. Use 'FC' instead 'FunctionComponent'.",
+          },
         ],
         'object-shorthand': ['error', 'always'],
         'prefer-destructuring': ['error', { object: true }],
@@ -44,6 +55,17 @@ module.exports = {
         'react/jsx-curly-brace-presence': ['error', 'never'],
         'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
         'react/self-closing-comp': 'error',
+      },
+    },
+    {
+      files: '*.{ts,tsx,cts,mts}',
+      parserOptions: {
+        project: './tsconfig.json',
+      },
+      rules: {
+        '@typescript-eslint/prefer-includes': 'error',
+        '@typescript-eslint/prefer-string-starts-ends-with': 'error',
+        '@typescript-eslint/prefer-regexp-exec': 'error',
       },
     },
     {

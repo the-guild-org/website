@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { Observer } from '../Observer';
 import { handleTwttrLoad } from './utils';
@@ -19,11 +19,11 @@ const Container = styled.div`
   overflow: auto;
 `;
 
-export const Tweet: FunctionComponent<ITweetProps> = ({
+export const Tweet: FC<ITweetProps> = ({
   tweetLink,
   theme = 'light',
   align = 'left',
-}: ITweetProps) => (
+}) => (
   <Observer onEnter={() => handleTwttrLoad()}>
     <Container>
       <blockquote

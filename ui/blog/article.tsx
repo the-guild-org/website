@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -148,7 +148,7 @@ const ConsultingInfo = styled.div`
   border-left: 3px solid var(--colors-accent);
 `;
 
-function Authors(props: { meta: Meta }) {
+const Authors: FC<{ meta: Meta }> = (props) => {
   const { meta } = props;
   const date = meta.date ? new Date(meta.date) : new Date();
   const updatedDate = meta.updateDate ? new Date(meta.updateDate) : null;
@@ -222,10 +222,10 @@ function Authors(props: { meta: Meta }) {
       </>
     );
   }
-}
+};
 
-const Article = (meta: Meta): React.FC => {
-  return function ArticleRender({ children: content }) {
+const Article = (meta: Meta): FC => {
+  return function ArticleRender({ children }) {
     const title = `${meta.title} - The Guild Blog`;
     const router = useRouter();
 
@@ -300,7 +300,7 @@ const Article = (meta: Meta): React.FC => {
                 </GenericLink>{' '}
                 and get in touch.
               </ConsultingInfo>
-              <Content>{content}</Content>
+              <Content>{children}</Content>
               <Newsletter />
               <Back>
                 <Link href="/blog">

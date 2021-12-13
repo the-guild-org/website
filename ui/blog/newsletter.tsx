@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import { FC, ChangeEvent, useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Confetti from 'react-confetti';
 import { Button } from '../shared/Layout';
@@ -71,7 +71,7 @@ const FixedConfetti = styled(Confetti)`
   position: fixed !important;
 `;
 
-export const Newsletter: React.FC<{ className?: string }> = ({ className }) => {
+export const Newsletter: FC<{ className?: string }> = ({ className }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -90,7 +90,7 @@ export const Newsletter: React.FC<{ className?: string }> = ({ className }) => {
     [mutate, email]
   );
 
-  const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   }, []);
 

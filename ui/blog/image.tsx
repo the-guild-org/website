@@ -1,6 +1,6 @@
-import React from 'react';
+import { FC } from 'react';
 
-export const Image: React.FC<{
+export const Image: FC<{
   alt: string;
   src: string;
   className?: string;

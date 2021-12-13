@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
@@ -36,7 +36,7 @@ const Copyrights = styled.div`
   }
 `;
 
-export const Footer: React.FunctionComponent = () => {
+export const Footer: FC = () => {
   return (
     <Container>
       <Link href="/">

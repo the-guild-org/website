@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 
 import { device } from '../../media';
@@ -34,7 +34,7 @@ const Container = styled.div<{ dark: boolean }>`
 
 type Position = 'left' | 'right';
 
-export const Section: React.FunctionComponent<{
+export const Section: FC<{
   anchor: string;
   subtitle: string;
   title: string;

@@ -1,4 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import {
+  FC,
+  FormEvent,
+  ChangeEvent,
+  useState,
+  useCallback,
+  useEffect,
+} from 'react';
 import styled from 'styled-components';
 import { Send } from 'react-feather';
 import { useMutation } from '../../../hooks/use-graphql';
@@ -41,7 +48,7 @@ const Input = styled.input`
   flex: 1;
   font-size: 15px;
   font-weight: 300;
-  color: #ffffff;
+  color: #fff;
 
   background: transparent;
   outline: none;
@@ -69,34 +76,32 @@ const Success = styled(Status)`
   color: #00eaff;
 `;
 
-export const InputField: React.FunctionComponent<{ className?: string }> = ({
-  className,
-}) => {
-  const [email, setEmail] = useState<string>();
+export const InputField: FC<{ className?: string }> = ({ className }) => {
+  const [email, setEmail] = useState('');
   const [result, mutate] = useMutation(
     `mutation sayHi($email: String!, $project: String!) { sayHi(email: $email, project: $project) { ok } }`
   );
   const onSubmit = useCallback(
-    (event: React.FormEvent) => {
+    (event: FormEvent) => {
       event.preventDefault();
       mutate({ email, project: 'CONNECTED_BUILD' });
     },
     [email, mutate]
   );
   const onChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    (event: ChangeEvent<HTMLInputElement>) => {
       if (!result.loading) {
         setEmail(event.target.value);
       }
     },
-    [setEmail, result.loading]
+    [result.loading]
   );
 
   useEffect(() => {
     if (result.complete) {
       setEmail('');
     }
-  }, [result.complete, setEmail]);
+  }, [result.complete]);
 
   return (
     <div className={className}>

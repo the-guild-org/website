@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { GitHub, Twitter, Slack } from 'react-feather';
 import { getFontColor } from '../theme';
@@ -29,7 +29,7 @@ const SocialMedia = styled.a`
   }
 `;
 
-export const SocialMedias: React.FunctionComponent = () => {
+export const SocialMedias: FC = () => {
   return (
     <>
       <SocialMedia href="https://github.com/the-guild-org">

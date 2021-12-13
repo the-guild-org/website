@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 
 import { device } from '../../media';
@@ -35,7 +35,7 @@ const ConnectedBuild = styled(Text)`
   color: ${(props) => props.theme.hero.highlightColor};
 `;
 
-export const Title: React.FunctionComponent<{ text: string }> = ({ text }) => {
+export const Title: FC<{ text: string }> = ({ text }) => {
   return (
     <Container>
       <Text>{text}</Text>

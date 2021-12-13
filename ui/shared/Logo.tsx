@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -15,7 +15,7 @@ const Text = styled.div`
   color: var(--colors-primary);
 `;
 
-export const TheGuildLogo: React.FunctionComponent = () => {
+export const TheGuildLogo: FC = () => {
   return (
     <Container>
       <svg

@@ -1,8 +1,8 @@
-import React from 'react';
+import { FC } from 'react';
 import { Section } from '../Section';
 import { Options } from './Options';
 
-export const HowItWorks: React.FunctionComponent = () => {
+export const HowItWorks: FC = () => {
   return (
     <Section
       on="left"

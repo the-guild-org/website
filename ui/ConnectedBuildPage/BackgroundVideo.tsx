@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import styled from 'styled-components';
 import { useToggle } from '../../hooks/use-toggle';
 

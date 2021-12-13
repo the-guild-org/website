@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { Observer } from '../Observer';
 
 export type EmbbedBoolean = '0' | '1';

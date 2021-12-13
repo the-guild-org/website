@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { Container } from '../shared/Layout';
 import { MetaWithLink, pickAuthor } from '../../lib/meta';
@@ -13,7 +13,7 @@ const ArticlesContainer = styled(Container)`
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
 `;
 
-export const LastArticles: React.FC<{
+export const LastArticles: FC<{
   articles: MetaWithLink[];
   className?: string;
 }> = ({ articles, className }) => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { getFontColor } from '../theme';
 
@@ -58,7 +58,7 @@ const Text = styled.div`
 
 const indexes = 'abcdefg';
 
-const Option: React.FunctionComponent<{
+const Option: FC<{
   index: number;
   title: string;
   text: string;
@@ -83,7 +83,7 @@ const Option: React.FunctionComponent<{
   );
 };
 
-export const Options: React.FunctionComponent = () => {
+export const Options: FC = () => {
   return (
     <Container>
       <Option

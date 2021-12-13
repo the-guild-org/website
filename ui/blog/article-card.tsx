@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import NativeLink from 'next/link';
 import format from 'date-fns/format';
@@ -83,7 +83,7 @@ const Details = styled.div`
   }
 `;
 
-export const ArticleCard: React.FC<{
+export const ArticleCard: FC<{
   title: string;
   description: string;
   author?: any;

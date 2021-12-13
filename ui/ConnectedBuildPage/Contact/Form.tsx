@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 
 import { SocialMedias } from './SocialMedia';
@@ -32,7 +32,7 @@ const Input = styled(InputField)`
   margin: 15px 0 40px 0;
 `;
 
-export const Form: React.FunctionComponent = () => {
+export const Form: FC = () => {
   return (
     <Container>
       <Title>Join the Connected Build consortium of companies</Title>

@@ -1,9 +1,8 @@
-import React from 'react';
-
+import { FC } from 'react';
 import { Section } from '../Section';
 import { Form } from './Form';
 
-export const Contact: React.FunctionComponent = () => {
+export const Contact: FC = () => {
   return (
     <Section
       on="right"
