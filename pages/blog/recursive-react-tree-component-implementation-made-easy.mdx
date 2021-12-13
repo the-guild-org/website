@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'Recursive React tree component implementation made easy',
@@ -6,10 +6,10 @@ export const meta = {
   tags: ['react'],
   date: '2018-11-05',
   description: 'The challenges that I’ve faced and how I solved them',
-  image: '/medium/db6c7817bbaf73790065c3e1f8ebb835.png',
-};
+  image: '/medium/db6c7817bbaf73790065c3e1f8ebb835.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 ## The challenges that I’ve faced and how I solved them
 
@@ -18,8 +18,8 @@ When I was building [tortilla.acedemy’s diff page](https://tortilla.academy/sr
 This is how I wanted my tree’s API to look like:
 
 ```javascript
-import React from 'react';
-import FSRoot from 'react-fs-tree';
+import React from 'react'
+import FSRoot from 'react-fs-tree'
 
 const FSTree = () => (
   <FSRoot
@@ -34,14 +34,14 @@ const FSTree = () => (
         childNodes: [
           { name: 'foo' },
           { name: 'bar', selected: true },
-          { name: 'baz' },
-        ],
-      },
+          { name: 'baz' }
+        ]
+      }
     ]}
   />
-);
+)
 
-export default FSTree;
+export default FSTree
 ```
 
 During my implementation of that tree I’ve faced some pretty interesting challenges, and I have thought to write an article about it and share some of my insights; so let’s cut to the chase.
@@ -88,32 +88,32 @@ The following code snippet demonstrates the second preferred way of solving recu
 
 ```javascript
 /* module.js */
-export const exports = {};
-export default { exports };
+export const exports = {}
+export default { exports }
 
 /* FSBranch.js */
-import React from 'react';
-import { exports } from './module';
+import React from 'react'
+import { exports } from './module'
 
 class FSBranch extends React.Component {
   render() {
-    return <exports.FSNode />;
+    return <exports.FSNode />
   }
 }
 
-exports.FSBranch = FSBranch;
+exports.FSBranch = FSBranch
 
 /* FSNode.js */
-import React from 'react';
-import { exports } from './module';
+import React from 'react'
+import { exports } from './module'
 
 class FSNode extends React.Component {
   render() {
-    return <exports.FSBranch />;
+    return <exports.FSBranch />
   }
 }
 
-exports.FSNode = FSNode;
+exports.FSNode = FSNode
 ```
 
 # Style
@@ -146,22 +146,22 @@ You heard me right. Directly grabbing the reference from the React.Component’s
 ```javascript
 function onSelect(node) {
   // A React.Component is used directly as a controller
-  assert(node instanceof React.Component);
-  assert(node instanceof FSNode);
+  assert(node instanceof React.Component)
+  assert(node instanceof FSNode)
 
   if (this.state.selectedNode) {
-    this.state.selectedNode.deselect();
+    this.state.selectedNode.deselect()
   }
 
   this.setState({
-    selectedNode: node,
-  });
+    selectedNode: node
+  })
 }
 
 function onDeselect() {
   this.setState({
-    selectedNode: null,
-  });
+    selectedNode: null
+  })
 }
 ```
 

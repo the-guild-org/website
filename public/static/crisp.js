@@ -30,8 +30,11 @@ function guildCrisp() {
   let normHost = window.location.host.replace(/^www\./, '');
 
   if (HOST_TO_SEGMENTS[normHost]) {
-    // prettier-ignore
-    window.$crisp.push(["set", "session:segments", [HOST_TO_SEGMENTS[normHost]]])
+    window.$crisp.push([
+      'set',
+      'session:segments',
+      [HOST_TO_SEGMENTS[normHost]],
+    ]);
   }
 }
 

@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'GraphQL with TypeScript done right',
@@ -9,10 +9,10 @@ export const meta = {
     'How to get the most of React application types with GraphQL Code Generator',
   image: '/blog-assets/graphql-code-generator/cover.png',
   canonical:
-    'https://charlypoly.com/publications/typescript-with-graphql-done-right',
-};
+    'https://charlypoly.com/publications/typescript-with-graphql-done-right'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 [Generics](https://charlypoly.com/publications/typescript-generics-and-overloads), and Mapped types, are key to build types on top of existing ones by making them configurable (Generics) or iterables (Mapped types).
 
@@ -29,11 +29,11 @@ TypeScript helps with typing data and following how the data is used and transfo
 The example below shows how easily this “types chain” can be broken:
 
 ```ts
-const a = '1'; // a is a string
+const a = '1' // a is a string
 
-const stringToInt = (num: string): any => parseInt(num, 10);
+const stringToInt = (num: string): any => parseInt(num, 10)
 
-const b = stringToInt('5'); // b is of type any
+const b = stringToInt('5') // b is of type any
 ```
 
 _How to break the TypeScript “types chain” ([playground demo](https://www.typescriptlang.org/play?ssl=8&ssc=1&pln=1&pc=1#code/MYewdgzgLgBAhjAvDA5ARhTA9F+MCWEe0ATvmAOYBQNoksp5FAKiAJJizIAUYArgFsAXDEaUAlCLhgAnkgB8MAA5wSEAKYcovQQBoYaAAziaVOtBgAjJKKhlKrLdxQBWFOOy5rhGCABmMFAySurwslRAA))_
@@ -58,14 +58,14 @@ Most React projects type remote data (from APIs) manually, either at the compone
 
 ```ts
 interface User {
-  id: string;
-  email: string;
+  id: string
+  email: string
 }
 
 interface Chat {
-  id: string;
-  user: User;
-  messages: Message[];
+  id: string
+  user: User
+  messages: Message[]
 }
 
 //…
@@ -77,13 +77,13 @@ const userQuery = gql`
       email
     }
   }
-`;
+`
 
 const Login = () => {
-  const { data } = useQuery(userQuery);
-  const user = data ? (data.me as User) : null;
+  const { data } = useQuery(userQuery)
+  const user = data ? (data.me as User) : null
   // ...
-};
+}
 ```
 
 _Example of data-types definition and linked usage, common in many projects_
@@ -148,17 +148,17 @@ And after running `graphql-codegen` CLI, we can refactor our `<Login>` component
 ```ts
 import {
   currentUserDocument,
-  CurrentUserQueryResult,
-} from '../graphql/generated.ts';
+  CurrentUserQueryResult
+} from '../graphql/generated.ts'
 
 // no need to create the User type or `gql` query, we import them from the generated file
 const Login = () => {
-  const { data } = useQuery<CurrentUserQueryResult>(currentUserDocument);
+  const { data } = useQuery<CurrentUserQueryResult>(currentUserDocument)
   // user is typed!
-  const user = data ? data.me : null;
+  const user = data ? data.me : null
 
   // ...
-};
+}
 ```
 
 _src/components/Login.tsx_
@@ -202,12 +202,12 @@ This configuration will generate a `src/graphql/generated.ts` file that will con
 Here an example of GraphQL Code Generator output given our previous `currentUser` Query:
 
 ```ts
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
-export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>;
+import { gql } from '@apollo/client'
+import * as Apollo from '@apollo/client'
+export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>
 export type CurrentUserQuery = { __typename?: 'Query' } & {
-  me: { __typename?: 'User' } & Pick<User, 'id'>;
-};
+  me: { __typename?: 'User' } & Pick<User, 'id'>
+}
 
 export const CurrentUserDocument = gql`
   query currentUser {
@@ -215,12 +215,12 @@ export const CurrentUserDocument = gql`
       id
     }
   }
-`;
+`
 
 export type CurrentUserQueryResult = Apollo.QueryResult<
   CurrentUserQuery,
   CurrentUserQueryVariables
->;
+>
 ```
 
 _src/graphql/generated.ts_
@@ -263,13 +263,13 @@ This configuration will generate a `src/graphql/generated.ts` file that will con
 Example given our previous `currentUser` Query:
 
 ```ts
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
-const defaultOptions = {};
-export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>;
+import { gql } from '@apollo/client'
+import * as Apollo from '@apollo/client'
+const defaultOptions = {}
+export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>
 export type CurrentUserQuery = { __typename?: 'Query' } & {
-  me: { __typename?: 'User' } & Pick<User, 'id'>;
-};
+  me: { __typename?: 'User' } & Pick<User, 'id'>
+}
 
 export const CurrentUserDocument = gql`
   query currentUser {
@@ -277,7 +277,7 @@ export const CurrentUserDocument = gql`
       id
     }
   }
-`;
+`
 
 export function useCurrentUserQuery(
   baseOptions?: Apollo.QueryHookOptions<
@@ -285,17 +285,17 @@ export function useCurrentUserQuery(
     CurrentUserQueryVariables
   >
 ) {
-  const options = { ...defaultOptions, ...baseOptions };
+  const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<CurrentUserQuery, CurrentUserQueryVariables>(
     CurrentUserDocument,
     options
-  );
+  )
 }
-export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
+export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>
 export type CurrentUserQueryResult = Apollo.QueryResult<
   CurrentUserQuery,
   CurrentUserQueryVariables
->;
+>
 ```
 
 _src/graphql/generated.ts_
@@ -303,17 +303,17 @@ _src/graphql/generated.ts_
 Which will give us this updated version of our `<Login>` component:
 
 ```ts
-import { useCurrentUserQuery } from '../graphql/generated.ts';
+import { useCurrentUserQuery } from '../graphql/generated.ts'
 
 // no need to create the User type or `gql` query, we import them from the generated file
 
 const Login = () => {
-  const { data } = useCurrentUserQuery();
+  const { data } = useCurrentUserQuery()
   // user is typed!
-  const user = data ? data.me : null;
+  const user = data ? data.me : null
 
   // ...
-};
+}
 ```
 
 _src/components/Login.tsx_
@@ -343,11 +343,11 @@ _codegen.yml_
 GraphQL Code Generator will generate the following file:
 
 ```ts
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
-export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>;
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core'
+export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>
 export type CurrentUserQuery = { __typename?: 'Query' } & {
-  me: { __typename?: 'User' } & Pick<User, 'id'>;
-};
+  me: { __typename?: 'User' } & Pick<User, 'id'>
+}
 
 export const CurrentUserDocument: DocumentNode<
   CurrentUserQuery,
@@ -368,15 +368,15 @@ export const CurrentUserDocument: DocumentNode<
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-};
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
 ```
 
 _src/graphql/generated.ts_
@@ -384,17 +384,17 @@ _src/graphql/generated.ts_
 This allows us the following refactoring of our `<Login>` component:
 
 ```ts
-import { CurrentUserDocument } from '../graphql/generated.ts';
+import { CurrentUserDocument } from '../graphql/generated.ts'
 
 // no need to create the User type or `gql` query, we import them from the generated file
 
 const Login = () => {
-  const { data } = useQuery(CurrentUserDocument);
+  const { data } = useQuery(CurrentUserDocument)
   // user is typed!
-  const user = data ? data.me : null;
+  const user = data ? data.me : null
 
   // ...
-};
+}
 ```
 
 _src/components/Login.tsx_
@@ -451,8 +451,8 @@ Please note that a fragment needs to be defined against an existing type of the 
 Here is our updated helper code:
 
 ```ts
-import { UserFragment } from 'src/graphql/generated';
-const isUserEmailValid = (user: UserFragment) => !!user.email;
+import { UserFragment } from 'src/graphql/generated'
+const isUserEmailValid = (user: UserFragment) => !!user.email
 ```
 
 Leveraging GraphQL Fragments allows you to build your React app data types on top of the GraphQL API types.

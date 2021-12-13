@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'Under the hood of React’s hooks system',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2018-11-21',
   description:
     'Looking at the implementation and getting to know it inside out',
-  image: '/medium/923d5b18cf82df80927ee5278f7048ff.jpeg',
-};
+  image: '/medium/923d5b18cf82df80927ee5278f7048ff.jpeg'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 ## Looking at the implementation and getting to know it inside out
 
@@ -37,30 +37,28 @@ When we’re done performing the rendering work, we nullify the dispatcher and t
 The dispatcher is resolved in each and every hook call using a function called `resolveDispatcher()`. Like I said earlier, outside the rendering cycle of React this should be meaningless, and React should print the warning message: _“Hooks can only be called inside the body of a function component”_ (see [implementation](https://github.com/facebook/react/tree/5f06576f51ece88d846d01abd2ddd575827c6127/packages/react/src/ReactHooks.js#L17)).
 
 ```javascript
-let currentDispatcher;
+let currentDispatcher
 const dispatcherWithoutHooks = {
   /* ... */
-};
+}
 const dispatcherWithHooks = {
   /* ... */
-};
+}
 
 function resolveDispatcher() {
-  if (currentDispatcher) return currentDispatcher;
-  throw Error("Hooks can't be called");
+  if (currentDispatcher) return currentDispatcher
+  throw Error("Hooks can't be called")
 }
 
 function useXXX(...args) {
-  const dispatcher = resolveDispatcher();
-  return dispatcher.useXXX(...args);
+  const dispatcher = resolveDispatcher()
+  return dispatcher.useXXX(...args)
 }
 
 function renderRoot() {
-  currentDispatcher = enableHooks
-    ? dispatcherWithHooks
-    : dispatcherWithoutHooks;
-  performWork();
-  currentDispatcher = null;
+  currentDispatcher = enableHooks ? dispatcherWithHooks : dispatcherWithoutHooks
+  performWork()
+  currentDispatcher = null
 }
 ```
 
@@ -114,39 +112,39 @@ Unfortunately I haven’t managed to get a good grasp around the reducer hook be
 So back to hooks, before each and every function Component invocation, a function named [`prepareHooks()`](https://github.com/facebook/react/tree/5f06576f51ece88d846d01abd2ddd575827c6127/react-reconciler/src/ReactFiberHooks.js:123) is gonna be called, where the current fiber and its first hook node in the hooks queue are gonna be stored in global variables. This way, any time we call a hook function (`useXXX()`) it would know in which context to run.
 
 ```javascript
-let currentlyRenderingFiber;
-let workInProgressQueue;
-let currentHook;
+let currentlyRenderingFiber
+let workInProgressQueue
+let currentHook
 
 // Source: https://github.com/facebook/react/tree/5f06576f51ece88d846d01abd2ddd575827c6127/react-reconciler/src/ReactFiberHooks.js:123
 function prepareHooks(recentFiber) {
-  currentlyRenderingFiber = workInProgressFiber;
-  currentHook = recentFiber.memoizedState;
+  currentlyRenderingFiber = workInProgressFiber
+  currentHook = recentFiber.memoizedState
 }
 
 // Source: https://github.com/facebook/react/tree/5f06576f51ece88d846d01abd2ddd575827c6127/react-reconciler/src/ReactFiberHooks.js:148
 function finishHooks() {
-  currentlyRenderingFiber.memoizedState = workInProgressHook;
-  currentlyRenderingFiber = null;
-  workInProgressHook = null;
-  currentHook = null;
+  currentlyRenderingFiber.memoizedState = workInProgressHook
+  currentlyRenderingFiber = null
+  workInProgressHook = null
+  currentHook = null
 }
 
 // Source: https://github.com/facebook/react/tree/5f06576f51ece88d846d01abd2ddd575827c6127/react-reconciler/src/ReactFiberHooks.js:115
 function resolveCurrentlyRenderingFiber() {
-  if (currentlyRenderingFiber) return currentlyRenderingFiber;
-  throw Error("Hooks can't be called");
+  if (currentlyRenderingFiber) return currentlyRenderingFiber
+  throw Error("Hooks can't be called")
 }
 // Source: https://github.com/facebook/react/tree/5f06576f51ece88d846d01abd2ddd575827c6127/react-reconciler/src/ReactFiberHooks.js:267
 function createWorkInProgressHook() {
-  workInProgressHook = currentHook ? cloneHook(currentHook) : createNewHook();
-  currentHook = currentHook.next;
-  workInProgressHook;
+  workInProgressHook = currentHook ? cloneHook(currentHook) : createNewHook()
+  currentHook = currentHook.next
+  workInProgressHook
 }
 
 function useXXX() {
-  const fiber = resolveCurrentlyRenderingFiber();
-  const hook = createWorkInProgressHook();
+  const fiber = resolveCurrentlyRenderingFiber()
+  const hook = createWorkInProgressHook()
   // ...
 }
 
@@ -156,9 +154,9 @@ function updateFunctionComponent(
   Component,
   props
 ) {
-  prepareHooks(recentFiber, workInProgressFiber);
-  Component(props);
-  finishHooks();
+  prepareHooks(recentFiber, workInProgressFiber)
+  Component(props)
+  finishHooks()
 }
 ```
 
@@ -166,28 +164,28 @@ Once an update has finished, a function named [`finishHooks()`](https://github.c
 
 ```javascript
 const ChildComponent = () => {
-  useState('foo');
-  useState('bar');
-  useState('baz');
+  useState('foo')
+  useState('bar')
+  useState('baz')
 
-  return null;
-};
+  return null
+}
 
 const ParentComponent = () => {
-  const childFiberRef = useRef();
+  const childFiberRef = useRef()
 
   useEffect(() => {
-    let hookNode = childFiberRef.current.memoizedState;
+    let hookNode = childFiberRef.current.memoizedState
 
-    assert(hookNode.memoizedState, 'foo');
-    hookNode = hooksNode.next;
-    assert(hookNode.memoizedState, 'bar');
-    hookNode = hooksNode.next;
-    assert(hookNode.memoizedState, 'baz');
-  });
+    assert(hookNode.memoizedState, 'foo')
+    hookNode = hooksNode.next
+    assert(hookNode.memoizedState, 'bar')
+    hookNode = hooksNode.next
+    assert(hookNode.memoizedState, 'baz')
+  })
 
-  return <ChildComponent ref={childFiberRef} />;
-};
+  return <ChildComponent ref={childFiberRef} />
+}
 ```
 
 ---
@@ -200,7 +198,7 @@ You would be surprised to know, but behind the scenes the `useState` hook uses `
 
 ```javascript
 function basicStateReducer(state, action) {
-  return typeof action === 'function' ? action(state) : action;
+  return typeof action === 'function' ? action(state) : action
 }
 ```
 
@@ -210,18 +208,18 @@ This means that when you send the state setter down the component tree you can r
 
 ```javascript
 const ParentComponent = () => {
-  const [name, setName] = useState();
+  const [name, setName] = useState()
 
-  return <ChildComponent toUpperCase={setName} />;
-};
+  return <ChildComponent toUpperCase={setName} />
+}
 
 const ChildComponent = (props) => {
   useEffect(() => {
-    props.toUpperCase((state) => state.toUpperCase());
-  }, [true]);
+    props.toUpperCase((state) => state.toUpperCase())
+  }, [true])
 
-  return null;
-};
+  return null
+}
 ```
 
 ---
@@ -258,22 +256,22 @@ Besides the `tag` property, the other properties are pretty straight forward and
 The tag is composed out of a combination of binary values (see [implementation](https://github.com/facebook/react/tree/5f06576f51ece88d846d01abd2ddd575827c6127/packages/react-reconciler/src/ReactHookEffectTags.js)):
 
 ```javascript
-const NoEffect = /*             */ 0b00000000;
-const UnmountSnapshot = /*      */ 0b00000010;
-const UnmountMutation = /*      */ 0b00000100;
-const MountMutation = /*        */ 0b00001000;
-const UnmountLayout = /*        */ 0b00010000;
-const MountLayout = /*          */ 0b00100000;
-const MountPassive = /*         */ 0b01000000;
-const UnmountPassive = /*       */ 0b10000000;
+const NoEffect = /*             */ 0b00000000
+const UnmountSnapshot = /*      */ 0b00000010
+const UnmountMutation = /*      */ 0b00000100
+const MountMutation = /*        */ 0b00001000
+const UnmountLayout = /*        */ 0b00010000
+const MountLayout = /*          */ 0b00100000
+const MountPassive = /*         */ 0b01000000
+const UnmountPassive = /*       */ 0b10000000
 ```
 
 The most common use cases for these binary values would be using a pipeline (`|`) and add the bits as is to a single value. Then we can check whether a tag implements a certain behavior or not using an ampersand (`&`). If the result is non-zero, it means that the tag implements the specified behavior.
 
 ```javascript
-const effectTag = MountPassive | UnmountPassive;
-assert(effectTag, 0b11000000);
-assert(effectTag & MountPassive, 0b10000000);
+const effectTag = MountPassive | UnmountPassive
+assert(effectTag, 0b11000000)
+assert(effectTag & MountPassive, 0b10000000)
 ```
 
 Here are the supported hook effect types by React along with their tags (see [implementation](https://github.com/facebook/react/tree/5f06576f51ece88d846d01abd2ddd575827c6127/packages/react-reconciler/src/ReactFiberHooks.js:520)):
@@ -297,30 +295,30 @@ So, based on what we’ve just learned regards effect hooks, we can actually inj
 
 ```javascript
 function injectEffect(fiber) {
-  const lastEffect = fiber.updateQueue.lastEffect;
+  const lastEffect = fiber.updateQueue.lastEffect
 
   const destroyEffect = () => {
-    console.log('on destroy');
-  };
+    console.log('on destroy')
+  }
 
   const createEffect = () => {
-    console.log('on create');
+    console.log('on create')
 
-    return destroy;
-  };
+    return destroy
+  }
 
   const injectedEffect = {
     tag: 0b11000000,
     next: lastEffect.next,
     create: createEffect,
     destroy: destroyEffect,
-    inputs: [createEffect],
-  };
+    inputs: [createEffect]
+  }
 
-  lastEffect.next = injectedEffect;
+  lastEffect.next = injectedEffect
 }
 
-const ParentComponent = <ChildComponent ref={injectEffect} />;
+const ParentComponent = <ChildComponent ref={injectEffect} />
 ```
 
 ---

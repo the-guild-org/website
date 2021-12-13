@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title:
@@ -7,10 +7,10 @@ export const meta = {
   author: 'eytan',
   date: '2019-03-04',
   description: 'Use private class names instead of a dedicated component',
-  image: '/medium/847a27410df9de57458f3736cf937b9b.png',
-};
+  image: '/medium/847a27410df9de57458f3736cf937b9b.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 ## TL;DR: Use private class names instead of a dedicated component. \*\*experimental\*\*
 
@@ -23,19 +23,19 @@ For those who aren’t familiar with Styled-Components, here’s a quick example
 ```jsx
 const Button = styled.button`
   border-radius: 999px;
-`;
+`
 
 const RedButton = styled(Button)`
   color: red;
-`;
+`
 
 const GreenButton = styled(Button)`
   color: green;
-`;
+`
 
 const BlueButton = styled(Button)`
   color: blue;
-`;
+`
 
 const Dashboard = (
   <div>
@@ -43,7 +43,7 @@ const Dashboard = (
     <GreenButton />
     <BlueButton />
   </div>
-);
+)
 ```
 
 However, as good as it is, there are some major drawbacks for creating a dedicated component for each styled element:
@@ -72,7 +72,7 @@ const DashboardStyle = styled.div`
   ._blue-btn {
     color: blue;
   }
-`;
+`
 
 const Dashboard = (
   <DashboardStyle>
@@ -80,7 +80,7 @@ const Dashboard = (
     <button className="_btn _green-btn" />
     <button className="_btn _blue-btn" />
   </DashboardStyle>
-);
+)
 ```
 
 As much as I love this approach, it doesn’t achieve full encapsulation. A nested child component which has a similar class selector as its parent will result in a merged style, which is not necessarily what we want. Each component should leave independently of its ancestors, which is what Styled-Components are all about.
@@ -108,7 +108,7 @@ const DashboardStyle = styled.div`
   .${(props) => props.__scopename}-blue-btn {
     color: blue;
   }
-`;
+`
 
 const Dashboard = (
   <DashboardStyle __scopename="__scope0">
@@ -116,7 +116,7 @@ const Dashboard = (
     <button className="__scope0-green-btn" />
     <button className="__scope0-blue-btn" />
   </DashboardStyle>
-);
+)
 ```
 
 I also thought of creating a runtime wrapper around Styled-Components where I basically iterate through `props.children` and edit their class names, but there are some advantages for using an AOT compiler over a runtime solution:

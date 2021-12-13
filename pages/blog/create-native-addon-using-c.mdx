@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'How to create a native add-on using C++',
@@ -6,10 +6,10 @@ export const meta = {
   tags: ['cpp'],
   date: '2017-05-08',
   description: 'NodeJS Advanced — How to create a native add-on using C++',
-  image: '/medium/6989c5ee48f37336c330100619adbe13.png',
-};
+  image: '/medium/6989c5ee48f37336c330100619adbe13.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 In this tutorial we gonna go through the basics on how to write a native add-on to NodeJS using C++, one of the platform’s most powerful capabilities of which most web/JS developers now a days are not even familiar with.
 
@@ -53,14 +53,14 @@ In v8 a scope is referred as `Isolate` (`v8::Isolate`) and a variable is referre
 let obj = {
   foo: 'foo',
   bar: 'bar',
-  baz: 'baz',
-};
+  baz: 'baz'
+}
 ```
 
 ```javascript
-console.log(obj.foo);
-console.log(obj.bar);
-console.log(obj.baz);
+console.log(obj.foo)
+console.log(obj.bar)
+console.log(obj.baz)
 ```
 
 **C++**
@@ -92,8 +92,8 @@ Asynchronous logic can be implemented using the `AsyncWorker` (`Nan::AsyncWorker
 
 ```javascript
 setImmediate(() => {
-  callback(null, 'result');
-});
+  callback(null, 'result')
+})
 ```
 
 **C++**
@@ -150,7 +150,7 @@ v8 and Nan provide us with some handy macros (`NODE_MODULE`, `NAN_MODULE_INIT`, 
 **JavaScript**
 
 ```javascript
-exports.fn = (a, b) => a + b;
+exports.fn = (a, b) => a + b
 ```
 
 **C++**

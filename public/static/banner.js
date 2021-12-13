@@ -442,8 +442,11 @@ function main() {
     /* eslint-enable */
 
     if (HOST_TO_SEGMENTS[window.location.host]) {
-      // prettier-ignore
-      window.$crisp.push(["set", "session:segments", [HOST_TO_SEGMENTS[window.location.host]]])
+      window.$crisp.push([
+        'set',
+        'session:segments',
+        [HOST_TO_SEGMENTS[window.location.host]],
+      ]);
     }
   }
 }

@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'Introducing Envelop - The GraphQL Plugin System',
@@ -8,10 +8,10 @@ export const meta = {
   description:
     'A new tool by The Guild: A powerful new way for creating fast, modern and secure GraphQL servers.',
   thumbnail: '/blog-assets/envelop/envelop_cover.png',
-  image: '/blog-assets/envelop/envelop_cover.png',
-};
+  image: '/blog-assets/envelop/envelop_cover.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 **Today we are super excited to share with you a new open-source library we’ve been working on for the past few months!**
 
@@ -116,15 +116,15 @@ To get started quickly, start by installing only `@envelop/core` package in your
 Now, take a look at the following code snippet - it creates a `/graphql` endpoint, normalizes the incoming request with `graphql-helix`, creates the GraphQL functions with Envelop and runs the operation:
 
 ```ts
-import { envelop, useSchema, useLogger } from '@envelop/core';
-import fastify from 'fastify';
-import { processRequest, getGraphQLParameters } from 'graphql-helix';
+import { envelop, useSchema, useLogger } from '@envelop/core'
+import fastify from 'fastify'
+import { processRequest, getGraphQLParameters } from 'graphql-helix'
 
 // This creates the `getEnveloped` function for us. Behind the scense the wrapped functions are created once, here.
 const getEnveloped = envelop({
-  plugins: [useSchema(schema), useLogger()],
-});
-const app = fastify();
+  plugins: [useSchema(schema), useLogger()]
+})
+const app = fastify()
 
 app.route({
   method: ['POST'],
@@ -133,15 +133,15 @@ app.route({
     // Here we can pass the request and make available as part of the "context".
     // The return value is the a GraphQL-proxy that exposes all the functions.
     const { parse, validate, contextFactory, execute, schema } = getEnveloped({
-      req,
-    });
+      req
+    })
     const request = {
       body: req.body,
       headers: req.headers,
       method: req.method,
-      query: req.query,
-    };
-    const { operationName, query, variables } = getGraphQLParameters(request);
+      query: req.query
+    }
+    const { operationName, query, variables } = getGraphQLParameters(request)
 
     // Here, we pass our custom functions to Helix, and it will take care of the rest.
     const result = await processRequest({
@@ -153,23 +153,23 @@ app.route({
       parse,
       validate,
       execute,
-      contextFactory,
-    });
+      contextFactory
+    })
 
     if (result.type === 'RESPONSE') {
-      res.status(result.status);
-      res.send(result.payload);
+      res.status(result.status)
+      res.send(result.payload)
     } else {
       // You can find a complete example with Subscriptions and stream/defer here:
       // https://github.com/contrawork/graphql-helix/blob/master/examples/fastify/server.ts
-      res.send({ errors: [{ message: 'Not Supported in this demo' }] });
+      res.send({ errors: [{ message: 'Not Supported in this demo' }] })
     }
-  },
-});
+  }
+})
 
 app.listen(3000, () => {
-  console.log(`GraphQL server is running...`);
-});
+  console.log(`GraphQL server is running...`)
+})
 ```
 
 With that example, we only used `useLogger`, so while executing GraphQL operations, you should see that everything you do should be printed to the log.
@@ -188,9 +188,9 @@ const getEnveloped = envelop({
     useSchema(schema),
     useParserCache(),
     useValidationCache(),
-    useGraphQLJit(),
-  ],
-});
+    useGraphQLJit()
+  ]
+})
 ```
 
 > By using `useParserCache` we make sure to parse every unique operation only once.
@@ -212,33 +212,33 @@ Plugins can either live as internal plugins that are relevent only to your proje
 To get started with a custom plugin, choose what phases you need, and create functions that handle what you need. Envelop will provide a low-level, flexible api in each phase, so you can communicate with the core pipeline.
 
 ```ts
-import { Plugin } from '@envelop/types';
+import { Plugin } from '@envelop/types'
 
 const myPlugin: Plugin = {
   onParse({ params }) {
-    console.log('Parse started!', { args });
+    console.log('Parse started!', { args })
 
     return (result) => {
-      console.log('Parse done!', { result });
-    };
+      console.log('Parse done!', { result })
+    }
   },
   onExecute({ args }) {
-    console.log('Execution started!', { args });
+    console.log('Execution started!', { args })
 
     return {
       onExecuteDone: ({ result }) => {
-        console.log('Execution done!', { result });
-      },
-    };
-  },
-};
+        console.log('Execution done!', { result })
+      }
+    }
+  }
+}
 
 const getEnveloped = envelop({
   plugins: [
     /// ... other plugins ...,
-    myPlugin,
-  ],
-});
+    myPlugin
+  ]
+})
 ```
 
 **[You can find here the complete plugins documentation](https://www.envelop.dev/docs/plugins)**
@@ -250,13 +250,13 @@ const getEnveloped = envelop({
 In many cases, developers are looking for a way to reuse their server setup, as a boilerplate/template. Envelop allows you to create Envelops instances and later share it with others.
 
 ```ts
-import { envelop, useEnvelop, useSchema } from '@envelop/core';
+import { envelop, useEnvelop, useSchema } from '@envelop/core'
 
 // Somewhere where you wish to create the basics of what you wish to share
 // This defined the base plugins you wish to use as base.
 const myBaseEnvelop = envelop({
-  plugins: [useOrgAuth(), useOrgTracing(), useOrgLogsCollector()],
-});
+  plugins: [useOrgAuth(), useOrgTracing(), useOrgLogsCollector()]
+})
 
 // Later, when you create your own Envelop, you can extend that and add custom plugins.
 // You can also specify the schema only at this point
@@ -264,9 +264,9 @@ const myEnvelop = envelop({
   plugins: [
     useEnvelop(myBaseEnvelop),
     useSchema(myServerSchema),
-    useMyCustomPlugin(),
-  ],
-});
+    useMyCustomPlugin()
+  ]
+})
 ```
 
 So if you are working in a microservices environment, or in an enterprise that has many servers - you can now share the entire base GraphQL setup in a single variable, and extend it based on your needs.

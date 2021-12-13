@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'New GraphQL Modules ',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2020-12-21',
   description:
     'GraphQL Modules showed up on NPM almost 3 years ago but now we decided to rewrite it from scratch.',
-  image: '/blog-assets/graphql-modules-v1/cover.png',
-};
+  image: '/blog-assets/graphql-modules-v1/cover.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 # History lesson
 
@@ -80,7 +80,7 @@ Use and extend `GraphQLModules.GlobalContext` like this:
 declare global {
   namespace GraphQLModules {
     interface GlobalContext {
-      request: any;
+      request: any
     }
   }
 }
@@ -107,20 +107,20 @@ Singletons can't directly access Operation scoped services, meaning they probabl
 Thanks to @ExecutionContext decorator, every Singleton provider gets access to the GraphQL Context and the Operation scoped Injector.
 
 ```typescript
-import { Injectable, ExecutionContext } from 'graphql-modules';
-import { Config } from './config';
+import { Injectable, ExecutionContext } from 'graphql-modules'
+import { Config } from './config'
 
 @Injectable()
 export class Data {
   constructor(private config: Config) {}
 
   @ExecutionContext()
-  private context: ExecutionContext;
+  private context: ExecutionContext
 
   someMethod() {
-    console.log('Environment', this.config.env);
+    console.log('Environment', this.config.env)
 
-    const value = this.context.injector.get(SOME_TOKEN);
+    const value = this.context.injector.get(SOME_TOKEN)
   }
 }
 ```
@@ -134,7 +134,7 @@ GraphQL Modules provides [a set of utilities for testing](https://graphql-module
 To access the testing utilities, import `testkit` object from `graphql-modules` package:
 
 ```typescript
-import { testkit } from 'graphql-modules';
+import { testkit } from 'graphql-modules'
 ```
 
 The testkit object and its API will grow over time, we expect to implement more and more useful features in upcoming releases.

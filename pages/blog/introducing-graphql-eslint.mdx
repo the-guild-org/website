@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'Introducing GraphQL-ESLint!',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2020-10-03',
   description:
     'A new tool by The Guild, for making your GraphQL schema and GraphQL operations more standard and robust!',
-  image: 'https://github.com/dotansimha/graphql-eslint/raw/master/logo.png',
-};
+  image: 'https://github.com/dotansimha/graphql-eslint/raw/master/logo.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 **We are super excited to introduce a new development tool by The Guild!**
 
@@ -73,22 +73,22 @@ Need a new custom rule? Just create a file in your project, and travel the AST t
 Think that rule might be valuable for others? [Create a PR!](https://github.com/dotansimha/graphql-eslint#contributing)
 
 ```ts
-import { GraphQLESLintRule } from '@graphql-eslint/eslint-plugin';
+import { GraphQLESLintRule } from '@graphql-eslint/eslint-plugin'
 
 const rule: GraphQLESLintRule = {
   create(context) {
     return {
       OperationDefinition(node) {
-        if (node && (!node.name || node.name.value === '')) {
+        if (!node.name || node.name.value === '') {
           context.report({
             node: node,
-            message: `Oops, name is required on GraphQL operations!`,
-          });
+            message: `Oops, name is required on GraphQL operations!`
+          })
         }
-      },
-    };
-  },
-};
+      }
+    }
+  }
+}
 ```
 
 ## Compared to similar tools

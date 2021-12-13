@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'Implementing a runtime version of JSX',
@@ -6,10 +6,10 @@ export const meta = {
   tags: ['react'],
   date: '2018-11-12',
   description: 'Learning how to think like a JSX parser and building an AST',
-  image: '/medium/fadbe31be89eb8b0be9fc5f035c9617d.png',
-};
+  image: '/medium/fadbe31be89eb8b0be9fc5f035c9617d.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 ## Learning how to think like a JSX parser and building an AST
 
@@ -26,14 +26,14 @@ Below is an example of the final product:
 ```javascript
 class Hello extends React.Component {
   render() {
-    return jsx`<div>Hello ${this.props.name}</div>`;
+    return jsx`<div>Hello ${this.props.name}</div>`
   }
 }
 
 ReactDOM.render(
   jsx`<${Hello} name="World" />`,
   document.getElementById('container')
-);
+)
 ```
 
 Before we go ahead and rush to implementing the parser let’s understand what we’re aiming for. JSX simply takes an HTML-like syntax and transforms it into nested `React.createElement()` calls. What makes JSX unique is that we can use string interpolation within our HTML templates, so we can provide it with data which doesn’t necessarily has to be serialized, things like functions, arrays, or objects.
@@ -46,7 +46,7 @@ const el = (props) => (
     <Icon src={props.icon} />
     <span>{props.text}</span>
   </div>
-);
+)
 ```
 
 We should get the following output once compiling it with Babel:
@@ -58,7 +58,7 @@ const el = (props) =>
     { onClick: props.onClick },
     React.createElement(Icon, { src: props.icon }),
     React.createElement('span', null, props.text)
-  );
+  )
 ```
 
 Just aquick reminder — the compiled result should be used internally by ReactDOM to differentiate changes in the virtual DOM and then render them. This is something which is React specific and has nothing to do with JSX, so at this point we have achieved our goal.
@@ -100,7 +100,7 @@ So essentially the signature of our function should look like this:
 ```javascript
 const jsx = (splits, ...values) => {
   // ...
-};
+}
 ```
 
 Since we’re gonna heavily rely on regular expression, it will be much easier to deal with a consistent string, so we can unleash the regexp full potential. For now let’s focus on the string part without the literal, and parse regular HTML string. Once we have that logic, we can implement string interpolation handling on top of it.
@@ -369,10 +369,10 @@ The HTML parsing part is finished! Now we can call the `parseElement()` for any 
 Now we’re gonna add string interpolation on top of the HTML string parsing logic. Since we still wanna use the power of regexp at its full potential, we’re gonna assume that the given string would be a template with placeholders, where each of them should be replaced with a value. That would be the easiest and most efficient way, rather than accepting an array of string splits.
 
 ```javascript
-[
+;[
   '<__jsxPlaceholder>Hello __jsxPlaceholder</__jsxPlaceholder>',
-  [MyComponent, 'World', MyComponent],
-];
+  [MyComponent, 'World', MyComponent]
+]
 ```
 
 Accordingly, we will update the parsing functions’ signature and their calls, and we will define a placeholder constant:

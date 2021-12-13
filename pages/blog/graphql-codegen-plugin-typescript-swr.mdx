@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'Introducing: GraphQL Codegen plugin for TypeScript & SWR!',
@@ -6,10 +6,10 @@ export const meta = {
   tags: ['graphql', 'codegen', 'typescript', 'react', 'hooks', 'swr'],
   date: '2020-11-23',
   description: 'Working with GraphQL, TypeScript and SWR is now much simpler!',
-  image: '/blog-assets/graphql-codegen-plugin-typescript-swr/codegen-swr.png',
-};
+  image: '/blog-assets/graphql-codegen-plugin-typescript-swr/codegen-swr.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 The other day I was wondering which GraphQL client library to use for my personal project.
 
@@ -30,7 +30,7 @@ export function getSdkWithHooks(
   client: GraphQLClient,
   withWrapper: SdkFunctionWrapper = defaultWrapper
 ) {
-  const sdk = getSdk(client, withWrapper);
+  const sdk = getSdk(client, withWrapper)
   return {
     ...sdk,
     useGetPost(
@@ -38,9 +38,9 @@ export function getSdkWithHooks(
       variables: GetPostQueryVariables,
       config?: SWRConfigInterface<GetPostQuery>
     ) {
-      return useSWR<GetPostQuery>(key, () => sdk.GetPost(variables), config);
-    },
-  };
+      return useSWR<GetPostQuery>(key, () => sdk.GetPost(variables), config)
+    }
+  }
 }
 ```
 
@@ -49,16 +49,16 @@ export function getSdkWithHooks(
 This way, a wrapper function is generated for each GraphQL operation (query/mutation/subscription). The generated function uses the base code from the **typescript-graphql-request plugin**, and it uses **useSWR** to execute the actual request, so the user can get the same result as `useSWR` by simply entering the query key, variables, and options in the component!
 
 ```typescript
-const sdk = getSdkWithHooks(new GraphQLClient(API_URL, options));
+const sdk = getSdkWithHooks(new GraphQLClient(API_URL, options))
 
 const PostPage = ({ slug }) => {
   const { data, mutate, error } = sdk.useGetPost(
     `blog/post/${slug}`,
     { slug },
     { refreshInterval: 60 }
-  );
-  return <Post post={data.post} />;
-};
+  )
+  return <Post post={data.post} />
+}
 ```
 
 ## Usage

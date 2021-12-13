@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'Authentication with AccountsJS & GraphQL Modules',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2018-11-16',
   description:
     'How To Implement Server-Side using AccountsJS, GraphQL-Modules and Apollo-Server',
-  image: '/medium/39e75508d22dbe737fad027dd23819b8.png',
-};
+  image: '/medium/39e75508d22dbe737fad027dd23819b8.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 When starting a backend project, two of the biggest concerns will usually be the right structure of the project and authentication. If you could skip thinking and planning about these two, starting a new backend project can be much easier.
 
@@ -273,32 +273,32 @@ type Post {
 Now we can create a simple frontend app by using Apollo-Client and AccountsJS client for this backend app. The example below shows some example code that works on these two.
 
 ```tsx
-import React, { Component } from 'react';
-import { AccountsClient } from '@accounts/client';
-import { AccountsClientPassword } from '@accounts/client-password';
-import GraphQLClient from '@accounts/graphql-client';
-import ApolloClient from 'apollo-boost';
-import { Query, Mutation, ApolloProvider } from 'react-apollo';
-import gql from 'graphql-tag';
-import ReactDOM from 'react-dom';
+import React, { Component } from 'react'
+import { AccountsClient } from '@accounts/client'
+import { AccountsClientPassword } from '@accounts/client-password'
+import GraphQLClient from '@accounts/graphql-client'
+import ApolloClient from 'apollo-boost'
+import { Query, Mutation, ApolloProvider } from 'react-apollo'
+import gql from 'graphql-tag'
+import ReactDOM from 'react-dom'
 
 const apolloClient = new ApolloClient({
   request: async (operation) => {
-    const tokens = await accountsClient.getTokens();
+    const tokens = await accountsClient.getTokens()
     if (tokens) {
       operation.setContext({
         headers: {
-          'accounts-access-token': tokens.accessToken,
-        },
-      });
+          'accounts-access-token': tokens.accessToken
+        }
+      })
     }
   },
-  uri: 'http://localhost:4000/graphql',
-});
+  uri: 'http://localhost:4000/graphql'
+})
 
-const accountsGraphQL = new GraphQLClient({ graphQLClient: apolloClient });
-const accountsClient = new AccountsClient({}, accountsGraphQL);
-const accountsPassword = new AccountsClientPassword(accountsClient);
+const accountsGraphQL = new GraphQLClient({ graphQLClient: apolloClient })
+const accountsClient = new AccountsClient({}, accountsGraphQL)
+const accountsPassword = new AccountsClientPassword(accountsClient)
 
 const ALL_POSTS_QUERY = gql`
   query AllPosts {
@@ -311,34 +311,34 @@ const ALL_POSTS_QUERY = gql`
       }
     }
   }
-`;
+`
 
 const ADD_POST_MUTATION = gql`
   mutation AddPost($title: String, $content: String) {
     addPost(title: $title, content: $content)
   }
-`;
+`
 
 class App extends Component {
   state = {
     credentials: {
       username: '',
-      password: '',
+      password: ''
     },
     newPost: {
       title: '',
-      content: '',
+      content: ''
     },
-    user: null,
-  };
+    user: null
+  }
   componentDidMount() {
-    return this.updateUserState();
+    return this.updateUserState()
   }
   async updateUserState() {
-    const tokens = await accountsClient.refreshSession();
+    const tokens = await accountsClient.refreshSession()
     if (tokens) {
-      const user = await accountsGraphQL.getUser();
-      await this.setState({ user });
+      const user = await accountsGraphQL.getUser()
+      await this.setState({ user })
     }
   }
   renderAllPosts() {
@@ -346,10 +346,10 @@ class App extends Component {
       <Query query={ALL_POSTS_QUERY}>
         {({ data, loading, error }) => {
           if (loading) {
-            return <p>Loading...</p>;
+            return <p>Loading...</p>
           }
           if (error) {
-            return <p>Error: {error}</p>;
+            return <p>Error: {error}</p>
           }
           return data.allPosts.map((post: any) => (
             <li>
@@ -357,10 +357,10 @@ class App extends Component {
               <p>{post.content}</p>
               <p>Author: {post.author.username}</p>
             </li>
-          ));
+          ))
         }}
       </Query>
-    );
+    )
   }
   renderLoginRegister() {
     return (
@@ -376,8 +376,8 @@ class App extends Component {
                   this.setState({
                     credentials: {
                       ...this.state.credentials,
-                      username: e.target.value,
-                    },
+                      username: e.target.value
+                    }
                   })
                 }
               />
@@ -392,8 +392,8 @@ class App extends Component {
                   this.setState({
                     credentials: {
                       ...this.state.credentials,
-                      password: e.target.value,
-                    },
+                      password: e.target.value
+                    }
                   })
                 }
               />
@@ -402,15 +402,15 @@ class App extends Component {
           <p>
             <button
               onClick={(e) => {
-                e.preventDefault();
+                e.preventDefault()
                 accountsPassword
                   .login({
                     password: this.state.credentials.password,
                     user: {
-                      username: this.state.credentials.username,
-                    },
+                      username: this.state.credentials.username
+                    }
                   })
-                  .then(() => this.updateUserState());
+                  .then(() => this.updateUserState())
               }}
             >
               Login
@@ -419,21 +419,21 @@ class App extends Component {
           <p>
             <button
               onClick={(e) => {
-                e.preventDefault();
+                e.preventDefault()
                 accountsPassword
                   .createUser({
                     password: this.state.credentials.password,
-                    username: this.state.credentials.username,
+                    username: this.state.credentials.username
                   })
                   .then(() => {
-                    alert('Please login with your new credentials');
+                    alert('Please login with your new credentials')
                     this.setState({
                       credentials: {
                         username: '',
-                        password: '',
-                      },
-                    });
-                  });
+                        password: ''
+                      }
+                    })
+                  })
               }}
             >
               Register
@@ -441,7 +441,7 @@ class App extends Component {
           </p>
         </form>
       </fieldset>
-    );
+    )
   }
   renderAddPost() {
     return (
@@ -460,8 +460,8 @@ class App extends Component {
                         this.setState({
                           newPost: {
                             ...this.state.newPost,
-                            title: e.target.value,
-                          },
+                            title: e.target.value
+                          }
                         })
                       }
                     />
@@ -476,8 +476,8 @@ class App extends Component {
                         this.setState({
                           newPost: {
                             ...this.state.newPost,
-                            content: e.target.value,
-                          },
+                            content: e.target.value
+                          }
                         })
                       }
                     />
@@ -487,22 +487,22 @@ class App extends Component {
                   <input
                     type="submit"
                     onClick={(e) => {
-                      e.preventDefault();
+                      e.preventDefault()
                       addPost({
                         variables: {
                           title: this.state.newPost.title,
-                          content: this.state.newPost.content,
-                        },
-                      });
+                          content: this.state.newPost.content
+                        }
+                      })
                     }}
                   />
                 </p>
               </form>
             </fieldset>
-          );
+          )
         }}
       </Mutation>
-    );
+    )
   }
   render() {
     return (
@@ -512,7 +512,7 @@ class App extends Component {
         {!this.state.user && this.renderLoginRegister()}
         {this.state.user && this.renderAddPost()}
       </div>
-    );
+    )
   }
 }
 
@@ -521,7 +521,7 @@ ReactDOM.render(
     <App />
   </ApolloProvider>,
   document.getElementById('root')
-);
+)
 ```
 
 As you can see from the example, it can be really easy to create an application that has authentication in modular and future proof approach.

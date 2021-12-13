@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'git rebase (not) --interactive',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2018-09-03',
   description:
     'How to build a Node.JS script to re-write history. pre-requisites: Familiarity with git rebase --interacitve',
-  image: '/medium/aaf7b6a36c30ab802f51d8ecb40478e9.png',
-};
+  image: '/medium/aaf7b6a36c30ab802f51d8ecb40478e9.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 _tl;dr: How to build a Node.JS script to re-write history. pre-requisites: Familiarity with git rebase --interacitve._
 
@@ -71,13 +71,13 @@ Using this principle, here’s a cool script that will remove a range of commits
 
 ```javascript
 #!/usr/bin/env node
-const execa = require('execa');
-const fs = require('fs');
-const tmp = require('tmp');
+const execa = require('execa')
+const fs = require('fs')
+const tmp = require('tmp')
 
 // Main
 {
-  const [anchor, amount = 1] = process.argv.slice(-2).map(Number);
+  const [anchor, amount = 1] = process.argv.slice(-2).map(Number)
 
   gitRebaseInteractive(
     anchor,
@@ -88,23 +88,23 @@ const tmp = require('tmp');
         // Each line would be a cell
         .split('\n')
         // Get rid of empty lines
-        .filter(Boolean);
+        .filter(Boolean)
 
       // Commits we would like to drop
       const dropOperations = operations
         .slice(0, amount)
-        .map((operation) => operation.replace('pick', 'drop'));
+        .map((operation) => operation.replace('pick', 'drop'))
 
       // Commits we would like to pick
-      const pickOperations = operations.slice(amount);
+      const pickOperations = operations.slice(amount)
 
       // Composing final rebase file
-      return [].concat(dropOperations).concat(pickOperations).join('\n');
+      return [].concat(dropOperations).concat(pickOperations).join('\n')
     },
     [amount]
-  );
+  )
 
-  console.log(`Removed ${amount} commits starting ${anchor}`);
+  console.log(`Removed ${amount} commits starting ${anchor}`)
 }
 
 // Runs a git-rebase-interactive in a non interactive manner by providing a script
@@ -112,20 +112,20 @@ const tmp = require('tmp');
 function gitRebaseInteractive(head, fn, args) {
   execa.sync('git', ['rebase', '-i', head], {
     env: {
-      GIT_SEQUENCE_EDITOR: gitEdit(fn, args),
-    },
-  });
+      GIT_SEQUENCE_EDITOR: gitEdit(fn, args)
+    }
+  })
 }
 
 // Evaluates a script in a new process which should edit a git file.
 // The input of the provided function should be the contents of the file and the output
 // should be the new contents of the file
 function gitEdit(fn, args) {
-  args = args.map((arg) => `'${arg}'`).join(', ');
+  args = args.map((arg) => `'${arg}'`).join(', ')
 
-  const body = fn.toString().replace(/\\/g, '\\\\').replace(/`/g, '\\`');
+  const body = fn.toString().replace(/\\/g, '\\\\').replace(/`/g, '\\`')
 
-  const scriptFile = tmp.fileSync({ unsafeCleanup: true });
+  const scriptFile = tmp.fileSync({ unsafeCleanup: true })
 
   fs.writeFileSync(
     scriptFile.name,
@@ -138,9 +138,9 @@ function gitEdit(fn, args) {
     fs.writeFileSync(file, content)
     fs.unlinkSync('${scriptFile.name}')
   `
-  );
+  )
 
-  return `node ${scriptFile.name}`;
+  return `node ${scriptFile.name}`
 }
 ```
 

@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title:
@@ -8,10 +8,10 @@ export const meta = {
   date: '2019-06-19',
   description:
     'After a few years of working with GraphQL, as open-source developers and as infrastructure team in large enterprises, we’ve learned some lessons about GraphQL, and how to authenticate and authorize GraphQL API.',
-  image: '/blog-assets/graphql-modules-auth/cover.jpeg',
-};
+  image: '/blog-assets/graphql-modules-auth/cover.jpeg'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 After a few years of working with GraphQL, as open-source developers and as infrastructure team in large enterprises, we’ve learned some lessons about GraphQL, and how to authenticate and authorize GraphQL API.
 
@@ -81,8 +81,8 @@ I’m assuming that you already have your own favorite way to authenticate, whet
 Let’s start by creating a simple Apollo-Server instance, with a very simple schema. We’ll focus on exposing the `currentUser` as a query field.
 
 ```typescript
-import { ApolloServer } from 'apollo-server';
-import gql from 'graphql-tag';
+import { ApolloServer } from 'apollo-server'
+import gql from 'graphql-tag'
 
 const typeDefs = gql`
   type Query {
@@ -92,13 +92,13 @@ const typeDefs = gql`
     id: ID!
     username: String!
   }
-`;
+`
 
-const server = new ApolloServer({ typeDefs });
+const server = new ApolloServer({ typeDefs })
 
 server.listen().then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+  console.log(`🚀 Server ready at ${url}`)
+})
 ```
 
 Now, let’s implement `context` , and see if we can get a valid user out of the values we get there.
@@ -110,8 +110,8 @@ So we just trying to get a user and a token, and return them to Apollo-Server, s
 // auth-helpers.ts
 
 export interface User {
-  _id: string;
-  username: string;
+  _id: string
+  username: string
 }
 
 export async function tradeTokenForUser(token: string): Promise<User> {
@@ -123,11 +123,11 @@ export async function tradeTokenForUser(token: string): Promise<User> {
 ```
 
 ```typescript
-import { ApolloServer } from 'apollo-server';
-import gql from 'graphql-tag';
-import { tradeTokenForUser } from './auth-helpers';
+import { ApolloServer } from 'apollo-server'
+import gql from 'graphql-tag'
+import { tradeTokenForUser } from './auth-helpers'
 
-const HEADER_NAME = 'authorization';
+const HEADER_NAME = 'authorization'
 
 const typeDefs = gql`
   type Query {
@@ -137,34 +137,34 @@ const typeDefs = gql`
     id: ID!
     username: String!
   }
-`;
+`
 
 const server = new ApolloServer({
   typeDefs,
   context: async ({ req }) => {
-    let authToken = null;
-    let currentUser = null;
+    let authToken = null
+    let currentUser = null
 
     try {
-      authToken = req.headers[HEADER_NAME];
+      authToken = req.headers[HEADER_NAME]
 
       if (authToken) {
-        currentUser = await tradeTokenForUser(authToken);
+        currentUser = await tradeTokenForUser(authToken)
       }
     } catch (e) {
-      console.warn(`Unable to authenticate using auth token: ${authToken}`);
+      console.warn(`Unable to authenticate using auth token: ${authToken}`)
     }
 
     return {
       authToken,
-      currentUser,
-    };
-  },
-});
+      currentUser
+    }
+  }
+})
 
 server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`);
-});
+  console.log(`🚀  Server ready at ${url}`)
+})
 ```
 
 _Note that in a good GraphQL server implementation, the `context` is built once per request, and shouldn’t change over time. So they only way to modify it is using the `context` function that builds it before the resolver getting called._
@@ -172,11 +172,11 @@ _Note that in a good GraphQL server implementation, the `context` is built once 
 Now, we can finally implement the `resolvers` for the server:
 
 ```typescript
-import { ApolloServer } from 'apollo-server';
-import gql from 'graphql-tag';
-import { tradeTokenForUser } from './auth-helpers';
+import { ApolloServer } from 'apollo-server'
+import gql from 'graphql-tag'
+import { tradeTokenForUser } from './auth-helpers'
 
-const HEADER_NAME = 'authorization';
+const HEADER_NAME = 'authorization'
 
 const typeDefs = gql`
   type Query {
@@ -186,45 +186,45 @@ const typeDefs = gql`
     id: ID!
     username: String!
   }
-`;
+`
 
 const resolvers = {
   Query: {
-    me: (root, args, context) => context.currentUser,
+    me: (root, args, context) => context.currentUser
   },
   User: {
     id: (user) => user._id,
-    username: (user) => user.username,
-  },
-};
+    username: (user) => user.username
+  }
+}
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ req }) => {
-    let authToken = null;
-    let currentUser = null;
+    let authToken = null
+    let currentUser = null
 
     try {
-      authToken = req.headers[HEADER_NAME];
+      authToken = req.headers[HEADER_NAME]
 
       if (authToken) {
-        currentUser = await tradeTokenForUser(authToken);
+        currentUser = await tradeTokenForUser(authToken)
       }
     } catch (e) {
-      console.warn(`Unable to authenticate using auth token: ${authToken}`);
+      console.warn(`Unable to authenticate using auth token: ${authToken}`)
     }
 
     return {
       authToken,
-      currentUser,
-    };
-  },
-});
+      currentUser
+    }
+  }
+})
 
 server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`);
-});
+  console.log(`🚀  Server ready at ${url}`)
+})
 ```
 
 This is a naive implementation, that assumes that the token is valid, because otherwise the `context.currentUser` will be `null`.
@@ -241,19 +241,19 @@ I also added a _public_ part of the schema (`Query.serverTime`), that should be 
 
 export const authenticated = (next) => (root, args, context, info) => {
   if (!context.currentUser) {
-    throw new Error(`Unauthenticated!`);
+    throw new Error(`Unauthenticated!`)
   }
 
-  return next(root, args, context, info);
-};
+  return next(root, args, context, info)
+}
 ```
 
 ```typescript
-import { ApolloServer } from 'apollo-server';
-import gql from 'graphql-tag';
-import { tradeTokenForUser } from './auth-helpers';
+import { ApolloServer } from 'apollo-server'
+import gql from 'graphql-tag'
+import { tradeTokenForUser } from './auth-helpers'
 
-const HEADER_NAME = 'authorization';
+const HEADER_NAME = 'authorization'
 
 const typeDefs = gql`
   type Query {
@@ -264,46 +264,46 @@ const typeDefs = gql`
     id: ID!
     username: String!
   }
-`;
+`
 
 const resolvers = {
   Query: {
     me: authenticated((root, args, context) => context.currentUser),
-    serverTime: () => new Date(),
+    serverTime: () => new Date()
   },
   User: {
     id: (user) => user._id,
-    username: (user) => user.username,
-  },
-};
+    username: (user) => user.username
+  }
+}
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ req }) => {
-    let authToken = null;
-    let currentUser = null;
+    let authToken = null
+    let currentUser = null
 
     try {
-      authToken = req.headers[HEADER_NAME];
+      authToken = req.headers[HEADER_NAME]
 
       if (authToken) {
-        currentUser = await tradeTokenForUser(authToken);
+        currentUser = await tradeTokenForUser(authToken)
       }
     } catch (e) {
-      console.warn(`Unable to authenticate using auth token: ${authToken}`);
+      console.warn(`Unable to authenticate using auth token: ${authToken}`)
     }
 
     return {
       authToken,
-      currentUser,
-    };
-  },
-});
+      currentUser
+    }
+  }
+})
 
 server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`);
-});
+  console.log(`🚀  Server ready at ${url}`)
+})
 ```
 
 Great! So now our server is authenticated and we can get the `currentUser` in our resolvers.
@@ -318,13 +318,13 @@ Implementing Authorization is no different than implementing the `authenticated`
 Let’s add `type Article` to the schema, and allow creating article only to users with `role` set to `EDITOR` . It’s that simple:
 
 ```typescript
-import { ApolloServer } from 'apollo-server';
-import gql from 'graphql-tag';
-import { tradeTokenForUser } from './auth-helpers';
-import { authenticated } from './authenticated-guard';
-import { validateRole } from './validate-role';
+import { ApolloServer } from 'apollo-server'
+import gql from 'graphql-tag'
+import { tradeTokenForUser } from './auth-helpers'
+import { authenticated } from './authenticated-guard'
+import { validateRole } from './validate-role'
 
-const HEADER_NAME = 'authorization';
+const HEADER_NAME = 'authorization'
 
 const typeDefs = gql`
   type Query {
@@ -343,53 +343,53 @@ const typeDefs = gql`
   type Mutation {
     publishArticle(title: String!, content: String!): Article!
   }
-`;
+`
 
 const resolvers = {
   Query: {
     me: authenticated((root, args, context) => context.currentUser),
-    serverTime: () => new Date(),
+    serverTime: () => new Date()
   },
   Mutation: {
     publishArticle: authenticated(
       validateRole('EDITOR')((root, { title, content }, context) =>
         createNewArticle(title, content, context.currentUser)
       )
-    ),
+    )
   },
   User: {
     id: (user) => user._id,
-    username: (user) => user.username,
-  },
-};
+    username: (user) => user.username
+  }
+}
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ req }) => {
-    let authToken = null;
-    let currentUser = null;
+    let authToken = null
+    let currentUser = null
 
     try {
-      authToken = req.headers[HEADER_NAME];
+      authToken = req.headers[HEADER_NAME]
 
       if (authToken) {
-        currentUser = await tradeTokenForUser(authToken);
+        currentUser = await tradeTokenForUser(authToken)
       }
     } catch (e) {
-      console.warn(`Unable to authenticate using auth token: ${authToken}`);
+      console.warn(`Unable to authenticate using auth token: ${authToken}`)
     }
 
     return {
       authToken,
-      currentUser,
-    };
-  },
-});
+      currentUser
+    }
+  }
+})
 
 server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`);
-});
+  console.log(`🚀  Server ready at ${url}`)
+})
 ```
 
 ```typescript
@@ -397,11 +397,11 @@ server.listen().then(({ url }) => {
 
 export const validateRole = (role) => (next) => (root, args, context, info) => {
   if (context.currentUser.role !== role) {
-    throw new Error(`Unauthorized!`);
+    throw new Error(`Unauthorized!`)
   }
 
-  return next(root, args, context, info);
-};
+  return next(root, args, context, info)
+}
 ```
 
 # Next-Level implementation with GraphQL-Modules
@@ -423,7 +423,7 @@ Then, create another module called `common` and the general parts, and articles 
 ```typescript
 // articles-module.ts
 
-import { GraphQLModule } from '@graphql-modules/core';
+import { GraphQLModule } from '@graphql-modules/core'
 
 export const articlesModule = new GraphQLModule({
   name: 'articles',
@@ -442,19 +442,19 @@ export const articlesModule = new GraphQLModule({
   resolvers: {
     Mutation: {
       publishArticle: (root, { title, content }, { currentUser }) =>
-        createNewArticle(title, content, currentUser),
-    },
-  },
-});
+        createNewArticle(title, content, currentUser)
+    }
+  }
+})
 ```
 
 ```typescript
 // auth-module.ts
 
-import { GraphQLModule } from '@graphql-modules/core';
-import { tradeTokenForUser } from './auth-helpers';
+import { GraphQLModule } from '@graphql-modules/core'
+import { tradeTokenForUser } from './auth-helpers'
 
-const HEADER_NAME = 'authorization';
+const HEADER_NAME = 'authorization'
 
 export const authModule = new GraphQLModule({
   name: 'auth',
@@ -469,39 +469,39 @@ export const authModule = new GraphQLModule({
   `,
   resolvers: {
     Query: {
-      me: (root, args, { currentUser }) => currentUser,
+      me: (root, args, { currentUser }) => currentUser
     },
     User: {
       id: (user) => user._id,
-      username: (user) => user.username,
-    },
+      username: (user) => user.username
+    }
   },
   contextBuilder: ({ req }) => {
-    let authToken = null;
-    let currentUser = null;
+    let authToken = null
+    let currentUser = null
 
     try {
-      authToken = req.headers[HEADER_NAME];
+      authToken = req.headers[HEADER_NAME]
 
       if (authToken) {
-        currentUser = await tradeTokenForUser(authToken);
+        currentUser = await tradeTokenForUser(authToken)
       }
     } catch (e) {
-      console.warn(`Unable to authenticate using auth token: ${authToken}`);
+      console.warn(`Unable to authenticate using auth token: ${authToken}`)
     }
 
     return {
       authToken,
-      currentUser,
-    };
-  },
-});
+      currentUser
+    }
+  }
+})
 ```
 
 ```typescript
 // common-module.ts
 
-import { GraphQLModule } from '@graphql-modules/core';
+import { GraphQLModule } from '@graphql-modules/core'
 
 export const commonModule = new GraphQLModule({
   name: 'common',
@@ -512,47 +512,47 @@ export const commonModule = new GraphQLModule({
   `,
   resolvers: {
     Query: {
-      serverTime: () => new Date(),
-    },
-  },
-});
+      serverTime: () => new Date()
+    }
+  }
+})
 ```
 
 ```typescript
 // resolvers-composition.ts
 
-import { authenticated } from './authenticated-guard';
-import { validateRole } from './validate-role';
+import { authenticated } from './authenticated-guard'
+import { validateRole } from './validate-role'
 
 export const resolversComposition = {
   'Query.me': [authenticated],
-  'Mutation.publishArticle': [authenticated, validateRole],
-};
+  'Mutation.publishArticle': [authenticated, validateRole]
+}
 ```
 
 ```typescript
 // server.ts
 
-import { ApolloServer } from 'apollo-server';
-import gql from 'graphql-tag';
-import { resolversComposition } from './resolvers-composition';
+import { ApolloServer } from 'apollo-server'
+import gql from 'graphql-tag'
+import { resolversComposition } from './resolvers-composition'
 
 const app = new GraphQLModule({
   name: 'app',
   imports: [commonModule, authModule, articleModule],
-  resolversComposition,
-});
+  resolversComposition
+})
 
-const { schema, context } = app;
+const { schema, context } = app
 
 const server = new ApolloServer({
   schema,
-  context,
-});
+  context
+})
 
 server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`);
-});
+  console.log(`🚀  Server ready at ${url}`)
+})
 ```
 
 ## The Future of Authentication with GraphQL-Modules and GraphQL @directives
@@ -569,39 +569,39 @@ directive @protect(role: String) on FIELD
 Then, you can easily alter your `resolversComposition` into a function that accepts `GraphQLSchema` , and then check using your schema object, which resolves require which logic, and do a mapping:
 
 ```typescript
-import { GraphQLSchema } from 'graphql';
-import { getFieldsWithDirectives } from '@graphql-modules/utils';
-import { authenticated } from './authenticated-guard';
-import { validateRole } from './validate-role';
+import { GraphQLSchema } from 'graphql'
+import { getFieldsWithDirectives } from '@graphql-modules/utils'
+import { authenticated } from './authenticated-guard'
+import { validateRole } from './validate-role'
 
 const DIRECTIVE_TO_GUARD = {
   auth: () => authenticated,
-  protect: ({ role }) => validateRole(role),
-};
+  protect: ({ role }) => validateRole(role)
+}
 
 export const resolversComposition = ({ typeDefs }) => {
-  const fieldsAndTypeToDirectivesMap = getFieldsWithDirectives(typeDefs);
+  const fieldsAndTypeToDirectivesMap = getFieldsWithDirectives(typeDefs)
 
   for (const fieldPath in fieldsAndTypeToDirectivesMap) {
-    const directives = fieldsAndTypeToDirectivesMap[fieldPath];
+    const directives = fieldsAndTypeToDirectivesMap[fieldPath]
 
     if (directives.length > 0) {
       result[fieldPath] = directives
         .map((directive) => {
           if (DIRECTIVE_TO_GUARD[directive.name]) {
-            const mapperFn = DIRECTIVE_TO_GUARD[directive.name];
+            const mapperFn = DIRECTIVE_TO_GUARD[directive.name]
 
-            return mapperFn(directive.args);
+            return mapperFn(directive.args)
           }
 
-          return null;
+          return null
         })
-        .filter((a) => a);
+        .filter((a) => a)
     }
   }
 
-  return result;
-};
+  return result
+}
 ```
 
 The, you add the directives to your schema declaration:

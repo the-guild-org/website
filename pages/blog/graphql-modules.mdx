@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'GraphQL Modules  —  Feature based GraphQL Modules at scale',
@@ -6,10 +6,10 @@ export const meta = {
   tags: ['graphql', 'graphql-modules'],
   date: '2018-11-05',
   description: 'Feature based GraphQL Modules at scale',
-  image: '/medium/a4a2c4f56993a801a7ffe394fc0f95f1.png',
-};
+  image: '/medium/a4a2c4f56993a801a7ffe394fc0f95f1.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 Today we are happy to announce that we are open sourcing a framework we’ve been using for the past couple of months in production — [GraphQL Modules](https://graphql-modules.com/)!
 
@@ -62,13 +62,13 @@ In the following example, you can see a basic implementation for GraphQL Modules
 So when `User` module is loaded, the `type User` is created, and when `Chat` module is loaded, the `type User` being extended with more fields.
 
 ```typescript
-import { GraphQLModule } from '@graphql-modules/core';
-import { UserModule } from './user-module';
-import { ChatModule } from './chat-module';
+import { GraphQLModule } from '@graphql-modules/core'
+import { UserModule } from './user-module'
+import { ChatModule } from './chat-module'
 
 export const appModule = new GraphQLModule({
-  imports: [UserModule, ChatModule],
-});
+  imports: [UserModule, ChatModule]
+})
 ```
 
 ```typescript
@@ -112,18 +112,18 @@ export const ChatModule = new GraphQLModule({
 ```
 
 ```typescript
-import { appModule } from './modules/app';
-import { ApolloServer } from 'apollo-server';
+import { appModule } from './modules/app'
+import { ApolloServer } from 'apollo-server'
 
-const { schema, context } = appModule;
+const { schema, context } = appModule
 
 const server = new ApolloServer({
   schema,
   context,
-  introspection: true,
-});
+  introspection: true
+})
 
-server.listen();
+server.listen()
 ```
 
 ```typescript
@@ -292,14 +292,14 @@ So let’s say that we have the schema — how can we make this module generic a
 This is how you declare this module:
 
 ```typescript
-import { GraphQLModule } from '@graphql-modules/core';
-import gql from 'graphql-tag';
-import { UserModule } from '../user';
-import { Users } from '../user/users.provider';
+import { GraphQLModule } from '@graphql-modules/core'
+import gql from 'graphql-tag'
+import { UserModule } from '../user'
+import { Users } from '../user/users.provider'
 
 export interface IUserProfileModuleConfig {
-  profilePictureFields?: string;
-  uploadProfilePicture: (stream: Readable) => Promise<string>;
+  profilePictureFields?: string
+  uploadProfilePicture: (stream: Readable) => Promise<string>
 }
 
 export const UserProfileModule = new GraphQLModule<IUserProfileModuleConfig>({
@@ -315,10 +315,10 @@ export const UserProfileModule = new GraphQLModule<IUserProfileModuleConfig>({
   resolvers: (config) => ({
     User: {
       profilePicture: (user: User, args: never, context: ModuleContext) => {
-        const fieldName = config.profilePictureField || 'profilePic';
+        const fieldName = config.profilePictureField || 'profilePic'
 
-        return user[fieldName] || null;
-      },
+        return user[fieldName] || null
+      }
     },
     Mutation: {
       uploadProfilePicture: async (
@@ -327,25 +327,25 @@ export const UserProfileModule = new GraphQLModule<IUserProfileModuleConfig>({
         { injector, currentUser }: ModuleContext
       ) => {
         // using https://www.apollographql.com/docs/guides/file-uploads.html
-        const { stream } = await image;
+        const { stream } = await image
 
         // Get the external method for uploading files, this is provided by the app as config
-        const imageUrl = config.uploadProfilePicture(stream);
+        const imageUrl = config.uploadProfilePicture(stream)
 
         // Get the field name
-        const fieldName = config.profilePictureField || 'profilePic';
+        const fieldName = config.profilePictureField || 'profilePic'
 
         // Ask the injector for "Users" token, we are assuming that `user` module exposes it for us,
         // then, update the user with the uploaded url.
-        injector.get(Users).updateUser(currentUser, { [fieldName]: imageUrl });
+        injector.get(Users).updateUser(currentUser, { [fieldName]: imageUrl })
 
         // Return the current user, we can assume that `currentUser` will be in the context because
         // of resolvers composition - we will explain it later.
-        return currentUser;
-      },
-    },
-  }),
-});
+        return currentUser
+      }
+    }
+  })
+})
 ```
 
 > We declare a config object, and the app will provide it for us, so we can later replace it with a different logic for uploading.

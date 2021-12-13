@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'This is how I build Babel plug-ins',
@@ -6,10 +6,10 @@ export const meta = {
   tags: ['javascript', 'babel'],
   date: '2018-10-08',
   description: 'The basics of AOT compilers and how to write Babel plug-ins',
-  image: '/medium/b00e12c482b6ba2f40860ff3471bc55c.png',
-};
+  image: '/medium/b00e12c482b6ba2f40860ff3471bc55c.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 https://youtu.be/67DmVvjAdJU
 
@@ -18,11 +18,11 @@ The idea of writing such article popped into my mind while working on my [Webflo
 ```javascript
 /* In */
 
-foo = 'foo';
+foo = 'foo'
 
 /* Out */
 
-if (typeof window.foo === 'undefined') window.foo = 'foo';
+if (typeof window.foo === 'undefined') window.foo = 'foo'
 ```
 
 At the beginning I thought I could do that with some help from a regular expression; but boy was I wrong.
@@ -36,11 +36,11 @@ An example AST may look like so:
 ```javascript
 function foo(x) {
   if (x > 10) {
-    var a = 2;
-    return a * x;
+    var a = 2
+    return a * x
   }
 
-  return x + 10;
+  return x + 10
 }
 ```
 
@@ -84,7 +84,7 @@ I’ve prepared a quick template project that you can use to quickly write plug-
 To implement our plug-in, copy the following content and paste it in the `in.js` file:
 
 ```javascript
-foo = 'foo';
+foo = 'foo'
 ```
 
 and the following content to the `transform.js` file:
@@ -100,18 +100,18 @@ module.exports = () => {
           path.node.right.type === 'Literal' &&
           path.node.right.value === 'foo'
         ) {
-          path.node.right.value = 'bar';
+          path.node.right.value = 'bar'
         }
-      },
-    },
-  };
-};
+      }
+    }
+  }
+}
 ```
 
 To initiate the transformation, simply run `$ node transform.js`. Now open the `out.js` file and you should see the following content:
 
 ```javascript
-foo = 'bar';
+foo = 'bar'
 ```
 
 The `visitor` property is where the actual manipulation of the AST should be done. It walks through the tree and runs the handlers for each specified node type. In our case, whenever the visitor has encountered a node of type `AssignmentExpression` node, it will replace the right operand with `"bar"` in case we assign the the `"foo"` value to `foo`. We can add a manipulation handler for any node type that we want, it can be `AssignmentExpression`, `Identifier`, `Literal`, or even `Program`, which is the root node of the AST.
@@ -121,11 +121,11 @@ So going back to the main purpose of for which we gathered, I’ll first provide
 ```javascript
 /* In */
 
-foo = 'foo';
+foo = 'foo'
 
 /* Out */
 
-if (typeof window.foo === 'undefined') window.foo = 'foo';
+if (typeof window.foo === 'undefined') window.foo = 'foo'
 ```
 
 We will first take all global assignments and turn it into member assignment expressions of `window` to prevent confusions and potential misunderstandings. I like to start by first exploring the desired AST output:
@@ -146,12 +146,12 @@ module.exports = ({ types: t }) => {
           path.node.left = t.memberExpression(
             t.identifier('window'),
             t.identifier(path.node.left.name)
-          );
+          )
         }
-      },
-    },
-  };
-};
+      }
+    }
+  }
+}
 ```
 
 I will now introduce you to 2 new concepts that I haven’t mention before but are being used in the plug-in above:
@@ -162,13 +162,13 @@ I will now introduce you to 2 new concepts that I haven’t mention before but a
 Now we will add the missing peace to the puzzle which is transforming assignment expressions into conditional assignment expressions. So we wanna turn this code:
 
 ```javascript
-window.foo = 'foo';
+window.foo = 'foo'
 ```
 
 Into this code:
 
 ```javascript
-if (typeof window.foo === 'undefined') window.foo = 'foo';
+if (typeof window.foo === 'undefined') window.foo = 'foo'
 ```
 
 If you’ll investigate that code’s AST you’ll see that we’re dealing with 3 new node types:
@@ -191,30 +191,30 @@ module.exports = ({ types: t }) => {
           path.node.left = t.memberExpression(
             t.identifier('window'),
             t.identifier(path.node.left.name)
-          );
+          )
         }
         if (
           path.node.left.type == 'MemberExpression' &&
           path.node.left.object.name == 'window'
         ) {
-          const typeofNode = t.unaryExpression('typeof', path.node.left);
+          const typeofNode = t.unaryExpression('typeof', path.node.left)
           const isNodeUndefined = t.binaryExpression(
             '===',
             typeofNode,
             t.stringLiteral('undefined')
-          );
+          )
           const ifNodeUndefined = t.ifStatement(
             isNodeUndefined,
             t.expressionStatement(path.node)
-          );
+          )
 
-          path.replaceWith(ifNodeUndefined);
-          path.skip();
+          path.replaceWith(ifNodeUndefined)
+          path.skip()
         }
-      },
-    },
-  };
-};
+      }
+    }
+  }
+}
 ```
 
 So basically what we do here is checking whether we deal with a `window` member assignment expression, and if so we will create the conditional statement and replace it with the current node. Few notes:

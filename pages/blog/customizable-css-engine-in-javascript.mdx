@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'I wrote a customizable CSS engine in JavaScript',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2019-07-24',
   description:
     'I wrote a customizable CSS engine in JavaScript. Custom selectors, custom rules and custom events. You determine its behavior',
-  image: '/medium/9ecd4800956fc386f893c8730a0beb63.jpeg',
-};
+  image: '/medium/9ecd4800956fc386f893c8730a0beb63.jpeg'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 # Custom selectors, custom rules and custom events. You determine its behavior
 
@@ -84,9 +84,9 @@ One thing to note is that we‘re likely to change the `style` attribute inside 
 ```javascript
 function observerCallback(mutations, observer) {
   // Will cause more mutations
-  updateStyle(mutations);
+  updateStyle(mutations)
   // Will dispose pending mutations
-  observer.takeRecords();
+  observer.takeRecords()
 }
 ```
 
@@ -105,9 +105,9 @@ function handleMutations(
   { addedNodes, removedNodes, modifiedNodes } = normalizeMutations(mutations)
 ) {
   addedNodes.concat(modifiedNodes).forEach((mutation) => {
-    this.removeEventListeners(mutation);
-    this.addEventListeners(mutation);
-  });
+    this.removeEventListeners(mutation)
+    this.addEventListeners(mutation)
+  })
 }
 ```
 
@@ -116,17 +116,17 @@ If you looked at the source code of the demo, you probably noticed that each rul
 ```javascript
 class BorderRule extends EventSheet.Rule {
   static get ruleName() {
-    return 'border';
+    return 'border'
   }
 
   ['on initialize'](e, params) {
-    const border = e.target.style.border;
+    const border = e.target.style.border
 
-    e.target.style.border = params;
+    e.target.style.border = params
 
     return function dispose() {
-      e.target.style.border = border;
-    };
+      e.target.style.border = border
+    }
   }
 }
 ```
@@ -138,15 +138,15 @@ The module will add and remove events for given event target as normally, but in
 ```javascript
 function addEventListener(target, event, handler) {
   const wrappedHandler = (e) => {
-    const dispose = handler(e);
+    const dispose = handler(e)
 
     if (dispose != null && typeof dispose != 'function') {
-      throw TypeError('return value must be a function');
+      throw TypeError('return value must be a function')
     }
 
     // Private property
-    _(wrappedHandler).dispose = dispose;
-  };
+    _(wrappedHandler).dispose = dispose
+  }
 
   // ... store in cache ...
 }
@@ -154,9 +154,9 @@ function addEventListener(target, event, handler) {
 function removeEventListener(target, event, handler) {
   // ... restore from cache ...
 
-  const dispose = _(wrappedHandler).dispose;
+  const dispose = _(wrappedHandler).dispose
 
-  dispose();
+  dispose()
 
   // ... delete from cache ...
 }
@@ -226,9 +226,9 @@ eventSheet.attach(`
   .form .button.submit {
     handle-submit;
   }
-`);
+`)
 
-eventSheet.observe(formEl);
+eventSheet.observe(formEl)
 ```
 
 - The sheet can be loaded and applied on any existing DOM element regardless of the used UI framework.

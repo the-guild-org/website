@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'graphql-let - A Webpack loader for GraphQL Code Generator',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2020-11-25',
   description: 'graphql-let is a webpack loader of GraphQL code generator.',
   image: '/blog-assets/graphql-let/cover.png',
-  thumbnail: '/blog-assets/graphql-let/cover.png',
-};
+  thumbnail: '/blog-assets/graphql-let/cover.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 [graphql-let](https://github.com/piglovesyou/graphql-let) is a wrapper tool that makes using GraphQL Code Generator smoother and easier. In this article, I'll explain what graphql-let is and how it relates to GraphQL Code Generator.
 
@@ -91,14 +91,14 @@ graphql-let exports `graphql-let/jestTransformer` that you can use in Jest testi
 It's still partial support, but graphql-let provides a babel plugin to allows developers to write inline GraphQL documents.
 
 ```typescript jsx
-import gql from 'graphql-let';
+import gql from 'graphql-let'
 
 // Typed️⚡️
 const { useViewerQuery } = gql(`
     query Viewer {
         viewer { name }
     }
-`);
+`)
 ```
 
 It generates `.d.ts` files in `node_modules/@types/graphql-let` by default to apply overload signatures on the function `gql`. Ideally, it should be available in both a babel plugin and the webpack loader but there needs to be more effort.
