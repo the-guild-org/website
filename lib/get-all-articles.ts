@@ -9,7 +9,7 @@ import { MetaWithLink } from './meta';
  * Based on the files found in `pages/blog/*.mdx`
  */
 export async function getAllArticles(
-  tagsFilter?: string[]
+  tagsFilter: string[] = []
 ): Promise<MetaWithLink[]> {
   const blogDir = join(process.cwd(), 'pages/blog');
   const filenames = await globby('*.mdx', {
@@ -17,19 +17,21 @@ export async function getAllArticles(
     absolute: false,
   });
 
-  const articles = (
-    await Promise.all(filenames.map((file) => readMeta(blogDir, file)))
-  ).filter((article) => {
-    if (!tagsFilter || tagsFilter.length === 0) {
-      return true;
-    }
+  const articles = await Promise.all(
+    filenames.map((file) => readMeta(blogDir, file))
+  );
 
-    return (article.tags || []).some((articleTag) =>
-      tagsFilter.includes(articleTag)
-    );
-  });
+  return articles
+    .filter((article) => {
+      if (tagsFilter.length === 0) {
+        return true;
+      }
 
-  return articles.sort(sortByDateDesc);
+      return (article.tags || []).some((articleTag) =>
+        tagsFilter.includes(articleTag)
+      );
+    })
+    .sort(sortByDateDesc);
 }
 
 /**
@@ -39,7 +41,7 @@ async function readMeta(dir: string, file: string): Promise<MetaWithLink> {
   const filepath = join(dir, file);
   const raw = await promises.readFile(filepath, 'utf-8');
 
-  const [, result] = /export const meta = \{([^}]+)\};/.exec(raw);
+  const [, result] = /export const meta = {([^}]+)/.exec(raw);
 
   const parsed = JSON5.parse(`{ ${result.trim().replace(/,$/, '')} }`);
 

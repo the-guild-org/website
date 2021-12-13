@@ -105,7 +105,7 @@ const ImageLink = styled.a<{ image: string }>`
 `;
 
 const useIsomorphicLayoutEffect =
-  typeof window?.document?.createElement !== 'undefined'
+  typeof window !== 'undefined' && window.document?.createElement !== undefined
     ? useLayoutEffect
     : useEffect;
 
@@ -116,11 +116,11 @@ export const LinkPreview: FC<{ link: string }> = ({ link }) => {
     if (typeof window === 'undefined') {
       return;
     }
-    const absoluteLink = link.startsWith('/')
-      ? `https://the-guild.dev${link}`
-      : link;
 
     const fetchData = async () => {
+      const absoluteLink = link.startsWith('/')
+        ? `https://the-guild.dev${link}`
+        : link;
       const previewData = await fetchPreview(absoluteLink);
 
       setData(previewData);

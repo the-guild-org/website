@@ -3,7 +3,7 @@ export const projects = {
     featured: true,
     title: 'Code Generation and Type Safety',
     image: 'https://graphql-code-generator.com/img/gql-codegen-cover.png',
-    link: 'https://graphql-code-generator.com/',
+    link: 'https://graphql-code-generator.com',
     description: (
       <>
         <p>
@@ -22,7 +22,7 @@ export const projects = {
     title: 'GraphQL-ESLint',
     image:
       'https://raw.githubusercontent.com/dotansimha/graphql-eslint/master/logo.png',
-    link: 'https://github.com/dotansimha/graphql-eslint/',
+    link: 'https://github.com/dotansimha/graphql-eslint',
     description: (
       <>
         <p>
@@ -59,7 +59,7 @@ export const projects = {
     featured: true,
     title: 'GraphQL with any source of data',
     image: 'https://graphql-mesh.com/img/mesh-text-logo.svg',
-    link: 'https://graphql-mesh.com/',
+    link: 'https://graphql-mesh.com',
     description: (
       <p>
         GraphQL Mesh allows you to use GraphQL query language to access data in
@@ -85,7 +85,7 @@ export const projects = {
     featured: true,
     title: 'Utilities for GraphQL',
     image: '/img/logos/tools.svg',
-    link: 'https://graphql-tools.com/',
+    link: 'https://graphql-tools.com',
     description: (
       <>
         <p>
@@ -118,7 +118,7 @@ export const projects = {
     featured: false,
     title: 'REST API from GraphQL - with SOFA',
     image: '/img/logos/sofa.svg',
-    link: 'https://sofa-api.com/',
+    link: 'https://sofa-api.com',
     description: (
       <>
         <p>Generate RESTful APIs from your GraphQL Server</p>

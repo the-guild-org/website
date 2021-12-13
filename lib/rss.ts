@@ -10,7 +10,7 @@ export async function buildRSS(articles: MetaWithLink[]) {
     feed_url: 'https://the-guild.dev/feed.xml',
   });
 
-  articles.map((meta) => {
+  for (const meta of articles) {
     feed.item({
       title: meta.title,
       guid: meta.link,
@@ -18,7 +18,7 @@ export async function buildRSS(articles: MetaWithLink[]) {
       date: meta.date,
       description: meta.description,
     });
-  });
+  }
 
   const rss = feed.xml({ indent: true });
 

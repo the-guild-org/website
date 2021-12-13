@@ -9,6 +9,7 @@ import { Newsletter } from '../ui/blog/newsletter';
 import { MetaWithLink, pickAuthor } from '../lib/meta';
 import { getAllArticles } from '../lib/get-all-articles';
 import { authors } from '../ui/authors';
+
 interface Props {
   articles: MetaWithLink[];
   tagFilter?: string[];
@@ -73,20 +74,18 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
         </NewsletterContainer>
       )}
       <AllArticles>
-        {(articles || []).map((article) => {
-          return (
-            <ArticleCard
-              author={authors[pickAuthor(article)]}
-              key={article.link}
-              title={article.title}
-              description={article.description}
-              image={article.thumbnail || article.image}
-              link={article.link}
-              date={article.date}
-              tags={article.tags || []}
-            />
-          );
-        })}
+        {articles?.map((article) => (
+          <ArticleCard
+            author={authors[pickAuthor(article)]}
+            key={article.link}
+            title={article.title}
+            description={article.description}
+            image={article.thumbnail || article.image}
+            link={article.link}
+            date={article.date}
+            tags={article.tags || []}
+          />
+        ))}
       </AllArticles>
     </Page>
   );
