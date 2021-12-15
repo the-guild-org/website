@@ -38,6 +38,7 @@ module.exports = withBundleAnalyzer(
           destination: '/_next/static/sitemap.xml',
         },
       ],
+      webpack5: false,
       webpack(config, { dev, isServer }) {
         if (!dev && isServer) {
           const originalEntry = config.entry;

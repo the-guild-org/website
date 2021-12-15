@@ -6,13 +6,13 @@ export function withPlaceholder(src: string) {
   const ext = extname(src.toLowerCase());
 
   // TODO: Figure out why don't work with NextJS v12
-  // if (src.startsWith('/') && !SKIPPED_EXTENSIONS.has(ext)) {
-  //   return {
-  //     hasPlaceholder: true,
-  //     placeholder: require(`Public/${src.substr(1)}?lqip`),
-  //     large: require(`Public/${src.substr(1)}`),
-  //   };
-  // }
+  if (src.startsWith('/') && !SKIPPED_EXTENSIONS.has(ext)) {
+    return {
+      hasPlaceholder: true,
+      placeholder: require(`Public/${src.substr(1)}?lqip`),
+      large: require(`Public/${src.substr(1)}`),
+    };
+  }
 
   return {
     hasPlaceholder: false,
