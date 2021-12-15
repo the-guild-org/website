@@ -77,16 +77,58 @@ const PRODUCTS: {
     icon: 'envelop.svg',
   },
   {
-    name: 'Code Generator',
+    name: 'GraphQL Code Generator',
     description: 'Generate anything from GraphQL',
     url: 'https://graphql-code-generator.com',
     icon: 'code-generator.svg',
   },
   {
-    name: 'Tools',
+    name: 'GraphQL-Mesh',
+    description: 'Query anything, run anywhere',
+    url: 'https://graphql-mesh.com',
+    icon: 'mesh.svg',
+  },
+  {
+    name: 'GraphQL-Tools',
     description: 'A set of utilities for faster GraphQL development',
     url: 'https://graphql-tools.com',
     icon: 'tools.svg',
+  },
+  {
+    name: 'Yoga',
+    description: `A Fully-featured, simple to set up, performant and extendable server`,
+    url: 'https://graphql-yoga.vercel.app',
+    icon: 'yoga.svg',
+  },
+  {
+    name: 'Hive',
+    description: 'Schema Registry for your GraphQL Workflows',
+    url: 'https://graphql-hive.com',
+    icon: 'hive.svg',
+  },
+  {
+    name: 'Inspector',
+    description: 'Schema management tool',
+    url: 'https://graphql-inspector.com',
+    icon: 'inspector.svg',
+  },
+  {
+    name: 'Helix',
+    description: 'A highly evolved GraphQL HTTP Server',
+    url: 'https://graphql-helix.com',
+    icon: 'helix.svg',
+  },
+  {
+    name: 'GraphQL-ESLint',
+    description: 'Customisable ESLint parser, plugin and set rules for GraphQL',
+    url: 'https://github.com/dotansimha/graphql-eslint',
+    icon: 'eslint.svg',
+  },
+  {
+    name: 'GraphQL-Config',
+    description: 'One configuration for all your GraphQL tools',
+    url: 'https://graphql-config.com/introduction',
+    icon: 'config.svg',
   },
   {
     name: 'Swift',
@@ -95,13 +137,7 @@ const PRODUCTS: {
     icon: 'swift.svg',
   },
   {
-    name: 'Mesh',
-    description: 'Query anything, run anywhere',
-    url: 'https://graphql-mesh.com',
-    icon: 'mesh.svg',
-  },
-  {
-    name: 'Modules',
+    name: 'GraphQL-Modules',
     description: 'Enterprise Grade Tooling For Your GraphQL Server',
     url: 'https://graphql-modules.com',
     icon: 'modules.svg',
@@ -119,40 +155,10 @@ const PRODUCTS: {
     icon: 'shield.svg',
   },
   {
-    name: 'Hive',
-    description: 'Schema Registry for your GraphQL Workflows',
-    url: 'https://graphql-hive.com',
-    icon: 'hive.svg',
-  },
-  {
-    name: 'Inspector',
-    description: 'Schema management tool',
-    url: 'https://graphql-inspector.com',
-    icon: 'inspector.svg',
-  },
-  {
     name: 'SOFA',
     description: 'Generate RESTful APIs from your GraphQL Server',
     url: 'https://sofa-api.com',
     icon: 'sofa.svg',
-  },
-  {
-    name: 'Config',
-    description: 'One configuration for all your GraphQL tools',
-    url: 'https://graphql-config.com/introduction',
-    icon: 'config.svg',
-  },
-  {
-    name: 'Helix',
-    description: 'A highly evolved GraphQL HTTP Server',
-    url: 'https://graphql-helix.com',
-    icon: 'helix.svg',
-  },
-  {
-    name: 'ESLint',
-    description: 'Customisable ESLint parser, plugin and set rules for GraphQL',
-    url: 'https://github.com/dotansimha/graphql-eslint',
-    icon: 'eslint.svg',
   },
   {
     name: 'CLI',
@@ -177,11 +183,5 @@ const PRODUCTS: {
     description: `A fully-featured, production ready caching GraphQL client for Stencil and every GraphQL server`,
     url: 'https://github.com/ardatan/stencil-apollo',
     icon: 'stencil.svg',
-  },
-  {
-    name: 'Yoga',
-    description: `A Fully-featured, simple to set up, performant and extendable server`,
-    url: 'https://graphql-yoga.vercel.app',
-    icon: 'yoga.svg',
   },
 ];
