@@ -8,7 +8,7 @@ const ContactPage: FC = () => {
     <Page
       title="Contact Us - The Guild"
       description="Looking to work with The Guild or to learn more about our projects? We will be happy to speak with you!"
-      image="/img/ogimage-contact.png"
+      image="/img/ogimage.png"
     >
       <Hero shrink>
         <span>Contact us</span>

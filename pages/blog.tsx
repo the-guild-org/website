@@ -74,7 +74,7 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
     : `Announcements about our Open-Source projects`;
 
   return (
-    <Page title={title} description={description} image="/img/ogimage-blog.png">
+    <Page title={title} description={description} image="/img/ogimage.png">
       <HeroSection>
         <Heading>The Guild's blog</Heading>
       </HeroSection>
