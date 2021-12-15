@@ -6,20 +6,18 @@
   "scripts": {
     "lint": "eslint --ignore-path .gitignore .",
     "dev": "next dev",
-    "build": "yarn check-links && next build && TS_NODE_PROJECT=tsconfig.cli.json node --require ts-node/register/transpile-only ./lib/build.ts",
+    "build": "yarn check-links && next build && ts-node lib/build.ts",
     "analyze": "ANALYZE=true yarn build",
     "start": "next start",
     "format": "prettier --ignore-path .gitignore --write .",
-    "check-links": "node check-links.js",
+    "check-links": "ts-node check-links.ts",
     "postinstall": "patch-package",
     "prepare": "husky install",
-    "sync-blog": "node blog-sync.mjs"
+    "sync-blog": "node -r ts-node/register blog-sync.mjs"
   },
   "dependencies": {
     "@agentofuser/remark-oembed": "1.0.4",
     "@bugsnag/js": "7.13.2",
-    "@chakra-ui/icons": "1.1.1",
-    "@chakra-ui/react": "1.7.3",
     "@mapbox/rehype-prism": "0.8.0",
     "@mdx-js/loader": "1.6.22",
     "@mdx-js/react": "1.6.22",

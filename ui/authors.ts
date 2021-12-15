@@ -1,5 +1,11 @@
-// TODO: convert to `ts` and `blog-sync.mjs` to `ts` also
-export const authors = {
+type Author = {
+  name: string;
+  link: `https://${string}`;
+  github?: string;
+  twitter?: string;
+};
+
+export const authors: Record<string, Author> = {
   eytan: {
     name: 'Eytan Manor',
     link: 'https://twitter.com/eytan_manor',

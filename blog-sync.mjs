@@ -1,3 +1,4 @@
+// Can't understand how to convert this file to ts 🤷‍
 import { toVFile } from 'to-vfile';
 import { unified } from 'unified';
 import parse from 'remark-parse';
@@ -8,7 +9,11 @@ import { remove } from 'unist-util-remove';
 import { walk } from 'estree-walker';
 import { Client } from 'guild-devto-nodejs-sdk';
 import globby from 'globby';
-import { authors } from './ui/authors';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+// import not working, use require instead
+const { authors } = require('./ui/authors.ts');
 
 const DEV_TO_ORG_ID = 4467;
 
@@ -40,7 +45,7 @@ async function syncToDevTo(items) {
       const exists = allArticles.find((t) => t.canonicalUrl === canonicalUrl);
       const author =
         authors[
-          item.meta.authors && Array.isArray(item.meta.authors)
+          Array.isArray(item.meta.authors)
             ? item.meta.authors[0]
             : item.meta.author
         ];
