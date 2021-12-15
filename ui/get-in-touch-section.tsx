@@ -145,7 +145,7 @@ export const Newsletter: FC = () => {
 
 export const GetInTouchSection: FC = () => {
   return (
-    <div css={[tw`relative mt-[200px] mb-[400px]`]}>
+    <div css={[tw`relative my-[200px] md:mb-[400px]`]}>
       <div css={[tw`container mx-auto flex`]}>
         <div css={tw`flex-1 lg:max-w-[500px] p-4 2xl:pl-40`}>
           <Heading>Get in touch</Heading>

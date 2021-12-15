@@ -17,16 +17,7 @@ const ServiceCard = styled.a`
 
 export const ServicesSection: FC = () => {
   return (
-    <div
-      css={css`
-        background: linear-gradient(
-            180deg,
-            rgba(0, 0, 0, 0) 0%,
-            rgba(41, 40, 40, 0.2) 100%
-          ),
-          #0b0d11;
-      `}
-    >
+    <>
       <div css={tw`pt-28 flex flex-col items-center text-center`}>
         <Heading>The Guild’s Services</Heading>
         <Description css={tw`max-w-[700px] px-2 md:px-0`}>
@@ -58,7 +49,7 @@ export const ServicesSection: FC = () => {
           </NextLink>
         ))}
       </div>
-    </div>
+    </>
   );
 };
 

@@ -7,50 +7,61 @@ import { Anchor, Description, Heading } from './index';
 export const PlatformSection: FC = () => {
   return (
     <div
-      id="platform"
-      css={tw`container mx-auto mt-44 flex flex-col items-center text-center px-4 pb-28`}
+      css={css`
+        background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(41, 40, 40, 0.2) 100%
+          ),
+          #0b0d11;
+      `}
     >
-      <Heading>The Platform</Heading>
-      <Description css={tw`max-w-[400px] md:max-w-[700px]`}>
-        Our advanced, modular solutions can be adopted gradually as individual
-        open source libraries or as a complete unified API platform. Explore our
-        suite of sustainable, open source API tools that covers everything you
-        need to scale your API infrastructure:
-      </Description>
+      <div
+        id="platform"
+        css={tw`container mx-auto mt-44 flex flex-col items-center text-center pb-28`}
+      >
+        <Heading>The Platform</Heading>
+        <Description css={tw`max-w-[400px] md:max-w-[700px]`}>
+          Our advanced, modular solutions can be adopted gradually as individual
+          open source libraries or as a complete unified API platform. Explore
+          our suite of sustainable, open source API tools that covers everything
+          you need to scale your API infrastructure:
+        </Description>
 
-      {/* TODO: Add this when we'll have `/products` route */}
-      {/* <Anchor href="#">View All Products ➔</Anchor> */}
-      <NextLink href="/about-us">
-        <Anchor>Learn more about The Guild ➔</Anchor>
-      </NextLink>
+        {/* TODO: Add this when we'll have `/products` route */}
+        {/* <Anchor href="#">View All Products ➔</Anchor> */}
+        <NextLink href="/about-us">
+          <Anchor>Learn more about The Guild ➔</Anchor>
+        </NextLink>
 
-      <div css={tw`flex flex-wrap mt-10 max-w-[900px] justify-center`}>
-        {PRODUCTS.map((product) => (
-          <a
-            key={product.name}
-            css={tw`w-[60px] text-gray-500 hover:text-white border border-transparent border-solid hover:border-gray-800 transition-colors duration-200 rounded py-4 px-6 mb-2 lg:first:ml-6`}
-            title={product.description}
-            href={product.url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src={`/static/shared-logos/products/${product.icon}`}
-              alt={`${product.name} logo`}
-              css={[
-                css`
-                  // 'grayscale' and 'contrast' don't work with tailwind
-                  filter: grayscale(100%) contrast(0%) !important;
-                  // prefixes must be specified otherwise don't has transition for 'filter'
-                  transition-property: filter, -webkit-filter, -moz-filter,
-                    -o-filter;
-                `,
-                tw`h-[60px] hover:filter-none! ease-linear duration-200 `,
-              ]}
-            />
-            <h4 css={tw`font-medium mb-0 text-xs`}>{product.name}</h4>
-          </a>
-        ))}
+        <div css={tw`flex flex-wrap mt-10 max-w-[900px] justify-center`}>
+          {PRODUCTS.map((product) => (
+            <a
+              key={product.name}
+              css={tw`w-[60px] text-gray-500 hover:text-white border border-transparent border-solid hover:border-gray-800 transition-colors duration-200 rounded py-4 px-6 mb-2 lg:first:ml-6`}
+              title={product.description}
+              href={product.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src={`/static/shared-logos/products/${product.icon}`}
+                alt={`${product.name} logo`}
+                css={[
+                  css`
+                    // 'grayscale' and 'contrast' don't work with tailwind
+                    filter: grayscale(100%) contrast(0%) !important;
+                    // prefixes must be specified otherwise don't has transition for 'filter'
+                    transition-property: filter, -webkit-filter, -moz-filter,
+                      -o-filter;
+                  `,
+                  tw`h-[60px] hover:filter-none! ease-linear duration-200 `,
+                ]}
+              />
+              <h4 css={tw`font-medium mb-0 text-xs`}>{product.name}</h4>
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   );
