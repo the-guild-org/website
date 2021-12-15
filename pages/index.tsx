@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { css, createGlobalStyle } from 'styled-components';
+import { css } from 'styled-components';
 import { GetStaticProps } from 'next/types';
 import tw from 'twin.macro';
 import { Page } from '../ui/shared/Page';
@@ -31,25 +31,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
-const GlobalStyle = createGlobalStyle`
-  html {
-    // For smooth scrolling effect when click on '#' hash links
-    scroll-behavior: smooth;
-  }
-
-  // TODO: Remove this when guild/components Header/Footer will can accept bg color
-  footer {
-    background-color: #0b0d11 !important;
-  }
-
-  header {
-    &,
-    & > div > nav {
-      background-color: #0b0d11 !important;
-    }
-  }
-`;
-
 const IndexPage: FC<Props> = ({ articles }) => {
   return (
     <Page
@@ -57,27 +38,9 @@ const IndexPage: FC<Props> = ({ articles }) => {
       description="Open Source developers with experience of working with the largest companies and applications. GraphQL consulting, workshops and trainings."
       image="/img/ogimage.png"
     >
-      {/* TODO: Remove this when site will be compatible with two themes */}
-      <GlobalStyle />
-
       <div
         css={[
           css`
-            @font-face {
-              font-family: 'Poppins';
-              font-style: normal;
-              font-weight: 900;
-              font-display: swap;
-              src: url(https://fonts.gstatic.com/s/poppins/v15/pxiByp8kv8JHgFVrLBT5Z11lFd2JQEl8qw.woff2)
-                format('woff2');
-              unicode-range: U+0900-097F, U+1CD0-1CF6, U+1CF8-1CF9, U+200C-200D,
-                U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FB;
-            }
-
-            * {
-              font-family: Poppins, sans-serif;
-            }
-
             background-color: #0b0d11;
           `,
           // ❗️ Important! this position is necessary for 🔵 <Circle />, overflow needed for hiding images in get in touch section

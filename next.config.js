@@ -55,7 +55,7 @@ module.exports = withBundleAnalyzer(
         return config;
       },
       // images: {
-      //   // TODO: NextImage conflict with withOptimizedImages, remove withOptimizedImages in the future
+      //   // TODO: NextImage conflict with withOptimizedImages
       //   disableStaticImages: true,
       // },
       eslint: {

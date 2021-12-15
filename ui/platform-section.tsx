@@ -7,6 +7,7 @@ import { Anchor, Description, Heading } from './index';
 export const PlatformSection: FC = () => {
   return (
     <div
+      id="platform"
       css={css`
         background: linear-gradient(
             180deg,
@@ -17,8 +18,7 @@ export const PlatformSection: FC = () => {
       `}
     >
       <div
-        id="platform"
-        css={tw`container mx-auto mt-44 flex flex-col items-center text-center pb-28`}
+        css={tw`container mx-auto pt-20 flex flex-col items-center text-center pb-28`}
       >
         <Heading>The Platform</Heading>
         <Description css={tw`max-w-[400px] md:max-w-[700px]`}>
@@ -38,7 +38,13 @@ export const PlatformSection: FC = () => {
           {PRODUCTS.map((product) => (
             <a
               key={product.name}
-              css={tw`w-[60px] text-gray-500 hover:text-white border border-transparent border-solid hover:border-gray-800 transition-colors duration-200 rounded py-4 px-6 mb-2 lg:first:ml-6`}
+              css={[
+                css`
+                  // 'grayscale' and 'contrast' don't work with tailwind
+                  filter: grayscale(100%) contrast(0%);
+                `,
+                tw`w-[60px] text-gray-500 hover:text-white hover:filter-none! border border-transparent border-solid hover:border-gray-800 transition-all ease-linear duration-200 rounded py-4 px-6 mb-2 lg:first:ml-6`,
+              ]}
               title={product.description}
               href={product.url}
               target="_blank"
@@ -47,16 +53,7 @@ export const PlatformSection: FC = () => {
               <img
                 src={`/static/shared-logos/products/${product.icon}`}
                 alt={`${product.name} logo`}
-                css={[
-                  css`
-                    // 'grayscale' and 'contrast' don't work with tailwind
-                    filter: grayscale(100%) contrast(0%) !important;
-                    // prefixes must be specified otherwise don't has transition for 'filter'
-                    transition-property: filter, -webkit-filter, -moz-filter,
-                      -o-filter;
-                  `,
-                  tw`h-[60px] hover:filter-none! ease-linear duration-200 `,
-                ]}
+                css={tw`h-[60px]`}
               />
               <h4 css={tw`font-medium mb-0 text-xs`}>{product.name}</h4>
             </a>

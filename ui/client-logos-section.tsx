@@ -6,7 +6,7 @@ export const ClientLogosSection: FC = () => {
   return (
     <div css={tw`container mx-auto`}>
       <div
-        css={tw`mx-auto flex flex-wrap justify-center items-center mt-44 max-w-[1260px]`}
+        css={tw`mx-auto flex flex-wrap justify-center items-center mt-44 pb-20 max-w-[1260px]`}
       >
         {logos.map((item) => (
           <img

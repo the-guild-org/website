@@ -1,6 +1,7 @@
 import App, { NextWebVitalsMetric } from 'next/app';
 import Router from 'next/router';
 import Head from 'next/head';
+import { createGlobalStyle } from 'styled-components';
 import { ThemeProvider } from '@theguild/components';
 import 'prism-theme-night-owl';
 import 'remark-admonitions/styles/classic.css';
@@ -25,9 +26,35 @@ export function reportWebVitals({
   });
 }
 
+const GlobalStyle = createGlobalStyle`
+  html {
+    // For smooth scrolling effect when click on '#' hash links
+    scroll-behavior: smooth;
+    background-color: #0b0d11;
+  }
+
+  // TODO: Remove this when guild/components Header/Footer will can accept bg color
+  footer {
+    background-color: #0b0d11 !important;
+  }
+
+  header {
+    &,
+    & > div > nav {
+      background-color: #0b0d11 !important;
+    }
+  }
+
+  * {
+    font-family: Poppins, sans-serif;
+  }
+`;
+
 export default class MyApp extends App {
   render() {
     const { Component, pageProps, router } = this.props;
+    const isDarkMode = ['/', '/about-us'].includes(router.route);
+
     return (
       <>
         <Head>
@@ -63,8 +90,18 @@ export default class MyApp extends App {
             href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap"
             rel="stylesheet"
           />
+          {isDarkMode && (
+            <link
+              href="https://fonts.googleapis.com/css?family=Poppins:400,500,700&display=swap"
+              rel="stylesheet"
+            />
+          )}
         </Head>
         <script src="/static/crisp.js" />
+
+        {/* TODO: Remove this when site will be compatible with two themes */}
+        {isDarkMode && <GlobalStyle />}
+
         <style global jsx>
           {`
             html,
@@ -117,7 +154,7 @@ export default class MyApp extends App {
 
         <ThemeProvider
           // TODO: Remove this when site will be compatible with two themes
-          isDarkTheme={router.route === '/'}
+          isDarkTheme={isDarkMode}
         >
           <Component {...pageProps} />
         </ThemeProvider>
