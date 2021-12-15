@@ -136,7 +136,7 @@ const Service: FC<{
 }> = ({ title, image, description, list, reversed }) => (
   <ServiceContainer
     reversed={reversed}
-    id={title.toLowerCase().replaceAll(' ', '-')}
+    id={title.toLowerCase().replace(/ /g, '-')}
   >
     <div>
       <img src={`/img/illustrations/${image}`} alt={title} />
