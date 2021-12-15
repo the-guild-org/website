@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import NextLink from 'next/link';
-import { css } from 'styled-components';
 import tw, { styled } from 'twin.macro';
 import { Anchor, Description, Heading } from './index';
 
@@ -53,34 +52,62 @@ export const ServicesSection: FC = () => {
   );
 };
 
-const SERVICES: {
+export const SERVICES: {
   name: string;
   description: string;
+  longDescription: string;
+  list?: string[];
   icon: `${string}.svg`;
   url: `/services#${string}`;
 }[] = [
   {
     name: 'Consulting',
     description: 'Make the right choices, for now and the future.',
+    longDescription:
+      'Plan together your next big steps. Get wide and deep perspectives from our experience working with the largest companies and applications in the world, to make sure you reach your ambitions goals with success!',
     icon: 'consulting.svg',
     url: '/services#consulting',
+    list: [
+      'Current state assessment',
+      'Architectural review',
+      'Future-proof development plan',
+      'Focus on Developer Experience',
+      'Tooling',
+    ],
   },
   {
     name: 'Training',
     description: 'Strengthen your team, tailored to your people and mission.',
     icon: 'training.svg',
     url: '/services#workshops-and-trainings',
+    longDescription:
+      'Strengthen, mentor and inspire your team by the leaders of the community. Tailored to your people and mission, aimed to help establish long lasting teams.',
   },
   {
     name: 'Engineering',
     description: `Working side by side, us being an integral part of your team.`,
     icon: 'engineering.svg',
     url: '/services#engineering',
+    longDescription:
+      'We take pride in the fact that our open source and infrastructure comes from working side by side with the best developers in the world, on the largest applications in the world.',
+    list: [
+      'Integral part of your team',
+      'Coding practical tasks',
+      'Code reviews',
+      'Mentorship',
+    ],
   },
   {
     name: 'Open Source',
     description: 'Get Open Source support from the actual creators.',
     icon: 'open-source.svg',
     url: '/services#open-source',
+    longDescription:
+      'Safe Open Source. Make open source work for you and take your needs into the highest priority. Instead of structuring your whole app on top of open source you have no control or say about.',
+    list: [
+      'Technical support',
+      'Covers the entire stack',
+      'Part of decision making process',
+    ],
   },
 ];

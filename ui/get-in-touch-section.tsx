@@ -51,14 +51,14 @@ export const Newsletter: FC = () => {
   const [error, setError] = useState(false);
   const [confetti, setConfetti] = useState(false);
   const [result, mutate] = useMutation(
-    `mutation subscribe($email: String!) { subscribe(email: $email) { ok } }`
+    `mutation sayHi($email: String!, $name: String) { sayHi(email: $email, name: $name, project: "WEBSITE") { ok } }`
   );
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
       setLoading(true);
 
-      mutate({ email });
+      mutate({ email, name: email });
     },
     [mutate, email]
   );
@@ -97,11 +97,11 @@ export const Newsletter: FC = () => {
       )}
       <p css={[tw`border-0 text-gray-300`]}>
         {success
-          ? 'Thank you for joining!'
+          ? `Thank you, we'll contact you soon!`
           : error && (
               <>
                 <b>Something went wrong</b>, please try again or contact us
-                directly
+                directly through email.
               </>
             )}
       </p>
@@ -143,7 +143,9 @@ export const Newsletter: FC = () => {
   );
 };
 
-export const GetInTouchSection: FC = () => {
+export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
+  hideCover,
+}) => {
   return (
     <div css={[tw`relative my-[200px] md:mb-[400px]`]}>
       <div css={[tw`container mx-auto flex`]}>
@@ -161,47 +163,49 @@ export const GetInTouchSection: FC = () => {
 
           <Newsletter />
         </div>
-        <div css={tw`flex-1 hidden xl:block`}>
-          {/* Keep in mind order of images, most of button we'll cover others */}
-          <img
-            src="/img/get-in-touch/swift.png"
-            alt="Swift website"
-            css={[
-              css`
-                right: -4%;
-                top: -30%;
-              `,
-              tw`absolute opacity-20`,
-            ]}
-            width={719}
-            height={462}
-          />
-          <img
-            src="/img/get-in-touch/swift.png"
-            alt="Swift website"
-            css={[
-              css`
-                right: -1%;
-                top: -15%;
-              `,
-              tw`absolute`,
-            ]}
-            width={719}
-            height={462}
-          />
-          <img
-            src="/img/get-in-touch/hive.png"
-            alt="Hive website"
-            css={[
-              css`
-                right: 0;
-              `,
-              tw`absolute`,
-            ]}
-            width={741}
-            height={482}
-          />
-        </div>
+        {!hideCover ? (
+          <div css={tw`flex-1 hidden xl:block`}>
+            {/* Keep in mind order of images, most of button we'll cover others */}
+            <img
+              src="/img/get-in-touch/swift.png"
+              alt="Swift website"
+              css={[
+                css`
+                  right: -4%;
+                  top: -30%;
+                `,
+                tw`absolute opacity-20`,
+              ]}
+              width={719}
+              height={462}
+            />
+            <img
+              src="/img/get-in-touch/swift.png"
+              alt="Swift website"
+              css={[
+                css`
+                  right: -1%;
+                  top: -15%;
+                `,
+                tw`absolute`,
+              ]}
+              width={719}
+              height={462}
+            />
+            <img
+              src="/img/get-in-touch/hive.png"
+              alt="Hive website"
+              css={[
+                css`
+                  right: 0;
+                `,
+                tw`absolute`,
+              ]}
+              width={741}
+              height={482}
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ const Circle = styled.div<{ $size?: number }>`
   ${tw`rounded-full absolute`}
 `;
 
-export const HeroSection: FC = () => {
+export const HeroSection: FC = ({ children }) => {
   return (
     <>
       {/* Shadow for 🔵 Circle */}
@@ -59,20 +59,7 @@ export const HeroSection: FC = () => {
             tw`max-w-[700px] mt-44 flex flex-col items-center z-1 px-2 md:px-0`,
           ]}
         >
-          <Heading>Modern API Platform and ecosystem that scales</Heading>
-          <Description>
-            The Guild’s advanced open source ecosystem covers everything you
-            need for your API infrastructure with a modular, open source and
-            complete platform
-          </Description>
-          <Button
-            as="a"
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            href="#platform"
-          >
-            Explore The Platform
-          </Button>
+          {children}
         </div>
         {/* Shadow for 🟣 Circle */}
         <Circle

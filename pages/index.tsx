@@ -12,6 +12,7 @@ import { ServicesSection } from '../ui/services-section';
 import { GetInTouchSection } from '../ui/get-in-touch-section';
 import { ClientLogosSection } from '../ui/client-logos-section';
 import { RecommendedReadingSection } from '../ui/recommended-reading-section';
+import { Button, Description, Heading } from '../ui';
 
 type Props = {
   articles: MetaWithLink[];
@@ -40,14 +41,26 @@ const IndexPage: FC<Props> = ({ articles }) => {
     >
       <div
         css={[
-          css`
-            background-color: #0b0d11;
-          `,
           // ❗️ Important! this position is necessary for 🔵 <Circle />, overflow needed for hiding images in get in touch section
           tw`relative md:static overflow-x-hidden`,
         ]}
       >
-        <HeroSection />
+        <HeroSection>
+          <Heading>Modern API Platform and ecosystem that scales</Heading>
+          <Description>
+            The Guild’s advanced open source ecosystem covers everything you
+            need for your API infrastructure with a modular, open source and
+            complete platform
+          </Description>
+          <Button
+            as="a"
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            href="#platform"
+          >
+            Explore The Platform
+          </Button>
+        </HeroSection>
         <ClientLogosSection />
         <PlatformSection />
         <ServicesSection />

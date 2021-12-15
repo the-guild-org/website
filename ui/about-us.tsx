@@ -7,6 +7,7 @@ import { Newsletter } from './blog/newsletter';
 import { Page } from './shared/Page';
 import { Meta } from '../lib/meta';
 import { Heading } from '../ui';
+import { GetInTouchSection } from './get-in-touch-section';
 
 const Main = styled.article`
   padding: 125px 15px;
@@ -26,20 +27,12 @@ const AboutUs = ({ title, description }: Meta): FC => {
     return (
       <MDXProvider components={components}>
         <Page title={title} description={description}>
-          <div
-            css={[
-              css`
-                background-color: #0b0d11;
-              `,
-            ]}
-          >
-            <div css={tw`max-w-[690px] mx-auto`}>
-              <Main>
-                <Heading css={tw`text-center`}>{title}</Heading>
-                <Content>{children}</Content>
-                <Newsletter />
-              </Main>
-            </div>
+          <div css={tw`max-w-[690px] mx-auto`}>
+            <Main>
+              <Heading css={tw`text-center`}>{title}</Heading>
+              <Content>{children}</Content>
+              <GetInTouchSection hideCover />
+            </Main>
           </div>
         </Page>
       </MDXProvider>

@@ -115,7 +115,7 @@ export const Layout: FC = ({ children }) => {
 
 export const Section = styled.section<{ noNotch?: boolean; light?: boolean }>`
   position: relative;
-  background-color: ${(props) => (props.light ? '#fff' : '#f1f1f1')};
+  background-color: ${(props) => (props.light ? '#fff' : '#16171c')};
   color: var(--colors-primary);
 
   ${(props) =>
@@ -131,7 +131,7 @@ export const Section = styled.section<{ noNotch?: boolean; light?: boolean }>`
             border-style: solid;
             border-width: 0 40px 40px 40px;
             border-color: transparent transparent
-              ${props.light ? '#fff' : '#f1f1f1'} transparent;
+              ${props.light ? '#fff' : '#16171c'} transparent;
             left: 50%;
             transform: translateX(-50%);
           }

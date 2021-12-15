@@ -53,7 +53,9 @@ const GlobalStyle = createGlobalStyle`
 export default class MyApp extends App {
   render() {
     const { Component, pageProps, router } = this.props;
-    const isDarkMode = ['/', '/about-us'].includes(router.route);
+    const isDarkMode = ['/', '/about-us', '/services', '/blog'].includes(
+      router.route
+    );
 
     return (
       <>
@@ -113,15 +115,15 @@ export default class MyApp extends App {
             }
 
             :root {
-              --colors-text: #292929;
+              --colors-text: white;
               --colors-dim: #777;
               --colors-dim-dark: #555;
               --colors-accent: #03a6a6;
               --colors-accent-light: #04bfad;
               --colors-error: #bf120d;
               --colors-error-light: #ff3f38;
-              --colors-primary: #000;
-              --colors-background: #fff;
+              --colors-primary: white;
+              --colors-background: #0b0d11;
               --hover-opacity: 0.75;
 
               // After upgrading @theguild/components from 1.7.0 to 1.7.1 Modal is no longer centered
@@ -149,6 +151,8 @@ export default class MyApp extends App {
               text-decoration: none;
               transition: all 0.2s ease 0s;
             }
+
+           ,
           `}
         </style>
 

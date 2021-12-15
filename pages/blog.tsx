@@ -52,10 +52,8 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
 
   return (
     <Page title={title} description={description} image="/img/ogimage-blog.png">
-      <Hero shrink>
-        <span>Blog</span>
-        {hasTagFilter && <span>(filter by: {tagFilter.join(', ')})</span>}
-      </Hero>
+      {hasTagFilter && <span>(filter by: {tagFilter.join(', ')})</span>}
+
       {recentArticle && !hasTagFilter && (
         <Section>
           <SectionContainer>
