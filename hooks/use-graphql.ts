@@ -7,7 +7,7 @@ type GraphQLResult<TResult> = {
   data?: {
     data: TResult;
   };
-}
+};
 
 const endpoint = 'https://guild-ms-slack-bot.vercel.app/api/graphql';
 
@@ -31,7 +31,6 @@ export function useMutation<TResult, TVariables = Record<string, unknown>>(
       });
 
       fetch(endpoint, {
-        mode: 'no-cors',
         cache: 'no-cache',
         method: 'POST',
         body: JSON.stringify({
