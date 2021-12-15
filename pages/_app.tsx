@@ -52,10 +52,7 @@ const GlobalStyle = createGlobalStyle`
 
 export default class MyApp extends App {
   render() {
-    const { Component, pageProps, router } = this.props;
-    const isDarkMode = ['/', '/about-us', '/services', '/blog'].includes(
-      router.route
-    );
+    const { Component, pageProps } = this.props;
 
     return (
       <>
@@ -92,17 +89,14 @@ export default class MyApp extends App {
             href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap"
             rel="stylesheet"
           />
-          {isDarkMode && (
-            <link
-              href="https://fonts.googleapis.com/css?family=Poppins:400,500,700&display=swap"
-              rel="stylesheet"
-            />
-          )}
+          <link
+            href="https://fonts.googleapis.com/css?family=Poppins:400,500,700&display=swap"
+            rel="stylesheet"
+          />
         </Head>
         <script src="/static/crisp.js" />
 
-        {/* TODO: Remove this when site will be compatible with two themes */}
-        {isDarkMode && <GlobalStyle />}
+        <GlobalStyle />
 
         <style global jsx>
           {`
@@ -118,8 +112,8 @@ export default class MyApp extends App {
               --colors-text: white;
               --colors-dim: #777;
               --colors-dim-dark: #555;
-              --colors-accent: #03a6a6;
-              --colors-accent-light: #04bfad;
+              --colors-accent: #1CC8EE;
+              --colors-accent-light: #1CC8EE;
               --colors-error: #bf120d;
               --colors-error-light: #ff3f38;
               --colors-primary: white;
@@ -156,10 +150,7 @@ export default class MyApp extends App {
           `}
         </style>
 
-        <ThemeProvider
-          // TODO: Remove this when site will be compatible with two themes
-          isDarkTheme={isDarkMode}
-        >
+        <ThemeProvider isDarkTheme>
           <Component {...pageProps} />
         </ThemeProvider>
       </>

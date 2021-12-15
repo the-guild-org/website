@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import styled, { css } from 'styled-components';
 import tw from 'twin.macro';
-import { Description, Heading, Button } from './index';
 
 const Circle = styled.div<{ $size?: number }>`
   ${({ $size }) =>

@@ -8,10 +8,7 @@ import { Page } from './shared/Page';
 import { Meta } from '../lib/meta';
 import { Heading } from '../ui';
 import { GetInTouchSection } from './get-in-touch-section';
-
-const Main = styled.article`
-  padding: 125px 15px;
-`;
+import { HeroSection } from './hero-section';
 
 const Content = styled.div`
   padding-top: 25px;
@@ -27,12 +24,12 @@ const AboutUs = ({ title, description }: Meta): FC => {
     return (
       <MDXProvider components={components}>
         <Page title={title} description={description}>
+          <HeroSection>
+            <Heading>About Us</Heading>
+          </HeroSection>
           <div css={tw`max-w-[690px] mx-auto`}>
-            <Main>
-              <Heading css={tw`text-center`}>{title}</Heading>
-              <Content>{children}</Content>
-              <GetInTouchSection hideCover />
-            </Main>
+            <Content>{children}</Content>
+            <GetInTouchSection hideCover />
           </div>
         </Page>
       </MDXProvider>

@@ -7,7 +7,7 @@ import { authors } from './authors';
 import { MetaWithLink, pickAuthor } from '../lib/meta';
 import { Heading, Description, Anchor } from './index';
 
-const BlogCard = tw.a`w-[278px] h-[357px] border border-solid border-gray-500 rounded-2xl m-4 overflow-hidden flex flex-col hover:opacity-90 cursor-pointer border border-solid border-transparent hover:border-gray-500 transition-colors duration-200`;
+export const BlogCard = tw.a`w-[278px] min-h-[380px] max-h-[400px] border border-solid border-gray-500 rounded-2xl m-4 overflow-hidden flex flex-col hover:opacity-90 cursor-pointer border border-solid border-transparent hover:border-gray-500 transition-colors duration-200`;
 
 export const RecommendedReadingSection: FC<{ articles: MetaWithLink[] }> = ({
   articles = [],
@@ -34,7 +34,7 @@ export const RecommendedReadingSection: FC<{ articles: MetaWithLink[] }> = ({
       </div>
 
       <div
-        css={tw`container mx-auto my-12 flex flex-wrap justify-center text-white`}
+        css={tw`container mx-auto my-6 flex flex-wrap justify-center text-white`}
       >
         {articles.map((article) => (
           <BlogCard key={article.title} href={article.link}>
