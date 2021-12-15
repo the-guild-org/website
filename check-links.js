@@ -24,6 +24,8 @@ if (errors.length) {
     console.error(error);
   });
   process.exit(1);
+} else {
+  console.log('All good');
 }
 
 /**
