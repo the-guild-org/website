@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'GraphQL AuthZ - GraphQL Authorization layer',
@@ -8,10 +8,10 @@ export const meta = {
   description:
     'GraphQL AuthZ is a flexible modern way of adding an authorization layer on top of your existing GraphQL microservices or monolith backend systems.',
   image: '/blog-assets/graphql-authz/cover.png',
-  thumbnail: '/blog-assets/graphql-authz/cover.png',
-};
+  thumbnail: '/blog-assets/graphql-authz/cover.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 Today we are excited to introduce GraphQL AuthZ - a new open-source library for adding authorization layers in different GraphQL architectures.
 
@@ -30,19 +30,19 @@ GraphQL AuthZ wraps the graphql.js execution phase and runs logic for enforcing 
 This simplified pseudo-code describes how the GraphQL AuthZ hooks into the process by wrapping the `execute` function.
 
 ```typescript
-import { execute as originalExecute } from 'graphql';
+import { execute as originalExecute } from 'graphql'
 
 function execute(args) {
-  const preExecutionErrors = runPreExecutionRules(args);
+  const preExecutionErrors = runPreExecutionRules(args)
   if (preExecutionErrors) {
-    return preExecutionErrors;
+    return preExecutionErrors
   }
-  const result = originalExecute(args);
-  const postExecutionErrors = runPostExecutionRules(args, result);
+  const result = originalExecute(args)
+  const postExecutionErrors = runPostExecutionRules(args, result)
   if (postExecutionErrors) {
-    return postExecutionErrors;
+    return postExecutionErrors
   }
-  return result;
+  return result
 }
 ```
 
@@ -64,9 +64,9 @@ This technique works the best for authorization logic that is not dependent on r
 ```typescript
 // creating pre-execution rules
 
-const IsAuthenticated = preExecRule()((context) => !!context.user);
+const IsAuthenticated = preExecRule()((context) => !!context.user)
 
-const IsEditor = preExecRule()((context) => context.roles.has('editor'));
+const IsEditor = preExecRule()((context) => context.roles.has('editor'))
 ```
 
 However, if you need the flexibility for fetching data from a remote source such as a database before you can determine whether an operation should be executed, you still have the power to leverage those data sources with async code.
@@ -77,9 +77,9 @@ This technique is a perfect fit for mutation fields, as you want to avoid execut
 // user can only publish a post if he owns it
 
 const CanPublishPost = preExecRule()(async (context, fieldArgs) => {
-  const post = await db.posts.get(fieldArgs.postId);
-  return post.authorId === context.user?.id;
-});
+  const post = await db.posts.get(fieldArgs.postId)
+  return post.authorId === context.user?.id
+})
 ```
 
 ## Using the GraphQL schema as a data source
@@ -93,13 +93,13 @@ const CanPublishPost = preExecRule()(async (context, fieldArgs) => {
   const graphQLResult = await graphql({
     schema: context.schema,
     source: `query post($postId: ID!) { post(id: $postId) { author { id } } }`,
-    variableValues: { postId: fieldArgs.postId },
-  });
+    variableValues: { postId: fieldArgs.postId }
+  })
 
-  const post = graphQLResult.data?.post;
+  const post = graphQLResult.data?.post
 
-  return post && post.author.id === context.user?.id;
-});
+  return post && post.author.id === context.user?.id
+})
 ```
 
 Authorization logic could require any kind of data fetched from different databases or (micro)services. Some data points could even be resolved by third-party microservices or APIs that are not part of the composed graph.
@@ -124,11 +124,11 @@ For example, if your rule is attached to some object field it could require addi
 // creating post-execution rule
 
 const CanReadPost = postExecRule({
-  selectionSet: '{ status author { id } }',
+  selectionSet: '{ status author { id } }'
 })(
   (context, fieldArgs, post, parent) =>
     post.status === 'public' || post.author.id === context.user?.id
-);
+)
 ```
 
 By using this technique we reduce remote procedure calls to individual data sources by executing authorization logic on top of GraphQL execution result that is enriched with the additional data specified by the authorization rules. Since related data is often stored in the same place it can be fetched from a data source in one roundtrip (via the GraphQL schema) instead of performing one remote procedure call for the authorization and one call for the actual data populating.
@@ -178,22 +178,22 @@ If you are not pursuing a schema-first (SDL) development flow and are more a fan
 const authSchema = {
   Post: { __authz: { rules: ['CanReadPost'] } },
   User: {
-    email: { __authz: { rules: ['IsAdmin'] } },
+    email: { __authz: { rules: ['IsAdmin'] } }
   },
   Mutation: {
-    publishPost: { __authz: { rules: ['CanPublishPost'] } },
+    publishPost: { __authz: { rules: ['CanPublishPost'] } }
   },
   Query: {
-    users: { __authz: { rules: ['IsAuthenticated'] } },
+    users: { __authz: { rules: ['IsAuthenticated'] } }
   },
   // wildcards are supported. read more: https://github.com/AstrumU/graphql-authz#wildcard-rules
   '*': {
     __authz: { rules: ['Reject'] },
     '*': {
-      __authz: { rules: ['IsAuthenticated'] },
-    },
-  },
-};
+      __authz: { rules: ['IsAuthenticated'] }
+    }
+  }
+}
 ```
 
 ## Comparing GraphQL AuthZ with GraphQL Shield
