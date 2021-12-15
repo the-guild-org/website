@@ -1,18 +1,18 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title:
     'GraphQL Code Generator - Introducing Hooks support for React Apollo plugin',
   author: 'leonardo',
-  tags: ['graphql', 'codegen', 'react', 'apollo', 'react-apollo', 'hooks'],
+  tags: ['graphql', 'codegen', 'react', 'react-apollo', 'hooks'],
   date: '2019-03-01',
   updateDate: '2020-05-20',
   description:
     'Use and generate React Hooks with Apollo and Typescript with the new version of GraphQL Code Generator',
-  image: '/blog-assets/graphql-codegen-hooks-support-react-apollo/cover.png',
-};
+  image: '/blog-assets/graphql-codegen-hooks-support-react-apollo/cover.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 If you follow the React community, you’ll know for sure that [React Hooks](https://reactjs.org/docs/hooks-intro.html) had been one of the most awaited feature in the ecosystem since their first gist. They have been available since React v16.7-alpha, and many libraries already started adopting them — [officially](https://react.i18next.com/latest/usetranslation-hook) or with [auxiliary libraries](https://github.com/facebookincubator/redux-react-hook).
 
@@ -44,15 +44,15 @@ The new hook `useContext` allows us to access a React Context ([with its Consume
 ```tsx
 // This is our custom hook
 function useThemeColor() {
-  const theme = useContext(ThemeContext);
-  return theme.color;
+  const theme = useContext(ThemeContext)
+  return theme.color
 }
 
 function MyComponent(props: Props) {
   // Here we go
-  const color = useThemeColor();
+  const color = useThemeColor()
 
-  return <h1 style={{ color }}>{props.title}</h1>;
+  return <h1 style={{ color }}>{props.title}</h1>
 }
 ```
 
@@ -78,7 +78,7 @@ function MyComponent(props: Props) {
 If you are used to `Query` component, in the next example you’ll see how we are replacing it with just the `useQuery` hook:
 
 ```tsx
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks'
 
 const GET_TODOS = gql`
   {
@@ -87,11 +87,11 @@ const GET_TODOS = gql`
       description
     }
   }
-`;
+`
 
 function Todos() {
   // Here the magic bits
-  const { data, error, loading } = useQuery(GET_TODOS);
+  const { data, error, loading } = useQuery(GET_TODOS)
   if (loading)
     if (error)
       // ...
@@ -103,7 +103,7 @@ function Todos() {
             <li key={todo.id}>{todo.description}</li>
           ))}
         </ul>
-      );
+      )
 }
 ```
 
@@ -128,7 +128,7 @@ export function useUserListQuery(
   return useApolloQuery<UserListQueryQuery, UserListQueryVariables>(
     UserListQueryDocument,
     baseOptions
-  );
+  )
 }
 ```
 

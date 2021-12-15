@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import NativeLink from 'next/link';
 
@@ -22,7 +22,7 @@ const Link = styled(NativeLink)`
   }
 `;
 
-export const Tag: React.FC<{
+export const Tag: FC<{
   tag: string;
   asLink: boolean;
 }> = ({ tag, asLink }) => {

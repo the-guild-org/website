@@ -1,16 +1,23 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: "What's new with Apollo Client v3 and GraphQL Codegen",
   author: 'dotan',
-  tags: ['graphql', 'codegen', 'typescript', 'react', 'angular', 'apollo'],
+  tags: [
+    'graphql',
+    'codegen',
+    'typescript',
+    'react',
+    'angular',
+    'apollo-client'
+  ],
   date: '2020-11-30',
   description:
     'All the new features GraphQL Codegen adds to your type-system with the new Apollo Client 3',
-  image: '/blog-assets/graphql-code-generator/codegen-ac3.png',
-};
+  image: '/blog-assets/graphql-code-generator/codegen-ac3.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 In recent weeks and months, we've been migrating many of our clients codebases, many at very large scale (over thousand developers on a single codebase), from Apollo Client 2 to Apollo Client 3.
 
@@ -45,12 +52,12 @@ generates:
 Then, when you create your Apollo Client cache instance, use the generated variable:
 
 ```ts
-import introspection from './src/possible-types';
+import introspection from './src/possible-types'
 
 export default new ApolloClient({
   uri: 'https://countries.trevorblades.com',
-  cache: new InMemoryCache({ possibleTypes: introspection.possibleTypes }),
-});
+  cache: new InMemoryCache({ possibleTypes: introspection.possibleTypes })
+})
 ```
 
 Without this, you'll have to define and maintain the `possibleTypes` object manually, which might lead to an incorrect or invalid setup that might effect Apollo-Client runtime.
@@ -75,29 +82,29 @@ generates:
 Then, use the generated `TypedTypePolicies` to type your object:
 
 ```ts
-import { TypedTypePolicies } from './apollo-helpers';
+import { TypedTypePolicies } from './apollo-helpers'
 
 const typePolicies: TypedTypePolicies = {
   // Keys in this object will be validated against the typed on your schema
   Product: {
-    keyFields: ['id'], // Values in this field will be validated against the available fields from the Product type
+    keyFields: ['id'] // Values in this field will be validated against the available fields from the Product type
   },
   Person: {
-    keyFields: ['name', 'email'],
+    keyFields: ['name', 'email']
   },
   Book: {
     // This entire definition is typed, based on available types and fields
     fields: {
       tags: {
-        merge: false,
-      },
-    },
-  },
-};
+        merge: false
+      }
+    }
+  }
+}
 
 const cache = new InMemoryCache({
-  typePolicies,
-});
+  typePolicies
+})
 ```
 
 ## TypedDocumentNode
@@ -122,22 +129,22 @@ generates:
 Later, in your code, you can just import the generated `TypedDocumentNode` objects from `typed-document-nodes` (based on your GraphQL operations), and it will be automatically typed:
 
 ```tsx
-import { RatesDocument } from './typed-document-nodes';
-import { useQuery } from '@apollo/client';
+import { RatesDocument } from './typed-document-nodes'
+import { useQuery } from '@apollo/client'
 
 export const MyComponent: React.FC = () => {
   // We now have types support and auto complete for the
   // result type, just by passing `RatesDocument` as `query` to apollo client.
   const result = useQuery(RatesDocument, {
     variables: {
-      currency: 'USD',
-    },
-  });
+      currency: 'USD'
+    }
+  })
 
-  const rates = result.data.rates;
+  const rates = result.data.rates
 
-  return <div>Rates: {rates}</div>;
-};
+  return <div>Rates: {rates}</div>
+}
 ```
 
 ## Ready-to-use Hooks/HOC/Components
@@ -162,21 +169,21 @@ generates:
 Then, just use it directly in your components:
 
 ```tsx
-import { useRatesQuery } from './hooks';
+import { useRatesQuery } from './hooks'
 
 export const MyComponent: React.FC = () => {
   // We now have types support and auto complete for the
   // result type, just by passing `RatesDocument` as `query` to apollo client.
   const result = useRatesQuery(RatesDocument, {
     variables: {
-      currency: 'USD',
-    },
-  });
+      currency: 'USD'
+    }
+  })
 
-  const rates = result.data.rates;
+  const rates = result.data.rates
 
-  return <div>Rates: {rates}</div>;
-};
+  return <div>Rates: {rates}</div>
+}
 ```
 
 > Note: This is an alternative for TypedDocumentNode.

@@ -2,14 +2,16 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { GetStaticProps } from 'next/types';
 import { Page } from '../ui/shared/Page';
-import { Hero, Section, Container } from '../ui/shared/Layout';
+import { Section, Container } from '../ui/shared/Layout';
 import { projects } from '../lib/projects';
 import { ProjectSeparator, Project } from '../ui/shared/Projects';
+import { HeroSection } from '../ui/hero-section';
+import { Heading } from '../ui';
 
 const ProjectsSection = styled(Section)`
   padding: 50px 0;
-  background-color: #fff;
   text-align: center;
+  background: none;
 
   &::before {
     display: none;
@@ -21,7 +23,7 @@ interface Props {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const projectsOrder = Object.keys(projects).sort(() => 0.5 - Math.random());
+  const projectsOrder = Object.keys(projects);
 
   return {
     props: {
@@ -37,9 +39,9 @@ const OpenSource: FC<Props> = ({ projectsOrder }) => {
       description="Tech Stack developed by us. Every project is Open Source and most of them are focused around GraphQL."
       image="/img/ogimage.png"
     >
-      <Hero shrink>
-        <span>Open Source</span>
-      </Hero>
+      <HeroSection>
+        <Heading>Open Source</Heading>
+      </HeroSection>
       <ProjectsSection>
         <Container>
           {projectsOrder.map((id, i) => {

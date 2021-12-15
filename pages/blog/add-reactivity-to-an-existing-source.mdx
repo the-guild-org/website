@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'Add reactivity to an existing source using GraphQL Mesh',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2020-12-15',
   description:
     'How To extend an existing endpoint with subscriptions to bring reactivity to your application',
-  image: '/blog-assets/add-reactivity-to-an-existing-source/PimpMyGraphQL.png',
-};
+  image: '/blog-assets/add-reactivity-to-an-existing-source/PimpMyGraphQL.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 # Introduction
 
@@ -104,7 +104,7 @@ module.exports = (next) => async (root, args, context, info) => {
     kind: 'Field',
     name: {
       kind: 'Name',
-      value: 'returning',
+      value: 'returning'
     },
     arguments: [],
     directives: [],
@@ -115,25 +115,25 @@ module.exports = (next) => async (root, args, context, info) => {
           kind: 'Field',
           name: {
             kind: 'Name',
-            value: 'id',
+            value: 'id'
           },
           arguments: [],
-          directives: [],
-        },
-      ],
-    },
-  });
+          directives: []
+        }
+      ]
+    }
+  })
 
   // send the mutation to the graphQL source
-  const result = await next(root, args, context, info);
+  const result = await next(root, args, context, info)
 
   // select returned ids
-  const ids = result.returning.map((c) => c.id);
+  const ids = result.returning.map((c) => c.id)
 
   // Query users enforcing fields to return
   const responseUser = await context.spacexGQL.apiQuery.users(
     {
-      where: { id: { _in: ids } },
+      where: { id: { _in: ids } }
     },
     {
       fields: {
@@ -141,16 +141,16 @@ module.exports = (next) => async (root, args, context, info) => {
         name: true,
         rocket: true,
         timestamp: true,
-        twitter: true,
-      },
+        twitter: true
+      }
     }
-  );
+  )
 
   // publish new users
-  context.pubsub.publish('usersAdded', responseUser);
+  context.pubsub.publish('usersAdded', responseUser)
 
-  return result;
-};
+  return result
+}
 ```
 
 That's it!

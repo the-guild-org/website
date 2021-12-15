@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'GraphQL Scalars 1.0 is out!',
@@ -6,10 +6,10 @@ export const meta = {
   tags: ['graphql', 'graphql-scalars'],
   date: '2019-08-08',
   description: 'More Types, Data Integrity and Strict Validations on GraphQL',
-  image: '/medium/037668856e53c2b8a6e50ca7b886d157.gif',
-};
+  image: '/medium/037668856e53c2b8a6e50ca7b886d157.gif'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 The GraphQL Specification has the`Int`, `Float`, `String`, `Boolean`and `ID` Scalar types by default. Those scalar types help you identify the data and validate it before transferring it between client and server. But you might need more specific scalars for your GraphQL application, to help you better describe and validate your app’s data.
 
@@ -32,36 +32,36 @@ Since then we completely rewrote the library using TypeScript, upgraded all depe
 Apollo Server provides mocks built-in scalars such as `Int` , `String` , `Float` , `ID` and `Boolean` . What if you need same thing for our scalars? So, we provide you mocking functions for each scalar in this package. You can add those easily in your server for mocking the schema.
 
 ```typescript
-import { ApolloServer } from 'apollo-server';
-import { makeExecutableSchema } from 'graphql-tools';
+import { ApolloServer } from 'apollo-server'
+import { makeExecutableSchema } from 'graphql-tools'
 // import all scalars and resolvers
-import { typeDefs, resolvers, mocks } from 'graphql-scalars';
+import { typeDefs, resolvers, mocks } from 'graphql-scalars'
 // Alternatively, import individual scalars and resolvers
 // import { DateTimeResolver, DateTimeTypeDefinition, DateTimeMock, ... } from "graphql-scalars"
 
 const server = new ApolloServer({
   typeDefs: [
     // use spread syntax to add scalar definitions to your schema
-    ...typeDefs,
+    ...typeDefs
     // DateTimeDefinition,
     // ...
     // ... other type definitions ...
   ],
   resolvers: {
     // use spread syntax to add scalar resolvers to your resolver map
-    ...resolvers,
+    ...resolvers
     // DateTimeResolver,
     // ...
     // ... remainder of resolver map ...
   },
   mocks: {
     // use spread syntax to add scalar resolvers to your resolver map
-    ...mocks,
+    ...mocks
     // DateTimeMock,
     // ...
     // ... other mocks ...
-  },
-});
+  }
+})
 ```
 
 # Special Thanks

@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'Enable Remote Control in GraphQL Inspector',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2020-05-01',
   description:
     'Intercept schema changes via HTTP and decide which changes are acceptable which are not and all of this through a serverless function.',
-  image: '/blog-assets/remote-control-graphql-inspector/cover.png',
-};
+  image: '/blog-assets/remote-control-graphql-inspector/cover.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 The new version of GraphQL Inspector comes with **remote control of Pull Requests and Pushes via HTTP endpoint**. You're in charge of accepting or rejecting changes, even if they break the GraphQL API.
 
@@ -30,14 +30,14 @@ The idea is simple. You create an HTTP endpoint, like serverless function or wha
 
 ```javascript
 export default (req, res) => {
-  const changes = req.body.changes;
-  const conclusion = decide(changes);
+  const changes = req.body.changes
+  const conclusion = decide(changes)
 
   res.json({
     changes,
-    conclusion,
-  });
-};
+    conclusion
+  })
+}
 ```
 
 The HTTP endpoint will also receive **details about a Pull Request or a Commit** that triggered the schema check, so possibilities are endless here.

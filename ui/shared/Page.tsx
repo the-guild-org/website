@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { Layout } from './Layout';
 
 function ensureAbsolute(url: string): string {
-  return url.startsWith('/') ? 'https://the-guild.dev' + url : url;
+  return url.startsWith('/') ? `https://the-guild.dev${url}` : url;
 }
 
 export const Page: FC<{

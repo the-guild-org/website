@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'How to create a React app out of a Webflow project',
@@ -6,10 +6,10 @@ export const meta = {
   tags: ['react', 'webflow'],
   date: '2018-09-07',
   description: 'How to create a React app out of a Webflow project',
-  image: '/medium/50ea860594889aa4f1b96a509c886b9c.jpg',
-};
+  image: '/medium/50ea860594889aa4f1b96a509c886b9c.jpg'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 _tl;dr: It can be transpiled with a single command._
 
@@ -108,11 +108,11 @@ If you’ll take a look at the `views` folder you’ll see that it contains a fi
 To define a controller simply create a new file named `ConsultFormController.js` under the `controllers` folder where the corresponding controller’s gonna be exported as a React component. The controller should contain proxies to the original elements and each proxy should forward the necessary props. Rather than giving further explanation I would like to give you an example of a possible implementation of a ConsultFormController:
 
 ```javascript
-import React from 'react';
-import ConsultFormView from '../views/ConsultFormView';
+import React from 'react'
+import ConsultFormView from '../views/ConsultFormView'
 
 class ConsultFormController extends React.Component {
-  state = {};
+  state = {}
 
   render() {
     return (
@@ -123,31 +123,31 @@ class ConsultFormController extends React.Component {
         <description onChange={this.setDescription} />
         <submit onClick={this.submit} />
       </ConsultFormView>
-    );
+    )
   }
 
   setName = (e) => {
     this.setState({
-      name: e.target.value,
-    });
-  };
+      name: e.target.value
+    })
+  }
   setPhone = (e) => {
     this.setState({
-      phone: e.target.value,
-    });
-  };
+      phone: e.target.value
+    })
+  }
 
   setEmail = (e) => {
     this.setState({
-      email: e.target.value,
-    });
-  };
+      email: e.target.value
+    })
+  }
 
   setDescription = (e) => {
     this.setState({
-      description: e.target.value,
-    });
-  };
+      description: e.target.value
+    })
+  }
 
   submit = () => {
     alert(`
@@ -155,11 +155,11 @@ class ConsultFormController extends React.Component {
       ${this.phone}
       ${this.email}
       ${this.description}
-    `);
-  };
+    `)
+  }
 }
 
-export default ConsultFormController;
+export default ConsultFormController
 ```
 
 That’s it! Now you can just import the controller and use it anywhere and anytime you want, without having to deal with the hustle of maintaining a complex machine generated Webflow code; and any time you update the design just update your code using the `appfairy` command.

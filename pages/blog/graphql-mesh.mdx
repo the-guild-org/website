@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'GraphQL Mesh - Query anything, run anywhere',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2020-03-23',
   description: 'We are excited to announce GraphQL Mesh',
   image: '/blog-assets/graphql-mesh/cover.webm',
-  thumbnail: '/blog-assets/graphql-mesh/cover.jpg',
-};
+  thumbnail: '/blog-assets/graphql-mesh/cover.jpg'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 We are excited to announce [GraphQL Mesh](https://github.com/Urigo/graphql-mesh) — a powerful open source library enabling developers to leverage the power of GraphQL without requiring changes to the technologies your servers already use.
 
@@ -155,13 +155,13 @@ Here’s a simple example for fetching and aggregating data across multiple exte
 function getCityAndWeather(city: string): { city: string; weather: any } {
   const cities /* any */ = await fetchApi(
     `https://cities-api/cities?search=${city}`
-  );
-  const city /* any */ = cities.data[0];
+  )
+  const city /* any */ = cities.data[0]
   const weather /* any */ = await fetchApi(
     `https://weather-api/forecast?lat=${city.latitude}&lon=${city.longitude}`
-  );
+  )
 
-  return { city, weather };
+  return { city, weather }
 }
 ```
 
@@ -199,15 +199,15 @@ sources:
 The data aggregation logic can be moved into a custom GraphQL resolver:
 
 ```typescript
-import { Resolvers } from './mesh/types.generated';
+import { Resolvers } from './mesh/types.generated'
 
 export const resolvers: Resolvers = {
   dailyForecast: async (city, args, { Weather }) => {
     return Weather.api
       .forecastDailyByLatLon(city.latitude, city.longitude)
-      .then((r) => r.data);
-  },
-};
+      .then((r) => r.data)
+  }
+}
 ```
 
 We are using `city` parent value, which is being fetched by the Cities API, and fetch data from the weather API based on the city location.

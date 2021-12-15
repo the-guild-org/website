@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'How I helped improve Angular Console',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2018-11-30',
   description:
     'How I helped improve Angular Console. By doing GraphQL the right way',
-  image: '/medium/78d0f670476d24762cc05eefd42a0321.png',
-};
+  image: '/medium/78d0f670476d24762cc05eefd42a0321.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 # By doing GraphQL right
 
@@ -69,13 +69,13 @@ new GraphQLObjectType({
   name: 'Post',
   fields: {
     id: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     text: {
-      type: GraphQLString,
-    },
-  },
-});
+      type: GraphQLString
+    }
+  }
+})
 ```
 
 with Schema Definition Language:
@@ -101,14 +101,14 @@ new GraphQLObjectType({
   fields: {
     id: {
       type: GraphQLString,
-      resolve: (parent) => parent._id,
+      resolve: (parent) => parent._id
     },
     text: {
       type: GraphQLString,
-      resolve: (parent) => parent.content,
-    },
-  },
-});
+      resolve: (parent) => parent.content
+    }
+  }
+})
 ```
 
 I personally think it was a good choice because it forces developers to write logical part right next to type definition. The problem is, the bigger types the more confusing it gets. Also keeping resolvers as standalone functions makes them easier to test.
@@ -121,12 +121,12 @@ const PostType = gql`
     id: String
     text: String
   }
-`;
+`
 
 const Post = {
   id: (parent) => parent._id,
-  text: (parent) => parent.content,
-};
+  text: (parent) => parent.content
+}
 ```
 
 Here are the relevant changes that I’ve mentioned above, that allowed me to introduce something really interesting in the next PR.
@@ -146,18 +146,18 @@ In Angular Console, I used the TypeScript plugins to generate types for a schema
 Here’s how it might look like.
 
 ```typescript
-import { PostResolvers } from './generated-types';
+import { PostResolvers } from './generated-types'
 
 const Post: PostResolvers.Resolvers = {
   id: (parent) => parent._id,
-  text: (parent) => parent.content,
-};
+  text: (parent) => parent.content
+}
 ```
 
 ```typescript
 export interface PostParent {
-  _id: string;
-  content: string;
+  _id: string
+  content: string
 }
 ```
 

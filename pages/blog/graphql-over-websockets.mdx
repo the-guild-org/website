@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'GraphQL over WebSockets',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2020-09-15',
   description:
     'Coherent, zero-dependency, lazy, simple, server and client implementation of the new, security first, GraphQL over WebSocket Protocol.',
-  image: '/blog-assets/graphql-over-websockets/graphql-over-websocket.png',
-};
+  image: '/blog-assets/graphql-over-websockets/graphql-over-websocket.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 # GraphQL over WebSockets
 
@@ -59,7 +59,7 @@ $ yarn add graphql-ws
 #### Create a GraphQL schema
 
 ```ts
-import { buildSchema } from 'graphql';
+import { buildSchema } from 'graphql'
 
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(`
@@ -69,21 +69,21 @@ const schema = buildSchema(`
   type Subscription {
     greetings: String
   }
-`);
+`)
 
 // The roots provide resolvers for each GraphQL operation
 const roots = {
   query: {
-    hello: () => 'Hello World!',
+    hello: () => 'Hello World!'
   },
   subscription: {
     greetings: async function* sayHiIn5Languages() {
       for (const hi of ['Hi', 'Bonjour', 'Hola', 'Ciao', 'Zdravo']) {
-        yield { greetings: hi };
+        yield { greetings: hi }
       }
-    },
-  },
-};
+    }
+  }
+}
 ```
 
 #### Start the server
@@ -91,28 +91,28 @@ const roots = {
 ##### With [ws](https://github.com/websockets/ws)
 
 ```ts
-import ws from 'ws'; // yarn add ws
-import { useServer } from 'graphql-ws/lib/use/ws';
+import ws from 'ws' // yarn add ws
+import { useServer } from 'graphql-ws/lib/use/ws'
 
 const server = new ws.Server({
   port: 4000,
-  path: '/graphql',
-});
+  path: '/graphql'
+})
 
 useServer(
   // from the previous step
   { schema, roots },
   server
-);
+)
 
-console.log('Listening to port 4000');
+console.log('Listening to port 4000')
 ```
 
 ##### With [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js)
 
 ```ts
-import uWS from 'uWebSockets.js'; // yarn add uWebSockets.js@uNetworking/uWebSockets.js#<tag>
-import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets';
+import uWS from 'uWebSockets.js' // yarn add uWebSockets.js@uNetworking/uWebSockets.js#<tag>
+import { makeBehavior } from 'graphql-ws/lib/use/uWebSockets'
 
 uWS
   .App()
@@ -125,20 +125,20 @@ uWS
   )
   .listen(4000, (listenSocket) => {
     if (listenSocket) {
-      console.log('Listening to port 4000');
+      console.log('Listening to port 4000')
     }
-  });
+  })
 ```
 
 ##### With [fastify-websocket](https://github.com/fastify/fastify-websocket)
 
 ```ts
-import Fastify from 'fastify'; // yarn add fastify
-import fastifyWebsocket from 'fastify-websocket'; // yarn add fastify-websocket
-import { makeHandler } from 'graphql-ws/lib/use/fastify-websocket';
+import Fastify from 'fastify' // yarn add fastify
+import fastifyWebsocket from 'fastify-websocket' // yarn add fastify-websocket
+import { makeHandler } from 'graphql-ws/lib/use/fastify-websocket'
 
-const fastify = Fastify();
-fastify.register(fastifyWebsocket);
+const fastify = Fastify()
+fastify.register(fastifyWebsocket)
 
 fastify.get(
   '/graphql',
@@ -147,70 +147,70 @@ fastify.get(
     // from the previous step
     { schema, roots }
   )
-);
+)
 
 fastify.listen(4000, (err) => {
   if (err) {
-    fastify.log.error(err);
-    return process.exit(1);
+    fastify.log.error(err)
+    return process.exit(1)
   }
-  console.log('Listening to port 4000');
-});
+  console.log('Listening to port 4000')
+})
 ```
 
 #### Use the client
 
 ```ts
-import { createClient } from 'graphql-ws';
+import { createClient } from 'graphql-ws'
 
 const client = createClient({
-  url: 'ws://welcomer.com:4000/graphql',
-});
+  url: 'ws://welcomer.com:4000/graphql'
+})
 
 // query
-(async () => {
+;(async () => {
   const result = await new Promise((resolve, reject) => {
-    let result;
+    let result
     client.subscribe(
       {
-        query: '{ hello }',
+        query: '{ hello }'
       },
       {
         next: (data) => (result = data),
         error: reject,
-        complete: () => resolve(result),
+        complete: () => resolve(result)
       }
-    );
-  });
+    )
+  })
 
-  expect(result).toEqual({ hello: 'Hello World!' });
-})();
+  expect(result).toEqual({ hello: 'Hello World!' })
+})()
 
 // subscription
-(async () => {
+;(async () => {
   const onNext = () => {
     /* handle incoming values */
-  };
+  }
 
   let unsubscribe = () => {
     /* complete the subscription */
-  };
+  }
 
   await new Promise((resolve, reject) => {
     unsubscribe = client.subscribe(
       {
-        query: 'subscription { greetings }',
+        query: 'subscription { greetings }'
       },
       {
         next: onNext,
         error: reject,
-        complete: resolve,
+        complete: resolve
       }
-    );
-  });
+    )
+  })
 
-  expect(onNext).toBeCalledTimes(5); // we say "Hi" in 5 languages
-})();
+  expect(onNext).toBeCalledTimes(5) // we say "Hi" in 5 languages
+})()
 ```
 
 ## Want to find out more?

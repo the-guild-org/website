@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'GraphQL Code Generator v0.11',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2018-08-21',
   description:
     'Generate React and Angular Apollo Components, Resolver signatures and much more!',
-  image: '/blog-assets/graphql-code-generator/cover.png',
-};
+  image: '/blog-assets/graphql-code-generator/cover.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 :::danger Note:
 This blog post refers to an outdated version, please check http://graphql-code-generator.com/ for the latest docs!
@@ -99,14 +99,14 @@ We think this was another missing piece of making your code even more strongly t
 The template now generates a Typescript type for each GraphQL type with resolvers for all of its fields but it is also possible to extract a type of a single field.
 
 ```typescript
-import { QueryResolvers } from './generated/graphql';
-import { getPosts } from './posts';
+import { QueryResolvers } from './generated/graphql'
+import { getPosts } from './posts'
 
 const Query: QueryResolvers.Resolvers = {
   posts() {
-    return getPosts();
-  },
-};
+    return getPosts()
+  }
+}
 ```
 
 As you can see the usage is straightforward but we recommend to explore the source code of a generated file.
@@ -171,23 +171,23 @@ type User @entity {
 You will get a generated TypeScript interface:
 
 ```typescript
-import { ObjectID } from 'mongodb';
+import { ObjectID } from 'mongodb'
 
 export interface UserDbObject {
-  _id: ObjectID;
-  username: string;
-  email?: string | null;
+  _id: ObjectID
+  username: string
+  email?: string | null
 }
 ```
 
 Then, you can use it with MongoDB driver for NodeJS:
 
 ```typescript
-import { Collection } from 'mongodb';
-import { db } from './my-db-instance';
+import { Collection } from 'mongodb'
+import { db } from './my-db-instance'
 
 const MyCollection: Collection<UserDbObject> =
-  db.collection<UserDbObject>('users');
+  db.collection<UserDbObject>('users')
 ```
 
 Now your MongoDB collection is typed, and it’s easier to find bugs during development.
@@ -241,22 +241,22 @@ type Photo @entity {
 Will output:
 
 ```typescript
-import { ObjectID } from 'mongodb';
+import { ObjectID } from 'mongodb'
 
 export interface UserDbObject {
-  _id: ObjectID;
-  profile: ProfileDbObject;
-  photos: [ObjectID];
-  email?: string | null;
+  _id: ObjectID
+  profile: ProfileDbObject
+  photos: [ObjectID]
+  email?: string | null
 }
 
 export interface ProfileDbObject {
-  fullName: string;
+  fullName: string
 }
 
 export interface PhotoDbObject {
-  _id: ObjectID;
-  url: string;
+  _id: ObjectID
+  url: string
 }
 ```
 

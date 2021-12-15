@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'GraphQL over SSE (Server-Sent Events)',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2021-09-01',
   description:
     'Zero-dependency, HTTP/1 safe, simple, GraphQL over Server-Sent Events Protocol server and client.',
-  image: '/blog-assets/graphql-over-sse/graphql-over-sse.jpg',
-};
+  image: '/blog-assets/graphql-over-sse/graphql-over-sse.jpg'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 ## Introduction
 
@@ -63,7 +63,7 @@ $ yarn add graphql-sse
 #### Create a GraphQL schema
 
 ```ts
-import { GraphQLSchema, GraphQLObjectType, GraphQLString } from 'graphql';
+import { GraphQLSchema, GraphQLObjectType, GraphQLString } from 'graphql'
 
 /**
  * Construct a GraphQL schema and define the necessary resolvers.
@@ -81,9 +81,9 @@ const schema = new GraphQLSchema({
     fields: {
       hello: {
         type: GraphQLString,
-        resolve: () => 'world',
-      },
-    },
+        resolve: () => 'world'
+      }
+    }
   }),
   subscription: new GraphQLObjectType({
     name: 'Subscription',
@@ -92,13 +92,13 @@ const schema = new GraphQLSchema({
         type: GraphQLString,
         subscribe: async function* () {
           for (const hi of ['Hi', 'Bonjour', 'Hola', 'Ciao', 'Zdravo']) {
-            yield { greetings: hi };
+            yield { greetings: hi }
           }
-        },
-      },
-    },
-  }),
-});
+        }
+      }
+    }
+  })
+})
 ```
 
 #### Start the server
@@ -106,22 +106,22 @@ const schema = new GraphQLSchema({
 ##### With [`http`](https://nodejs.org/api/http.html)
 
 ```ts
-import http from 'http';
-import { createHandler } from 'graphql-sse';
+import http from 'http'
+import { createHandler } from 'graphql-sse'
 
 // Create the GraphQL over SSE handler
 const handler = createHandler({
-  schema, // from the previous step
-});
+  schema // from the previous step
+})
 
 // Create a HTTP server using the handler on `/graphql/stream`
 const server = http.createServer((req, res) => {
-  if (req.url.startsWith('/graphql/stream')) return handler(req, res);
-  return res.writeHead(404).end();
-});
+  if (req.url.startsWith('/graphql/stream')) return handler(req, res)
+  return res.writeHead(404).end()
+})
 
-server.listen(4000);
-console.log('Listening to port 4000');
+server.listen(4000)
+console.log('Listening to port 4000')
 ```
 
 ##### With [`http2`](https://nodejs.org/api/http2.html)
@@ -134,125 +134,125 @@ $ openssl req -x509 -newkey rsa:2048 -nodes -sha256 -subj '/CN=localhost' \
 ```
 
 ```ts
-import fs from 'fs';
-import http2 from 'http2';
-import { createHandler } from 'graphql-sse';
+import fs from 'fs'
+import http2 from 'http2'
+import { createHandler } from 'graphql-sse'
 
 // Create the GraphQL over SSE handler
 const handler = createHandler({
-  schema, // from the previous step
-});
+  schema // from the previous step
+})
 
 // Create a HTTP/2 server using the handler on `/graphql/stream`
 const server = http2.createSecureServer(
   {
     key: fs.readFileSync('localhost-privkey.pem'),
-    cert: fs.readFileSync('localhost-cert.pem'),
+    cert: fs.readFileSync('localhost-cert.pem')
   },
   (req, res) => {
-    if (req.url.startsWith('/graphql/stream')) return handler(req, res);
-    return res.writeHead(404).end();
+    if (req.url.startsWith('/graphql/stream')) return handler(req, res)
+    return res.writeHead(404).end()
   }
-);
+)
 
-server.listen(4000);
-console.log('Listening to port 4000');
+server.listen(4000)
+console.log('Listening to port 4000')
 ```
 
 ##### With [`express`](https://expressjs.com/)
 
 ```ts
-import express from 'express'; // yarn add express
-import { createHandler } from 'graphql-sse';
+import express from 'express' // yarn add express
+import { createHandler } from 'graphql-sse'
 
 // Create the GraphQL over SSE handler
-const handler = createHandler({ schema });
+const handler = createHandler({ schema })
 
 // Create an express app serving all methods on `/graphql/stream`
-const app = express();
-app.all('/graphql/stream', handler);
+const app = express()
+app.all('/graphql/stream', handler)
 
-app.listen(4000);
-console.log('Listening to port 4000');
+app.listen(4000)
+console.log('Listening to port 4000')
 ```
 
 ##### With [`fastify`](https://www.fastify.io/)
 
 ```ts
-import Fastify from 'fastify'; // yarn add fastify
-import { createHandler } from 'graphql-sse';
+import Fastify from 'fastify' // yarn add fastify
+import { createHandler } from 'graphql-sse'
 
 // Create the GraphQL over SSE handler
-const handler = createHandler({ schema });
+const handler = createHandler({ schema })
 
 // Create a fastify instance serving all methods on `/graphql/stream`
-const fastify = Fastify();
+const fastify = Fastify()
 fastify.all('/graphql/stream', (req, res) =>
   handler(
     req.raw,
     res.raw,
     req.body // fastify reads the body for you
   )
-);
+)
 
-fastify.listen(4000);
-console.log('Listening to port 4000');
+fastify.listen(4000)
+console.log('Listening to port 4000')
 ```
 
 #### Use the client
 
 ```ts
-import { createClient } from 'graphql-sse';
+import { createClient } from 'graphql-sse'
 
 const client = createClient({
   // singleConnection: true, use "single connection mode" instead of the default "distinct connection mode"
-  url: 'http://localhost:4000/graphql/stream',
-});
+  url: 'http://localhost:4000/graphql/stream'
+})
 
 // query
-(async () => {
+;(async () => {
   const result = await new Promise((resolve, reject) => {
-    let result;
+    let result
     client.subscribe(
       {
-        query: '{ hello }',
+        query: '{ hello }'
       },
       {
         next: (data) => (result = data),
         error: reject,
-        complete: () => resolve(result),
+        complete: () => resolve(result)
       }
-    );
-  });
+    )
+  })
 
-  expect(result).toEqual({ hello: 'world' });
-})();
+  expect(result).toEqual({ hello: 'world' })
+})()
 
 // subscription
-(async () => {
+;(async () => {
   const onNext = () => {
     /* handle incoming values */
-  };
+  }
 
   let unsubscribe = () => {
     /* complete the subscription */
-  };
+  }
 
   await new Promise((resolve, reject) => {
     unsubscribe = client.subscribe(
       {
-        query: 'subscription { greetings }',
+        query: 'subscription { greetings }'
       },
       {
         next: onNext,
         error: reject,
-        complete: resolve,
+        complete: resolve
       }
-    );
-  });
+    )
+  })
 
-  expect(onNext).toBeCalledTimes(5); // we say "Hi" in 5 languages
-})();
+  expect(onNext).toBeCalledTimes(5) // we say "Hi" in 5 languages
+})()
 ```
 
 ## Want to find out more?

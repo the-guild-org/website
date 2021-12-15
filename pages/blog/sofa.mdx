@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'Sofa — The best way to REST (is GraphQL)',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2019-01-25',
   description: 'Ending the REST vs GraphQL debate once and for all',
   image: '/blog-assets/sofa/cover.webm',
-  thumbnail: '/blog-assets/sofa/cover.jpg',
-};
+  thumbnail: '/blog-assets/sofa/cover.jpg'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 # Ending the REST vs GraphQL debate once and for all
 
@@ -69,12 +69,12 @@ Let’s create a short step by step tutorial on how to create a RESTful API.
 Step 1: npm install the [`sofa-api`](https://www.npmjs.com/package/sofa-api) package and add the following line of code:
 
 ```typescript
-import sofa from 'sofa-api';
-import express from 'express';
+import sofa from 'sofa-api'
+import express from 'express'
 
-const app = express();
+const app = express()
 
-app.use(sofa({ schema }));
+app.use(sofa({ schema }))
 ```
 
 Step 2: Go REST on a Sofa, you’re done.
@@ -163,28 +163,28 @@ sofa({
 Thanks to GraphQL’s type system Sofa is able to generate always up-to-date documentation for your REST API. Right now we support Swagger and its OpenAPI specification but it’s really easy to adopt different specs.
 
 ```typescript
-import sofa, { OpenAPI } from 'sofa-api';
+import sofa, { OpenAPI } from 'sofa-api'
 
 const openApi = OpenAPI({
   schema,
   info: {
     title: 'Example API',
-    version: '3.0.0',
-  },
-});
+    version: '3.0.0'
+  }
+})
 
 app.use(
   sofa({
     schema,
     onRoute(info) {
       openApi.addRoute(info, {
-        basePath: '',
-      });
-    },
+        basePath: ''
+      })
+    }
   })
-);
+)
 
-openApi.save('./swagger.json');
+openApi.save('./swagger.json')
 ```
 
 # Summary

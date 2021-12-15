@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: "What's new in GraphQL Codegen 0.9.0",
@@ -7,10 +7,10 @@ export const meta = {
   date: '2018-05-07',
   description:
     'The GraphQL codegen library can generate any code for any language — including type definitions, data models, query builder, resolvers, ORM code, complete full stack platforms!! and any specific code for your needs.',
-  image: '/blog-assets/graphql-code-generator/cover.png',
-};
+  image: '/blog-assets/graphql-code-generator/cover.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 :::danger Note:
 This blog post refers to an outdated version, please check http://graphql-code-generator.com/ for the latest docs!
@@ -91,12 +91,12 @@ type User @entity {
 And your generated output will be:
 
 ```typescript
-import { ObjectID } from 'mongodb';
+import { ObjectID } from 'mongodb'
 
 export interface UserDbObject {
-  _id: ObjectID;
-  username: string;
-  email?: string | null;
+  _id: ObjectID
+  username: string
+  email?: string | null
 }
 ```
 
@@ -119,14 +119,14 @@ Part of the new release is an easier way to use the GraphQL Code Generator progr
 Just import `generate` from `graphql-code-generator` and run it with your options object (you can also choose whether to write the files to the FS or not):
 
 ```typescript
-import { generate } from 'graphql-code-generator';
+import { generate } from 'graphql-code-generator'
 
 function doSomething() {
   const generatedFiles = await generate({
     template: 'typescript',
     url: 'http://127.0.0.1:3000/graphql',
-    out: process.cwd() + '/models/',
-  });
+    out: process.cwd() + '/models/'
+  })
 }
 ```
 

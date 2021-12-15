@@ -1,9 +1,12 @@
-export function withPlaceholder(src: string) {
-  const ext = last(src.toLowerCase().split('.'));
-  const skipped = ['mp4', 'webm', 'svg', 'gif'];
-  const isSkipped = skipped.includes(ext);
+import { extname } from 'path';
 
-  if (src.startsWith('/') && !isSkipped) {
+const SKIPPED_EXTENSIONS = new Set(['.mp4', '.webm', '.svg', '.gif']);
+
+export function withPlaceholder(src: string) {
+  const ext = extname(src.toLowerCase());
+
+  // TODO: Figure out why don't work with NextJS v12
+  if (src.startsWith('/') && !SKIPPED_EXTENSIONS.has(ext)) {
     return {
       hasPlaceholder: true,
       placeholder: require(`Public/${src.substr(1)}?lqip`),
@@ -16,8 +19,4 @@ export function withPlaceholder(src: string) {
     placeholder: src,
     large: src,
   };
-}
-
-function last<T>(list: T[]): T {
-  return list[list.length - 1];
 }

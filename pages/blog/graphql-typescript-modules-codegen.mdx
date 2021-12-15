@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title:
@@ -8,10 +8,10 @@ export const meta = {
   date: '2018-12-04',
   description:
     'Writing a GraphQL TypeScript project w/ GraphQL-Modules and GraphQL-Code-Generator',
-  image: '/medium/0e0c64ec5841ba4731bddefaabbb75c8.png',
-};
+  image: '/medium/0e0c64ec5841ba4731bddefaabbb75c8.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 Last year we’ve released [GraphQL-Modules](https://graphql-modules.com/) — which applies modular approach to large scale, GraphQL-based applications.
 
@@ -24,13 +24,13 @@ GraphQL Code Generator can take a JS/TS export from GraphQL-Modules to generate 
 You can create a `schema.ts` file to expose `typeDefs` to GraphQL Code Generator:
 
 ```typescript
-import { AppModule } from './modules/app';
+import { AppModule } from './modules/app'
 
-export default AppModule.typeDefs;
+export default AppModule.typeDefs
 
 // If your module needs a configuration
 
-export default AppModule.forRoot({ ...dummyConfiguration }).typeDefs;
+export default AppModule.forRoot({ ...dummyConfiguration }).typeDefs
 ```
 
 Create a `codegen.yml` config file, including `schema.ts` as a schema source, and generate [common](https://graphql-code-generator.com/docs/plugins/typescript-common) and [server](https://graphql-code-generator.com/docs/plugins/typescript-server) typings for TypeScript. We use `transpile-only` to prevent errors related to TypeScript on typing generation phase to let `ts-node` handle this on running the actual application.
@@ -67,16 +67,16 @@ We can add a script to `package.json` to run:
 Then, we can use these typings in our project. This example shows a resolvers handler that implements resolvers for `Query` type with generated types.
 
 ```typescript
-import { UsersProvider } from '../providers/users.provider';
-import { IResolvers } from '../../generated-models';
+import { UsersProvider } from '../providers/users.provider'
+import { IResolvers } from '../../generated-models'
 
 export default {
   Query: {
     // all parameters and return value are typed
     users: (root, args, context, info) =>
-      context.injector.get(UsersProvider).getUsers(args),
-  },
-} as IResolvers;
+      context.injector.get(UsersProvider).getUsers(args)
+  }
+} as IResolvers
 ```
 
 At the end, we have a strictly-typed backend project, based of separate feature modules, and each of those modules uses GraphQL and TypeScript.

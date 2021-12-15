@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title:
@@ -8,10 +8,10 @@ export const meta = {
   date: '2019-01-21',
   description:
     'Use this magical Babel plugin and get a performance boost for your React components',
-  image: '/medium/5f2a07bb7a73727cca4707c0e85f75e8.jpeg',
-};
+  image: '/medium/5f2a07bb7a73727cca4707c0e85f75e8.jpeg'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 With the introduction of React hooks (in React 16.8-alpha) arose an issue — calculations are being unnecessarily re-evaluated due to declarations being done within the rendering phase.
 
@@ -124,7 +124,7 @@ It’s a good thing I love React and I think of the future. That’s why I inven
 
 ```jsx
 export default ({ data, sortComparator, filterPredicate, history }) => {
-  const transformedData = data.filter(filterPredicate).sort(sortComparator);
+  const transformedData = data.filter(filterPredicate).sort(sortComparator)
 
   return (
     <div>
@@ -141,20 +141,20 @@ export default ({ data, sortComparator, filterPredicate, history }) => {
         ))}
       </ul>
     </div>
-  );
-};
+  )
+}
 ```
 
 The plug-in will generate:
 
 ```jsx
-let _anonymousFnComponent, _anonymousFnComponent2;
+let _anonymousFnComponent, _anonymousFnComponent2
 
 export default ({ data, sortComparator, filterPredicate, history }) => {
   const transformedData = React.useMemo(
     () => data.filter(filterPredicate).sort(sortComparator),
     [data, data.filter, filterPredicate, sortComparator]
-  );
+  )
 
   return React.createElement(
     (_anonymousFnComponent2 =
@@ -163,7 +163,7 @@ export default ({ data, sortComparator, filterPredicate, history }) => {
         const _onClick2 = React.useCallback(
           () => history.pop(),
           [history, history.pop]
-        );
+        )
 
         return (
           <div>
@@ -177,24 +177,24 @@ export default ({ data, sortComparator, filterPredicate, history }) => {
                       const _onClick = React.useCallback(
                         () => history.push(`data/${id}`),
                         [history, history.push, id]
-                      );
+                      )
 
                       return (
                         <li className="data-item" key={id} onClick={_onClick}>
                           {value}
                         </li>
-                      );
+                      )
                     })),
                   { key: id }
                 )
               )}
             </ul>
           </div>
-        );
+        )
       })),
     null
-  );
-};
+  )
+}
 ```
 
 So what are you waiting for? Go visit the official [GitHub repo](https://github.com/DAB0mB/babel-plugin-react-persist) and get yourself a copy of the plug-in! Have any suggestions or feature request? Feel free to open a ticket in the [repo’s issues page](https://github.com/DAB0mB/babel-plugin-react-persist/issues) or comment below!

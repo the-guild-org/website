@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 interface CommonMeta {
   title: string;
   tags: string[];

@@ -3,7 +3,6 @@ const nextMDX = require('@next/mdx');
 const rehypePrism = require('@mapbox/rehype-prism');
 const withOptimizedImages = require('next-optimized-images');
 const admonitions = require('remark-admonitions');
-
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
@@ -29,18 +28,16 @@ module.exports = withBundleAnalyzer(
       handleImages: ['jpeg', 'jpg', 'png', 'svg'],
       inlineImageLimit: 1000,
       pageExtensions: ['tsx', 'md', 'mdx'],
-      rewrites() {
-        return [
-          {
-            source: '/feed.xml',
-            destination: '/_next/static/feed.xml',
-          },
-          {
-            source: '/sitemap.xml',
-            destination: '/_next/static/sitemap.xml',
-          },
-        ];
-      },
+      rewrites: () => [
+        {
+          source: '/feed.xml',
+          destination: '/_next/static/feed.xml',
+        },
+        {
+          source: '/sitemap.xml',
+          destination: '/_next/static/sitemap.xml',
+        },
+      ],
       webpack5: false,
       webpack(config, { dev, isServer }) {
         if (!dev && isServer) {
@@ -54,8 +51,16 @@ module.exports = withBundleAnalyzer(
             return entries;
           };
         }
-        config.resolve.alias['Public'] = path.resolve(__dirname, 'public');
+        config.resolve.alias.Public = path.resolve(__dirname, 'public');
         return config;
+      },
+      // images: {
+      //   // TODO: NextImage conflict with withOptimizedImages
+      //   disableStaticImages: true,
+      // },
+      eslint: {
+        // TODO: Remove this when all eslint errors will be fixed
+        ignoreDuringBuilds: true,
       },
     })
   )

@@ -1,9 +1,6 @@
 import { useState, useCallback } from 'react';
-import fetchPonyfill from 'fetch-ponyfill';
 
-const { fetch } = fetchPonyfill();
-
-interface GraphQLResult<TResult> {
+type GraphQLResult<TResult> = {
   complete: boolean;
   loading: boolean;
   error?: string;

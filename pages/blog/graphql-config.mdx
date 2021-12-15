@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'GraphQL Config',
@@ -6,10 +6,10 @@ export const meta = {
   tags: ['graphql', 'graphql-config'],
   date: '2019-10-25',
   description: 'One configuration for all your tools',
-  image: '/medium/6acdca885a85960c4b5f3b5c2516a7be.gif',
-};
+  image: '/medium/6acdca885a85960c4b5f3b5c2516a7be.gif'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 # TLDR
 
@@ -119,9 +119,9 @@ Majority of the GraphQL tools depend not only on Schema but Operations and Fragm
 GraphQL Config accepts not only `.graphql` files but also extracts documents from **TypeScript and JavaScript files, including JSX and TSX**.
 
 ```jsx
-import React from 'react';
-import gql from 'graphql-tag';
-import { useQuery } from '@apollo/react-hooks';
+import React from 'react'
+import gql from 'graphql-tag'
+import { useQuery } from '@apollo/react-hooks'
 
 // GraphQL Config is able to extract it!
 const GET_USERS = gql`
@@ -131,14 +131,14 @@ const GET_USERS = gql`
       name
     }
   }
-`;
+`
 
 export function Users() {
-  const { loading, error, data } = useQuery(GET_USERS);
+  const { loading, error, data } = useQuery(GET_USERS)
 
   // ...
 
-  return <UsersList users={data.users} />;
+  return <UsersList users={data.users} />
 }
 ```
 
@@ -193,20 +193,20 @@ It also simplifies the codebase of GraphQL tools as they don’t need to take ca
 ```typescript
 export const RelayLoader = {
   loaderId() {
-    return 'relay-loader';
+    return 'relay-loader'
   },
   canLoad(pointer) {
-    return isReactFile(pointer);
+    return isReactFile(pointer)
   },
   load(pointer) {
-    const document = extractDocument(pointer);
+    const document = extractDocument(pointer)
 
     return new Source({
       location: pointer,
-      document,
-    });
-  },
-};
+      document
+    })
+  }
+}
 ```
 
 We maintain [a few loaders](https://github.com/ardatan/graphql-toolkit/tree/master/packages/loaders) but we believe the community will start to cover other use cases as well.
@@ -231,12 +231,12 @@ Take for example loaders. Imagine you want to collect operations and fragments f
 
 ```typescript
 const RelayExtension = (api) => {
-  api.loaders.documents.register(RelayLoader);
+  api.loaders.documents.register(RelayLoader)
 
   return {
-    name: 'relay',
-  };
-};
+    name: 'relay'
+  }
+}
 ```
 
 The new `extensions` allows you to turn GraphQL Config into something fully customizable and to be used in tools like Webpack!

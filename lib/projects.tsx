@@ -1,11 +1,10 @@
-import React from 'react';
-
 export const projects = {
   codegen: {
     featured: true,
-    title: 'Code Generation and Type Safety',
-    image: 'https://graphql-code-generator.com/img/gql-codegen-cover.png',
-    link: 'https://graphql-code-generator.com/',
+    title: 'GraphQL Code Generator',
+    image:
+      'https://www.graphql-code-generator.com/assets/illustrations/gql-codegen-cover.svg',
+    link: 'https://graphql-code-generator.com',
     description: (
       <>
         <p>
@@ -19,12 +18,40 @@ export const projects = {
       </>
     ),
   },
+  envelop: {
+    featured: true,
+    title: 'Envelop: The missing GraphQL plugin system',
+    image: 'https://www.envelop.dev/assets/home-claw.png',
+    link: 'https://www.envelop.dev/',
+    description: (
+      <>
+        <p>
+          Develop and share plugins that are usable with any GraphQL server
+          framework or schema.
+        </p>
+      </>
+    ),
+  },
+  yoga: {
+    featured: true,
+    title: 'GraphQL-Yoga: Modern GraphQL Server',
+    image: 'https://graphql-yoga.vercel.app/assets/logo.svg',
+    link: 'https://graphql-yoga.vercel.app/',
+    description: (
+      <>
+        <p>
+          Fully-featured GraphQL Server with focus on easy setup, performance
+          and great developer experience
+        </p>
+      </>
+    ),
+  },
   'graphql-eslint': {
     featured: true,
     title: 'GraphQL-ESLint',
     image:
       'https://raw.githubusercontent.com/dotansimha/graphql-eslint/master/logo.png',
-    link: 'https://github.com/dotansimha/graphql-eslint/',
+    link: 'https://github.com/dotansimha/graphql-eslint',
     description: (
       <>
         <p>
@@ -33,15 +60,14 @@ export const projects = {
         </p>
         <p>
           Works on schema and operations, easily customizable, supports custom
-          rules, visualize lint issues in real-time in IDEs. Works on `.graphql`
-          files, and also on code files (with `gql`).
+          rules, visualize lint issues in real-time in IDEs.
         </p>
       </>
     ),
   },
   inspector: {
     featured: true,
-    title: 'Maintenance and Analysis of GraphQL API',
+    title: 'GraphQL-Inspector',
     image: 'https://graphql-inspector.com/img/logo.svg',
     link: 'https://graphql-inspector.com',
     description: (
@@ -59,21 +85,21 @@ export const projects = {
   },
   mesh: {
     featured: true,
-    title: 'GraphQL with any source of data',
-    image: 'https://graphql-mesh.com/img/mesh-text-logo.svg',
-    link: 'https://graphql-mesh.com/',
+    title: 'GraphQL-Mesh',
+    image: 'https://www.graphql-mesh.com/assets/subheader-logo.svg',
+    link: 'https://graphql-mesh.com',
     description: (
       <p>
         GraphQL Mesh allows you to use GraphQL query language to access data in
-        remote APIs that don&apos;t run GraphQL (and also ones that do run GraphQL).
-        It can be used as a gateway to other services, or run as a local GraphQL
-        schema that aggregates data from remote APIs.
+        remote APIs that don&apos;t run GraphQL (and also ones that do run
+        GraphQL). It can be used as a gateway to other services, or run as a
+        local GraphQL schema that aggregates data from remote APIs.
       </p>
     ),
   },
   modules: {
     featured: true,
-    title: 'Modularization of GraphQL API',
+    title: 'GraphQL-Modules',
     image: '/img/logos/modules.svg',
     link: 'https://graphql-modules.com',
     description: (
@@ -87,7 +113,7 @@ export const projects = {
     featured: true,
     title: 'Utilities for GraphQL',
     image: '/img/logos/tools.svg',
-    link: 'https://graphql-tools.com/',
+    link: 'https://graphql-tools.com',
     description: (
       <>
         <p>
@@ -120,7 +146,7 @@ export const projects = {
     featured: false,
     title: 'REST API from GraphQL - with SOFA',
     image: '/img/logos/sofa.svg',
-    link: 'https://sofa-api.com/',
+    link: 'https://sofa-api.com',
     description: (
       <>
         <p>Generate RESTful APIs from your GraphQL Server</p>
@@ -167,7 +193,7 @@ export const projects = {
   },
   apolloAngular: {
     featured: false,
-    title: 'GraphQL in Angular - Apollo Angular',
+    title: 'Apollo-Angular: GraphQL in Angular',
     image: '/img/logos/apollo-angular.svg',
     link: 'https://apollo-angular.com',
     description: (

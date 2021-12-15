@@ -1,6 +1,6 @@
-import React from 'react';
+import { FC } from 'react';
 
-export const Image: React.FC<{
+export const Image: FC<{
   alt: string;
   src: string;
   className?: string;
@@ -16,13 +16,7 @@ export const Image: React.FC<{
       : src.replace('.webm', '.mp4');
 
     return (
-      <video
-        className={className}
-        playsInline
-        autoPlay
-        loop
-        muted
-      >
+      <video className={className} playsInline autoPlay loop muted>
         <source src={webm} type="video/webm" />
         <source src={mp4} type="video/mp4" />
       </video>

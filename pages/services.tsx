@@ -1,81 +1,17 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import { Page } from '../ui/shared/Page';
-import { Hero, Section, Container, Arrow } from '../ui/shared/Layout';
-import { Contact } from '../ui/shared/Contact';
-import { services } from '../lib/services';
-import { logos } from '../lib/logos';
-
-const LogosContainer = styled.div`
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 75px 25px;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  flex-direction: row;
-  flex-wrap: wrap;
-
-  & > div {
-    flex-grow: 0;
-    flex-shrink: 0;
-    margin: 25px 25px 25px 25px;
-    transition: opacity 0.2s ease;
-    opacity: 0.7;
-
-    &:hover {
-      opacity: 1;
-    }
-  }
-
-  & > div > img {
-    display: block;
-    max-height: 40px;
-    max-width: 160px;
-  }
-
-  @media (max-width: 640px) {
-    & > div > img {
-      display: block;
-      max-height: 30px;
-      max-width: 120px;
-    }
-  }
-`;
-
-const Logos: FC<{
-  logos: Array<{
-    name: string;
-    logo: string;
-  }>;
-}> = ({ logos }) => {
-  return (
-    <LogosContainer>
-      {logos.map((item, i) => (
-        <div key={`logo-${i}`}>
-          <img
-            src={`/img/logos/companies/${item.logo}`}
-            title={item.name}
-            alt={item.name}
-          />
-        </div>
-      ))}
-    </LogosContainer>
-  );
-};
-
-//
+import { Section, Container, Arrow } from '../ui/shared/Layout';
+import { HeroSection } from '../ui/hero-section';
+import { Heading } from '../ui';
+import { ClientLogosSection } from '../ui/client-logos-section';
+import { SERVICES } from '../ui/services-section';
+import { GetInTouchSection } from '../ui/get-in-touch-section';
 
 const ServiceContainer = styled(Container)<{ reversed?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   flex-direction: ${(props) => (props.reversed ? 'row-reverse' : 'row')};
-
-  & > div > img {
-    max-width: 60%;
-  }
 
   & > div {
     text-align: left;
@@ -137,36 +73,33 @@ const Service: FC<{
   image: string;
   description?: string;
   list?: string[];
-}> = ({ title, image, description, list, reversed }) => {
-  return (
-    <ServiceContainer reversed={reversed}>
-      <div>
-        <img src={`/img/illustrations/${image}`} alt={title} />
-      </div>
-      <div>
-        <ServiceTitle>{title}</ServiceTitle>
-        {description && <ServiceDescription>{description}</ServiceDescription>}
-        {list && (
-          <ServiceList>
-            {list.map((item, i) => (
-              <li key={`item-${i}`}>
-                <ServiceArrow /> {item}
-              </li>
-            ))}
-          </ServiceList>
-        )}
-      </div>
-    </ServiceContainer>
-  );
-};
+}> = ({ title, image, description, list, reversed }) => (
+  <ServiceContainer
+    reversed={reversed}
+    id={title.toLowerCase().replace(/ /g, '-')}
+  >
+    <div>
+      <img src={`/img/illustrations/${image}`} alt={title} />
+    </div>
+    <div>
+      <ServiceTitle>{title}</ServiceTitle>
+      {description && <ServiceDescription>{description}</ServiceDescription>}
+      {list && (
+        <ServiceList>
+          {list.map((item, i) => (
+            <li key={`item-${i}`}>
+              <ServiceArrow /> {item}
+            </li>
+          ))}
+        </ServiceList>
+      )}
+    </div>
+  </ServiceContainer>
+);
 
 const MainSection = styled(Section)`
   padding: 75px 0;
   text-align: center;
-`;
-
-const DarkSection = styled(Section)`
-  background-color: #03a6a6;
 `;
 
 const Services: FC = () => {
@@ -176,29 +109,25 @@ const Services: FC = () => {
       description="Open Source developers with experience of working with the largest companies and applications. GraphQL consulting, workshops and trainings"
       image="/img/ogimage.png"
     >
-      <Hero shrink>
-        <span>Our Services</span>
-      </Hero>
-      <DarkSection noNotch>
-        <Logos logos={logos} />
-      </DarkSection>
-      {services.map((service, i) => {
+      <HeroSection>
+        <Heading>Our Services</Heading>
+      </HeroSection>
+      <ClientLogosSection />
+      {SERVICES.map((service, i) => {
         const isOdd = i % 2 !== 0;
         return (
-          <MainSection key={`service-${i}`} noNotch={i !== 0} light={!isOdd}>
+          <MainSection key={`service-${i}`} noNotch={i !== 0}>
             <Service
               reversed={isOdd}
-              title={service.title}
-              image={service.image}
+              title={service.name}
+              image={service.icon}
               description={service.description}
               list={service.list}
             />
           </MainSection>
         );
       })}
-      <Section noNotch light={services.length % 2 === 0}>
-        <Contact />
-      </Section>
+      <GetInTouchSection />
     </Page>
   );
 };

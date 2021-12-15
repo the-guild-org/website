@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, ReactElement } from 'react';
 import styled from 'styled-components';
 import NativeLink from 'next/link';
 import LazyLoad from 'react-lazyload';
@@ -26,7 +26,7 @@ const Cover = styled(Image)<{
   isPlaceholder?: boolean;
 }>`
   display: block;
-  max-width: ${(props) => (props.maxSize ? props.maxSize + 'px' : '100%')};
+  max-width: ${(props) => (props.maxSize ? `${props.maxSize}px` : '100%')};
   min-width: 200px;
   max-height: 200px;
   object-fit: contain;
@@ -102,9 +102,9 @@ const Container = styled.div<{ width: number }>`
   }
 `;
 
-export const Featured: React.FC<{
+export const Featured: FC<{
   title: string;
-  description: string | React.ReactElement;
+  description: string | ReactElement;
   image: string;
   link: string;
   noShadow?: boolean;

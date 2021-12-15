@@ -31,7 +31,7 @@ if (errors.length) {
  * @param {Function} onError
  */
 function checkFile(name, onError) {
-  const filepath = path.join(cwd, name) + '.mdx';
+  const filepath = path.join(cwd, `${name}.mdx`);
   const doc = fs.readFileSync(filepath, {
     encoding: 'utf-8',
   });
@@ -52,7 +52,7 @@ function checkFile(name, onError) {
  * @param {string} link
  */
 function exists(link) {
-  const filepath = path.join(pagesDir, link) + '.mdx';
+  const filepath = path.join(pagesDir, `${link}.mdx`);
 
   return fs.existsSync(filepath);
 }
@@ -114,9 +114,7 @@ function extractMdLinks(doc) {
  * @returns {Link[]}
  */
 function extractPreviews(doc) {
-  const links = doc.match(
-    /<LinkPreview \s*link=["']{1}([^"']+)["']{1}\s*\/>/g
-  );
+  const links = doc.match(/<LinkPreview \s*link=["']{1}([^"']+)["']{1}\s*\/>/g);
 
   if (!links) {
     return [];

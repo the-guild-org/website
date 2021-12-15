@@ -1,16 +1,16 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'Apollo Angular 0.11',
   author: 'kamil',
-  tags: ['graphql', 'apollo', 'angular', 'apollo-angular'],
+  tags: ['graphql', 'apollo-angular'],
   date: '2017-03-01',
   description:
     'New name, AoT support, TypeScript improvements, and Angular 4 readiness',
-  image: '/medium/cc2b3a84ee2ef485ffad79881a284b9a.png',
-};
+  image: '/medium/cc2b3a84ee2ef485ffad79881a284b9a.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 # New name, AoT support, TypeScript improvements, and Angular 4 readiness
 
@@ -40,7 +40,7 @@ As you all know, the term “Angular 2” is [no longer a thing](http://angularj
 We’ve applied this rule to the service as well, so there is no “Angular2Apollo” anymore. It’s just **Apollo**. Simpler and more convenient. The migration process is very simple:
 
 ```typescript
-import { Angular2Apollo } from 'angular2-apollo';
+import { Angular2Apollo } from 'angular2-apollo'
 
 class AppComponent {
   constructor(apollo: Angular2Apollo) {}
@@ -48,7 +48,7 @@ class AppComponent {
 ```
 
 ```typescript
-import { Apollo } from 'apollo-angular';
+import { Apollo } from 'apollo-angular'
 
 class AppComponent {
   constructor(apollo: Apollo) {}
@@ -74,16 +74,16 @@ One of the most interesting features of Angular is Ahead-of-Time compilation. An
 To support this feature, we had to change the way of providing ApolloClient to ApolloModule. Instead of using an instance of ApolloClient directly, it has to be wrapped with a function. Here’s an example:
 
 ```typescript
-import { ApolloClient } from 'apollo-client';
-import { ApolloModule } from 'apollo-angular';
+import { ApolloClient } from 'apollo-client'
+import { ApolloModule } from 'apollo-angular'
 
-const client = new ApolloClient();
+const client = new ApolloClient()
 
 function provideClient() {
-  return client;
+  return client
 }
 
-ApolloModule.withClient(provideClient);
+ApolloModule.withClient(provideClient)
 ```
 
 ---
@@ -102,8 +102,8 @@ We decided to make it as an optional feature and to implement it in a way that d
 function provideClients() {
   return {
     default: defaultClient,
-    extra: extraClient,
-  };
+    extra: extraClient
+  }
 }
 ```
 
@@ -154,24 +154,24 @@ const query = gql`
       name
     }
   }
-`;
+`
 
 interface User {
-  name: string;
+  name: string
 }
 
 interface Data {
-  currentUser: User;
+  currentUser: User
 }
 
 class AppComponent {
-  apollo: Apollo;
-  currentUser: User;
+  apollo: Apollo
+  currentUser: User
 
   ngOnInit() {
     this.apollo.watchQuery<Data>({ query }).subscribe((result) => {
-      this.currentUser = result.data.currentUser;
-    });
+      this.currentUser = result.data.currentUser
+    })
   }
 }
 ```
@@ -186,24 +186,24 @@ We recently changed the logic of the ApolloQueryObservable’s generic type. Her
 
 ```typescript
 class AppComponent {
-  user: ApolloQueryObservable<ApolloQueryResult<Data>>;
+  user: ApolloQueryObservable<ApolloQueryResult<Data>>
 
   getUser() {
     this.user.subscribe((result) => {
       // result is of type ApolloQueryResult<Data>
-    });
+    })
   }
 }
 ```
 
 ```typescript
 class AppComponent {
-  user: ApolloQueryObservable<Data>;
+  user: ApolloQueryObservable<Data>
 
   getUser() {
     this.user.subscribe((result) => {
       // result is of type ApolloQueryResult<Data>
-    });
+    })
   }
 }
 ```

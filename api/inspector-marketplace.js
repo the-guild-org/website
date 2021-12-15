@@ -5,7 +5,6 @@ const axios = require('axios').default;
 const { WebClient } = require('@slack/web-api');
 const { ensureContact } = require('../lib/contacts');
 
-
 const bugsnagClient = Bugsnag.createClient(process.env.BUGSNAG_API);
 const slack = new WebClient(process.env.SLACK_TOKEN);
 const zapier = process.env.ZAPIER_INSPECTOR_WEBHOOK;

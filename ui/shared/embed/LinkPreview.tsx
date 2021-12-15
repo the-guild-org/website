@@ -1,10 +1,7 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import fetchPonyfill from 'fetch-ponyfill';
+import { FC, useEffect, useLayoutEffect, useState } from 'react';
 import styled from 'styled-components';
 import { GenericLink } from '../../blog/elements/link';
 import { Observer } from '../Observer';
-
-const { fetch } = fetchPonyfill();
 
 type PreviewData = {
   description: string;
@@ -26,7 +23,6 @@ async function fetchPreview(url: string): Promise<PreviewData> {
     return result.json();
   } catch (error) {
     console.error(error);
-
     return null;
   }
 }
@@ -97,7 +93,7 @@ const ImageLink = styled.a<{ image: string }>`
   background-position: center center;
   background-image: url(${(props) => props.image});
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.09);
-  border-radius: 0px 5px 5px 0px;
+  border-radius: 0 5px 5px 0;
 
   @media (max-width: 640px) {
     width: 90px;
@@ -106,17 +102,12 @@ const ImageLink = styled.a<{ image: string }>`
 `;
 
 const useIsomorphicLayoutEffect =
-  typeof window !== 'undefined' &&
-  typeof window.document !== 'undefined' &&
-  typeof window.document.createElement !== 'undefined'
+  typeof window !== 'undefined' && window.document?.createElement !== undefined
     ? useLayoutEffect
     : useEffect;
 
-export const LinkPreview: React.FC<{ link: string }> = ({ link }) => {
+export const LinkPreview: FC<{ link: string }> = ({ link }) => {
   const [data, setData] = useState<PreviewData>(null);
-  const absoluteLink = link.startsWith('/')
-    ? `https://the-guild.dev${link}`
-    : link;
 
   useIsomorphicLayoutEffect(() => {
     if (typeof window === 'undefined') {
@@ -124,6 +115,9 @@ export const LinkPreview: React.FC<{ link: string }> = ({ link }) => {
     }
 
     const fetchData = async () => {
+      const absoluteLink = link.startsWith('/')
+        ? `https://the-guild.dev${link}`
+        : link;
       const previewData = await fetchPreview(absoluteLink);
 
       setData(previewData);

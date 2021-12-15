@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: "What's new in GraphQL-Codegen v2?",
@@ -7,10 +7,10 @@ export const meta = {
   date: '2021-08-03',
   description:
     'Human-readable types, improved infrastructure, a new plugin for TypeScript and more!',
-  image: '/blog-assets/graphql-code-generator/cover.png',
-};
+  image: '/blog-assets/graphql-code-generator/cover.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 [GraphQL Code Generator](https://github.com/dotansimha/graphql-code-generator/) is around for almost 5 years, and it's improving the developer experience of many developers (>3M downloads a month on NPM!).
 Like all of The Guild's projects, throughout all these years, the library continuously evolved based on the experience and feedback from the community and our clients - every day codegen gets better and better, so keep your feedback coming and keep your dependencies up to date :)
@@ -39,19 +39,19 @@ A few years ago, we changed the output of codegen to use `Pick` in order to buil
 ```ts
 // Base types generated based on the schema, from `typescript` plugin:
 type Query = {
-  user: User;
-};
+  user: User
+}
 
 type User = {
-  id: Scalars['ID'];
-  name: Scalars['String'];
-};
+  id: Scalars['ID']
+  name: Scalars['String']
+}
 
 // Types generate based on operations, from `typescript-plugins`:
 
 type MyQuery = {
-  user: Pick<User, 'id' | 'name'>;
-};
+  user: Pick<User, 'id' | 'name'>
+}
 ```
 
 Some time after, we added `preResolveTypes` configuration flag as experimental, in order to generate more readable types with primitive types resolved directly on the generate types:
@@ -59,10 +59,10 @@ Some time after, we added `preResolveTypes` configuration flag as experimental, 
 ```ts
 type MyQuery = {
   user: {
-    id: string;
-    name: string;
-  };
-};
+    id: string
+    name: string
+  }
+}
 ```
 
 We are happy to announce that v2 of `typescript-operations` now uses `preResolveTypes: true` by default, so all generated types are more readable.
@@ -144,7 +144,7 @@ A month ago, [`Maël Nison`](https://github.com/arcanis) reached out to us with 
 It allowed writing the operations in the following way:
 
 ```tsx
-import { gql } from './gql';
+import { gql } from './gql'
 
 const { GetTweets, CreateTweet } = gql(`#graphql
   query GetTweets {
@@ -158,7 +158,7 @@ const { GetTweets, CreateTweet } = gql(`#graphql
       id
     }
   }
-`);
+`)
 ```
 
 The README on his repository contained a [list of limitations](https://github.com/arcanis/graphql-typescript-integration#limitations). We took that that feedback and fixed some upstream bugs within graphql-tools and improved graphql-codegen according to that.
@@ -181,7 +181,7 @@ With this new plugin+preset, you can generate typings for your inline `gql` func
 All you need to do is import your `gql` function and run codegen in watch mode.
 
 ```tsx
-import { gql, FragmentType } from '@app/gql';
+import { gql, FragmentType } from '@app/gql'
 
 // TweetFragment is a fully typed document node
 const TweetFragment = gql(/* GraphQL */ `
@@ -189,7 +189,7 @@ const TweetFragment = gql(/* GraphQL */ `
     id
     body
   }
-`);
+`)
 
 const TweetsQueryWithFragment = gql(/* GraphQL */ `
   query TweetsWithFragmentQuery {
@@ -198,13 +198,13 @@ const TweetsQueryWithFragment = gql(/* GraphQL */ `
       ...TweetFragment
     }
   }
-`);
+`)
 
 const TweetComponent = (props: {
-  tweet: FragmentType<typeof TweetFragment>;
+  tweet: FragmentType<typeof TweetFragment>
 }) => {
-  return <Tweet>{props.tweet.body}</Tweet>;
-};
+  return <Tweet>{props.tweet.body}</Tweet>
+}
 ```
 
 That way we don't need to switch context between `.graphql` and our `.ts(x)` files and have less files within our repository (compared to the `near-operation-file` preset)!
@@ -233,20 +233,20 @@ We are experimenting with a better way to link `typeDefs` with the resolvers sig
 One of the goal of this preset is to make sure that every resolver that should be defined and implemented is actually implemented.
 
 ```tsx
-import { typeDefs } from 'tsgql';
+import { typeDefs } from 'tsgql'
 
 const sdl = typeDefs(/* GraphQL */ `
   type Query {
     foo: String!
   }
-`);
+`)
 
 export const resolvers: typeof sdl = {
   Query: {
     // If this resolver would not be defined it will raise a TypeScript error.
-    foo: () => 'test',
-  },
-};
+    foo: () => 'test'
+  }
+}
 ```
 
 [You can find more info here](https://github.com/dotansimha/graphql-code-generator/pull/6379)
@@ -256,7 +256,7 @@ export const resolvers: typeof sdl = {
 Today the Relay framework development flow allows hiding (masking) properties from operation results objects that are added via fragments. Those properties are only accessible from within the component that consumes the fragment:
 
 ```tsx
-import { gql, FragmentProperty } from '@app/gql';
+import { gql, FragmentProperty } from '@app/gql'
 
 // TweetFragment is a fully typed document node
 const TweetFragment = gql(/* GraphQL */ `
@@ -264,7 +264,7 @@ const TweetFragment = gql(/* GraphQL */ `
     id
     body
   }
-`);
+`)
 
 const TweetsQueryWithFragment = gql(/* GraphQL */ `
   query TweetsWithFragmentQuery {
@@ -273,13 +273,13 @@ const TweetsQueryWithFragment = gql(/* GraphQL */ `
       ...TweetFragment
     }
   }
-`);
+`)
 
 const AppComponent = () => {
-  const { data } = useQuery({ query: TweetsQueryWithFragment });
+  const { data } = useQuery({ query: TweetsQueryWithFragment })
 
   // accessing this here is a TypeScript error.
-  data.Tweets[0].body;
+  data.Tweets[0].body
 
   return (
     <>
@@ -287,15 +287,15 @@ const AppComponent = () => {
         <TweetComponent key={tweet.id} tweet={tweet} />
       ))}
     </>
-  );
-};
+  )
+}
 
 const TweetComponent = (props: {
-  tweet: FragmentProperty<typeof TweetFragment>;
+  tweet: FragmentProperty<typeof TweetFragment>
 }) => {
   // accessing props.tweet.body here is legit.
-  return <Tweet>{props.tweet.body}</Tweet>;
-};
+  return <Tweet>{props.tweet.body}</Tweet>
+}
 ```
 
 This allows building scalable components as each component only receives the data it should have access to and furthermore components higher up in the tree can not access data it did not explicitly request.

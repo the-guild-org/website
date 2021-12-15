@@ -5,11 +5,11 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint --ignore-path .gitignore .",
-    "dev": "next --hostname 0.0.0.0",
+    "dev": "next dev",
     "build": "yarn check-links && next build && TS_NODE_PROJECT=tsconfig.cli.json node --require ts-node/register/transpile-only ./lib/build.ts",
     "analyze": "ANALYZE=true yarn build",
     "start": "next start",
-    "format": "prettier --write .",
+    "format": "prettier --ignore-path .gitignore --write .",
     "check-links": "node check-links.js",
     "postinstall": "patch-package",
     "prepare": "husky install",
@@ -18,6 +18,8 @@
   "dependencies": {
     "@agentofuser/remark-oembed": "1.0.4",
     "@bugsnag/js": "7.13.2",
+    "@chakra-ui/icons": "1.1.1",
+    "@chakra-ui/react": "1.7.3",
     "@mapbox/rehype-prism": "0.8.0",
     "@mdx-js/loader": "1.6.22",
     "@mdx-js/react": "1.6.22",
@@ -29,7 +31,6 @@
     "cors": "2.8.5",
     "date-fns": "2.27.0",
     "express": "4.17.1",
-    "fetch-ponyfill": "7.1.0",
     "globby": "11.0.4",
     "graphql": "16.1.0",
     "html-entities": "2.3.2",
@@ -60,7 +61,7 @@
   "devDependencies": {
     "@next/bundle-analyzer": "11.1.3",
     "@types/fontfaceobserver": "2.1.0",
-    "@types/node": "16.11.12",
+    "@types/node": "16.11.13",
     "@types/react": "17.0.37",
     "@types/styled-components": "5.1.18",
     "@typescript-eslint/eslint-plugin": "5.7.0",
@@ -85,10 +86,5 @@
     "unified": "10.1.1",
     "unist-util-remove": "3.1.0",
     "unist-util-visit": "4.1.0"
-  },
-  "prettier": {
-    "trailingComma": "es5",
-    "semi": true,
-    "singleQuote": true
   }
 }

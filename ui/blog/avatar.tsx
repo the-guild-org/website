@@ -1,7 +1,7 @@
-import React from 'react';
+import { FC } from 'react';
 import ReactAvatar from 'react-avatar';
 
-export const Avatar: React.FC<{ author: any }> = ({ author }) => {
+export const Avatar: FC<{ author: any }> = ({ author }) => {
   return (
     <ReactAvatar
       round

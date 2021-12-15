@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'Getting to know React DOM’s event handling system inside out',
@@ -6,10 +6,10 @@ export const meta = {
   tags: ['react', 'dom'],
   date: '2018-10-22',
   description: 'Getting to know React DOM’s event handling system inside out',
-  image: '/medium/dff8edec78c39a832292c7435ee1213b.png',
-};
+  image: '/medium/dff8edec78c39a832292c7435ee1213b.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 It all started when I’ve tried to redirect submitted React event handlers into another DOM element. I won’t get into details regarding the use case, but what I did was fairly logical: I’ve redefined the `addEventListener()` method on the DOM element’s instance, hoping to capture the submitted arguments and do as I wish with them. Unfortunately, it didn’t work…
 
@@ -49,7 +49,7 @@ const ExampleComponent = () => (
   <div onClick={onClick}>
     <div onClick={onClick} />
   </div>
-);
+)
 ```
 
 We will have a single event listener registered on the native DOM for the `click` event. By running the `getEventListeners()` method which is available on Chrome dev-tools, we would get the following result:
@@ -105,17 +105,17 @@ Synthetic events are React’s normalized event arguments which ensures that the
 
 ```javascript
 function onClick(event) {
-  console.log(event); // => nullified object.
-  console.log(event.type); // => "click"
-  const eventType = event.type; // => "click"
+  console.log(event) // => nullified object.
+  console.log(event.type) // => "click"
+  const eventType = event.type // => "click"
   setTimeout(function () {
-    console.log(event.type); // => null
-    console.log(eventType); // => "click"
-  }, 0);
+    console.log(event.type) // => null
+    console.log(eventType) // => "click"
+  }, 0)
   // Won't work. this.state.clickEvent will only contain null values.
-  this.setState({ clickEvent: event });
+  this.setState({ clickEvent: event })
   // You can still export event properties.
-  this.setState({ eventType: event.type });
+  this.setState({ eventType: event.type })
 }
 ```
 

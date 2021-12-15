@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'Collecting GraphQL Live Query Resource Identifier with GraphQL Tools',
@@ -8,10 +8,10 @@ export const meta = {
   description:
     'GraphQL Tools can help solving a variety of problems. Lean how it can be used for live queries.',
   image:
-    '/blog-assets/collecting-graphql-live-query-resource-identifier-with-graphql-tools/cover.jpg',
-};
+    '/blog-assets/collecting-graphql-live-query-resource-identifier-with-graphql-tools/cover.jpg'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 **Photo by <a href="https://unsplash.com/@luki90pl"> Łukasz Nieścioruk</a> on <a href="https://unsplash.com/photos/BMVzvCYTlvU">Unsplash</a>**
 
@@ -67,18 +67,18 @@ Let's see how the implementation for this could look like:
 ```tsx
 const Query = {
   viewer: (source, args, context) => {
-    return context.viewer;
-  },
-};
+    return context.viewer
+  }
+}
 
 const Mutation = {
   updateLogin: async (source, args, context) => {
-    await context.db.updateUser(context.viewer.id, args.newLogin);
+    await context.db.updateUser(context.viewer.id, args.newLogin)
 
-    context.liveQueryStore.triggerUpdate(`Query.viewer`);
-    return true;
-  },
-};
+    context.liveQueryStore.triggerUpdate(`Query.viewer`)
+    return true
+  }
+}
 ```
 
 If a specific user updates his login we shouldn't invalidate and re-execute any live query operation that has a viewer selection set for any connected user who might not even be affected by that change!
@@ -130,11 +130,11 @@ Imagine if we had to register a resource manually in each resolver that returns 
 ```tsx
 const Query = {
   viewer: (source, args, context) => {
-    const viewer = context.viewer;
-    context.registerResource(`User:${viewer.id}`);
-    return viewer;
-  },
-};
+    const viewer = context.viewer
+    context.registerResource(`User:${viewer.id}`)
+    return viewer
+  }
+}
 ```
 
 It might seem quite simple for a single resolver, however, it can quickly clutter and lead to bugs if we have to manually do that for any resource in any resolver.
@@ -145,18 +145,18 @@ Ideally a library user will just have to add a `context.liveQueryStore.triggerUp
 const Query = {
   viewer: (source, args, context) => {
     // No tracking registration code here.
-    return context.viewer;
-  },
-};
+    return context.viewer
+  }
+}
 
 const Mutation = {
   updateLogin: async (source, args, context) => {
-    await context.db.updateUser(context.viewer.id, args.newLogin);
+    await context.db.updateUser(context.viewer.id, args.newLogin)
 
-    context.liveQueryStore.triggerUpdate(`User:${context.viewer.id}`);
-    return true;
-  },
-};
+    context.liveQueryStore.triggerUpdate(`User:${context.viewer.id}`)
+    return true
+  }
+}
 ```
 
 So, I thought more about how this could be implemented in a less verbose way.
@@ -186,20 +186,20 @@ import {
   GraphQLOutputType,
   GraphQLScalarType,
   execute,
-  defaultFieldResolver,
-} from 'graphql';
-import { mapSchema, MapperKind } from '@graphql-tools/utils';
+  defaultFieldResolver
+} from 'graphql'
+import { mapSchema, MapperKind } from '@graphql-tools/utils'
 
-const ORIGINAL_CONTEXT_SYMBOL = Symbol('ORIGINAL_CONTEXT_SYMBOL');
+const ORIGINAL_CONTEXT_SYMBOL = Symbol('ORIGINAL_CONTEXT_SYMBOL')
 
 const isNonNullIDScalarType = (
   type: GraphQLOutputType
 ): type is GraphQLScalarType => {
   if (isNonNullType(type)) {
-    return isScalarType(type.ofType) && type.ofType.name === 'ID';
+    return isScalarType(type.ofType) && type.ofType.name === 'ID'
   }
-  return false;
-};
+  return false
+}
 
 // invokes the callback with the resolved or sync input. Handy when you don't know whether the input is a Promise or the actual value you want.
 export const runWith = <T>(
@@ -207,11 +207,11 @@ export const runWith = <T>(
   callback: (value: T) => void
 ) => {
   if (input instanceof Promise) {
-    input.then(callback, () => undefined);
+    input.then(callback, () => undefined)
   } else {
-    callback(input);
+    callback(input)
   }
-};
+}
 
 const addResourceIdentifierCollectorToSchema = (
   schema: GraphQLSchema,
@@ -219,45 +219,45 @@ const addResourceIdentifierCollectorToSchema = (
 ): GraphQLSchema =>
   mapSchema(schema, {
     [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typename) => {
-      const newFieldConfig = { ...fieldConfig };
+      const newFieldConfig = { ...fieldConfig }
 
       let isIDField =
-        fieldName === idFieldName && isNonNullIDScalarType(fieldConfig.type);
-      let resolve = fieldConfig.resolve ?? defaultFieldResolver;
+        fieldName === idFieldName && isNonNullIDScalarType(fieldConfig.type)
+      let resolve = fieldConfig.resolve ?? defaultFieldResolver
 
       newFieldConfig.resolve = (src, args, context, info) => {
         if (!context || ORIGINAL_CONTEXT_SYMBOL in context === false) {
-          return resolve(src, args, context, info);
+          return resolve(src, args, context, info)
         }
 
         const collectResourceIdentifier: ResourceIdentifierCollectorFunction =
-          context.collectResourceIdentifier;
-        context = context[ORIGINAL_CONTEXT_SYMBOL];
-        const result = resolve(src, args, context, info);
+          context.collectResourceIdentifier
+        context = context[ORIGINAL_CONTEXT_SYMBOL]
+        const result = resolve(src, args, context, info)
 
         if (isIDField) {
           runWith(result, (id: string) =>
             collectResourceIdentifier({ typename, id })
-          );
+          )
         }
-        return result;
-      };
+        return result
+      }
 
-      return newFieldConfig;
-    },
-  });
+      return newFieldConfig
+    }
+  })
 ```
 
 The implementation for executing the operation is similar to the following:
 
 ```ts
-const newIdentifier = new Set(rootFieldIdentifier);
+const newIdentifier = new Set(rootFieldIdentifier)
 const collectResourceIdentifier: ResourceGatherFunction = ({ typename, id }) =>
   // for a relay spec conform server the typename could even be omitted :)
-  newIdentifier.add(`${typename}:${id}`);
+  newIdentifier.add(`${typename}:${id}`)
 
 // You definitely wanna cache the wrapped schema as you don't want to re-create it for each operation :)
-const wrappedSchema = addResourceIdentifierCollectorToSchema(schema);
+const wrappedSchema = addResourceIdentifierCollectorToSchema(schema)
 
 const result = execute({
   schema: wrappedSchema,
@@ -266,10 +266,10 @@ const result = execute({
   rootValue,
   contextValue: {
     [ORIGINAL_CONTEXT_SYMBOL]: contextValue,
-    collectResourceIdentifier,
+    collectResourceIdentifier
   },
-  variableValues: operationVariables,
-});
+  variableValues: operationVariables
+})
 ```
 
 I had to wrap the "user" context in a context (context-ception 🤯) on which I also attached the function for adding the resource identifier to the resource identifier set. I got inspired for this by the apollo-server source code, as I knew it has a way for measuring resolver execution time, which must be done on a request/operation basis similar to the resource identifier collection. This method allows using a new function/context for each execution. Inside the field resolver, the correct user context is then passed into the actual (user) field resolver.

@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import { FC, ChangeEvent, useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Container, Button } from './Layout';
 import { useMutation } from '../../hooks/use-graphql';
@@ -121,25 +121,19 @@ enum State {
   Success,
 }
 
-export const Contact: React.FC = () => {
+export const Contact: FC = () => {
   const [state, setState] = useState<State>(State.Idle);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [result, mutate] = useMutation(
     `mutation sayHi($email: String!, $name: String) { sayHi(email: $email, name: $name, project: "WEBSITE") { ok } }`
   );
-  const onEmailChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setEmail(event.target.value);
-    },
-    []
-  );
-  const onNameChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setName(event.target.value);
-    },
-    []
-  );
+  const onEmailChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  }, []);
+  const onNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  }, []);
 
   useEffect(() => {
     if (result.error) {

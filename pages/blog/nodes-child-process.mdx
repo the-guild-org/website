@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: "Getting to know Node's child_process module",
@@ -6,10 +6,10 @@ export const meta = {
   tags: ['node'],
   date: '2018-09-27',
   description: 'How to call git, cpp, sh, etc, from a Node.JS script',
-  image: '/medium/8e3e63cb7dfad3159760903440eb32fd.png',
-};
+  image: '/medium/8e3e63cb7dfad3159760903440eb32fd.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 # How to call git, cpp, sh, etc, from a Node.JS script
 
@@ -34,9 +34,9 @@ Why is this module called `child_process` and not just `process`? First of all, 
 The `child_process` module provides us with utility functions whose logics are stacked on top of one another. The most basic function is `spawn()`:
 
 ```javascript
-const { spawn } = require('child_process');
+const { spawn } = require('child_process')
 
-spawn('git', ['log']);
+spawn('git', ['log'])
 ```
 
 > _Docs: [spawn](https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options)_
@@ -44,19 +44,19 @@ spawn('git', ['log']);
 The `spawn` function will spawn a new process of `git log` type. The first argument of the function represents a path for an executable file that should start the process, and the second argument is an arguments vector that will be given to the executable. The returned process object will hold a property for each std type represented as a Stream: `.stdin` - WriteStream, `.stout` - ReadStream and finally `.stderr` - ReadStream. Accordingly, if we would like to run `git log` through a Node process and print it to the console we would do something like the following:
 
 ```javascript
-const { spawn } = require('child_process');
+const { spawn } = require('child_process')
 
-spawn('git', ['log']).stdout.pipe(process.stdout);
+spawn('git', ['log']).stdout.pipe(process.stdout)
 ```
 
 Or if we will take advantage of the last options argument, we could do the following:
 
 ```javascript
-const { spawn } = require('child_process');
+const { spawn } = require('child_process')
 
 spawn('git', ['log'], {
-  stdio: 'inherit', // Will use process .stdout, .stdin, .stderr
-});
+  stdio: 'inherit' // Will use process .stdout, .stdin, .stderr
+})
 ```
 
 > _Note that every `child_process` function will also have a “sync” version of it (e.g. `spawnSync()`), but assuming that you’re already familiar with synchronous and asynchronous functions in Node, I’m gonna skip that for the sake of simplicity._
@@ -64,15 +64,15 @@ spawn('git', ['log'], {
 The next function on the list would be the `execFile()`. As implied, it will execute a given file path, just like `spawn()`does. The difference between the 2 though, is that unlike `spawn()` which returns a bunch of streams, `execFile()` will parse the streams and will return the result directly as a string:
 
 ```javascript
-const { execFile } = require('child_process');
+const { execFile } = require('child_process')
 
 execFile('git', ['log'], (err, out) => {
   if (err) {
-    console.error(err);
+    console.error(err)
   } else {
-    console.log(out);
+    console.log(out)
   }
-});
+})
 ```
 
 > _Docs: [execFile](https://nodejs.org/api/child_process.html#child_process_child_process_execfile_file_args_options_callback)_
@@ -89,10 +89,10 @@ exports.execFile = function execFile(file /* , args, options, callback */) {
     uid: options.uid,
     shell: options.shell,
     windowsHide: options.windowsHide !== false,
-    windowsVerbatimArguments: !!options.windowsVerbatimArguments,
-  });
+    windowsVerbatimArguments: !!options.windowsVerbatimArguments
+  })
   // ...
-};
+}
 ```
 
 > _Source: [lib/child_process.js](https://github.com/nodejs/node/tree/master/lib/child_process.js#L170)_
@@ -100,16 +100,16 @@ exports.execFile = function execFile(file /* , args, options, callback */) {
 As `bash` is vastly used as the command line shell, Node provided us with a function that will span an instance of `bash` and execute the given command line. This function is called `exec()` and it returns the stdout as a string, just like `execFile()`does:
 
 ```javascript
-const { exec } = require('child_process');
+const { exec } = require('child_process')
 
 // Will print all commit messages which include foo
 exec('git log --format="%s" | grep foo', (err, out) => {
   if (err) {
-    console.error(err);
+    console.error(err)
   } else {
-    console.log(out);
+    console.log(out)
   }
-});
+})
 ```
 
 > _Docs: [exec](https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback)_
@@ -118,9 +118,9 @@ Here’s a snapshot of Node’s source code that proves that `exec()` is directl
 
 ```javascript
 exports.exec = function exec(/* command , options, callback */) {
-  const opts = normalizeExecArgs.apply(null, arguments);
-  return exports.execFile(opts.file, opts.options, opts.callback);
-};
+  const opts = normalizeExecArgs.apply(null, arguments)
+  return exports.execFile(opts.file, opts.options, opts.callback)
+}
 ```
 
 > _Source: [lib/child_process.js](https://github.com/nodejs/node/blob/v8.12.0/lib/child_process.js#L141)_
@@ -128,19 +128,19 @@ exports.exec = function exec(/* command , options, callback */) {
 In other words, the core of `exec()` can be implemented like so:
 
 ```javascript
-const { execFile } = require('child_process');
+const { execFile } = require('child_process')
 
 exports.exec = (command, options, callback) => {
-  return execFile(`bash`, ['-c', command], options, callback);
-};
+  return execFile(`bash`, ['-c', command], options, callback)
+}
 ```
 
 Often times, we would just spawn another Node process which would execute another script file, thus, Node has provided us with a function that is bound to Node’s executable file path, called `fork():`
 
 ```javascript
-const { fork } = require('child_process');
+const { fork } = require('child_process')
 
-fork('./script/path.js');
+fork('./script/path.js')
 ```
 
 > _Docs: [fork](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options)_
@@ -149,24 +149,24 @@ What’s nice about this method is that it will open a communication channel bet
 
 ```javascript
 /* Parent process script */
-const { fork } = require('child_process');
-const n = fork(`${__dirname}/child.js`);
+const { fork } = require('child_process')
+const n = fork(`${__dirname}/child.js`)
 
 n.on('message', (m) => {
-  console.log('PARENT got message:', m);
-});
+  console.log('PARENT got message:', m)
+})
 
 // Causes the child to print: CHILD got message: { hello: 'world' }
-n.send({ hello: 'world' });
+n.send({ hello: 'world' })
 
 /* Child process script - child.js */
 
 process.on('message', (m) => {
-  console.log('CHILD got message:', m);
-});
+  console.log('CHILD got message:', m)
+})
 
 // Causes the parent to print: PARENT got message: { foo: 'bar', baz: null }
-process.send({ foo: 'bar', baz: NaN });
+process.send({ foo: 'bar', baz: NaN })
 ```
 
 > _Source: [lib/child_process.js](https://github.com/nodejs/node/tree/master/lib/child_process.js#L57)_
@@ -176,23 +176,23 @@ Now back to what I’ve said at the beginning of this article. Each process uses
 Following this principle, a common use-case would be distributing the work of the script that we’re currently at. So rather than calling the `fork()` method with the current script file path, we can just use the `cluster` module, which is directly related to `child_process` because of the reason I’ve just mentioned, and call the `cluster.fork()` method:
 
 ```javascript
-const cluster = require('cluster');
+const cluster = require('cluster')
 
 if (cluster.isMaster) {
-  const n = cluster.fork(`${__dirname}/child.js`);
+  const n = cluster.fork(`${__dirname}/child.js`)
   n.on('message', (m) => {
-    console.log('PARENT got message:', m);
-  });
+    console.log('PARENT got message:', m)
+  })
   // Causes the child to print: CHILD got message: { hello: 'world' }
-  n.send({ hello: 'world' });
+  n.send({ hello: 'world' })
 }
 
 if (cluster.isWorker) {
   process.on('message', (m) => {
-    console.log('CHILD got message:', m);
-  });
+    console.log('CHILD got message:', m)
+  })
   // Causes the parent to print: PARENT got message: { foo: 'bar', baz: null }
-  process.send({ foo: 'bar', baz: NaN });
+  process.send({ foo: 'bar', baz: NaN })
 }
 ```
 
@@ -211,8 +211,8 @@ function createWorkerProcess(id, env) {
     execArgv: execArgv,
     stdio: cluster.settings.stdio,
     gid: cluster.settings.gid,
-    uid: cluster.settings.uid,
-  });
+    uid: cluster.settings.uid
+  })
 }
 ```
 
@@ -223,8 +223,8 @@ As you can see, the cluster is directly dependent on the `fork()` method, and if
 ```javascript
 exports.fork = function fork(modulePath /* , args, options */) {
   // ...
-  return spawn(options.execPath, args, options);
-};
+  return spawn(options.execPath, args, options)
+}
 ```
 
 > _Source: [lib/child_process.js](https://github.com/nodejs/node/blob/v8.12.0/lib/child_process.js#L104)_

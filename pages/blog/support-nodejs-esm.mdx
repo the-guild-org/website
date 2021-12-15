@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'What does it take to support Node.js ESM?',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2021-08-12',
   description:
     'I have worked on all of The Guild’s libraries and graphql-js to support ESM. Here is how you can do it too',
-  image: '/blog-assets/nodejs-esm/nodejs_logo.png',
-};
+  image: '/blog-assets/nodejs-esm/nodejs_logo.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 **ECMAScript modules**, also known as **ESM**, is the [official standard format](https://tc39.es/ecma262/#sec-modules) to package JavaScript, and fortunately [Node.js supports it](https://nodejs.org/api/esm.html#esm_modules_ecmascript_modules) 🎉.
 
@@ -113,13 +113,13 @@ If you have a top-level `require`, changing it to ESM should be straight-forward
 > from
 
 ```js
-const foo = require('foo');
+const foo = require('foo')
 ```
 
 > to
 
 ```js
-import foo from 'foo';
+import foo from 'foo'
 ```
 
 But if you are dynamically calling require inside of functions, you will need to do some refactoring to be able to handle async imports:
@@ -128,9 +128,9 @@ But if you are dynamically calling require inside of functions, you will need to
 
 ```js
 function getFoo() {
-  const { bar } = require('foo');
+  const { bar } = require('foo')
 
-  return bar;
+  return bar
 }
 ```
 
@@ -138,9 +138,9 @@ function getFoo() {
 
 ```js
 async function getFoo() {
-  const { bar } = await import('foo');
+  const { bar } = await import('foo')
 
-  return bar;
+  return bar
 }
 ```
 
@@ -159,14 +159,14 @@ The only workaround to have an isomorphic `__dirname` or `__filename` to be used
 The workaround alongside with `createRequire` should like this
 
 ```ts
-import filedirname from 'filedirname';
-import { createRequire } from 'module';
+import filedirname from 'filedirname'
+import { createRequire } from 'module'
 
-const [filename] = filedirname();
+const [filename] = filedirname()
 
-const require_isomorphic = createRequire(filename);
+const require_isomorphic = createRequire(filename)
 
-require_isomorphic('foo');
+require_isomorphic('foo')
 ```
 
 - ![image.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1625698233060/vHvCI9hH6.png)
@@ -180,13 +180,13 @@ Part of the ESM Specification is that you have to specify the extension in expli
 This **won't work** in ESM
 
 ```ts
-import { foo } from 'foo/lib/main';
+import { foo } from 'foo/lib/main'
 ```
 
 But this will
 
 ```ts
-import { foo } from 'foo/lib/main.js';
+import { foo } from 'foo/lib/main.js'
 ```
 
 **BUT** there is a **`big exception`** to this, which is the node_modules package you are importing uses the [`exports`](#exports) `package.json` field, because generally the exports field will have to extension in the alias itself, and if you specify the extension on those packages, it will result in a double extension:

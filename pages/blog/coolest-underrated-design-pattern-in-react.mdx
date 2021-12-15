@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'The coolest, most underrated design pattern in React',
@@ -6,10 +6,10 @@ export const meta = {
   tags: ['react', 'child-props'],
   date: '2019-07-31',
   description: 'The coolest, most underrated design pattern in React',
-  image: '/medium/8da637649866c3f3ebcc4e5c90437d89.png',
-};
+  image: '/medium/8da637649866c3f3ebcc4e5c90437d89.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 There will be times when we would like to pass props and control the behavior of child elements. Let me explain. Let’s take the following modal for example:
 
@@ -49,11 +49,11 @@ The problem with that approach is that it spams the props mechanism; it makes th
   contents="Modal body text goes here."
   dismissButtonProps={{
     text: 'Close',
-    handler: close,
+    handler: close
   }}
   actionButtonProps={{
     text: 'Save changes',
-    handler: save,
+    handler: save
   }}
 />
 ```
@@ -139,17 +139,17 @@ const useChildProps = (children, whitelist) => {
     [].concat(children).reduce(
       (childProps, child) => {
         if (whitelist && !whitelist.includes(child.type)) {
-          throw Error(`element <${child.type}> is not supported`);
+          throw Error(`element <${child.type}> is not supported`)
         }
 
-        childProps[child.type] = child.props;
+        childProps[child.type] = child.props
 
-        return childProps;
+        return childProps
       },
       [children]
     )
-  );
-};
+  )
+}
 ```
 
 ```jsx

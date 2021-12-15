@@ -1,6 +1,8 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import { FC, ChangeEvent, useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Confetti from 'react-confetti';
+import tw from 'twin.macro';
+import { css } from 'styled-components';
 import { Button } from '../shared/Layout';
 import { useMutation } from '../../hooks/use-graphql';
 
@@ -8,12 +10,13 @@ const Container = styled.div`
   margin-top: 75px;
   padding: 25px;
   border-radius: 3px;
-  background-color: #f1f1f1;
+  background-color: #16171c;
 `;
 
 const Header = styled.div`
   font-size: 1.3rem;
   font-weight: 400;
+  color: white;
 `;
 
 const Subheader = styled.p`
@@ -38,10 +41,8 @@ const Input = styled.input`
   padding: 0.75rem 1rem;
   line-height: 1.5rem;
   font-size: 1rem;
-  border-width: 1px;
   border-radius: 0.375rem;
   border: 1px solid #d2d6dc;
-  background-color: #fff;
   appearance: none;
   margin: 0;
   box-sizing: border-box;
@@ -72,7 +73,7 @@ const FixedConfetti = styled(Confetti)`
   position: fixed !important;
 `;
 
-export const Newsletter: React.FC<{ className?: string }> = ({ className }) => {
+export const Newsletter: FC<{ className?: string }> = ({ className }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -91,7 +92,7 @@ export const Newsletter: React.FC<{ className?: string }> = ({ className }) => {
     [mutate, email]
   );
 
-  const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   }, []);
 
@@ -147,10 +148,29 @@ export const Newsletter: React.FC<{ className?: string }> = ({ className }) => {
             placeholder="Enter your email"
             value={email}
             onChange={onChange}
+            css={[
+              css`
+                background: #24272e !important;
+              `,
+              tw`border-0 text-gray-300`,
+            ]}
           />
-          <Submit type="submit" disabled={loading}>
-            Subscribe
-          </Submit>
+          <Button
+            type="submit"
+            disabled={loading}
+            css={[
+              css`
+                background: linear-gradient(
+                  114.44deg,
+                  #7433ff 0%,
+                  #ffa3fd 100%
+                );
+              `,
+              tw`mt-5 sm:mt-0 sm:ml-5 px-10! text-white! opacity-80 hover:opacity-100`,
+            ]}
+          >
+            Submit
+          </Button>
         </Form>
       )}
     </Container>

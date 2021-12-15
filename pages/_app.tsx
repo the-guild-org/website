@@ -1,10 +1,11 @@
 import App, { NextWebVitalsMetric } from 'next/app';
 import Router from 'next/router';
 import Head from 'next/head';
+import { createGlobalStyle } from 'styled-components';
+import { ThemeProvider } from '@theguild/components';
 import 'prism-theme-night-owl';
 import 'remark-admonitions/styles/classic.css';
 import * as gtag from '../lib/gtag';
-
 import { GA_TRACKING_ID } from '../lib/gtag';
 
 Router.events.on('routeChangeComplete', (url) => gtag.pageview(url));
@@ -25,9 +26,34 @@ export function reportWebVitals({
   });
 }
 
+const GlobalStyle = createGlobalStyle`
+  html {
+    // For smooth scrolling effect when click on '#' hash links
+    scroll-behavior: smooth;
+    background-color: #0b0d11;
+  }
+
+  // TODO: Remove this when guild/components Header/Footer will can accept bg color
+  footer {
+    background-color: #0b0d11 !important;
+  }
+
+  header {
+    &,
+    & > div > nav {
+      background-color: #0b0d11 !important;
+    }
+  }
+
+  * {
+    font-family: Poppins, sans-serif;
+  }
+`;
+
 export default class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props;
+
     return (
       <>
         <Head>
@@ -35,10 +61,10 @@ export default class MyApp extends App {
           <meta charSet="utf-8" />
           <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
           <link rel="shortcut icon" href="/fav.ico" />
-          {/* Global Site Tag (gtag.js) - Google Analytics */}
           <script
             async
-            src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+            // Global Site Tag (gtag.js) - Google Analytics
+            src={`https://googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
           />
           <script
             dangerouslySetInnerHTML={{
@@ -46,8 +72,7 @@ export default class MyApp extends App {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${GA_TRACKING_ID}');
-          `,
+            gtag('config', '${GA_TRACKING_ID}');`,
             }}
           />
           <link
@@ -56,7 +81,6 @@ export default class MyApp extends App {
             title="RSS Feed for the-guild.dev"
             href="/feed.xml"
           />
-
           <link
             href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
             rel="stylesheet"
@@ -65,8 +89,15 @@ export default class MyApp extends App {
             href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap"
             rel="stylesheet"
           />
+          <link
+            href="https://fonts.googleapis.com/css?family=Poppins:400,500,700&display=swap"
+            rel="stylesheet"
+          />
         </Head>
         <script src="/static/crisp.js" />
+
+        <GlobalStyle />
+
         <style global jsx>
           {`
             html,
@@ -78,15 +109,15 @@ export default class MyApp extends App {
             }
 
             :root {
-              --colors-text: #292929;
+              --colors-text: white;
               --colors-dim: #777;
               --colors-dim-dark: #555;
-              --colors-accent: #03a6a6;
-              --colors-accent-light: #04bfad;
+              --colors-accent: #1CC8EE;
+              --colors-accent-light: #1CC8EE;
               --colors-error: #bf120d;
               --colors-error-light: #ff3f38;
-              --colors-primary: #000;
-              --colors-background: #fff;
+              --colors-primary: white;
+              --colors-background: #0b0d11;
               --hover-opacity: 0.75;
 
               // After upgrading @theguild/components from 1.7.0 to 1.7.1 Modal is no longer centered
@@ -114,9 +145,14 @@ export default class MyApp extends App {
               text-decoration: none;
               transition: all 0.2s ease 0s;
             }
+
+           ,
           `}
         </style>
-        <Component {...pageProps} />
+
+        <ThemeProvider isDarkTheme>
+          <Component {...pageProps} />
+        </ThemeProvider>
       </>
     );
   }

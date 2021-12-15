@@ -1,4 +1,4 @@
-import withArticle from '../../ui/blog/article';
+import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title: 'GraphQL Tools V8 - Stitch Federation Services',
@@ -7,10 +7,10 @@ export const meta = {
   date: '2021-07-28',
   description: 'Faster and more flexible Schema Stitching!',
   image: '/blog-assets/graphql-tools-v6/cover.webm',
-  thumbnail: '/blog-assets/graphql-tools-v6/cover.png',
-};
+  thumbnail: '/blog-assets/graphql-tools-v6/cover.png'
+}
 
-export default withArticle({ ...meta });
+export default withArticle({ ...meta })
 
 Ever since [The Guild has taken over GraphQL Tools](https://the-guild.dev/blog/graphql-tools-v6), we kept our promise and like every open source library we maintain, [we keep improving and supporting](https://the-guild.dev/blog/tag/graphql-tools) it on a daily basis.
 
@@ -101,16 +101,16 @@ URL Loader from `@graphql-tools/url-loader` package creates executable GraphQLSc
 - [Multipart File Uploads](https://github.com/jaydenseric/graphql-multipart-request-spec) ✔️
 
 ```ts
-import { loadSchema } from '@graphql-tools/load';
-import { UrlLoader } from '@graphql-tools/url-loader';
+import { loadSchema } from '@graphql-tools/load'
+import { UrlLoader } from '@graphql-tools/url-loader'
 
 const schema = await loadSchema(`https://my-graphql-api.com`, {
   loaders: [new UrlLoader()],
   // Enable File Uploads
   multipart: true,
   // Choose your Subscription protocol
-  subscriptionProtocol: SubscriptionProtocol.SSE,
-});
+  subscriptionProtocol: SubscriptionProtocol.SSE
+})
 ```
 
 #### Create executors for Schema Stitching/Delegation;
@@ -118,19 +118,19 @@ const schema = await loadSchema(`https://my-graphql-api.com`, {
 You can easily create executors for subschemas like below;
 
 ```ts
-import { UrlLoader } from '@graphql-tools/url-loader';
-import { introspectSchema } from '@graphql-tools/wrap';
-import { stitchSchemas } from '@graphql-tools/stitch';
+import { UrlLoader } from '@graphql-tools/url-loader'
+import { introspectSchema } from '@graphql-tools/wrap'
+import { stitchSchemas } from '@graphql-tools/stitch'
 
-const urlLoader = new UrlLoader();
-const executor = urlLoader.getExecutorAsync(`https://my-graphql-api.com`, {});
+const urlLoader = new UrlLoader()
+const executor = urlLoader.getExecutorAsync(`https://my-graphql-api.com`, {})
 
 const mySubschema = {
   schema: await introspectSchema(executor),
-  executor,
-};
+  executor
+}
 
-const stitchedSchema = await stitchSchemas([mySubschema, myOtherSubschema]);
+const stitchedSchema = await stitchSchemas([mySubschema, myOtherSubschema])
 ```
 
 ## And more...

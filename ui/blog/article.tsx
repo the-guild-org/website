@@ -1,15 +1,12 @@
-import React from 'react';
+import { FC } from 'react';
 import { MDXProvider } from '@mdx-js/react';
-import Link from 'next/link';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import styled, { css } from 'styled-components';
 import format from 'date-fns/format';
-import { ArrowLeft } from 'react-feather';
 import { components } from './elements';
 import { Newsletter } from './newsletter';
 import { Page } from '../shared/Page';
-import { Button } from '../shared/Layout';
 import { Meta, hasAuthor, hasManyAuthors } from '../../lib/meta';
 import { Image } from './image';
 import { Tag } from './tag';
@@ -111,29 +108,9 @@ const Cover = styled.div`
   }
 `;
 
-const TagContainers = styled.div`
+export const TagContainers = styled.div`
   text-align: center;
   margin-top: 10px;
-`;
-
-const BackButton = styled(Button)`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--colors-primary);
-  margin: 0 auto;
-
-  &:hover {
-    background-color: var(--colors-dim-dark);
-  }
-
-  & > * {
-    margin-right: 1.3rem;
-  }
-`;
-
-const Back = styled.div`
-  margin: 125px auto 0 auto;
 `;
 
 const ConsultingInfo = styled.div`
@@ -144,11 +121,11 @@ const ConsultingInfo = styled.div`
   line-height: 2rem;
   font-family: 'PT Serif', serif;
   color: var(--colors-dim);
-  background-color: #f7f7f7;
+  background-color: #16171c;
   border-left: 3px solid var(--colors-accent);
 `;
 
-function Authors(props: { meta: Meta }) {
+const Authors: FC<{ meta: Meta }> = (props) => {
   const { meta } = props;
   const date = meta.date ? new Date(meta.date) : new Date();
   const updatedDate = meta.updateDate ? new Date(meta.updateDate) : null;
@@ -222,10 +199,10 @@ function Authors(props: { meta: Meta }) {
       </>
     );
   }
-}
+};
 
-const Article = (meta: Meta): React.FC => {
-  return function ArticleRender({ children: content }) {
+const Article = (meta: Meta): FC => {
+  return function ArticleRender({ children }) {
     const title = `${meta.title} - The Guild Blog`;
     const router = useRouter();
 
@@ -300,15 +277,8 @@ const Article = (meta: Meta): React.FC => {
                 </GenericLink>{' '}
                 and get in touch.
               </ConsultingInfo>
-              <Content>{content}</Content>
+              <Content>{children}</Content>
               <Newsletter />
-              <Back>
-                <Link href="/blog">
-                  <BackButton title="Go back to blog">
-                    <ArrowLeft /> Back to blog
-                  </BackButton>
-                </Link>
-              </Back>
             </Main>
           </Container>
         </Page>
