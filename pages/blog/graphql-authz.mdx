@@ -4,7 +4,7 @@ export const meta = {
   title: 'GraphQL AuthZ - GraphQL Authorization layer',
   authors: ['dimatill', 'laurin'],
   tags: ['graphql', 'authorization', 'graphql-authz'],
-  date: '2021-12-10',
+  date: '2021-12-16',
   description:
     'GraphQL AuthZ is a flexible modern way of adding an authorization layer on top of your existing GraphQL microservices or monolith backend systems.',
   image: '/blog-assets/graphql-authz/cover.png',
@@ -210,16 +210,16 @@ Another feature in GraphQL Shield is the built-in contextual caching mechanism f
 
 ## Which approach to choose?
 
-To sum up use-cases and different authorization approaches, here is the tip:
+Let's wrap up all the use-cases mentioned above and also give a library recommendation.
 
 - If you have very few places that should be covered by authorization and you don't plan to increase such places, you can just add authorization logic right inside resolvers to not overcomplicate things.
 - If all of your authorization logic doesn't depend on the data and shouldn't perform complex calculations, you can use [operation-field-permissions](https://www.envelop.dev/plugins/use-operation-field-permissions) [Envelop](https://www.envelop.dev/) plugin.
 - If your authorization logic contains some calculations which are the same for many fields of your schema, you can use [GraphQL Shield](https://github.com/maticzav/graphql-shield) to leverage the built-in contextual caching mechanism.
-- If your authorization logic heavily depends on the data or you want to use schema directives to attach auth rules, you can use [GraphQL-AuthZ](https://github.com/AstrumU/graphql-authz) to leverage the 'GraphQL schema as a data source' pattern and post-execution rules.
+- If your authorization logic heavily depends on the data or you want to use schema directives to attach auth rules, you can use [GraphQL AuthZ](https://github.com/AstrumU/graphql-authz) to leverage the 'GraphQL schema as a data source' pattern and post-execution rules.
 
 ## Conclusion
 
-GraphQL AuthZ is a new approach to doing GraphQL native authorization. We are happy that we can finally share this library with the community and keen to learn about the ways it might be used within your next project! Don't hesitate to contact us for questions or to evaluate whether this library might be a fit for your architecture.
+GraphQL AuthZ is a new approach for applying GraphQL native authorization. We are happy that we can finally share this library with the community and keen to learn about the ways it might be used within your next project! Don't hesitate to contact us for questions or to evaluate whether this library might be a fit for your architecture.
 
 Please check out the [GraphQL AuthZ repository on GitHub](https://github.com/AstrumU/graphql-authz) for learning more. You can find a tutorial on how to set it up in different ways and with different technologies.
 
