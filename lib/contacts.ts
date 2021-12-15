@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable react-hooks/rules-of-hooks */
 /// @ts-check
 const Crisp = require('node-crisp-api');
 const produce = require('immer').default;
