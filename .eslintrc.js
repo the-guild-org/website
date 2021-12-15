@@ -6,7 +6,7 @@ module.exports = {
   reportUnusedDisableDirectives: true,
   overrides: [
     {
-      files: ['*.{js,jsx,cjs,mjs,ts,tsx,cts,mts}'],
+      files: '*.{js,jsx,cjs,mjs,ts,tsx,cts,mts}',
       extends: [
         'eslint:recommended',
         'plugin:@typescript-eslint/recommended',
@@ -66,6 +66,13 @@ module.exports = {
         '@typescript-eslint/prefer-includes': 'error',
         '@typescript-eslint/prefer-string-starts-ends-with': 'error',
         '@typescript-eslint/prefer-regexp-exec': 'error',
+        '@typescript-eslint/dot-notation': 'error',
+      },
+    },
+    {
+      files: '*.{js,jsx,cjs,mjs}',
+      rules: {
+        'dot-notation': 'error',
       },
     },
     {

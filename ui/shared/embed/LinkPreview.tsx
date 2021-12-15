@@ -1,10 +1,7 @@
 import { FC, useEffect, useLayoutEffect, useState } from 'react';
-import fetchPonyfill from 'fetch-ponyfill';
 import styled from 'styled-components';
 import { GenericLink } from '../../blog/elements/link';
 import { Observer } from '../Observer';
-
-const { fetch } = fetchPonyfill();
 
 type PreviewData = {
   description: string;

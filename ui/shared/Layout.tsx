@@ -59,37 +59,56 @@ export const Layout: FC = ({ children }) => {
         sameSite
         activeLink={router.asPath}
         accentColor="var(--colors-accent)"
+        logoProps={{ style: { zIndex: 1 } }}
+        // themeSwitch TODO: turn ON when site will be compatible with light model
       />
       {children}
-      <FooterExtended
-        sameSite
-        resources={[
-          {
-            children: 'Services',
-            title: 'Work with us',
-            href: '/services',
-            onClick: (e) => {
-              e.preventDefault();
-              router.push('/services');
+      <div
+        css={css`
+          // TODO: FIX guild/components - Input style is broken, need to reset default style for newsletter input 🤷‍
+          input {
+            border: 0;
+            // font is also broken, he is set up as Arial 🤷‍
+            font-family: TGCFont, sans-serif;
+          }
+
+          button[type='submit'] {
+            border: 0;
+
+            &:hover {
+              cursor: pointer;
+            }
+          }
+        `}
+      >
+        <FooterExtended
+          sameSite
+          resources={[
+            {
+              children: 'Documentation',
+              title: 'Documentation',
+              href: '/blog',
+              onClick(e) {
+                e.preventDefault();
+                router.push('/blog');
+              },
             },
-          },
-          {
-            children: 'Open Source',
-            title: 'Explore our projects',
-            href: '/open-source',
-            onClick: (e) => {
-              e.preventDefault();
-              router.push('/open-source');
+            {
+              children: 'Quickstart',
+              title: 'Quickstart',
+              href: '/services',
+              onClick(e) {
+                e.preventDefault();
+                router.push('/services');
+              },
             },
-          },
-          {
-            children: 'Community Meetings',
-            title: 'Join our Community Meetings',
-            href: 'https://github.com/the-guild-org/community-meetings',
-            target: '_blank',
-          },
-        ]}
-      />
+          ]}
+          // TODO: Add me in the future as is it in mockup
+          // onNewsletterSubmit={(e, email) => {
+          //   console.log({ email })
+          // }}
+        />
+      </div>
     </Wrapper>
   );
 };
@@ -190,21 +209,19 @@ export const Hero: FC<{ shrink?: boolean }> = ({ shrink, children }) => {
   );
 };
 
-export const Arrow: FC<{ className?: string }> = ({ className }) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  );
-};
+export const Arrow: FC<{ className?: string }> = ({ className }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);

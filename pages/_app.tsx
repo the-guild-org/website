@@ -1,10 +1,10 @@
 import App, { NextWebVitalsMetric } from 'next/app';
 import Router from 'next/router';
 import Head from 'next/head';
+import { ThemeProvider } from '@theguild/components';
 import 'prism-theme-night-owl';
 import 'remark-admonitions/styles/classic.css';
 import * as gtag from '../lib/gtag';
-
 import { GA_TRACKING_ID } from '../lib/gtag';
 
 Router.events.on('routeChangeComplete', (url) => gtag.pageview(url));
@@ -27,7 +27,7 @@ export function reportWebVitals({
 
 export default class MyApp extends App {
   render() {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, router } = this.props;
     return (
       <>
         <Head>
@@ -35,10 +35,10 @@ export default class MyApp extends App {
           <meta charSet="utf-8" />
           <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
           <link rel="shortcut icon" href="/fav.ico" />
-          {/* Global Site Tag (gtag.js) - Google Analytics */}
           <script
             async
-            src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+            // Global Site Tag (gtag.js) - Google Analytics
+            src={`https://googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
           />
           <script
             dangerouslySetInnerHTML={{
@@ -46,8 +46,7 @@ export default class MyApp extends App {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${GA_TRACKING_ID}');
-          `,
+            gtag('config', '${GA_TRACKING_ID}');`,
             }}
           />
           <link
@@ -56,7 +55,6 @@ export default class MyApp extends App {
             title="RSS Feed for the-guild.dev"
             href="/feed.xml"
           />
-
           <link
             href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
             rel="stylesheet"
@@ -116,7 +114,13 @@ export default class MyApp extends App {
             }
           `}
         </style>
-        <Component {...pageProps} />
+
+        <ThemeProvider
+          // TODO: Remove this when site will be compatible with two themes
+          isDarkTheme={router.route === '/'}
+        >
+          <Component {...pageProps} />
+        </ThemeProvider>
       </>
     );
   }

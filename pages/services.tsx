@@ -50,23 +50,19 @@ const Logos: FC<{
     name: string;
     logo: string;
   }[];
-}> = ({ logos }) => {
-  return (
-    <LogosContainer>
-      {logos.map((item, i) => (
-        <div key={`logo-${i}`}>
-          <img
-            src={`/img/logos/companies/${item.logo}`}
-            title={item.name}
-            alt={item.name}
-          />
-        </div>
-      ))}
-    </LogosContainer>
-  );
-};
-
-//
+}> = ({ logos }) => (
+  <LogosContainer>
+    {logos.map((item, i) => (
+      <div key={`logo-${i}`}>
+        <img
+          src={`/img/logos/companies/${item.logo}`}
+          title={item.name}
+          alt={item.name}
+        />
+      </div>
+    ))}
+  </LogosContainer>
+);
 
 const ServiceContainer = styled(Container)<{ reversed?: boolean }>`
   display: flex;
@@ -137,28 +133,29 @@ const Service: FC<{
   image: string;
   description?: string;
   list?: string[];
-}> = ({ title, image, description, list, reversed }) => {
-  return (
-    <ServiceContainer reversed={reversed}>
-      <div>
-        <img src={`/img/illustrations/${image}`} alt={title} />
-      </div>
-      <div>
-        <ServiceTitle>{title}</ServiceTitle>
-        {description && <ServiceDescription>{description}</ServiceDescription>}
-        {list && (
-          <ServiceList>
-            {list.map((item, i) => (
-              <li key={`item-${i}`}>
-                <ServiceArrow /> {item}
-              </li>
-            ))}
-          </ServiceList>
-        )}
-      </div>
-    </ServiceContainer>
-  );
-};
+}> = ({ title, image, description, list, reversed }) => (
+  <ServiceContainer
+    reversed={reversed}
+    id={title.toLowerCase().replaceAll(' ', '-')}
+  >
+    <div>
+      <img src={`/img/illustrations/${image}`} alt={title} />
+    </div>
+    <div>
+      <ServiceTitle>{title}</ServiceTitle>
+      {description && <ServiceDescription>{description}</ServiceDescription>}
+      {list && (
+        <ServiceList>
+          {list.map((item, i) => (
+            <li key={`item-${i}`}>
+              <ServiceArrow /> {item}
+            </li>
+          ))}
+        </ServiceList>
+      )}
+    </div>
+  </ServiceContainer>
+);
 
 const MainSection = styled(Section)`
   padding: 75px 0;
