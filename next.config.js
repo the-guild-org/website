@@ -23,18 +23,7 @@ const nextConfig = {
       destination: '/_next/static/sitemap.xml',
     },
   ],
-  webpack(config, { dev, isServer }) {
-//     if (!dev && isServer) {
-//       const originalEntry = config.entry;
-
-//       config.entry = async () => {
-//         const entries = { ...(await originalEntry()) };
-
-//         entries['./lib/build.ts'] = './lib/build.ts';
-
-//         return entries;
-//       };
-//     }
+  webpack(config) {
     config.resolve.alias.Public = join(process.cwd(), 'public');
 
     //❗️ need for Next 12 with next-optimized-images
@@ -74,9 +63,10 @@ module.exports = withPlugins(
     [
       withOptimizedImages,
       {
-        handleImages: ['jpeg', 'jpg', 'png'], //❗️ svg provoke fail during build – NonErrorEmittedError: (Emitted value instead of an instance of Error)
-        inlineImageLimit: 1000,
-        optimizeImagesInDev: false,
+        images: {
+          handleImages: ['jpeg', 'jpg', 'png'], //❗️ svg provoke fail during build – NonErrorEmittedError: (Emitted value instead of an instance of Error)
+          limit: 1000,
+        },
       },
     ],
   ],
