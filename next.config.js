@@ -24,17 +24,17 @@ const nextConfig = {
     },
   ],
   webpack(config, { dev, isServer }) {
-    if (!dev && isServer) {
-      const originalEntry = config.entry;
+//     if (!dev && isServer) {
+//       const originalEntry = config.entry;
 
-      config.entry = async () => {
-        const entries = { ...(await originalEntry()) };
+//       config.entry = async () => {
+//         const entries = { ...(await originalEntry()) };
 
-        entries['./lib/build.ts'] = './lib/build.ts';
+//         entries['./lib/build.ts'] = './lib/build.ts';
 
-        return entries;
-      };
-    }
+//         return entries;
+//       };
+//     }
     config.resolve.alias.Public = join(process.cwd(), 'public');
 
     //❗️ need for Next 12 with next-optimized-images
