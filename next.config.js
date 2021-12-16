@@ -10,9 +10,7 @@ const nextConfig = {
   experimental: {
     optimizeFonts: true,
     optimizeCss: true,
-    babelMultiThread: true,
   },
-  target: 'experimental-serverless-trace',
   rewrites: () => [
     {
       source: '/feed.xml',
@@ -35,10 +33,6 @@ const nextConfig = {
     });
 
     return config;
-  },
-  images: {
-    loader: 'custom', //❗️ need for Next 12 with next-optimized-images
-    disableStaticImages: true, //❗️ need for Next 12 with next-optimized-images
   },
   eslint: {
     // TODO: Remove this when all eslint errors will be fixed
@@ -66,6 +60,8 @@ module.exports = withPlugins(
         images: {
           handleImages: ['jpeg', 'jpg', 'png'], //❗️ svg provoke fail during build – NonErrorEmittedError: (Emitted value instead of an instance of Error)
           limit: 1000,
+          disableStaticImages: true, //❗️ need for Next 12 with next-optimized-images
+          loader: 'custom', //❗️ need for Next 12 with next-optimized-images
         },
       },
     ],
