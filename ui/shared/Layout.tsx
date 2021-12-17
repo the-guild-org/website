@@ -85,8 +85,8 @@ export const Layout: FC = ({ children }) => {
           sameSite
           resources={[
             {
-              children: 'Documentation',
-              title: 'Documentation',
+              children: 'Blog',
+              title: 'Blog',
               href: '/blog',
               onClick(e) {
                 e.preventDefault();
@@ -94,8 +94,8 @@ export const Layout: FC = ({ children }) => {
               },
             },
             {
-              children: 'Quickstart',
-              title: 'Quickstart',
+              children: 'Services',
+              title: 'Services',
               href: '/services',
               onClick(e) {
                 e.preventDefault();

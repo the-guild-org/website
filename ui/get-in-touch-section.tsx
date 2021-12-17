@@ -44,6 +44,48 @@ const FixedConfetti = styled(Confetti)`
   position: fixed !important;
 `;
 
+import React from 'react';
+
+function Submit({ children, isLoading, ...props }) {
+  const [width, setWidth] = React.useState(0);
+  const [height, setHeight] = React.useState(0);
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    if (ref.current && ref.current.getBoundingClientRect().width) {
+      setWidth(ref.current.getBoundingClientRect().width);
+    }
+    if (ref.current && ref.current.getBoundingClientRect().height) {
+      setHeight(ref.current.getBoundingClientRect().height);
+    }
+  }, [children]);
+
+  return (
+    <Button
+      type="submit"
+      disabled={isLoading}
+      css={[
+        css`
+          background: linear-gradient(114.44deg, #7433ff 0%, #ffa3fd 100%);
+        `,
+        tw`mt-5 sm:mt-0 sm:ml-5 px-10! text-white! opacity-80 hover:opacity-100`,
+      ]}
+      ref={ref}
+      style={
+        width && height
+          ? {
+              width: `${width}px`,
+              height: `${height}px`,
+            }
+          : {}
+      }
+      {...props}
+    >
+      {isLoading ? <>. . .</> : children}
+    </Button>
+  );
+}
+
 export const Newsletter: FC = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -57,7 +99,6 @@ export const Newsletter: FC = () => {
     (e) => {
       e.preventDefault();
       setLoading(true);
-
       mutate({ email, name: email });
     },
     [mutate, email]
@@ -121,22 +162,9 @@ export const Newsletter: FC = () => {
               tw`border-0 text-gray-300`,
             ]}
           />
-          <Button
-            type="submit"
-            disabled={loading}
-            css={[
-              css`
-                background: linear-gradient(
-                  114.44deg,
-                  #7433ff 0%,
-                  #ffa3fd 100%
-                );
-              `,
-              tw`mt-5 sm:mt-0 sm:ml-5 px-10! text-white! opacity-80 hover:opacity-100`,
-            ]}
-          >
+          <Submit type="submit" isLoading={loading}>
             Submit
-          </Button>
+          </Submit>
         </Form>
       )}
     </>

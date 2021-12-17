@@ -18,7 +18,7 @@ export const ServicesSection: FC = () => {
   return (
     <>
       <div css={tw`pt-28 flex flex-col items-center text-center`}>
-        <Heading>The Guild’s Services</Heading>
+        <Heading>The Guild's Services</Heading>
         <Description css={tw`max-w-[700px] px-2 md:px-0`}>
           Work directly with the most powerful group of API developers that
           created the open source infrastructure you use today
@@ -36,7 +36,7 @@ export const ServicesSection: FC = () => {
                 alt={`${service.name} illustration`}
               />
               <Heading $size="md">{service.name}</Heading>
-              <Description css={tw`mb-4 text-sm`}>
+              <Description css={tw`mb-4 text-sm px-4`}>
                 {service.description}
               </Description>
               <span

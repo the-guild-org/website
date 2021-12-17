@@ -1,66 +1,155 @@
 import { FC } from 'react';
 import NextLink from 'next/link';
-import { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import tw from 'twin.macro';
+import * as Tooltip from '@radix-ui/react-tooltip';
 import { Anchor, Description, Heading } from './index';
+
+const slideUpAndFade = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const slideRightAndFade = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
+
+const slideDownAndFade = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const slideLeftAndFade = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
+
+const StyledContent = styled(Tooltip.Content)`
+  border-radius: 4px;
+  padding: 10px 15px;
+  font-size: 12px;
+  line-height: 1;
+  color: #fff;
+  background: #16171c;
+  box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
+    hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation-duration: 400ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+
+    &[data-state='delayed-open'] {
+      &[data-side='top'] {
+        animation-name: ${slideDownAndFade};
+      }
+      &[data-side='right'] {
+        animation-name: ${slideLeftAndFade};
+      }
+      &[data-side='bottom'] {
+        animation-name: ${slideUpAndFade};
+      }
+      &[data-side='left'] {
+        animation-name: ${slideRightAndFade};
+      }
+    }
+  }
+`;
 
 export const PlatformSection: FC = () => {
   return (
-    <div
-      id="platform"
-      css={css`
-        background: linear-gradient(
-            180deg,
-            rgba(0, 0, 0, 0) 0%,
-            rgba(41, 40, 40, 0.2) 100%
-          ),
-          #0b0d11;
-      `}
-    >
+    <Tooltip.Provider>
       <div
-        css={tw`container mx-auto pt-20 flex flex-col items-center text-center pb-28`}
+        id="platform"
+        css={css`
+          background: linear-gradient(
+              180deg,
+              rgba(0, 0, 0, 0) 0%,
+              rgba(41, 40, 40, 0.2) 100%
+            ),
+            #0b0d11;
+        `}
       >
-        <Heading>The Platform</Heading>
-        <Description css={tw`max-w-[400px] md:max-w-[700px]`}>
-          Our advanced, modular solutions can be adopted gradually as individual
-          open source libraries or as a complete unified API platform. Explore
-          our suite of sustainable, open source API tools that covers everything
-          you need to scale your API infrastructure:
-        </Description>
+        <div
+          css={tw`container mx-auto pt-20 flex flex-col items-center text-center pb-28`}
+        >
+          <Heading>The Platform</Heading>
+          <Description css={tw`max-w-[400px] md:max-w-[700px]`}>
+            Our advanced, modular solutions can be adopted gradually as
+            individual open source libraries or as a complete unified API
+            platform. Explore our suite of sustainable, open source API tools
+            that covers everything you need to scale your API infrastructure:
+          </Description>
 
-        {/* TODO: Add this when we'll have `/products` route */}
-        {/* <Anchor href="#">View All Products ➔</Anchor> */}
-        <NextLink href="/about-us">
-          <Anchor>Learn more about The Guild ➔</Anchor>
-        </NextLink>
+          {/* TODO: Add this when we'll have `/products` route */}
+          {/* <Anchor href="#">View All Products ➔</Anchor> */}
+          <NextLink href="/about-us">
+            <Anchor>Learn more about The Guild ➔</Anchor>
+          </NextLink>
 
-        <div css={tw`flex flex-wrap mt-10 max-w-[900px] justify-center`}>
-          {PRODUCTS.map((product) => (
-            <a
-              key={product.name}
-              css={[
-                css`
-                  // 'grayscale' and 'contrast' don't work with tailwind
-                  filter: grayscale(100%) contrast(0%);
-                `,
-                tw`w-[60px] text-gray-500 hover:text-white hover:filter-none! border border-transparent border-solid hover:border-gray-800 transition-all ease-linear duration-200 rounded py-4 px-6 mb-2 lg:first:ml-6`,
-              ]}
-              title={product.description}
-              href={product.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src={`/static/shared-logos/products/${product.icon}`}
-                alt={`${product.name} logo`}
-                css={tw`h-[60px]`}
-              />
-              <h4 css={tw`font-medium mb-0 text-xs`}>{product.name}</h4>
-            </a>
-          ))}
+          <div css={tw`flex flex-wrap mt-10 max-w-[900px] justify-center`}>
+            {PRODUCTS.map((product) => (
+              <Tooltip.Root key={product.name}>
+                <Tooltip.Trigger asChild>
+                  <a
+                    css={[
+                      css`
+                        // 'grayscale' and 'contrast' don't work with tailwind
+                        filter: grayscale(100%) contrast(0%);
+                      `,
+                      tw`w-[60px] text-gray-500 hover:text-white hover:filter-none! border border-transparent border-solid hover:border-gray-800 transition-all ease-linear duration-200 rounded py-4 px-6 mb-2 lg:first:ml-6`,
+                    ]}
+                    // title={}
+                    href={product.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img
+                      src={`/static/shared-logos/products/${product.icon}`}
+                      alt={`${product.name} logo`}
+                      css={tw`h-[60px]`}
+                    />
+                    <h4 css={tw`font-medium mb-0 text-xs`}>{product.name}</h4>
+                  </a>
+                </Tooltip.Trigger>
+                <StyledContent sideOffset={5}>
+                  {product.description}
+                </StyledContent>
+              </Tooltip.Root>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </Tooltip.Provider>
   );
 };
 
@@ -77,19 +166,19 @@ const PRODUCTS: {
     icon: 'envelop.svg',
   },
   {
-    name: 'GraphQL Code Generator',
+    name: 'Codegen',
     description: 'Generate anything from GraphQL',
     url: 'https://graphql-code-generator.com',
     icon: 'code-generator.svg',
   },
   {
-    name: 'GraphQL-Mesh',
+    name: 'Mesh',
     description: 'Query anything, run anywhere',
     url: 'https://graphql-mesh.com',
     icon: 'mesh.svg',
   },
   {
-    name: 'GraphQL-Tools',
+    name: 'Tools',
     description: 'A set of utilities for faster GraphQL development',
     url: 'https://graphql-tools.com',
     icon: 'tools.svg',
@@ -119,13 +208,13 @@ const PRODUCTS: {
     icon: 'helix.svg',
   },
   {
-    name: 'GraphQL-ESLint',
+    name: 'ESLint',
     description: 'Customisable ESLint parser, plugin and set rules for GraphQL',
     url: 'https://github.com/dotansimha/graphql-eslint',
     icon: 'eslint.svg',
   },
   {
-    name: 'GraphQL-Config',
+    name: 'Config',
     description: 'One configuration for all your GraphQL tools',
     url: 'https://graphql-config.com/introduction',
     icon: 'config.svg',
@@ -137,7 +226,7 @@ const PRODUCTS: {
     icon: 'swift.svg',
   },
   {
-    name: 'GraphQL-Modules',
+    name: 'Modules',
     description: 'Enterprise Grade Tooling For Your GraphQL Server',
     url: 'https://graphql-modules.com',
     icon: 'modules.svg',
