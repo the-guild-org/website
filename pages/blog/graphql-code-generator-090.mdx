@@ -20,13 +20,13 @@ The [GraphQL codegen library](https://github.com/dotansimha/graphql-code-generat
 
 _Not sure what GraphQL Code Generator is? [read this](/blog/graphql-code-generator)!_
 
-## I’m excited to announce a new version of the GraphQL Code Generator! 🎉🎉🎉
+## I'm excited to announce a new version of the GraphQL Code Generator! 🎉🎉🎉
 
 Here are some of the new feature and changes in the new release:
 
-- **New CLI util that helps you to write custom templates**: now it’s much easier to write your own generator template!
+- **New CLI util that helps you to write custom templates**: now it's much easier to write your own generator template!
 - **TypeScript & MongoDB template**: a new template was added — you can now generate TypeScript models for MongoDB
-- **Custom output processors**: we know that Handlebars isn’t for everyone, so now you can write custom processors that does whatever you need
+- **Custom output processors**: we know that Handlebars isn't for everyone, so now you can write custom processors that does whatever you need
 - **Programmatic usage**: our can now use it from your code and not just as CLI
 - **TypeScript template** now supports output customization using environment variables.
 
@@ -38,7 +38,7 @@ And also a lot of bugs were fixed. [You can find the full changelog here](https:
 
 # New CLI util that helps you to write custom templates
 
-As part of the development, we understood the value of templates sharing between developers. We also understood that it’s difficult to get started with writing your own codegen templates. That’s why we created a new CLI util called `codegen-handlebars-templates-scripts`.
+As part of the development, we understood the value of templates sharing between developers. We also understood that it's difficult to get started with writing your own codegen templates. That's why we created a new CLI util called `codegen-handlebars-templates-scripts`.
 
 With this tools, you can easily scaffold, build, test and publish your new template, and share it with other developers.
 
@@ -78,7 +78,7 @@ gql-gen --template graphql-codegen-typescript-mongodb-template --schema ...
 
 The idea behind the new template is to help MongoDB developer to write better code, and to make sure their data is type safe.
 
-With this template, you can defined you GraphQL schema in the following format: (don’t worry, we also included the GraphQL @directives for you as part of the package)
+With this template, you can defined you GraphQL schema in the following format: (don't worry, we also included the GraphQL @directives for you as part of the package)
 
 ```graphql
 type User @entity {
@@ -100,11 +100,11 @@ export interface UserDbObject {
 }
 ```
 
-To read more about the usage and for more examples, [go ahead and read the template’s README](https://github.com/dotansimha/graphql-code-generator/blob/master/packages/templates/typescript-mongodb/README.md).
+To read more about the usage and for more examples, [go ahead and read the template's README](https://github.com/dotansimha/graphql-code-generator/blob/master/packages/templates/typescript-mongodb/README.md).
 
 ## Custom Output Processors
 
-We know that writing templates isn’t easy, and we know that not everyone likes to use Handlebars to write templates, so we made it easier to write your own output processor.
+We know that writing templates isn't easy, and we know that not everyone likes to use Handlebars to write templates, so we made it easier to write your own output processor.
 
 Implementing a custom output processor is easy. All you have to do is to create a JavaScript file (or any other, and compile it to JS), and use it for your `--template` flag. Your JS file should use `default export` a function that will build the entire output.
 

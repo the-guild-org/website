@@ -48,7 +48,7 @@ _Most modern React applications have the following data setup: centralized data 
 
 Since React applications are built on top of data, we can conclude that:
 
-> The strength of your React application’s types is based on the stability of your data types
+> The strength of your React application's types is based on the stability of your data types
 
 <br />
 
@@ -92,7 +92,7 @@ Manually writing and maintaining those type can lead to human errors:
 
 - **outdated typing** (regarding the API current implementation)
 - **typos**
-- **partial typing** of data (not all API’s data has a corresponding type)
+- **partial typing** of data (not all API's data has a corresponding type)
 
 As we saw earlier, the strength of your React TypeScript types is based on your data types, therefore, any mistake on your manually maintained data types will ripple in many of your React components.
 
@@ -104,7 +104,7 @@ Fortunately, thanks to the GraphQL introspection feature, many tools arose to so
 
 <br />
 
-# Robust React application’s types with GraphQL
+# Robust React application's types with GraphQL
 
 [GraphQL Code Generator](https://www.graphql-code-generator.com/), given the mutations and queries used by the app and the access to the target GraphQL API, generates the corresponding TypeScript types.
 
@@ -112,11 +112,11 @@ Fortunately, thanks to the GraphQL introspection feature, many tools arose to so
 
 GraphQL Code Generator is doing all the heavy lifting by getting from the API the definitions of the data types used by the React applications queries and mutations.
 
-Let’s see an example with our hypothetical application Login component relying on the User type.
+Let's see an example with our hypothetical application Login component relying on the User type.
 
 ## Stronger generated TypeScript types
 
-First, let’s create a `queries.graphql` file in a `src/graphql` folder:
+First, let's create a `queries.graphql` file in a `src/graphql` folder:
 
 ```graphql
 query currentUser {
@@ -169,7 +169,7 @@ Contrary to the manually maintained data types, using the GraphQL Code Generator
 
 Maintaining data types on the front-end side only consist of running the GraphQL Code Generator tool to update types according to the last GraphQL API version.
 
-Let’s now see some more advanced configurations that bring more stability.
+Let's now see some more advanced configurations that bring more stability.
 
 ## Getting the most of your GraphQL Code Generator configuration
 
@@ -229,7 +229,7 @@ We already saw the benefits of these generated types on the `<Login>` component 
 
 However, we can agree that having to provide both the query TypeScript type (`CurrentUserQueryResult`) and the query GraphQL document node (`currentUserDocument`) to `useQuery()` is cumbersome: `useQuery<CurrentUserQueryResult>(currentUserDocument)`
 
-Let’s see how we can improve that in the next configuration mode.
+Let's see how we can improve that in the next configuration mode.
 
 <br />
 
@@ -237,9 +237,9 @@ Let’s see how we can improve that in the next configuration mode.
 
 GraphQL Code Generator is capable of more than just generating TypeScript types, it can also generate JavaScript/TypeScript code.
 
-Let’s see how we can ask to GraphQL Code Generator to generate Typed React hooks, so we don’t have to provide the TypeScript types to `useQuery()` every time.
+Let's see how we can ask to GraphQL Code Generator to generate Typed React hooks, so we don't have to provide the TypeScript types to `useQuery()` every time.
 
-Let’s use the following configuration:
+Let's use the following configuration:
 
 ```yaml
 schema: http://localhost:3000/graphql
@@ -318,7 +318,7 @@ const Login = () => {
 
 _src/components/Login.tsx_
 
-Nice! Isn’t it?
+Nice! Isn't it?
 
 <br />
 
@@ -407,9 +407,9 @@ The generation of one custom hook per GraphQL operation (`Query`/`Mutation`) can
 
 ## Tips: Leverage GraphQL Fragments for scalable types
 
-Now that we have many ways to generate **stable **data types, let’s see how to make them easier to use and maintain in time.
+Now that we have many ways to generate **stable **data types, let's see how to make them easier to use and maintain in time.
 
-Let’s take a look at the following helper:
+Let's take a look at the following helper:
 
 ```ts
 import { CurrentUserQuery } from "src/graphql/generated";
@@ -488,7 +488,7 @@ The TypeScript type system is powerful and valuable only if used properly.
 
 In React applications, most of the components rely on data, doing your data typing at the center of your application stability.
 
-Thanks to GraphQL Code Generator and with a fast setup, you will be able to ensure the stability of your React application data types, along with your application’s global stability.
+Thanks to GraphQL Code Generator and with a fast setup, you will be able to ensure the stability of your React application data types, along with your application's global stability.
 
 If you decide to use GraphQL Code Generator, make sure to:
 

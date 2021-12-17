@@ -7,17 +7,17 @@ export const meta = {
   tags: ['graphql', 'graphql-modules', 'authentication'],
   date: '2019-06-19',
   description:
-    'After a few years of working with GraphQL, as open-source developers and as infrastructure team in large enterprises, we’ve learned some lessons about GraphQL, and how to authenticate and authorize GraphQL API.',
+    'After a few years of working with GraphQL, as open-source developers and as infrastructure team in large enterprises, we've learned some lessons about GraphQL, and how to authenticate and authorize GraphQL API.',
   image: '/blog-assets/graphql-modules-auth/cover.jpeg'
 }
 
 export default withArticle({ ...meta })
 
-After a few years of working with GraphQL, as open-source developers and as infrastructure team in large enterprises, we’ve learned some lessons about GraphQL, and how to authenticate and authorize GraphQL API.
+After a few years of working with GraphQL, as open-source developers and as infrastructure team in large enterprises, we've learned some lessons about GraphQL, and how to authenticate and authorize GraphQL API.
 
-Authentication and authorization should be simple, because for most cases, it’s just a piece of code that we wish to run before letting users access certain resources.
+Authentication and authorization should be simple, because for most cases, it's just a piece of code that we wish to run before letting users access certain resources.
 
-In this article we’ll go through all the different ways of implementing authentication and authorization, the benefits and downsides to each one, and offer a solution that we believe is the best philosophy to do so.
+In this article we'll go through all the different ways of implementing authentication and authorization, the benefits and downsides to each one, and offer a solution that we believe is the best philosophy to do so.
 
 # Authentication / Authorization?
 
@@ -25,7 +25,7 @@ I found [good answer in StackOverflow](https://stackoverflow.com/questions/63678
 
 ![StackOverflow Answer](/blog-assets/graphql-modules-auth/stackoverflow-answer.png 'StackOverflow Answer')
 
-In this article, I’ll cover the difference between authentication and authorization with GraphQL APIs, explain how to implement them with GraphQL server, and with the [GraphQL-Modules framework](http://graphql-modules.com/).
+In this article, I'll cover the difference between authentication and authorization with GraphQL APIs, explain how to implement them with GraphQL server, and with the [GraphQL-Modules framework](http://graphql-modules.com/).
 
 We learned that a good implementation for GraphQL authentication has the following features regarding _authentication_:
 
@@ -42,43 +42,43 @@ And the following features regarding _authorization_:
 
 # Where to put your authentication?
 
-To understand why implementing authentication in GraphQL might be tricky, let’s start with the following chart:
+To understand why implementing authentication in GraphQL might be tricky, let's start with the following chart:
 
 ![Where to put your authentication?](/blog-assets/graphql-modules-auth/where-to-put-graph.png 'Where to put your authentication?')
 
-A request comes from the network, go through a HTTP server (for example, `express`) — That’s **#1** in the chart.
+A request comes from the network, go through a HTTP server (for example, `express`) — That's **#1** in the chart.
 Then it goes through GraphQL server, which builds a `context`, and then it runs your resolvers — **#2**.
-Then, you have your business logic, that you might want to separate from the resolvers, that’s **#3**.
+Then, you have your business logic, that you might want to separate from the resolvers, that's **#3**.
 
 Basically, you can implement GraphQL authentication on each part of this chart. But there are differences between those points that might effect the behaviour of your server, and might limit you later doing some things.
 
-Let’s focus on the features requirements I mentioned before, and try to understand how the implementation selection might effect you.
+Let's focus on the features requirements I mentioned before, and try to understand how the implementation selection might effect you.
 
-So let’s take **#1**:
+So let's take **#1**:
 If you implement your authentication on **#1** (between the network request and the HTTP server), you probably does it with express middleware or something similar.
-The benefit in this is the separation between authentication logic and your business logic. But, you can’t connect your data from the HTTP request to your GraphQL server, and it might be difficult later to get access to the currentUser. It also protects the entire GraphQL endpoint, and not only parts of it.
-**So that’s nice, but not perfect**.
+The benefit in this is the separation between authentication logic and your business logic. But, you can't connect your data from the HTTP request to your GraphQL server, and it might be difficult later to get access to the currentUser. It also protects the entire GraphQL endpoint, and not only parts of it.
+**So that's nice, but not perfect**.
 
 Regarding **#3**:
-Implementing authentication as part of your resolver code or business logic code isn’t a good idea. It usually means that your app code knows too much about the authentication, and it’s probably coupled to it.
-It’s might to simpler to implement, but much more difficult to reuse later.
+Implementing authentication as part of your resolver code or business logic code isn't a good idea. It usually means that your app code knows too much about the authentication, and it's probably coupled to it.
+It's might to simpler to implement, but much more difficult to reuse later.
 
 And, **#2**:
 **You can implement authentication between your HTTP server and your GraphQL server, by using the GraphQL `context`**.
 By implementing a custom `context` building function, you can access the network request and build your `context` object, and add `currentUser` to it.
 Then, your `resolvers` getting called by the GraphQL engine.
 
-**From our experience, we can tell that implementing authentication in this part of your GraphQL server gives you control over your authentication flow, if it’s done right.**
+**From our experience, we can tell that implementing authentication in this part of your GraphQL server gives you control over your authentication flow, if it's done right.**
 
-In the next chapter we’ll dive in, and see how easy it’s to implement in with Apollo-Server.
+In the next chapter we'll dive in, and see how easy it's to implement in with Apollo-Server.
 
 # Getting Started with Authentication
 
-We’ll start by implementing a simple authentication flow in GraphQL server (using [Apollo-Server 2.0](https://github.com/apollographql/apollo-server)).
+We'll start by implementing a simple authentication flow in GraphQL server (using [Apollo-Server 2.0](https://github.com/apollographql/apollo-server)).
 
-I’m assuming that you already have your own favorite way to authenticate, whether it’s with headers, cookies or any other way. In the point of view of the server, we expect to get a token, and we’ll assume that it comes from the headers for the simplicity.
+I'm assuming that you already have your own favorite way to authenticate, whether it's with headers, cookies or any other way. In the point of view of the server, we expect to get a token, and we'll assume that it comes from the headers for the simplicity.
 
-Let’s start by creating a simple Apollo-Server instance, with a very simple schema. We’ll focus on exposing the `currentUser` as a query field.
+Let's start by creating a simple Apollo-Server instance, with a very simple schema. We'll focus on exposing the `currentUser` as a query field.
 
 ```typescript
 import { ApolloServer } from 'apollo-server'
@@ -101,9 +101,9 @@ server.listen().then(({ url }) => {
 })
 ```
 
-Now, let’s implement `context` , and see if we can get a valid user out of the values we get there.
+Now, let's implement `context` , and see if we can get a valid user out of the values we get there.
 Our goal in this part is only to validate the token, and try to trade it for a user.
-If the token or the user are not valid — we don’t want to throw an exception here, because that way, our server will not support public queries.
+If the token or the user are not valid — we don't want to throw an exception here, because that way, our server will not support public queries.
 So we just trying to get a user and a token, and return them to Apollo-Server, so it will use it as the context for our resolvers. If something went wrong with the validation — we just return `null` for the `user` and `authToken`.
 
 ```typescript
@@ -167,7 +167,7 @@ server.listen().then(({ url }) => {
 })
 ```
 
-_Note that in a good GraphQL server implementation, the `context` is built once per request, and shouldn’t change over time. So they only way to modify it is using the `context` function that builds it before the resolver getting called._
+_Note that in a good GraphQL server implementation, the `context` is built once per request, and shouldn't change over time. So they only way to modify it is using the `context` function that builds it before the resolver getting called._
 
 Now, we can finally implement the `resolvers` for the server:
 
@@ -233,8 +233,8 @@ That leads us to the next steps: implementing guards.
 To add guards to your resolvers, you can use a simple Middleware approach, and wrap your resolver with a function that checks if `context.user` is valid, and otherwise, throws an error.
 You are getting full control over your authentication flow, because you can choose which resolvers to wrap.
 
-So let’s implement a simple guard, and use it in our server.
-I also added a _public_ part of the schema (`Query.serverTime`), that should be public, and not effected by the authentication flow. So it’s not wrapped with our guard.
+So let's implement a simple guard, and use it in our server.
+I also added a _public_ part of the schema (`Query.serverTime`), that should be public, and not effected by the authentication flow. So it's not wrapped with our guard.
 
 ```typescript
 // authenticated-guard.ts
@@ -313,9 +313,9 @@ It also protects only the part of the GraphQL schema that we wanted to protect, 
 
 Now that we understand the concept of authentication in GraphQL servers, we can also implement authorization.
 
-Implementing Authorization is no different than implementing the `authenticated` guard we did before. It’s just another guard, or resolver wrapper we can use.
+Implementing Authorization is no different than implementing the `authenticated` guard we did before. It's just another guard, or resolver wrapper we can use.
 
-Let’s add `type Article` to the schema, and allow creating article only to users with `role` set to `EDITOR` . It’s that simple:
+Let's add `type Article` to the schema, and allow creating article only to users with `role` set to `EDITOR` . It's that simple:
 
 ```typescript
 import { ApolloServer } from 'apollo-server'
@@ -559,7 +559,7 @@ server.listen().then(({ url }) => {
 
 If you wish to get rid of the `resolversComposition` wrapping, and use a more declarative way, you can use GraphQL directives to decorate your schema and put the authentication/authorization there.
 
-To get started, add the following @directives to your `auth` module’s schema:
+To get started, add the following @directives to your `auth` module's schema:
 
 ```graphql
 directive @auth on FIELD
@@ -618,7 +618,7 @@ type Query {
 }
 ```
 
-## What’s next?
+## What's next?
 
 Another thing we are working on, is having some of your repeated authentication and authorization logic installable through npm!
 

@@ -21,7 +21,7 @@ _This blog is a part of a series on GraphQL where we will dive deep into GraphQL
 - Part 5: [**The Stack #3**](/blog/graphql-deep-dive-5)
 - Part 6: [**The Workflow**](/blog/graphql-deep-dive-6)
 
-In the [**last blog post**](/blog/graphql-deep-dive-1), we explored the various questions one might have when starting off or working with the GraphQL ecosystem and answered them. Now that justice has been done to clear the clouded thoughts you might have, let’s dive into the next important step in this blog.
+In the [**last blog post**](/blog/graphql-deep-dive-1), we explored the various questions one might have when starting off or working with the GraphQL ecosystem and answered them. Now that justice has been done to clear the clouded thoughts you might have, let's dive into the next important step in this blog.
 
 In this blog, we will start looking at how your architecture can look like when working with GraphQL and its ecosystem.
 
@@ -29,14 +29,14 @@ In this blog, we will start looking at how your architecture can look like when 
 
 Your architecture hugely revolves around your usecase and you have to be very careful in getting it right and take proper consultation if needed from experts. While it is very important to get it right before you start, mistakes can happen, and with a lot of research happening these days, you can often find any revolution happen any day which can make your old way of thinking obsolete.
 
-That is why, I would highly recommend you to **Architect for Change** and make your architecture as **Modular** as possible so that you have the flexibility to do incremental changes in the future if needed. Let’s just talk about architecture in context with GraphQL here. We will explore more deeper into the rest of the architecture in an another blog post.
+That is why, I would highly recommend you to **Architect for Change** and make your architecture as **Modular** as possible so that you have the flexibility to do incremental changes in the future if needed. Let's just talk about architecture in context with GraphQL here. We will explore more deeper into the rest of the architecture in an another blog post.
 
 **The Basics**
 
 There are some things you would have to think of before starting your journey.
 
 - Am I building a monolith or am I working on microservices?
-  Remember that monoliths still have a huge place in today’s world given the complexity which comes with Microservices as long as your project is small.
+  Remember that monoliths still have a huge place in today's world given the complexity which comes with Microservices as long as your project is small.
 - What does my deployment target going to look like? VM, Containers or Bare Metal?
 - What is going to be my orchestration layer? Kubernetes, Mesos, Swarm or OpenStack?
 - What are my scaling needs?
@@ -59,7 +59,7 @@ If you are in the Kubernetes world, you also have a lot of ingress controllers l
 
 The first thing would be the entry point of all your GraphQL requests. Since GraphQL exposes a single endpoint eg. `/graphql` this becomes the single entry point for all your operations.
 
-But, I highly wouldn’t recommend directly exposing your service to client since it can be unsecure, difficult to manage things like rate-limiting, load balancing and so on.
+But, I highly wouldn't recommend directly exposing your service to client since it can be unsecure, difficult to manage things like rate-limiting, load balancing and so on.
 
 Rather, it is always recommended to expose it via an API Gateway of your choice. Be it Ambassador, Kong, WSO2, Apigee or anything else for that matter. This can also act as sort of a kill switch or can also be used for things like filtering and moderating traffic whenever needed.
 
@@ -121,7 +121,7 @@ Remember to keep your stack as simple as possible and you can incrementally have
 
 - When architecting applications, I try to use the [**Black Box model**](https://medium.com/timecampus/the-power-of-black-box-a7d8a320e557) as much as possible. This simplifies a lot of things for me.
 - I try to go for the Zero Trust Security Model when building my architecture popularized by [**Beyondcorp**](https://cloud.google.com/beyondcorp) from Google and while this will create a lot of friction at start, this makes life a lot better for you in the future.
-- There are some questions I ask based on the principles like [**YAGNI**](https://en.wikipedia.org/wiki/You_aren't_gonna_need_it)**,** [**DRY**](https://en.wikipedia.org/wiki/Don't_repeat_yourself)**,** [**KISS**](https://en.wikipedia.org/wiki/KISS_principle) and they play a huge role in making sure that you don’t overwhelm yourself with things you don’t want to do right now and prioritize things right.
+- There are some questions I ask based on the principles like [**YAGNI**](https://en.wikipedia.org/wiki/You_aren't_gonna_need_it)**,** [**DRY**](https://en.wikipedia.org/wiki/Don't_repeat_yourself)**,** [**KISS**](https://en.wikipedia.org/wiki/KISS_principle) and they play a huge role in making sure that you don't overwhelm yourself with things you don't want to do right now and prioritize things right.
 - I try to refer case studies and see how others are already solving the same problem and this can help me save a lot of my time. Avoiding to re-invent the wheel. For GraphQL, you may find them [**here**](https://www.graphql.com/case-studies/)
 
 **Deciding the “Right” Stack for “You”**

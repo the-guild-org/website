@@ -25,7 +25,7 @@ But today we want to announce something new — we now have 2 new official plugi
 
 A [Apollo-Android generator](https://github.com/dotansimha/graphql-code-generator/pull/1924) and a [Java backend](https://graphql-code-generator.com/docs/plugins/java-resolvers) resolvers signature generator.
 
-We’ve created those plugins because we needed them for some of our clients production applications and the current tools in the ecosystem that are currently out there weren’t sufficient enough for us.
+We've created those plugins because we needed them for some of our clients production applications and the current tools in the ecosystem that are currently out there weren't sufficient enough for us.
 
 # Apollo-Android
 
@@ -33,9 +33,9 @@ The new plugin allows you to generate Java code if your project is using Apollo-
 
 It includes a query builder and a response builders (for converting the network response into a type-safe classes), and it integrates with Apollo-Android runtime.
 
-The goal of the generated code is to let you use your GraphQL operations (`query`, `mutation`, `subscription` and `fragment`) without the need to convert JSONs or deal with HTTP requests — you just need to write your operations, run the codegen and you’ll get ready-to-use Java classes.
+The goal of the generated code is to let you use your GraphQL operations (`query`, `mutation`, `subscription` and `fragment`) without the need to convert JSONs or deal with HTTP requests — you just need to write your operations, run the codegen and you'll get ready-to-use Java classes.
 
-The reason we decided to implement our own plugin was because now that we need to use it in large production apps, the current tools in the ecosystem weren’t sufficient enough for us.
+The reason we decided to implement our own plugin was because now that we need to use it in large production apps, the current tools in the ecosystem weren't sufficient enough for us.
 
 We also think this is a good opportunity for the community to iterate faster because of all the awesome capabilities the generator already has.
 
@@ -49,9 +49,9 @@ The new plugin will be available today in beta using the following tag — `1.2.
 
 Next week we are also planning to make it easier to integrate the plugin by building a Gradle plugin that wraps the execution of the Codegen, and integrates it with the Java ecosystem.
 
-On the stable release this Gradle plugin will be available, but for now, if you wish to try it now, you’ll need to configure it manually.
+On the stable release this Gradle plugin will be available, but for now, if you wish to try it now, you'll need to configure it manually.
 
-Because the current GraphQL Code Generator package is released on NPM, you’ll need to create a simple `package.json` file with the following content:
+Because the current GraphQL Code Generator package is released on NPM, you'll need to create a simple `package.json` file with the following content:
 
 ```json
 {
@@ -97,15 +97,15 @@ Also, add a build step:
 build.dependsOn yarn
 ```
 
-Now, when you’ll run your Gradle build, it will make sure to download the Codegen and it’s plugins, and will generate the Java classes for you.
+Now, when you'll run your Gradle build, it will make sure to download the Codegen and it's plugins, and will generate the Java classes for you.
 
 The usage of the generated code is the same you had before, just follow [the instructions of Apollo-Android runtime](https://github.com/apollographql/apollo-android#consuming-code).
 
 # Java Backend Resolver Plugin
 
-The other plugin generates resolvers signature, that allow you to integrate your Java models classes to the generated signature, so you’ll get a type-safe implementation of your resolvers.
+The other plugin generates resolvers signature, that allow you to integrate your Java models classes to the generated signature, so you'll get a type-safe implementation of your resolvers.
 
-It’s based on [`graphql-java`](https://www.graphql-java.com/) and compatible with it’s implementation for [`DataFetcher`s](https://www.graphql-java.com/documentation/v13/data-fetching/).
+It's based on [`graphql-java`](https://www.graphql-java.com/) and compatible with it's implementation for [`DataFetcher`s](https://www.graphql-java.com/documentation/v13/data-fetching/).
 
 Follow the instructions above, but use this `package.json`:
 
@@ -165,7 +165,7 @@ generates:
         Node: 'com.myapp.models.BaseModel#BaseModel'
 ```
 
-You’ll get a complete type-safe resolvers signature:
+You'll get a complete type-safe resolvers signature:
 
 ```java
 package com.java.generated;
@@ -207,7 +207,7 @@ public class Resolvers {
 
 Now you can use it as base `interface` for your `DataFetcher` implementation, and get a type-safe resolvers!
 
-## What’s next?
+## What's next?
 
 We are getting close to a stable release for those plugins and want your opinions on them.
 

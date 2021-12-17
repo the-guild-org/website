@@ -11,13 +11,13 @@ export const meta = {
 
 export default withArticle({ ...meta })
 
-Today we are happy to announce that we are open sourcing a framework we’ve been using for the past couple of months in production — [GraphQL Modules](https://graphql-modules.com/)!
+Today we are happy to announce that we are open sourcing a framework we've been using for the past couple of months in production — [GraphQL Modules](https://graphql-modules.com/)!
 
 Yet another framework? well, kind of.. GraphQL Modules is a set of extra libraries, structures and guidelines around the amazing [Apollo Server 2.0](https://www.apollographql.com/docs/apollo-server/).
 
 You can and should use them as completely separate packages, each one is good for different use cases, but all together they represent our current philosophy of building large scale GraphQL servers.
 
-We would love to get feedback from the Apollo team and if they wish to use those ideas and integrate them into Apollo Server we would love to contribute. That’s why we’ve developed it as a set of independent tools under a single monorepo.
+We would love to get feedback from the Apollo team and if they wish to use those ideas and integrate them into Apollo Server we would love to contribute. That's why we've developed it as a set of independent tools under a single monorepo.
 
 The basic concept behind GraphQL Modules is to separate your GraphQL server into smaller, **reusable,** **feature based** parts.
 
@@ -39,7 +39,7 @@ We argue that there is a better approach of writing your GraphQL Schema and impl
 
 We believe you should **separates your GraphQL schema by modules**, or **features**, and includes anything related to a specific part of the app under a “module” — which is just a simple directory. Each one of the GraphQL Modules libraries would help you in the gradual process of doing that.
 
-The modules are being defined by their GraphQL schema — so we’ve taken the “GraphQL First” approach lead by Apollo and combined it together with classic modularization tooling to create new ways of writing GraphQL servers!
+The modules are being defined by their GraphQL schema — so we've taken the “GraphQL First” approach lead by Apollo and combined it together with classic modularization tooling to create new ways of writing GraphQL servers!
 
 ![](/medium/0f1a8490480abbc46d06daf9cf727171.png)
 
@@ -47,7 +47,7 @@ The GraphQL Modules toolset has tools to help with:
 
 - **Schema Separation** — declare your GraphQL schema in smaller pieces, which you can later move and reuse.
 - **Tools designed to create independent modules** — each module is completely independent and testable, and can be shared with other applications or even open sourced if needed
-- **Resolvers Composition** — with GraphQL Modules you can write your resolver as you wish, and let the app that hosts the module to wrap the resolvers and extend them. It’s implemented with a basic middleware API, but with more flexibility. That means that you can, for example, implement your entire module without knowing about the app authentication process, and assume that `currentUser` will be injected for you by the app.
+- **Resolvers Composition** — with GraphQL Modules you can write your resolver as you wish, and let the app that hosts the module to wrap the resolvers and extend them. It's implemented with a basic middleware API, but with more flexibility. That means that you can, for example, implement your entire module without knowing about the app authentication process, and assume that `currentUser` will be injected for you by the app.
 - **A clear, gradual path** from a very simple and fast, single-file modules, to scalable multi-file, multi-teams, multi-repo, multi-server modules.
 - **A scalable structure for your GraphQL servers** — managing multiple teams and features, multiple microservices and servers and more advanced tools, which you can choose to include when your schema gets into massive scale:
 - **Communication Bridge** — We also let you send custom messages with payload between modules — that means you can even run modules in different microservices and easily interact between them.
@@ -181,7 +181,7 @@ GraphQL Modules is built as a toolkit, with the following tools, which you shoul
 
 **@​graphql-modules/core**
 
-- [Resolvers Composition](https://graphql-modules.com/docs/introduction/resolvers-composition) — manages the app’s resolvers wrapping
+- [Resolvers Composition](https://graphql-modules.com/docs/introduction/resolvers-composition) — manages the app's resolvers wrapping
 - [Context building](https://graphql-modules.com/docs/introduction/context) — each module can inject custom properties to the schema, and other modules can use it (for example, auth module can inject the current user, and other modules can use it)
 - [Dependency injection and module dependencies management](https://graphql-modules.com/docs/introduction/dependency-injection) — when you start, there is no need of using DI is your server. but when your server gets big enough with a large number of modules which depends on each other, only then, DI becomes a very help thing that actually simplifies your code a lot. USE ONLY WHEN NECESSARY ;)
 
@@ -193,11 +193,11 @@ You can find more tooling at your disposal like:
 
 # Get Started
 
-First thing, don’t go full in! Start by simply moving your code into feature based folders and structures with your existing tools.
+First thing, don't go full in! Start by simply moving your code into feature based folders and structures with your existing tools.
 
 Then head over to [https://graphql-modules.com/](https://graphql-modules.com/) and check out our tools and use them only when you see that they solve a real problem for you! (for us it has)
 
-Also check out [the repo](https://github.com/Urigo/graphql-modules)’s README and [a number of example apps](https://github.com/Urigo/graphql-modules#examples).
+Also check out [the repo](https://github.com/Urigo/graphql-modules)'s README and [a number of example apps](https://github.com/Urigo/graphql-modules#examples).
 
 You probably have many questions — How does this compare to other tools, how to use those libraries with X and so on.
 
@@ -217,7 +217,7 @@ Everyone is talking about schema stitching and GraphQL Bindings. Where does that
 
 Schema stitching is an amazing ability and concept, which helps you merge separated GraphQL servers into a single endpoint and opens up a lot of exciting use cases.
 
-But, with all the excitement, we’ve missed something much more basic than that — sometimes we still want to work on a single logical server, but we just want to separate the code according to features.
+But, with all the excitement, we've missed something much more basic than that — sometimes we still want to work on a single logical server, but we just want to separate the code according to features.
 
 We want to be able to do most of the merging work at build time, and only if really necessary, do the rest of the merging at runtime as a last resort.
 
@@ -225,7 +225,7 @@ We want to split the code into separate teams and even create reusable modules w
 
 Those modules can be npm modules, microservices or just separate folders inside a single server.
 
-Separating your schema to smaller parts is easier when you are dealing with `typeDefs` and `resolvers`— it’s more readable and easy to understand.
+Separating your schema to smaller parts is easier when you are dealing with `typeDefs` and `resolvers`— it's more readable and easy to understand.
 
 We also wanted to allow developers to extend only specific types, without creating the entire schema. With GraphQL schema, you have to specify at least one field under `Query` type, which is something that we did not want to enforce on our users.
 
@@ -233,19 +233,19 @@ We see our approach as complementary to Schema Stitching and works together with
 
 # Feature-based implementation
 
-One of the most important things in GraphQL Module’s approach is the feature-based implementation.
+One of the most important things in GraphQL Module's approach is the feature-based implementation.
 
 Nowadays, most frameworks are separating the layers based on the role of the layer — such as controllers, data-access and so on.
 
-GraphQL Modules has a different approach — separate to modules based on your server’s features, and allow it to manage its own layers within each module implementation.
+GraphQL Modules has a different approach — separate to modules based on your server's features, and allow it to manage its own layers within each module implementation.
 
-It’s easier to think about apps in a modular way, for example:
+It's easier to think about apps in a modular way, for example:
 
 Your awesome app needs a basic authentication, users management, user profiles, user galleries and a chat.
 
 Each one of these could be a module, and implement its own GraphQL schema and its own logic, and it could depend on other modules to provide some of the logic.
 
-Here’s a simple example for a GraphQL Schema as we described:
+Here's a simple example for a GraphQL Schema as we described:
 
 ![](/medium/ab6a60456476a8bc274f6d388b0c7178.png)
 
@@ -259,21 +259,21 @@ The result of course, will be the same, because we are merging the schema into a
 
 # Reusability of backend modules
 
-So now that we understood the power of feature-based implementation, it’s easier to grasp the idea behind code reusability.
+So now that we understood the power of feature-based implementation, it's easier to grasp the idea behind code reusability.
 
 If we could implement the schema and the core of Auth and User module as “plug-and-play” — we will be able later to import it in other projects, with very minor changes (using configuration, dependency injection, or module composition).
 
 **How could we reuse complete modules that hold part of a schema?**
 
-For example, let’s take a `User` type.
+For example, let's take a `User` type.
 
 Most of `User` type schemas will contain `id`, `email` and `username` fields. The Mutation type will have `login` and the `Query` will have `user` field to query for a specific user.
 
 We can re-use this type declaration.
 
-The actual implementation might differ between apps, according to the authentication provider, database and so on, but we can still implement the business logic in a simple resolver, and use dependency injector and ask the app that’s using the module to provide the actual authentication function (of course, with a complete TypeScript interface so we’ll know that we need to provide it ;) ).
+The actual implementation might differ between apps, according to the authentication provider, database and so on, but we can still implement the business logic in a simple resolver, and use dependency injector and ask the app that's using the module to provide the actual authentication function (of course, with a complete TypeScript interface so we'll know that we need to provide it ;) ).
 
-Let’s take it one step further. If we would like to add a profile picture to a user, we can add a new module named `UserProfile` and re-declare the `User` and `Mutation` types again:
+Let's take it one step further. If we would like to add a profile picture to a user, we can add a new module named `UserProfile` and re-declare the `User` and `Mutation` types again:
 
 ```graphql
 type User {
@@ -287,7 +287,7 @@ type Mutation {
 
 This way, GraphQL Modules will merge the fields from this `User` type into the complete `User` type, and this module will only extend the `User` type and `Mutation` type with the required actions.
 
-So let’s say that we have the schema — how can we make this module generic and re-use it?
+So let's say that we have the schema — how can we make this module generic and re-use it?
 
 This is how you declare this module:
 
@@ -356,7 +356,7 @@ Now that we broke our app into individual modules, once our codebase grows, we c
 
 What do I mean by scaling a codebase?
 
-Let’s say we start to have code parts we want to share between different modules.
+Let's say we start to have code parts we want to share between different modules.
 
 The current way of doing it in the existing GraphQL world is through a GraphQL context.
 
@@ -364,23 +364,23 @@ This approach has proven itself to work, but at some point it becomes a big hass
 
 GraphQL modules let each module extend and inject fields to the \`context\` object, but this is something that you should use with caution, because I recommend the \`context\` to contain the actual \`context\` — which contains data such as global configuration, environment, the current user and so on.
 
-GraphQL modules only adds one field under the `context`, called `injector` which is the bridge that lets you access your GraphQLApp and the application Injector, and it lets you fetch your module’s config and providers.
+GraphQL modules only adds one field under the `context`, called `injector` which is the bridge that lets you access your GraphQLApp and the application Injector, and it lets you fetch your module's config and providers.
 
 Modules can be a simple directory in a project or in a monorepo, or it could be a published NPM module — you have the power to choose how to manage your codebase according to your needs and preferences.
 
 # Dependency Injection
 
-GraphQL Modules’ dependency injection is inspired by .NET and Java’s dependency injection which has proven itself to work pretty well over the years. With that being said, there were some issues with .NET and Java’s APIs, which we’ve tried to list and go through. We ran into some pretty interesting conclusions.
+GraphQL Modules' dependency injection is inspired by .NET and Java's dependency injection which has proven itself to work pretty well over the years. With that being said, there were some issues with .NET and Java's APIs, which we've tried to list and go through. We ran into some pretty interesting conclusions.
 
-We’ve learn that it’s not something that should be forced. Dependency injection makes sense in some specific use cases and you should need to use it only when it’s necessary and when it helps you move faster. So this concept should come more and more in handy as we scale up, we can simplify things, maintain our code with ease and manage our teams’ contributions!
+We've learn that it's not something that should be forced. Dependency injection makes sense in some specific use cases and you should need to use it only when it's necessary and when it helps you move faster. So this concept should come more and more in handy as we scale up, we can simplify things, maintain our code with ease and manage our teams' contributions!
 
-Having GraphQL Modules deployed across all of our Enterprise customers while also being used on our smaller applications, lead us to believe that we’ve found the optimal point of where you should use the concept of dependency injection, and when not.
+Having GraphQL Modules deployed across all of our Enterprise customers while also being used on our smaller applications, lead us to believe that we've found the optimal point of where you should use the concept of dependency injection, and when not.
 
-We’ve also came with the optimal API for dependency injection. It’s extremely easy to understand, and use.
+We've also came with the optimal API for dependency injection. It's extremely easy to understand, and use.
 
-After a long research of the existing dependency injection solutions for JavaScript, we’ve decided to implement a simple Injector, that supports the needs of GraphQL-Modules ecosystem, and support circular dependencies and more.
+After a long research of the existing dependency injection solutions for JavaScript, we've decided to implement a simple Injector, that supports the needs of GraphQL-Modules ecosystem, and support circular dependencies and more.
 
-We’ve simplified the Dependency Injection API and exposed to you only the important parts, that we believe that are necessary for a GraphQL server development.
+We've simplified the Dependency Injection API and exposed to you only the important parts, that we believe that are necessary for a GraphQL server development.
 
 # Authentication
 

@@ -6,13 +6,13 @@ export const meta = {
   tags: ['graphql', 'angular'],
   date: '2016-07-28',
   description:
-    'In this post, I’ll make the case for why Angular needs a best practice for communicating with the server, and why GraphQL should be that best practice.',
+    'In this post, I'll make the case for why Angular needs a best practice for communicating with the server, and why GraphQL should be that best practice.',
   image: '/medium/723af25d23534dd3f801257126be159b.png'
 }
 
 export default withArticle({ ...meta })
 
-In this post, I’ll make the case for why Angular needs a best practice for communicating with the server, and why GraphQL should be that best practice.
+In this post, I'll make the case for why Angular needs a best practice for communicating with the server, and why GraphQL should be that best practice.
 
 # Best practices
 
@@ -26,7 +26,7 @@ That is all great, and means that if we will follow those best practices our app
 
 # Data fetching
 
-Today, whether we are developing in a large company, consulting, or writing our own app, when we fetch data from the server we are often left with old practices that don’t address the needs of a modern app.
+Today, whether we are developing in a large company, consulting, or writing our own app, when we fetch data from the server we are often left with old practices that don't address the needs of a modern app.
 
 Also, we are kind of powerless and unable to decide how the data will be supplied to our apps by the server, even though the way we fetch the data to our app is at least as meaningful to the way our app behaves as how we present it.
 
@@ -40,9 +40,9 @@ Here are the areas where REST is currently lacking:
 
 - **self documentation** — when you send a request to a REST endpoint, there is nothing in the protocol that tells you what you are going to get (and not everyone has the resources to create a nice, updated documentation like Twitter)
 
-- REST doesn’t support **real time data** fetching
+- REST doesn't support **real time data** fetching
 
-- tough choices when designing your REST endpoint, which I’ll elaborate on below
+- tough choices when designing your REST endpoint, which I'll elaborate on below
 
 **Over-fetching** — When one endpoint serves all the data, each Component calls it again and again. This means it serves more fields than the component needed _and_ we call it many times, creating more load on the server
 
@@ -68,7 +68,7 @@ The server communicates what data it can provide and the client specifies what d
 
 This means: one request to get exactly the information the app needs, when it needs it. **No over-fetching and under-fetching.**
 
-With that, each component needs to specify its data dependencies and a client library will merge them into one request. There’s no need for a shared service with prepared fetching functions.
+With that, each component needs to specify its data dependencies and a client library will merge them into one request. There's no need for a shared service with prepared fetching functions.
 
 GraphQL is also not a storage engine! You can connect it to an existing REST endpoint or SQL and NoSql databases.
 

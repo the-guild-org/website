@@ -7,7 +7,9 @@ const rehypePrism = require('@mapbox/rehype-prism');
 const admonitions = require('remark-admonitions');
 
 const nextConfig = {
+  pageExtensions: ['tsx', 'md', 'mdx'],
   experimental: {
+    esmExternals: true,
     optimizeFonts: true,
     optimizeCss: true,
   },
@@ -47,7 +49,6 @@ module.exports = withPlugins(
       withMDX,
       {
         extension: /\.mdx?$/,
-        pageExtensions: ['tsx', 'md', 'mdx'],
         options: {
           remarkPlugins: [admonitions],
           rehypePlugins: [rehypePrism],

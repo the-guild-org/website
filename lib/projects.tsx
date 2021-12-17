@@ -222,7 +222,7 @@ export const projects = {
         <p>Stencil-Apollo lets you easily use GraphQL in Web Components.</p>
         <p>
           Stencil-Apollo has the same functionalities as its React sibling
-          React-Apollo, and the usage is really simple. You’re able to take
+          React-Apollo, and the usage is really simple. You're able to take
           advantage of an entire ecosystem of Apollo Links and Cache
           implementations
         </p>
@@ -240,7 +240,7 @@ export const projects = {
         <p>
           SwiftGraphQL is centred around the core principle that every query you
           can possibly make is valid. If your project compiles, your queries
-          work. We’ve mirrored all GraphQL structures and made them better by
+          work. We've mirrored all GraphQL structures and made them better by
           adding type-safety. You have to try it!
         </p>
       </>
