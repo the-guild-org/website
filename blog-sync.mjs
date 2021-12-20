@@ -106,6 +106,8 @@ async function syncToDevTo(items) {
     } catch (e) {
       console.log(
         `Failed to send article to dev.to, error: `,
+        e,
+        item,
         e.response?.status || e,
         e.response?.statusText,
         e.response?.data
@@ -123,6 +125,8 @@ async function main() {
       const vfile = toVFile.readSync(`${baseDir}${blogFile}`);
       const { value, data } = await processor.process(vfile);
       const cleanName = blogFile.split('.').slice(0, -1).join('.');
+
+      console.log(value, data);
 
       if (String(data.meta.skipSync) !== 'true') {
         items.push({
