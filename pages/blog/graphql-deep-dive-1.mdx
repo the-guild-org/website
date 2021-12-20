@@ -34,7 +34,7 @@ and these can just be few of the examples on how big the ecosystem has grown wit
 
 GraphQL is at our heart at [Timecampus](https://www.twitter.com/timecampus), the heart of everything we do and we wanted to share the love we have for GraphQL and the ecosystem and also the hard lessons we learnt along the way. And its not just GraphQL, we will be diving deep into a lot of Open Source Tools, Libraries, Frameworks, Software and Practices as we go along.
 
-I am pretty sure that we have a lot to talk about as we go along. So, why not start the series with an FAQ? That’s what we are going to do here. I have put together a set of questions and answered them as well below.
+I am pretty sure that we have a lot to talk about as we go along. So, why not start the series with an FAQ? That's what we are going to do here. I have put together a set of questions and answered them as well below.
 
 **If you are new to GraphQL, I would recommend you to start with these links before jumping into this blog post:**
 
@@ -50,11 +50,11 @@ I am pretty sure that we have a lot to talk about as we go along. So, why not st
 
 And if you are keen to dig deep into the GraphQL Spec, it is hosted [**here**](http://spec.graphql.org/)
 
-So, assuming you already know the basics of GraphQL, let’s jump right in.
+So, assuming you already know the basics of GraphQL, let's jump right in.
 
 **Why should I move away from REST to GraphQL? What are the benefits?**
 
-I would start by saying that GraphQL does not make REST or any other channel of communication obsolete. It all boils down to your usecase. For small projects, the simplicity of REST might overweigh the advantages provided by GraphQL but as you have more teams, an evolving product, complex lifecycles and a data schema which gets bigger and bigger by the day, that’s when you will truly realize the value that GraphQL has to offer.
+I would start by saying that GraphQL does not make REST or any other channel of communication obsolete. It all boils down to your usecase. For small projects, the simplicity of REST might overweigh the advantages provided by GraphQL but as you have more teams, an evolving product, complex lifecycles and a data schema which gets bigger and bigger by the day, that's when you will truly realize the value that GraphQL has to offer.
 
 ![Image for post](/blog-assets/graphql-deep-dive-1/1.png)
 
@@ -142,12 +142,12 @@ In my case, I typically try to work on the frontend without any framework (I use
 - Using React? [Relay](https://relay.dev/) can be a [great choice](https://blog.bitsrc.io/apollo-and-relay-side-by-side-adb5e3844935)
 - Using Vue? You can try [**Vue Apollo**](https://apollo.vuejs.org/guide/)
 - Using web components with Apollo Stack for GQL? You might want to check out [**Apollo Elements**](https://github.com/apollo-elements/apollo-elements)
-- Using vanilla JS or TS or using web components and want to have a framework-independent way of doing things? You can stick to the GraphQL codegen itself since it takes care of almost everything underneath. Or if you want, you can also use Apollo Client’s vanilla version `@apollo/client/core`.
+- Using vanilla JS or TS or using web components and want to have a framework-independent way of doing things? You can stick to the GraphQL codegen itself since it takes care of almost everything underneath. Or if you want, you can also use Apollo Client's vanilla version `@apollo/client/core`.
   [**Apollo Elements**](https://github.com/apollo-elements/apollo-elements) does come with support for a lot of webcomponent libraries like [Lit](https://lit-element.polymer-project.org/), [Fast](https://www.fast.design/) and [Gluon](https://github.com/ruphin/gluonjs) or even without any of it and hence is quite flexible.
 - Or if you are just looking for a lightweight, performant and extensible GraphQL client, [URQL](https://formidable.com/open-source/urql/) can be great as well.
 - Or if you are looking for a minimal client which runs both in the Browser and Node, you can try [GraphQL Request](https://github.com/prisma-labs/graphql-request)
 
-Well, there are lot of other ways we haven’t talked about and this is just a start.
+Well, there are lot of other ways we haven't talked about and this is just a start.
 
 **What are some of the ways in which I can maintain performance while using GraphQL?**
 
@@ -198,7 +198,7 @@ But, this can be tedious to implement and using a package like [**graphql-scalar
 
 As the [DRY principle](https://en.wikipedia.org/wiki/Don't_repeat_yourself) goes, we can also make our operations modular with the help of [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) and then use those fragments as applicable anywhere.
 
-**Can’t I convert my Database schema directly to a GraphQL schema or generate a GraphQL schema?**
+**Can't I convert my Database schema directly to a GraphQL schema or generate a GraphQL schema?**
 
 While technically, it is possible and this is what database providers who offer a GraphQL layer on top use like Hasura or Graphcool — It is highly **not recommended** for client consumption and I would also recommend you to read [this](https://graphql.org/learn/thinking-in-graphs/) to get more idea.
 
@@ -271,7 +271,7 @@ There are a lot of small ways in which you can give back. Small or big does not 
 
 **Are there some case studies which can actually help me in the implementation?**
 
-Sure. While I can’t list them all here, here are some:
+Sure. While I can't list them all here, here are some:
 
 - [Netflix and GraphQL](https://netflixtechblog.com/how-netflix-scales-its-api-with-graphql-federation-part-1-ae3557c187e2)
 - [Airbnb and GraphQL](https://medium.com/airbnb-engineering/how-airbnb-is-moving-10x-faster-at-scale-with-graphql-and-apollo-aa4ec92d69e2)
@@ -294,7 +294,7 @@ You can have a look at more like these [here](https://github.com/APIs-guru/graph
 
 This is one of the places where GraphQL really shines. You need not move everything over at one piece. Here are some steps which might help.
 
-- First, build a Datagraph for your entire business without worrying about the underlying logic/implementation. But don’t worry too much since you can always evolve this over time.
+- First, build a Datagraph for your entire business without worrying about the underlying logic/implementation. But don't worry too much since you can always evolve this over time.
 - Next, implement resolvers for every part of the schema in such a way that at phase 1, you just wrap your existing infrastructure with GraphQL. For instance, if your services use SOAP, you can add a GraphQL layer on top of it and calling that can all the SOAP service underneath and the client need not worry about it. You can use something like [GraphQL Mesh](https://graphql-mesh.com/) or [SOFA](https://sofa-api.com/) which can help in abstracting these. There is a good blog post on how to migrate from REST to GraphQL [**here**](https://the-guild.dev/blog/migrating-from-rest).
 - Change the client implementation one by one to call the GraphQL gateway instead of the legacy service.
 - Now that you have GraphQL working in your ecosystem, you can incrementally move away from legacy implementations like SOAP without having to worry about how it will affect the clients progressively, one component at a time to use a native GraphQL implementation.

@@ -48,7 +48,7 @@ const IndexPage: FC<Props> = ({ articles }) => {
         <HeroSection>
           <Heading>Modern API Platform and ecosystem that scales</Heading>
           <Description>
-            The Guild’s advanced open source ecosystem covers everything you
+            The Guild's advanced open source ecosystem covers everything you
             need for your API infrastructure with a modular, open source and
             complete platform
           </Description>

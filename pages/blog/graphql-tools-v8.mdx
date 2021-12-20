@@ -14,9 +14,9 @@ export default withArticle({ ...meta })
 
 Ever since [The Guild has taken over GraphQL Tools](https://the-guild.dev/blog/graphql-tools-v6), we kept our promise and like every open source library we maintain, [we keep improving and supporting](https://the-guild.dev/blog/tag/graphql-tools) it on a daily basis.
 
-Many things are continuously happening and improving with the library, and now, as we are releasing a new major version, we wanted to share some of the new things we’ve added.
+Many things are continuously happening and improving with the library, and now, as we are releasing a new major version, we wanted to share some of the new things we've added.
 
-It’s important for us to say thank you to all our users and open source contributors. The driving force behind this tremendous amount of work is you!
+It's important for us to say thank you to all our users and open source contributors. The driving force behind this tremendous amount of work is you!
 
 TL;DR
 
@@ -84,7 +84,7 @@ You can easily merge your existing `Executor` and `Subscriber` functions by chec
 
 ```ts
 function myExecutor({ document, variables, operationType }) {
-  if (operationType === ‘subscription’) {
+  if (operationType === ‘subscription') {
      return callWSClient(...);
    }
  return callHTTPClient(...);
@@ -137,12 +137,12 @@ const stitchedSchema = await stitchSchemas([mySubschema, myOtherSubschema])
 
 - Git Loader now supports glob patterns
   - GraphQL Tools is used by GraphQL Config, GraphQL Code Generator, GraphQL Inspector and more to download the type definitions and operation documents from the different sources with GraphQL Tools Loaders.
-  - For example to compare your schema against the master, you need to dump your schema into a single “schema.graphql” file and point the GraphQL Inspector to that file. But now you can use glob patterns to point multiple files on your Git repo and you don’t need to have a generated `schema.graphql` in the codebase.
+  - For example to compare your schema against the master, you need to dump your schema into a single “schema.graphql” file and point the GraphQL Inspector to that file. But now you can use glob patterns to point multiple files on your Git repo and you don't need to have a generated `schema.graphql` in the codebase.
 - No more a huge `graphql-tools` package;
-  - GraphQL Tools has a lot of packages for different use cases and previously we were publishing `graphql-tools` package to the npm that includes all scoped packages we have in the repo. Let’s say when someone only needs `makeExecutableSchema`, NPM installs every single package with a lot of unused dependencies together with those. From now on, we decided to deprecate `graphql-tools` and encourage the users to migrate to the scoped packages. For example, you should install `@graphql-tools/schema` for `makeExecutableSchema`. You can check API Reference and the rest of the documentation to find what packages you need.
+  - GraphQL Tools has a lot of packages for different use cases and previously we were publishing `graphql-tools` package to the npm that includes all scoped packages we have in the repo. Let's say when someone only needs `makeExecutableSchema`, NPM installs every single package with a lot of unused dependencies together with those. From now on, we decided to deprecate `graphql-tools` and encourage the users to migrate to the scoped packages. For example, you should install `@graphql-tools/schema` for `makeExecutableSchema`. You can check API Reference and the rest of the documentation to find what packages you need.
 - We have removed some functions, methods and stuff that are not widely used by the community;
   - `makeRemoteExecutableSchema`
-    - In the new GraphQL Tools, you don’t need this at all. You can write your own executor by following the documentation and use wrapSchema instead. Or you can use UrlLoader directly without the need of writing all the remote execution logic.
+    - In the new GraphQL Tools, you don't need this at all. You can write your own executor by following the documentation and use wrapSchema instead. Or you can use UrlLoader directly without the need of writing all the remote execution logic.
     - This was already being deprecated after v4 in favor of `wrapSchema`. [You can find the new usage in the docs.](https://www.graphql-tools.com/docs/stitch-combining-schemas#stitching-remote-schemas)
   - Legacy Schema Directives, `visitSchema` and `directiveResolvers`
     - We suggest you to [check the new approach for schema directives and schema visiting in the documentation instead of these old approaches.](https://www.graphql-tools.com/docs/schema-directives#full-mapschema-api)

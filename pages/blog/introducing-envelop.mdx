@@ -13,7 +13,7 @@ export const meta = {
 
 export default withArticle({ ...meta })
 
-**Today we are super excited to share with you a new open-source library we’ve been working on for the past few months!**
+**Today we are super excited to share with you a new open-source library we've been working on for the past few months!**
 
 ![Envelop](/blog-assets/envelop/definition.png)
 
@@ -31,9 +31,9 @@ export default withArticle({ ...meta })
 
 ![Envelop](https://the-guild.dev/static/shared-logos/products/envelop.svg)
 
-**Envelop** is a lightweight _library_ that allows developers to create plugins that enriches the GraphQL execution layer with new features. **It’s the plugin system for your GraphQL layer.**
+**Envelop** is a lightweight _library_ that allows developers to create plugins that enriches the GraphQL execution layer with new features. **It's the plugin system for your GraphQL layer.**
 
-Envelop’s core is based on hooks and plugins - we believe that developers should share and open-source small pieces of implementation and logics that can help others, while still keeping their codebase customized to their needs with full control and power.
+Envelop's core is based on hooks and plugins - we believe that developers should share and open-source small pieces of implementation and logics that can help others, while still keeping their codebase customized to their needs with full control and power.
 
 **Envelop** is **schema-agnostic and HTTP-server agnostic**, meaning that it can be integrated with any kind of setup. We do not aim to provide a complete, vendor-locking suite, since we believe that the developer should be able to adjust any part of their application, at any time, without major implications.
 
@@ -49,19 +49,19 @@ We believe these gaps were created because many GraphQL frameworks are focused o
 
 Also, as GraphQL keeps evolving with new capabilities and solutions, it seems like the GraphQL frameworks are making it hard or even impossible to use these new features like `@defer` / `@stream`, `@live` queries, `@oneOf` and other new GraphQL features.
 
-We tried to locate the core of that issue, and from our point-of-view, it seemed like GraphQL was missing a robust, simple and flexible plugin system. That’s why we created **Envelop**.
+We tried to locate the core of that issue, and from our point-of-view, it seemed like GraphQL was missing a robust, simple and flexible plugin system. That's why we created **Envelop**.
 
 While most existing implementations of GraphQL servers/frameworks introduce feature-rich environments, Envelop aims to introduce only hooks on top of the original GraphQL functions, without modifying the signature, and allow you to choose the features that you need, by adding **Envelop plugins**.
 
 Most existing GraphQL servers are implemented in a way that implements schema building and HTTP server integration, meaning the features that are only relevant to the GraphQL layer “leaks” and creates a very opinionated product.
 
-We believe that the `Network Transport <> GraphQL Engine <> GraphQL Schema` coupling should be separated, and each part should take care of it’s role, without mixing these features. Each layer has it's own responsibility.
+We believe that the `Network Transport <> GraphQL Engine <> GraphQL Schema` coupling should be separated, and each part should take care of it's role, without mixing these features. Each layer has it's own responsibility.
 
-That’s why we decided to create an agnostic library where you can choose your transport (HTTP / WebSocket / anything else), choose your schema (any schema builder works with Envelop), and Envelop will take care of the extra features.
+That's why we decided to create an agnostic library where you can choose your transport (HTTP / WebSocket / anything else), choose your schema (any schema builder works with Envelop), and Envelop will take care of the extra features.
 
 We also felt that for too long things haven't been moving on the server area when it comes to GraphQL - most servers are in maintenance/support mode and don't bring anything new.
 
-Many extra features of GraphQL are straightforward, but not available for developers since it’s not open-source (or, bundled into specific frameworks/servers), or not transparent enough (like, tracing, metrics, auditing, fine-grained permissions and more). We aim to change that.
+Many extra features of GraphQL are straightforward, but not available for developers since it's not open-source (or, bundled into specific frameworks/servers), or not transparent enough (like, tracing, metrics, auditing, fine-grained permissions and more). We aim to change that.
 
 ## The `envelop` approach
 
@@ -75,7 +75,7 @@ In most implementations, running a GraphQL operation consists of the following a
 - `variables` - parses the input variables and builds the variables object.
 - `execute` - takes a GraphQL schema, operation `DocumentNode`, variables and context and runs your resolvers.
 
-> There are more phases, and more workflows - It’s dropped only for brevity ;)
+> There are more phases, and more workflows - It's dropped only for brevity ;)
 
 Envelop allows developers to create plugins that hook into any phase, and change the behaviour of it, based on the feature it implements. The output of `envelop` are the GraphQL functions, with the injected behaviour based on the plugins you use.
 
@@ -85,12 +85,12 @@ Envelop allows developers to create plugins that hook into any phase, and change
 
 By creating these plugins, you can create custom behaviour in a very easy way.
 
-Let’s try to break a few plugins and understand how it works:
+Let's try to break a few plugins and understand how it works:
 
 - `useLogger` - hooks into the “before” of all phases, and just does `console.log`.
 - `useTiming` - hooks into “before” and “after” of all phases, measures times, and then prints it.
 - `useParserCache` - hooks into before and after the `parse` phase and implements caching based on the operation string.
-- `useGraphQLJit` - hooks into `execute` phase and replaces the `execute` function with GraphQL-Jit’s executor.
+- `useGraphQLJit` - hooks into `execute` phase and replaces the `execute` function with GraphQL-Jit's executor.
 - `usePersistedOperations` - hooks into `parse` and replaces the `parse` function with a function that maps a hash into a DocumentNode.
 - `useGenericAuth` - hooks into context building and resolves the current user from the GraphQL request, then hooks into the `execute` phase to verify the user authentication.
 - `useOpenTelemetry` - hooks into all phases, execution and resolvers, and creates Spans for OpenTelemetry tracing.
@@ -103,7 +103,7 @@ Let’s try to break a few plugins and understand how it works:
 
 To get started with **Envelop**, make sure you understand the other requirements that you need:
 
-- You need a GraphQL schema - it doesn’t matter how you created it (either with GraphQL core library, makeExecutableSchema, or any code-first / schema-first frameworks)
+- You need a GraphQL schema - it doesn't matter how you created it (either with GraphQL core library, makeExecutableSchema, or any code-first / schema-first frameworks)
 - You need a HTTP server - like express, Fastify, Koa AWS Lambda or others
 - You need a request normalization and GraphQL request pipeline - we recommend [`graphql-helix`](https://github.com/contrawork/graphql-helix) for that.
 
@@ -180,7 +180,7 @@ With that example, we only used `useLogger`, so while executing GraphQL operatio
 
 But logging is not everything possible with Envelop. By adding more plugins, you can add more features to your GraphQL execution, based on your app needs.
 
-For example, here’s a cool snippet for boosting things in your execution layer:
+For example, here's a cool snippet for boosting things in your execution layer:
 
 ```ts
 const getEnveloped = envelop({
@@ -205,7 +205,7 @@ We also created [Envelop Plugins Hub](https://www.envelop.dev/plugins) : a place
 
 ![Plugins](https://www.envelop.dev/assets/features-modern.png)
 
-Writing plugins for Envelop is super simple. We allow you to write code that connects to the phases that you need, and we’ll make sure to run your functions at the right time.
+Writing plugins for Envelop is super simple. We allow you to write code that connects to the phases that you need, and we'll make sure to run your functions at the right time.
 
 Plugins can either live as internal plugins that are relevent only to your project, or you can share it with the community as NPM package.
 
@@ -305,11 +305,11 @@ We are also helping with that, so if you are migrating to Envelop and not sure w
 
 ## Examples
 
-Since we understand that Envelop doesn’t come as a whole server, we create tons of examples you can use for reference. We added examples for using several HTTP servers (express/fastify), running different Functions/Lambda cloud providers, different schema providers (Type-GraphQL, Nexus) subscriptions transports (SSE / GraphQL-WS), new GraphQL features like `@stream` / `@defer` and more.
+Since we understand that Envelop doesn't come as a whole server, we create tons of examples you can use for reference. We added examples for using several HTTP servers (express/fastify), running different Functions/Lambda cloud providers, different schema providers (Type-GraphQL, Nexus) subscriptions transports (SSE / GraphQL-WS), new GraphQL features like `@stream` / `@defer` and more.
 
 [You can find all examples and demos here](https://www.envelop.dev/docs/integrations)
 
-## What’s next?
+## What's next?
 
 We are constantly working on improving the low-level API of Envelop, so if something is missing, you can always reach out and report an issue. We are also adding more plugins based on our use-cases.
 

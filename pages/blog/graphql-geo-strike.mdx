@@ -11,7 +11,7 @@ export const meta = {
 
 export default withArticle({ ...meta })
 
-**TLDR:** We’ve built a multiplayer shooter and used Apollo’s GraphQL subscriptions to keep game state in sync at a very high frequency. Here’s our impressions!
+**TLDR:** We've built a multiplayer shooter and used Apollo's GraphQL subscriptions to keep game state in sync at a very high frequency. Here's our impressions!
 **Tools used:** [Angular-cesium](http://www.angular-cesium.com/), [Apollo Angular](https://github.com/kamilkisiela/apollo-angular), [CesiumJS](https://cesiumjs.org/), [Angular](https://angular.io/)
 **Go Play:** [geo-strike.com](https://geo-strike.com)
 
@@ -32,13 +32,13 @@ There are two ways you can understand our challenges:
 
 ![](/blog-assets/graphql-geo-strike/gameplay.webm)
 
-For those of you that have not played the game (yet!) I’ll explain a bit what it is.
+For those of you that have not played the game (yet!) I'll explain a bit what it is.
 
-Our game is a multiplayer shooting game that is taking place in the vicinity of the Times Square. The game mode is a “team deathmatch” battle where you spawn on the map with your team, and you need to find and shoot the other team’s players. The winning team is the one that stayed alive while the other team’s players are dead. If you die, you can only view the rest of the game from a bird’s eye view.
+Our game is a multiplayer shooting game that is taking place in the vicinity of the Times Square. The game mode is a “team deathmatch” battle where you spawn on the map with your team, and you need to find and shoot the other team's players. The winning team is the one that stayed alive while the other team's players are dead. If you die, you can only view the rest of the game from a bird's eye view.
 
 ![](/blog-assets/graphql-geo-strike/map.webm)
 
-We use CesiumJS — a google earth like, open source, mapping engine — as our scene, so when I say the game takes place in the Times Square, It’s an actual representation of the Times Square with the buildings being streamed to the client using Cesium’s 3d Tiles. As a matter of fact, there is nothing keeping you at the Times Square only, you can wonder off to anywhere on earth. Keep in mind that you will be able to see buildings only in Manhattan.
+We use CesiumJS — a google earth like, open source, mapping engine — as our scene, so when I say the game takes place in the Times Square, It's an actual representation of the Times Square with the buildings being streamed to the client using Cesium's 3d Tiles. As a matter of fact, there is nothing keeping you at the Times Square only, you can wonder off to anywhere on earth. Keep in mind that you will be able to see buildings only in Manhattan.
 
 # Real-Time State Synchronization
 
@@ -78,9 +78,9 @@ But for those challenges, Apollo and `angular-apollo` had us covered! Apollo cli
 
 # Not just one subscription
 
-As I’ve mentioned above, we are publishing the game state every 200ms which is quite good for positioning players, but there are events on our game that cannot tolerate this kind of delay and still feel good to the user.
+As I've mentioned above, we are publishing the game state every 200ms which is quite good for positioning players, but there are events on our game that cannot tolerate this kind of delay and still feel good to the user.
 
-After analyzing our graph, we determined that there are two such events. Shooting (obviously) and game state notifications. To handle those subscriptions on a ASAP manner, we’ve simply added two different subscriptions that the client should subscribe to. This makes sure that as soon as someone shoots, we will play the shooting sound according to his relative location on all other clients, and as soon a player is killed, all other players will get a notification indicating that.
+After analyzing our graph, we determined that there are two such events. Shooting (obviously) and game state notifications. To handle those subscriptions on a ASAP manner, we've simply added two different subscriptions that the client should subscribe to. This makes sure that as soon as someone shoots, we will play the shooting sound according to his relative location on all other clients, and as soon a player is killed, all other players will get a notification indicating that.
 
 # Further improvements
 
@@ -92,9 +92,9 @@ This kind of massive multiplayer online game calls for some next level optimizat
 
 For instance:
 
-- Optimize the amount of data sent to each client by filtering players state based on the player’s current position in the world.
-- Optimize the payload size by converting GraphQL responses to [Google’s Binary ProtoBuff](https://developers.google.com/protocol-buffers/).
-- Use Apollo Engine’s dynamic persistent queries to optimize the data that should be sent to our game server.
+- Optimize the amount of data sent to each client by filtering players state based on the player's current position in the world.
+- Optimize the payload size by converting GraphQL responses to [Google's Binary ProtoBuff](https://developers.google.com/protocol-buffers/).
+- Use Apollo Engine's dynamic persistent queries to optimize the data that should be sent to our game server.
 
 # Who are we, you ask?
 
@@ -102,6 +102,6 @@ This game is the product of a collaboration between [Webiks](http://webiks.com/)
 
 If you are interested in other non-graphql challenges we faced in this project, Omer, the CEO of Webiks wrote a [blog post that showcases all of it](http://webiks.com/introducing-geostrike-alpha/).
 
-Oh, and it’s all open source! Come over, [star and contribute](https://github.com/Webiks/GeoStrike)!
+Oh, and it's all open source! Come over, [star and contribute](https://github.com/Webiks/GeoStrike)!
 
 Thanks for Reading!

@@ -12,29 +12,29 @@ export const meta = {
 
 export default withArticle({ ...meta })
 
-**TL;DR**: If you are writing a large-scale project, it’s necessary to understand the relations between your pieces of code, and how they effect each other. Otherwise, it might be difficult to deal with changes later.
+**TL;DR**: If you are writing a large-scale project, it's necessary to understand the relations between your pieces of code, and how they effect each other. Otherwise, it might be difficult to deal with changes later.
 
 While developing a **large-scale project**, removing, changing and modifying parts of the project can become a very time consuming and risky task, because understanding the full side-effects of those changes is very hard.
 
 In [GraphQL-Modules](https://graphql-modules.com/), you can declare your modules in a feature-based structure, with clear enforced boundaries and avoid unexpected side-effects during development.
 
-Each module can declare it’s own scope of the complete schema:
+Each module can declare it's own scope of the complete schema:
 
-![](/medium/c806f0ae70dca7a4d1e434736f241ed5.png 'Every module has its own schema, context and DI container. Here you can see AuthModule is appended to UserModule. But, other modules don’t import AuthModule. So, they cannot access directly AuthModule DI container or context.')
+![](/medium/c806f0ae70dca7a4d1e434736f241ed5.png 'Every module has its own schema, context and DI container. Here you can see AuthModule is appended to UserModule. But, other modules don't import AuthModule. So, they cannot access directly AuthModule DI container or context.')
 
-Each module has its own **_schema_**, **_context_**, **_typeDefs_**, **_resolvers,_** and business-logic and each module is encapsulated, which limits the module’s access to only its own parts of the schema.
+Each module has its own **_schema_**, **_context_**, **_typeDefs_**, **_resolvers,_** and business-logic and each module is encapsulated, which limits the module's access to only its own parts of the schema.
 
-**So, what’s the real benefit of this?**
+**So, what's the real benefit of this?**
 
-Let’s assume you have an authentication module;
+Let's assume you have an authentication module;
 
 After a while, you decided to use **_AccountsJS_** in your **_GraphQL_** project which has completely different implementation than the existing one.
 
-This can be a risky change, because you’re afraid of breaking a lot of things and you can’t be sure about the all the places in your code that uses values affected by the authentication module, for example the global context.
+This can be a risky change, because you're afraid of breaking a lot of things and you can't be sure about the all the places in your code that uses values affected by the authentication module, for example the global context.
 
-With GraphQL-Modules’s approach of encapsulation, even the context is completely encapsulated, so every module that uses your existing **_AuthenticationModule_**’s **_context_** in defined on the`imports` of the dependent modules, and its interface is already extended by **_AuthenticationModule_**’s **_context_** if you’re using _TypeScript_. When it is removed, you will notice that change on compile-time immediately.
+With GraphQL-Modules's approach of encapsulation, even the context is completely encapsulated, so every module that uses your existing **_AuthenticationModule_**'s **_context_** in defined on the`imports` of the dependent modules, and its interface is already extended by **_AuthenticationModule_**'s **_context_** if you're using _TypeScript_. When it is removed, you will notice that change on compile-time immediately.
 
-Let’s take a look at some code, to show how GraphQL Modules makes you create those dependencies explicitly.
+Let's take a look at some code, to show how GraphQL Modules makes you create those dependencies explicitly.
 
 `AppModule` is our top Application Module;
 
@@ -52,7 +52,7 @@ const AppModule = new GraphQLModule({
 
 ```
 
-And there is another module that tries to use `AuthenticationModule`’s context, but it doesn’t import `AuthenticationModule`. In this case, it is not possible to get anything from `AuthenticationModule` in the resolvers, because it is not imported. The following module doesn’t know anything about `AuthenticationModule`.
+And there is another module that tries to use `AuthenticationModule`'s context, but it doesn't import `AuthenticationModule`. In this case, it is not possible to get anything from `AuthenticationModule` in the resolvers, because it is not imported. The following module doesn't know anything about `AuthenticationModule`.
 
 ```typescript
 const SomeImportantModuleThatUsesAuthenticatedContext = new GraphQLModule({
@@ -74,7 +74,7 @@ const SomeImportantModuleThatUsesAuthenticatedContext = new GraphQLModule({
 });
 ```
 
-To fix this, we need to import `AuthenticationModule` into that ‘important’ module to make it able to access `AuthenticationModule`’s context like below;
+To fix this, we need to import `AuthenticationModule` into that ‘important' module to make it able to access `AuthenticationModule`'s context like below;
 
 ```typescript
 const SomeImportantModuleThatUsesAuthenticatedContext = new GraphQLModule({
