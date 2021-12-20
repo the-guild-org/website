@@ -1,5 +1,4 @@
 const { join } = require('path');
-const withPlugins = require('next-compose-plugins');
 const withBundleAnalyzer = require('@next/bundle-analyzer');
 const withMDX = require('@next/mdx');
 const withOptimizedImages = require('next-optimized-images');
@@ -40,32 +39,24 @@ const nextConfig = {
     // TODO: Remove this when all eslint errors will be fixed
     ignoreDuringBuilds: true,
   },
+  images: {
+    handleImages: ['jpeg', 'jpg', 'png'], //❗️ svg provoke fail during build – NonErrorEmittedError: (Emitted value instead of an instance of Error)
+    limit: 1000,
+    disableStaticImages: true, //❗️ need for Next 12 with next-optimized-images
+    loader: 'custom', //❗️ need for Next 12 with next-optimized-images
+  },
 };
 
-module.exports = withPlugins(
-  [
-    [withBundleAnalyzer, { enabled: process.env.ANALYZE === 'true' }],
-    [
-      withMDX,
-      {
-        extension: /\.mdx?$/,
-        options: {
-          remarkPlugins: [admonitions],
-          rehypePlugins: [rehypePrism],
-        },
-      },
-    ],
-    [
-      withOptimizedImages,
-      {
-        images: {
-          handleImages: ['jpeg', 'jpg', 'png'], //❗️ svg provoke fail during build – NonErrorEmittedError: (Emitted value instead of an instance of Error)
-          limit: 1000,
-          disableStaticImages: true, //❗️ need for Next 12 with next-optimized-images
-          loader: 'custom', //❗️ need for Next 12 with next-optimized-images
-        },
-      },
-    ],
-  ],
-  nextConfig
-);
+const analyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
+const mdx = withMDX({
+  extension: /\.mdx?$/,
+  options: {
+    remarkPlugins: [admonitions],
+    rehypePlugins: [rehypePrism],
+  },
+});
+
+module.exports = analyzer(mdx(withOptimizedImages(nextConfig)));
