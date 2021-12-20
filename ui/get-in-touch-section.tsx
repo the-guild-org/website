@@ -205,7 +205,6 @@ export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
                 tw`absolute opacity-20`,
               ]}
               width={719}
-              height={462}
             />
             <img
               src="/img/get-in-touch/swift.png"
@@ -218,7 +217,6 @@ export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
                 tw`absolute`,
               ]}
               width={719}
-              height={462}
             />
             <img
               src="/img/get-in-touch/hive.png"
