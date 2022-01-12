@@ -1,0 +1,137 @@
+import withArticle from '../../ui/blog/article'
+export const meta = {
+  title: 'Caching data with DataLoader',
+  author: 'giladtidhar',
+  tags: ['cache', 'data', 'servers', 'graphql'],
+  date: '2022-1-12',
+  description: 'How to use DataLoader to cache data',
+  image: '/blog-assets/caching-data-with-dataloader/cover.png'
+}
+export default withArticle({ ...meta })
+
+# Caching
+
+Caching data is an important thing, it could be the difference between a slow wasteful server and a fast efficient server.
+
+But, what is caching?
+A cache is a place in memory for important data, which can be delivered to the client faster than the regular procedure.  
+The goal of caching is to improve performance where it’s needed the most.
+
+## how is caching faster?
+
+Using a cache for important data is faster because of a few reasons:
+
+- A cache is usually not stored in storage, but in memory, which is a few times faster.
+- A cache is smaller than a database, so there are a lot less values to filter through.
+- Data that is queried a lot of times will be fetched from the database only one time, so there's less time lost for fetching multiple times.
+
+# how do we use caching?
+
+## About dataloader
+
+My prefered platform for caching is dataloader, and in this tutorial I will explain how to use dataloader with Node.js and Typescript, to have caching in your server.
+
+### A small caveat:
+
+The dataloader package was created specifically for GraphQL, but it can work with other Node.js programs.
+
+## Using dataloader
+
+### 1. Install dataloader in your project
+
+To do that, just run
+
+`npm install --save dataloader` or `yarn add dataloader`
+
+### 2. Create a dataloader instant.
+
+To start, import dataloader and LRU (LRU is a way to map cache data, it is installed with dataloader).
+
+```ts
+import DataLoader from 'dataloader'
+import { LRUMap } from 'lru_map'
+```
+
+### 3. Define the types that would be saved to our cache
+
+The first type should be a way to represent the data, like a string with a name, and the other is the data itself.
+
+```ts
+type PackageName = string
+type PackageInfo = DataType // note that this is the type of the data we represent.
+//for example:
+type DataType = {
+  id: string
+  name: string
+  description?: string
+}
+```
+
+### 4. Create the dataloader instant
+
+```ts
+const dataLoader = new DataLoader<PackageName, PackageInfo>(
+  async (/* 1 */keys: readonly PackageName[]) => { /* 2 */
+    return await Promise.all(
+      keys.map((packageName) => {
+        getData(packageName).catch((e) => e);
+      })
+    );
+  },{
+    cacheMap: new LRUMap(100/* 3 */);
+  }
+);
+```
+
+As you can see, we give the keys that the user asks for to the dataloader (1).
+
+I recommend setting the keys to be some kind of id for the following reason:  
+Lets say that in your api, the user asks for data using its id, so the user will fetch with `id:"something"`, you could just pass the id as the key, instead of changing it.
+
+The dataloader will first check if it has the keys on cache, and if so, it would return the data, without going through the database.
+
+After that (2), we give the dataloader a function for fetching the data, in case it doesn't have it in the cache.  
+In this case, I have the function `getData`, and I'm using the keys to "get data" from my database.
+
+In the end (3) we give it cacheMap and some value, the value represents how many queries dataloader will cache, in this case, after a 100 values, it will delete the first value to make space for the 101th value.
+
+From now, to query data, you just run
+
+```ts
+dataLoader.load(keys)
+```
+
+# Dataloader with GraphQL
+
+Dataloader was designed to work with GraphQL, to solve the [n+1 problem](https://medium.com/the-marcy-lab-school/what-is-the-n-1-problem-in-graphql-dd4921cb3c1a)
+
+## How to use the dataloader package with GraphQL?
+
+To use the dataloader with GraphQL just pass it in the context!
+
+```ts
+type PackageName = string;
+type PackageInfo = Package;
+export type GraphQLContext = {
+  dataLoader: DataLoader<PackageName, PackageInfo>;
+  ...
+};
+const dataLoader = new DataLoader<PackageName, PackageInfo>(
+  async (keys: readonly PackageName[]) => {
+    return await Promise.all(
+      keys.map((packageName) => {
+        npmApi.getPackage(packageName).catch((e) => e)
+      })
+    );
+  },
+  {
+    cacheMap: new LRUMap(100),
+  }
+);
+...
+export async function contextFactory() {
+  return { dataLoader, ... };
+}
+```
+
+Now, in your resolvers, just call `context.dataLoader.load(keys)` and that's it! You now have caching in your server!
