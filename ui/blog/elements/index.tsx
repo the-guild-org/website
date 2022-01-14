@@ -13,27 +13,23 @@ const H1 = styled.h2`
   text-align: left;
   margin-top: 2.5rem;
   font-size: 2rem;
+  line-height: 2.3rem;
   color: var(--colors-primary);
-  font-family: 'Roboto', sans-serif;
 `;
 
 const H2 = styled.h3`
   margin-top: 2.5rem;
   font-size: 1.5rem;
   color: var(--colors-primary);
-  font-family: 'Roboto', sans-serif;
 `;
 
 const H3 = styled.h4`
   margin-top: 2.5rem;
-  font-size: 1.2rem;
   color: var(--colors-primary);
-  font-family: 'Roboto', sans-serif;
 `;
 
 const P = styled.p`
-  line-height: 2rem;
-  margin-bottom: 2rem;
+  line-height: 1.9rem;
 `;
 
 const Li = styled.li`

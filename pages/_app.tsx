@@ -44,10 +44,6 @@ const GlobalStyle = createGlobalStyle`
       background-color: #0b0d11 !important;
     }
   }
-
-  * {
-    font-family: Poppins, sans-serif;
-  }
 `;
 
 export default class MyApp extends App {
@@ -137,7 +133,7 @@ export default class MyApp extends App {
 
             body {
               background-color: var(--colors-background);
-              font-family: 'Roboto', sans-serif;
+              font-family: Poppins, sans-serif;
             }
 
             a {

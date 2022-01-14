@@ -36,7 +36,6 @@ const Container = styled.div`
   box-sizing: border-box;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(0, 0, 0, 0.09);
   border-radius: 5px;
-  font-family: 'Roboto', sans-serif;
 
   &:hover {
     opacity: var(--hover-opacity);

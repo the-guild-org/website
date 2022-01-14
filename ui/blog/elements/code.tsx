@@ -7,10 +7,8 @@ export const Code = styled.pre.attrs<{ syntax?: string }>(({ syntax }) => ({
   color: #f8f8f2;
   overflow: auto;
   padding: 1.5rem;
-  margin: 40px 0;
   border-radius: 3px;
   -webkit-overflow-scrolling: touch;
-
   font-size: 1rem;
   white-space: pre-wrap;
   word-break: break-word;
@@ -23,8 +21,13 @@ export const InlineCode = styled.code.attrs<{ wrap?: boolean }>(({ wrap }) => ({
   className: wrap ? 'wrap' : '',
 }))`
   background-color: rgba(0, 0, 0, 0.05);
-  font-size: 1.2rem;
-  white-space: pre-wrap;
-  padding: 3px 4px;
-  margin: 0 2px;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+
+  font-family: Monaco, Consolas, 'Andale  Mono', 'DejaVu Sans Mono', monospace;
 `;

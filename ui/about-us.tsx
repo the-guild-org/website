@@ -11,7 +11,6 @@ import { HeroSection } from './hero-section';
 
 const Content = styled.div`
   padding-top: 25px;
-  font-family: 'PT Serif', serif;
   font-size: 1rem;
   font-weight: 400;
   color: #7f818c;
