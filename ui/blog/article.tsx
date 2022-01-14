@@ -24,11 +24,28 @@ const Main = styled.article`
 `;
 
 const Content = styled.div`
+  font-family: Inter, -apple-system, system-ui, "Segoe UI", Roboto, sans-serif
+
   padding-top: 25px;
   font-size: 1rem;
   font-weight: 400;
   color: var(--colors-text);
-  line-height: 2rem;
+  line-height: 1.8rem;
+
+  > * {
+    margin-bottom: 1.7rem;
+  }
+
+  > pre[class*=language-] {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 1.7rem;
+    border-radius: 3px;
+    > pre {
+      padding: 1.5rem;
+      margin: 0;
+    }
+  }
 `;
 
 const Title = styled.h1`
@@ -117,7 +134,7 @@ const ConsultingInfo = styled.div`
   padding: 25px;
   font-size: 1rem;
   font-weight: 400;
-  line-height: 2rem;
+  line-height: 1.8rem;
   color: var(--colors-dim);
   background-color: #16171c;
   border-left: 3px solid var(--colors-accent);

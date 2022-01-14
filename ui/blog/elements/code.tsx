@@ -9,7 +9,6 @@ export const Code = styled.pre.attrs<{ syntax?: string }>(({ syntax }) => ({
   padding: 1.5rem;
   border-radius: 3px;
   -webkit-overflow-scrolling: touch;
-
   font-size: 1rem;
   white-space: pre-wrap;
   word-break: break-word;
@@ -29,5 +28,6 @@ export const InlineCode = styled.code.attrs<{ wrap?: boolean }>(({ wrap }) => ({
   padding: 2px;
   padding-left: 5px;
   padding-right: 5px;
-  font: 1rem Monaco, Consolas, 'Andale  Mono', 'DejaVu Sans Mono', monospace;
+
+  font-family: Monaco, Consolas, 'Andale  Mono', 'DejaVu Sans Mono', monospace;
 `;
