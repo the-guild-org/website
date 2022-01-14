@@ -118,7 +118,6 @@ const ConsultingInfo = styled.div`
   font-size: 1rem;
   font-weight: 400;
   line-height: 2rem;
-  font-family: 'PT Serif', serif;
   color: var(--colors-dim);
   background-color: #16171c;
   border-left: 3px solid var(--colors-accent);

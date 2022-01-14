@@ -33,7 +33,7 @@ const H3 = styled.h4`
 
 const P = styled.p`
   line-height: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.7rem;
 `;
 
 const Li = styled.li`

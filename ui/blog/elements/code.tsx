@@ -7,7 +7,6 @@ export const Code = styled.pre.attrs<{ syntax?: string }>(({ syntax }) => ({
   color: #f8f8f2;
   overflow: auto;
   padding: 1.5rem;
-  margin: 40px 0;
   border-radius: 3px;
   -webkit-overflow-scrolling: touch;
 
