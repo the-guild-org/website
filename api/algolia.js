@@ -13,6 +13,11 @@ app.use(
     },
   })
 );
+app.use((_req, _res, next) => {
+  console.log('Got a request');
+
+  return next();
+});
 app.use(cors());
 app.use((req, res) => {
   console.log('Hit!');
