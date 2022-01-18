@@ -1,24 +1,34 @@
-const crypto = require('crypto');
-const microCors = require('micro-cors');
-const Bugsnag = require('@bugsnag/js');
-const axios = require('axios').default;
-const { WebClient } = require('@slack/web-api');
-const { ensureContact } = require('../lib/contacts');
+import crypto from 'crypto';
+import { NextApiRequest, NextApiResponse } from 'next';
+
+import Bugsnag from '@bugsnag/js';
+import axios from 'axios';
+import { WebClient } from '@slack/web-api';
+import { ensureContact } from '../../lib/contacts';
+import { getRawBody } from '../../lib/getRawBody';
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 const bugsnagClient = Bugsnag.createClient(process.env.BUGSNAG_API);
 const slack = new WebClient(process.env.SLACK_TOKEN);
 const zapier = process.env.ZAPIER_INSPECTOR_WEBHOOK;
 const channelID = 'CLZ5BCE7K';
-const cors = microCors();
 
-function isAllowed(req) {
-  const signature = (req.headers['x-hub-signature'] || '').replace('sha1=', '');
+function isAllowed(req: NextApiRequest, body: string) {
+  const signature = ((req.headers['x-hub-signature'] as string) || '').replace(
+    'sha1=',
+    ''
+  );
 
   console.log('Received signature:', signature);
 
   const ourSignature = crypto
     .createHmac('sha1', process.env.MARKETPLACE_INSPECTOR_SECRET)
-    .update(typeof req.body === 'string' ? req.body : JSON.stringify(req.body))
+    .update(typeof body === 'string' ? body : JSON.stringify(body))
     .digest('hex');
 
   console.log('Our signature:', ourSignature);
@@ -27,8 +37,11 @@ function isAllowed(req) {
   return ourSignature === signature;
 }
 
-module.exports = cors(async (req, res) => {
-  if (!isAllowed(req)) {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const rawBody = await getRawBody(req);
+  const body = rawBody.toString();
+  if (!isAllowed(req, body)) {
     res.statusCode = 500;
     res.statusMessage = 'Not Allowed by CORS';
     res.end();
@@ -42,14 +55,13 @@ module.exports = cors(async (req, res) => {
     return;
   }
 
-  const payload =
-    typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  const payload = typeof body === 'string' ? JSON.parse(body) : body;
   const { action, sender, marketplace_purchase } = payload;
 
   bugsnagClient.addMetadata('payload', payload);
 
   let { login, email } = sender;
-  let url = sender.html_url;
+  const url = sender.html_url;
   let isOrg = false;
 
   if (
@@ -108,4 +120,4 @@ module.exports = cors(async (req, res) => {
   res.statusCode = 200;
   res.statusMessage = 'OK';
   res.end();
-});
+};

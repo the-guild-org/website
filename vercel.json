@@ -14,14 +14,28 @@
     },
     { "source": "/twitter", "destination": "https://twitter.com/TheGuildDev" }
   ],
-  "rewrites": [
-    { "source": "/api/algolia/(.*)", "destination": "/api/algolia" }
-  ],
   "env": {
     "SLACK_TOKEN": "@slack-token",
     "BUGSNAG_API": "@website-bugsnag-api",
     "MARKETPLACE_INSPECTOR_SECRET": "@marketplace-inspector-secret",
     "MAILCHIMP_API_KEY": "@mailchimp-api-key",
     "ZAPIER_INSPECTOR_WEBHOOK": "@marketplace-inspector-zapier"
-  }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Credentials", "value": "true" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+        }
+      ]
+    }
+  ]
 }
