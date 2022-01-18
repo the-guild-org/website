@@ -1,7 +1,7 @@
 import qs from 'querystring';
 import { NextApiRequest, NextApiResponse } from 'next';
-import getRawBody from 'raw-body';
 import algoliasearch from 'algoliasearch/lite';
+import { getRawBody } from '../../../lib/getRawBody';
 
 export const config = {
   api: {

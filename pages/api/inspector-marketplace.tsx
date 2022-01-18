@@ -3,9 +3,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import Bugsnag from '@bugsnag/js';
 import axios from 'axios';
-import getRawBody from 'raw-body';
 import { WebClient } from '@slack/web-api';
 import { ensureContact } from '../../lib/contacts';
+import { getRawBody } from '../../lib/getRawBody';
 
 export const config = {
   api: {
