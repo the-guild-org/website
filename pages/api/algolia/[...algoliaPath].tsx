@@ -1,56 +1,45 @@
-const qs = require('querystring');
-const express = require('express');
-const cors = require('cors');
-const algoliasearch = require('algoliasearch/lite');
+import qs from 'querystring';
+import { NextApiRequest, NextApiResponse } from 'next';
+import getRawBody from 'raw-body';
+import algoliasearch from 'algoliasearch/lite';
 
-const app = express();
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
-app.use(
-  express.urlencoded({
-    extended: true,
-    verify(req, _, buf) {
-      req.rawBody = buf;
-    },
-  })
-);
-app.use((_req, _res, next) => {
-  console.log('Got a request');
-
-  return next();
-});
-app.use(cors());
-app.use((req, res) => {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const { query } = req;
+  const rawBody = await getRawBody(req);
   console.log('Hit!');
-  const body = JSON.parse(req.rawBody.toString());
-  console.log('Body', body);
-  const input = body.requests[0];
   const client = algoliasearch(
-    req.query['x-algolia-application-id'],
-    req.query['x-algolia-api-key']
+    query['x-algolia-application-id'] as string,
+    query['x-algolia-api-key'] as string
   );
+  const body = JSON.parse(rawBody.toString());
+  const input = body.requests[0];
+  console.log('Body', input);
   const index = client.initIndex(input.indexName);
 
-  index
-    .search(input.query, qs.parse(input.params))
-    .then((result) => {
-      const referer = normalizeUrl(req.header('Referer'));
+  try {
+    const result = await index.search(input.query, qs.parse(input.params));
+    const referer = normalizeUrl(req.headers.referer);
 
-      res.json({
-        results: [
-          {
-            ...result,
-            hits: modifyHits(sortHits(result.hits, referer), referer),
-          },
-        ],
-      });
-    })
-    .catch((reason) => {
-      console.log('reason', reason);
-      res.status(500).send(reason);
+    res.json({
+      results: [
+        {
+          ...result,
+          hits: modifyHits(sortHits(result.hits, referer), referer),
+        },
+      ],
     });
-});
-
-module.exports = app;
+  } catch (reason) {
+    console.log('reason', reason);
+    res.status(500).send(reason);
+  }
+};
 
 function sortHits(hits, referer) {
   return hits.sort((left, right) => {
