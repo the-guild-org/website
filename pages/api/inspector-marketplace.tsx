@@ -7,6 +7,12 @@ import getRawBody from 'raw-body';
 import { WebClient } from '@slack/web-api';
 import { ensureContact } from '../../lib/contacts';
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 const bugsnagClient = Bugsnag.createClient(process.env.BUGSNAG_API);
 const slack = new WebClient(process.env.SLACK_TOKEN);
 const zapier = process.env.ZAPIER_INSPECTOR_WEBHOOK;
