@@ -34,11 +34,12 @@ Using a cache for compute-intensive data is faster for a few reasons:
 
 My prefered platform for caching is dataloader, and in this tutorial I will explain how to use dataloader with Node.js and Typescript, to have caching in your server.
 
-:::tip `dataloader` outside of GraphQL 
+:::tip `dataloader` outside of GraphQL
 
 The `dataloader` package was created specifically for GraphQL, but it can work with other Node.js programs.
 
 :::
+
 ## Using dataloader
 
 ### 1. Install dataloader in your project
@@ -73,7 +74,7 @@ type DataType = {
 
 ### 4. Create the dataloader instant
 
-```ts
+````ts
 const dataLoader = new DataLoader<PackageName, PackageInfo>(
   async (/* (1) */keys: readonly PackageName[]) => { /* (2) */
     return await Promise.all(
@@ -88,12 +89,12 @@ const dataLoader = new DataLoader<PackageName, PackageInfo>(
 
 As you can see, we give the keys that the user asks for to the dataloader (1).
 
-I recommend setting the keys to be some kind of id for the following reason:  
+I recommend setting the keys to be some kind of id for the following reason:
 Lets say that in your api, the user asks for data using its id, so the user will fetch with `id:"something"`, you could just pass the id as the key, instead of changing it.
 
 The dataloader will first check if it has the keys on cache, and if so, it would return the data, without going through the database.
 
-After that (2), we give the dataloader a function for fetching the data, in case it doesn't have it in the cache.  
+After that (2), we give the dataloader a function for fetching the data, in case it doesn't have it in the cache.
 In this case, I have the function `getData`, and I'm using the keys to "get data" from my database.
 
 In the end (3) we give it cacheMap and some value, the value represents how many queries dataloader will cache, in this case, after a 100 values, it will delete the first value to make space for the 101th value.
@@ -102,7 +103,7 @@ From now, to query data, you just run
 
 ```ts
 dataLoader.load(keys)
-```
+````
 
 # Dataloader with GraphQL
 
@@ -113,6 +114,7 @@ Dataloader was designed to work with GraphQL, to solve the [n+1 problem](https:/
 To use the dataloader with GraphQL just pass it in the context!
 
 ```ts
+import DataLoader from "dataloader";
 type PackageName = string;
 type PackageInfo = Package;
 export type GraphQLContext = {
