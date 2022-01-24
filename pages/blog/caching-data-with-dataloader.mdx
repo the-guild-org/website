@@ -2,7 +2,7 @@ import withArticle from '../../ui/blog/article'
 export const meta = {
   title: 'Caching data with DataLoader',
   author: 'giladtidhar',
-  tags: ['cache', 'data', 'servers', 'graphql'],
+  tags: ['cache', 'data', 'server', 'graphql'],
   date: '2022-1-12',
   description: 'How to use DataLoader to cache data',
   image: '/blog-assets/caching-data-with-dataloader/cover.png'
@@ -11,41 +11,45 @@ export default withArticle({ ...meta })
 
 # Caching
 
-Caching data is an important thing, it could be the difference between a slow wasteful server and a fast efficient server.
+Caching is an essential part of designing scalable and performant GraphQL API.
 
 But, what is caching?
-A cache is a place in memory for important data, which can be delivered to the client faster than the regular procedure.  
+Caching is the technical design of trying to avoid compute-intensive tasks by keeping their results temporarily in a cache.
+A cache is a place in memory for important data, which can be delivered to the client faster than the regular procedure.
+
+For example, for a GraphQL API, we might want to cache a field value that comes from a slow external API.
 The goal of caching is to improve performance where it’s needed the most.
 
-## how is caching faster?
+## How is caching faster?
 
-Using a cache for important data is faster because of a few reasons:
+Using a cache for compute-intensive data is faster for a few reasons:
 
 - A cache is usually not stored in storage, but in memory, which is a few times faster.
 - A cache is smaller than a database, so there are a lot less values to filter through.
-- Data that is queried a lot of times will be fetched from the database only one time, so there's less time lost for fetching multiple times.
+- While some cached data might be queried a lot of times, it will be fetched from the database only one time, so there's less time lost for fetching multiple times.
 
-# how do we use caching?
+# How do we use caching?
 
-## About dataloader
+## Caching with `dataloader`
 
 My prefered platform for caching is dataloader, and in this tutorial I will explain how to use dataloader with Node.js and Typescript, to have caching in your server.
 
-### A small caveat:
+:::tip `dataloader` outside of GraphQL 
 
-The dataloader package was created specifically for GraphQL, but it can work with other Node.js programs.
+The `dataloader` package was created specifically for GraphQL, but it can work with other Node.js programs.
 
+:::
 ## Using dataloader
 
 ### 1. Install dataloader in your project
 
-To do that, just run
+Install `dataloader` by running the following:
 
 `npm install --save dataloader` or `yarn add dataloader`
 
-### 2. Create a dataloader instant.
+### 2. Import `dataloader`
 
-To start, import dataloader and LRU (LRU is a way to map cache data, it is installed with dataloader).
+To start, import `dataloader` and LRU (LRU is a cache algorithm that will put only the most _X_ requested items in the cache).
 
 ```ts
 import DataLoader from 'dataloader'
@@ -71,17 +75,16 @@ type DataType = {
 
 ```ts
 const dataLoader = new DataLoader<PackageName, PackageInfo>(
-  async (/* 1 */keys: readonly PackageName[]) => { /* 2 */
+  async (/* (1) */keys: readonly PackageName[]) => { /* (2) */
     return await Promise.all(
       keys.map((packageName) => {
         getData(packageName).catch((e) => e);
       })
     );
   },{
-    cacheMap: new LRUMap(100/* 3 */);
+    cacheMap: new LRUMap(100); /* (3) */
   }
 );
-```
 
 As you can see, we give the keys that the user asks for to the dataloader (1).
 
