@@ -12,7 +12,7 @@ export const meta = {
 
 export default withArticle({ ...meta })
 
-On a high-level, GraphQL servers are pretty easy to set up. 
+On a high-level, GraphQL servers are pretty easy to set up.
 Just passing a GraphQL schema and starting the server do the job.
 
 However, for many use-cases, such a setup is not sufficient.
@@ -48,8 +48,9 @@ http://localhost:8080/graphql?query=query%20UserById%28%24id%3A%20ID%21%29%20%7B
 ```
 
 The GraphQL HTTP server's first task is to parse and normalize the body or query string and furthermore determine the protocol that shall be used for sending the response. The protocols can be:
+
 - `application/graphql+json` (or `application/json` for legacy clients) for a single result that yields from the execution phase
-- `multipart/mixed` for incremental delivery (when using `@defer` and `@stream` directives). 
+- `multipart/mixed` for incremental delivery (when using `@defer` and `@stream` directives).
 
 Not officially in the specification, but also used is `text/event-stream` for event streams (e.g. when executing subscription or live query operations).
 
@@ -279,13 +280,9 @@ The HTTP layer forwards those to the client that initiated the request.
 
 This procedure is performed by the `execute` and `subscribe` functions that are exported from `graphql-js`. Other languages that are orientate themselves on the `graphql-js` reference implementation have a corresponding counterpart.
 
-# Why use GraphQL Helix?
-
-Implementing the logic for parsing and normalizing the HTTP request is time consuming and an error prone process. By leveraging a well maintained and tested library that follows the GraphQL over HTTP specification we can reduce the time required for building a GraphQL HTTP server. Furthermore, it allows us to customize and replace the functions used for doing the `parse`, `validate` and `execute`/`subscribe` phases. It is a light-weight wrapper around `graphql-js` with maximum flexibility.
-
 # Why do we want to override different phases?
 
-## Parsing with `parse`
+## Overriding `parse`
 
 ### Add Caching
 
@@ -296,7 +293,7 @@ Parsing a GraphQL document string comes with overhead. We could cache frequently
 The GraphQL Type system defines the capabilities of the GraphQL service.
 This phase can be used to add new capabilities to the type system that may not yet be supported by GraphQL specification.
 
-## Validating with `validate`
+## Overriding `validate`
 
 ### Add caching
 
@@ -306,7 +303,7 @@ Similar to parsing, validating a GraphQL document AST comes with an overhead. We
 
 You might wanna restrict what kind of operations are allowed to be executed. E.g. If we we only want to allow `query` operations, we can provide a custom validation rule that yields errors as soon as a `mutation` or `subscription` operation is encountered.
 
-## Executing/Subscribing with `execute` and `subscribe`
+## Overriding `execute` or `subscribe`
 
 ### Add caching
 
@@ -324,11 +321,43 @@ We wanna make sure the errors occurring during the execution do not contain sens
 
 We could customize the algorithm that is used by `graphql-js` in order to add new features or make it more performant e.g. by using [graphql-executor](https://www.npmjs.com/package/graphql-executor).
 
-# Why use Envelop?
+# Use envelop for extending the phases
 
 While making our GraphQL servers production ready and working with our clients we discovered that we were writing the same custom code over and over again.
 
 Envelop provides us a user friendly way of hooking into the before and after phases of `parse`, `validate`, `execute` and `subscribe`.
+
+```ts
+import  { Plugin, envelop } from '@envelop/core';
+import { NoSchemaIntrospectionCustomRule } from 'graphql';
+
+const myPlugin: Plugin = {
+  onParse() {
+    console.log("before parsing")
+     return function afterParse({ result }) {
+      if (result instanceof Error) {
+        console.log("Error occured during parsing: ", result)
+      }
+    }
+  },
+  onValidate({ addValidationRule }) {
+    // add a custom validation rule
+    addValidationRule(NoSchemaIntrospectionCustomRule);
+
+    return function afterValidate({ result }) {
+      if (result.length) {
+        console.log("Errors occured duting validation: ", result)
+      }
+    }
+  },
+  onExecute({ args }) => {
+   const myVar = args.contextValue.myVar;
+  },
+};
+
+const getEnveloped = envelop({ plugins: [myPlugin] })
+const { parse, validate, execute, subscribe } = getEnveloped();
+```
 
 ![Envelop Plugin Illustration](/blog-assets/the-anatomy-of-a-graphql-request/envelop-breakdown.png)
 
@@ -340,7 +369,7 @@ Furthermore, the plugins can be easily shared across projects.
 
 As you might have noticed [we adopted GraphQL Yoga to The Guild ecosystem quite a while ago](https://github.com/dotansimha/graphql-yoga/issues/670). [We have been thinking a lot on how version 2 should look like](https://github.com/dotansimha/graphql-yoga/issues/704) and while building and using envelop within our customer projects we realized a few limitations that can only be solved by owning/wrapping the whole HTTP GraphQL request pipeline.
 
-While GraphQL Helix allows you to own the HTTP normalization phase, envelop is strictly about wrapping the `graphql-js` core functions (`parse`, `validate`, `execute` and `subscribe`). GraphQL Yoga will provide a unified plugin interface for writing plugins that hook into ALL of those phases envelop has plus all the encapsulated phases for parsing and normalizing the HTTP request that are today hard-coded and not extensibe within GraphQL Helix, allowing you to write powerful GraphQL servers and making features such as Automatic Persisted Queries or Response Cachning more powerful and easy to adopt.
+While envelop is strictly about wrapping the `graphql-js` core functions (`parse`, `validate`, `execute` and `subscribe`). GraphQL Yoga will provide a unified plugin interface for writing plugins that hook into ALL of those phases envelop has plus all the encapsulated phases for parsing and normalizing the HTTP request, allowing you to write powerful GraphQL servers and making features such as Automatic Persisted Queries or Response Cachning more powerful and easy to adopt.
 
 For a small sneak peak check out [GraphQL.wtf Episode 24 - Batteries Included GraphQL Server](https://graphql.wtf/episodes/24-graphql-yoga) or [try the GraphQL Yoga alpha](https://www.graphql-yoga.com/).
 
