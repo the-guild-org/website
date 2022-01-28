@@ -12,20 +12,22 @@ export const meta = {
 
 export default withArticle({ ...meta })
 
-On a high level GraphQL servers are quite easy to use. You pass it a GraphQL schema, start the server and that is it.
-For many use-cases that is sufficient enough.
+On a high-level, GraphQL servers are pretty easy to set up. 
+Just passing a GraphQL schema and starting the server do the job.
+
+However, for many use-cases, such a setup is not sufficient.
 
 But let's dive deeper, under the hood and learn what is exactly happening under the hood and why it is useful to hook into each of the phases of an GraphQL request!
 
-While GraphQL can be done over almost any protocol, this article focuses on the most commonly used protocol [GraphQL over HTTP](https://github.com/graphql/graphql-over-http). However, most knowledge can be transfered to other protocols such as GraphQL over WebSockets or other more exotic ones.
+Note: While GraphQL can be done over almost any protocol, this article focuses on the most commonly used protocol [GraphQL over HTTP](https://github.com/graphql/graphql-over-http). However, most knowledge can be transferred to other protocols such as GraphQL over WebSockets or other more exotic ones.
 
 ![The Phases of an GraphQL Request](/blog-assets/the-anatomy-of-a-graphql-request/phases-breakdown.png)
 
 ## HTTP Parsing and Normalization
 
-Clients send HTTP requests to the server with a payload that contains an operation document string (query, mutation or subscription) and optionally some variables and the operation name from the document that shall be executed.
+Clients send HTTP requests to the server with a payload that contains an operation document string (query, mutation, or subscription), optionally some variables, and the operation name from the document that shall be executed.
 
-Generally it is a JSON object for most requests that are executed via the POST http method.
+When the requests are executed via the POST HTTP method, the body will be a JSON object:
 
 **Example JSON POST Body**
 
@@ -45,15 +47,19 @@ However, when using the GET HTTP method (e.g. for query operations) those parame
 http://localhost:8080/graphql?query=query%20UserById%28%24id%3A%20ID%21%29%20%7B%20user%28id%3A%20%24id%29%20%7B%20id%20name%20%7D%20%7D&variables=%7B%20%22id%22%3A%20%2210%22%20%7DoperationName=UserById
 ```
 
-The GraphQL HTTP servers first task is to parse and normalize the body or query string and furthermore determine the protocol that shall be used for sending the response. Currently the protocols can be `application/graphql+json` (or `application/json` for legacy clients) for a single result that yields from the execution phase, `multipart/mixed` for incremental delivery (when using `@defer` and `@stream` directives). Not officially in the specification, but also used is `text/event-stream` for event streams (e.g. when executing subscription or live query operations).
+The GraphQL HTTP server's first task is to parse and normalize the body or query string and furthermore determine the protocol that shall be used for sending the response. The protocols can be:
+- `application/graphql+json` (or `application/json` for legacy clients) for a single result that yields from the execution phase
+- `multipart/mixed` for incremental delivery (when using `@defer` and `@stream` directives). 
+
+Not officially in the specification, but also used is `text/event-stream` for event streams (e.g. when executing subscription or live query operations).
 
 ## GraphQL parse
 
-After parsing and normalizing the request the server will pass on the GraphQL parameters onto the GraphQL engine which will first parse the GraphQL operation document (which can contain any number of query, mutation or subscription operations and fragment definitions).
+After parsing and normalizing the request, the server will pass on the GraphQL parameters onto the GraphQL engine that will parse the GraphQL operation document (which can contain any number of query, mutation, or subscription operations and fragment definitions).
 
-If there is any typo or syntax error this phase will yield GraphQLErrors for each of those issues and pass them back to the server layer, so it can send those back to the client.
+If there is any typo or syntax error, this phase will yield GraphQLErrors for each of those issues and pass them back to the server layer to send those back to the client.
 
-For the following invalid GraphQL operation (`)` missing after `$id`):
+For the following invalid GraphQL operation (`)` missing after `$id` at line 2):
 
 ```
 query UserById($id: ID!) {
@@ -78,7 +84,7 @@ The error will look similar to this:
 }
 ```
 
-As you can, see the error messages are unfortunately not always straight-forward and helpful. The location can, however, help you tracking down the syntax error!
+As you can see, the error messages are unfortunately not always straightforward and helpful. The location can, however, help you track down the syntax error!
 
 In case no error occurs, the parse phase produces an AST (abstract syntax tree).
 
@@ -175,8 +181,8 @@ This procedure is performed by the `parse` function that is exported from `graph
 
 ## GraphQL validate
 
-In the validation phase the parsed document is validated against our GraphQL schema, in order to ensure all selected fields in the operation are actually available and valid. The previously parsed AST makes it easier for the validation rules to have a common interface of traversing the document.
-Furthermore, other validation rules, that ensure that the document follows the GraphQL specification are checked. E.g. whether variables referenced in the document are declared in the operation definition and so on.
+In the validation phase, the parsed document is validated against our GraphQL schema to ensure all selected fields in the operation are available and valid. The previously parsed AST makes it easier for the validation rules to have a common interface of traversing the document.
+Furthermore, other validation rules that ensure that the document follows the GraphQL specification are checked, E.g. whether variables referenced in the document are declared in the operation definition.
 
 As an example the following operation is missing a definition for the `$id` variable:
 
@@ -219,8 +225,8 @@ In the execution phase we are actually resolving the data requested by the clien
 
 Previously, the HTTP request has been parsed and normalized, which yielded the following additional (but optional) values: `variables` and `operationName`.
 
-If the GraphQL document that will be used for execution included more than one executable mutation, query or subscription operation the `operationName` is determined to identify the document that shall be used.
-In case the determined executable operation has any variable definitions, those are asserted against the `variables` values parsed from the HTTP request.
+If the GraphQL document used for execution included more than one executable mutation, query or subscription operation, the `operationName` is determined to identify the document that shall be used.
+If the determined executable operation has any variable definitions, those are asserted against the `variables` values parsed from the HTTP request.
 
 If anything goes wrong or is incorrect an error is raised. E.g. the variables provided are invalid or the operation that shall be executed cannot be determined as the `operationName` is invalid or missing.
 
