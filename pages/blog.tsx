@@ -107,7 +107,7 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
             <div
               css={[
                 css`
-                  background-image: url(${article.image});
+                  background-image: url(${article.thumbnail ?? article.image});
                 `,
                 tw`w-full h-full max-w-[278px] max-h-[164px] bg-cover bg-center bg-no-repeat flex-shrink-0`,
               ]}
