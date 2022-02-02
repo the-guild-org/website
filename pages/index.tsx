@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { css } from 'styled-components';
 import { GetStaticProps } from 'next/types';
 import tw from 'twin.macro';
 import { Page } from '../ui/shared/Page';
