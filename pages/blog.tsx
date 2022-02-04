@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import { FC } from 'react';
 import styled from 'styled-components';
 import { GetStaticProps } from 'next/types';

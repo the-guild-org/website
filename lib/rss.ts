@@ -1,4 +1,4 @@
-import { promises } from 'fs';
+import { promises } from 'node:fs';
 import RSS from 'rss';
 import { MetaWithLink } from './meta';
 import { logAsComplete } from './utils';

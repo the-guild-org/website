@@ -1,5 +1,5 @@
-import { readFileSync, existsSync } from 'fs';
-import { join, relative } from 'path';
+import { readFileSync, existsSync } from 'node:fs';
+import { join, relative } from 'node:path';
 import { globbySync } from 'globby';
 
 const PAGES_DIR = join(process.cwd(), 'pages');

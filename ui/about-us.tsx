@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { MDXProvider } from '@mdx-js/react';
-import styled from 'styled-components';
 import tw from 'twin.macro';
 import { components } from './blog/elements';
 import { Page } from './shared/Page';

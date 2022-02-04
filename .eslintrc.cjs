@@ -62,6 +62,7 @@ module.exports = {
         'react/no-unescaped-entities': 'off',
         'react/self-closing-comp': 'error',
         'unicorn/prefer-module': 'error',
+        'unicorn/prefer-node-protocol': ['error', { checkRequire: true }],
       },
     },
     {
