@@ -1,6 +1,13 @@
 import { css } from 'styled-components';
 import tw from 'twin.macro';
-import { FC, ChangeEvent, useCallback, useState, useEffect } from 'react';
+import {
+  FC,
+  ChangeEvent,
+  useCallback,
+  useState,
+  useEffect,
+  useRef,
+} from 'react';
 import styled from 'styled-components';
 import Confetti from 'react-confetti';
 import { useMutation } from '../hooks/use-graphql';
@@ -44,14 +51,12 @@ const FixedConfetti = styled(Confetti)`
   position: fixed !important;
 `;
 
-import React from 'react';
-
 function Submit({ children, isLoading, ...props }) {
-  const [width, setWidth] = React.useState(0);
-  const [height, setHeight] = React.useState(0);
-  const ref = React.useRef(null);
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
+  const ref = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current && ref.current.getBoundingClientRect().width) {
       setWidth(ref.current.getBoundingClientRect().width);
     }
@@ -191,7 +196,7 @@ export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
 
           <Newsletter />
         </div>
-        {!hideCover ? (
+        {!hideCover && (
           <div css={tw`flex-1 hidden xl:block`}>
             {/* Keep in mind order of images, most of button we'll cover others */}
             <img
@@ -231,7 +236,7 @@ export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
               height={482}
             />
           </div>
-        ) : null}
+        )}
       </div>
     </div>
   );
