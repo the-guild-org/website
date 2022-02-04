@@ -7,6 +7,7 @@
     "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
+    "outDir": "dist",
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
@@ -15,6 +16,9 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "exclude": ["node_modules"],
+  "exclude": [
+    "node_modules",
+    "blog-sync.ts" // has type errors and stuck `next build` command with ` Checking validity of types` message
+  ],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }
