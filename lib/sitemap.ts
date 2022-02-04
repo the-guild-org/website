@@ -1,6 +1,6 @@
 import { promises } from 'node:fs';
 import { MetaWithLink } from './meta';
-import { logAsComplete } from './utils';
+import { logAsComplete } from './utils.js';
 
 const createUrl = (link: string) => {
   return `
