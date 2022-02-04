@@ -1,4 +1,7 @@
 import { extname } from 'path';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 const SKIPPED_EXTENSIONS = new Set(['.mp4', '.webm', '.svg', '.gif']);
 

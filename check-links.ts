@@ -1,11 +1,11 @@
 import { readFileSync, existsSync } from 'fs';
 import { join, relative } from 'path';
-import globby from 'globby';
+import { globbySync } from 'globby';
 
 const PAGES_DIR = join(process.cwd(), 'pages');
 const CWD = join(PAGES_DIR, 'blog');
 
-const files = globby.sync('*.mdx', {
+const files = globbySync('*.mdx', {
   absolute: false,
   cwd: CWD,
 });

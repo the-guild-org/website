@@ -1,9 +1,9 @@
-const { join } = require('path');
-const withBundleAnalyzer = require('@next/bundle-analyzer');
-const withMDX = require('@next/mdx');
-const withOptimizedImages = require('next-optimized-images');
-const rehypePrism = require('@mapbox/rehype-prism');
-const admonitions = require('remark-admonitions');
+import { join } from 'path';
+import withBundleAnalyzer from '@next/bundle-analyzer';
+import withMDX from '@next/mdx';
+import withOptimizedImages from 'next-optimized-images';
+import rehypePrism from '@mapbox/rehype-prism';
+import admonitions from 'remark-admonitions';
 
 const nextConfig = {
   pageExtensions: ['tsx', 'md', 'mdx'],
@@ -59,4 +59,4 @@ const mdx = withMDX({
   },
 });
 
-module.exports = analyzer(mdx(withOptimizedImages(nextConfig)));
+export default analyzer(mdx(withOptimizedImages(nextConfig)));

@@ -1,4 +1,3 @@
-// Can't understand how to convert this file to ts 🤷‍
 import { toVFile } from 'to-vfile';
 import { unified } from 'unified';
 import parse from 'remark-parse';
@@ -8,17 +7,13 @@ import { visit } from 'unist-util-visit';
 import { remove } from 'unist-util-remove';
 import { walk } from 'estree-walker';
 import { Client } from 'guild-devto-nodejs-sdk';
-import globby from 'globby';
-import { createRequire } from 'module';
-
-const require = createRequire(import.meta.url);
-// import not working, use require instead
-const { authors } = require('./ui/authors.ts');
+import { globbySync } from 'globby';
+import { authors } from './ui/authors.js'; // extension .js is fixes ERR_MODULE_NOT_FOUND error
 
 const DEV_TO_ORG_ID = 4467;
 
 const baseDir = './pages/blog/';
-const files = globby.sync('*.mdx', {
+const files = globbySync('*.mdx', {
   absolute: false,
   cwd: baseDir,
 });
