@@ -1,6 +1,7 @@
 import App, { NextWebVitalsMetric } from 'next/app';
 import Router from 'next/router';
 import Head from 'next/head';
+import Script from 'next/script';
 import { createGlobalStyle } from 'styled-components';
 import { ThemeProvider } from '@theguild/components';
 import 'prism-theme-night-owl';
@@ -90,7 +91,7 @@ export default class MyApp extends App {
             rel="stylesheet"
           />
         </Head>
-        <script src="/static/crisp.js" />
+        <Script src="/static/crisp.js" />
 
         <GlobalStyle />
 
@@ -141,8 +142,6 @@ export default class MyApp extends App {
               text-decoration: none;
               transition: all 0.2s ease 0s;
             }
-
-           ,
           `}
         </style>
 

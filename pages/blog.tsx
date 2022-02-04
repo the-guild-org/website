@@ -14,7 +14,7 @@ import { authors } from '../ui/authors';
 import { HeroSection } from '../ui/hero-section';
 import { Description, Heading } from '../ui';
 import { BlogCard } from '../ui/recommended-reading-section';
-import { TagContainers } from '../ui/blog/article';
+import { TagContainer } from '../ui/blog/article';
 import { Tag } from '../ui/blog/tag';
 
 interface Props {
@@ -35,9 +35,7 @@ export const AllArticles = styled(Container)`
 `;
 
 function extractRelevantTags(articles: Props['articles']) {
-  const allTags = articles
-    .reduce((acc, article) => [...acc, ...(article.tags || [])], [])
-    .filter(Boolean);
+  const allTags = articles.flatMap((article) => article.tags || []);
 
   const map = new Map<string, number>();
 
@@ -71,18 +69,18 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
     : 'The Guild Blog';
   const description = hasTagFilter
     ? `List of articles related to ${tagFilter.join(', ')}`
-    : `Announcements about our Open-Source projects`;
+    : 'Announcements about our Open-Source projects';
 
   return (
     <Page title={title} description={description} image="/img/ogimage.png">
       <HeroSection>
         <Heading>The Guild's blog</Heading>
       </HeroSection>
-      <TagContainers>
+      <TagContainer>
         {allTags.map((t) => (
           <Tag tag={t} key={t} asLink />
         ))}
-      </TagContainers>
+      </TagContainer>
       {/* {recentArticle && !hasTagFilter && (
         <Section noNotch>
           <SectionContainer>
@@ -112,7 +110,7 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
                 tw`w-full h-full max-w-[278px] max-h-[164px] bg-cover bg-center bg-no-repeat flex-shrink-0`,
               ]}
             />
-            <div css={[tw`p-5`]}>
+            <div css={tw`p-5`}>
               <Heading $size="md">{article.title}</Heading>
               <Description
                 $size="md"
@@ -120,7 +118,7 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
               >
                 {article.description}
               </Description>
-              <div css={tw`text-xs `}>
+              <div css={tw`text-xs`}>
                 <span css={tw`text-gray-200 font-bold`}>
                   {authors[pickAuthor(article)].name}
                 </span>
