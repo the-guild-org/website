@@ -14,18 +14,15 @@ const H1 = styled.h2`
   margin-top: 2.5rem;
   font-size: 2rem;
   line-height: 2.3rem;
-  color: var(--colors-primary);
 `;
 
 const H2 = styled.h3`
   margin-top: 2.5rem;
   font-size: 1.5rem;
-  color: var(--colors-primary);
 `;
 
 const H3 = styled.h4`
   margin-top: 2.5rem;
-  color: var(--colors-primary);
 `;
 
 const P = styled.p`

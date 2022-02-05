@@ -1,40 +1,37 @@
 import { FC } from 'react';
-import styled from 'styled-components';
-import NativeLink from 'next/link';
-
-const TagContainer = styled.span`
-  display: inline-block;
-  padding: 0.3rem;
-  margin-right: 8px;
-  margin-bottom: 8px;
-  background-color: #f1f1f1;
-  border-radius: 0.3rem;
-  font-size: 0.7rem;
-  color: var(--colors-dim);
-`;
-
-const Link = styled(NativeLink)`
-  color: var(--colors-dim);
-  font-size: 0.8rem;
-
-  &:hover {
-    opacity: var(--hover-opacity);
-  }
-`;
+import NextLink from 'next/link';
+import tw from 'twin.macro';
 
 export const Tag: FC<{
   tag: string;
   asLink: boolean;
 }> = ({ tag, asLink }) => {
   return (
-    <TagContainer>
+    <span
+      css={[
+        tw`
+    inline-block
+    bg-gray-100
+    hover:bg-gray-200
+    p-2
+    mr-2
+    mb-2
+    rounded-md
+    text-xs
+    text-gray-500
+    dark:text-gray-600
+    transition-all
+    duration-200`,
+        asLink && tw`cursor-pointer`,
+      ]}
+    >
       {asLink ? (
-        <Link href={`/blog/tag/${tag}`} as="a">
-          {tag}
-        </Link>
+        <NextLink href={`/blog/tag/${tag}`}>
+          <a>{tag}</a>
+        </NextLink>
       ) : (
         tag
       )}
-    </TagContainer>
+    </span>
   );
 };

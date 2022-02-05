@@ -3,27 +3,8 @@ import styled from 'styled-components';
 import Confetti from 'react-confetti';
 import tw from 'twin.macro';
 import { css } from 'styled-components';
-import { Button } from '../shared/Layout';
 import { useMutation } from '../../hooks/use-graphql';
-
-const Container = styled.div`
-  margin-top: 75px;
-  padding: 25px;
-  border-radius: 3px;
-  background-color: #16171c;
-`;
-
-const Header = styled.div`
-  font-size: 1.3rem;
-  font-weight: 400;
-  color: white;
-`;
-
-const Subheader = styled.p`
-  font-size: 1rem;
-  font-weight: 400;
-  color: var(--colors-dim-dark);
-`;
+import { Heading, Description, Input, Button } from '../index';
 
 const Form = styled.form`
   display: flex;
@@ -32,40 +13,6 @@ const Form = styled.form`
   @media (max-width: 640px) {
     flex-direction: column;
     align-items: stretch;
-  }
-`;
-
-const Input = styled.input`
-  flex-grow: 1;
-  flex-shrink: 1;
-  padding: 0.75rem 1rem;
-  line-height: 1.5rem;
-  font-size: 1rem;
-  border-radius: 0.375rem;
-  border: 1px solid #d2d6dc;
-  appearance: none;
-  margin: 0;
-  box-sizing: border-box;
-
-  &:focus {
-    box-shadow: 0 0 0 3px rgba(164, 202, 254, 0.45);
-    outline: 0;
-    border-color: #a4cafe;
-  }
-
-  &:disabled {
-    opacity: var(--hover-opacity);
-  }
-`;
-
-const Submit = styled(Button)`
-  flex-shrink: 0;
-  flex-grow: 0;
-  margin-left: 1rem;
-
-  @media (max-width: 640px) {
-    margin-top: 1rem;
-    margin-left: 0;
   }
 `;
 
@@ -122,12 +69,15 @@ export const Newsletter: FC<{ className?: string }> = ({ className }) => {
     navigator.hardwareConcurrency > 1;
 
   return (
-    <Container className={className}>
+    <div
+      className={className}
+      css={tw`bg-gray-100 dark:bg-gray-900 rounded p-6 mt-20`}
+    >
       {hasPower && confetti && (
         <FixedConfetti width={window.innerWidth} height={window.innerHeight} />
       )}
-      <Header>Join our newsletter</Header>
-      <Subheader>
+      <Heading $size="md">Join our newsletter</Heading>
+      <Description css={tw`mb-3`}>
         {success ? (
           'Thank you for joining!'
         ) : error ? (
@@ -138,7 +88,7 @@ export const Newsletter: FC<{ className?: string }> = ({ className }) => {
           `Want to hear from us when there's something new? Sign up and stay up to
         date!`
         )}
-      </Subheader>
+      </Description>
       {showForm && (
         <Form onSubmit={onSubmit}>
           <Input
@@ -148,12 +98,6 @@ export const Newsletter: FC<{ className?: string }> = ({ className }) => {
             placeholder="Enter your email"
             value={email}
             onChange={onChange}
-            css={[
-              css`
-                background: #24272e !important;
-              `,
-              tw`border-0 text-gray-300`,
-            ]}
           />
           <Button
             type="submit"
@@ -166,13 +110,13 @@ export const Newsletter: FC<{ className?: string }> = ({ className }) => {
                   #ffa3fd 100%
                 );
               `,
-              tw`mt-5 sm:mt-0 sm:ml-5 px-10! text-white! opacity-80 hover:opacity-100`,
+              tw`mt-5 sm:mt-0 sm:ml-5 px-10! text-white! opacity-80 hover:opacity-100 border-0`,
             ]}
           >
             Submit
           </Button>
         </Form>
       )}
-    </Container>
+    </div>
   );
 };

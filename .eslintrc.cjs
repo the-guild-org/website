@@ -84,10 +84,7 @@ module.exports = {
       },
     },
     {
-      files: ['.eslintrc.cjs', 'next.config.mjs', 'check-links.ts', 'api/*'],
-      env: {
-        node: true,
-      },
+      files: ['*.cjs'],
       rules: {
         '@typescript-eslint/no-var-requires': 'off',
       },

@@ -14,7 +14,18 @@ export const ClientLogosSection: FC = () => {
             src={`/img/logos/companies/${item.logo}`}
             title={item.name}
             alt={`${item.name} logo`}
-            css={tw`opacity-70 hover:opacity-100 transition-opacity duration-300 max-w-[90px] md:max-w-[180px] max-h-[35px] md:max-h-[40px] m-6`}
+            css={tw`
+            opacity-70
+            hover:opacity-100
+            transition-opacity
+            duration-300
+            max-w-[90px]
+            md:max-w-[180px]
+            max-h-[35px]
+            md:max-h-[40px]
+            m-6
+            invert
+            dark:invert-0`}
           />
         ))}
       </div>

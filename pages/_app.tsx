@@ -2,8 +2,9 @@ import App, { NextWebVitalsMetric } from 'next/app';
 import Router from 'next/router';
 import Head from 'next/head';
 import Script from 'next/script';
+import { extendTheme } from '@chakra-ui/react';
 import { createGlobalStyle } from 'styled-components';
-import { ThemeProvider } from '@theguild/components';
+import { CombinedThemeProvider, AppSeoProps } from '@guild-docs/client';
 import 'prism-theme-night-owl';
 import 'remark-admonitions/styles/classic.css';
 import * as gtag from '../lib/gtag';
@@ -27,25 +28,68 @@ export function reportWebVitals({
   });
 }
 
+const accentColor = '#1cc8ee';
+
 const GlobalStyle = createGlobalStyle`
-  html {
-    // For smooth scrolling effect when click on '#' hash links
-    scroll-behavior: smooth;
-    background-color: #0b0d11;
-  }
-
   // TODO: Remove this when guild/components Header/Footer will can accept bg color
-  footer {
-    background-color: #0b0d11 !important;
-  }
-
-  header {
-    &,
-    & > div > nav {
-      background-color: #0b0d11 !important;
+  @media (min-width: 768px) {
+    header,
+    header > div > nav {
+      background-color: transparent !important;
     }
   }
+
+  footer {
+    background-color: transparent !important;
+  }
+
+  /* by default fill background with black */
+  html {
+    &,
+    body,
+    #tgc-modal,
+    #tgc-modal > div:last-child > div {
+      background-color: var(--colors-background);
+    }
+  }
+
+  html[data-theme='light'] {
+    &,
+    body,
+    #tgc-modal,
+    #tgc-modal > div:last-child > div {
+      background-color: transparent; /* Header should use NextLink for client side routing */
+    }
+  }
+
+  body {
+    z-index: -1; /* needs for blue and pink circles */
+  }
 `;
+
+const theme = extendTheme({
+  colors: {
+    accentColor,
+  },
+  fonts: {
+    heading: 'TGCFont, sans-serif',
+    body: 'TGCFont, sans-serif',
+  },
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: false,
+  },
+});
+
+const defaultSeo: AppSeoProps = {
+  title: 'The Guild',
+  description: 'Modern API Platform and Ecosystem that scales',
+  logo: {
+    url: 'https://guild.dev/static/logo.svg',
+    width: 88,
+    height: 50,
+  },
+};
 
 export default class MyApp extends App {
   render() {
@@ -56,7 +100,6 @@ export default class MyApp extends App {
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta charSet="utf-8" />
-          <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
           <link rel="shortcut icon" href="/fav.ico" />
           <script
             async
@@ -79,22 +122,12 @@ export default class MyApp extends App {
             href="/feed.xml"
           />
           <link
-            href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-            rel="stylesheet"
-          />
-          <link
-            href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap"
-            rel="stylesheet"
-          />
-          <link
             href="https://fonts.googleapis.com/css?family=Poppins:400,500,700&display=swap"
             rel="stylesheet"
           />
         </Head>
         <Script src="/static/crisp.js" />
-
         <GlobalStyle />
-
         <style global jsx>
           {`
             html,
@@ -109,8 +142,8 @@ export default class MyApp extends App {
               --colors-text: white;
               --colors-dim: #777;
               --colors-dim-dark: #555;
-              --colors-accent: #1CC8EE;
-              --colors-accent-light: #1CC8EE;
+              --colors-accent: #1cc8ee;
+              --colors-accent-light: #1cc8ee;
               --colors-error: #bf120d;
               --colors-error-light: #ff3f38;
               --colors-primary: white;
@@ -133,7 +166,6 @@ export default class MyApp extends App {
             }
 
             body {
-              background-color: var(--colors-background);
               font-family: Poppins, sans-serif;
             }
 
@@ -142,12 +174,20 @@ export default class MyApp extends App {
               text-decoration: none;
               transition: all 0.2s ease 0s;
             }
+
+            html {
+              // For smooth scrolling effect when click on '#' hash links
+              scroll-behavior: smooth;
+            }
           `}
         </style>
-
-        <ThemeProvider isDarkTheme>
+        <CombinedThemeProvider
+          theme={theme}
+          accentColor={accentColor}
+          defaultSeo={defaultSeo}
+        >
           <Component {...pageProps} />
-        </ThemeProvider>
+        </CombinedThemeProvider>
       </>
     );
   }

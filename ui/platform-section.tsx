@@ -3,6 +3,7 @@ import NextLink from 'next/link';
 import styled, { css, keyframes } from 'styled-components';
 import tw from 'twin.macro';
 import * as Tooltip from '@radix-ui/react-tooltip';
+import { useColorModeValue } from '@chakra-ui/react';
 import { Anchor, Description, Heading } from './index';
 
 const slideUpAndFade = keyframes`
@@ -60,7 +61,7 @@ const StyledContent = styled(Tooltip.Content)`
   line-height: 1;
   color: #fff;
   background: #16171c;
-  box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
+  box-shadow: hsl(206 22% 7% / 35%) 0 10px 38px -10px,
     hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
 
   @media (prefers-reduced-motion: no-preference) {
@@ -72,12 +73,15 @@ const StyledContent = styled(Tooltip.Content)`
       &[data-side='top'] {
         animation-name: ${slideDownAndFade};
       }
+
       &[data-side='right'] {
         animation-name: ${slideLeftAndFade};
       }
+
       &[data-side='bottom'] {
         animation-name: ${slideUpAndFade};
       }
+
       &[data-side='left'] {
         animation-name: ${slideRightAndFade};
       }
@@ -86,6 +90,7 @@ const StyledContent = styled(Tooltip.Content)`
 `;
 
 export const PlatformSection: FC = () => {
+  const bg = useColorModeValue('white', 'var(--colors-background)');
   return (
     <Tooltip.Provider>
       <div
@@ -96,7 +101,7 @@ export const PlatformSection: FC = () => {
               rgba(0, 0, 0, 0) 0%,
               rgba(41, 40, 40, 0.2) 100%
             ),
-            #0b0d11;
+            ${bg};
         `}
       >
         <div
@@ -126,7 +131,22 @@ export const PlatformSection: FC = () => {
                         // 'grayscale' and 'contrast' don't work with tailwind
                         filter: grayscale(100%) contrast(0%);
                       `,
-                      tw`w-[60px] text-gray-500 hover:text-white hover:filter-none! border border-transparent border-solid hover:border-gray-800 transition-all ease-linear duration-200 rounded py-4 px-6 mb-2 lg:first:ml-6`,
+                      tw`
+                      hover:text-gray-600
+                      dark:hover:text-white
+                      hover:filter-none!
+                      border
+                      border-transparent
+                      border-solid
+                      dark:hover:border-gray-800
+                      transition-all
+                      ease-linear
+                      duration-200
+                      rounded
+                      py-3
+                      px-5
+                      m-2
+                      lg:first:ml-6`,
                     ]}
                     // title={}
                     href={product.url}
@@ -136,9 +156,11 @@ export const PlatformSection: FC = () => {
                     <img
                       src={`/static/shared-logos/products/${product.icon}`}
                       alt={`${product.name} logo`}
-                      css={tw`h-[60px]`}
+                      css={tw`h-[60px] drag-none`}
                     />
-                    <h4 css={tw`font-medium mb-0 text-xs`}>{product.name}</h4>
+                    <h4 css={tw`font-medium mb-0 mt-2 text-xs`}>
+                      {product.name}
+                    </h4>
                   </a>
                 </Tooltip.Trigger>
                 <StyledContent sideOffset={5}>

@@ -60,7 +60,7 @@ export const Layout: FC = ({ children }) => {
         activeLink={router.asPath}
         accentColor="var(--colors-accent)"
         logoProps={{ style: { zIndex: 1 } }}
-        // themeSwitch TODO: turn ON when site will be compatible with light model
+        themeSwitch
       />
       {children}
       <div
@@ -115,7 +115,7 @@ export const Layout: FC = ({ children }) => {
 
 export const Section = styled.section<{ noNotch?: boolean; light?: boolean }>`
   position: relative;
-  background-color: ${(props) => (props.light ? '#fff' : '#16171c')};
+  background-color: ${(props) => (props.light ? 'transparent' : '#16171c')};
   color: var(--colors-primary);
 
   ${(props) =>

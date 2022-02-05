@@ -13,7 +13,6 @@ import { authors } from '../ui/authors';
 import { HeroSection } from '../ui/hero-section';
 import { Description, Heading } from '../ui';
 import { BlogCard } from '../ui/recommended-reading-section';
-import { TagContainer } from '../ui/blog/article';
 import { Tag } from '../ui/blog/tag';
 
 interface Props {
@@ -27,10 +26,9 @@ const NewsletterContainer = styled(Container)`
 
 export const AllArticles = styled(Container)`
   padding: 125px 0;
-  display: grid;
-  grid-column-gap: 40px;
-  grid-row-gap: 70px;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
 `;
 
 function extractRelevantTags(articles: Props['articles']) {
@@ -75,11 +73,11 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
       <HeroSection>
         <Heading>The Guild's blog</Heading>
       </HeroSection>
-      <TagContainer>
+      <div css={tw`text-center mt-2`}>
         {allTags.map((t) => (
           <Tag tag={t} key={t} asLink />
         ))}
-      </TagContainer>
+      </div>
       {/* {recentArticle && !hasTagFilter && (
         <Section noNotch>
           <SectionContainer>
@@ -118,10 +116,10 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
                 {article.description}
               </Description>
               <div css={tw`text-xs`}>
-                <span css={tw`text-gray-200 font-bold`}>
+                <span css={tw`dark:text-gray-200 font-bold`}>
                   {authors[pickAuthor(article)].name}
                 </span>
-                <span css={tw`text-gray-500`}>
+                <span css={tw`dark:text-gray-500`}>
                   {' '}
                   • {format(new Date(article.date), 'LLL do y')}
                 </span>

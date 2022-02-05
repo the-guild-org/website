@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components';
+import { useColorMode } from '@chakra-ui/react';
 import { Page } from '../ui/shared/Page';
 import { Section, Container, Arrow } from '../ui/shared/Layout';
 import { HeroSection } from '../ui/hero-section';
@@ -103,6 +104,7 @@ const MainSection = styled(Section)`
 `;
 
 const Services: FC = () => {
+  const { colorMode } = useColorMode()
   return (
     <Page
       title="Our Services - The Guild"
@@ -116,7 +118,7 @@ const Services: FC = () => {
       {SERVICES.map((service, i) => {
         const isOdd = i % 2 !== 0;
         return (
-          <MainSection key={`service-${i}`} noNotch={i !== 0}>
+          <MainSection key={`service-${i}`} noNotch={i !== 0} light={colorMode === 'light'}>
             <Service
               reversed={isOdd}
               title={service.name}
