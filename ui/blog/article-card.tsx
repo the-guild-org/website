@@ -45,8 +45,6 @@ const Placeholder = styled.div`
   border-radius: 0.5rem 0.5rem 0 0;
 `;
 
-const TagContainers = styled.div``;
-
 const Content = styled.div`
   padding: 1rem 1.5rem;
   text-align: left;
@@ -131,11 +129,11 @@ export const ArticleCard: FC<{
           </div>
         </Details>
         <Title>{title}</Title>
-        <TagContainers>
+        <div>
           {tags.map((t) => (
             <Tag tag={t} key={t} asLink={false} />
           ))}
-        </TagContainers>
+        </div>
         <Description>{description}</Description>
       </Content>
     </Link>

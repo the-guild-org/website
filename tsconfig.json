@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
+    "outDir": "dist",
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
@@ -15,11 +16,9 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
-    }
-  }
+  "exclude": [
+    "node_modules",
+    "blog-sync.ts" // has type errors and stuck `next build` command with ` Checking validity of types` message
+  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

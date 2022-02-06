@@ -1,4 +1,4 @@
-import qs from 'querystring';
+import qs from 'node:querystring';
 import { NextApiRequest, NextApiResponse } from 'next';
 import algoliasearch from 'algoliasearch/lite';
 import { getRawBody } from '../../../lib/getRawBody';

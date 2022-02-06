@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable react-hooks/rules-of-hooks */
-/// @ts-check
-const Crisp = require('node-crisp-api');
-const produce = require('immer').default;
+import { Crisp } from 'node-crisp-api';
+import { produce } from 'immer';
+
 const WEBSITE_ID = 'af9adec5-ddfa-4db9-a4a3-25769daf2fc2';
 
 async function useCatch(fn) {

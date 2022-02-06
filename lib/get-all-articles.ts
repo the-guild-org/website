@@ -1,6 +1,6 @@
-import { join } from 'path';
-import { promises } from 'fs';
-import globby from 'globby';
+import { join } from 'node:path';
+import { promises } from 'node:fs';
+import { globby } from 'globby';
 import JSON5 from 'json5';
 import { format } from 'date-fns';
 import { MetaWithLink } from './meta';

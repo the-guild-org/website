@@ -24,7 +24,7 @@ const Main = styled.article`
 `;
 
 const Content = styled.div`
-  font-family: Inter, -apple-system, system-ui, "Segoe UI", Roboto, sans-serif
+  font-family: Inter, -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
 
   padding-top: 25px;
   font-size: 1rem;
@@ -124,7 +124,7 @@ const Cover = styled.div`
   }
 `;
 
-export const TagContainers = styled.div`
+export const TagContainer = styled.div`
   text-align: center;
   margin-top: 10px;
 `;
@@ -140,8 +140,7 @@ const ConsultingInfo = styled.div`
   border-left: 3px solid var(--colors-accent);
 `;
 
-const Authors: FC<{ meta: Meta }> = (props) => {
-  const { meta } = props;
+const Authors: FC<{ meta: Meta }> = ({ meta }) => {
   const date = meta.date ? new Date(meta.date) : new Date();
   const updatedDate = meta.updateDate ? new Date(meta.updateDate) : null;
 
@@ -272,11 +271,11 @@ const Article = (meta: Meta): FC => {
             <Main>
               <Title>{meta.title}</Title>
               <Authors meta={meta} />
-              <TagContainers>
+              <TagContainer>
                 {meta.tags.map((t) => (
                   <Tag tag={t} key={t} asLink />
                 ))}
-              </TagContainers>
+              </TagContainer>
               <Cover>
                 <Image src={meta.image} alt={title} />
               </Cover>

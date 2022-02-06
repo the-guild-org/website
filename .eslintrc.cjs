@@ -6,16 +6,21 @@ module.exports = {
   reportUnusedDisableDirectives: true,
   overrides: [
     {
-      files: '*.{js,jsx,cjs,mjs,ts,tsx,cts,mts}',
+      env: {
+        es6: true,
+      },
       extends: [
         'eslint:recommended',
         'plugin:@typescript-eslint/recommended',
         'next',
         'prettier',
       ],
-      env: {
-        es6: true,
+      files: '*.{js,jsx,cjs,mjs,ts,tsx,cts,mts}',
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        sourceType: 'module',
       },
+      plugins: ['unicorn'],
       rules: {
         '@typescript-eslint/array-type': ['error', { readonly: 'generic' }],
         '@typescript-eslint/no-explicit-any': 'off',
@@ -54,7 +59,10 @@ module.exports = {
         'react/jsx-boolean-value': ['error', 'never'],
         'react/jsx-curly-brace-presence': ['error', 'never'],
         'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
+        'react/no-unescaped-entities': 'off',
         'react/self-closing-comp': 'error',
+        'unicorn/prefer-module': 'error',
+        'unicorn/prefer-node-protocol': ['error', { checkRequire: true }],
       },
     },
     {
@@ -76,7 +84,7 @@ module.exports = {
       },
     },
     {
-      files: ['.eslintrc.js', 'next.config.js', 'check-links.js', 'api/*'],
+      files: ['.eslintrc.cjs', 'next.config.mjs', 'check-links.ts', 'api/*'],
       env: {
         node: true,
       },

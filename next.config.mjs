@@ -1,14 +1,18 @@
-const { join } = require('path');
-const withBundleAnalyzer = require('@next/bundle-analyzer');
-const withMDX = require('@next/mdx');
-const withOptimizedImages = require('next-optimized-images');
-const rehypePrism = require('@mapbox/rehype-prism');
-const admonitions = require('remark-admonitions');
+import { join } from 'node:path';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import withBundleAnalyzer from '@next/bundle-analyzer';
+import withMDX from '@next/mdx';
+import withOptimizedImages from 'next-optimized-images';
+import rehypePrism from '@mapbox/rehype-prism';
+import admonitions from 'remark-admonitions';
+
+const CWD = process.cwd();
+let wrotePackageJson = false;
 
 const nextConfig = {
   pageExtensions: ['tsx', 'md', 'mdx'],
   experimental: {
-    esmExternals: true,
+    esmExternals: 'loose',
     optimizeFonts: true,
     optimizeCss: true,
   },
@@ -23,7 +27,7 @@ const nextConfig = {
     },
   ],
   webpack(config) {
-    config.resolve.alias.Public = join(process.cwd(), 'public');
+    config.resolve.alias.Public = join(CWD, 'public');
 
     //❗️ need for Next 12 with next-optimized-images
     config.module.rules.push({
@@ -32,6 +36,17 @@ const nextConfig = {
         loader: 'file-loader',
       },
     });
+
+    /*
+     * https://github.com/vercel/next.js/discussions/32220#discussioncomment-1766378
+     * Temporal workaround to use "type": "module" and fixes ERR_REQUIRE_ESM error in `next build`
+     * PR that will fix this issue https://github.com/vercel/next.js/pull/33637
+     */
+    if (!wrotePackageJson) {
+      mkdirSync(join(CWD, '.next'), { recursive: true });
+      writeFileSync(join(CWD, '.next/package.json'), '{"type":"commonjs"}');
+      wrotePackageJson = true;
+    }
 
     return config;
   },
@@ -59,4 +74,4 @@ const mdx = withMDX({
   },
 });
 
-module.exports = analyzer(mdx(withOptimizedImages(nextConfig)));
+export default analyzer(mdx(withOptimizedImages(nextConfig)));

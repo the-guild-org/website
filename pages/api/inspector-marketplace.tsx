@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import Bugsnag from '@bugsnag/js';
