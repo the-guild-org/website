@@ -98,7 +98,7 @@ export const SERVICES: {
     name: 'Training',
     description: 'Strengthen your team, tailored to your people and mission.',
     icon: 'training.svg',
-    url: '/services#workshops-and-trainings',
+    url: '/services#training',
     longDescription:
       'Strengthen, mentor and inspire your team by the leaders of the community. Tailored to your people and mission, aimed to help establish long lasting teams.',
   },

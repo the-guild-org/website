@@ -43,22 +43,12 @@ const GlobalStyle = createGlobalStyle`
     background-color: transparent !important;
   }
 
-  /* by default fill background with black */
-  html {
+  html[data-theme='dark'] {
     &,
     body,
     #tgc-modal,
     #tgc-modal > div:last-child > div {
       background-color: var(--colors-background);
-    }
-  }
-
-  html[data-theme='light'] {
-    &,
-    body,
-    #tgc-modal,
-    #tgc-modal > div:last-child > div {
-      background-color: transparent; /* Header should use NextLink for client side routing */
     }
   }
 

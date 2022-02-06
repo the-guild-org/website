@@ -53,35 +53,37 @@ export const RecommendedReadingSection: FC<{ articles: MetaWithLink[] }> = ({
 
       <div css={tw`container mx-auto my-6 flex flex-wrap justify-center`}>
         {articles.map((article) => (
-          <BlogCard key={article.title} href={article.link}>
-            {/*<img src={article.image} css={tw`max-w-[278px] max-h-[164px]`} />*/}
-            <div
-              css={[
-                css`
+          <NextLink key={article.title} href={article.link}>
+            <BlogCard>
+              {/*<img src={article.image} css={tw`max-w-[278px] max-h-[164px]`} />*/}
+              <div
+                css={[
+                  css`
                   background-image: url(${article.image});
                 `,
-                tw`w-full h-full max-w-[278px] max-h-[164px] bg-cover bg-center bg-no-repeat flex-shrink-0`,
-              ]}
-            />
-            <div css={tw`p-5`}>
-              <Heading $size="md">{article.title}</Heading>
-              <Description
-                $size="md"
-                css={tw`overflow-ellipsis overflow-hidden max-h-[48px]`}
-              >
-                {article.description}
-              </Description>
-              <div css={tw`text-xs`}>
+                  tw`w-full h-full max-w-[278px] max-h-[164px] bg-cover bg-center bg-no-repeat flex-shrink-0`,
+                ]}
+              />
+              <div css={tw`p-5`}>
+                <Heading $size="md">{article.title}</Heading>
+                <Description
+                  $size="md"
+                  css={tw`overflow-ellipsis overflow-hidden max-h-[48px]`}
+                >
+                  {article.description}
+                </Description>
+                <div css={tw`text-xs`}>
                 <span css={tw`dark:text-gray-200 font-bold`}>
                   {authors[pickAuthor(article)].name}
                 </span>
-                <span css={tw`text-gray-500`}>
+                  <span css={tw`text-gray-500`}>
                   {' '}
-                  • {format(new Date(article.date), 'LLL do y')}
+                    • {format(new Date(article.date), 'LLL do y')}
                 </span>
+                </div>
               </div>
-            </div>
-          </BlogCard>
+            </BlogCard>
+          </NextLink>
         ))}
       </div>
     </div>

@@ -56,11 +56,18 @@ export const Layout: FC = ({ children }) => {
     <Wrapper>
       <GlobalStyles includeFonts />
       <Header
-        sameSite
         activeLink={router.asPath}
         accentColor="var(--colors-accent)"
-        logoProps={{ style: { zIndex: 1 } }}
         themeSwitch
+        linkProps={{
+          onClick(e) {
+            const { href } = e.currentTarget;
+            if (href) {
+              const { pathname } = new URL(href);
+              router.push(pathname);
+            }
+          },
+        }}
       />
       {children}
       <div
