@@ -1,4 +1,7 @@
+const plugin = require('tailwindcss/plugin');
+
 module.exports = {
+  darkMode: 'class',
   theme: {
     extend: {
       zIndex: {
@@ -11,4 +14,13 @@ module.exports = {
       },
     },
   },
+  plugins: [
+    plugin(({ addUtilities }) => {
+      addUtilities({
+        '.drag-none': {
+          userDrag: 'none',
+        },
+      });
+    }),
+  ],
 };

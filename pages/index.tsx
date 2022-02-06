@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { GetStaticProps } from 'next/types';
-import tw from 'twin.macro';
 import { Page } from '../ui/shared/Page';
 import { MetaWithLink } from '../lib/meta';
 import { getAllArticles } from '../lib/get-all-articles';
@@ -38,34 +37,27 @@ const IndexPage: FC<Props> = ({ articles }) => {
       description="Open Source developers with experience of working with the largest companies and applications. GraphQL consulting, workshops and trainings."
       image="/img/ogimage.png"
     >
-      <div
-        css={[
-          // ❗️ Important! this position is necessary for 🔵 <Circle />, overflow needed for hiding images in get in touch section
-          tw`relative md:static overflow-x-hidden`,
-        ]}
-      >
-        <HeroSection>
-          <Heading>Modern API Platform and ecosystem that scales</Heading>
-          <Description>
-            The Guild's advanced open source ecosystem covers everything you
-            need for your API infrastructure with a modular, open source and
-            complete platform
-          </Description>
-          <Button
-            as="a"
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            href="#platform"
-          >
-            Explore The Platform
-          </Button>
-        </HeroSection>
-        <ClientLogosSection />
-        <PlatformSection />
-        <ServicesSection />
-        <GetInTouchSection />
-        <RecommendedReadingSection articles={articles.slice(0, 4)} />
-      </div>
+      <HeroSection>
+        <Heading>Modern API Platform and ecosystem that scales</Heading>
+        <Description>
+          The Guild's advanced open source ecosystem covers everything you need
+          for your API infrastructure with a modular, open source and complete
+          platform
+        </Description>
+        <Button
+          as="a"
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          href="#platform"
+        >
+          Explore The Platform
+        </Button>
+      </HeroSection>
+      <ClientLogosSection />
+      <PlatformSection />
+      <ServicesSection />
+      <GetInTouchSection />
+      <RecommendedReadingSection articles={articles.slice(0, 4)} />
     </Page>
   );
 };

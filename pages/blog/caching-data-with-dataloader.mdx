@@ -59,8 +59,8 @@ import { LRUMap } from 'lru_map'
 
 ### 3. Define the types that would be saved to our cache
 
-The first type should be a way to represent the data, like a string with a name, and the other is the data itself.  
-For example, let's say we're trying to cache books. Our package name will be the books id, so we can tell which book is which.  
+The first type should be a way to represent the data, like a string with a name, and the other is the data itself.
+For example, let's say we're trying to cache books. Our package name will be the books id, so we can tell which book is which.
 Our package data will be the books length, writer, price etc...
 
 so in this case, our schema would look like this:
@@ -82,7 +82,7 @@ type author {
 
 and the corresponding data type would look like this:
 
-```graphql
+```ts
 type packageId = string
 type PackageData = /* note that this is the type of the data we represent. */ {
   id: string
@@ -207,6 +207,6 @@ export const resolvers = {
 
 for further learning, check these out:
 
-[The n+1 problem](https://medium.com/the-marcy-lab-school/what-is-the-n-1-problem-in-graphql-dd4921cb3c1a)  
-[The dataloader github page](https://github.com/graphql/dataloader)  
+[The n+1 problem](https://medium.com/the-marcy-lab-school/what-is-the-n-1-problem-in-graphql-dd4921cb3c1a)
+[The dataloader github page](https://github.com/graphql/dataloader)
 [A great video about dataloader](https://youtu.be/_FQ1ZEWIn2s)

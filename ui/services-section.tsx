@@ -4,14 +4,9 @@ import tw, { styled } from 'twin.macro';
 import { Anchor, Description, Heading } from './index';
 
 const ServiceCard = styled.a`
-  background: #16171c;
-
   &:hover {
     box-shadow: 0 -6px 34px rgba(117, 117, 117, 0.15);
-    border-color: #24272e;
   }
-
-  ${tw`w-[278px] h-[370px] m-4 rounded-t-2xl border-2 border-solid border-transparent overflow-hidden cursor-pointer duration-200 text-center`}
 `;
 
 export const ServicesSection: FC = () => {
@@ -30,7 +25,25 @@ export const ServicesSection: FC = () => {
       <div css={tw`container mx-auto flex flex-wrap justify-center mt-[117px]`}>
         {SERVICES.map((service) => (
           <NextLink key={service.name} href={service.url}>
-            <ServiceCard title={service.name}>
+            <ServiceCard
+              title={service.name}
+              css={tw`
+              w-[278px]
+              h-[370px]
+              m-4
+              rounded-t-2xl
+              border-2
+              border-solid
+              border-transparent
+              hover:border-gray-200
+              bg-gray-100
+              dark:bg-gray-900
+              dark:hover:border-gray-800
+              overflow-hidden
+              cursor-pointer
+              duration-200
+              text-center`}
+            >
               <img
                 src={`/img/illustrations/${service.icon}`}
                 alt={`${service.name} illustration`}
@@ -40,7 +53,13 @@ export const ServicesSection: FC = () => {
                 {service.description}
               </Description>
               <span
-                css={tw`text-xs text-gray-500 hover:text-gray-300 transition-colors duration-200`}
+                css={tw`
+                text-xs
+                text-gray-500
+                hover:text-gray-600
+                dark:hover:text-gray-300
+                transition-colors
+                duration-200`}
               >
                 Learn more ➔
               </span>
@@ -79,7 +98,7 @@ export const SERVICES: {
     name: 'Training',
     description: 'Strengthen your team, tailored to your people and mission.',
     icon: 'training.svg',
-    url: '/services#workshops-and-trainings',
+    url: '/services#training',
     longDescription:
       'Strengthen, mentor and inspire your team by the leaders of the community. Tailored to your people and mission, aimed to help establish long lasting teams.',
   },

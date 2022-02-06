@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { promises } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { globby } from 'globby';
 import JSON5 from 'json5';
 import { format } from 'date-fns';
@@ -39,7 +39,7 @@ export async function getAllArticles(
  */
 async function readMeta(dir: string, file: string): Promise<MetaWithLink> {
   const filepath = join(dir, file);
-  const raw = await promises.readFile(filepath, 'utf-8');
+  const raw = await readFile(filepath, 'utf-8');
 
   const [, result] = /export const meta = {([^}]+)/.exec(raw);
 

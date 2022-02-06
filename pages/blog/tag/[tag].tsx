@@ -21,7 +21,7 @@ export const getStaticProps: GetStaticProps<ComponentProps<typeof Blog>> =
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const allArticles = await getAllArticles();
-  const allTags = new Set<string>(allArticles.map((art) => art.tags).flat());
+  const allTags = new Set<string>(allArticles.flatMap((art) => art.tags));
 
   return {
     paths: Array.from(allTags).map((tag) => ({ params: { tag } })),

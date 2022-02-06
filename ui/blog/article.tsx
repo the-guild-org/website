@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import styled, { css } from 'styled-components';
 import format from 'date-fns/format';
+import tw from 'twin.macro';
 import { components } from './elements';
 import { Newsletter } from './newsletter';
 import { Page } from '../shared/Page';
@@ -14,45 +15,29 @@ import { authors } from '../authors';
 import { Avatar } from './avatar';
 import { GenericLink } from './elements/link';
 
-const Container = styled.div`
-  max-width: 690px;
-  margin: 0 auto;
-`;
-
-const Main = styled.article`
-  padding: 125px 15px;
-`;
-
 const Content = styled.div`
-  font-family: Inter, -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+  font-family: Inter, -apple-system, system-ui, 'Segoe UI', Roboto, sans-serif;
 
   padding-top: 25px;
   font-size: 1rem;
   font-weight: 400;
-  color: var(--colors-text);
   line-height: 1.8rem;
 
   > * {
     margin-bottom: 1.7rem;
   }
 
-  > pre[class*=language-] {
+  > pre[class*='language-'] {
     margin: 0;
     padding: 0;
     margin-bottom: 1.7rem;
     border-radius: 3px;
+
     > pre {
       padding: 1.5rem;
       margin: 0;
     }
   }
-`;
-
-const Title = styled.h1`
-  text-align: center;
-  margin-top: 0;
-  font-size: 2rem;
-  color: var(--colors-primary);
 `;
 
 const Author = styled.div<{
@@ -105,10 +90,6 @@ const Time = styled.time`
   font-size: 0.8rem;
 `;
 
-const CenteredTime = styled.div`
-  text-align: center;
-`;
-
 const Cover = styled.div`
   padding-top: 25px;
   margin: 0 auto;
@@ -124,19 +105,8 @@ const Cover = styled.div`
   }
 `;
 
-export const TagContainer = styled.div`
-  text-align: center;
-  margin-top: 10px;
-`;
-
 const ConsultingInfo = styled.div`
-  margin-top: 25px;
-  padding: 25px;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.8rem;
   color: var(--colors-dim);
-  background-color: #16171c;
   border-left: 3px solid var(--colors-accent);
 `;
 
@@ -178,18 +148,17 @@ const Authors: FC<{ meta: Meta }> = ({ meta }) => {
   if (hasManyAuthors(meta)) {
     return (
       <>
-        <CenteredTime>
-          <Time
-            dateTime={date.toISOString()}
-            title={
-              updatedDate
-                ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
-                : `Posted ${format(date, 'EEEE, LLL do y')}`
-            }
-          >
-            {format(date, 'EEEE, LLL do y')}
-          </Time>
-        </CenteredTime>
+        <Time
+          dateTime={date.toISOString()}
+          title={
+            updatedDate
+              ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
+              : `Posted ${format(date, 'EEEE, LLL do y')}`
+          }
+          css={tw`block text-center mt-4`}
+        >
+          {format(date, 'EEEE, LLL do y')}
+        </Time>
         <Details>
           {meta.authors.map((authorId, i) => {
             const author = authors[authorId];
@@ -215,8 +184,8 @@ const Authors: FC<{ meta: Meta }> = ({ meta }) => {
   }
 };
 
-const Article = (meta: Meta): FC => {
-  return function ArticleRender({ children }) {
+const Article = (meta: Meta): FC =>
+  function ArticleRender({ children }) {
     const title = `${meta.title} - The Guild Blog`;
     const router = useRouter();
 
@@ -234,9 +203,7 @@ const Article = (meta: Meta): FC => {
       headline: title,
       image: [ogImage],
       datePublished: new Date(meta.date).toISOString(),
-      dateModified: meta.updateDate
-        ? new Date(meta.updateDate).toISOString()
-        : new Date(meta.date).toISOString(),
+      dateModified: new Date(meta.updateDate || meta.date).toISOString(),
       author: {
         '@type': 'Person',
         name: firstAuthor.name,
@@ -256,30 +223,31 @@ const Article = (meta: Meta): FC => {
     return (
       <MDXProvider components={components}>
         <Page title={title} image={ogImage} description={meta.description}>
-          <Container>
+          <div css={tw`mx-auto max-w-[690px]`}>
             <Head>
               <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(markupData) }}
               />
-
               <link
                 rel="canonical"
                 href={meta.canonical || `https://the-guild.dev${router.route}`}
               />
             </Head>
-            <Main>
-              <Title>{meta.title}</Title>
+            <div css={tw`py-32 px-3 md:px-0`}>
+              <div css={tw`text-4xl text-center`}>{meta.title}</div>
               <Authors meta={meta} />
-              <TagContainer>
+              <div css={tw`text-center mt-4`}>
                 {meta.tags.map((t) => (
                   <Tag tag={t} key={t} asLink />
                 ))}
-              </TagContainer>
+              </div>
               <Cover>
                 <Image src={meta.image} alt={title} />
               </Cover>
-              <ConsultingInfo>
+              <ConsultingInfo
+                css={tw`bg-gray-100 dark:bg-gray-900 leading-7 p-6 mt-6`}
+              >
                 Looking for experts? We offer consulting and trainings.
                 <br />
                 Explore{' '}
@@ -293,12 +261,11 @@ const Article = (meta: Meta): FC => {
               </ConsultingInfo>
               <Content>{children}</Content>
               <Newsletter />
-            </Main>
-          </Container>
+            </div>
+          </div>
         </Page>
       </MDXProvider>
     );
   };
-};
 
 export default Article;

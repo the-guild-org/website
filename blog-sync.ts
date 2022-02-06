@@ -8,7 +8,7 @@ import { remove } from 'unist-util-remove';
 import { walk } from 'estree-walker';
 import { Client } from 'guild-devto-nodejs-sdk';
 import { globbySync } from 'globby';
-import { authors } from './ui/authors.js'; // extension .js is fixes ERR_MODULE_NOT_FOUND error
+import { authors } from './ui/authors.js'; // extension .js fixes ERR_MODULE_NOT_FOUND error
 
 const DEV_TO_ORG_ID = 4467;
 
