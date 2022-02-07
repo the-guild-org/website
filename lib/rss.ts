@@ -1,7 +1,7 @@
 import { promises } from 'node:fs';
 import RSS from 'rss';
 import { MetaWithLink } from './meta';
-import { logAsComplete } from './utils.js';
+import { logAsComplete } from './utils';
 
 export async function buildRSS(articles: MetaWithLink[]) {
   const feed = new RSS({
