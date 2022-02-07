@@ -18,12 +18,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .setHeader('Content-Length', '0')
       .setHeader('Access-Control-Allow-Origin', '*')
       .setHeader('Access-Control-Request-Headers', 'Vary')
+      .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
       .end();
   }
 
   res
     .setHeader('Access-Control-Allow-Origin', '*')
-    .setHeader('Access-Control-Request-Headers', 'Vary');
+    .setHeader('Access-Control-Request-Headers', 'Vary')
+    .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 
   const { query } = req;
   const rawBody = await getRawBody(req);
