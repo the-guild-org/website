@@ -1,6 +1,5 @@
 import qs from 'node:querystring';
 import { NextApiRequest, NextApiResponse } from 'next';
-import cors, { CorsOptions, CorsOptionsDelegate } from 'cors';
 
 import algoliasearch from 'algoliasearch/lite';
 import { getRawBody } from '../../../lib/getRawBody';
@@ -11,15 +10,20 @@ export const config = {
   },
 };
 
-const corsMiddleware = initMiddleware(cors);
-
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  await corsMiddleware(req, res, {
-    methods: ['GET', 'HEAD', 'POST', 'OPTIONS'],
-    origin: '*',
-    optionsSuccessStatus: 200,
-  });
+  if (req.method === 'OPTIONS') {
+    return res
+      .status(200)
+      .setHeader('Content-Length', '0')
+      .setHeader('Access-Control-Allow-Origin', '*')
+      .setHeader('Access-Control-Request-Headers', 'Vary')
+      .end();
+  }
+
+  res
+    .setHeader('Access-Control-Allow-Origin', '*')
+    .setHeader('Access-Control-Request-Headers', 'Vary');
 
   const { query } = req;
   const rawBody = await getRawBody(req);
@@ -156,23 +160,4 @@ function pickPrefix(url) {
   }
 
   return 'External';
-}
-
-// - Helper method to wait for a middleware to execute before continuing
-// - And to throw an error when an error happens in a middleware
-function initMiddleware(middleware: typeof cors) {
-  return (
-    req: NextApiRequest,
-    res: NextApiResponse,
-    options?: CorsOptions | CorsOptionsDelegate
-  ) =>
-    new Promise((resolve, reject) => {
-      middleware(options)(req, res, (result: Error | unknown) => {
-        if (result instanceof Error) {
-          return reject(result);
-        }
-
-        return resolve(result);
-      });
-    });
 }
