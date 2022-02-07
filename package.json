@@ -1,18 +1,18 @@
 {
   "name": "the-guild-website",
   "version": "0.0.0",
-  "type": "module",
   "license": "MIT",
   "scripts": {
     "lint": "eslint --ignore-path .gitignore .",
     "dev": "next dev",
-    "build": "yarn check-links && next build && node --loader ts-node/esm lib/build.ts",
+    "build": "yarn check-links && next build && yarn compile-ts lib/build.ts dist/build-sitemap.mjs && node dist/build-sitemap.mjs",
     "analyze": "ANALYZE=true yarn build",
     "start": "next start",
     "format": "prettier --ignore-path .gitignore --write .",
-    "check-links": "node --loader ts-node/esm check-links.ts",
+    "check-links": "yarn compile-ts check-links.ts dist/check-links.mjs && node dist/check-links.mjs",
     "prepare": "husky install",
-    "sync-blog": "node --loader ts-node/esm/transpile-only blog-sync.ts"
+    "sync-blog": "yarn compile-ts blog-sync.ts dist/blog-sync.mjs && node dist/blog-sync.mjs",
+    "compile-ts": "ts-node -O '{\"module\":\"commonjs\"}' scripts/compile-ts"
   },
   "dependencies": {
     "@agentofuser/remark-oembed": "1.0.4",
@@ -68,6 +68,7 @@
     "@typescript-eslint/parser": "5.10.2",
     "babel-plugin-styled-components": "2.0.2",
     "critters": "0.0.16",
+    "esbuild": "0.14.20",
     "eslint": "8.8.0",
     "eslint-config-next": "12.0.10",
     "eslint-config-prettier": "8.3.0",
@@ -83,7 +84,7 @@
     "remark-parse": "10.0.1",
     "remark-stringify": "10.0.2",
     "to-vfile": "7.2.3",
-    "ts-node": "10.4.0",
+    "ts-node": "10.5.0",
     "typescript": "4.5.5",
     "unified": "10.1.1",
     "unist-util-remove": "3.1.0",
