@@ -1,7 +1,9 @@
 import qs from 'node:querystring';
 import { NextApiRequest, NextApiResponse } from 'next';
+
 import algoliasearch from 'algoliasearch/lite';
 import { getRawBody } from '../../../lib/getRawBody';
+import { NextCors } from '../../../lib/cors';
 
 export const config = {
   api: {
@@ -11,6 +13,12 @@ export const config = {
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  await NextCors(req, res, {
+    methods: ['GET', 'HEAD', 'POST'],
+    origin: '*',
+    optionsSuccessStatus: 200,
+  });
+
   const { query } = req;
   const rawBody = await getRawBody(req);
   console.log('Hit!');
