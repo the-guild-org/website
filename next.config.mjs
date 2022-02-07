@@ -10,7 +10,7 @@ const CWD = process.cwd();
 let wrotePackageJson = false;
 
 const nextConfig = {
-  pageExtensions: ['tsx', 'md', 'mdx'],
+  pageExtensions: ['tsx', 'md', 'mdx', 'ts'],
   experimental: {
     esmExternals: 'loose',
     optimizeFonts: true,
