@@ -238,7 +238,7 @@ const PRODUCTS: {
   {
     name: 'Config',
     description: 'One configuration for all your GraphQL tools',
-    url: 'https://www.graphql-config.com/docs/user/user-introduction',
+    url: 'https://graphql-config.com/docs/user/user-introduction',
     icon: 'config.svg',
   },
   {
