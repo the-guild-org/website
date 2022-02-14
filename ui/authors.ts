@@ -94,7 +94,7 @@ export const authors: Record<string, Author> = {
   charlypoly: {
     name: 'Charly Poly',
     link: 'https://charlypoly.com',
-    github: 'wittydeveloper',
+    github: 'charlypoly',
   },
   maticzav: {
     name: 'Matic Zavadlal',
