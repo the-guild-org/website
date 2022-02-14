@@ -79,18 +79,6 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
           <Tag tag={t} key={t} asLink />
         ))}
       </div>
-      {/* {recentArticle && !hasTagFilter && (
-        <Section noNotch>
-          <SectionContainer>
-            <Featured
-              title={recentArticle.title}
-              description={recentArticle.description}
-              image={recentArticle.thumbnail || recentArticle.image}
-              link={recentArticle.link}
-            />
-          </SectionContainer>
-        </Section>
-      )} */}
       {!hasTagFilter && (
         <NewsletterContainer>
           <Newsletter />
@@ -98,18 +86,9 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
       )}
       <AllArticles>
         {articles?.map((article) => (
-          <NextLink key={article.title} href={article.link}>
+          <NextLink key={article.title} href={article.link} passHref>
             <BlogCard>
-              {/*<img src={article.image} css={tw`max-w-[278px] max-h-[164px]`} />*/}
-              <div
-                css={[
-                  css`
-                    background-image: url(${article.thumbnail ??
-                    article.image});
-                  `,
-                  tw`w-full h-full max-w-[278px] max-h-[164px] bg-cover bg-center bg-no-repeat flex-shrink-0`,
-                ]}
-              />
+              <TeaserImage imageUrl={article.thumbnail ?? article.image} />
               <div css={tw`p-5`}>
                 <Heading $size="md">{article.title}</Heading>
                 <Description
@@ -135,5 +114,18 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
     </Page>
   );
 };
+
+function TeaserImage(props: { imageUrl: string }) {
+  return (
+    <div
+      css={[
+        tw`w-full h-full max-w-[278px] max-h-[164px] bg-cover bg-center bg-no-repeat flex-shrink-0`,
+      ]}
+      style={{
+        backgroundImage: `url(${props.imageUrl}`,
+      }}
+    />
+  );
+}
 
 export default Blog;
