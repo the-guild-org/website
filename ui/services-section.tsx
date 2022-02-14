@@ -24,7 +24,7 @@ export const ServicesSection: FC = () => {
       </div>
       <div css={tw`container mx-auto flex flex-wrap justify-center mt-[117px]`}>
         {SERVICES.map((service) => (
-          <NextLink key={service.name} href={service.url}>
+          <NextLink key={service.name} href={service.url} passHref>
             <ServiceCard
               title={service.name}
               css={tw`
