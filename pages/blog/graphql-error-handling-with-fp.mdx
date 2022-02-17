@@ -73,7 +73,7 @@ If something fails during the execution, we can:
 - throw an Error and use the default GraphQL error mechanism explained above
 - return `null`: this is not satisfactory because we can't know the reason the operation returned `null`
 
-Let's make the following modification to handle all possible paths:
+Let's instead implement error handling using Union types with the following modifications:
 
 ```graphql
 interface BaseError {
