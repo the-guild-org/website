@@ -59,6 +59,62 @@ This standard error handling is not satisfactory for the many reasons:
 
 GraphQL has support for Union types (only for Types, not yet for Inputs). We can take advantage of it and design our schema to specify all possible results: expected and unexpected / error cases.
 
+We can then do queries like the following:
+
+```graphql
+query {
+  entity: entity(id:"10", userId:"u-4") {
+    ...fields
+  }
+  notFound: entity(id: "100", userId:"u-1") {
+    ...fields
+  }
+  notAllowed: entity(id: "1", userId:"u-4") {
+    ...fields
+  }
+  invalidEntityId: entity(id: "1a", userId:"u-4") {
+    ...fields
+  }
+}
+
+fragment fields on EntityResult {
+  __typename
+  ...on Entity {
+    id
+    name
+  }
+  ...on BaseError {
+    message
+  }
+}
+```
+
+And get the expected result or properly typed alternative results in case of errors:
+
+```json
+{
+  "data": {
+    "entity": {
+      "__typename": "Entity",
+      "id": "10",
+      "name": "Entity #10"
+    },
+    "notFound": {
+      "__typename": "NotFoundError",
+      "message": "Entity 100 not found"
+    },
+    "notAllowed": {
+      "__typename": "NotAllowedError",
+      "message": "User u-4 isn't allowed to access entity 1"
+    },
+    "invalidEntityId": {
+      "__typename": "InvalidInputError",
+      "message": "Input validation failed for fields: [entityId]"
+    }
+  }
+}
+```
+
 Leveraging GraphQL Union types for error cases brings many benefits:
 
 1. Type-safety: the errors are also typed
