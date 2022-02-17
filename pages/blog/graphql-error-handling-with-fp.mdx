@@ -34,6 +34,18 @@ The standard error handling mechanism from GraphQL with return a JSON containing
 - a `data` key which contains the data corresponding to the GraphQL operation (query, mutation, subscription) invoked and
 - an `errors` key which contains an array of errors returned by the server, with a message and location.
 
+```json
+{
+  "errors": [
+    {
+      "message": "User not found",
+      "locations": [{ "line": 6, "column": 7 }],
+      "path": ["user", 1]
+    }
+  ]
+}
+```
+
 This standard error handling is not satisfactory for the many reasons:
 
 1. it is not easily parseable, it is more meant for a human user to read
