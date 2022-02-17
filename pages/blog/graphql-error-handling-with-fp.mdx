@@ -22,7 +22,15 @@ Contrary to REST, GraphQL does not use Status Code to differentiate a successful
 # GraphQL default error handling
 
 
-In GraphQL, you'll get a 5xx error in case the server is not available at all, but for other exceptions you'll get the standard error handling mechanism from GraphQL: in the JSON you receive there is:
+In GraphQL, all requests must go to a single endpoint:
+
+
+> POST https://example.com/graphql
+
+A GraphQL API will always return a `200 OK` Status Code, even in case of error.
+You'll get a 5xx error in case the server is not available at all.
+
+The standard error handling mechanism from GraphQL with return a JSON containing:
 - a `data` key which contains the data corresponding to the GraphQL operation (query, mutation, subscription) invoked and
 - an `errors` key which contains an array of errors returned by the server, with a message and location.
 
