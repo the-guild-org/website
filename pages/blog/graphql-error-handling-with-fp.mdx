@@ -57,14 +57,14 @@ This standard error handling is not satisfactory for the many reasons:
 # Better modelisation of errors using Union and Interfaces
 
 
-GraphQL has support for Union types (only for Types, not yet for Inputs). We can take advantage of it and design our schema to specify the happy and unhappy paths.
+GraphQL has support for Union types (only for Types, not yet for Inputs). We can take advantage of it and design our schema to specify all possible results: expected and unexpected / error cases.
 
 Leveraging GraphQL Union types for error cases brings many benefits:
 
 1. Type-safety: the errors are also typed
 2. The consumer cannot ignore the errors (the must be handled using inline fragments)
 3. Self-documented: the operation signature includes all possible cases (result and errors) therefore less documentation is required to explain the possible error cases
-4. The _unhappy_ paths are not unexpected anymore, there are just other possible results
+4. The unexpected results are now just other possible results
 
 ## Implementing Union types based error handling
 
@@ -126,7 +126,7 @@ type Query {
 ```
 
 We define a `BaseError` interface that all concrete Errors implement.
-Then, we define the query result as a Union type of the happy path (an `Entity`) and the other possible results (`NotFoundError`, `NotAllowedError`, etc.). In this manner, we extensively describe all possible results, with the added benefit that we can make our result type non-nullable (with the `!` character).
+Then, we define the query result as a Union type of the expected result (an `Entity`) and the other possible results (`NotFoundError`, `NotAllowedError`, etc.). In this manner, we extensively describe all possible results, with the added benefit that we can make our result type non-nullable (with the `!` character).
 
 For a more detailed explanation, you can read this article from Sasha Solomon: [200 OK! Error Handling in GraphQL](https://sachee.medium.com/200-ok-error-handling-in-graphql-7ec869aec9bc).
 
