@@ -2,7 +2,6 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { GetStaticProps } from 'next/types';
 import NextLink from 'next/link';
-import { css } from 'styled-components';
 import tw from 'twin.macro';
 import { format } from 'date-fns';
 import { Page } from '../ui/shared/Page';

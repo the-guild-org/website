@@ -46,14 +46,14 @@ export const RecommendedReadingSection: FC<{ articles: MetaWithLink[] }> = ({
         <Description css={tw`max-w-[700px]`}>
           Read and follow the most popular blog in the GraphQL Ecosystem
         </Description>
-        <NextLink href="/blog">
+        <NextLink href="/blog" passHref>
           <Anchor>View all posts ➔</Anchor>
         </NextLink>
       </div>
 
       <div css={tw`container mx-auto my-6 flex flex-wrap justify-center`}>
         {articles.map((article) => (
-          <NextLink key={article.title} href={article.link}>
+          <NextLink key={article.title} href={article.link} passHref>
             <BlogCard>
               {/*<img src={article.image} css={tw`max-w-[278px] max-h-[164px]`} />*/}
               <div
