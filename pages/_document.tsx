@@ -1,8 +1,15 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import Document, { Head, Main, NextScript, Html } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
 
+const noFlashCode = readFileSync(
+  join(process.cwd(), '/public/static/no-flash.mjs'),
+  'utf8'
+);
+
 export default class MyDocument extends Document {
-  static async getInitialProps(ctx: any) {
+  static async getInitialProps(ctx) {
     const sheet = new ServerStyleSheet();
     const originalRenderPage = ctx.renderPage;
 
@@ -45,8 +52,13 @@ export default class MyDocument extends Document {
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(richData) }}
           />
+          <link
+            href="https://fonts.googleapis.com/css?family=Poppins:400,500,700&display=swap"
+            rel="stylesheet"
+          />
         </Head>
         <body>
+          <script dangerouslySetInnerHTML={{ __html: noFlashCode }} />
           <Main />
           <NextScript />
         </body>

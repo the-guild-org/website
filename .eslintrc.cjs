@@ -38,6 +38,7 @@ module.exports = {
           },
         ],
         'no-else-return': ['error', { allowElseIf: false }],
+        'no-empty': ['error', { allowEmptyCatch: true }],
         'no-lonely-if': 'error',
         'no-restricted-globals': [
           'error',
@@ -53,6 +54,7 @@ module.exports = {
               "Use named import if you need import something from react. `import React from 'react'` not need in NextJS. Use 'FC' instead 'FunctionComponent'.",
           },
         ],
+        'no-var': 'error',
         'object-shorthand': ['error', 'always'],
         'prefer-destructuring': ['error', { object: true }],
         'prefer-template': 'error',

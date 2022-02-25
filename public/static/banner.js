@@ -1,10 +1,10 @@
 /* eslint-env browser */
 /**
- * @param {String} HTML representing any number of sibling elements
+ * @param {String} html representing any number of sibling elements
  * @return {NodeList}
  */
 function htmlToElements(html) {
-  var template = document.createElement('template');
+  const template = document.createElement('template');
   template.innerHTML = html;
   return template.content;
 }
@@ -26,10 +26,10 @@ function main() {
    */
   function toggleModal() {
     // Get the modal
-    var modal = document.getElementById('ossModal');
+    const modal = document.getElementById('ossModal');
 
     // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName('g-close')[0];
+    const span = document.getElementsByClassName('g-close')[0];
 
     modal.style.display = 'block';
 
@@ -48,7 +48,7 @@ function main() {
 
   function bindModal() {
     // Get the button that opens the modal
-    var btn = document.getElementById('oss-nav');
+    const btn = document.getElementById('oss-nav');
 
     // When the user clicks the button, open the modal
     btn.onclick = function () {
@@ -57,7 +57,7 @@ function main() {
   }
 
   function init() {
-    const guildHeader = htmlToElements(`
+    const guildHeader = htmlToElements(/* HTML */ `
       <style type="text/css">
         #g-header-bar {
           background-color: var(--ifm-navbar-background-color)
@@ -119,7 +119,7 @@ function main() {
           cursor: pointer;
         }
 
-        .productTable h4 {        
+        .productTable h4 {
           margin-bottom: 0;
           padding-bottom: 0;
         }
@@ -201,7 +201,6 @@ function main() {
 
       <!-- The Modal -->
       <div id="ossModal" class="g-modal">
-
         <!-- Modal content -->
         <div class="g-modal-content">
           <span class="g-close">&times;</span>
@@ -213,7 +212,10 @@ function main() {
           <div class="productTable" align="center">
             <div class="flex-item-left">
               <div class="ossCells">
-                <img src="https://graphql-code-generator.com/img/gql-codegen-cover.png" width="100">
+                <img
+                  src="https://graphql-code-generator.com/img/gql-codegen-cover.png"
+                  width="100"
+                />
               </div>
               <div class="ossContentCells">
                 <a href="https://graphql-code-generator.com/" target="_blank">
@@ -225,67 +227,81 @@ function main() {
 
             <div class="flex-item-right">
               <div class="ossCells">
-              <img src="${linkUrl}/img/logos/tools.svg" width="100">
+                <img src="${linkUrl}/img/logos/tools.svg" width="100" />
               </div>
               <div class="ossContentCells">
                 <a href="https://graphql-tools.com/" target="_blank">
                   <h4>GraphQL Tools</h4>
                 </a>
-                <p>A set of utilities to build your JavaScript GraphQL schema in a concise and powerful way.</p>
+                <p>
+                  A set of utilities to build your JavaScript GraphQL schema in
+                  a concise and powerful way.
+                </p>
               </div>
             </div>
 
             <div class="flex-item-left">
               <div class="ossCells">
-                <img src="${linkUrl}/img/logos/modules.svg" width="100">
+                <img src="${linkUrl}/img/logos/modules.svg" width="100" />
               </div>
               <div class="ossContentCells">
                 <a href="https://graphql-modules.com/" target="_blank">
                   <h4>GraphQL Modules</h4>
                 </a>
-                GraphQL Modules lets you separate your backend implementation to small, reusable, easy-to-implement and easy-to-test pieces.
+                GraphQL Modules lets you separate your backend implementation to
+                small, reusable, easy-to-implement and easy-to-test pieces.
               </div>
             </div>
 
             <div class="flex-item-right">
               <div class="ossCells">
-                <img src="${linkUrl}/img/logos/scalars.svg" width="100">
+                <img src="${linkUrl}/img/logos/scalars.svg" width="100" />
               </div>
               <div class="ossContentCells">
                 <a href="https://www.graphql-scalars.dev/" target="_blank">
                   <h4>GraphQL Scalars</h4>
                 </a>
-                A library of custom GraphQL Scalars for creating precise type-safe GraphQL schemas.
+                A library of custom GraphQL Scalars for creating precise
+                type-safe GraphQL schemas.
               </div>
             </div>
 
             <div class="flex-item-left">
               <div class="ossCells">
-                <img src="https://graphql-mesh.com/img/mesh-text-logo.svg" width="100">
+                <img
+                  src="https://graphql-mesh.com/img/mesh-text-logo.svg"
+                  width="100"
+                />
               </div>
               <div class="ossContentCells">
                 <a href="https://graphql-mesh.com/" target="_blank">
                   <h4>GraphQL Mesh</h4>
                 </a>
-                GraphQL Mesh allows you to use GraphQL query language to access data in remote APIs that don't run GraphQL (and also ones that do run GraphQL).
+                GraphQL Mesh allows you to use GraphQL query language to access
+                data in remote APIs that don't run GraphQL (and also ones that
+                do run GraphQL).
               </div>
             </div>
 
             <div class="flex-item-right">
               <div class="ossCells">
-                <img src="${linkUrl}/img/logos/apollo-angular.svg" width="100">
+                <img
+                  src="${linkUrl}/img/logos/apollo-angular.svg"
+                  width="100"
+                />
               </div>
               <div class="ossContentCells">
                 <a href="https://apollo-angular.com/" target="_blank">
                   <h4>Apollo Angular</h4>
                 </a>
-                A fully-featured, production ready caching GraphQL client for Angular and every GraphQL server.
+                A fully-featured, production ready caching GraphQL client for
+                Angular and every GraphQL server.
               </div>
             </div>
 
             <div class="flex-item-left">
               <div class="ossCells">
-                <img src="${linkUrl}/img/logos/cli.svg" width="100">
+                <img src="${linkUrl}/img/logos/cli.svg" width="100" />
               </div>
               <div class="ossContentCells">
                 <a href="https://graphql-cli.com/" target="_blank">
@@ -297,7 +313,7 @@ function main() {
 
             <div class="flex-item-right">
               <div class="ossCells">
-                <img src="${linkUrl}/img/logos/config.svg" width="100">
+                <img src="${linkUrl}/img/logos/config.svg" width="100" />
               </div>
               <div class="ossContentCells">
                 <a href="https://graphql-config.com/" target="_blank">
@@ -309,7 +325,7 @@ function main() {
 
             <div class="flex-item-left">
               <div class="ossCells">
-                <img src="${linkUrl}/img/logos/sofa.svg" width="100">
+                <img src="${linkUrl}/img/logos/sofa.svg" width="100" />
               </div>
               <div class="ossContentCells">
                 <a href="https://www.sofa-api.com/" target="_blank">
@@ -321,48 +337,66 @@ function main() {
 
             <div class="flex-item-right">
               <div class="ossCells">
-                <img src="${linkUrl}/img/logos/stencil-apollo.svg" width="100">
+                <img
+                  src="${linkUrl}/img/logos/stencil-apollo.svg"
+                  width="100"
+                />
               </div>
               <div class="ossContentCells">
-                <a href="https://github.com/ardatan/stencil-apollo" target="_blank">
+                <a
+                  href="https://github.com/ardatan/stencil-apollo"
+                  target="_blank"
+                >
                   <h4>Apollo Stencil</h4>
                 </a>
                 Stencil-Apollo lets you easily use GraphQL in Web Components.
               </div>
             </div>
 
-
             <div class="flex-item-left">
               <div class="ossCells">
-                <img src="https://raw.githubusercontent.com/dotansimha/graphql-eslint/master/logo.png" width="100">
+                <img
+                  src="https://raw.githubusercontent.com/dotansimha/graphql-eslint/master/logo.png"
+                  width="100"
+                />
               </div>
               <div class="ossContentCells">
-                <a href="https://github.com/dotansimha/graphql-eslint/" target="_blank">
+                <a
+                  href="https://github.com/dotansimha/graphql-eslint/"
+                  target="_blank"
+                >
                   <h4>GraphQL ESLint</h4>
                 </a>
-                GraphQL-ESLint integrates GraphQL AST in the ESLint core (as a parser).
+                GraphQL-ESLint integrates GraphQL AST in the ESLint core (as a
+                parser).
               </div>
             </div>
 
             <div class="flex-item-right">
               <div class="ossCells">
-                <img src="https://graphql-inspector.com/img/logo.svg" width="100">
+                <img
+                  src="https://graphql-inspector.com/img/logo.svg"
+                  width="100"
+                />
               </div>
               <div class="ossContentCells">
                 <a href="https://graphql-inspector.com/" target="_blank">
                   <h4>GraphQL Inspector</h4>
                 </a>
-                GraphQL Inspector is a set of tools to help you better maintain and improve GraphQL API as well as GraphQL consumers.
+                GraphQL Inspector is a set of tools to help you better maintain
+                and improve GraphQL API as well as GraphQL consumers.
               </div>
             </div>
 
-
             <div class="flex-item-left">
               <div class="ossCells">
-                <img src="${linkUrl}/img/logos/whats-app.svg" width="100">
+                <img src="${linkUrl}/img/logos/whats-app.svg" width="100" />
               </div>
               <div class="ossContentCells">
-                <a href="https://github.com/Urigo/WhatsApp-Clone-Tutorial" target="_blank">
+                <a
+                  href="https://github.com/Urigo/WhatsApp-Clone-Tutorial"
+                  target="_blank"
+                >
                   <h4>Whatsapp Clone Tutorial</h4>
                 </a>
                 An open-source full-stack example app.
@@ -380,14 +414,9 @@ function main() {
                 GraphQL Inspector is a set of tools to help you better maintain and improve GraphQL API as well as GraphQL consumers.
               </div>
             </div>-->
-
-
           </div>
-
         </div>
-
       </div>
-
 
       <div id="g-header-bar">
         <a href="${linkUrl}" title="The Guild - Open Source">
@@ -402,7 +431,12 @@ function main() {
           <a href="${linkUrl}/services" class="g-header-links">Our Services</a>
           <a id="oss-nav" class="g-header-links">
             Open Source
-            <img src="${linkUrl}/static/go-down.svg" height="10" width="12" style="color:black;" />
+            <img
+              src="${linkUrl}/static/go-down.svg"
+              height="10"
+              width="12"
+              style="color:black;"
+            />
           </a>
           <!--<a href="${linkUrl}/open-source" class="g-header-links">Products</a>-->
           <a href="${linkUrl}/blog" class="g-header-links">Blog</a>

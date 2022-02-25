@@ -111,10 +111,6 @@ export default class MyApp extends App {
             title="RSS Feed for the-guild.dev"
             href="/feed.xml"
           />
-          <link
-            href="https://fonts.googleapis.com/css?family=Poppins:400,500,700&display=swap"
-            rel="stylesheet"
-          />
         </Head>
         <Script src="/static/crisp.js" />
         <GlobalStyle />
