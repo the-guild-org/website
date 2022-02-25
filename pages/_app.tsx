@@ -5,7 +5,7 @@ import Script from 'next/script';
 import { extendTheme } from '@chakra-ui/react';
 import { createGlobalStyle } from 'styled-components';
 import { CombinedThemeProvider, AppSeoProps } from '@guild-docs/client';
-import 'prism-theme-night-owl';
+import 'prism-theme-night-owl/build/no-italics.css';
 import 'remark-admonitions/styles/classic.css';
 import * as gtag from '../lib/gtag';
 import { GA_TRACKING_ID } from '../lib/gtag';
