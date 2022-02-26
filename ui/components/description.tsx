@@ -3,10 +3,13 @@ import clsx from 'clsx';
 
 type Size = 'lg' | 'md';
 
-const Description = styled.p(({ $size = 'lg' }: { $size?: Size }) => [
-  tw`text-gray-500`,
-  $size === 'lg' && tw`leading-6 mb-7`,
-  $size === 'md' && tw`text-xs leading-4 mb-6`,
-]);
+const Description = styled.p.attrs<{ $size: Size }>(({ className, $size }) => ({
+  className: clsx(
+    'text-gray-500',
+    $size === 'lg' && 'leading-6 mb-7',
+    $size === 'md' && 'text-xs leading-4 mb-6',
+    className
+  ),
+}));
 
 export default Description;

@@ -2,7 +2,12 @@ import NativeLink from 'next/link';
 import styled from 'styled-components';
 import clsx from 'clsx';
 
-export const Anchor = tw.a`text-gray-500 font-bold hover:text-gray-600 dark:hover:text-gray-300`;
+export const Anchor = styled.a.attrs(({ className }) => ({
+  className: clsx(
+    'text-gray-500 font-bold hover:text-gray-600 dark:hover:text-gray-300',
+    className
+  ),
+}));
 
 export const ExternalLink = styled.a.attrs((props) => ({
   href: props.href,
@@ -54,6 +59,7 @@ export const InternalLink = ({ href, as, children }) => (
           font-size: inherit;
           color: var(--colors-accent);
         }
+
         a:hover {
           color: var(--colors-accent-light);
           text-decoration: none;
