@@ -1,8 +1,7 @@
 import { FC } from 'react';
 import NextLink from 'next/link';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { useColorModeValue } from '@chakra-ui/react';
 import { Anchor, Description, Heading } from './components';
 
 const slideUpAndFade = keyframes`
@@ -89,21 +88,14 @@ const StyledContent = styled(Tooltip.Content)`
 `;
 
 export const PlatformSection: FC = () => {
-  const bg = useColorModeValue('white', 'var(--colors-background)');
   return (
     <Tooltip.Provider>
       <div
         id="platform"
-        /* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */
-        // @ts-ignore
-        css={css`
-          background: linear-gradient(
-              180deg,
-              rgba(0, 0, 0, 0) 0%,
-              rgba(41, 40, 40, 0.2) 100%
-            ),
-            ${bg};
-        `}
+        className="
+        [background:linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(41,40,40,0.2)100%)]
+        dark:[background:linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(41,40,40,0.2)100%),#0b0d11]
+        "
       >
         <div className="container flex flex-col items-center pt-20 pb-28 text-center">
           <Heading>The Platform</Heading>
@@ -125,14 +117,7 @@ export const PlatformSection: FC = () => {
               <Tooltip.Root key={product.name}>
                 <Tooltip.Trigger asChild>
                   <a
-                    /* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */
-                    // @ts-ignore
-                    css={css`
-                      // 'grayscale' and 'contrast' don't work with tailwind
-                      filter: grayscale(100%) contrast(0%);
-                    `}
                     className="
-                      hover:filter-none!
                       m-2
                       rounded
                       border
@@ -140,15 +125,17 @@ export const PlatformSection: FC = () => {
                       border-transparent
                       py-3
                       px-5
+                      contrast-0
+                      grayscale
                       transition-all
                       duration-200
                       ease-linear
                       hover:text-gray-600
+                      hover:filter-none
                       dark:hover:border-gray-800
                       dark:hover:text-white
                       lg:first:ml-6
                     "
-                    // title={}
                     href={product.url}
                     target="_blank"
                     rel="noopener noreferrer"

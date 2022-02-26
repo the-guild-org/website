@@ -9,7 +9,7 @@ import 'prism-theme-night-owl/build/no-italics.css';
 import 'remark-admonitions/styles/classic.css';
 import * as gtag from '../lib/gtag';
 import { GA_TRACKING_ID } from '../lib/gtag';
-import '../public/static/global.css'
+import '../public/static/global.css';
 
 Router.events.on('routeChangeComplete', (url) => gtag.pageview(url));
 

@@ -21,7 +21,6 @@ export const ServicesSection: FC = () => {
             <a
               title={service.name}
               className="
-              dark:bg-[#24272E4C]
               m-4
               h-[370px]
               w-[278px]
@@ -35,6 +34,7 @@ export const ServicesSection: FC = () => {
               duration-200
               hover:border-gray-200
               hover:[box-shadow:0_-6px_34px_rgba(117,117,117,0.15)]
+              dark:bg-[#24272E4C]
               dark:hover:border-[#24272E]"
             >
               <img
