@@ -1,52 +1,39 @@
 import { FC } from 'react';
-import styled from 'styled-components';
 import { GetStaticProps } from 'next/types';
-import NextLink from 'next/link';
 import tw from 'twin.macro';
-import { format } from 'date-fns';
 import { Page } from '../ui/shared/Page';
-import { Container } from '../ui/shared/Layout';
-import { Newsletter } from '../ui/blog/newsletter';
-import { MetaWithLink, pickAuthor } from '../lib/meta';
+import { Newsletter, Heading, BlogCardList, TagList } from '../ui/components';
+import { MetaWithLink } from '../lib/meta';
 import { getAllArticles } from '../lib/get-all-articles';
-import { authors } from '../ui/authors';
 import { HeroSection } from '../ui/hero-section';
-import { Description, Heading } from '../ui';
-import { BlogCard } from '../ui/recommended-reading-section';
-import { Tag } from '../ui/blog/tag';
 
 interface Props {
   articles: MetaWithLink[];
   tagFilter?: string[];
 }
 
-const NewsletterContainer = styled(Container)`
-  padding-top: 30px;
-`;
-
-export const AllArticles = styled(Container)`
-  padding: 125px 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-`;
-
 function extractRelevantTags(articles: Props['articles']) {
   const allTags = articles.flatMap((article) => article.tags || []);
 
-  const map = new Map<string, number>();
+  const map: Record<string, number> = Object.create(null);
 
   for (const tag of allTags) {
-    map.set(tag, (map.get(tag) || 0) + 1);
+    map[tag] ??= 0;
+    map[tag] += 1;
   }
 
-  // nasty
-  map.set('codegen', 100);
-  map.set('envelop', 100);
+  const sorted = Object.entries(map)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
 
-  const sorted = Array.from(map).sort((a, b) => b[1] - a[1]);
+  if (sorted.every(([tagName]) => tagName !== 'codegen')) {
+    sorted.unshift(['codegen', 0]);
+  }
+  if (sorted.every(([tagName]) => tagName !== 'envelop')) {
+    sorted.unshift(['envelop', 0]);
+  }
 
-  return sorted.slice(0, 10).map((v) => v[0]);
+  return sorted.slice(0, 10);
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
@@ -58,14 +45,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 };
 
 const Blog: FC<Props> = ({ articles, tagFilter }) => {
-  const hasTagFilter = tagFilter && tagFilter.length > 0;
+  const tagFilters = tagFilter?.join(', ');
   const allTags = extractRelevantTags(articles);
 
-  const title = hasTagFilter
-    ? `The Guild Blog - ${tagFilter.join(', ')}`
+  const title = tagFilters
+    ? `The Guild Blog - ${tagFilters}`
     : 'The Guild Blog';
-  const description = hasTagFilter
-    ? `List of articles related to ${tagFilter.join(', ')}`
+  const description = tagFilters
+    ? `List of articles related to ${tagFilters}`
     : 'Announcements about our Open-Source projects';
 
   return (
@@ -73,58 +60,16 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
       <HeroSection>
         <Heading>The Guild's blog</Heading>
       </HeroSection>
-      <div css={tw`text-center mt-2`}>
-        {allTags.map((t) => (
-          <Tag tag={t} key={t} asLink />
-        ))}
+      <div css={tw`container max-w-[1200px]!`}>
+        {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
+        {/* @ts-ignore*/}
+        <TagList tags={allTags} withCount asLink css={tw`mt-10 mb-20`} />
+        {/* @ts-ignore*/}
+        {!tagFilters && <Newsletter css={tw`mb-14`} />}
+        <BlogCardList articles={articles} />
       </div>
-      {!hasTagFilter && (
-        <NewsletterContainer>
-          <Newsletter />
-        </NewsletterContainer>
-      )}
-      <AllArticles>
-        {articles?.map((article) => (
-          <NextLink key={article.title} href={article.link} passHref>
-            <BlogCard>
-              <TeaserImage imageUrl={article.thumbnail ?? article.image} />
-              <div css={tw`p-5`}>
-                <Heading $size="md">{article.title}</Heading>
-                <Description
-                  $size="md"
-                  css={tw`overflow-ellipsis overflow-hidden max-h-[48px] mb-4`}
-                >
-                  {article.description}
-                </Description>
-                <div css={tw`text-xs`}>
-                  <span css={tw`dark:text-gray-200 font-bold`}>
-                    {authors[pickAuthor(article)].name}
-                  </span>
-                  <span css={tw`dark:text-gray-500`}>
-                    {' '}
-                    • {format(new Date(article.date), 'LLL do y')}
-                  </span>
-                </div>
-              </div>
-            </BlogCard>
-          </NextLink>
-        ))}
-      </AllArticles>
     </Page>
   );
 };
-
-function TeaserImage(props: { imageUrl: string }) {
-  return (
-    <div
-      css={[
-        tw`w-full h-full max-w-[278px] max-h-[164px] bg-cover bg-center bg-no-repeat flex-shrink-0`,
-      ]}
-      style={{
-        backgroundImage: `url(${props.imageUrl}`,
-      }}
-    />
-  );
-}
 
 export default Blog;

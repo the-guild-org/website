@@ -1,82 +1,30 @@
 import styled from 'styled-components';
-import { Code, InlineCode } from './code';
-import { GenericLink } from './link';
+import tw from 'twin.macro';
+import { GenericLink, Image } from '../../components';
 import { CodeSandbox } from '../../shared/embed/CodeSandbox';
 import { Gfycat } from '../../shared/embed/Gfycat';
 import { StackBlitz } from '../../shared/embed/StackBlitz';
 import { Tweet } from '../../shared/embed/Tweet';
 import { YouTube } from '../../shared/embed/YouTube';
 import { LinkPreview } from '../../shared/embed/LinkPreview';
-import { Image } from '../image';
-
-const H1 = styled.h2`
-  text-align: left;
-  margin-top: 2.5rem;
-  font-size: 2rem;
-  line-height: 2.3rem;
-`;
-
-const H2 = styled.h3`
-  margin-top: 2.5rem;
-  font-size: 1.5rem;
-`;
-
-const H3 = styled.h4`
-  margin-top: 2.5rem;
-`;
-
-const P = styled.p`
-  line-height: 1.9rem;
-`;
-
-const Li = styled.li`
-  margin-bottom: 0.35rem;
-`;
 
 const Ul = styled.ul`
-  list-style: none;
-  margin-bottom: 2rem;
-
-  & > ${Li} {
-    &:before {
-      content: '-';
-      display: inline-block;
-      color: #6d6d6d;
-      position: absolute;
-      margin-left: -25px;
-    }
+  ${tw`relative mb-8 list-none`}
+  & > li:before {
+    ${tw`content-['–'] absolute -left-5`}
   }
 `;
 
-const Ol = styled.ol`
-  margin-bottom: 2rem;
-`;
-
 const Blockquote = styled.blockquote`
-  margin: 2rem 0;
-  padding-left: 3rem;
-  color: var(--colors-dim);
-  font-size: 1.5rem;
-  font-weight: 400;
-  font-style: italic;
-
+  ${tw`
+    italic text-2xl pl-8 my-8 font-light
+    text-[#24272E] dark:text-[#C4C4C4]
+    border-l-4 border-solid border-l-[#7F818C] dark:border-l-[#C4C4C4]
+  `}
   & > p {
     line-height: 2.5rem;
   }
 `;
-
-const Hr = () => (
-  <div>
-    <hr />
-    <style jsx>{`
-      hr {
-        margin: 4rem 0;
-        border: none;
-        border-bottom: 1px solid #eee;
-      }
-    `}</style>
-  </div>
-);
 
 const Img = styled(Image).attrs((props) => ({
   ...props,
@@ -92,19 +40,51 @@ const Iframe = styled.iframe`
   margin: 0 auto;
 `;
 
+const Code = styled.pre.attrs<{ syntax?: string }>(({ syntax }) => ({
+  className: syntax ? ` ${syntax}` : '',
+}))`
+  background: #1d1f21;
+  color: #f8f8f2;
+  overflow: auto;
+  padding: 1.5rem;
+  border-radius: 3px;
+  -webkit-overflow-scrolling: touch;
+  font-size: 1rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  letter-spacing: 0;
+  font-weight: 400;
+  line-height: 1.4;
+`;
+
+const InlineCode = styled.code.attrs<{ wrap?: boolean }>(({ wrap }) => ({
+  className: wrap ? 'wrap' : '',
+}))`
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+
+  font-family: Monaco, Consolas, 'Andale  Mono', 'DejaVu Sans Mono', monospace;
+`;
+
 export const components = {
-  h1: H1,
-  h2: H2,
-  h3: H3,
-  li: Li,
+  h1: tw.h1`text-3xl dark:text-[#FCFCFC] font-extrabold mb-5`,
+  h2: tw.h2`text-2xl dark:text-[#FCFCFC] font-extrabold mb-3`,
+  h3: tw.h3`dark:text-[#FCFCFC] font-extrabold mb-2`,
+  li: tw.li`mb-1.5`,
   ul: Ul,
-  ol: Ol,
+  ol: tw.ol`mb-8`,
   code: Code,
   inlineCode: InlineCode,
   blockquote: Blockquote,
   a: GenericLink,
-  p: P,
-  hr: Hr,
+  p: tw.p`leading-[1.65] my-5`,
+  hr: tw.hr`border-[#24272E] my-10`,
   img: Img,
   iframe: Iframe,
   CodeSandbox,

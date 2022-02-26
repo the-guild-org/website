@@ -2,7 +2,7 @@
 // Insert this script in your index.html right after the <body> tag
 // This will help to prevent a flash if dark mode is the default
 
-(function () {
+(() => {
   const STORAGE_KEY = 'chakra-ui-color-mode';
 
   function setThemeOnHTML(darkMode) {
@@ -10,7 +10,7 @@
     htmlEl.dataset.theme = darkMode ? 'dark' : 'light';
   }
 
-  let localStorageTheme = localStorage.getItem(STORAGE_KEY);
+  const localStorageTheme = localStorage.getItem(STORAGE_KEY);
 
   // Determine from localStorage
   if (localStorageTheme) {

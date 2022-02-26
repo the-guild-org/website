@@ -13,11 +13,6 @@ export const Container = styled.div`
   }
 `;
 
-const Wrapper = styled.div`
-  width: 100%;
-  height: 100%;
-`;
-
 export const Button = styled.button`
   width: auto;
   height: auto;
@@ -53,8 +48,8 @@ export const Layout: FC = ({ children }) => {
   const router = useRouter();
 
   return (
-    <Wrapper>
-      <GlobalStyles includeFonts />
+    <>
+      <GlobalStyles includeFonts={false} />
       <Header
         activeLink={router.asPath}
         accentColor="var(--colors-accent)"
@@ -116,7 +111,7 @@ export const Layout: FC = ({ children }) => {
           // }}
         />
       </div>
-    </Wrapper>
+    </>
   );
 };
 
@@ -129,20 +124,20 @@ export const Section = styled.section<{ noNotch?: boolean; light?: boolean }>`
     props.noNotch
       ? ''
       : css`
-          &::before {
-            content: '';
-            position: absolute;
-            top: -40px;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 40px 40px 40px;
-            border-color: transparent transparent
-              ${props.light ? '#fff' : '#16171c'} transparent;
-            left: 50%;
-            transform: translateX(-50%);
-          }
-        `}
+        &::before {
+          content: '';
+          position: absolute;
+          top: -40px;
+          width: 0;
+          height: 0;
+          border-style: solid;
+          border-width: 0 40px 40px 40px;
+          border-color: transparent transparent
+            ${props.light ? '#fff' : '#16171c'} transparent;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+      `}
 `;
 
 const HeroContainer = styled.div<{ shrink?: boolean }>`

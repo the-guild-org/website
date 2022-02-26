@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import ReactAvatar from 'react-avatar';
 
-export const Avatar: FC<{ author: any }> = ({ author }) => {
+const Avatar: FC<{ author: any }> = ({ author }) => {
   return (
     <ReactAvatar
       round
@@ -13,3 +13,5 @@ export const Avatar: FC<{ author: any }> = ({ author }) => {
     />
   );
 };
+
+export default Avatar;

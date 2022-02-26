@@ -10,7 +10,7 @@ import { ServicesSection } from '../ui/services-section';
 import { GetInTouchSection } from '../ui/get-in-touch-section';
 import { ClientLogosSection } from '../ui/client-logos-section';
 import { RecommendedReadingSection } from '../ui/recommended-reading-section';
-import { Button, Description, Heading } from '../ui';
+import { Button, Description, Heading } from '../ui/components';
 
 type Props = {
   articles: MetaWithLink[];

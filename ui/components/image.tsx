@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-export const Image: FC<{
+const Image: FC<{
   alt: string;
   src: string;
   className?: string;
@@ -29,3 +29,5 @@ export const Image: FC<{
 
   return <img className={className} src={src} alt={alt} />;
 };
+
+export default Image;

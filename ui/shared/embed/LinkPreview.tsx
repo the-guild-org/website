@@ -1,6 +1,6 @@
 import { FC, useEffect, useLayoutEffect, useState } from 'react';
 import styled from 'styled-components';
-import { GenericLink } from '../../blog/elements/link';
+import { GenericLink } from '../../components';
 import { Observer } from '../Observer';
 
 type PreviewData = {

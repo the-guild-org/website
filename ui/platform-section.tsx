@@ -4,7 +4,7 @@ import styled, { css, keyframes } from 'styled-components';
 import tw from 'twin.macro';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { useColorModeValue } from '@chakra-ui/react';
-import { Anchor, Description, Heading } from './index';
+import { Anchor, Description, Heading } from './components';
 
 const slideUpAndFade = keyframes`
   from {
@@ -105,7 +105,7 @@ export const PlatformSection: FC = () => {
         `}
       >
         <div
-          css={tw`container mx-auto pt-20 flex flex-col items-center text-center pb-28`}
+          css={tw`container pt-20 flex flex-col items-center text-center pb-28`}
         >
           <Heading>The Platform</Heading>
           <Description css={tw`max-w-[400px] md:max-w-[700px]`}>

@@ -6,7 +6,7 @@ import { Section, Container } from '../ui/shared/Layout';
 import { projects } from '../lib/projects';
 import { ProjectSeparator, Project } from '../ui/shared/Projects';
 import { HeroSection } from '../ui/hero-section';
-import { Heading } from '../ui';
+import { Heading } from '../ui/components';
 
 const ProjectsSection = styled(Section)`
   padding: 50px 0;

@@ -2,7 +2,7 @@ import { FC, ReactElement } from 'react';
 import styled from 'styled-components';
 import NativeLink from 'next/link';
 import LazyLoad from 'react-lazyload';
-import { Image } from '../blog/image';
+import { Image } from '../components';
 import { withPlaceholder } from '../../lib/images';
 
 const Title = styled.h2`

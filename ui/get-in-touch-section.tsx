@@ -11,7 +11,7 @@ import {
 import styled from 'styled-components';
 import Confetti from 'react-confetti';
 import { useMutation } from '../hooks/use-graphql';
-import { Heading, Description, Button, Anchor, Input } from '../ui';
+import { Heading, Description, Button, Anchor, Input } from './components';
 
 const Form = styled.form`
   display: flex;
@@ -132,7 +132,7 @@ export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
 }) => {
   return (
     <div css={[tw`relative my-[200px]`, !hideCover && tw`md:mb-[400px]`]}>
-      <div css={tw`container mx-auto flex`}>
+      <div css={tw`container flex`}>
         <div
           css={[tw`flex-1`, !hideCover && tw`p-4 2xl:pl-40 lg:max-w-[500px]`]}
         >

@@ -56,6 +56,7 @@ module.exports = {
         ],
         'no-var': 'error',
         'object-shorthand': ['error', 'always'],
+        'prefer-const': 'error',
         'prefer-destructuring': ['error', { object: true }],
         'prefer-template': 'error',
         'react/jsx-boolean-value': ['error', 'never'],

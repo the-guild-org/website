@@ -3,10 +3,14 @@ import { join } from 'node:path';
 import Document, { Head, Main, NextScript, Html } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
 
+const JS_COMMENT_REGEX = /\/\*[\s\S]*?\*\/|\/\/.*/g;
+
 const noFlashCode = readFileSync(
   join(process.cwd(), '/public/static/no-flash.mjs'),
   'utf8'
-);
+)
+  .replace(JS_COMMENT_REGEX, '')
+  .trim();
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
@@ -53,7 +57,7 @@ export default class MyDocument extends Document {
             dangerouslySetInnerHTML={{ __html: JSON.stringify(richData) }}
           />
           <link
-            href="https://fonts.googleapis.com/css?family=Poppins:400,500,700&display=swap"
+            href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap"
             rel="stylesheet"
           />
         </Head>
