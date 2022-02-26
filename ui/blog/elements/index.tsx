@@ -21,9 +21,12 @@ const Ul = styled.ul.attrs(({ className }) => ({
 
 const Blockquote = styled.blockquote(({ className }) => ({
   className: clsx(
-    `italic text-2xl pl-8 my-8 font-light
+    `
+    pl-8 my-8
+    text-2xl italic font-light
     text-[#24272E] dark:text-[#C4C4C4]
-    border-l-4 border-solid border-l-[#7F818C] dark:border-l-[#C4C4C4]`,
+    border-l-4 border-l-[#7F818C] dark:border-l-[#C4C4C4] border-solid
+    `,
     className
   ),
   css: css`
@@ -80,18 +83,24 @@ const InlineCode = styled.code.attrs<{ wrap?: boolean }>(({ wrap }) => ({
 `;
 
 export const components = {
-  h1: tw.h1`text-3xl dark:text-[#FCFCFC] font-extrabold mb-5`,
-  h2: tw.h2`text-2xl dark:text-[#FCFCFC] font-extrabold mb-3`,
-  h3: tw.h3`dark:text-[#FCFCFC] font-extrabold mb-2`,
-  li: tw.li`mb-1.5`,
+  h1: styled.h1.attrs(() => ({
+    className: 'text-3xl dark:text-[#FCFCFC] font-extrabold mb-5',
+  })),
+  h2: styled.h2.attrs(() => ({
+    className: 'text-2xl dark:text-[#FCFCFC] font-extrabold mb-3',
+  })),
+  h3: styled.h3.attrs(() => ({
+    className: 'dark:text-[#FCFCFC] font-extrabold mb-2',
+  })),
+  li: styled.li.attrs(() => ({ className: 'mb-1.5' })),
   ul: Ul,
-  ol: tw.ol`mb-8`,
+  ol: styled.ol.attrs(() => ({ className: 'mb-8' })),
   code: Code,
   inlineCode: InlineCode,
   blockquote: Blockquote,
   a: GenericLink,
-  p: tw.p`leading-[1.65] my-5`,
-  hr: tw.hr`border-[#24272E] my-10`,
+  p: styled.p.attrs(() => ({ className: 'leading-[1.65] my-5' })),
+  hr: styled.hr.attrs(() => ({ className: 'border-[#24272E] my-10' })),
   img: Img,
   iframe: Iframe,
   CodeSandbox,
