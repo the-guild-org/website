@@ -102,13 +102,14 @@ module.exports = {
             'youtube-mdx-embed',
             'twitter-tweet',
             'codesandbox-mdx-embed',
-            'drag-none', // report about
+            'drag-none', // false positive
+            'filter-none', // false positive
           ],
-          officialSorting: true,
         },
       },
       rules: {
-        'tailwindcss/no-custom-classname': 'error',
+        'tailwindcss/no-custom-classname': 'error', // set more strict to highlight in editor
+        'tailwindcss/classnames-order': 'off', // conflicts with official prettier-plugin-tailwindcss and tailwind v3
       },
     },
   ],
