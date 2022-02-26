@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import tw from 'twin.macro';
+import clsx from 'clsx';
 import { logos } from '../lib/logos';
 
 export const ClientLogosSection: FC = () => {

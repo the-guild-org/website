@@ -1,4 +1,4 @@
-import tw from 'twin.macro';
+import clsx from 'clsx';
 
 const Button = tw.button`
 text-sm

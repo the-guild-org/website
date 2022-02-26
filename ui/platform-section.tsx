@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import NextLink from 'next/link';
 import styled, { css, keyframes } from 'styled-components';
-import tw from 'twin.macro';
+import clsx from 'clsx';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { useColorModeValue } from '@chakra-ui/react';
 import { Anchor, Description, Heading } from './components';

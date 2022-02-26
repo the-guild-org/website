@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import NextLink from 'next/link';
 import { css } from 'styled-components';
-import tw from 'twin.macro';
+import clsx from 'clsx';
 import { useColorModeValue } from '@chakra-ui/react';
 import { MetaWithLink } from '../lib/meta';
 import { Heading, Description, Anchor, BlogCardList } from './components';

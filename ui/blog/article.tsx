@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import styled, { css } from 'styled-components';
 import format from 'date-fns/format';
-import tw from 'twin.macro';
+import clsx from 'clsx';
 import { components } from './elements';
 import {
   Newsletter,

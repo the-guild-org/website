@@ -1,6 +1,6 @@
 import NativeLink from 'next/link';
 import styled from 'styled-components';
-import tw from 'twin.macro';
+import clsx from 'clsx';
 
 export const Anchor = tw.a`text-gray-500 font-bold hover:text-gray-600 dark:hover:text-gray-300`;
 

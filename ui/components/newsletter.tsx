@@ -1,7 +1,7 @@
 import { FC, ChangeEvent, useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Confetti from 'react-confetti';
-import tw from 'twin.macro';
+import clsx from 'clsx';
 import { css } from 'styled-components';
 import { useMutation } from '../../hooks/use-graphql';
 import Button from './button';

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import tw from 'twin.macro';
+import clsx from 'clsx';
 
 type Size = 'lg' | 'md';
 

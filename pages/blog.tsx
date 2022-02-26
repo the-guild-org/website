@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { GetStaticProps } from 'next/types';
-import tw from 'twin.macro';
+import clsx from 'clsx';
 import { Page } from '../ui/shared/Page';
 import { Newsletter, Heading, BlogCardList, TagList } from '../ui/components';
 import { MetaWithLink } from '../lib/meta';

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { MDXProvider } from '@mdx-js/react';
-import tw from 'twin.macro';
+import clsx from 'clsx';
 import { components } from './blog/elements';
 import { Page } from './shared/Page';
 import { Meta } from '../lib/meta';

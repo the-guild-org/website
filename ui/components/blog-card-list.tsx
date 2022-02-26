@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import tw from 'twin.macro';
+import clsx from 'clsx';
 import NextLink from 'next/link';
 import { format } from 'date-fns';
 import Description from './description';

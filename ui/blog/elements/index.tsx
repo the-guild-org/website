@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import tw from 'twin.macro';
+import clsx from 'clsx';
 import { GenericLink, Image } from '../../components';
 import { CodeSandbox } from '../../shared/embed/CodeSandbox';
 import { Gfycat } from '../../shared/embed/Gfycat';
