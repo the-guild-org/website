@@ -94,6 +94,8 @@ export const PlatformSection: FC = () => {
     <Tooltip.Provider>
       <div
         id="platform"
+        /* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */
+        // @ts-ignore
         css={css`
           background: linear-gradient(
               180deg,
@@ -123,6 +125,8 @@ export const PlatformSection: FC = () => {
               <Tooltip.Root key={product.name}>
                 <Tooltip.Trigger asChild>
                   <a
+                    /* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */
+                    // @ts-ignore
                     css={css`
                       // 'grayscale' and 'contrast' don't work with tailwind
                       filter: grayscale(100%) contrast(0%);

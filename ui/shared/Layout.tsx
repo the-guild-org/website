@@ -66,6 +66,8 @@ export const Layout: FC = ({ children }) => {
       />
       {children}
       <div
+        /* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */
+        // @ts-ignore
         css={css`
           // TODO: FIX guild/components - Input style is broken, need to reset default style for newsletter input 🤷‍
           input {

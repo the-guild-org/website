@@ -20,6 +20,6 @@ disabled:cursor-not-allowed
       box-shadow: 0 0 0 3px rgba(164, 202, 254, 0.45); /* use tailwindcss class in v3 */
     }
   `,
-}));
+})) as any;
 
 export default Input;

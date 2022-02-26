@@ -7,7 +7,7 @@ export const Anchor = styled.a.attrs(({ className }) => ({
     'font-bold text-gray-500 hover:text-gray-600 dark:hover:text-gray-300',
     className
   ),
-}));
+})) as any;
 
 export const ExternalLink = styled.a.attrs((props) => ({
   href: props.href,

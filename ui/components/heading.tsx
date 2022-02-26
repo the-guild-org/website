@@ -12,6 +12,6 @@ const Heading = styled.h2.attrs<{ $size?: Size }>(
       className
     ),
   })
-);
+) as any;
 
 export default Heading;

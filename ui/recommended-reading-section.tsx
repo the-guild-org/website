@@ -11,6 +11,8 @@ export const RecommendedReadingSection: FC<{ articles: MetaWithLink[] }> = ({
   const bg = useColorModeValue('white', 'var(--colors-background)');
   return (
     <div
+      /* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */
+      // @ts-ignore
       css={css`
         background: linear-gradient(
             180deg,
@@ -20,9 +22,9 @@ export const RecommendedReadingSection: FC<{ articles: MetaWithLink[] }> = ({
           ${bg};
       `}
     >
-      <div className='flex flex-col items-center py-28'>
-        <Heading className='text-center'>Recommended Reading</Heading>
-        <Description className='max-w-[700px]'>
+      <div className="flex flex-col items-center py-28">
+        <Heading className="text-center">Recommended Reading</Heading>
+        <Description className="max-w-[700px]">
           Read and follow the most popular blog in the GraphQL Ecosystem
         </Description>
         <NextLink href="/blog" passHref>

@@ -278,6 +278,8 @@ const Article = (meta: Meta): FC =>
               </GenericLink>{' '}
               and get in touch.
             </ConsultingInfo>
+            {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
+            {/* @ts-ignore*/}
             <Content tw="text-[#7F818C]">{children}</Content>
           </div>
           <div className="container my-20 max-w-[1200px]!">

@@ -19,7 +19,7 @@ const Ul = styled.ul.attrs(({ className }) => ({
   `,
 }));
 
-const Blockquote = styled.blockquote(({ className }) => ({
+const Blockquote = styled.blockquote.attrs(({ className }) => ({
   className: clsx(
     `
     pl-8 my-8
