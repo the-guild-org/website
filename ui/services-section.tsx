@@ -12,9 +12,9 @@ const ServiceCard = styled.a`
 export const ServicesSection: FC = () => {
   return (
     <>
-      <div css={tw`pt-28 flex flex-col items-center text-center`}>
+      <div className='pt-28 flex flex-col items-center text-center'>
         <Heading>The Guild's Services</Heading>
-        <Description css={tw`max-w-[700px] px-2 md:px-0`}>
+        <Description className='max-w-[700px] px-2 md:px-0'>
           Work directly with the most powerful group of API developers that
           created the open source infrastructure you use today
         </Description>
@@ -22,12 +22,12 @@ export const ServicesSection: FC = () => {
           <Anchor>Learn more about our services ➔</Anchor>
         </NextLink>
       </div>
-      <div css={tw`container flex flex-wrap justify-center mt-[117px]`}>
+      <div className='container flex flex-wrap justify-center mt-[117px]'>
         {SERVICES.map((service) => (
           <NextLink key={service.name} href={service.url} passHref>
             <ServiceCard
               title={service.name}
-              css={tw`
+              className="
               w-[278px] h-[370px]
               m-4
               border-2 border-solid border-transparent rounded-t-2xl
@@ -37,24 +37,24 @@ export const ServicesSection: FC = () => {
               dark:hover:border-[#24272E]
               overflow-hidden
               duration-200
-              text-center`}
+              text-center"
             >
               <img
                 src={`/img/illustrations/${service.icon}`}
                 alt={`${service.name} illustration`}
               />
               <Heading $size="md">{service.name}</Heading>
-              <Description css={tw`mb-4 text-sm px-4`}>
+              <Description className='mb-4 text-sm px-4'>
                 {service.description}
               </Description>
               <span
-                css={tw`
+                className='
                 text-xs
                 text-gray-500
                 hover:text-gray-600
                 dark:hover:text-gray-300
                 transition-colors
-                duration-200`}
+                duration-200'
               >
                 Learn more ➔
               </span>

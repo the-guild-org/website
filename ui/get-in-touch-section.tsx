@@ -34,12 +34,10 @@ function Submit({ children, isLoading, ...props }) {
     <Button
       type="submit"
       disabled={isLoading}
-      css={[
-        css`
-          background: linear-gradient(114.44deg, #7433ff 0%, #ffa3fd 100%);
-        `,
-        tw`mt-5 sm:mt-0 sm:ml-5 px-10! text-white! opacity-80 hover:opacity-100`,
-      ]}
+      className="mt-5 sm:mt-0 sm:ml-5 px-10! text-white! opacity-80 hover:opacity-100"
+      css={css`
+        background: linear-gradient(114.44deg, #7433ff 0%, #ffa3fd 100%);
+      `}
       ref={ref}
       {...props}
     >
@@ -98,7 +96,7 @@ export const Newsletter: FC = () => {
       {hasPower && confetti && (
         <FixedConfetti width={window.innerWidth} height={window.innerHeight} />
       )}
-      <p css={tw`border-0 text-gray-300`}>
+      <p className="border-0 text-gray-300">
         {success
           ? `Thank you, we'll contact you soon!`
           : error && (
@@ -131,10 +129,13 @@ export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
   hideCover,
 }) => {
   return (
-    <div css={[tw`relative my-[200px]`, !hideCover && tw`md:mb-[400px]`]}>
-      <div css={tw`container flex`}>
+    <div className={clsx('relative my-[200px]', !hideCover && 'md:mb-[400px]')}>
+      <div className="container flex">
         <div
-          css={[tw`flex-1`, !hideCover && tw`p-4 2xl:pl-40 lg:max-w-[500px]`]}
+          className={clsx(
+            'flex-1',
+            !hideCover && 'p-4 2xl:pl-40 lg:max-w-[500px]'
+          )}
         >
           <Heading>Get in touch</Heading>
 
@@ -154,7 +155,7 @@ export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
             src="/img/get-in-touch.png"
             alt="Hive website"
             width={768}
-            css={tw`absolute right-0 hidden xl:block drag-none`}
+            className="absolute right-0 hidden xl:block drag-none"
           />
         )}
       </div>

@@ -104,11 +104,9 @@ export const PlatformSection: FC = () => {
             ${bg};
         `}
       >
-        <div
-          css={tw`container pt-20 flex flex-col items-center text-center pb-28`}
-        >
+        <div className="container pt-20 flex flex-col items-center text-center pb-28">
           <Heading>The Platform</Heading>
-          <Description css={tw`max-w-[400px] md:max-w-[700px]`}>
+          <Description className="max-w-[400px] md:max-w-[700px]">
             Our advanced, modular solutions can be adopted gradually as
             individual open source libraries or as a complete unified API
             platform. Explore our suite of sustainable, open source API tools
@@ -121,17 +119,16 @@ export const PlatformSection: FC = () => {
             <Anchor>Learn more about The Guild ➔</Anchor>
           </NextLink>
 
-          <div css={tw`flex flex-wrap mt-10 max-w-[900px] justify-center`}>
+          <div className="flex flex-wrap mt-10 max-w-[900px] justify-center">
             {PRODUCTS.map((product) => (
               <Tooltip.Root key={product.name}>
                 <Tooltip.Trigger asChild>
                   <a
-                    css={[
-                      css`
-                        // 'grayscale' and 'contrast' don't work with tailwind
-                        filter: grayscale(100%) contrast(0%);
-                      `,
-                      tw`
+                    css={css`
+                      // 'grayscale' and 'contrast' don't work with tailwind
+                      filter: grayscale(100%) contrast(0%);
+                    `}
+                    className="
                       hover:text-gray-600
                       dark:hover:text-white
                       hover:filter-none!
@@ -146,8 +143,8 @@ export const PlatformSection: FC = () => {
                       py-3
                       px-5
                       m-2
-                      lg:first:ml-6`,
-                    ]}
+                      lg:first:ml-6
+                    "
                     // title={}
                     href={product.url}
                     target="_blank"
@@ -156,9 +153,9 @@ export const PlatformSection: FC = () => {
                     <img
                       src={`/static/shared-logos/products/${product.icon}`}
                       alt={`${product.name} logo`}
-                      css={tw`h-[60px] drag-none`}
+                      className='h-[60px] drag-none'
                     />
-                    <h4 css={tw`font-medium mb-0 mt-2 text-xs`}>
+                    <h4 className='font-medium mb-0 mt-2 text-xs'>
                       {product.name}
                     </h4>
                   </a>

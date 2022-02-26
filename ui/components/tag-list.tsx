@@ -6,12 +6,8 @@ import NextLink from 'next/link';
 const Tag = ({ children, clickable = false, isActive = false, ...props }) => {
   return (
     <a
-      css={[
-        tw`
-        bg-gray-200 dark:bg-[#24272E]
-        rounded-[5px] overflow-hidden
-        `,
-      ]}
+      className='bg-gray-200 dark:bg-[#24272E]
+        rounded-[5px] overflow-hidden'
       {...props}
     >
       <span
@@ -48,7 +44,7 @@ const TagList: FC<{
 }> = ({ tags, asLink = false, withCount = false, ...props }) => {
   const router = useRouter();
   return (
-    <div css={tw`flex flex-wrap gap-2.5 justify-center`} {...props}>
+    <div className='flex flex-wrap gap-2.5 justify-center' {...props}>
       {tags.map((tagOrTagCount) => {
         const [tag, count] = Array.isArray(tagOrTagCount)
           ? tagOrTagCount

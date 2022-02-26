@@ -21,9 +21,9 @@ export const RecommendedReadingSection: FC<{ articles: MetaWithLink[] }> = ({
           ${bg};
       `}
     >
-      <div css={tw`flex flex-col items-center py-28`}>
-        <Heading css={tw`text-center`}>Recommended Reading</Heading>
-        <Description css={tw`max-w-[700px]`}>
+      <div className='flex flex-col items-center py-28'>
+        <Heading className='text-center'>Recommended Reading</Heading>
+        <Description className='max-w-[700px]'>
           Read and follow the most popular blog in the GraphQL Ecosystem
         </Description>
         <NextLink href="/blog" passHref>

@@ -73,14 +73,16 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
 
   return (
     <div
-      className={className}
-      css={tw`bg-gray-100 dark:bg-gray-900 rounded p-6 mt-20`}
+      className={clsx(
+        'bg-gray-100 dark:bg-gray-900 rounded p-6 mt-20',
+        className
+      )}
     >
       {hasPower && confetti && (
         <FixedConfetti width={window.innerWidth} height={window.innerHeight} />
       )}
       <Heading $size="md">Join our newsletter</Heading>
-      <Description css={tw`mb-3`}>
+      <Description className="mb-3">
         {success ? (
           'Thank you for joining!'
         ) : error ? (
@@ -105,16 +107,10 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
           <Button
             type="submit"
             disabled={loading}
-            css={[
-              css`
-                background: linear-gradient(
-                  114.44deg,
-                  #7433ff 0%,
-                  #ffa3fd 100%
-                );
-              `,
-              tw`mt-5 sm:mt-0 sm:ml-5 px-10! text-white! opacity-80 hover:opacity-100 border-0`,
-            ]}
+            className="mt-5 sm:mt-0 sm:ml-5 px-10! text-white! opacity-80 hover:opacity-100 border-0"
+            css={css`
+              background: linear-gradient(114.44deg, #7433ff 0%, #ffa3fd 100%);
+            `}
           >
             Submit
           </Button>

@@ -26,8 +26,7 @@ const BlogCardList: FC<{ articles: MetaWithLink[]; className?: string }> = ({
 }) => {
   return (
     <div
-      css={tw`flex flex-wrap justify-center gap-x-7 gap-y-10 my-6`}
-      className={className}
+      className={clsx('flex flex-wrap justify-center gap-x-7 gap-y-10 my-6', className)}
     >
       {articles.map((article) => (
         <NextLink key={article.title} href={article.link} passHref>
@@ -35,24 +34,24 @@ const BlogCardList: FC<{ articles: MetaWithLink[]; className?: string }> = ({
             <img
               src={article.thumbnail ?? article.image}
               alt="Article logo"
-              css={tw`w-full h-[164px] object-cover drag-none`}
+              className='w-full h-[164px] object-cover drag-none'
             />
-            <div css={tw`flex flex-col flex-grow p-5`}>
-              <Heading $size="md" css={tw`line-clamp-3`}>
+            <div className='flex flex-col flex-grow p-5'>
+              <Heading $size="md" className='line-clamp-3'>
                 {article.title}
               </Heading>
               <Description
                 $size="md"
-                css={tw`leading-[18px] line-clamp-3 overflow-ellipsis overflow-hidden`}
+                className='leading-[18px] line-clamp-3 overflow-ellipsis overflow-hidden'
               >
                 {article.description}
               </Description>
-              <div css={tw`mt-auto text-xs`}>
-                <span css={tw`font-bold dark:text-[#C4C4C4]`}>
+              <div className='mt-auto text-xs'>
+                <span className='font-bold dark:text-[#C4C4C4]'>
                   {authors[pickAuthor(article)].name}
                 </span>
-                <span css={tw`dark:text-gray-500`}>
-                  <span css={tw`select-none`}> • </span>
+                <span className='dark:text-gray-500'>
+                  <span className='select-none'> • </span>
                   {format(new Date(article.date), 'LLL do y')}
                 </span>
               </div>

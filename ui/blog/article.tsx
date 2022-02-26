@@ -156,7 +156,7 @@ const Authors: FC<{ meta: Meta }> = ({ meta }) => {
               ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
               : `Posted ${format(date, 'EEEE, LLL do y')}`
           }
-          css={tw`block text-center mt-4`}
+          className='block text-center mt-4'
         >
           {format(date, 'EEEE, LLL do y')}
         </Time>
@@ -256,19 +256,19 @@ const Article = (meta: Meta): FC =>
         </Head>
 
         <Page title={title} image={ogImage} description={meta.description}>
-          <div css={tw`w-[790px] max-w-[100vw] mx-auto pt-32`}>
-            <Heading css={tw`text-[42px] leading-[55px] text-center font-bold`}>
+          <div className='w-[790px] max-w-[100vw] mx-auto pt-32'>
+            <Heading className='text-[42px] leading-[55px] text-center font-bold'>
               {meta.title}
             </Heading>
             <Authors meta={meta} />
             {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
             {/* @ts-ignore*/}
-            <TagList tags={meta.tags} asLink css={tw`mt-4`} />
+            <TagList tags={meta.tags} asLink className='mt-4' />
             <Cover>
               <Image src={meta.image} alt={title} />
             </Cover>
             <ConsultingInfo
-              css={tw`bg-gray-100 dark:bg-gray-900 leading-7 p-6 mt-6`}
+              className='bg-gray-100 dark:bg-gray-900 leading-7 p-6 mt-6'
             >
               Looking for experts? We offer consulting and trainings.
               <br />
@@ -283,11 +283,11 @@ const Article = (meta: Meta): FC =>
             </ConsultingInfo>
             <Content tw="text-[#7F818C]">{children}</Content>
           </div>
-          <div css={tw`container max-w-[1200px]! my-20`}>
+          <div className='container max-w-[1200px]! my-20'>
             {similarArticles.length > 0 && (
               <>
                 <h3
-                  css={tw`text-[28px] dark:text-[#FCFCFC] font-extrabold text-center`}
+                  className='text-[28px] dark:text-[#FCFCFC] font-extrabold text-center'
                 >
                   Similar articles
                 </h3>
@@ -296,7 +296,7 @@ const Article = (meta: Meta): FC =>
             )}
             {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
             {/* @ts-ignore*/}
-            <Newsletter css={tw`max-w-[650px] mx-auto`} />
+            <Newsletter className='max-w-[650px] mx-auto' />
           </div>
         </Page>
       </MDXProvider>
