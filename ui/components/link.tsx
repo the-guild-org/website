@@ -1,5 +1,8 @@
 import NativeLink from 'next/link';
 import styled from 'styled-components';
+import tw from 'twin.macro';
+
+export const Anchor = tw.a`text-gray-500 font-bold hover:text-gray-600 dark:hover:text-gray-300`;
 
 export const ExternalLink = styled.a.attrs((props) => ({
   href: props.href,

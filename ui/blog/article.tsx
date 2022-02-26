@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -6,22 +6,23 @@ import styled, { css } from 'styled-components';
 import format from 'date-fns/format';
 import tw from 'twin.macro';
 import { components } from './elements';
-import { Newsletter } from './newsletter';
+import {
+  Newsletter,
+  Image,
+  Avatar,
+  GenericLink,
+  TagList,
+  Heading,
+  BlogCardList,
+} from '../components';
 import { Page } from '../shared/Page';
-import { Meta, hasAuthor, hasManyAuthors } from '../../lib/meta';
-import { Image } from './image';
-import { Tag } from './tag';
+import { Meta, hasAuthor, hasManyAuthors, MetaWithLink } from '../../lib/meta';
 import { authors } from '../authors';
-import { Avatar } from './avatar';
-import { GenericLink } from './elements/link';
 
 const Content = styled.div`
-  font-family: Inter, -apple-system, system-ui, 'Segoe UI', Roboto, sans-serif;
-
+  font-family: Popins, sans-serif;
   padding-top: 25px;
-  font-size: 1rem;
   font-weight: 400;
-  line-height: 1.8rem;
 
   > * {
     margin-bottom: 1.7rem;
@@ -189,6 +190,27 @@ const Article = (meta: Meta): FC =>
     const title = `${meta.title} - The Guild Blog`;
     const router = useRouter();
 
+    const [similarArticles, setSimilarArticles] = useState<MetaWithLink[]>([]);
+    useEffect(() => {
+      fetch(
+        `/api/get-articles?${new URLSearchParams(
+          meta.tags.map((tag) => ['tags', tag])
+        )}`
+      )
+        .then((res) => res.json())
+        .then((articles: MetaWithLink[]) =>
+          articles
+            .sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            )
+            .slice(0, 12)
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 4)
+        )
+        .then(setSimilarArticles)
+        .catch(console.error);
+    }, []);
+
     const ogImage =
       (meta.image?.endsWith('.webm') || meta.image?.endsWith('.mp4')) &&
       meta.thumbnail
@@ -222,46 +244,59 @@ const Article = (meta: Meta): FC =>
 
     return (
       <MDXProvider components={components}>
+        <Head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(markupData) }}
+          />
+          <link
+            rel="canonical"
+            href={meta.canonical || `https://the-guild.dev${router.route}`}
+          />
+        </Head>
+
         <Page title={title} image={ogImage} description={meta.description}>
-          <div css={tw`mx-auto max-w-[690px]`}>
-            <Head>
-              <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(markupData) }}
-              />
-              <link
-                rel="canonical"
-                href={meta.canonical || `https://the-guild.dev${router.route}`}
-              />
-            </Head>
-            <div css={tw`py-32 px-3 md:px-0`}>
-              <div css={tw`text-4xl text-center`}>{meta.title}</div>
-              <Authors meta={meta} />
-              <div css={tw`text-center mt-4`}>
-                {meta.tags.map((t) => (
-                  <Tag tag={t} key={t} asLink />
-                ))}
-              </div>
-              <Cover>
-                <Image src={meta.image} alt={title} />
-              </Cover>
-              <ConsultingInfo
-                css={tw`bg-gray-100 dark:bg-gray-900 leading-7 p-6 mt-6`}
+          <div css={tw`w-[790px] max-w-[100vw] mx-auto pt-32`}>
+            <Heading css={tw`text-[42px] leading-[55px] text-center font-bold`}>
+              {meta.title}
+            </Heading>
+            <Authors meta={meta} />
+            {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
+            {/* @ts-ignore*/}
+            <TagList tags={meta.tags} asLink css={tw`mt-4`} />
+            <Cover>
+              <Image src={meta.image} alt={title} />
+            </Cover>
+            <ConsultingInfo
+              css={tw`bg-gray-100 dark:bg-gray-900 leading-7 p-6 mt-6`}
+            >
+              Looking for experts? We offer consulting and trainings.
+              <br />
+              Explore{' '}
+              <GenericLink
+                href="/services"
+                title="Explore our services. Consulting and Trainings."
               >
-                Looking for experts? We offer consulting and trainings.
-                <br />
-                Explore{' '}
-                <GenericLink
-                  href="/services"
-                  title="Explore our services. Consulting and Trainings."
+                our services
+              </GenericLink>{' '}
+              and get in touch.
+            </ConsultingInfo>
+            <Content tw="text-[#7F818C]">{children}</Content>
+          </div>
+          <div css={tw`container max-w-[1200px]! my-20`}>
+            {similarArticles.length > 0 && (
+              <>
+                <h3
+                  css={tw`text-[28px] dark:text-[#FCFCFC] font-extrabold text-center`}
                 >
-                  our services
-                </GenericLink>{' '}
-                and get in touch.
-              </ConsultingInfo>
-              <Content>{children}</Content>
-              <Newsletter />
-            </div>
+                  Similar articles
+                </h3>
+                <BlogCardList articles={similarArticles} />
+              </>
+            )}
+            {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
+            {/* @ts-ignore*/}
+            <Newsletter css={tw`max-w-[650px] mx-auto`} />
           </div>
         </Page>
       </MDXProvider>

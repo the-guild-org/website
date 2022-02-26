@@ -3,6 +3,9 @@ const plugin = require('tailwindcss/plugin');
 module.exports = {
   darkMode: 'class',
   theme: {
+    container: {
+      center: true,
+    },
     extend: {
       zIndex: {
         '-1': -1,
@@ -20,7 +23,11 @@ module.exports = {
         '.drag-none': {
           userDrag: 'none',
         },
+        '.select-none': {
+          userSelect: 'none',
+        },
       });
     }),
+    require('@tailwindcss/line-clamp'),
   ],
 };

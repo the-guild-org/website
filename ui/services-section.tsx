@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import NextLink from 'next/link';
 import tw, { styled } from 'twin.macro';
-import { Anchor, Description, Heading } from './index';
+import { Anchor, Description, Heading } from './components';
 
 const ServiceCard = styled.a`
   &:hover {
@@ -22,25 +22,20 @@ export const ServicesSection: FC = () => {
           <Anchor>Learn more about our services ➔</Anchor>
         </NextLink>
       </div>
-      <div css={tw`container mx-auto flex flex-wrap justify-center mt-[117px]`}>
+      <div css={tw`container flex flex-wrap justify-center mt-[117px]`}>
         {SERVICES.map((service) => (
           <NextLink key={service.name} href={service.url} passHref>
             <ServiceCard
               title={service.name}
               css={tw`
-              w-[278px]
-              h-[370px]
+              w-[278px] h-[370px]
               m-4
-              rounded-t-2xl
-              border-2
-              border-solid
-              border-transparent
+              border-2 border-solid border-transparent rounded-t-2xl
               hover:border-gray-200
               bg-gray-100
-              dark:bg-gray-900
-              dark:hover:border-gray-800
+              dark:bg-[rgba(36, 39, 46, 0.3)]
+              dark:hover:border-[#24272E]
               overflow-hidden
-              cursor-pointer
               duration-200
               text-center`}
             >

@@ -4,7 +4,10 @@ import Confetti from 'react-confetti';
 import tw from 'twin.macro';
 import { css } from 'styled-components';
 import { useMutation } from '../../hooks/use-graphql';
-import { Heading, Description, Input, Button } from '../index';
+import Button from './button';
+import Heading from './heading';
+import Description from './description';
+import Input from './input';
 
 const Form = styled.form`
   display: flex;
@@ -20,7 +23,7 @@ const FixedConfetti = styled(Confetti)`
   position: fixed !important;
 `;
 
-export const Newsletter: FC<{ className?: string }> = ({ className }) => {
+const Newsletter: FC<{ className?: string }> = ({ className }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -120,3 +123,5 @@ export const Newsletter: FC<{ className?: string }> = ({ className }) => {
     </div>
   );
 };
+
+export default Newsletter;
