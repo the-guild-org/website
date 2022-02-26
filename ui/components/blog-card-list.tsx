@@ -32,10 +32,10 @@ const BlogCardList: FC<{ articles: MetaWithLink[]; className?: string }> = ({
           border-solid
           bg-white
           transition-colors
-          dark:border-transparent
           hover:border-[#7F818C]
-          hover:dark:border-[#7F818C]
-          dark:bg-[#101218]"
+          dark:border-transparent
+          dark:bg-[#101218]
+          hover:dark:border-[#7F818C]"
           >
             <img
               src={article.thumbnail ?? article.image}

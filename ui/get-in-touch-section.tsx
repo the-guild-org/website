@@ -34,15 +34,15 @@ function Submit({ children, isLoading, ...props }) {
       type="submit"
       disabled={isLoading}
       className="
+      mt-5
       px-10
       text-white
-      hover:text-white
-      mt-5
       opacity-80
+      [background:linear-gradient(114.44deg,#7433ff_0%,#ffa3fd_100%)]
+      hover:text-white
       hover:opacity-100
       sm:mt-0
       sm:ml-5
-      [background:linear-gradient(114.44deg,#7433ff_0%,#ffa3fd_100%)]
       "
       ref={ref}
       {...props}
