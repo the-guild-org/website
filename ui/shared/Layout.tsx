@@ -65,26 +65,7 @@ export const Layout: FC = ({ children }) => {
         }}
       />
       {children}
-      <div
-        /* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */
-        // @ts-ignore
-        css={css`
-          // TODO: FIX guild/components - Input style is broken, need to reset default style for newsletter input 🤷‍
-          input {
-            border: 0;
-            // font is also broken, he is set up as Arial 🤷‍
-            font-family: TGCFont, sans-serif;
-          }
-
-          button[type='submit'] {
-            border: 0;
-
-            &:hover {
-              cursor: pointer;
-            }
-          }
-        `}
-      >
+      <div>
         <FooterExtended
           sameSite
           resources={[

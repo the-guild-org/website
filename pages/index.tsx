@@ -44,12 +44,7 @@ const IndexPage: FC<Props> = ({ articles }) => {
           for your API infrastructure with a modular, open source and complete
           platform
         </Description>
-        <Button
-          as="a"
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          href="#platform"
-        >
+        <Button as="a" href="#platform">
           Explore The Platform
         </Button>
       </HeroSection>

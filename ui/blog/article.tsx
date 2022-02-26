@@ -260,8 +260,6 @@ const Article = (meta: Meta): FC =>
               {meta.title}
             </Heading>
             <Authors meta={meta} />
-            {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
-            {/* @ts-ignore*/}
             <TagList tags={meta.tags} asLink className="mt-4" />
             <Cover>
               <Image src={meta.image} alt={title} />
@@ -278,11 +276,9 @@ const Article = (meta: Meta): FC =>
               </GenericLink>{' '}
               and get in touch.
             </ConsultingInfo>
-            {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
-            {/* @ts-ignore*/}
-            <Content tw="text-[#7F818C]">{children}</Content>
+            <Content className="text-[#7F818C]">{children}</Content>
           </div>
-          <div className="max-w-[1200px]! container my-20">
+          <div className="container my-20">
             {similarArticles.length > 0 && (
               <>
                 <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">
@@ -291,8 +287,6 @@ const Article = (meta: Meta): FC =>
                 <BlogCardList articles={similarArticles} />
               </>
             )}
-            {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
-            {/* @ts-ignore*/}
             <Newsletter className="mx-auto max-w-[650px]" />
           </div>
         </Page>
