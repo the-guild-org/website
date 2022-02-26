@@ -32,8 +32,9 @@ const BlogCardList: FC<{ articles: MetaWithLink[]; className?: string }> = ({
           border-solid
           bg-white
           transition-colors
-          hover:border-[#7F818C]
           dark:border-transparent
+          hover:border-[#7F818C]
+          hover:dark:border-[#7F818C]
           dark:bg-[#101218]"
           >
             <img

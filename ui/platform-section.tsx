@@ -93,7 +93,7 @@ export const PlatformSection: FC = () => {
       <div
         id="platform"
         className="
-        [background:linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(41,40,40,0.2)100%)]
+        [background:linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(41,40,40,0.1)100%)]
         dark:[background:linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(41,40,40,0.2)100%),#0b0d11]
         "
       >

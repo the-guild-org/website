@@ -107,10 +107,18 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
           <Button
             type="submit"
             disabled={loading}
-            className="px-10! text-white! mt-5 border-0 opacity-80 hover:opacity-100 sm:mt-0 sm:ml-5"
-            css={css`
-              background: linear-gradient(114.44deg, #7433ff 0%, #ffa3fd 100%);
-            `}
+            className="
+            px-10
+            text-white
+            hover:text-white
+            mt-5
+            border-0
+            opacity-80
+            hover:opacity-100
+            sm:mt-0
+            sm:ml-5
+            [background:linear-gradient(114.44deg,#7433ff_0%,#ffa3fd_100%)]
+            "
           >
             Submit
           </Button>
