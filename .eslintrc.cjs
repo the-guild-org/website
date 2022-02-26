@@ -104,6 +104,7 @@ module.exports = {
             'codesandbox-mdx-embed',
             'drag-none', // report about
           ],
+          officialSorting: true,
         },
       },
     },

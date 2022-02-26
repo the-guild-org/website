@@ -10,6 +10,6 @@ const Description = styled.p.attrs<{ $size: Size }>(({ className, $size }) => ({
     $size === 'md' && 'mb-6 text-xs leading-4',
     className
   ),
-})) as any;
+}))``;
 
 export default Description;

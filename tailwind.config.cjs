@@ -2,6 +2,7 @@ const plugin = require('tailwindcss/plugin');
 
 module.exports = {
   darkMode: 'class',
+  content: ['./{pages,ui}/**/*.{html,ts,tsx,js,jsx,cjs,mjs}'],
   theme: {
     container: {
       center: true,

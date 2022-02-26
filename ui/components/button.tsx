@@ -23,6 +23,6 @@ const Button = styled.button.attrs(({ className }) => ({
 `,
     className
   ),
-})) as any;
+}))``;
 
 export default Button;

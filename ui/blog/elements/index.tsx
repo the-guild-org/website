@@ -17,7 +17,7 @@ const Ul = styled.ul.attrs(({ className }) => ({
       left: -1.25rem;
     }
   `,
-}));
+}))``;
 
 const Blockquote = styled.blockquote.attrs(({ className }) => ({
   className: clsx(
@@ -41,7 +41,7 @@ const Blockquote = styled.blockquote.attrs(({ className }) => ({
       line-height: 2.5rem;
     }
   `,
-}));
+}))``;
 
 const Img = styled(Image).attrs((props) => ({
   ...props,
@@ -92,22 +92,22 @@ const InlineCode = styled.code.attrs<{ wrap?: boolean }>(({ wrap }) => ({
 export const components = {
   h1: styled.h1.attrs(() => ({
     className: 'text-3xl dark:text-[#FCFCFC] font-extrabold mb-5',
-  })),
+  }))``,
   h2: styled.h2.attrs(() => ({
     className: 'text-2xl dark:text-[#FCFCFC] font-extrabold mb-3',
-  })),
+  }))``,
   h3: styled.h3.attrs(() => ({
     className: 'dark:text-[#FCFCFC] font-extrabold mb-2',
-  })),
-  li: styled.li.attrs(() => ({ className: 'mb-1.5' })),
+  }))``,
+  li: styled.li.attrs(() => ({ className: 'mb-1.5' }))``,
   ul: Ul,
-  ol: styled.ol.attrs(() => ({ className: 'mb-8' })),
+  ol: styled.ol.attrs(() => ({ className: 'mb-8' }))``,
   code: Code,
   inlineCode: InlineCode,
   blockquote: Blockquote,
   a: GenericLink,
-  p: styled.p.attrs(() => ({ className: 'leading-[1.65] my-5' })),
-  hr: styled.hr.attrs(() => ({ className: 'border-[#24272E] my-10' })),
+  p: styled.p.attrs(() => ({ className: 'leading-[1.65] my-5' }))``,
+  hr: styled.hr.attrs(() => ({ className: 'border-[#24272E] my-10' }))``,
   img: Img,
   iframe: Iframe,
   CodeSandbox,
