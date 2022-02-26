@@ -126,20 +126,20 @@ export const Section = styled.section<{ noNotch?: boolean; light?: boolean }>`
     props.noNotch
       ? ''
       : css`
-        &::before {
-          content: '';
-          position: absolute;
-          top: -40px;
-          width: 0;
-          height: 0;
-          border-style: solid;
-          border-width: 0 40px 40px 40px;
-          border-color: transparent transparent
-            ${props.light ? '#fff' : '#16171c'} transparent;
-          left: 50%;
-          transform: translateX(-50%);
-        }
-      `}
+          &::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 40px 40px 40px;
+            border-color: transparent transparent
+              ${props.light ? '#fff' : '#16171c'} transparent;
+            left: 50%;
+            transform: translateX(-50%);
+          }
+        `}
 `;
 
 const HeroContainer = styled.div<{ shrink?: boolean }>`

@@ -15,7 +15,7 @@ const AboutUs = ({ title, description }: Meta): FC => {
           <HeroSection hideCirclesOnMobile>
             <Heading>About Us</Heading>
           </HeroSection>
-          <div className="px-3 mx-auto mt-24 max-w-[790px]">
+          <div className="mx-auto mt-24 max-w-[790px] px-3">
             <div className="text-[#111] dark:text-[#7F818C]">{children}</div>
             <GetInTouchSection hideCover />
           </div>

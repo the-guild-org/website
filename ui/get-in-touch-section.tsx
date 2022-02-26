@@ -34,7 +34,7 @@ function Submit({ children, isLoading, ...props }) {
     <Button
       type="submit"
       disabled={isLoading}
-      className="mt-5 opacity-80 hover:opacity-100 sm:mt-0 sm:ml-5 px-10! text-white!"
+      className="px-10! text-white! mt-5 opacity-80 hover:opacity-100 sm:mt-0 sm:ml-5"
       css={css`
         background: linear-gradient(114.44deg, #7433ff 0%, #ffa3fd 100%);
       `}
@@ -96,7 +96,7 @@ export const Newsletter: FC = () => {
       {hasPower && confetti && (
         <FixedConfetti width={window.innerWidth} height={window.innerHeight} />
       )}
-      <p className="text-gray-300 border-0">
+      <p className="border-0 text-gray-300">
         {success
           ? `Thank you, we'll contact you soon!`
           : error && (
@@ -155,7 +155,7 @@ export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
             src="/img/get-in-touch.png"
             alt="Hive website"
             width={768}
-            className="hidden absolute right-0 xl:block drag-none"
+            className="absolute right-0 hidden drag-none xl:block"
           />
         )}
       </div>

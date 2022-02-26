@@ -155,7 +155,7 @@ const Authors: FC<{ meta: Meta }> = ({ meta }) => {
               ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
               : `Posted ${format(date, 'EEEE, LLL do y')}`
           }
-          className="block mt-4 text-center"
+          className="mt-4 block text-center"
         >
           {format(date, 'EEEE, LLL do y')}
         </Time>
@@ -255,8 +255,8 @@ const Article = (meta: Meta): FC =>
         </Head>
 
         <Page title={title} image={ogImage} description={meta.description}>
-          <div className="pt-32 mx-auto w-[790px] max-w-[100vw]">
-            <Heading className="text-[42px] font-bold leading-[55px] text-center">
+          <div className="mx-auto w-[790px] max-w-[100vw] pt-32">
+            <Heading className="text-center text-[42px] font-bold leading-[55px]">
               {meta.title}
             </Heading>
             <Authors meta={meta} />
@@ -266,7 +266,7 @@ const Article = (meta: Meta): FC =>
             <Cover>
               <Image src={meta.image} alt={title} />
             </Cover>
-            <ConsultingInfo className="p-6 mt-6 leading-7 bg-gray-100 dark:bg-gray-900">
+            <ConsultingInfo className="mt-6 bg-gray-100 p-6 leading-7 dark:bg-gray-900">
               Looking for experts? We offer consulting and trainings.
               <br />
               Explore{' '}
@@ -282,10 +282,10 @@ const Article = (meta: Meta): FC =>
             {/* @ts-ignore*/}
             <Content tw="text-[#7F818C]">{children}</Content>
           </div>
-          <div className="container my-20 max-w-[1200px]!">
+          <div className="max-w-[1200px]! container my-20">
             {similarArticles.length > 0 && (
               <>
-                <h3 className="text-[28px] font-extrabold text-center dark:text-[#FCFCFC]">
+                <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">
                   Similar articles
                 </h3>
                 <BlogCardList articles={similarArticles} />

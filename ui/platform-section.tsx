@@ -120,7 +120,7 @@ export const PlatformSection: FC = () => {
             <Anchor>Learn more about The Guild ➔</Anchor>
           </NextLink>
 
-          <div className="flex flex-wrap justify-center mt-10 max-w-[900px]">
+          <div className="mt-10 flex max-w-[900px] flex-wrap justify-center">
             {PRODUCTS.map((product) => (
               <Tooltip.Root key={product.name}>
                 <Tooltip.Trigger asChild>
@@ -132,17 +132,21 @@ export const PlatformSection: FC = () => {
                       filter: grayscale(100%) contrast(0%);
                     `}
                     className="
-                      py-3 px-5 m-2
-                      hover:text-gray-600
-                      dark:hover:text-white
-                      rounded border border-transparent
-                      dark:hover:border-gray-800
+                      hover:filter-none!
+                      m-2
+                      rounded
+                      border
                       border-solid
+                      border-transparent
+                      py-3
+                      px-5
                       transition-all
                       duration-200
                       ease-linear
+                      hover:text-gray-600
+                      dark:hover:border-gray-800
+                      dark:hover:text-white
                       lg:first:ml-6
-                      hover:filter-none!
                     "
                     // title={}
                     href={product.url}
@@ -152,9 +156,9 @@ export const PlatformSection: FC = () => {
                     <img
                       src={`/static/shared-logos/products/${product.icon}`}
                       alt={`${product.name} logo`}
-                      className='h-[60px] drag-none'
+                      className="h-[60px] drag-none"
                     />
-                    <h4 className='mt-2 mb-0 text-xs font-medium'>
+                    <h4 className="mt-2 mb-0 text-xs font-medium">
                       {product.name}
                     </h4>
                   </a>

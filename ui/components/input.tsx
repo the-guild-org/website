@@ -5,10 +5,13 @@ const Input = styled.input.attrs(({ className }) => ({
   className: clsx(
     `
 grow
-py-3 px-4
+py-3
+px-4
 dark:text-gray-300
 bg-gray-200 dark:bg-gray-800
-rounded-xl border border-transparent
+rounded-xl
+border
+border-transparent
 focus:border-blue-300
 focus:outline-none
 disabled:cursor-not-allowed

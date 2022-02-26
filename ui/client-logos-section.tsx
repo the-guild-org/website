@@ -4,24 +4,25 @@ import { logos } from '../lib/logos';
 export const ClientLogosSection: FC = () => {
   return (
     <div className="container">
-      <div className="flex flex-wrap justify-center items-center pb-20 mx-auto mt-44 max-w-[1260px]">
+      <div className="mx-auto mt-44 flex max-w-[1260px] flex-wrap items-center justify-center pb-20">
         {logos.map((item) => (
           <img
             key={item.logo}
             src={`/img/logos/companies/${item.logo}`}
             title={item.name}
             alt={`${item.name} logo`}
-            className="m-6
-            max-w-[90px]
+            className="
+            m-6
             max-h-[35px]
+            max-w-[90px]
             opacity-70
-            hover:opacity-100
             invert
-            dark:invert-0
             transition-opacity
             duration-300
-            md:max-w-[180px]
-            md:max-h-[40px]"
+            hover:opacity-100
+            dark:invert-0
+            md:max-h-[40px]
+            md:max-w-[180px]"
           />
         ))}
       </div>

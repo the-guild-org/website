@@ -22,10 +22,17 @@ const Ul = styled.ul.attrs(({ className }) => ({
 const Blockquote = styled.blockquote.attrs(({ className }) => ({
   className: clsx(
     `
-    pl-8 my-8
-    text-2xl italic font-light
-    text-[#24272E] dark:text-[#C4C4C4]
-    border-l-4 border-l-[#7F818C] dark:border-l-[#C4C4C4] border-solid
+    pl-8
+    my-8
+    text-2xl
+    italic
+    font-light
+    text-[#24272E]
+    dark:text-[#C4C4C4]
+    border-l-4
+    border-l-[#7F818C]
+    dark:border-l-[#C4C4C4]
+    border-solid
     `,
     className
   ),

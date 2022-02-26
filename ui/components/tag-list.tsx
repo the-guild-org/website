@@ -6,14 +6,14 @@ import NextLink from 'next/link';
 const Tag = ({ children, clickable = false, isActive = false, ...props }) => {
   return (
     <a
-      className="overflow-hidden bg-gray-200 dark:bg-[#24272E] rounded-[5px]"
+      className="overflow-hidden rounded-[5px] bg-gray-200 dark:bg-[#24272E]"
       {...props}
     >
       <span
         className={clsx(
           'flex py-1.5 px-2.5 text-sm font-medium transition-colors',
           clickable
-            ? 'hover:text-black hover:dark:text-[#82E9FF] hover:dark:bg-[rgba(21, 175, 208, 0.3)]'
+            ? 'hover:dark:bg-[rgba(21, 175, 208, 0.3)] hover:text-black hover:dark:text-[#82E9FF]'
             : 'cursor-default',
           // TODO: has bug when using dark mode, try refactor proper when migrate to tailwind v3
           isActive
@@ -34,7 +34,7 @@ const TagList: FC<{
 }> = ({ tags, asLink = false, withCount = false, ...props }) => {
   const router = useRouter();
   return (
-    <div className="flex flex-wrap gap-2.5 justify-center" {...props}>
+    <div className="flex flex-wrap justify-center gap-2.5" {...props}>
       {tags.map((tagOrTagCount) => {
         const [tag, count] = Array.isArray(tagOrTagCount)
           ? tagOrTagCount

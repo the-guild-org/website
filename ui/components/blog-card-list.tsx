@@ -14,7 +14,7 @@ const BlogCardList: FC<{ articles: MetaWithLink[]; className?: string }> = ({
   return (
     <div
       className={clsx(
-        'flex flex-wrap gap-x-7 gap-y-10 justify-center my-6',
+        'my-6 flex flex-wrap justify-center gap-x-7 gap-y-10',
         className
       )}
     >
@@ -22,28 +22,32 @@ const BlogCardList: FC<{ articles: MetaWithLink[]; className?: string }> = ({
         <NextLink key={article.title} href={article.link} passHref>
           <a
             className="
-          overflow-hidden
-          flex flex-col
+          flex
           w-[278px]
-          bg-white dark:bg-[#101218] rounded-[20px]
-          border border-solid
+          cursor-pointer
+          flex-col
+          overflow-hidden
+          rounded-[20px]
+          border
+          border-solid
+          bg-white
+          transition-colors
           hover:border-[#7F818C]
           dark:border-transparent
-          transition-colors
-          cursor-pointer"
+          dark:bg-[#101218]"
           >
             <img
               src={article.thumbnail ?? article.image}
               alt="Article logo"
-              className="object-cover w-full h-[164px] drag-none"
+              className="h-[164px] w-full object-cover drag-none"
             />
-            <div className="flex flex-col grow p-5">
+            <div className="flex grow flex-col p-5">
               <Heading $size="md" className="line-clamp-3">
                 {article.title}
               </Heading>
               <Description
                 $size="md"
-                className="overflow-hidden leading-[18px] text-ellipsis line-clamp-3"
+                className="overflow-hidden text-ellipsis leading-[18px] line-clamp-3"
               >
                 {article.description}
               </Description>

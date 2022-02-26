@@ -59,7 +59,7 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
       <HeroSection>
         <Heading>The Guild's blog</Heading>
       </HeroSection>
-      <div className="container max-w-[1200px]!">
+      <div className="max-w-[1200px]! container">
         {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
         {/* @ts-ignore*/}
         <TagList tags={allTags} withCount asLink className="mt-10 mb-20" />

@@ -12,9 +12,9 @@ const ServiceCard = styled.a`
 export const ServicesSection: FC = () => {
   return (
     <>
-      <div className='flex flex-col items-center pt-28 text-center'>
+      <div className="flex flex-col items-center pt-28 text-center">
         <Heading>The Guild's Services</Heading>
-        <Description className='px-2 max-w-[700px] md:px-0'>
+        <Description className="max-w-[700px] px-2 md:px-0">
           Work directly with the most powerful group of API developers that
           created the open source infrastructure you use today
         </Description>
@@ -22,36 +22,43 @@ export const ServicesSection: FC = () => {
           <Anchor>Learn more about our services ➔</Anchor>
         </NextLink>
       </div>
-      <div className='container flex flex-wrap justify-center mt-[117px]'>
+      <div className="container mt-[117px] flex flex-wrap justify-center">
         {SERVICES.map((service) => (
           <NextLink key={service.name} href={service.url} passHref>
             <ServiceCard
               title={service.name}
               className="
-              overflow-hidden m-4
+              dark:bg-[rgba(36, 39, 46, 0.3)]
+              m-4
+              h-[370px]
               w-[278px]
-              h-[370px] text-center bg-gray-100 rounded-t-2xl
+              overflow-hidden
+              rounded-t-2xl
               border-2
+              border-solid
               border-transparent
-              hover:border-gray-200 dark:hover:border-[#24272E] border-solid duration-200
-              dark:bg-[rgba(36, 39, 46, 0.3)]"
+              bg-gray-100
+              text-center
+              duration-200
+              hover:border-gray-200
+              dark:hover:border-[#24272E]"
             >
               <img
                 src={`/img/illustrations/${service.icon}`}
                 alt={`${service.name} illustration`}
               />
               <Heading $size="md">{service.name}</Heading>
-              <Description className='px-4 mb-4 text-sm'>
+              <Description className="mb-4 px-4 text-sm">
                 {service.description}
               </Description>
               <span
-                className='
+                className="
                 text-xs
                 text-gray-500
-                hover:text-gray-600
-                dark:hover:text-gray-300
                 transition-colors
-                duration-200'
+                duration-200
+                hover:text-gray-600
+                dark:hover:text-gray-300"
               >
                 Learn more ➔
               </span>
