@@ -6,12 +6,12 @@ import NextLink from 'next/link';
 const Tag = ({ children, clickable = false, isActive = false, ...props }) => {
   return (
     <a
-      className="bg-gray-200 dark:bg-[#24272E] rounded-[5px] overflow-hidden"
+      className="overflow-hidden bg-gray-200 dark:bg-[#24272E] rounded-[5px]"
       {...props}
     >
       <span
         className={clsx(
-          'flex px-2.5 py-1.5 transition-colors text-sm font-medium',
+          'flex py-1.5 px-2.5 text-sm font-medium transition-colors',
           clickable
             ? 'hover:text-black hover:dark:text-[#82E9FF] hover:dark:bg-[rgba(21, 175, 208, 0.3)]'
             : 'cursor-default',

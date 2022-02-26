@@ -95,6 +95,11 @@ module.exports = {
     {
       files: '{pages,ui}/**/*',
       extends: ['plugin:tailwindcss/recommended'],
+      settings: {
+        tailwindcss: {
+          config: 'tailwind.config.cjs',
+        },
+      },
     },
   ],
 };

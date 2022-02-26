@@ -34,7 +34,7 @@ function Submit({ children, isLoading, ...props }) {
     <Button
       type="submit"
       disabled={isLoading}
-      className="mt-5 sm:mt-0 sm:ml-5 px-10! text-white! opacity-80 hover:opacity-100"
+      className="mt-5 opacity-80 hover:opacity-100 sm:mt-0 sm:ml-5 px-10! text-white!"
       css={css`
         background: linear-gradient(114.44deg, #7433ff 0%, #ffa3fd 100%);
       `}
@@ -134,7 +134,7 @@ export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
         <div
           className={clsx(
             'flex-1',
-            !hideCover && 'p-4 2xl:pl-40 lg:max-w-[500px]'
+            !hideCover && 'p-4 lg:max-w-[500px] 2xl:pl-40'
           )}
         >
           <Heading>Get in touch</Heading>
