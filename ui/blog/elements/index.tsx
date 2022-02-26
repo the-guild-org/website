@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import clsx from 'clsx';
 import { GenericLink, Image } from '../../components';
 import { CodeSandbox } from '../../shared/embed/CodeSandbox';
@@ -8,23 +8,30 @@ import { Tweet } from '../../shared/embed/Tweet';
 import { YouTube } from '../../shared/embed/YouTube';
 import { LinkPreview } from '../../shared/embed/LinkPreview';
 
-const Ul = styled.ul`
-  ${tw`relative mb-8 list-none`}
-  & > li:before {
-    ${tw`content-['–'] absolute -left-5`}
-  }
-`;
+const Ul = styled.ul.attrs(({ className }) => ({
+  className: clsx('relative mb-8 list-none', className),
+  css: css`
+    & > li:before {
+      content: '';
+      position: absolute;
+      left: -1.25rem;
+    }
+  `,
+}));
 
-const Blockquote = styled.blockquote`
-  ${tw`
-    italic text-2xl pl-8 my-8 font-light
+const Blockquote = styled.blockquote(({ className }) => ({
+  className: clsx(
+    `italic text-2xl pl-8 my-8 font-light
     text-[#24272E] dark:text-[#C4C4C4]
-    border-l-4 border-solid border-l-[#7F818C] dark:border-l-[#C4C4C4]
-  `}
-  & > p {
-    line-height: 2.5rem;
-  }
-`;
+    border-l-4 border-solid border-l-[#7F818C] dark:border-l-[#C4C4C4]`,
+    className
+  ),
+  css: css`
+    & > p {
+      line-height: 2.5rem;
+    }
+  `,
+}));
 
 const Img = styled(Image).attrs((props) => ({
   ...props,
