@@ -13,11 +13,10 @@ const Tag = ({ children, clickable = false, isActive = false, ...props }) => {
         className={clsx(
           'flex py-1.5 px-2.5 text-sm font-medium transition-colors',
           clickable
-            ? 'hover:dark:bg-[rgba(21, 175, 208, 0.3)] hover:text-black hover:dark:text-[#82E9FF]'
+            ? 'hover:text-black hover:dark:bg-[#15AFD04C] hover:dark:text-[#82E9FF]'
             : 'cursor-default',
-          // TODO: has bug when using dark mode, try refactor proper when migrate to tailwind v3
           isActive
-            ? 'bg-[rgba(21, 175, 208, 0.3)] text-[#82E9FF]!'
+            ? 'dark:bg-[#15AFD04C] dark:text-[#82E9FF]'
             : 'text-gray-500 dark:text-[#7F818C]'
         )}
       >
@@ -31,10 +30,14 @@ const TagList: FC<{
   tags: (string | [string, number])[];
   asLink?: boolean;
   withCount?: boolean;
-}> = ({ tags, asLink = false, withCount = false, ...props }) => {
+  className?: string;
+}> = ({ tags, asLink = false, withCount = false, className, ...props }) => {
   const router = useRouter();
   return (
-    <div className="flex flex-wrap justify-center gap-2.5" {...props}>
+    <div
+      className={clsx('flex flex-wrap justify-center gap-2.5', className)}
+      {...props}
+    >
       {tags.map((tagOrTagCount) => {
         const [tag, count] = Array.isArray(tagOrTagCount)
           ? tagOrTagCount

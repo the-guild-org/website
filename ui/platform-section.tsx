@@ -116,7 +116,7 @@ export const PlatformSection: FC = () => {
 
           {/* TODO: Add this when we'll have `/products` route */}
           {/* <Anchor href="#">View All Products ➔</Anchor> */}
-          <NextLink href="/about-us">
+          <NextLink href="/about-us" passHref>
             <Anchor>Learn more about The Guild ➔</Anchor>
           </NextLink>
 

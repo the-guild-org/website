@@ -1,13 +1,6 @@
 import { FC } from 'react';
 import NextLink from 'next/link';
-import styled from 'styled-components';
 import { Anchor, Description, Heading } from './components';
-
-const ServiceCard = styled.a`
-  &:hover {
-    box-shadow: 0 -6px 34px rgba(117, 117, 117, 0.15);
-  }
-`;
 
 export const ServicesSection: FC = () => {
   return (
@@ -18,17 +11,17 @@ export const ServicesSection: FC = () => {
           Work directly with the most powerful group of API developers that
           created the open source infrastructure you use today
         </Description>
-        <NextLink href="/services">
+        <NextLink href="/services" passHref>
           <Anchor>Learn more about our services ➔</Anchor>
         </NextLink>
       </div>
       <div className="container mt-[117px] flex flex-wrap justify-center">
         {SERVICES.map((service) => (
           <NextLink key={service.name} href={service.url} passHref>
-            <ServiceCard
+            <a
               title={service.name}
               className="
-              dark:bg-[rgba(36, 39, 46, 0.3)]
+              dark:bg-[#24272E4C]
               m-4
               h-[370px]
               w-[278px]
@@ -41,6 +34,7 @@ export const ServicesSection: FC = () => {
               text-center
               duration-200
               hover:border-gray-200
+              hover:[box-shadow:0_-6px_34px_rgba(117,117,117,0.15)]
               dark:hover:border-[#24272E]"
             >
               <img
@@ -62,7 +56,7 @@ export const ServicesSection: FC = () => {
               >
                 Learn more ➔
               </span>
-            </ServiceCard>
+            </a>
           </NextLink>
         ))}
       </div>

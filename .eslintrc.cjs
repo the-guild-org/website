@@ -107,6 +107,9 @@ module.exports = {
           officialSorting: true,
         },
       },
+      rules: {
+        'tailwindcss/no-custom-classname': 'error',
+      },
     },
   ],
 };
