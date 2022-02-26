@@ -156,7 +156,7 @@ const Authors: FC<{ meta: Meta }> = ({ meta }) => {
               ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
               : `Posted ${format(date, 'EEEE, LLL do y')}`
           }
-          className="block text-center mt-4"
+          className="block mt-4 text-center"
         >
           {format(date, 'EEEE, LLL do y')}
         </Time>
@@ -267,7 +267,7 @@ const Article = (meta: Meta): FC =>
             <Cover>
               <Image src={meta.image} alt={title} />
             </Cover>
-            <ConsultingInfo className="bg-gray-100 dark:bg-gray-900 leading-7 p-6 mt-6">
+            <ConsultingInfo className="p-6 mt-6 leading-7 bg-gray-100 dark:bg-gray-900">
               Looking for experts? We offer consulting and trainings.
               <br />
               Explore{' '}

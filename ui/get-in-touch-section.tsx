@@ -96,7 +96,7 @@ export const Newsletter: FC = () => {
       {hasPower && confetti && (
         <FixedConfetti width={window.innerWidth} height={window.innerHeight} />
       )}
-      <p className="border-0 text-gray-300">
+      <p className="text-gray-300 border-0">
         {success
           ? `Thank you, we'll contact you soon!`
           : error && (
@@ -155,7 +155,7 @@ export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
             src="/img/get-in-touch.png"
             alt="Hive website"
             width={768}
-            className="absolute right-0 hidden xl:block drag-none"
+            className="hidden absolute right-0 xl:block drag-none"
           />
         )}
       </div>

@@ -4,7 +4,7 @@ import clsx from 'clsx';
 const Input = styled.input.attrs(({ className }) => ({
   className: clsx(
     `
-flex-grow
+grow
 py-3 px-4
 dark:text-gray-300
 bg-gray-200 dark:bg-gray-800
