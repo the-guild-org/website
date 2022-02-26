@@ -21,7 +21,7 @@ export const HeroSection: FC<{ hideCirclesOnMobile?: boolean }> = ({
           hideCirclesOnMobile && 'hidden xl:block'
         )}
       />
-      <div className="text-center flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center text-center">
         <div
           className="
           z-1

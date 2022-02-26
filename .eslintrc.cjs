@@ -98,6 +98,12 @@ module.exports = {
       settings: {
         tailwindcss: {
           config: 'tailwind.config.cjs',
+          whitelist: [
+            'youtube-mdx-embed',
+            'twitter-tweet',
+            'codesandbox-mdx-embed',
+            'drag-none', // report about
+          ],
         },
       },
     },

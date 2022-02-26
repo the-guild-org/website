@@ -26,7 +26,7 @@ const BlogCardList: FC<{ articles: MetaWithLink[]; className?: string }> = ({
 }) => {
   return (
     <div
-      className={clsx('flex flex-wrap justify-center gap-x-7 gap-y-10 my-6', className)}
+      className={clsx('flex flex-wrap gap-x-7 gap-y-10 justify-center my-6', className)}
     >
       {articles.map((article) => (
         <NextLink key={article.title} href={article.link} passHref>
@@ -34,15 +34,15 @@ const BlogCardList: FC<{ articles: MetaWithLink[]; className?: string }> = ({
             <img
               src={article.thumbnail ?? article.image}
               alt="Article logo"
-              className='w-full h-[164px] object-cover drag-none'
+              className='object-cover w-full h-[164px] drag-none'
             />
-            <div className='flex flex-col flex-grow p-5'>
+            <div className='flex flex-col grow p-5'>
               <Heading $size="md" className='line-clamp-3'>
                 {article.title}
               </Heading>
               <Description
                 $size="md"
-                className='leading-[18px] line-clamp-3 overflow-ellipsis overflow-hidden'
+                className='overflow-hidden leading-[18px] text-ellipsis line-clamp-3'
               >
                 {article.description}
               </Description>

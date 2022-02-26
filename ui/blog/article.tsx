@@ -292,7 +292,7 @@ const Article = (meta: Meta): FC =>
             )}
             {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
             {/* @ts-ignore*/}
-            <Newsletter className="max-w-[650px] mx-auto" />
+            <Newsletter className="mx-auto max-w-[650px]" />
           </div>
         </Page>
       </MDXProvider>
