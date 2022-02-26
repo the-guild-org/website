@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import NextLink from 'next/link';
-import clsx from 'clsx';
+import styled from 'styled-components';
 import { Anchor, Description, Heading } from './components';
 
 const ServiceCard = styled.a`
@@ -12,9 +12,9 @@ const ServiceCard = styled.a`
 export const ServicesSection: FC = () => {
   return (
     <>
-      <div className='pt-28 flex flex-col items-center text-center'>
+      <div className='flex flex-col items-center pt-28 text-center'>
         <Heading>The Guild's Services</Heading>
-        <Description className='max-w-[700px] px-2 md:px-0'>
+        <Description className='px-2 max-w-[700px] md:px-0'>
           Work directly with the most powerful group of API developers that
           created the open source infrastructure you use today
         </Description>
@@ -28,23 +28,20 @@ export const ServicesSection: FC = () => {
             <ServiceCard
               title={service.name}
               className="
-              w-[278px] h-[370px]
-              m-4
-              border-2 border-solid border-transparent rounded-t-2xl
-              hover:border-gray-200
-              bg-gray-100
-              dark:bg-[rgba(36, 39, 46, 0.3)]
-              dark:hover:border-[#24272E]
-              overflow-hidden
-              duration-200
-              text-center"
+              overflow-hidden m-4
+              w-[278px]
+              h-[370px] text-center bg-gray-100 rounded-t-2xl
+              border-2
+              border-transparent
+              hover:border-gray-200 dark:hover:border-[#24272E] border-solid duration-200
+              dark:bg-[rgba(36, 39, 46, 0.3)]"
             >
               <img
                 src={`/img/illustrations/${service.icon}`}
                 alt={`${service.name} illustration`}
               />
               <Heading $size="md">{service.name}</Heading>
-              <Description className='mb-4 text-sm px-4'>
+              <Description className='px-4 mb-4 text-sm'>
                 {service.description}
               </Description>
               <span

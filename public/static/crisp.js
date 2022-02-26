@@ -1,5 +1,5 @@
 function guildCrisp() {
-  let HOST_TO_SEGMENTS = {
+  const HOST_TO_SEGMENTS = {
     'graphql-code-generator.com': ['codegen'],
     'graphql-modules.com': ['modules'],
     'graphql-tools.com': ['tools'],
@@ -27,7 +27,7 @@ function guildCrisp() {
   })();
   /* eslint-enable */
 
-  let normHost = window.location.host.replace(/^www\./, '');
+  const normHost = window.location.host.replace(/^www\./, '');
 
   if (HOST_TO_SEGMENTS[normHost]) {
     window.$crisp.push([

@@ -1,28 +1,27 @@
 import { FC } from 'react';
-import clsx from 'clsx';
 import { logos } from '../lib/logos';
 
 export const ClientLogosSection: FC = () => {
   return (
     <div className="container">
-      <div className="mx-auto flex flex-wrap justify-center items-center mt-44 pb-20 max-w-[1260px]">
+      <div className="flex flex-wrap justify-center items-center pb-20 mx-auto mt-44 max-w-[1260px]">
         {logos.map((item) => (
           <img
             key={item.logo}
             src={`/img/logos/companies/${item.logo}`}
             title={item.name}
             alt={`${item.name} logo`}
-            className="opacity-70
+            className="m-6
+            max-w-[90px]
+            max-h-[35px]
+            opacity-70
             hover:opacity-100
+            invert
+            dark:invert-0
             transition-opacity
             duration-300
-            max-w-[90px]
             md:max-w-[180px]
-            max-h-[35px]
-            md:max-h-[40px]
-            m-6
-            invert
-            dark:invert-0"
+            md:max-h-[40px]"
           />
         ))}
       </div>

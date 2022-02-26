@@ -6,8 +6,8 @@ type Size = 'lg' | 'md';
 const Description = styled.p.attrs<{ $size: Size }>(({ className, $size }) => ({
   className: clsx(
     'text-gray-500',
-    $size === 'lg' && 'leading-6 mb-7',
-    $size === 'md' && 'text-xs leading-4 mb-6',
+    $size === 'lg' && 'mb-7 leading-6',
+    $size === 'md' && 'mb-6 text-xs leading-4',
     className
   ),
 }));

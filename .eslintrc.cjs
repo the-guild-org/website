@@ -92,5 +92,9 @@ module.exports = {
         '@typescript-eslint/no-var-requires': 'off',
       },
     },
+    {
+      files: '{pages,ui}/**/*',
+      extends: ['plugin:tailwindcss/recommended'],
+    },
   ],
 };

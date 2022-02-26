@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import NextLink from 'next/link';
 import styled, { css, keyframes } from 'styled-components';
-import clsx from 'clsx';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { useColorModeValue } from '@chakra-ui/react';
 import { Anchor, Description, Heading } from './components';
@@ -104,7 +103,7 @@ export const PlatformSection: FC = () => {
             ${bg};
         `}
       >
-        <div className="container pt-20 flex flex-col items-center text-center pb-28">
+        <div className="container flex flex-col items-center pt-20 pb-28 text-center">
           <Heading>The Platform</Heading>
           <Description className="max-w-[400px] md:max-w-[700px]">
             Our advanced, modular solutions can be adopted gradually as
@@ -119,7 +118,7 @@ export const PlatformSection: FC = () => {
             <Anchor>Learn more about The Guild ➔</Anchor>
           </NextLink>
 
-          <div className="flex flex-wrap mt-10 max-w-[900px] justify-center">
+          <div className="flex flex-wrap justify-center mt-10 max-w-[900px]">
             {PRODUCTS.map((product) => (
               <Tooltip.Root key={product.name}>
                 <Tooltip.Trigger asChild>
@@ -129,21 +128,17 @@ export const PlatformSection: FC = () => {
                       filter: grayscale(100%) contrast(0%);
                     `}
                     className="
+                      py-3 px-5 m-2
                       hover:text-gray-600
                       dark:hover:text-white
-                      hover:filter-none!
-                      border
-                      border-transparent
-                      border-solid
+                      rounded border border-transparent
                       dark:hover:border-gray-800
+                      border-solid
                       transition-all
-                      ease-linear
                       duration-200
-                      rounded
-                      py-3
-                      px-5
-                      m-2
+                      ease-linear
                       lg:first:ml-6
+                      hover:filter-none!
                     "
                     // title={}
                     href={product.url}
@@ -155,7 +150,7 @@ export const PlatformSection: FC = () => {
                       alt={`${product.name} logo`}
                       className='h-[60px] drag-none'
                     />
-                    <h4 className='font-medium mb-0 mt-2 text-xs'>
+                    <h4 className='mt-2 mb-0 text-xs font-medium'>
                       {product.name}
                     </h4>
                   </a>

@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { GetStaticProps } from 'next/types';
-import clsx from 'clsx';
 import { Page } from '../ui/shared/Page';
 import { Newsletter, Heading, BlogCardList, TagList } from '../ui/components';
 import { MetaWithLink } from '../lib/meta';
@@ -65,7 +64,7 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
         {/* @ts-ignore*/}
         <TagList tags={allTags} withCount asLink className="mt-10 mb-20" />
         {/* @ts-ignore*/}
-        {!tagFilters && <Newsletter className='mb-14' />}
+        {!tagFilters && <Newsletter className="mb-14" />}
         <BlogCardList articles={articles} />
       </div>
     </Page>
