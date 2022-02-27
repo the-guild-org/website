@@ -201,16 +201,16 @@ const resolvers = {
       const entity = await context.api.getEntityById(id);
       const isAllowed = await context.api.isUserAllowedForEntity(id, userId);
 
-      if (!isAllowed) {
-        return {
-          __typename: 'NotAllowedError',
-          message: `User ${userId} not allowed for entity ${id}`,
-        };
-      }
       if (!entity) {
         return {
           __typename: 'NotFoundError',
           message: `Entity ${id} not found`,
+        };
+      }
+      if (!isAllowed) {
+        return {
+          __typename: 'NotAllowedError',
+          message: `User ${userId} not allowed for entity ${id}`,
         };
       }
       return {
@@ -322,8 +322,8 @@ const resolvers = {
       const isAllowed = await context.api.isUserAllowedForEntity(id, userId);
 
       const error = (
-        !isAllowed ? new NotAllowedError(`User ${userId} not allowed for entity ${id}`) :
         !entity ? new NotFoundError(`Entity ${id} not found`) :
+        !isAllowed ? new NotAllowedError(`User ${userId} not allowed for entity ${id}`) :
         null
       );
 
