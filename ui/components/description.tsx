@@ -1,17 +1,25 @@
-import styled from 'styled-components';
 import clsx from 'clsx';
+import { FC } from 'react';
 
 type Size = 'lg' | 'md';
 
-const Description = styled.p.attrs<{ $size: Size }>(
-  ({ className, $size = 'lg' }) => ({
-    className: clsx(
-      'text-gray-500',
-      $size === 'lg' && 'mb-7 leading-6',
-      $size === 'md' && 'mb-6 text-xs leading-4',
-      className
-    ),
-  })
-)``;
+const Description: FC<{ size?: Size; className?: string }> = ({
+  className,
+  size = 'lg',
+  children,
+}) => {
+  return (
+    <p
+      className={clsx(
+        'text-gray-500',
+        size === 'lg' && 'mb-7 leading-6',
+        size === 'md' && 'mb-6 text-xs leading-4',
+        className
+      )}
+    >
+      {children}
+    </p>
+  );
+};
 
 export default Description;

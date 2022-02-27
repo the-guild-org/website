@@ -80,7 +80,7 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
       {hasPower && confetti && (
         <FixedConfetti width={window.innerWidth} height={window.innerHeight} />
       )}
-      <Heading $size="md">Join our newsletter</Heading>
+      <Heading size="md">Join our newsletter</Heading>
       <Description className="mb-3">
         {success ? (
           'Thank you for joining!'

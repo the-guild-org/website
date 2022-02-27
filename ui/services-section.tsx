@@ -41,7 +41,7 @@ export const ServicesSection: FC = () => {
                 src={`/img/illustrations/${service.icon}`}
                 alt={`${service.name} illustration`}
               />
-              <Heading $size="md">{service.name}</Heading>
+              <Heading size="md">{service.name}</Heading>
               <Description className="mb-4 px-4 text-sm">
                 {service.description}
               </Description>
