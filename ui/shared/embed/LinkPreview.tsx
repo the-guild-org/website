@@ -68,35 +68,33 @@ const TextLink = styled('a', {
   },
   '@media (max-width: 640px)': {
     '& > strong': {
-      marginBottom: 0
+      marginBottom: 0,
     },
     '& > em': {
       display: 'none',
       visibility: 'hidden',
-    }
-  }
-})
+    },
+  },
+});
 
-const ImageLink = styled.a<{ image: string }>`
-  display: table-cell;
-  vertical-align: middle;
-  width: 160px;
-  height: 160px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(${(props) => props.image});
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.09);
-  border-radius: 0 5px 5px 0;
-
-  @media (max-width: 640px) {
-    width: 90px;
-    height: 90px;
-  }
-`;
+const ImageLink = styled('a', {
+  display: 'table-cell',
+  verticalAlign: 'middle',
+  width: 160,
+  height: 160,
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center center',
+  boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.09)',
+  borderRadius: '0 5px 5px 0',
+  '@media (max-width: 640px)': {
+    width: 90,
+    height: 90,
+  },
+});
 
 const useIsomorphicLayoutEffect =
-  typeof window !== 'undefined' && window.document?.createElement !== undefined
+  typeof window !== 'undefined' && window.document?.createElement
     ? useLayoutEffect
     : useEffect;
 
@@ -132,7 +130,12 @@ export const LinkPreview: FC<{ link: string }> = ({ link }) => {
           <em>{data.description}</em>
           {data.url}
         </TextLink>
-        <ImageLink href={link} image={data.image} />
+        <ImageLink
+          href={link}
+          style={{
+            backgroundImage: `url(${data.image})`,
+          }}
+        />
       </Container>
     </Observer>
   );
