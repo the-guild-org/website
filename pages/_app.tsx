@@ -8,7 +8,7 @@ import 'prism-theme-night-owl/build/no-italics.css';
 import 'remark-admonitions/styles/classic.css';
 import * as gtag from '../lib/gtag';
 import { GA_TRACKING_ID } from '../lib/gtag';
-import GlobalStyle from '../styles/global';
+import globalStyles from '../styles/global';
 import '../styles/global.css';
 
 Router.events.on('routeChangeComplete', (url) => gtag.pageview(url));
@@ -57,6 +57,7 @@ const defaultSeo: AppSeoProps = {
 
 export default class MyApp extends App {
   render() {
+    globalStyles()
     const { Component, pageProps } = this.props;
 
     return (
@@ -87,7 +88,6 @@ export default class MyApp extends App {
           />
         </Head>
         <Script src="/static/crisp.js" />
-        <GlobalStyle />
         <CombinedThemeProvider
           theme={theme}
           accentColor={accentColor}

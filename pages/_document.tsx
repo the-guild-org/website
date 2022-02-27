@@ -13,14 +13,6 @@ const noFlashCode = readFileSync(
   .trim();
 
 export default class MyDocument extends Document {
-  static async getInitialProps(ctx) {
-    const initialProps = await Document.getInitialProps(ctx);
-    return {
-      ...initialProps,
-      styles: <>{initialProps.styles}</>,
-    };
-  }
-
   render() {
     const richData = {
       '@context': 'https://schema.org',
@@ -42,7 +34,7 @@ export default class MyDocument extends Document {
             href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap"
             rel="stylesheet"
           />
-          <style id="stitches" dangerouslySetInnerHTML={{ __html: getCssText() }} />
+          <style dangerouslySetInnerHTML={{ __html: getCssText() }} />
         </Head>
         <body>
           <script dangerouslySetInnerHTML={{ __html: noFlashCode }} />
