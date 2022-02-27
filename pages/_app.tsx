@@ -3,12 +3,12 @@ import Router from 'next/router';
 import Head from 'next/head';
 import Script from 'next/script';
 import { extendTheme } from '@chakra-ui/react';
-import { createGlobalStyle } from 'styled-components';
 import { CombinedThemeProvider, AppSeoProps } from '@guild-docs/client';
 import 'prism-theme-night-owl/build/no-italics.css';
 import 'remark-admonitions/styles/classic.css';
 import * as gtag from '../lib/gtag';
 import { GA_TRACKING_ID } from '../lib/gtag';
+import GlobalStyle from '../styles/global';
 import '../styles/global.css';
 
 Router.events.on('routeChangeComplete', (url) => gtag.pageview(url));
@@ -30,33 +30,6 @@ export function reportWebVitals({
 }
 
 const accentColor = '#1cc8ee';
-
-const GlobalStyle = createGlobalStyle`
-  // TODO: Remove this when guild/components Header/Footer will can accept bg color
-  @media (min-width: 768px) {
-    header,
-    header > div > nav {
-      background-color: transparent !important;
-    }
-  }
-
-  footer {
-    background-color: transparent !important;
-  }
-
-  html[data-theme='dark'] {
-    &,
-    body,
-    #tgc-modal,
-    #tgc-modal > div:last-child > div {
-      background-color: var(--colors-background);
-    }
-  }
-
-  body {
-    z-index: -1; /* needs for blue and pink circles */
-  }
-`;
 
 const theme = extendTheme({
   colors: {
@@ -115,45 +88,6 @@ export default class MyApp extends App {
         </Head>
         <Script src="/static/crisp.js" />
         <GlobalStyle />
-        <style global jsx>
-          {`
-            html,
-            body,
-            #__next {
-              margin: 0;
-              width: 100%;
-              height: 100%;
-            }
-
-            :root {
-              --colors-text: white;
-              --colors-dim: #777;
-              --colors-dim-dark: #555;
-              --colors-accent: #1cc8ee;
-              --colors-accent-light: #1cc8ee;
-              --colors-error: #bf120d;
-              --colors-error-light: #ff3f38;
-              --colors-primary: white;
-              --colors-background: #0b0d11;
-              --hover-opacity: 0.75;
-            }
-
-            body {
-              font-family: Poppins, sans-serif;
-            }
-
-            a {
-              cursor: pointer;
-              text-decoration: none;
-              transition: all 0.2s ease 0s;
-            }
-
-            html {
-              // For smooth scrolling effect when click on '#' hash links
-              scroll-behavior: smooth;
-            }
-          `}
-        </style>
         <CombinedThemeProvider
           theme={theme}
           accentColor={accentColor}

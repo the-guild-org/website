@@ -11,10 +11,6 @@ module.exports = {
       zIndex: {
         '-1': -1,
         1: 1,
-        2: 2,
-        3: 3,
-        4: 4,
-        5: 5,
       },
     },
   },
@@ -23,9 +19,6 @@ module.exports = {
       addUtilities({
         '.drag-none': {
           userDrag: 'none',
-        },
-        '.select-none': {
-          userSelect: 'none',
         },
       });
     }),
