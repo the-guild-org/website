@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import styled from 'styled-components';
 import { Observer } from '../Observer';
 import { handleTwttrLoad } from './utils';
 
@@ -12,31 +11,22 @@ export interface ITweetProps {
   align?: 'left' | 'center' | 'right';
 }
 
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: auto;
-`;
-
 export const Tweet: FC<ITweetProps> = ({
   tweetLink,
   theme = 'light',
   align = 'left',
 }) => (
   <Observer onEnter={() => handleTwttrLoad()}>
-    <Container>
+    <div className='flex justify-center'>
       <blockquote
         className="twitter-tweet"
         data-theme={theme}
         data-align={align}
       >
         <a href={`https://twitter.com/${tweetLink}?ref_src=twsrc%5Etfw`}>
-          {typeof window !== 'undefined' && !(window as any).twttr
-            ? 'Loading'
-            : ''}
+          {typeof window !== 'undefined' && !(window as any).twttr && 'Loading'}
         </a>
       </blockquote>
-    </Container>
+    </div>
   </Observer>
 );
