@@ -57,7 +57,7 @@ const defaultSeo: AppSeoProps = {
 
 export default class MyApp extends App {
   render() {
-    globalStyles()
+    globalStyles();
     const { Component, pageProps } = this.props;
 
     return (
