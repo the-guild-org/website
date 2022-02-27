@@ -1,33 +1,7 @@
 import { FC } from 'react';
-import styled, { css } from 'styled-components';
 import { Page } from '../ui/shared/Page';
 import { Hero } from '../ui/shared/Layout';
 import { Contact } from '../ui/shared/Contact';
-
-const Section = styled.section<{ noNotch?: boolean; light?: boolean }>`
-  position: relative;
-  background-color: ${(props) => (props.light ? 'transparent' : '#16171c')};
-  color: var(--colors-primary);
-
-  ${(props) =>
-  props.noNotch
-    ? ''
-    : css`
-          &::before {
-            content: '';
-            position: absolute;
-            top: -40px;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 40px 40px 40px;
-            border-color: transparent transparent
-              ${props.light ? '#fff' : '#16171c'} transparent;
-            left: 50%;
-            transform: translateX(-50%);
-          }
-        `}
-`;
 
 const ContactPage: FC = () => {
   return (
@@ -39,9 +13,24 @@ const ContactPage: FC = () => {
       <Hero shrink>
         <span>Contact us</span>
       </Hero>
-      <Section>
+      <section
+        className="
+          relative
+          bg-gray-100
+          before:absolute
+          before:left-1/2
+          before:-top-10
+          before:-translate-x-1/2
+          before:border-transparent
+          before:border-b-gray-100
+          before:content-['']
+          before:[border-width:0_40px_40px_40px]
+          dark:bg-[#16171c]
+          before:dark:border-b-[#16171c]
+      "
+      >
         <Contact />
-      </Section>
+      </section>
     </Page>
   );
 };
