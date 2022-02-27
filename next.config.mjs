@@ -9,6 +9,7 @@ const CWD = process.cwd();
 
 const nextConfig = {
   pageExtensions: ['tsx', 'md', 'mdx', 'ts', 'cts', 'mts'],
+  outputFileTracing: true,
   experimental: {
     esmExternals: 'loose',
     optimizeFonts: true,
