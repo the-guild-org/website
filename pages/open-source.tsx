@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import styled from 'styled-components';
+import { styled } from '@stitches/react';
 import { GetStaticProps } from 'next/types';
 import { Page } from '../ui/shared/Page';
 import { Section, Container } from '../ui/shared/Layout';
@@ -8,15 +8,14 @@ import { ProjectSeparator, Project } from '../ui/shared/Projects';
 import { HeroSection } from '../ui/hero-section';
 import { Heading } from '../ui/components';
 
-const ProjectsSection = styled(Section)`
-  padding: 50px 0;
-  text-align: center;
-  background: none;
-
-  &::before {
-    display: none;
-  }
-`;
+const ProjectsSection = styled(Section, {
+  padding: '50px 0',
+  textAlign: 'center',
+  background: 'none',
+  '&::before': {
+    display: 'none',
+  },
+});
 
 interface Props {
   projectsOrder: string[];
