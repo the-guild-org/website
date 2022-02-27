@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import { css, styled } from '@stitches/react';
 import clsx from 'clsx';
 import { GenericLink, Image } from '../../components';
 import { CodeSandbox } from '../../shared/embed/CodeSandbox';
@@ -8,72 +8,10 @@ import { Tweet } from '../../shared/embed/Tweet';
 import { YouTube } from '../../shared/embed/YouTube';
 import { LinkPreview } from '../../shared/embed/LinkPreview';
 
-const Ul = styled.ul.attrs(({ className }) => ({
-  className: clsx('relative mb-8 list-none', className),
-  css: css`
-    & > li:before {
-      content: '';
-      position: absolute;
-      left: -1.25rem;
-    }
-  `,
-}))``;
-
-const Blockquote = styled.blockquote.attrs(({ className }) => ({
-  className: clsx(
-    `
-    pl-8
-    my-8
-    text-2xl
-    italic
-    font-light
-    text-[#24272E]
-    dark:text-[#C4C4C4]
-    border-l-4
-    border-l-[#7F818C]
-    dark:border-l-[#C4C4C4]
-    border-solid
-    `,
-    className
-  ),
-  css: css`
-    & > p {
-      line-height: 2.5rem;
-    }
-  `,
-}))``;
-
-const Code = styled.pre.attrs<{ syntax?: string }>(({ syntax }) => ({
-  className: syntax ? ` ${syntax}` : '',
-}))`
-  background: #1d1f21;
-  color: #f8f8f2;
-  overflow: auto;
-  padding: 1.5rem;
-  border-radius: 3px;
-  -webkit-overflow-scrolling: touch;
-  font-size: 1rem;
-  white-space: pre-wrap;
-  word-break: break-word;
-  letter-spacing: 0;
-  font-weight: 400;
-  line-height: 1.4;
-`;
-
-const InlineCode = styled.code.attrs<{ wrap?: boolean }>(({ wrap }) => ({
-  className: wrap ? 'wrap' : '',
-}))`
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 5px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 2px;
-  padding-left: 5px;
-  padding-right: 5px;
-
-  font-family: Monaco, Consolas, 'Andale  Mono', 'DejaVu Sans Mono', monospace;
-`;
+const Ul = styled('ul', {});
+const Blockquote = styled('blockquote', {});
+const Code = styled('pre', {});
+const InlineCode = styled('code', {});
 
 export const components = {
   h1: ({ className, children, ...props }) => (
@@ -111,15 +49,94 @@ export const components = {
       {children}
     </li>
   ),
-  ul: Ul,
+  ul: ({ className, children, ...props }) => (
+    <Ul
+      className={clsx('relative mb-8 list-none', className)}
+      css={css({
+        '& > li:before': {
+          content: '',
+          position: 'absolute',
+          left: '-1.25rem',
+        },
+      })}
+      {...props}
+    >
+      {children}
+    </Ul>
+  ),
   ol: ({ className, children, ...props }) => (
     <ol className={clsx('mb-8', className)} {...props}>
       {children}
     </ol>
   ),
-  code: Code,
-  inlineCode: InlineCode,
-  blockquote: Blockquote,
+  code: ({ className, syntax, children, ...props }) => (
+    <Code
+      className={clsx('', syntax, className)}
+      css={css({
+        background: '#1d1f21',
+        color: '#f8f8f2',
+        overflow: 'auto',
+        padding: '1.5rem',
+        borderRadius: 3,
+        '-webkit-overflow-scrolling': 'touch',
+        fontSize: '1rem',
+        whiteSpace: 'pre-wrap',
+        wordBreak: 'break-word',
+        letterSpacing: 0,
+        fontWeight: 400,
+        lineHeight: 1.4,
+      })}
+      {...props}
+    >
+      {children}
+    </Code>
+  ),
+  inlineCode: ({ className, wrap, children, ...props }) => (
+    <InlineCode
+      className={clsx('', wrap && 'wrap', className)}
+      css={css({
+        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+        borderRadius: 5,
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        padding: 2,
+        paddingLeft: 5,
+        paddingRight: 5,
+        fontFamily:
+          "Monaco, Consolas, 'Andale  Mono', 'DejaVu Sans Mono', monospace",
+      })}
+      {...props}
+    >
+      {children}
+    </InlineCode>
+  ),
+  blockquote: ({ className, children, ...props }) => (
+    <Blockquote
+      className={clsx(
+        `
+    my-8
+    border-l-4
+    border-solid
+    border-l-[#7F818C]
+    pl-8
+    text-2xl
+    font-light
+    italic
+    text-[#24272E]
+    dark:border-l-[#C4C4C4]
+    dark:text-[#C4C4C4]
+    `,
+        className
+      )}
+      css={css({
+        '& > p': {
+          lineHeight: '2.5rem',
+        },
+      })}
+      {...props}
+    >
+      {children}
+    </Blockquote>
+  ),
   a: GenericLink,
   p: ({ className, children, ...props }) => (
     <p className={clsx('my-5 leading-[1.65]', className)} {...props}>
