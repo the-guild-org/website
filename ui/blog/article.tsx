@@ -2,8 +2,8 @@ import { FC, useEffect, useState } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { styled } from '@stitches/react';
 import format from 'date-fns/format';
+import { styled } from '../../stitches.config';
 import { components } from './elements';
 import {
   Newsletter,

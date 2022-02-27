@@ -1,14 +1,14 @@
 import { FC } from 'react';
-import { styled } from '@stitches/react';
 import { GetStaticProps } from 'next/types';
+import { styled } from '../stitches.config';
 import { Page } from '../ui/shared/Page';
-import { Section, Container } from '../ui/shared/Layout';
+import { Container } from '../ui/shared/Layout';
 import { projects } from '../lib/projects';
 import { HeroSection } from '../ui/hero-section';
 import { Heading } from '../ui/components';
 import { Featured } from '../ui/shared/Featured';
 
-const ProjectsSection = styled(Section, {
+const ProjectsSection = styled('div', {
   padding: '50px 0',
   textAlign: 'center',
   background: 'none',

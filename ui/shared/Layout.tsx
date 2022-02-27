@@ -1,8 +1,8 @@
 import { FC } from 'react';
-import { styled } from '@stitches/react';
 import { useRouter } from 'next/router';
 import { GlobalStyles, Header, FooterExtended } from '@theguild/components';
 import clsx from 'clsx';
+import { styled } from '../../stitches.config';
 
 export const Container = styled('div', {
   maxWidth: 960,
@@ -81,6 +81,7 @@ const HeroHeader = styled('div', {
 export const Hero: FC<{ shrink?: boolean }> = ({ shrink, children }) => {
   return (
     <div
+      // eslint-disable-next-line tailwindcss/no-contradicting-classname -- false positive for background image on before and after
       className={clsx(
         `
       relative

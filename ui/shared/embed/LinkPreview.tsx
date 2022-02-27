@@ -1,5 +1,5 @@
 import { FC, useEffect, useLayoutEffect, useState } from 'react';
-import { styled } from '@stitches/react';
+import { styled } from '../../../stitches.config';
 import { GenericLink } from '../../components';
 import { Observer } from '../Observer';
 

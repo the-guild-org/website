@@ -1,5 +1,5 @@
 import { FC, ChangeEvent, useCallback, useState, useEffect } from 'react';
-import { styled } from '@stitches/react';
+import { styled } from '../../stitches.config';
 import { Container } from './Layout';
 import { useMutation } from '../../hooks/use-graphql';
 import { runOnCrisp } from '../../lib/crisp';

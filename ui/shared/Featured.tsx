@@ -1,8 +1,8 @@
 import { FC, ReactElement } from 'react';
-import { styled } from '@stitches/react';
 import NativeLink from 'next/link';
 import LazyLoad from 'react-lazyload';
 import clsx from 'clsx';
+import { styled } from '../../stitches.config';
 import { Image } from '../components';
 import { withPlaceholder } from '../../lib/images';
 

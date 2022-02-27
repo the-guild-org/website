@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { styled } from '@stitches/react';
 import clsx from 'clsx';
+import { styled } from '../stitches.config';
 import { Page } from '../ui/shared/Page';
 import { Container, Arrow } from '../ui/shared/Layout';
 import { HeroSection } from '../ui/hero-section';

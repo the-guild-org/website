@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import NextLink from 'next/link';
-import { keyframes, styled } from '@stitches/react';
 import * as Tooltip from '@radix-ui/react-tooltip';
+import { keyframes, styled } from '../stitches.config';
 import { Anchor, Description, Heading } from './components';
 
 const slideUpOrLeftAndFade = keyframes({

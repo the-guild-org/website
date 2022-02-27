@@ -1,5 +1,5 @@
-import { css, styled } from '@stitches/react';
 import clsx from 'clsx';
+import { css, styled } from '../../../stitches.config';
 import { GenericLink, Image } from '../../components';
 import { CodeSandbox } from '../../shared/embed/CodeSandbox';
 import { Gfycat } from '../../shared/embed/Gfycat';
