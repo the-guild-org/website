@@ -90,24 +90,44 @@ const InlineCode = styled.code.attrs<{ wrap?: boolean }>(({ wrap }) => ({
 `;
 
 export const components = {
-  h1: styled.h1.attrs(() => ({
-    className: 'text-3xl dark:text-[#FCFCFC] font-extrabold mb-5',
-  }))``,
-  h2: styled.h2.attrs(() => ({
-    className: 'text-2xl dark:text-[#FCFCFC] font-extrabold mb-3',
-  }))``,
-  h3: styled.h3.attrs(() => ({
-    className: 'dark:text-[#FCFCFC] font-extrabold mb-2',
-  }))``,
-  li: styled.li.attrs(() => ({ className: 'mb-1.5' }))``,
+  h1: ({ className, children, ...props }) => (
+    <h1 className={clsx('text-3xl dark:text-[#FCFCFC] font-extrabold mb-5', className)} {...props}>
+      {children}
+    </h1>
+  ),
+  h2: ({ className, children, ...props }) => (
+    <h2 className={clsx('text-2xl dark:text-[#FCFCFC] font-extrabold mb-3', className)} {...props}>
+      {children}
+    </h2>
+  ),
+  h3: ({ className, children, ...props }) => (
+    <h3 className={clsx('dark:text-[#FCFCFC] font-extrabold mb-2', className)} {...props}>
+      {children}
+    </h3>
+  ),
+  li: ({ className, children, ...props }) => (
+    <li className={clsx('mb-1.5', className)} {...props}>
+      {children}
+    </li>
+  ),
   ul: Ul,
-  ol: styled.ol.attrs(() => ({ className: 'mb-8' }))``,
+  ol: ({ className, children, ...props }) => (
+    <ol className={clsx('mb-8', className)} {...props}>
+      {children}
+    </ol>
+  ),
   code: Code,
   inlineCode: InlineCode,
   blockquote: Blockquote,
   a: GenericLink,
-  p: styled.p.attrs(() => ({ className: 'leading-[1.65] my-5' }))``,
-  hr: styled.hr.attrs(() => ({ className: 'border-[#24272E] my-10' }))``,
+  p: ({ className, children, ...props }) => (
+    <p className={clsx('leading-[1.65] my-5', className)} {...props}>
+      {children}
+    </p>
+  ),
+  hr: ({ className, ...props }) => (
+    <hr className={clsx('border-[#24272E] my-10', className)} {...props} />
+  ),
   img: Img,
   iframe: Iframe,
   CodeSandbox,
