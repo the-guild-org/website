@@ -47,7 +47,6 @@ const Services: FC = () => {
             key={`service-${i}`}
           >
             <ServiceContainer
-              reversed={isOdd}
               id={service.name.toLowerCase().replace(/ /g, '-')}
               className={clsx(
                 'flex-col',
