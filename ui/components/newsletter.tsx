@@ -58,7 +58,7 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
   return (
     <div
       className={clsx(
-        'mt-20 mx-5 rounded bg-gray-100 p-6 dark:bg-gray-900',
+        'mt-20 mx-5 md:mx-auto rounded bg-gray-100 p-6 dark:bg-gray-900',
         className
       )}
     >

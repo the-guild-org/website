@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import styled, { css } from 'styled-components';
+import { styled } from '@stitches/react';
 import format from 'date-fns/format';
 import { components } from './elements';
 import {
@@ -18,97 +18,80 @@ import { Page } from '../shared/Page';
 import { Meta, hasAuthor, hasManyAuthors, MetaWithLink } from '../../lib/meta';
 import { authors } from '../authors';
 
-const Content = styled.div`
-  font-family: Popins, sans-serif;
-  padding-top: 25px;
-  font-weight: 400;
+const Content = styled('div', {
+  fontFamily: 'Popins, sans-serif',
+  paddingTop: 25,
+  fontWeight: 400,
 
-  > * {
-    margin-bottom: 1.7rem;
-  }
+  '> *': {
+    marginBottom: '1.7rem',
+  },
 
-  > pre[class*='language-'] {
-    margin: 0;
-    padding: 0;
-    margin-bottom: 1.7rem;
-    border-radius: 3px;
+  '> pre[class*="language-"]': {
+    margin: 0,
+    padding: 0,
+    marginBottom: '1.7rem',
+    borderRadius: 3,
 
-    > pre {
-      padding: 1.5rem;
-      margin: 0;
-    }
-  }
-`;
+    '> pre': {
+      padding: '1.5rem',
+      margin: 0,
+    },
+  },
+});
 
-const Author = styled.div<{
-  many?: boolean;
-}>`
-  text-align: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  font-size: 0.9rem;
+const Author = styled('div', {
+  textAlign: 'center',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  fontSize: '0.9rem',
+  '& > div:nth-child(2)': {
+    marginLeft: 10,
+    display: 'flex',
+    textAlign: 'left',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    '& > a': {
+      color: 'var(--colors-accent)',
+    },
+    '& > a:hover': {
+      color: 'var(--colors-accent-light)',
+    },
+  },
+});
 
-  ${(props) =>
-    props.many &&
-    css`
-      &:not(:last-child) {
-        padding-right: 15px;
-      }
+const Details = styled('div', {
+  marginTop: '2rem',
+  textAlign: 'center',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+});
 
-      &:not(:first-of-type) {
-        padding-left: 15px;
-      }
-    `}
-  & > div:nth-child(2) {
-    margin-left: 10px;
-    display: flex;
-    text-align: left;
-    flex-direction: column;
-    justify-content: center;
+const Time = styled('time', {
+  color: 'var(--colors-dim)',
+  fontSize: '0.8rem',
+});
 
-    & > a {
-      color: var(--colors-accent);
-    }
+const Cover = styled('div', {
+  paddingTop: 25,
+  margin: '0 auto',
+  width: '100%',
+  height: 'auto',
+  '& > *': {
+    maxWidth: '100%',
+    height: 'auto',
+    maxHeight: 300,
+    display: 'block',
+    margin: '0 auto',
+  },
+});
 
-    & > a:hover {
-      color: var(--colors-accent-light);
-    }
-  }
-`;
-
-const Details = styled.div`
-  margin-top: 2rem;
-  text-align: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-`;
-
-const Time = styled.time`
-  color: var(--colors-dim);
-  font-size: 0.8rem;
-`;
-
-const Cover = styled.div`
-  padding-top: 25px;
-  margin: 0 auto;
-  width: 100%;
-  height: auto;
-
-  & > * {
-    max-width: 100%;
-    height: auto;
-    max-height: 300px;
-    display: block;
-    margin: 0 auto;
-  }
-`;
-
-const ConsultingInfo = styled.div`
-  color: var(--colors-dim);
-  border-left: 3px solid var(--colors-accent);
-`;
+const ConsultingInfo = styled('div', {
+  color: 'var(--colors-dim)',
+  borderLeft: '3px solid var(--colors-accent)',
+});
 
 const Authors: FC<{ meta: Meta }> = ({ meta }) => {
   const date = meta.date ? new Date(meta.date) : new Date();
@@ -159,12 +142,12 @@ const Authors: FC<{ meta: Meta }> = ({ meta }) => {
         >
           {format(date, 'EEEE, LLL do y')}
         </Time>
-        <Details>
+        <Details className="gap-x-5">
           {meta.authors.map((authorId, i) => {
             const author = authors[authorId];
 
             return (
-              <Author many key={`${authorId}_${i}`}>
+              <Author key={`${authorId}_${i}`}>
                 <div>
                   <a href={author.link} title={author.name}>
                     <Avatar author={author} />
