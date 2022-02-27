@@ -41,45 +41,41 @@ const Container = styled('div', {
   },
 });
 
-const TextLink = styled.a`
-  background: rgba(255, 255, 255, 0);
-  text-decoration: none;
-  display: table-cell;
-  vertical-align: middle;
-  padding: 20px;
-
-  & > strong {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: 700;
-    font-style: normal;
-    font-size: 1rem;
-    line-height: 1.3;
-    color: var(--colors-text);
-  }
-
-  & > em {
-    font-size: 0.85rem;
-    font-style: normal;
-    color: var(--colors-dim);
-    display: block;
-    max-height: 120px;
-    overflow: hidden;
-    word-break: break-word;
-    line-height: 1.3;
-  }
-
-  @media (max-width: 640px) {
-    & > strong {
-      margin-bottom: 0;
-    }
-
-    & > em {
-      display: none;
-      visibility: hidden;
+const TextLink = styled('a', {
+  background: 'rgba(255, 255, 255, 0)',
+  textDecoration: 'none',
+  display: 'table-cell',
+  verticalAlign: 'middle',
+  padding: 20,
+  '& > strong': {
+    display: 'block',
+    marginBottom: 10,
+    fontWeight: 700,
+    fontStyle: 'normal',
+    fontSize: '1rem',
+    lineHeight: 1.3,
+    color: 'var(--colors-text)',
+  },
+  '& > em': {
+    fontSize: '0.85rem',
+    fontStyle: 'normal',
+    color: 'var(--colors-dim)',
+    display: 'block',
+    maxHeight: 120,
+    overflow: 'hidden',
+    wordBreak: 'break-word',
+    lineHeight: 1.3,
+  },
+  '@media (max-width: 640px)': {
+    '& > strong': {
+      marginBottom: 0
+    },
+    '& > em': {
+      display: 'none',
+      visibility: 'hidden',
     }
   }
-`;
+})
 
 const ImageLink = styled.a<{ image: string }>`
   display: table-cell;
