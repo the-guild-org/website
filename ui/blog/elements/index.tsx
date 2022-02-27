@@ -43,20 +43,6 @@ const Blockquote = styled.blockquote.attrs(({ className }) => ({
   `,
 }))``;
 
-const Img = styled(Image).attrs((props) => ({
-  ...props,
-  alt: props.alt || '',
-}))`
-  display: block;
-  max-width: 100%;
-  margin: 0 auto;
-`;
-
-const Iframe = styled.iframe`
-  display: block;
-  margin: 0 auto;
-`;
-
 const Code = styled.pre.attrs<{ syntax?: string }>(({ syntax }) => ({
   className: syntax ? ` ${syntax}` : '',
 }))`
@@ -91,17 +77,32 @@ const InlineCode = styled.code.attrs<{ wrap?: boolean }>(({ wrap }) => ({
 
 export const components = {
   h1: ({ className, children, ...props }) => (
-    <h1 className={clsx('text-3xl dark:text-[#FCFCFC] font-extrabold mb-5', className)} {...props}>
+    <h1
+      className={clsx(
+        'mb-5 text-3xl font-extrabold dark:text-[#FCFCFC]',
+        className
+      )}
+      {...props}
+    >
       {children}
     </h1>
   ),
   h2: ({ className, children, ...props }) => (
-    <h2 className={clsx('text-2xl dark:text-[#FCFCFC] font-extrabold mb-3', className)} {...props}>
+    <h2
+      className={clsx(
+        'mb-3 text-2xl font-extrabold dark:text-[#FCFCFC]',
+        className
+      )}
+      {...props}
+    >
       {children}
     </h2>
   ),
   h3: ({ className, children, ...props }) => (
-    <h3 className={clsx('dark:text-[#FCFCFC] font-extrabold mb-2', className)} {...props}>
+    <h3
+      className={clsx('mb-2 font-extrabold dark:text-[#FCFCFC]', className)}
+      {...props}
+    >
       {children}
     </h3>
   ),
@@ -121,15 +122,26 @@ export const components = {
   blockquote: Blockquote,
   a: GenericLink,
   p: ({ className, children, ...props }) => (
-    <p className={clsx('leading-[1.65] my-5', className)} {...props}>
+    <p className={clsx('my-5 leading-[1.65]', className)} {...props}>
       {children}
     </p>
   ),
   hr: ({ className, ...props }) => (
-    <hr className={clsx('border-[#24272E] my-10', className)} {...props} />
+    <hr className={clsx('my-10 border-[#24272E]', className)} {...props} />
   ),
-  img: Img,
-  iframe: Iframe,
+  img: ({ className, alt, src, ...props }) => (
+    <Image
+      className={clsx('mx-auto block max-w-full', className)}
+      src={src}
+      alt={alt}
+      {...props}
+    />
+  ),
+  iframe: ({ className, children, ...props }) => (
+    <iframe className={clsx('mx-auto block', className)} {...props}>
+      {children}
+    </iframe>
+  ),
   CodeSandbox,
   Gfycat,
   StackBlitz,
