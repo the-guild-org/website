@@ -1,5 +1,4 @@
 import { FC, ChangeEvent, useCallback, useState, useEffect } from 'react';
-import styled from 'styled-components';
 import Confetti from 'react-confetti';
 import clsx from 'clsx';
 import { useMutation } from '../../hooks/use-graphql';
@@ -7,20 +6,6 @@ import Button from './button';
 import Heading from './heading';
 import Description from './description';
 import Input from './input';
-
-const Form = styled.form`
-  display: flex;
-  align-items: center;
-
-  @media (max-width: 640px) {
-    flex-direction: column;
-    align-items: stretch;
-  }
-`;
-
-const FixedConfetti = styled(Confetti)`
-  position: fixed !important;
-`;
 
 const Newsletter: FC<{ className?: string }> = ({ className }) => {
   const [email, setEmail] = useState('');
@@ -73,12 +58,12 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
   return (
     <div
       className={clsx(
-        'mt-20 rounded bg-gray-100 p-6 dark:bg-gray-900',
+        'mt-20 mx-5 rounded bg-gray-100 p-6 dark:bg-gray-900',
         className
       )}
     >
       {hasPower && confetti && (
-        <FixedConfetti width={window.innerWidth} height={window.innerHeight} />
+        <Confetti width={window.innerWidth} height={window.innerHeight} className="!fixed" />
       )}
       <Heading size="md">Join our newsletter</Heading>
       <Description className="mb-3">
@@ -94,7 +79,7 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
         )}
       </Description>
       {showForm && (
-        <Form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className="flex flex-col sm:flex-row">
           <Input
             type="text"
             required
@@ -111,7 +96,7 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
           >
             Submit
           </Button>
-        </Form>
+        </form>
       )}
     </div>
   );
