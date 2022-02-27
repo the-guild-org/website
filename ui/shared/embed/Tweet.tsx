@@ -17,7 +17,7 @@ export const Tweet: FC<ITweetProps> = ({
   align = 'left',
 }) => (
   <Observer onEnter={() => handleTwttrLoad()}>
-    <div className='flex justify-center'>
+    <div className="flex justify-center">
       <blockquote
         className="twitter-tweet"
         data-theme={theme}

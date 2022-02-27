@@ -13,37 +13,6 @@ export const Container = styled.div`
   }
 `;
 
-export const Button = styled.button`
-  width: auto;
-  height: auto;
-  padding: 0.75rem 1.5rem;
-  transition-duration: 0.15s;
-  color: #fff;
-  line-height: 1.375;
-  font-size: 1rem;
-  font-weight: 700;
-  border: 1px solid transparent;
-  border-radius: 0.375rem;
-  background-color: var(--colors-accent);
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.18);
-  /* 0 2px 4px -1px rgba(0, 0, 0, 0.06); */
-  box-sizing: border-box;
-  cursor: pointer;
-
-  &:hover {
-    background-color: var(--colors-accent-light);
-  }
-
-  &:focus {
-    outline: 0;
-  }
-
-  &:disabled {
-    opacity: var(--hover-opacity);
-    cursor: progress;
-  }
-`;
-
 export const Layout: FC = ({ children }) => {
   const router = useRouter();
 

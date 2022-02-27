@@ -58,12 +58,16 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
   return (
     <div
       className={clsx(
-        'mt-20 mx-5 md:mx-auto rounded bg-gray-100 p-6 dark:bg-gray-900',
+        'mx-5 mt-20 rounded bg-gray-100 p-6 dark:bg-gray-900 md:mx-auto',
         className
       )}
     >
       {hasPower && confetti && (
-        <Confetti width={window.innerWidth} height={window.innerHeight} className="!fixed" />
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          className="!fixed"
+        />
       )}
       <Heading size="md">Join our newsletter</Heading>
       <Description className="mb-3">
