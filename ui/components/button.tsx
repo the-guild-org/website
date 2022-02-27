@@ -1,7 +1,12 @@
 import clsx from 'clsx';
-import { FC } from 'react';
+import { FC, HTMLProps } from 'react';
 
-const Button: FC<{ className?: string }> = ({ className, children }) => {
+const Button: FC<
+  HTMLProps<HTMLButtonElement> & {
+    type?: 'button' | 'submit' | 'reset';
+    variant?: 'secondary' | 'primary';
+  }
+> = ({ className, children, variant = 'secondary', ...props }) => {
   return (
     <button
       className={clsx(
@@ -11,20 +16,21 @@ const Button: FC<{ className?: string }> = ({ className, children }) => {
   border-0
   bg-gray-200
   py-4
-  px-5
   text-sm
   font-bold
-  text-gray-500
   transition-all
   duration-200
   hover:bg-gray-300
-  hover:text-gray-600
   dark:bg-gray-800
   dark:hover:bg-gray-700
-  dark:hover:text-gray-400
 `,
+        variant === 'primary' &&
+          'px-10 text-white opacity-80 [background:linear-gradient(114.44deg,#7433ff_0%,#ffa3fd_100%)] hover:opacity-100',
+        variant === 'secondary' &&
+          'px-5 text-gray-500 hover:text-gray-600 dark:hover:text-gray-400',
         className
       )}
+      {...props}
     >
       {children}
     </button>

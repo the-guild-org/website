@@ -1,56 +1,8 @@
 import clsx from 'clsx';
-import {
-  FC,
-  ChangeEvent,
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
-} from 'react';
-import styled from 'styled-components';
+import { FC, ChangeEvent, useCallback, useState, useEffect } from 'react';
 import Confetti from 'react-confetti';
 import { useMutation } from '../hooks/use-graphql';
 import { Heading, Description, Button, Anchor, Input } from './components';
-
-const Form = styled.form`
-  display: flex;
-  align-items: center;
-
-  @media (max-width: 640px) {
-    flex-direction: column;
-    align-items: stretch;
-  }
-`;
-
-const FixedConfetti = styled(Confetti)`
-  position: fixed !important;
-`;
-
-function Submit({ children, isLoading, ...props }) {
-  const ref = useRef(null);
-
-  return (
-    <Button
-      type="submit"
-      disabled={isLoading}
-      className="
-      mt-5
-      px-10
-      text-white
-      opacity-80
-      [background:linear-gradient(114.44deg,#7433ff_0%,#ffa3fd_100%)]
-      hover:text-white
-      hover:opacity-100
-      sm:mt-0
-      sm:ml-5
-      "
-      ref={ref}
-      {...props}
-    >
-      {isLoading ? <>. . .</> : children}
-    </Button>
-  );
-}
 
 export const Newsletter: FC = () => {
   const [email, setEmail] = useState('');
@@ -100,7 +52,11 @@ export const Newsletter: FC = () => {
   return (
     <>
       {hasPower && confetti && (
-        <FixedConfetti width={window.innerWidth} height={window.innerHeight} />
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          className="!fixed"
+        />
       )}
       <p className="border-0 text-gray-300">
         {success
@@ -113,7 +69,7 @@ export const Newsletter: FC = () => {
             )}
       </p>
       {!success && (
-        <Form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className="flex flex-col sm:flex-row">
           <Input
             type="email"
             required
@@ -122,10 +78,15 @@ export const Newsletter: FC = () => {
             value={email}
             onChange={onChange}
           />
-          <Submit type="submit" isLoading={loading}>
-            Submit
-          </Submit>
-        </Form>
+          <Button
+            type="submit"
+            disabled={loading}
+            variant="primary"
+            className="mt-5 sm:mt-0 sm:ml-5"
+          >
+            {loading ? '. . .' : 'Submit'}
+          </Button>
+        </form>
       )}
     </>
   );
@@ -140,7 +101,7 @@ export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
         <div
           className={clsx(
             'flex-1',
-            !hideCover && 'p-4 lg:max-w-[500px] 2xl:pl-40'
+            !hideCover && 'p-4 xl:max-w-[40%] 2xl:pl-40'
           )}
         >
           <Heading>Get in touch</Heading>
