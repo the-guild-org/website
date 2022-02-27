@@ -1,5 +1,5 @@
 import { FC, useEffect, useLayoutEffect, useState } from 'react';
-import styled from 'styled-components';
+import { styled } from '@stitches/react';
 import { GenericLink } from '../../components';
 import { Observer } from '../Observer';
 
@@ -27,20 +27,19 @@ async function fetchPreview(url: string): Promise<PreviewData> {
   }
 }
 
-const Container = styled.div`
-  display: table;
-  width: 100%;
-  margin-top: 45px;
-  margin-bottom: 45px;
-  max-height: 280px;
-  box-sizing: border-box;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(0, 0, 0, 0.09);
-  border-radius: 5px;
-
-  &:hover {
-    opacity: var(--hover-opacity);
-  }
-`;
+const Container = styled('div', {
+  display: 'table',
+  width: '100%',
+  marginTop: 45,
+  marginBottom: 45,
+  maxHeight: 280,
+  boxSizing: 'border-box',
+  boxShadow: `0 2px 6px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(0, 0, 0, 0.09)`,
+  borderRadius: 5,
+  '&:hover': {
+    opacity: 'var(--hover-opacity)',
+  },
+});
 
 const TextLink = styled.a`
   background: rgba(255, 255, 255, 0);
