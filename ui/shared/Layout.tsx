@@ -1,17 +1,17 @@
 import { FC } from 'react';
-import styled, { css } from 'styled-components';
+import { styled } from '@stitches/react';
 import { useRouter } from 'next/router';
 import { GlobalStyles, Header, FooterExtended } from '@theguild/components';
+import clsx from 'clsx';
 
-export const Container = styled.div`
-  max-width: 960px;
-  margin: 0 auto;
-  box-sizing: border-box;
-
-  @media (max-width: 960px) {
-    margin: 0 15px;
-  }
-`;
+export const Container = styled('div', {
+  maxWidth: 960,
+  margin: '0 auto',
+  boxSizing: 'border-box',
+  '@media (max-width: 960px)': {
+    margin: '0 15px',
+  },
+});
 
 export const Layout: FC = ({ children }) => {
   const router = useRouter();
@@ -67,111 +67,71 @@ export const Layout: FC = ({ children }) => {
   );
 };
 
-export const Section = styled.section<{ noNotch?: boolean; light?: boolean }>`
-  position: relative;
-  background-color: ${(props) => (props.light ? 'transparent' : '#16171c')};
-  color: var(--colors-primary);
-
-  ${(props) =>
-    props.noNotch
-      ? ''
-      : css`
-          &::before {
-            content: '';
-            position: absolute;
-            top: -40px;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 40px 40px 40px;
-            border-color: transparent transparent
-              ${props.light ? '#fff' : '#16171c'} transparent;
-            left: 50%;
-            transform: translateX(-50%);
-          }
-        `}
-`;
-
-const HeroContainer = styled.div<{ shrink?: boolean }>`
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  height: ${(props) => (props.shrink ? '50vh' : '100vh')};
-  min-height: 300px;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-image: url(/img/tiles-lb.png);
-    background-position: left bottom;
-    background-repeat: no-repeat;
-    z-index: -1;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-image: url(/img/tiles-lb.png);
-    background-position: left bottom;
-    background-repeat: no-repeat;
-    transform: rotate(-180deg);
-    z-index: -2;
-  }
-`;
-
-const HeroHeader = styled.div`
-  display: flex;
-  width: 100%;
-  height: 100%;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  color: var(--colors-primary);
-
-  span {
-    color: var(--colors-accent);
-  }
-
-  & > h1 {
-    display: block;
-    font-size: 34px;
-  }
-`;
-
-const FullContainer = styled(Container)`
-  height: 100%;
-`;
+const HeroHeader = styled('div', {
+  color: 'var(--colors-primary)',
+  span: {
+    color: 'var(--colors-accent)',
+  },
+  '& > h1': {
+    display: 'block',
+    fontSize: 34,
+  },
+});
 
 export const Hero: FC<{ shrink?: boolean }> = ({ shrink, children }) => {
   return (
-    <HeroContainer shrink={shrink}>
-      <FullContainer>
-        <HeroHeader>
+    <div
+      className={clsx(
+        `
+      relative
+      min-h-[300px]
+      w-full
+      overflow-hidden
+      before:absolute
+      before:inset-0
+      before:bg-[url(/img/tiles-lb.png)]
+      before:bg-left-bottom
+      before:bg-no-repeat
+      before:content-['']
+      after:absolute
+      after:inset-0
+      after:rotate-180
+      after:bg-[url(/img/tiles-lb.png)]
+      after:bg-left-bottom
+      after:bg-no-repeat
+      after:content-['']
+      `,
+        shrink ? 'h-[50vh]' : 'h-[100vh]'
+      )}
+    >
+      <Container className="h-full">
+        <HeroHeader
+          className="
+        flex
+        h-full
+        w-full
+        flex-col
+        items-center
+        justify-center
+        text-center
+        "
+        >
           <h1>{children}</h1>
         </HeroHeader>
-      </FullContainer>
-    </HeroContainer>
+      </Container>
+    </div>
   );
 };
 
 export const Arrow: FC<{ className?: string }> = ({ className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
+    width={20}
+    height={20}
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2"
+    strokeWidth={2}
     strokeLinecap="round"
     strokeLinejoin="round"
     className={className}
