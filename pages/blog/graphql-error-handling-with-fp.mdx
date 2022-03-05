@@ -56,8 +56,13 @@ This standard error handling is not satisfactory for the many reasons:
 
 # Better modelisation of errors using Union and Interfaces
 
+GraphQL has support for Union types. We can take advantage of it and design our schema to specify all possible results: expected and unexpected / error cases.
 
-GraphQL has support for Union types (only for Types, not yet for Inputs). We can take advantage of it and design our schema to specify all possible results: expected and unexpected / error cases.
+:::note
+GraphQL Union is available for Types only, not for Inputs. However, the [`oneOf` directive](https://github.com/graphql/graphql-spec/pull/825) will bridge the gap in the future.
+
+If you use [Envelop](https://www.envelop.dev/) or [GraphQL Yoga](https://www.graphql-yoga.com/) (both developed by [The Guild](https://the-guild.dev/)), you can already benefit from it today by using this [Envelop plugin](https://www.envelop.dev/plugins/use-extended-validation#schema-directive-flow))
+:::
 
 We can then do queries like the following:
 
