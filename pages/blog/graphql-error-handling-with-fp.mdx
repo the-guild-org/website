@@ -30,6 +30,12 @@ In GraphQL, all requests must go to a single endpoint:
 A GraphQL API will always return a `200 OK` Status Code, even in case of error.
 You'll get a 5xx error in case the server is not available at all.
 
+:::note
+This is actually a common practice, but it is not mandatory. You could send GraphQL responses with different Status Codes. It would however need to be implemented at the server level and not at the operation resolvers level.
+
+As an example, you can checkout [graphql-helix implementation](https://github.com/contra/graphql-helix/blob/a796f9d2afdd8c2d91b745edbc53c5d49b716ba6/packages/core/lib/process-request.ts#L92-L281) of some error cases' responses with different Status Codes, e.g. 400 for GraphQL syntax or validation error, 405 when using not allowed HTTP method (e.g. GET for mutations or using anything else than POST or GET for queries).
+:::
+
 The standard error handling mechanism from GraphQL with return a JSON containing:
 - a `data` key which contains the data corresponding to the GraphQL operation (query, mutation, subscription) invoked and
 - an `errors` key which contains an array of errors returned by the server, with a message and location.
