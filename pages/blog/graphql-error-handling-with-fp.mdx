@@ -515,12 +515,12 @@ export const getEntityForUser = (
 We fetch the User, then the Entity and when we have both, we check the User permission for this entity. Two things to note here:
 
 1. because the `isUserAllowedForEntityAsError` depends on both the User and the Entity and we fetched those separately, we have a nested pipeline (the nested pipe needs to close over the `user`). We'll see next an alternate syntax to get rid of this nesting.
-2. the `chainFirst` function allows us to execute computations in sequence but keep only the result of the first computation. Here what it does is:
+2. the `chainFirst` function allows us to execute computations in sequence but keep only the result of the first computation if the second computation is successful. Here what it does is:
    1. get the Entity (as a `TaskEither`)
       1. if it's a left (some `Error`), it won't execute the `isUserAllowedForEntityAsError`
       2. if it's a right (`Entity`), it executes the `isUserAllowedForEntityAsError`
-         1. if it is a left (`NotAllowedError`), it returns the `TaskEither` holding this Error
-         2. if it is a right (`true`), it ignores it and returns the result of the previous computation (the `TaskEither` holding the `Entity`)
+        1. if it is a left (`NotAllowedError`), it returns the `TaskEither` holding this Error
+        2. if it is a right (`true`), it ignores it and returns the result of the previous computation (the `TaskEither` holding the `Entity`)
 
 ## Avoid nested `pipe` with the `Do` notation
 
