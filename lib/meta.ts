@@ -29,6 +29,7 @@ export function hasManyAuthors(meta: object): meta is MetaWithAuthors {
 }
 
 export function pickAuthor(meta: Meta): string {
+  console.log(meta);
   return meta.author || meta.authors[0];
 }
 
