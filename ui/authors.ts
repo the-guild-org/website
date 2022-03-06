@@ -111,4 +111,9 @@ export const authors: Record<string, Author> = {
     link: 'https://github.com/dimatill',
     github: 'dimatill',
   },
+  gthau: {
+    name: 'Ghislain Thau',
+    link: 'https://github.com/gthau',
+    github: 'gthau',
+  },
 };
