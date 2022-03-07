@@ -10,7 +10,7 @@ import { Heading, Description, Anchor } from './index';
 
 export const BlogCard = tw.a`
 w-[278px]
-min-h-[380px]
+min-h-[400px]
 bg-white
 dark:bg-gray-900
 dark:border-transparent
@@ -59,8 +59,8 @@ export const RecommendedReadingSection: FC<{ articles: MetaWithLink[] }> = ({
               <div
                 css={[
                   css`
-                  background-image: url(${article.image});
-                `,
+                    background-image: url(${article.image});
+                  `,
                   tw`w-full h-full max-w-[278px] max-h-[164px] bg-cover bg-center bg-no-repeat flex-shrink-0`,
                 ]}
               />
@@ -73,13 +73,13 @@ export const RecommendedReadingSection: FC<{ articles: MetaWithLink[] }> = ({
                   {article.description}
                 </Description>
                 <div css={tw`text-xs`}>
-                <span css={tw`dark:text-gray-200 font-bold`}>
-                  {authors[pickAuthor(article)].name}
-                </span>
+                  <span css={tw`dark:text-gray-200 font-bold`}>
+                    {authors[pickAuthor(article)].name}
+                  </span>
                   <span css={tw`text-gray-500`}>
-                  {' '}
+                    {' '}
                     • {format(new Date(article.date), 'LLL do y')}
-                </span>
+                  </span>
                 </div>
               </div>
             </BlogCard>

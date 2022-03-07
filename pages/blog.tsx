@@ -92,7 +92,7 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
                 <Heading $size="md">{article.title}</Heading>
                 <Description
                   $size="md"
-                  css={tw`overflow-ellipsis overflow-hidden max-h-[48px]`}
+                  css={tw`overflow-ellipsis overflow-hidden max-h-[48px] mb-4`}
                 >
                   {article.description}
                 </Description>

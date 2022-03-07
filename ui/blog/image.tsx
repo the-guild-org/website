@@ -5,6 +5,10 @@ export const Image: FC<{
   src: string;
   className?: string;
 }> = ({ alt, src, className }) => {
+  if (!src) {
+    return null;
+  }
+
   const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
 
   if (isVideo) {
