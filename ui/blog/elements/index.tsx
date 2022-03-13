@@ -147,7 +147,7 @@ export const components = {
   ),
   a: GenericLink,
   p: ({ className, children, ...props }) => (
-    <p className={clsx('my-5 leading-[1.65]', className)} {...props}>
+    <p className={clsx('my-5 leading-relaxed', className)} {...props}>
       {children}
     </p>
   ),

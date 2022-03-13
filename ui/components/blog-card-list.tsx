@@ -43,12 +43,12 @@ const BlogCardList: FC<{ articles: MetaWithLink[]; className?: string }> = ({
               className="h-[164px] w-full object-cover drag-none"
             />
             <div className="flex grow flex-col p-5">
-              <Heading size="md" className="line-clamp-3">
+              <Heading size="md" className="line-clamp-3 [hyphens:auto]">
                 {article.title}
               </Heading>
               <Description
                 size="md"
-                className="overflow-hidden text-ellipsis leading-[18px] line-clamp-3"
+                className="overflow-hidden text-ellipsis !leading-[18px] line-clamp-3 [hyphens:auto]"
               >
                 {article.description}
               </Description>

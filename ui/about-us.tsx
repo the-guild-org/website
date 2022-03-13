@@ -7,8 +7,8 @@ import { Heading } from './components';
 import { GetInTouchSection } from './get-in-touch-section';
 import { HeroSection } from './hero-section';
 
-const AboutUs = ({ title, description }: Meta): FC => {
-  return function AboutUsRender({ children }) {
+const AboutUs = (): FC<Meta> =>
+  function AboutUsRender({ children, title, description }) {
     return (
       <MDXProvider components={components}>
         <Page title={title} description={description}>
@@ -23,6 +23,5 @@ const AboutUs = ({ title, description }: Meta): FC => {
       </MDXProvider>
     );
   };
-};
 
 export default AboutUs;
