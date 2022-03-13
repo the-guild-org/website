@@ -1,9 +1,8 @@
-import { promises } from 'node:fs';
+import { writeFile } from 'node:fs/promises';
 import RSS from 'rss';
 import { MetaWithLink } from './meta';
-import { logAsComplete } from './utils';
 
-export async function buildRSS(articles: MetaWithLink[]) {
+export async function generateRSS(articles: MetaWithLink[]) {
   const feed = new RSS({
     title: 'The Guild Blog',
     site_url: 'https://the-guild.dev',
@@ -20,9 +19,8 @@ export async function buildRSS(articles: MetaWithLink[]) {
     });
   }
 
-  const rss = feed.xml({ indent: true });
+  const rss = feed.xml({ indent: '  ' });
 
-  await promises.writeFile('./.next/static/feed.xml', rss);
-
-  logAsComplete('RSS');
+  await writeFile('./.next/static/feed.xml', rss);
+  console.info('✅  RSS generated');
 }

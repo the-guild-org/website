@@ -22,15 +22,11 @@ export async function getAllArticles(
   );
 
   return articles
-    .filter((article) => {
-      if (tagsFilter.length === 0) {
-        return true;
-      }
-
-      return (article.tags || []).some((articleTag) =>
-        tagsFilter.includes(articleTag)
-      );
-    })
+    .filter(
+      (article) =>
+        tagsFilter.length === 0 ||
+        article.tags?.some((tag) => tagsFilter.includes(tag))
+    )
     .sort(sortByDateDesc);
 }
 

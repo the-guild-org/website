@@ -1,14 +1,12 @@
 import { getAllArticles } from './get-all-articles';
-import { buildRSS } from './rss';
-import { buildSitemap } from './sitemap';
+import { generateRSS } from './rss';
+import { generateSitemap } from './sitemap';
 
-async function build() {
+try {
   const articles = await getAllArticles();
 
-  await Promise.all([buildRSS(articles), buildSitemap(articles)]);
-}
-
-build().catch((e) => {
+  await Promise.all([generateRSS(articles), generateSitemap(articles)]);
+} catch (e) {
   console.error(e);
   process.exit(1);
-});
+}

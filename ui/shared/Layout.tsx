@@ -34,35 +34,33 @@ export const Layout: FC = ({ children }) => {
         }}
       />
       {children}
-      <div>
-        <FooterExtended
-          sameSite
-          resources={[
-            {
-              children: 'Blog',
-              title: 'Blog',
-              href: '/blog',
-              onClick(e) {
-                e.preventDefault();
-                router.push('/blog');
-              },
+      <FooterExtended
+        sameSite
+        resources={[
+          {
+            children: 'Blog',
+            title: 'Blog',
+            href: '/blog',
+            onClick(e) {
+              e.preventDefault();
+              router.push('/blog');
             },
-            {
-              children: 'Services',
-              title: 'Services',
-              href: '/services',
-              onClick(e) {
-                e.preventDefault();
-                router.push('/services');
-              },
+          },
+          {
+            children: 'Services',
+            title: 'Services',
+            href: '/services',
+            onClick(e) {
+              e.preventDefault();
+              router.push('/services');
             },
-          ]}
-          // TODO: Add me in the future as is it in mockup
-          // onNewsletterSubmit={(e, email) => {
-          //   console.log({ email })
-          // }}
-        />
-      </div>
+          },
+        ]}
+        // TODO: Add me in the future as is it in mockup
+        // onNewsletterSubmit={(e, email) => {
+        //   console.log({ email })
+        // }}
+      />
     </>
   );
 };

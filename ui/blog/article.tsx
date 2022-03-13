@@ -17,6 +17,7 @@ import {
 import { Page } from '../shared/Page';
 import { Meta, hasAuthor, hasManyAuthors, MetaWithLink } from '../../lib/meta';
 import { authors } from '../authors';
+import blogsMeta from '../../dist/blogs-meta.json';
 
 const Content = styled('div', {
   fontFamily: 'Popins, sans-serif',
@@ -167,31 +168,28 @@ const Authors: FC<{ meta: Meta }> = ({ meta }) => {
   }
 };
 
-const Article = (meta: Meta): FC =>
-  function ArticleRender({ children }) {
+const Article = (): FC<{ meta: Meta }> =>
+  function ArticleRender({ meta, children }) {
     const title = `${meta.title} - The Guild Blog`;
     const router = useRouter();
-
     const [similarArticles, setSimilarArticles] = useState<MetaWithLink[]>([]);
+
     useEffect(() => {
-      fetch(
-        `/api/get-articles?${new URLSearchParams(
-          meta.tags.map((tag) => ['tags', tag])
-        )}`
-      )
-        .then((res) => res.json())
-        .then((articles: MetaWithLink[]) =>
-          articles
-            .sort(
-              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-            )
-            .slice(0, 12)
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 4)
-        )
-        .then(setSimilarArticles)
-        .catch(console.error);
-    }, []);
+      setSimilarArticles(
+        blogsMeta
+          .filter(
+            (article) =>
+              meta.tags.length === 0 ||
+              article.tags?.some((tag) => meta.tags.includes(tag))
+          )
+          .sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          )
+          .slice(0, 12)
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 4)
+      );
+    }, [meta.tags]);
 
     const ogImage =
       (meta.image?.endsWith('.webm') || meta.image?.endsWith('.mp4')) &&

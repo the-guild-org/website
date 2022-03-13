@@ -4,8 +4,10 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint --ignore-path .gitignore .",
-    "dev": "next dev",
-    "build": "yarn check-links && next build && yarn compile-ts lib/build.ts dist/build-sitemap.mjs && node dist/build-sitemap.mjs",
+    "dev": "yarn generate:blogs-meta && next dev",
+    "generate:blogs-meta": "yarn compile-ts lib/generate-blogs-meta.ts dist/generate-blogs-meta.mjs && node dist/generate-blogs-meta.mjs",
+    "generate:sitemap-and-rss": "yarn compile-ts lib/build.ts dist/generate-sitemap-and-rss.mjs && node dist/generate-sitemap-and-rss.mjs",
+    "build": "yarn check-links && yarn generate:blogs-meta && next build && yarn generate:sitemap-and-rss",
     "postinstall": "patch-package",
     "analyze": "ANALYZE=true yarn build",
     "start": "next start",
