@@ -1,5 +1,5 @@
 import { FC, useEffect, useLayoutEffect, useState } from 'react';
-import styled from 'styled-components';
+import { styled } from '../../../stitches.config';
 import { GenericLink } from '../../components';
 import { Observer } from '../Observer';
 
@@ -27,81 +27,74 @@ async function fetchPreview(url: string): Promise<PreviewData> {
   }
 }
 
-const Container = styled.div`
-  display: table;
-  width: 100%;
-  margin-top: 45px;
-  margin-bottom: 45px;
-  max-height: 280px;
-  box-sizing: border-box;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(0, 0, 0, 0.09);
-  border-radius: 5px;
+const Container = styled('div', {
+  display: 'table',
+  width: '100%',
+  marginTop: 45,
+  marginBottom: 45,
+  maxHeight: 280,
+  boxSizing: 'border-box',
+  boxShadow: `0 2px 6px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(0, 0, 0, 0.09)`,
+  borderRadius: 5,
+  '&:hover': {
+    opacity: 'var(--hover-opacity)',
+  },
+});
 
-  &:hover {
-    opacity: var(--hover-opacity);
-  }
-`;
+const TextLink = styled('a', {
+  background: 'rgba(255, 255, 255, 0)',
+  textDecoration: 'none',
+  display: 'table-cell',
+  verticalAlign: 'middle',
+  padding: 20,
+  '& > strong': {
+    display: 'block',
+    marginBottom: 10,
+    fontWeight: 700,
+    fontStyle: 'normal',
+    fontSize: '1rem',
+    lineHeight: 1.3,
+    color: 'var(--colors-text)',
+  },
+  '& > em': {
+    fontSize: '0.85rem',
+    fontStyle: 'normal',
+    color: 'var(--colors-dim)',
+    display: 'block',
+    maxHeight: 120,
+    overflow: 'hidden',
+    wordBreak: 'break-word',
+    lineHeight: 1.3,
+  },
+  '@media (max-width: 640px)': {
+    '& > strong': {
+      marginBottom: 0,
+    },
+    '& > em': {
+      display: 'none',
+      visibility: 'hidden',
+    },
+  },
+});
 
-const TextLink = styled.a`
-  background: rgba(255, 255, 255, 0);
-  text-decoration: none;
-  display: table-cell;
-  vertical-align: middle;
-  padding: 20px;
-
-  & > strong {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: 700;
-    font-style: normal;
-    font-size: 1rem;
-    line-height: 1.3;
-    color: var(--colors-text);
-  }
-
-  & > em {
-    font-size: 0.85rem;
-    font-style: normal;
-    color: var(--colors-dim);
-    display: block;
-    max-height: 120px;
-    overflow: hidden;
-    word-break: break-word;
-    line-height: 1.3;
-  }
-
-  @media (max-width: 640px) {
-    & > strong {
-      margin-bottom: 0;
-    }
-
-    & > em {
-      display: none;
-      visibility: hidden;
-    }
-  }
-`;
-
-const ImageLink = styled.a<{ image: string }>`
-  display: table-cell;
-  vertical-align: middle;
-  width: 160px;
-  height: 160px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(${(props) => props.image});
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.09);
-  border-radius: 0 5px 5px 0;
-
-  @media (max-width: 640px) {
-    width: 90px;
-    height: 90px;
-  }
-`;
+const ImageLink = styled('a', {
+  display: 'table-cell',
+  verticalAlign: 'middle',
+  width: 160,
+  height: 160,
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center center',
+  boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.09)',
+  borderRadius: '0 5px 5px 0',
+  '@media (max-width: 640px)': {
+    width: 90,
+    height: 90,
+  },
+});
 
 const useIsomorphicLayoutEffect =
-  typeof window !== 'undefined' && window.document?.createElement !== undefined
+  typeof window !== 'undefined' && window.document?.createElement
     ? useLayoutEffect
     : useEffect;
 
@@ -137,7 +130,12 @@ export const LinkPreview: FC<{ link: string }> = ({ link }) => {
           <em>{data.description}</em>
           {data.url}
         </TextLink>
-        <ImageLink href={link} image={data.image} />
+        <ImageLink
+          href={link}
+          style={{
+            backgroundImage: `url(${data.image})`,
+          }}
+        />
       </Container>
     </Observer>
   );

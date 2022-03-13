@@ -1,118 +1,108 @@
 import { FC, ChangeEvent, useCallback, useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { Container, Button } from './Layout';
+import { styled } from '../../stitches.config';
+import { Container } from './Layout';
 import { useMutation } from '../../hooks/use-graphql';
 import { runOnCrisp } from '../../lib/crisp';
+import { Button } from '../components';
 
-const Main = styled(Container)`
-  display: flex;
-  flex-direction: row;
-  padding: 75px 0;
+const Main = styled(Container, {
+  display: 'flex',
+  flexDirection: 'row',
+  padding: '75px 0',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  '& > *': {
+    width: '45%',
+  },
+  '@media (max-width: 960px)': {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    '& > *:first-of-type': {
+      marginBottom: 25,
+    },
+    '& > *': {
+      width: '70%',
+    },
+  },
+  '@media (max-width: 640px)': {
+    '& > *': {
+      width: '100%',
+    },
+  },
+});
 
-  justify-content: space-between;
-  align-items: center;
+const Title = styled('h2', {
+  color: 'var(--colors-text)',
+});
 
-  & > * {
-    width: 45%;
-  }
+const Description = styled('p', {
+  color: 'var(--colors-dim)',
+});
 
-  @media (max-width: 960px) {
-    flex-direction: column;
-    justify-content: center;
+const Email = styled('a', {
+  color: 'var(--colors-dim)',
+  fontSize: '0.8rem',
+});
 
-    & > *:first-of-type {
-      margin-bottom: 25px;
-    }
+const FormTitle = styled('p', {
+  color: 'var(--colors-dim)',
+});
 
-    & > * {
-      width: 70%;
-    }
-  }
+const Form = styled('form', {
+  display: 'flex',
+  alignItems: 'center',
+  '@media (max-width: 640px)': {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+  },
+});
 
-  @media (max-width: 640px) {
-    & > * {
-      width: 100%;
-    }
-  }
-`;
+const Input = styled('input', {
+  flexGrow: 1,
+  flexShrink: 1,
+  padding: '0.75rem 1rem',
+  lineHeight: '1.5rem',
+  fontSize: '1rem',
+  borderRadius: '0.375rem',
+  border: '1px solid #d2d6dc',
+  backgroundColor: '#fff',
+  appearance: 'none',
+  margin: '0 5px 0 0',
+  boxSizing: 'border-box',
+  '&:focus': {
+    boxShadow: '0 0 0 3px rgba(164, 202, 254, 0.45)',
+    outline: 0,
+    borderColor: '#a4cafe',
+  },
+  '&:disabled': {
+    opacity: 'var(--hover-opacity)',
+  },
+});
 
-const Title = styled.h2`
-  color: var(--colors-text);
-`;
-
-const Description = styled.p`
-  color: var(--colors-dim);
-`;
-
-const Email = styled.a`
-  color: var(--colors-dim);
-  font-size: 0.8rem;
-`;
-
-const FormTitle = styled.p`
-  color: var(--colors-dim);
-`;
-
-const Form = styled.form`
-  display: flex;
-  align-items: center;
-
-  @media (max-width: 640px) {
-    flex-direction: column;
-    align-items: stretch;
-  }
-`;
-
-const Input = styled.input`
-  flex-grow: 1;
-  flex-shrink: 1;
-  padding: 0.75rem 1rem;
-  line-height: 1.5rem;
-  font-size: 1rem;
-  border-radius: 0.375rem;
-  border: 1px solid #d2d6dc;
-  background-color: #fff;
-  appearance: none;
-  margin: 0 5px 0 0;
-  box-sizing: border-box;
-
-  &:focus {
-    box-shadow: 0 0 0 3px rgba(164, 202, 254, 0.45);
-    outline: 0;
-    border-color: #a4cafe;
-  }
-
-  &:disabled {
-    opacity: var(--hover-opacity);
-  }
-`;
-
-const Submit = styled(Button)<{ state: State }>`
-  flex-shrink: 0;
-  flex-grow: 0;
-  margin-left: 1rem;
-
-  background-color: ${(props) =>
-    props.state === State.Error
-      ? 'var(--colors-error)'
-      : props.state === State.Success
-      ? 'var(--colors-primary)'
-      : 'var(--colors-accent)'};
-
-  &:hover {
-    background-color: ${(props) =>
-      props.state === State.Error
-        ? 'var(--colors-error-light)'
-        : props.state === State.Success
-        ? 'var(--colors-dim-dark)'
-        : 'var(--colors-accent-light)'};
-  }
-
-  @media (max-width: 640px) {
-    margin-top: 1rem;
-    margin-left: 0;
-  }
-`;
+const Submit = styled(Button, {
+  flexShrink: 0,
+  flexGrow: 0,
+  marginLeft: '1rem',
+  '@media (max-width: 640px)': {
+    marginTop: '1rem',
+    marginLeft: 0,
+  },
+});
+//   background-color: ${(props) =>
+//     props.state === State.Error
+//       ? 'var(--colors-error)'
+//       : props.state === State.Success
+//       ? 'var(--colors-primary)'
+//       : 'var(--colors-accent)'};
+//
+//   &:hover {
+//     background-color: ${(props) =>
+//       props.state === State.Error
+//         ? 'var(--colors-error-light)'
+//         : props.state === State.Success
+//         ? 'var(--colors-dim-dark)'
+//         : 'var(--colors-accent-light)'};
+//   }
 
 enum State {
   Idle,
@@ -200,7 +190,12 @@ export const Contact: FC = () => {
             value={email}
             onChange={onEmailChange}
           />
-          <Submit type="submit" state={state} disabled={isLoading}>
+          <Submit
+            type="submit"
+            // state={state}
+            disabled={isLoading}
+            variant="primary"
+          >
             {buttonTextMap[state]}
           </Submit>
         </Form>

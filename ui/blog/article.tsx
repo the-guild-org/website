@@ -2,9 +2,8 @@ import { FC, useEffect, useState } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import styled, { css } from 'styled-components';
 import format from 'date-fns/format';
-import tw from 'twin.macro';
+import { styled } from '../../stitches.config';
 import { components } from './elements';
 import {
   Newsletter,
@@ -18,98 +17,82 @@ import {
 import { Page } from '../shared/Page';
 import { Meta, hasAuthor, hasManyAuthors, MetaWithLink } from '../../lib/meta';
 import { authors } from '../authors';
+import blogsMeta from '../../dist/blogs-meta.json';
 
-const Content = styled.div`
-  font-family: Popins, sans-serif;
-  padding-top: 25px;
-  font-weight: 400;
+const Content = styled('div', {
+  fontFamily: 'Popins, sans-serif',
+  paddingTop: 25,
+  fontWeight: 400,
 
-  > * {
-    margin-bottom: 1.7rem;
-  }
+  '> *': {
+    marginBottom: '1.7rem',
+  },
 
-  > pre[class*='language-'] {
-    margin: 0;
-    padding: 0;
-    margin-bottom: 1.7rem;
-    border-radius: 3px;
+  '> pre[class*="language-"]': {
+    margin: 0,
+    padding: 0,
+    marginBottom: '1.7rem',
+    borderRadius: 3,
 
-    > pre {
-      padding: 1.5rem;
-      margin: 0;
-    }
-  }
-`;
+    '> pre': {
+      padding: '1.5rem',
+      margin: 0,
+    },
+  },
+});
 
-const Author = styled.div<{
-  many?: boolean;
-}>`
-  text-align: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  font-size: 0.9rem;
+const Author = styled('div', {
+  textAlign: 'center',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  fontSize: '0.9rem',
+  '& > div:nth-child(2)': {
+    marginLeft: 10,
+    display: 'flex',
+    textAlign: 'left',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    '& > a': {
+      color: 'var(--colors-accent)',
+    },
+    '& > a:hover': {
+      color: 'var(--colors-accent-light)',
+    },
+  },
+});
 
-  ${(props) =>
-    props.many &&
-    css`
-      &:not(:last-child) {
-        padding-right: 15px;
-      }
+const Details = styled('div', {
+  marginTop: '2rem',
+  textAlign: 'center',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+});
 
-      &:not(:first-of-type) {
-        padding-left: 15px;
-      }
-    `}
-  & > div:nth-child(2) {
-    margin-left: 10px;
-    display: flex;
-    text-align: left;
-    flex-direction: column;
-    justify-content: center;
+const Time = styled('time', {
+  color: 'var(--colors-dim)',
+  fontSize: '0.8rem',
+});
 
-    & > a {
-      color: var(--colors-accent);
-    }
+const Cover = styled('div', {
+  paddingTop: 25,
+  margin: '0 auto',
+  width: '100%',
+  height: 'auto',
+  '& > *': {
+    maxWidth: '100%',
+    height: 'auto',
+    maxHeight: 300,
+    display: 'block',
+    margin: '0 auto',
+  },
+});
 
-    & > a:hover {
-      color: var(--colors-accent-light);
-    }
-  }
-`;
-
-const Details = styled.div`
-  margin-top: 2rem;
-  text-align: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-`;
-
-const Time = styled.time`
-  color: var(--colors-dim);
-  font-size: 0.8rem;
-`;
-
-const Cover = styled.div`
-  padding-top: 25px;
-  margin: 0 auto;
-  width: 100%;
-  height: auto;
-
-  & > * {
-    max-width: 100%;
-    height: auto;
-    max-height: 300px;
-    display: block;
-    margin: 0 auto;
-  }
-`;
-
-const ConsultingInfo = styled.div`
-  color: var(--colors-dim);
-  border-left: 3px solid var(--colors-accent);
-`;
+const ConsultingInfo = styled('div', {
+  color: 'var(--colors-dim)',
+  borderLeft: '3px solid var(--colors-accent)',
+});
 
 const Authors: FC<{ meta: Meta }> = ({ meta }) => {
   const date = meta.date ? new Date(meta.date) : new Date();
@@ -156,16 +139,16 @@ const Authors: FC<{ meta: Meta }> = ({ meta }) => {
               ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
               : `Posted ${format(date, 'EEEE, LLL do y')}`
           }
-          css={tw`block text-center mt-4`}
+          className="mt-4 block text-center"
         >
           {format(date, 'EEEE, LLL do y')}
         </Time>
-        <Details>
+        <Details className="gap-x-5">
           {meta.authors.map((authorId, i) => {
             const author = authors[authorId];
 
             return (
-              <Author many key={`${authorId}_${i}`}>
+              <Author key={`${authorId}_${i}`}>
                 <div>
                   <a href={author.link} title={author.name}>
                     <Avatar author={author} />
@@ -185,31 +168,28 @@ const Authors: FC<{ meta: Meta }> = ({ meta }) => {
   }
 };
 
-const Article = (meta: Meta): FC =>
-  function ArticleRender({ children }) {
+const Article = (): FC<{ meta: Meta }> =>
+  function ArticleRender({ meta, children }) {
     const title = `${meta.title} - The Guild Blog`;
     const router = useRouter();
-
     const [similarArticles, setSimilarArticles] = useState<MetaWithLink[]>([]);
+
     useEffect(() => {
-      fetch(
-        `/api/get-articles?${new URLSearchParams(
-          meta.tags.map((tag) => ['tags', tag])
-        )}`
-      )
-        .then((res) => res.json())
-        .then((articles: MetaWithLink[]) =>
-          articles
-            .sort(
-              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-            )
-            .slice(0, 12)
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 4)
-        )
-        .then(setSimilarArticles)
-        .catch(console.error);
-    }, []);
+      setSimilarArticles(
+        blogsMeta
+          .filter(
+            (article) =>
+              meta.tags.length === 0 ||
+              article.tags?.some((tag) => meta.tags.includes(tag))
+          )
+          .sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          )
+          .slice(0, 12)
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 4)
+      );
+    }, [meta.tags]);
 
     const ogImage =
       (meta.image?.endsWith('.webm') || meta.image?.endsWith('.mp4')) &&
@@ -256,20 +236,16 @@ const Article = (meta: Meta): FC =>
         </Head>
 
         <Page title={title} image={ogImage} description={meta.description}>
-          <div css={tw`w-[790px] max-w-[100vw] mx-auto pt-32`}>
-            <Heading css={tw`text-[42px] leading-[55px] text-center font-bold`}>
+          <div className="mx-auto w-[790px] max-w-[100vw] pt-32">
+            <Heading className="text-center text-[42px] font-bold leading-[55px]">
               {meta.title}
             </Heading>
             <Authors meta={meta} />
-            {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
-            {/* @ts-ignore*/}
-            <TagList tags={meta.tags} asLink css={tw`mt-4`} />
+            <TagList tags={meta.tags} asLink className="mt-4" />
             <Cover>
               <Image src={meta.image} alt={title} />
             </Cover>
-            <ConsultingInfo
-              css={tw`bg-gray-100 dark:bg-gray-900 leading-7 p-6 mt-6`}
-            >
+            <ConsultingInfo className="mt-6 bg-gray-100 p-6 leading-7 dark:bg-gray-900">
               Looking for experts? We offer consulting and trainings.
               <br />
               Explore{' '}
@@ -281,22 +257,18 @@ const Article = (meta: Meta): FC =>
               </GenericLink>{' '}
               and get in touch.
             </ConsultingInfo>
-            <Content tw="text-[#7F818C]">{children}</Content>
+            <Content className="text-[#7F818C]">{children}</Content>
           </div>
-          <div css={tw`container max-w-[1200px]! my-20`}>
+          <div className="container my-20">
             {similarArticles.length > 0 && (
               <>
-                <h3
-                  css={tw`text-[28px] dark:text-[#FCFCFC] font-extrabold text-center`}
-                >
+                <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">
                   Similar articles
                 </h3>
                 <BlogCardList articles={similarArticles} />
               </>
             )}
-            {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
-            {/* @ts-ignore*/}
-            <Newsletter css={tw`max-w-[650px] mx-auto`} />
+            <Newsletter className="mx-auto max-w-[650px]" />
           </div>
         </Page>
       </MDXProvider>

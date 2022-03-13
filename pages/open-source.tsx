@@ -1,22 +1,21 @@
 import { FC } from 'react';
-import styled from 'styled-components';
 import { GetStaticProps } from 'next/types';
+import { styled } from '../stitches.config';
 import { Page } from '../ui/shared/Page';
-import { Section, Container } from '../ui/shared/Layout';
+import { Container } from '../ui/shared/Layout';
 import { projects } from '../lib/projects';
-import { ProjectSeparator, Project } from '../ui/shared/Projects';
 import { HeroSection } from '../ui/hero-section';
 import { Heading } from '../ui/components';
+import { Featured } from '../ui/shared/Featured';
 
-const ProjectsSection = styled(Section)`
-  padding: 50px 0;
-  text-align: center;
-  background: none;
-
-  &::before {
-    display: none;
-  }
-`;
+const ProjectsSection = styled('div', {
+  padding: '50px 0',
+  textAlign: 'center',
+  background: 'none',
+  '&::before': {
+    display: 'none',
+  },
+});
 
 interface Props {
   projectsOrder: string[];
@@ -32,6 +31,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
+const ProjectSeparator = styled('div', {
+  margin: '30px auto',
+  width: 50,
+  height: 2,
+  backgroundColor: 'var(--colors-accent-light)',
+});
+
 const OpenSource: FC<Props> = ({ projectsOrder }) => {
   return (
     <Page
@@ -44,28 +50,13 @@ const OpenSource: FC<Props> = ({ projectsOrder }) => {
       </HeroSection>
       <ProjectsSection>
         <Container>
-          {projectsOrder.map((id, i) => {
-            const project = projects[id];
-
-            return (
-              <div key={id}>
-                {i !== 0 && <ProjectSeparator />}
-                <Project
-                  title={project.title}
-                  image={project.image}
-                  link={project.link}
-                  description={project.description}
-                />
-              </div>
-            );
-          })}
-          <div key="whatsapp">
-            <ProjectSeparator />
-            <Project
-              title="WhatsApp Clone Tutorial"
-              image="/img/logos/whats-app.svg"
-              link="https://github.com/Urigo/WhatsApp-Clone-Tutorial"
-              description={
+          {projectsOrder
+            .map((id) => projects[id])
+            .concat({
+              title: 'WhatsApp Clone Tutorial',
+              image: '/img/logos/whats-app.svg',
+              link: 'https://github.com/Urigo/WhatsApp-Clone-Tutorial',
+              description: (
                 <>
                   <p>An open-source full-stack example app.</p>
                   <p>
@@ -74,9 +65,23 @@ const OpenSource: FC<Props> = ({ projectsOrder }) => {
                     PostgreSQL, Styled Components and Material UI
                   </p>
                 </>
-              }
-            />
-          </div>
+              ),
+            })
+            .map((project, i) => (
+              <div key={project.title}>
+                {i !== 0 && <ProjectSeparator />}
+                <Featured
+                  className="px-[50px]"
+                  width={80}
+                  noShadow
+                  maxCoverSize={200}
+                  title={project.title}
+                  image={project.image}
+                  link={project.link}
+                  description={project.description}
+                />
+              </div>
+            ))}
         </Container>
       </ProjectsSection>
     </Page>

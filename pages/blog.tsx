@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { GetStaticProps } from 'next/types';
-import tw from 'twin.macro';
 import { Page } from '../ui/shared/Page';
 import { Newsletter, Heading, BlogCardList, TagList } from '../ui/components';
 import { MetaWithLink } from '../lib/meta';
@@ -60,12 +59,9 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
       <HeroSection>
         <Heading>The Guild's blog</Heading>
       </HeroSection>
-      <div css={tw`container max-w-[1200px]!`}>
-        {/* eslint-disable @typescript-eslint/ban-ts-comment -- TODO: fix after tailwind upgrade */}
-        {/* @ts-ignore*/}
-        <TagList tags={allTags} withCount asLink css={tw`mt-10 mb-20`} />
-        {/* @ts-ignore*/}
-        {!tagFilters && <Newsletter css={tw`mb-14`} />}
+      <div className="container max-w-[1200px]">
+        <TagList tags={allTags} withCount asLink className="mt-10 mb-20" />
+        {!tagFilters && <Newsletter className="mb-14" />}
         <BlogCardList articles={articles} />
       </div>
     </Page>

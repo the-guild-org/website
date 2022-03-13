@@ -1,12 +1,25 @@
-import styled from 'styled-components';
-import tw from 'twin.macro';
+import clsx from 'clsx';
+import { FC } from 'react';
 
 type Size = 'lg' | 'md';
 
-const Description = styled.p(({ $size = 'lg' }: { $size?: Size }) => [
-  tw`text-gray-500`,
-  $size === 'lg' && tw`leading-6 mb-7`,
-  $size === 'md' && tw`text-xs leading-4 mb-6`,
-]);
+const Description: FC<{ size?: Size; className?: string }> = ({
+  className,
+  size = 'lg',
+  children,
+}) => {
+  return (
+    <p
+      className={clsx(
+        'text-gray-500',
+        size === 'lg' && 'mb-7 leading-6',
+        size === 'md' && 'mb-6 text-xs leading-4',
+        className
+      )}
+    >
+      {children}
+    </p>
+  );
+};
 
 export default Description;

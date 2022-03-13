@@ -1,12 +1,25 @@
-import styled from 'styled-components';
-import tw from 'twin.macro';
+import clsx from 'clsx';
+import { FC } from 'react';
 
 type Size = 'lg' | 'md';
 
-const Heading = styled.h2(({ $size = 'lg' }: { $size?: Size }) => [
-  tw`m-0 mb-2`,
-  $size === 'lg' && tw`text-5xl dark:text-gray-50 leading-tight`,
-  $size === 'md' && tw`text-lg font-bold dark:text-gray-50 leading-7`,
-]);
+const Heading: FC<{ size?: Size; className?: string }> = ({
+  className,
+  size = 'lg',
+  children,
+}) => {
+  return (
+    <h2
+      className={clsx(
+        'm-0 mb-2',
+        size === 'lg' && 'text-5xl leading-tight dark:text-gray-50',
+        size === 'md' && 'text-lg font-bold leading-7 dark:text-gray-50',
+        className
+      )}
+    >
+      {children}
+    </h2>
+  );
+};
 
 export default Heading;

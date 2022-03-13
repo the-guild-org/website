@@ -1,27 +1,11 @@
 import { FC, ChangeEvent, useCallback, useState, useEffect } from 'react';
-import styled from 'styled-components';
 import Confetti from 'react-confetti';
-import tw from 'twin.macro';
-import { css } from 'styled-components';
+import clsx from 'clsx';
 import { useMutation } from '../../hooks/use-graphql';
 import Button from './button';
 import Heading from './heading';
 import Description from './description';
 import Input from './input';
-
-const Form = styled.form`
-  display: flex;
-  align-items: center;
-
-  @media (max-width: 640px) {
-    flex-direction: column;
-    align-items: stretch;
-  }
-`;
-
-const FixedConfetti = styled(Confetti)`
-  position: fixed !important;
-`;
 
 const Newsletter: FC<{ className?: string }> = ({ className }) => {
   const [email, setEmail] = useState('');
@@ -73,14 +57,20 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
 
   return (
     <div
-      className={className}
-      css={tw`bg-gray-100 dark:bg-gray-900 rounded p-6 mt-20`}
+      className={clsx(
+        'mx-5 mt-20 rounded bg-gray-100 p-6 dark:bg-gray-900 md:mx-auto',
+        className
+      )}
     >
       {hasPower && confetti && (
-        <FixedConfetti width={window.innerWidth} height={window.innerHeight} />
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          className="!fixed"
+        />
       )}
-      <Heading $size="md">Join our newsletter</Heading>
-      <Description css={tw`mb-3`}>
+      <Heading size="md">Join our newsletter</Heading>
+      <Description className="mb-3">
         {success ? (
           'Thank you for joining!'
         ) : error ? (
@@ -93,7 +83,7 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
         )}
       </Description>
       {showForm && (
-        <Form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className="flex flex-col sm:flex-row">
           <Input
             type="text"
             required
@@ -105,20 +95,12 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
           <Button
             type="submit"
             disabled={loading}
-            css={[
-              css`
-                background: linear-gradient(
-                  114.44deg,
-                  #7433ff 0%,
-                  #ffa3fd 100%
-                );
-              `,
-              tw`mt-5 sm:mt-0 sm:ml-5 px-10! text-white! opacity-80 hover:opacity-100 border-0`,
-            ]}
+            variant="primary"
+            className="mt-5 sm:mt-0 sm:ml-5"
           >
             Submit
           </Button>
-        </Form>
+        </form>
       )}
     </div>
   );

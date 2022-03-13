@@ -1,64 +1,44 @@
-import NativeLink from 'next/link';
-import styled from 'styled-components';
-import tw from 'twin.macro';
+import NextLink from 'next/link';
+import clsx from 'clsx';
+import { FC, HTMLProps } from 'react';
 
-export const Anchor = tw.a`text-gray-500 font-bold hover:text-gray-600 dark:hover:text-gray-300`;
-
-export const ExternalLink = styled.a.attrs((props) => ({
-  href: props.href,
-  target: '_blank',
-  rel: 'noopener noreferrer',
-}))`
-  text-decoration: none;
-  font-size: inherit;
-  color: var(--colors-accent);
-
-  &:hover {
-    color: var(--colors-accent-light);
-    text-decoration: none;
-  }
-`;
-
-const AnchorLink = styled.a`
-  color: var(--colors-accent);
-  font-size: inherit;
-  text-decoration: none;
-  border-bottom: 1px dotted;
-
-  &:hover {
-    color: var(--colors-accent-light);
-    text-decoration: none;
-  }
-`;
+export const Anchor: FC<HTMLProps<HTMLAnchorElement>> = ({
+  className,
+  children,
+  ...props
+}) => {
+  return (
+    <a
+      className={clsx(
+        'font-bold text-gray-500 hover:text-gray-600 dark:hover:text-gray-300',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </a>
+  );
+};
 
 export const GenericLink = (props) => {
   if (props.href.startsWith('/') && !props.href.startsWith('/blog')) {
-    return <InternalLink {...props} />;
+    return (
+      <NextLink href={props.href} as={props.as}>
+        <a className="text-[#1cc8ee] hover:underline">{props.children}</a>
+      </NextLink>
+    );
   }
 
   if (props.href.startsWith('#')) {
-    return <AnchorLink {...props} />;
+    return <a className="text-[#1cc8ee] hover:underline" {...props} />;
   }
 
-  return <ExternalLink {...props} />;
+  return (
+    <a
+      className="text-[#1cc8ee] hover:underline"
+      target="_blank"
+      rel="noopener noreferrer"
+      {...props}
+    />
+  );
 };
-
-export const InternalLink = ({ href, as, children }) => (
-  <NativeLink href={href} as={as}>
-    <a>
-      {children}
-
-      <style jsx>{`
-        a {
-          text-decoration: none;
-          font-size: inherit;
-          color: var(--colors-accent);
-        }
-        a:hover {
-          color: var(--colors-accent-light);
-          text-decoration: none;
-        }
-      `}</style>
-    </a>
-  </NativeLink>
-);
