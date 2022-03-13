@@ -20,7 +20,7 @@ import { authors } from '../authors';
 import blogsMeta from '../../dist/blogs-meta.json';
 
 const Content = styled('div', {
-  fontFamily: 'Popins, sans-serif',
+  fontFamily: 'Open Sans, sans-serif',
   paddingTop: 25,
   fontWeight: 400,
 
@@ -30,7 +30,6 @@ const Content = styled('div', {
 
   '> pre[class*="language-"]': {
     margin: 0,
-    padding: 0,
     marginBottom: '1.7rem',
     borderRadius: 3,
 
@@ -255,7 +254,7 @@ const Article = (): FC<{ meta: Meta }> =>
               </GenericLink>{' '}
               and get in touch.
             </ConsultingInfo>
-            <Content className="text-[#7F818C]">{children}</Content>
+            <Content className="dark:text-[#7F818C]">{children}</Content>
           </div>
           <div className="container my-20">
             {similarArticles.length > 0 && (

@@ -10,7 +10,7 @@ import { LinkPreview } from '../../shared/embed/LinkPreview';
 
 const Ul = styled('ul', {});
 const Blockquote = styled('blockquote', {});
-const Code = styled('pre', {});
+const Code = styled('code', {});
 const InlineCode = styled('code', {});
 
 export const components = {
@@ -71,6 +71,14 @@ export const components = {
       {children}
     </ol>
   ),
+  pre: styled('pre', {
+    background: '#1d1f21',
+    borderRadius: 4,
+    padding: 24,
+    color: '#f8f8f2',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-all',
+  }),
   code: ({ className, syntax, children, ...props }) => (
     <Code
       className={clsx('', syntax, className)}
@@ -78,9 +86,7 @@ export const components = {
       // @ts-ignore
       css={css({
         background: '#1d1f21',
-        color: '#f8f8f2',
         overflow: 'auto',
-        padding: '1.5rem',
         borderRadius: 3,
         '-webkit-overflow-scrolling': 'touch',
         fontSize: '1rem',
@@ -97,19 +103,22 @@ export const components = {
   ),
   inlineCode: ({ className, wrap, children, ...props }) => (
     <InlineCode
-      className={clsx('', wrap && 'wrap', className)}
+      className={clsx(
+        'rounded-[5px] border border-solid border-gray-500/20 px-1 py-0.5',
+        wrap && 'wrap',
+        className
+      )}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- TODO: find a way to fix type error
       // @ts-ignore
-      css={css({
-        backgroundColor: 'rgba(0, 0, 0, 0.05)',
-        borderRadius: 5,
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        padding: 2,
-        paddingLeft: 5,
-        paddingRight: 5,
-        fontFamily:
-          "Monaco, Consolas, 'Andale  Mono', 'DejaVu Sans Mono', monospace",
-      })}
+      // css={css({
+      //   backgroundColor: 'rgba(0, 0, 0, 0.05)',
+      //   border: '1px solid rgba(255, 255, 255, 0.2)',
+      //   padding: 2,
+      //   paddingLeft: 5,
+      //   paddingRight: 5,
+      //   fontFamily:
+      //     "Monaco, Consolas, 'Andale  Mono', 'DejaVu Sans Mono', monospace",
+      // })}
       {...props}
     >
       {children}
