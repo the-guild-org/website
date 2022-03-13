@@ -1,14 +1,18 @@
 import clsx from 'clsx';
-import { FC, HTMLProps } from 'react';
+import { FC, ComponentProps } from 'react';
+import { styled } from '../../stitches.config';
+
+const ButtonWithAsProp = styled('button', {});
 
 const Button: FC<
-  HTMLProps<HTMLButtonElement> & {
-    type?: 'button' | 'submit' | 'reset';
+  ComponentProps<typeof ButtonWithAsProp> & {
     variant?: 'secondary' | 'primary';
+    as?: 'a';
+    href?: string;
   }
 > = ({ className, children, variant = 'secondary', ...props }) => {
   return (
-    <button
+    <ButtonWithAsProp
       className={clsx(
         `
   cursor-pointer
@@ -33,7 +37,7 @@ const Button: FC<
       {...props}
     >
       {children}
-    </button>
+    </ButtonWithAsProp>
   );
 };
 
