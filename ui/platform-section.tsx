@@ -47,7 +47,7 @@ export const PlatformSection: FC = () => {
         dark:[background:linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(41,40,40,0.2)100%),#0b0d11]
         "
       >
-        <div className="container flex flex-col items-center pt-20 pb-28 text-center">
+        <div className="container flex flex-col items-center px-4 pt-20 pb-28 text-center sm:px-6 md:px-8">
           <Heading>The Platform</Heading>
           <Description className="max-w-[400px] md:max-w-[700px]">
             Our advanced, modular solutions can be adopted gradually as

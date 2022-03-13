@@ -79,7 +79,7 @@ The other, more efficient way of solving this is to synthesize the mutations. Ye
 
 ![](/medium/dee039857e0e507016a5fb742f50c814.png)
 
-One thing to note is that we‘re likely to change the `style` attribute inside rule event handlers, which will unnecessarily re-trigger the mutation callback and might potentially cause an infinite mutation loop. To avoid that I used the [`takeRecords()`](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/takeRecords) function to dispose the pending mutations from triggering.
+One thing to note is that we're likely to change the `style` attribute inside rule event handlers, which will unnecessarily re-trigger the mutation callback and might potentially cause an infinite mutation loop. To avoid that I used the [`takeRecords()`](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/takeRecords) function to dispose the pending mutations from triggering.
 
 ```javascript
 function observerCallback(mutations, observer) {

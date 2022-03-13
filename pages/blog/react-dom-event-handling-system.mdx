@@ -139,7 +139,7 @@ The plug-in hub goes through the accumulated information and dispatches the even
 
 So that's how that events handling system works in a nutshell. There are few things I would like you to note:
 
-- Top level event listeners which are registered to the main DOM (`window.document`) can also be registered to other DOMs, depends on where application container's at. For example, if the container is adopted by an `iframe`, then the `iframe`‘s DOM will be the main event listener; it can also be a document fragment, a shadow DOM, etc. It's important that you'd be aware of that and know that there's a slight limitation the events' propagation.
+- Top level event listeners which are registered to the main DOM (`window.document`) can also be registered to other DOMs, depends on where application container's at. For example, if the container is adopted by an `iframe`, then the `iframe`'s DOM will be the main event listener; it can also be a document fragment, a shadow DOM, etc. It's important that you'd be aware of that and know that there's a slight limitation the events' propagation.
 - React re-dispatches the events in two phases: one for capturing and the other for bubbling, just like how the native DOM does.
 - The event handling which is done for React Native **is different** than React DOM's and you shouldn't confuse between the two! React is just a library that produces a virtual representation of the view that we would like to render, and React DOM/Native are the bridge between React and the environment that we're using. **This article is relevant for React DOM only!**
 

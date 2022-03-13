@@ -5,7 +5,7 @@ import { Anchor, Description, Heading } from './components';
 export const ServicesSection: FC = () => {
   return (
     <>
-      <div className="flex flex-col items-center pt-28 text-center">
+      <div className="flex flex-col items-center px-4 pt-28 text-center sm:px-6 md:px-8">
         <Heading>The Guild's Services</Heading>
         <Description className="max-w-[700px] px-2 md:px-0">
           Work directly with the most powerful group of API developers that

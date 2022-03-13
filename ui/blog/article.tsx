@@ -236,10 +236,8 @@ const Article = (): FC<{ meta: Meta }> =>
         </Head>
 
         <Page title={title} image={ogImage} description={meta.description}>
-          <div className="mx-auto w-[790px] max-w-[100vw] pt-32">
-            <Heading className="text-center text-[42px] font-bold leading-[55px]">
-              {meta.title}
-            </Heading>
+          <div className="mx-auto w-[790px] max-w-[100vw] px-4 pt-32 sm:px-6 md:px-8">
+            <Heading className="text-center text-[42px]">{meta.title}</Heading>
             <Authors meta={meta} />
             <TagList tags={meta.tags} asLink className="mt-4" />
             <Cover>
