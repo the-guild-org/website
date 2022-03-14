@@ -7,7 +7,6 @@ import { CombinedThemeProvider, AppSeoProps } from '@guild-docs/client';
 import 'prism-theme-night-owl/build/no-italics.css';
 import 'remark-admonitions/styles/classic.css';
 import * as gtag from '../lib/gtag';
-import { GA_TRACKING_ID } from '../lib/gtag';
 import globalStyles from '../styles/global';
 import '../styles/global.css';
 
@@ -66,20 +65,6 @@ export default class MyApp extends App {
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta charSet="utf-8" />
           <link rel="shortcut icon" href="/fav.ico" />
-          <script
-            async
-            // Global Site Tag (gtag.js) - Google Analytics
-            src={`https://googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-          />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_TRACKING_ID}');`,
-            }}
-          />
           <link
             rel="alternate"
             type="application/rss+xml"
@@ -87,7 +72,7 @@ export default class MyApp extends App {
             href="/feed.xml"
           />
         </Head>
-        <Script src="/static/crisp.js" />
+        <Script async src="/static/crisp.js" />
         <CombinedThemeProvider
           theme={theme}
           accentColor={accentColor}

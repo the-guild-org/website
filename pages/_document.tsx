@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import Document, { Head, Main, NextScript, Html } from 'next/document';
 import { getCssText } from '../stitches.config';
+import { GA_TRACKING_ID } from '../lib/gtag';
 
 const JS_COMMENT_REGEX = /\/\*[\s\S]*?\*\/|\/\/.*/g;
 
@@ -29,6 +30,21 @@ export default class MyDocument extends Document {
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(richData) }}
+          />
+          <script
+            async
+            // Global Site Tag (gtag.js) - Google Analytics
+            src={`https://googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+          />
+          <script
+            id="googleTagManager"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_TRACKING_ID}');`,
+            }}
           />
           <link
             href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap"

@@ -171,24 +171,24 @@ const Article = (): FC<{ meta: Meta }> =>
   function ArticleRender({ meta, children }) {
     const title = `${meta.title} - The Guild Blog`;
     const router = useRouter();
+
     const [similarArticles, setSimilarArticles] = useState<MetaWithLink[]>([]);
 
     useEffect(() => {
-      setSimilarArticles(
-        blogsMeta
-          .filter(
-            (article) =>
-              meta.tags.length === 0 ||
-              article.tags?.some((tag) => meta.tags.includes(tag))
-          )
-          .sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-          )
-          .slice(0, 12)
-          .sort(() => 0.5 - Math.random())
-          .slice(0, 4)
-      );
-    }, [meta.tags]);
+      const newSimilarArticles = blogsMeta
+        .filter(
+          (article) =>
+            meta.tags.length === 0 ||
+            article.link !== router.route ||
+            article.tags?.some((tag) => meta.tags.includes(tag))
+        )
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 12)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 4);
+
+      setSimilarArticles(newSimilarArticles);
+    }, [meta.tags, router.route]);
 
     const ogImage =
       (meta.image?.endsWith('.webm') || meta.image?.endsWith('.mp4')) &&

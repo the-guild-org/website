@@ -1,14 +1,15 @@
+import { forwardRef, HTMLProps } from 'react';
 import NextLink from 'next/link';
 import clsx from 'clsx';
-import { FC, HTMLProps } from 'react';
 
-export const Anchor: FC<HTMLProps<HTMLAnchorElement>> = ({
-  className,
-  children,
-  ...props
-}) => {
+// forwardRef fixes Warning: Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?
+export const Anchor = forwardRef<
+  HTMLAnchorElement,
+  HTMLProps<HTMLAnchorElement>
+>(function Anchor({ className, children, ...props }, forwardedRef) {
   return (
     <a
+      ref={forwardedRef}
       className={clsx(
         'font-bold text-gray-500 hover:text-gray-600 dark:hover:text-gray-300',
         className
@@ -18,7 +19,7 @@ export const Anchor: FC<HTMLProps<HTMLAnchorElement>> = ({
       {children}
     </a>
   );
-};
+});
 
 export const GenericLink = (props) => {
   if (props.href.startsWith('/') && !props.href.startsWith('/blog')) {
