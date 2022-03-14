@@ -53,9 +53,21 @@ module.exports = {
             message:
               "Use named import if you need import something from react. `import React from 'react'` not need in NextJS. Use 'FC' instead 'FunctionComponent'.",
           },
+          {
+            name: '@stitches/react',
+            importNames: [
+              'styled',
+              'getCssText',
+              'keyframes',
+              'css',
+              'globalCss',
+            ],
+            message: 'Use `stitches.config.ts`.',
+          },
         ],
         'no-var': 'error',
         'object-shorthand': ['error', 'always'],
+        'prefer-const': 'error',
         'prefer-destructuring': ['error', { object: true }],
         'prefer-template': 'error',
         'react/jsx-boolean-value': ['error', 'never'],
@@ -89,6 +101,27 @@ module.exports = {
       files: ['*.cjs'],
       rules: {
         '@typescript-eslint/no-var-requires': 'off',
+      },
+    },
+    {
+      files: '{pages,ui}/**/*',
+      extends: ['plugin:tailwindcss/recommended'],
+      settings: {
+        tailwindcss: {
+          config: 'tailwind.config.cjs',
+          whitelist: [
+            'youtube-mdx-embed',
+            'twitter-tweet',
+            'codesandbox-mdx-embed',
+            'drag-none', // false positive
+            'filter-none', // false positive
+            'wrap', // don't know if is used
+          ],
+        },
+      },
+      rules: {
+        'tailwindcss/no-custom-classname': 'error', // set more strict to highlight in editor
+        'tailwindcss/classnames-order': 'off', // conflicts with official prettier-plugin-tailwindcss and tailwind v3
       },
     },
   ],

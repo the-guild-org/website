@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import tw from 'twin.macro';
+import clsx from 'clsx';
 
 export const HeroSection: FC<{ hideCirclesOnMobile?: boolean }> = ({
   children,
@@ -9,44 +9,29 @@ export const HeroSection: FC<{ hideCirclesOnMobile?: boolean }> = ({
     <div>
       <img
         src="/img/blue-circle.svg"
-        css={[
-          tw`
-          absolute
-          -z-1
-          top-0
-          -left-40
-          lg:left-0`,
-          hideCirclesOnMobile && tw`hidden xl:block`,
-        ]}
+        className={clsx(
+          'absolute top-0 -left-40 -z-1 lg:left-0',
+          hideCirclesOnMobile && 'hidden xl:block'
+        )}
       />
       <img
         src="/img/pink-circle.png"
-        css={[
-          tw`absolute
-          -z-1
-          right-0
-          top-96
-          sm:top-80
-          md:top-24
-          w-32
-          sm:w-60
-          lg:w-96
-          drag-none`,
-          hideCirclesOnMobile && tw`hidden xl:block`,
-        ]}
+        className={clsx(
+          'absolute top-96 right-0 -z-1 w-32 drag-none sm:top-80 sm:w-60 md:top-24 lg:w-96',
+          hideCirclesOnMobile && 'hidden xl:block'
+        )}
       />
-      <div css={tw`text-center flex flex-col justify-center items-center`}>
+      <div className="flex flex-col items-center justify-center text-center">
         <div
-          css={tw`
-          max-w-[700px]
-          lg:mt-44
+          className="
+          z-1
           mt-20
           flex
-          flex-col
-          items-center
-          z-1
+          max-w-[700px]
+          flex-col items-center
           px-2
-          md:px-2`}
+          md:px-2
+          lg:mt-44"
         >
           {children}
         </div>

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Page } from '../ui/shared/Page';
-import { Hero, Section } from '../ui/shared/Layout';
+import { Hero } from '../ui/shared/Layout';
 import { Contact } from '../ui/shared/Contact';
 
 const ContactPage: FC = () => {
@@ -13,9 +13,24 @@ const ContactPage: FC = () => {
       <Hero shrink>
         <span>Contact us</span>
       </Hero>
-      <Section>
+      <section
+        className="
+          relative
+          bg-gray-100
+          before:absolute
+          before:left-1/2
+          before:-top-10
+          before:-translate-x-1/2
+          before:border-transparent
+          before:border-b-gray-100
+          before:content-['']
+          before:[border-width:0_40px_40px_40px]
+          dark:bg-[#16171c]
+          before:dark:border-b-[#16171c]
+      "
+      >
         <Contact />
-      </Section>
+      </section>
     </Page>
   );
 };

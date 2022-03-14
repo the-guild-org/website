@@ -1,69 +1,62 @@
 import { FC } from 'react';
 import NextLink from 'next/link';
-import tw, { styled } from 'twin.macro';
-import { Anchor, Description, Heading } from './index';
-
-const ServiceCard = styled.a`
-  &:hover {
-    box-shadow: 0 -6px 34px rgba(117, 117, 117, 0.15);
-  }
-`;
+import { Anchor, Description, Heading } from './components';
 
 export const ServicesSection: FC = () => {
   return (
     <>
-      <div css={tw`pt-28 flex flex-col items-center text-center`}>
+      <div className="flex flex-col items-center px-4 pt-28 text-center sm:px-6 md:px-8">
         <Heading>The Guild's Services</Heading>
-        <Description css={tw`max-w-[700px] px-2 md:px-0`}>
+        <Description className="max-w-[700px] px-2 md:px-0">
           Work directly with the most powerful group of API developers that
           created the open source infrastructure you use today
         </Description>
-        <NextLink href="/services">
+        <NextLink href="/services" passHref>
           <Anchor>Learn more about our services ➔</Anchor>
         </NextLink>
       </div>
-      <div css={tw`container mx-auto flex flex-wrap justify-center mt-[117px]`}>
+      <div className="container mt-[117px] flex flex-wrap justify-center">
         {SERVICES.map((service) => (
           <NextLink key={service.name} href={service.url} passHref>
-            <ServiceCard
+            <a
               title={service.name}
-              css={tw`
-              w-[278px]
-              h-[370px]
+              className="
               m-4
+              h-[370px]
+              w-[278px]
+              overflow-hidden
               rounded-t-2xl
               border-2
               border-solid
               border-transparent
-              hover:border-gray-200
               bg-gray-100
-              dark:bg-gray-900
-              dark:hover:border-gray-800
-              overflow-hidden
-              cursor-pointer
+              text-center
               duration-200
-              text-center`}
+              hover:border-gray-200
+              hover:[box-shadow:0_-6px_34px_rgba(117,117,117,0.15)]
+              dark:bg-[#24272E4C]
+              dark:hover:border-[#24272E]"
             >
               <img
                 src={`/img/illustrations/${service.icon}`}
                 alt={`${service.name} illustration`}
               />
-              <Heading $size="md">{service.name}</Heading>
-              <Description css={tw`mb-4 text-sm px-4`}>
+              <Heading size="md">{service.name}</Heading>
+              <Description className="mb-4 px-4 text-sm">
                 {service.description}
               </Description>
               <span
-                css={tw`
+                className="
                 text-xs
                 text-gray-500
-                hover:text-gray-600
-                dark:hover:text-gray-300
                 transition-colors
-                duration-200`}
+                duration-200
+                hover:text-gray-600
+                dark:hover:text-gray-300"
               >
                 Learn more ➔
               </span>
-            </ServiceCard>
+            </a>
           </NextLink>
         ))}
       </div>

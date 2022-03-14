@@ -1,40 +1,19 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import Document, { Head, Main, NextScript, Html } from 'next/document';
-import { ServerStyleSheet } from 'styled-components';
+import { getCssText } from '../stitches.config';
+import { GA_TRACKING_ID } from '../lib/gtag';
+
+const JS_COMMENT_REGEX = /\/\*[\s\S]*?\*\/|\/\/.*/g;
 
 const noFlashCode = readFileSync(
   join(process.cwd(), '/public/static/no-flash.mjs'),
   'utf8'
-);
+)
+  .replace(JS_COMMENT_REGEX, '')
+  .trim();
 
 export default class MyDocument extends Document {
-  static async getInitialProps(ctx) {
-    const sheet = new ServerStyleSheet();
-    const originalRenderPage = ctx.renderPage;
-
-    try {
-      ctx.renderPage = () =>
-        originalRenderPage({
-          enhanceApp: (App) => (props) =>
-            sheet.collectStyles(<App {...props} />),
-        });
-
-      const initialProps = await Document.getInitialProps(ctx);
-      return {
-        ...initialProps,
-        styles: (
-          <>
-            {initialProps.styles}
-            {sheet.getStyleElement()}
-          </>
-        ),
-      };
-    } finally {
-      sheet.seal();
-    }
-  }
-
   render() {
     const richData = {
       '@context': 'https://schema.org',
@@ -52,10 +31,26 @@ export default class MyDocument extends Document {
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(richData) }}
           />
+          <script
+            async
+            // Global Site Tag (gtag.js) - Google Analytics
+            src={`https://googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+          />
+          <script
+            id="googleTagManager"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_TRACKING_ID}');`,
+            }}
+          />
           <link
-            href="https://fonts.googleapis.com/css?family=Poppins:400,500,700&display=swap"
+            href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap"
             rel="stylesheet"
           />
+          <style dangerouslySetInnerHTML={{ __html: getCssText() }} />
         </Head>
         <body>
           <script dangerouslySetInnerHTML={{ __html: noFlashCode }} />

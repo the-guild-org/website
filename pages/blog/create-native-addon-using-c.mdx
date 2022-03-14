@@ -254,7 +254,7 @@ sudo npm install -g node-gyp
 
 Assuming that you have installed everything properly, we will now need to create a `binding.gyp` file:
 
-## [Create ‘binding.gyp' file](https://github.com/DAB0mB/node-distance-addon/commit/ff44399)
+## [Create 'binding.gyp' file](https://github.com/DAB0mB/node-distance-addon/commit/ff44399)
 
 **Added binding.gyp**
 
@@ -272,7 +272,7 @@ Assuming that you have installed everything properly, we will now need to create
 +┊  ┊11┊}🚫↵
 ```
 
-GYP stands for ‘Generate Your Project' and was created by the Chromium team as a configuration file for building native projects. The configuration show above should be a good template for any future add-on you're looking to develop. Let's take a deeper look at it:
+GYP stands for 'Generate Your Project' and was created by the Chromium team as a configuration file for building native projects. The configuration show above should be a good template for any future add-on you're looking to develop. Let's take a deeper look at it:
 
 - `target_name` - Specifies the output dir of our add-on, in which case it should be `build/Release/distance`
 - `sources` - Should include all the cpp files that are associated with you add-on.
@@ -282,7 +282,7 @@ More information about GYP configuration can be found [here](https://gyp.gsrc.io
 
 Be sure to also add the specified flag to the `package.json` which basically says 'Hey, I have a GYP file which should be taken into consideration as well':
 
-## [Create ‘binding.gyp' file](https://github.com/DAB0mB/node-distance-addon/commit/ff44399)
+## [Create 'binding.gyp' file](https://github.com/DAB0mB/node-distance-addon/commit/ff44399)
 
 **Changed package.json**
 
@@ -345,7 +345,7 @@ The basis for build process is set. We will create the entry file for our add-on
 
 Every add-on should start with these two macro calls. They are both compiled into a piece of code which will register our module with ease. The `NODE_MODULE` macro template accepts the name of the target as the first argument (That one we set as `target_name` in the GYP file, remember?) and the initialization method for our module. The `NAN_MODULE_INIT`generates a function with the given name. It accepts `target` as the first argument which is equivalent to NodeJS's `exports`. Now we will create our first method stub for a synchronous distance calculation:
 
-## [Create ‘CalculateSync' method stub](https://github.com/DAB0mB/node-distance-addon/commit/90e3c72)
+## [Create 'CalculateSync' method stub](https://github.com/DAB0mB/node-distance-addon/commit/90e3c72)
 
 **Changed src/distance.cc**
 
@@ -427,7 +427,7 @@ Then again we convert the `To()` function to convert the result into the desired
 
 Now all is left to do is defining the return value. Keep in mind that the value should be returned through v8's current scope, not natively, so using the `return` keyword would be useless. The return value can actually be defined through the provided `info` argument, like this:
 
-## [Add return value to ‘CalculateSync' method](https://github.com/DAB0mB/node-distance-addon/commit/1d6a7f6)
+## [Add return value to 'CalculateSync' method](https://github.com/DAB0mB/node-distance-addon/commit/1d6a7f6)
 
 **Changed src/distance.cc**
 
@@ -478,7 +478,7 @@ And of-course it requires us to add the core distance calculation method:
 
 This is it for the synchronous calculation. Now we will add an async version of it. We will start by creating a method with everything we learned so far until the point where we have to return the result:
 
-## [Create ‘CalculateAsync' method with basic deconstructuring](https://github.com/DAB0mB/node-distance-addon/commit/2711bf5)
+## [Create 'CalculateAsync' method with basic deconstructuring](https://github.com/DAB0mB/node-distance-addon/commit/2711bf5)
 
 **Changed src/distance.cc**
 
@@ -553,7 +553,7 @@ Here's the different part. We don't wanna simply return the value, we want to ma
 
 Here we fetch the third argument which is the callback. We wrap it with Nan's Callback, which will make sure it is not garbage collected once the scope is being deleted, we want it to keep living until it's not relevant. At the bottom of the method, instead of returning a value explicitly, we queue our `DistanceWorker` into the workers queue. On that note, let's implement the DistanceWorker:
 
-## [Create ‘DistanceWorker' with a constructor and a deconstructor](https://github.com/DAB0mB/node-distance-addon/commit/8bbd87f)
+## [Create 'DistanceWorker' with a constructor and a deconstructor](https://github.com/DAB0mB/node-distance-addon/commit/8bbd87f)
 
 **Changed src/distance.cc**
 

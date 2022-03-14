@@ -9,6 +9,9 @@ build({
   platform: 'node',
   format: 'esm',
   banner: {
-    js: 'import { createRequire as topLevelCreateRequire } from "module";\nconst require = topLevelCreateRequire(import.meta.url);',
+    js: [
+      'import { createRequire as topLevelCreateRequire } from "module";',
+      'const require = topLevelCreateRequire(import.meta.url);',
+    ].join('\n'),
   },
 });

@@ -1,112 +1,181 @@
-import styled from 'styled-components';
-import { Code, InlineCode } from './code';
-import { GenericLink } from './link';
+import clsx from 'clsx';
+import { css, styled } from '../../../stitches.config';
+import { GenericLink, Image } from '../../components';
 import { CodeSandbox } from '../../shared/embed/CodeSandbox';
 import { Gfycat } from '../../shared/embed/Gfycat';
 import { StackBlitz } from '../../shared/embed/StackBlitz';
 import { Tweet } from '../../shared/embed/Tweet';
 import { YouTube } from '../../shared/embed/YouTube';
 import { LinkPreview } from '../../shared/embed/LinkPreview';
-import { Image } from '../image';
 
-const H1 = styled.h2`
-  text-align: left;
-  margin-top: 2.5rem;
-  font-size: 2rem;
-  line-height: 2.3rem;
-`;
-
-const H2 = styled.h3`
-  margin-top: 2.5rem;
-  font-size: 1.5rem;
-`;
-
-const H3 = styled.h4`
-  margin-top: 2.5rem;
-`;
-
-const P = styled.p`
-  line-height: 1.9rem;
-`;
-
-const Li = styled.li`
-  margin-bottom: 0.35rem;
-`;
-
-const Ul = styled.ul`
-  list-style: none;
-  margin-bottom: 2rem;
-
-  & > ${Li} {
-    &:before {
-      content: '-';
-      display: inline-block;
-      color: #6d6d6d;
-      position: absolute;
-      margin-left: -25px;
-    }
-  }
-`;
-
-const Ol = styled.ol`
-  margin-bottom: 2rem;
-`;
-
-const Blockquote = styled.blockquote`
-  margin: 2rem 0;
-  padding-left: 3rem;
-  color: var(--colors-dim);
-  font-size: 1.5rem;
-  font-weight: 400;
-  font-style: italic;
-
-  & > p {
-    line-height: 2.5rem;
-  }
-`;
-
-const Hr = () => (
-  <div>
-    <hr />
-    <style jsx>{`
-      hr {
-        margin: 4rem 0;
-        border: none;
-        border-bottom: 1px solid #eee;
-      }
-    `}</style>
-  </div>
-);
-
-const Img = styled(Image).attrs((props) => ({
-  ...props,
-  alt: props.alt || '',
-}))`
-  display: block;
-  max-width: 100%;
-  margin: 0 auto;
-`;
-
-const Iframe = styled.iframe`
-  display: block;
-  margin: 0 auto;
-`;
+const Ul = styled('ul', {});
+const Blockquote = styled('blockquote', {});
+const Code = styled('code', {});
+const InlineCode = styled('code', {});
 
 export const components = {
-  h1: H1,
-  h2: H2,
-  h3: H3,
-  li: Li,
-  ul: Ul,
-  ol: Ol,
-  code: Code,
-  inlineCode: InlineCode,
-  blockquote: Blockquote,
+  h1: ({ className, children, ...props }) => (
+    <h1
+      className={clsx(
+        'mb-5 text-3xl font-extrabold dark:text-[#FCFCFC]',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </h1>
+  ),
+  h2: ({ className, children, ...props }) => (
+    <h2
+      className={clsx(
+        'mb-3 text-2xl font-extrabold dark:text-[#FCFCFC]',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </h2>
+  ),
+  h3: ({ className, children, ...props }) => (
+    <h3
+      className={clsx('mb-2 font-extrabold dark:text-[#FCFCFC]', className)}
+      {...props}
+    >
+      {children}
+    </h3>
+  ),
+  li: ({ className, children, ...props }) => (
+    <li className={clsx('mb-1.5', className)} {...props}>
+      {children}
+    </li>
+  ),
+  ul: ({ className, children, ...props }) => (
+    <Ul
+      className={clsx('relative mb-8 list-none', className)}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- TODO: find a way to fix type error
+      // @ts-ignore
+      css={css({
+        '& > li:before': {
+          content: '',
+          position: 'absolute',
+          left: '-1.25rem',
+        },
+      })}
+      {...props}
+    >
+      {children}
+    </Ul>
+  ),
+  ol: ({ className, children, ...props }) => (
+    <ol className={clsx('mb-8', className)} {...props}>
+      {children}
+    </ol>
+  ),
+  pre: styled('pre', {
+    background: '#1d1f21',
+    borderRadius: 4,
+    padding: 24,
+    color: '#f8f8f2',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-all',
+  }),
+  code: ({ className, syntax, children, ...props }) => (
+    <Code
+      className={clsx('', syntax, className)}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- TODO: find a way to fix type error
+      // @ts-ignore
+      css={css({
+        background: '#1d1f21',
+        overflow: 'auto',
+        borderRadius: 3,
+        '-webkit-overflow-scrolling': 'touch',
+        fontSize: '1rem',
+        whiteSpace: 'pre-wrap',
+        wordBreak: 'break-word',
+        letterSpacing: 0,
+        fontWeight: 400,
+        lineHeight: 1.4,
+      })}
+      {...props}
+    >
+      {children}
+    </Code>
+  ),
+  inlineCode: ({ className, wrap, children, ...props }) => (
+    <InlineCode
+      className={clsx(
+        'rounded-[5px] border border-solid border-gray-500/20 px-1 py-0.5',
+        wrap && 'wrap',
+        className
+      )}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- TODO: find a way to fix type error
+      // @ts-ignore
+      // css={css({
+      //   backgroundColor: 'rgba(0, 0, 0, 0.05)',
+      //   border: '1px solid rgba(255, 255, 255, 0.2)',
+      //   padding: 2,
+      //   paddingLeft: 5,
+      //   paddingRight: 5,
+      //   fontFamily:
+      //     "Monaco, Consolas, 'Andale  Mono', 'DejaVu Sans Mono', monospace",
+      // })}
+      {...props}
+    >
+      {children}
+    </InlineCode>
+  ),
+  blockquote: ({ className, children, ...props }) => (
+    <Blockquote
+      className={clsx(
+        `
+    my-8
+    border-l-4
+    border-solid
+    border-l-[#7F818C]
+    pl-8
+    text-2xl
+    font-light
+    italic
+    text-[#24272E]
+    dark:border-l-[#C4C4C4]
+    dark:text-[#C4C4C4]
+    `,
+        className
+      )}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- TODO: find a way to fix type error
+      // @ts-ignore
+      css={css({
+        '& > p': {
+          lineHeight: '2.5rem',
+        },
+      })}
+      {...props}
+    >
+      {children}
+    </Blockquote>
+  ),
   a: GenericLink,
-  p: P,
-  hr: Hr,
-  img: Img,
-  iframe: Iframe,
+  p: ({ className, children, ...props }) => (
+    <p className={clsx('my-5 leading-relaxed', className)} {...props}>
+      {children}
+    </p>
+  ),
+  hr: ({ className, ...props }) => (
+    <hr className={clsx('my-10 border-[#24272E]', className)} {...props} />
+  ),
+  img: ({ className, alt, src, ...props }) => (
+    <Image
+      className={clsx('mx-auto block max-w-full', className)}
+      src={src}
+      alt={alt}
+      {...props}
+    />
+  ),
+  iframe: ({ className, children, ...props }) => (
+    <iframe className={clsx('mx-auto block', className)} {...props}>
+      {children}
+    </iframe>
+  ),
   CodeSandbox,
   Gfycat,
   StackBlitz,

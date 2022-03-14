@@ -25,7 +25,7 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log('✅ Links checked!');
+console.log('✅  Links checked!');
 
 function checkFile(name: string, onError: (err: string) => void) {
   const filepath = join(CWD, `${name}.mdx`);

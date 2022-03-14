@@ -1,114 +1,55 @@
 import { FC } from 'react';
 import NextLink from 'next/link';
-import styled, { css, keyframes } from 'styled-components';
-import tw from 'twin.macro';
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { useColorModeValue } from '@chakra-ui/react';
-import { Anchor, Description, Heading } from './index';
+import { keyframes, styled } from '../stitches.config';
+import { Anchor, Description, Heading } from './components';
 
-const slideUpAndFade = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(2px);
-  }
+const slideUpOrLeftAndFade = keyframes({
+  '0%': { opacity: 0, transform: 'translateY(2px)' },
+  '100%': { opacity: 1, transform: 'translateY(0)' },
+});
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
+const slideDownOrRightAndFade = keyframes({
+  '0%': { opacity: 0, transform: 'translateY(-2px)' },
+  '100%': { opacity: 1, transform: 'translateY(0)' },
+});
 
-const slideRightAndFade = keyframes`
-  from {
-    opacity: 0;
-    transform: translateX(-2px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-`;
-
-const slideDownAndFade = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(-2px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
-const slideLeftAndFade = keyframes`
-  from {
-    opacity: 0;
-    transform: translateX(2px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-`;
-
-const StyledContent = styled(Tooltip.Content)`
-  border-radius: 4px;
-  padding: 10px 15px;
-  font-size: 12px;
-  line-height: 1;
-  color: #fff;
-  background: #16171c;
-  box-shadow: hsl(206 22% 7% / 35%) 0 10px 38px -10px,
-    hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
-
-  @media (prefers-reduced-motion: no-preference) {
-    animation-duration: 400ms;
-    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: transform, opacity;
-
-    &[data-state='delayed-open'] {
-      &[data-side='top'] {
-        animation-name: ${slideDownAndFade};
-      }
-
-      &[data-side='right'] {
-        animation-name: ${slideLeftAndFade};
-      }
-
-      &[data-side='bottom'] {
-        animation-name: ${slideUpAndFade};
-      }
-
-      &[data-side='left'] {
-        animation-name: ${slideRightAndFade};
-      }
-    }
-  }
-`;
+const StyledContent = styled(Tooltip.Content, {
+  borderRadius: 4,
+  padding: '10px 15px',
+  fontSize: 12,
+  lineHeight: 1,
+  color: '#fff',
+  background: '#16171c',
+  boxShadow: `hsl(206 22% 7% / 35%) 0 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px`,
+  '@media (prefers-reduced-motion: no-preference)': {
+    animationDuration: '400ms',
+    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+    willChange: 'transform, opacity',
+    '&[data-state="delayed-open"]': {
+      '&[data-side="top"], &[data-side="left"]': {
+        animationName: slideDownOrRightAndFade,
+      },
+      '&[data-side="bottom"], &[data-side="right"]': {
+        animationName: slideUpOrLeftAndFade,
+      },
+    },
+  },
+});
 
 export const PlatformSection: FC = () => {
-  const bg = useColorModeValue('white', 'var(--colors-background)');
   return (
     <Tooltip.Provider>
       <div
         id="platform"
-        css={css`
-          background: linear-gradient(
-              180deg,
-              rgba(0, 0, 0, 0) 0%,
-              rgba(41, 40, 40, 0.2) 100%
-            ),
-            ${bg};
-        `}
+        className="
+        [background:linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(41,40,40,0.1)100%)]
+        dark:[background:linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(41,40,40,0.2)100%),#0b0d11]
+        "
       >
-        <div
-          css={tw`container mx-auto pt-20 flex flex-col items-center text-center pb-28`}
-        >
+        <div className="container flex flex-col items-center px-4 pt-20 pb-28 text-center sm:px-6 md:px-8">
           <Heading>The Platform</Heading>
-          <Description css={tw`max-w-[400px] md:max-w-[700px]`}>
+          <Description className="max-w-[400px] md:max-w-[700px]">
             Our advanced, modular solutions can be adopted gradually as
             individual open source libraries or as a complete unified API
             platform. Explore our suite of sustainable, open source API tools
@@ -117,38 +58,34 @@ export const PlatformSection: FC = () => {
 
           {/* TODO: Add this when we'll have `/products` route */}
           {/* <Anchor href="#">View All Products ➔</Anchor> */}
-          <NextLink href="/about-us">
+          <NextLink href="/about-us" passHref>
             <Anchor>Learn more about The Guild ➔</Anchor>
           </NextLink>
 
-          <div css={tw`flex flex-wrap mt-10 max-w-[900px] justify-center`}>
+          <div className="mt-10 flex max-w-[900px] flex-wrap justify-center">
             {PRODUCTS.map((product) => (
               <Tooltip.Root key={product.name}>
                 <Tooltip.Trigger asChild>
                   <a
-                    css={[
-                      css`
-                        // 'grayscale' and 'contrast' don't work with tailwind
-                        filter: grayscale(100%) contrast(0%);
-                      `,
-                      tw`
-                      hover:text-gray-600
-                      dark:hover:text-white
-                      hover:filter-none!
-                      border
-                      border-transparent
-                      border-solid
-                      dark:hover:border-gray-800
-                      transition-all
-                      ease-linear
-                      duration-200
+                    className="
+                      m-2
                       rounded
+                      border
+                      border-solid
+                      border-transparent
                       py-3
                       px-5
-                      m-2
-                      lg:first:ml-6`,
-                    ]}
-                    // title={}
+                      contrast-0
+                      grayscale
+                      transition-all
+                      duration-200
+                      ease-linear
+                      hover:text-gray-600
+                      hover:filter-none
+                      dark:hover:border-gray-800
+                      dark:hover:text-white
+                      lg:first:ml-6
+                    "
                     href={product.url}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -156,9 +93,9 @@ export const PlatformSection: FC = () => {
                     <img
                       src={`/static/shared-logos/products/${product.icon}`}
                       alt={`${product.name} logo`}
-                      css={tw`h-[60px] drag-none`}
+                      className="h-[60px] drag-none"
                     />
-                    <h4 css={tw`font-medium mb-0 mt-2 text-xs`}>
+                    <h4 className="mt-2 mb-0 text-xs font-medium">
                       {product.name}
                     </h4>
                   </a>
