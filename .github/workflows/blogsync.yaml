@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 14
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         name: Cache node_modules
         with:
           path: '**/node_modules'
@@ -28,7 +28,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         name: Cache NextJS
         with:
           path: ${{ github.workspace }}/.next/cache
