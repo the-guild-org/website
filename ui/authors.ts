@@ -116,9 +116,9 @@ export const authors: Record<string, Author> = {
     link: 'https://github.com/gthau',
     github: 'gthau',
   },
-  guild: {
-    name: 'The Guild',
-    link: 'https://github.com/the-guild-org',
-    github: 'the-guild-org',
+  saihaj: {
+    name: 'Saihajpreet Singh ',
+    link: 'https://github.com/saihaj',
+    github: 'saihaj',
   },
 };
