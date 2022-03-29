@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useMemo } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -172,23 +172,26 @@ const Article = (): FC<{ meta: Meta }> =>
     const title = `${meta.title} - The Guild Blog`;
     const router = useRouter();
 
-    const [similarArticles, setSimilarArticles] = useState<MetaWithLink[]>([]);
+    const similarArticles = useMemo<MetaWithLink[]>(() => {
+      return blogsMeta
+        .filter((article) => {
+          const noTags = meta.tags.length === 0;
+          const notActiveArticle = article.link !== router.route;
+          const sharesTag = article.tags?.some((tag) =>
+            meta.tags.includes(tag)
+          );
 
-    useEffect(() => {
-      const newSimilarArticles = blogsMeta
-        .filter(
-          (article) =>
-            meta.tags.length === 0 ||
-            article.link !== router.route ||
-            article.tags?.some((tag) => meta.tags.includes(tag))
-        )
+          if (noTags) {
+            return true;
+          }
+
+          return sharesTag && notActiveArticle;
+        })
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(0, 12)
         .sort(() => 0.5 - Math.random())
         .slice(0, 4);
-
-      setSimilarArticles(newSimilarArticles);
-    }, [meta.tags, router.route]);
+    }, [router.route, blogsMeta]);
 
     const ogImage =
       (meta.image?.endsWith('.webm') || meta.image?.endsWith('.mp4')) &&

@@ -19,7 +19,7 @@ const BlogCardList: FC<{ articles: MetaWithLink[]; className?: string }> = ({
       )}
     >
       {articles.map((article) => (
-        <NextLink key={article.title} href={article.link} passHref>
+        <NextLink key={article.link} href={article.link} passHref>
           <a
             className="
           flex
