@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import format from 'date-fns/format';
+import { parse, isValid, format } from 'date-fns';
 import { styled } from '../../stitches.config';
 import { components } from './elements';
 import {
@@ -202,6 +202,8 @@ const Article = (): FC<{ meta: Meta }> =>
       '@context': 'https://schema.org',
       '@type': 'Article',
       headline: title,
+      name: title,
+      description: meta.description,
       image: [ogImage],
       datePublished: new Date(meta.date).toISOString(),
       dateModified: new Date(meta.updateDate || meta.date).toISOString(),
@@ -232,9 +234,42 @@ const Article = (): FC<{ meta: Meta }> =>
             rel="canonical"
             href={meta.canonical || `https://the-guild.dev${router.route}`}
           />
+          <meta property="og:description" content={meta.description} />
+          {isValid(meta.date) && (
+            <meta
+              property="article:published_time"
+              content={parse(
+                meta.date,
+                'MMM dd, yyyyy',
+                new Date()
+              ).toISOString()}
+            />
+          )}
+          {isValid(meta.updateDate) && (
+            <meta
+              property="article:modified_time"
+              content={parse(
+                meta.updateDate,
+                'MMM dd, yyyyy',
+                new Date()
+              ).toISOString()}
+            />
+          )}
+          <meta property="article:section" content="Software" />
+          {meta.tags.map((c, i) => (
+            <meta
+              property="article:tag"
+              content={c}
+              key={`meta-article-tag-${i}`}
+            />
+          ))}
+          <meta name="twitter:card" content="summary" />
+          <meta name="twitter:site" content="@TheGuildDev" />
+          <meta name="twitter:title" content={meta.title} />
+          <meta name="twitter:description" content={meta.description} />
         </Head>
 
-        <Page title={title} image={ogImage} description={meta.description}>
+        <Page title={title} image={meta.image} description={meta.description}>
           <div className="mx-auto w-[790px] max-w-[100vw] px-4 pt-32 sm:px-6 md:px-8">
             <Heading className="text-center text-[42px]">{meta.title}</Heading>
             <Authors meta={meta} />
