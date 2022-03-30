@@ -23,74 +23,18 @@ const Content = styled('div', {
   fontFamily: 'Open Sans, sans-serif',
   paddingTop: 25,
   fontWeight: 400,
-
   '> *': {
     marginBottom: '1.7rem',
   },
-
   '> pre[class*="language-"]': {
     margin: 0,
     marginBottom: '1.7rem',
     borderRadius: 3,
-
     '> pre': {
       padding: '1.5rem',
       margin: 0,
     },
   },
-});
-
-const Author = styled('div', {
-  textAlign: 'center',
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'center',
-  fontSize: '0.9rem',
-  '& > div:nth-child(2)': {
-    marginLeft: 10,
-    display: 'flex',
-    textAlign: 'left',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    '& > a': {
-      color: 'var(--colors-accent)',
-    },
-    '& > a:hover': {
-      color: 'var(--colors-accent-light)',
-    },
-  },
-});
-
-const Details = styled('div', {
-  marginTop: '2rem',
-  textAlign: 'center',
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'center',
-});
-
-const Time = styled('time', {
-  color: 'var(--colors-dim)',
-  fontSize: '0.8rem',
-});
-
-const Cover = styled('div', {
-  paddingTop: 25,
-  margin: '0 auto',
-  width: '100%',
-  height: 'auto',
-  '& > *': {
-    maxWidth: '100%',
-    height: 'auto',
-    maxHeight: 300,
-    display: 'block',
-    margin: '0 auto',
-  },
-});
-
-const ConsultingInfo = styled('div', {
-  color: 'var(--colors-dim)',
-  borderLeft: '3px solid var(--colors-accent)',
 });
 
 const Authors: FC<{ meta: Meta }> = ({ meta }) => {
@@ -101,74 +45,66 @@ const Authors: FC<{ meta: Meta }> = ({ meta }) => {
     const author = meta.author && authors[meta.author];
 
     return (
-      <Details>
-        <Author>
-          <div>
-            <a href={author.link} title={author.name}>
-              <Avatar author={author} />
-            </a>
-          </div>
-          <div>
-            <a href={author.link} title={author.name}>
-              {author.name}
-            </a>
-            <Time
-              dateTime={date.toISOString()}
-              title={
-                updatedDate
-                  ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
-                  : `Posted ${format(date, 'EEEE, LLL do y')}`
-              }
-            >
-              {format(date, 'EEEE, LLL do y')}
-            </Time>
-          </div>
-        </Author>
-      </Details>
+      <div className="my-5 flex flex-row items-center justify-center">
+        <a href={author.link} title={author.name}>
+          <Avatar author={author} />
+        </a>
+        <div className="ml-2.5 flex flex-col">
+          <a href={author.link} title={author.name} className="text-[#1cc8ee]">
+            {author.name}
+          </a>
+          <time
+            dateTime={date.toISOString()}
+            title={
+              updatedDate
+                ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
+                : `Posted ${format(date, 'EEEE, LLL do y')}`
+            }
+            className="text-xs text-[#777]"
+          >
+            {format(date, 'EEEE, LLL do y')}
+          </time>
+        </div>
+      </div>
     );
   }
 
   if (hasManyAuthors(meta)) {
     return (
       <>
-        <Time
+        <time
           dateTime={date.toISOString()}
           title={
             updatedDate
               ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
               : `Posted ${format(date, 'EEEE, LLL do y')}`
           }
-          className="mt-4 block text-center"
+          className="mt-5 block text-center text-xs text-[#777]"
         >
           {format(date, 'EEEE, LLL do y')}
-        </Time>
-        <Details className="gap-x-5">
-          {meta.authors.map((authorId, i) => {
+        </time>
+        <div className="my-5 flex flex-wrap justify-center gap-5">
+          {meta.authors.map((authorId) => {
             const author = authors[authorId];
-
             return (
-              <Author key={`${authorId}_${i}`}>
-                <div>
-                  <a href={author.link} title={author.name}>
-                    <Avatar author={author} />
-                  </a>
-                </div>
-                <div>
-                  <a href={author.link} title={author.name}>
+              <div key={authorId}>
+                <a href={author.link} title={author.name}>
+                  <Avatar author={author} />
+                  <span className="ml-2.5 text-sm text-[#1cc8ee]">
                     {author.name}
-                  </a>
-                </div>
-              </Author>
+                  </span>
+                </a>
+              </div>
             );
           })}
-        </Details>
+        </div>
       </>
     );
   }
 };
 
-const Article = (): FC<{ meta: Meta }> =>
-  function ArticleRender({ meta, children }) {
+const Article = (meta: Meta): FC =>
+  function ArticleRender({ children }) {
     const title = `${meta.title} - The Guild Blog`;
     const router = useRouter();
 
@@ -188,7 +124,7 @@ const Article = (): FC<{ meta: Meta }> =>
         .slice(0, 4);
 
       setSimilarArticles(newSimilarArticles);
-    }, [meta.tags, router.route]);
+    }, [router.route]);
 
     const ogImage =
       (meta.image?.endsWith('.webm') || meta.image?.endsWith('.mp4')) &&
@@ -239,10 +175,12 @@ const Article = (): FC<{ meta: Meta }> =>
             <Heading className="text-center text-[42px]">{meta.title}</Heading>
             <Authors meta={meta} />
             <TagList tags={meta.tags} asLink className="mt-4" />
-            <Cover>
-              <Image src={meta.image} alt={title} />
-            </Cover>
-            <ConsultingInfo className="mt-6 bg-gray-100 p-6 leading-7 dark:bg-gray-900">
+            <Image
+              src={meta.image}
+              alt={title}
+              className="mx-auto mt-6 max-h-72"
+            />
+            <div className="mt-6 border-l-[3px] border-solid border-[#1cc8ee] bg-gray-100 p-6 leading-7 text-[#777] dark:bg-gray-900">
               Looking for experts? We offer consulting and trainings.
               <br />
               Explore{' '}
@@ -253,7 +191,7 @@ const Article = (): FC<{ meta: Meta }> =>
                 our services
               </GenericLink>{' '}
               and get in touch.
-            </ConsultingInfo>
+            </div>
             <Content className="dark:text-[#7F818C]">{children}</Content>
           </div>
           <div className="container my-20">
