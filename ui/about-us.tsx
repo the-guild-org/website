@@ -1,14 +1,14 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import { components } from './blog/elements';
 import { Page } from './shared/Page';
-import { Meta } from '../lib/meta';
+import type { Meta } from '../lib/meta';
 import { Heading } from './components';
 import { GetInTouchSection } from './get-in-touch-section';
 import { HeroSection } from './hero-section';
 
-const AboutUs = (): FC<Meta> =>
-  function AboutUsRender({ children, title, description }) {
+const AboutUs = ({ title, description }: Meta): FC =>
+  function AboutUsRender({ children }) {
     return (
       <MDXProvider components={components}>
         <Page title={title} description={description}>

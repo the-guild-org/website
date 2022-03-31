@@ -3,7 +3,6 @@ import withBundleAnalyzer from '@next/bundle-analyzer';
 import withMDX from '@next/mdx';
 import withOptimizedImages from 'next-optimized-images';
 import rehypePrism from '@mapbox/rehype-prism';
-import admonitions from 'remark-admonitions';
 
 const CWD = process.cwd();
 
@@ -56,7 +55,7 @@ const analyzer = withBundleAnalyzer({
 const mdx = withMDX({
   extension: /\.mdx?$/,
   options: {
-    remarkPlugins: [admonitions],
+    providerImportSource: '@mdx-js/react',
     rehypePlugins: [rehypePrism],
   },
 });
