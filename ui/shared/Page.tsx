@@ -24,7 +24,9 @@ export const Page: FC<{
         <NextSeo
           title={title}
           description={description}
-          openGraph={{ images: [{ url: ensureAbsolute(image) }] }}
+          openGraph={
+            image ? { images: [{ url: ensureAbsolute(image) }] } : undefined
+          }
         />
         <meta name="description" content={description} />
 
