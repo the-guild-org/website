@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { parse, isValid, format } from 'date-fns';
+import { format } from 'date-fns';
 import { ArticleJsonLd, NextSeo } from 'next-seo';
 
 import { OpenGraph } from 'next-seo/lib/types';
@@ -139,7 +139,7 @@ const Article = (meta: Meta): FC =>
 
     const markupData: OpenGraph = {
       title,
-      images: [{ url: ogImage }],
+      images: [{ url: `https://the-guild.dev/${ogImage}` }],
       article: {
         authors: meta.authors,
         publishedTime: new Date(meta.date).toISOString(),
@@ -170,7 +170,7 @@ const Article = (meta: Meta): FC =>
           authorName={firstAuthor.name}
           datePublished={new Date(meta.date).toISOString()}
           dateModified={new Date(meta.updateDate || meta.date).toISOString()}
-          images={[ogImage]}
+          images={[`https://the-guild.dev/${ogImage}`]}
         />
 
         <Page title={title} image={meta.image} description={meta.description}>
