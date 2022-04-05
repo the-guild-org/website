@@ -5,7 +5,6 @@ import Script from 'next/script';
 import { extendTheme } from '@chakra-ui/react';
 import { CombinedThemeProvider, AppSeoProps } from '@guild-docs/client';
 import 'prism-theme-night-owl/build/no-italics.css';
-import 'remark-admonitions/styles/classic.css';
 import * as gtag from '../lib/gtag';
 import globalStyles from '../styles/global';
 import '../styles/global.css';
