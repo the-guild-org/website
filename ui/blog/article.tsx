@@ -2,7 +2,10 @@ import { FC, useEffect, useState } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import format from 'date-fns/format';
+import { format } from 'date-fns';
+import { ArticleJsonLd, NextSeo } from 'next-seo';
+
+import { OpenGraph } from 'next-seo/lib/types';
 import { styled } from '../../stitches.config';
 import { components } from './elements';
 import {
@@ -126,51 +129,55 @@ const Article = (meta: Meta): FC =>
       setSimilarArticles(newSimilarArticles);
     }, [router.route]);
 
+    const firstAuthor =
+      authors[hasManyAuthors(meta) ? meta.authors[0] : meta.author];
     const ogImage =
       (meta.image?.endsWith('.webm') || meta.image?.endsWith('.mp4')) &&
       meta.thumbnail
         ? meta.thumbnail
         : meta.image;
 
-    const firstAuthor =
-      authors[hasManyAuthors(meta) ? meta.authors[0] : meta.author];
-    const markupData = {
-      '@context': 'https://schema.org',
-      '@type': 'Article',
-      headline: title,
-      image: [ogImage],
-      datePublished: new Date(meta.date).toISOString(),
-      dateModified: new Date(meta.updateDate || meta.date).toISOString(),
-      author: {
-        '@type': 'Person',
-        name: firstAuthor.name,
-      },
-      publisher: {
-        '@type': 'Organization',
-        name: 'The Guild',
-        email: 'contact@the-guild.dev',
-        url: 'https://the-guild.dev',
-        logo: {
-          '@type': 'ImageObject',
-          url: 'https://the-guild.dev/static/logo.svg',
-        },
+    const markupData: OpenGraph = {
+      title,
+      images: [{ url: `https://the-guild.dev/${ogImage}` }],
+      article: {
+        authors: meta.authors,
+        publishedTime: new Date(meta.date).toISOString(),
+        modifiedTime: new Date(meta.updateDate || meta.date).toISOString(),
+        tags: meta.tags,
       },
     };
 
     return (
       <MDXProvider components={components}>
         <Head>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(markupData) }}
-          />
           <link
             rel="canonical"
             href={meta.canonical || `https://the-guild.dev${router.route}`}
           />
         </Head>
+        <NextSeo
+          title={meta.title}
+          description={meta.description}
+          openGraph={markupData}
+        />
+        <ArticleJsonLd
+          title={title}
+          description={meta.description}
+          url={`https://the-guild.dev${router.route}`}
+          publisherName="The Guild"
+          publisherLogo="https://the-guild.dev/static/logo.svg"
+          authorName={firstAuthor.name}
+          datePublished={new Date(meta.date).toISOString()}
+          dateModified={new Date(meta.updateDate || meta.date).toISOString()}
+          images={[`https://the-guild.dev/${ogImage}`]}
+        />
 
-        <Page title={title} image={ogImage} description={meta.description}>
+        <Page
+          title={title}
+          image={`https://the-guild.dev/${ogImage}`}
+          description={meta.description}
+        >
           <div className="mx-auto w-[790px] max-w-[100vw] px-4 pt-32 sm:px-6 md:px-8">
             <Heading className="text-center text-[42px]">{meta.title}</Heading>
             <Authors meta={meta} />
