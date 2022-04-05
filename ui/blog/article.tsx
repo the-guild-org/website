@@ -173,7 +173,11 @@ const Article = (meta: Meta): FC =>
           images={[`https://the-guild.dev/${ogImage}`]}
         />
 
-        <Page title={title} image={meta.image} description={meta.description}>
+        <Page
+          title={title}
+          image={`https://the-guild.dev/${ogImage}`}
+          description={meta.description}
+        >
           <div className="mx-auto w-[790px] max-w-[100vw] px-4 pt-32 sm:px-6 md:px-8">
             <Heading className="text-center text-[42px]">{meta.title}</Heading>
             <Authors meta={meta} />

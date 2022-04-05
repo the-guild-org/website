@@ -3,6 +3,10 @@ import Head from 'next/head';
 import { NextSeo } from 'next-seo';
 import { Layout } from './Layout';
 
+function ensureAbsolute(url: string): string {
+  return url.startsWith('/') ? `https://the-guild.dev${url}` : url;
+}
+
 export const Page: FC<{
   description: string;
   image?: string;
@@ -20,7 +24,7 @@ export const Page: FC<{
         <NextSeo
           title={title}
           description={description}
-          openGraph={{ images: [{ url: image }] }}
+          openGraph={{ images: [{ url: ensureAbsolute(image) }] }}
         />
         <meta name="description" content={description} />
 
