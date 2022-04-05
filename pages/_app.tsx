@@ -49,8 +49,6 @@ const defaultSeo: AppSeoProps = {
   description: 'Modern API Platform and Ecosystem that scales',
   logo: {
     url: 'https://guild.dev/static/logo.svg',
-    width: 88,
-    height: 50,
   },
 };
 
