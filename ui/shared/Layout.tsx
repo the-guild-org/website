@@ -32,6 +32,14 @@ export const Layout: FC = ({ children }) => {
             }
           },
         }}
+        transformLinks={(links) => [
+          ...links,
+          {
+            href: '/contact',
+            label: 'Contact',
+            title: 'Get in touch',
+          },
+        ]}
       />
       {children}
       <FooterExtended

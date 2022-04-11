@@ -92,9 +92,10 @@ export const Newsletter: FC = () => {
   );
 };
 
-export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
-  hideCover,
-}) => {
+export const GetInTouchSection: FC<{
+  hideCover?: boolean;
+  hideHeading?: boolean;
+}> = ({ hideCover, hideHeading }) => {
   return (
     <div className={clsx('relative my-[200px]', !hideCover && 'md:mb-[400px]')}>
       <div className="container flex">
@@ -104,7 +105,7 @@ export const GetInTouchSection: FC<{ hideCover?: boolean }> = ({
             !hideCover && 'p-4 xl:max-w-[40%] 2xl:pl-40'
           )}
         >
-          <Heading>Get in touch</Heading>
+          {hideHeading !== true && <Heading>Get in touch</Heading>}
 
           <Description>
             Looking to work with The Guild, learn more about our solutions or
