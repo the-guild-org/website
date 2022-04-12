@@ -145,7 +145,7 @@ const PRODUCTS: {
   {
     name: 'Yoga',
     description: `A Fully-featured, simple to set up, performant and extendable server`,
-    url: 'https://graphql-yoga.vercel.app',
+    url: 'https://graphql-yoga.com',
     icon: 'yoga.svg',
   },
   {
