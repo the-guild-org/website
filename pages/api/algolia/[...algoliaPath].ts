@@ -152,6 +152,10 @@ function pickPrefix(url) {
   if (url.startsWith('https://graphql-shield.com')) {
     return 'GraphQL Shield';
   }
+  
+  if (url.startsWith('https://graphql-yoga.com')) {
+    return 'GraphQL Yoga';
+  }
 
   if (url.startsWith('https://the-guild.dev/blog')) {
     return 'The Guild Blog';
