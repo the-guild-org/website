@@ -11,9 +11,7 @@ const MaintenancePage: FC = () => {
     <Page
       title={`${name} is offline - The Guild`}
       description={description as string}
-      image={
-        "https://the-guild-og-image.vercel.app/We'll%20be%20back%20soon!.png?theme=light&md=1&fontSize=100px&images=https%3A%2F%2Fthe-guild.dev%2Fstatic%2Flogo.svg"
-      }
+      image="https://og-image-guild.vercel.app/We'll%20be%20back%20soon!.png?theme=light&md=1&fontSize=100px&images=https%3A%2F%2Fthe-guild.dev%2Fstatic%2Flogo.svg"
     >
       <Hero>
         <span>{name}</span> is offline
