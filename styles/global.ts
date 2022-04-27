@@ -3,7 +3,7 @@ import { globalCss } from '../stitches.config';
 const globalStyles = globalCss({
   /* TODO: Remove this when guild/components Header/Footer will can accept bg color */
   '@media (min-width: 768px)': {
-    'header, header > div > nav': {
+    'header, header > div > div:nth-child(3) > ul > nav': {
       backgroundColor: 'transparent !important',
     },
   },
@@ -34,7 +34,7 @@ const globalStyles = globalCss({
   },
   body: {
     fontFamily: 'Poppins, sans-serif',
-    zIndex: -1 /* needs for blue and pink circles */
+    zIndex: -1 /* needs for blue and pink circles */,
   },
   a: {
     cursor: 'pointer',
@@ -44,7 +44,7 @@ const globalStyles = globalCss({
   html: {
     /* For smooth scrolling effect when click on '#' hash links */
     scrollBehavior: 'smooth',
-  }
+  },
 });
 
 export default globalStyles;
