@@ -45,7 +45,7 @@ const IndexPage: FC<Props> = ({ articles }) => {
           platform
         </Description>
         <Button as="a" href="#platform">
-          Explore The Platform
+          Explore The Ecosystem
         </Button>
       </HeroSection>
       <ClientLogosSection />
