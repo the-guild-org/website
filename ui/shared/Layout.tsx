@@ -22,6 +22,7 @@ export const Layout: FC = ({ children }) => {
       <Header
         activeLink={router.asPath}
         accentColor="var(--colors-accent)"
+        searchBarProps={{ version: 'v2' }}
         themeSwitch
         linkProps={{
           onClick(e) {
