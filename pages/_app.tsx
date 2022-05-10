@@ -7,7 +7,10 @@ import { CombinedThemeProvider, AppSeoProps } from '@guild-docs/client';
 import 'prism-theme-night-owl/build/no-italics.css';
 import * as gtag from '../lib/gtag';
 import globalStyles from '../styles/global';
+
 import '../styles/global.css';
+import '@algolia/autocomplete-theme-classic';
+import '@theguild/components/dist/static/css/SearchBarV2.css';
 
 Router.events.on('routeChangeComplete', (url) => gtag.pageview(url));
 
