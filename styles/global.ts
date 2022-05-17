@@ -3,7 +3,7 @@ import { globalCss } from '../stitches.config';
 const globalStyles = globalCss({
   /* TODO: Remove this when guild/components Header/Footer will can accept bg color */
   '@media (min-width: 768px)': {
-    'header, header > div > div:nth-child(3) > ul > nav': {
+    'header, header ul > nav': {
       backgroundColor: 'transparent !important',
     },
   },
