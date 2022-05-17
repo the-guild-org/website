@@ -227,6 +227,12 @@ const PRODUCTS: {
     icon: 'whatsapp.svg',
   },
   {
+    name: 'KitQL',
+    description: 'A set of tools, helping you building efficient apps in a fast way. >> SvelteKit & GraphQL <<',
+    url: 'https://kitql.dev',
+    icon: 'kitql-wow.svg',
+  },
+  {
     name: 'Stencil',
     description: `A fully-featured, production ready caching GraphQL client for Stencil and every GraphQL server`,
     url: 'https://github.com/ardatan/stencil-apollo',
