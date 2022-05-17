@@ -230,7 +230,7 @@ const PRODUCTS: {
     name: 'KitQL',
     description: 'A set of tools, helping you building efficient apps in a fast way. >> SvelteKit & GraphQL <<',
     url: 'https://kitql.dev',
-    icon: 'kitql.svg',
+    icon: 'kitql-wow.svg',
   },
   {
     name: 'Stencil',
