@@ -28,7 +28,7 @@ export const components = {
   h2: ({ className, children, ...props }) => (
     <h2
       className={clsx(
-        'mb-3 text-2xl font-extrabold dark:text-[#FCFCFC]',
+        'mt-12 mb-3 text-2xl font-extrabold dark:text-[#FCFCFC]',
         className
       )}
       {...props}
@@ -38,11 +38,25 @@ export const components = {
   ),
   h3: ({ className, children, ...props }) => (
     <h3
-      className={clsx('mb-2 font-extrabold dark:text-[#FCFCFC]', className)}
+      className={clsx(
+        'mt-8 mb-2 text-xl font-extrabold dark:text-[#FCFCFC]',
+        className
+      )}
       {...props}
     >
       {children}
     </h3>
+  ),
+  h4: ({ className, children, ...props }) => (
+    <h4
+      className={clsx(
+        'mt-8 mb-2 text-lg font-extrabold dark:text-[#FCFCFC]',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </h4>
   ),
   li: ({ className, children, ...props }) => (
     <li className={clsx('mb-1.5', className)} {...props}>
@@ -50,19 +64,7 @@ export const components = {
     </li>
   ),
   ul: ({ className, children, ...props }) => (
-    <Ul
-      className={clsx('relative mb-8 list-none', className)}
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- TODO: find a way to fix type error
-      // @ts-ignore
-      css={css({
-        '& > li:before': {
-          content: '',
-          position: 'absolute',
-          left: '-1.25rem',
-        },
-      })}
-      {...props}
-    >
+    <Ul className={clsx('relative mb-8 list-disc pl-8', className)} {...props}>
       {children}
     </Ul>
   ),
