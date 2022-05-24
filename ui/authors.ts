@@ -117,8 +117,13 @@ export const authors: Record<string, Author> = {
     github: 'gthau',
   },
   saihaj: {
-    name: 'Saihajpreet Singh ',
+    name: 'Saihajpreet Singh',
     link: 'https://github.com/saihaj',
     github: 'saihaj',
+  },
+  dimitri: {
+    name: 'Dimitri POSTOLOV',
+    link: 'https://github.com/B2o5T',
+    github: 'B2o5T',
   },
 };
