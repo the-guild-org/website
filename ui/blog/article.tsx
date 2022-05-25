@@ -139,7 +139,13 @@ const Article = (meta: Meta): FC =>
 
     const markupData: OpenGraph = {
       title,
-      images: [{ url: `https://the-guild.dev/${ogImage}` }],
+      images: [
+        {
+          url: `https://the-guild.dev${
+            ogImage.startsWith('/') ? ogImage : `/${ogImage}`
+          }`,
+        },
+      ],
       article: {
         authors: meta.authors,
         publishedTime: new Date(meta.date).toISOString(),
