@@ -139,7 +139,13 @@ const Article = (meta: Meta): FC =>
 
     const markupData: OpenGraph = {
       title,
-      images: [{ url: `https://the-guild.dev/${ogImage}` }],
+      images: [
+        {
+          url: `https://the-guild.dev${
+            ogImage.startsWith('/') ? ogImage : `/${ogImage}`
+          }`,
+        },
+      ],
       article: {
         authors: meta.authors,
         publishedTime: new Date(meta.date).toISOString(),
@@ -155,6 +161,7 @@ const Article = (meta: Meta): FC =>
             rel="canonical"
             href={meta.canonical || `https://the-guild.dev${router.route}`}
           />
+          <meta name="twitter:card" content="summary_large_image" />
         </Head>
         <NextSeo
           title={meta.title}
