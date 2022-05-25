@@ -15,6 +15,7 @@ function guildCrisp() {
     'swift-graphql.com': ['swift'],
     'envelop.dev': ['envelop'],
     'graphql-yoga.com': ['yoga'],
+    'kitql.dev': ['kitql']
   };
   /* eslint-env browser */
   /* eslint-disable */
