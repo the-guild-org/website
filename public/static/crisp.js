@@ -13,6 +13,8 @@ function guildCrisp() {
     'graphql-hive.com': ['hive'],
     'graphql-shield.com': ['shield'],
     'swift-graphql.com': ['swift'],
+    'envelop.dev': ['envelop'],
+    'graphql-yoga.com': ['yoga'],
   };
   /* eslint-env browser */
   /* eslint-disable */
