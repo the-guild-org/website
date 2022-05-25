@@ -161,6 +161,7 @@ const Article = (meta: Meta): FC =>
             rel="canonical"
             href={meta.canonical || `https://the-guild.dev${router.route}`}
           />
+          <meta name="twitter:card" content="summary_large_image" />
         </Head>
         <NextSeo
           title={meta.title}
