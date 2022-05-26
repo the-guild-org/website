@@ -20,4 +20,7 @@ export const logos: {
   { name: '3rdFriday', logo: '3rdfriday-white.png' },
   { name: 'Mount St. Joseph University', logo: 'msj-white.png' },
   { name: 'FUSE autotech', logo: 'fuse-white.png' },
+  { name: 'Formidable', logo: 'formidable-white.png' },
+  { name: 'Parse Platform', logo: 'parse-white.png' },
+  { name: 'RedwoodJS', logo: 'redwoodjs-white.png' },
 ];
