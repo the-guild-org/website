@@ -5,6 +5,7 @@ import { Heading, Description, Anchor, BlogCardList } from './components';
 
 export const RecommendedReadingSection: FC<{ articles: MetaWithLink[] }> = ({
   articles = [],
+  children,
 }) => {
   return (
     <div
@@ -23,6 +24,7 @@ export const RecommendedReadingSection: FC<{ articles: MetaWithLink[] }> = ({
           <Anchor>View all posts ➔</Anchor>
         </NextLink>
         <BlogCardList articles={articles} />
+        {children}
       </div>
     </div>
   );
