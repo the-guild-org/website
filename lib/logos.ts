@@ -19,4 +19,5 @@ export const logos: {
   { name: 'Pepper', logo: 'pepper-white.png' },
   { name: '3rdFriday', logo: '3rdfriday-white.png' },
   { name: 'Mount St. Joseph University', logo: 'msj-white.png' },
+  { name: 'Netflix', logo: 'netflix-white.png' },
 ];
