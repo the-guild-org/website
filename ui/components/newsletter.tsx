@@ -70,31 +70,34 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
         />
       )}
       <Heading size="md">Join our newsletter</Heading>
-      <Description className="mb-3">
-        {success ? (
-          'Thank you for joining!'
-        ) : error ? (
-          <>
-            <b>Something went wrong</b>, please try again or contact us directly
-          </>
-        ) : (
-          `Want to hear from us when there's something new? Sign up and stay up to
+      {loading ? (
+        <Description className="mb-3">Subscribing ...</Description>
+      ) : (
+        <Description className="mb-3">
+          {success ? (
+            'Thank you for joining!'
+          ) : error ? (
+            <>
+              <b>Something went wrong</b>, please try again or contact us
+              directly
+            </>
+          ) : (
+            `Want to hear from us when there's something new? Sign up and stay up to
         date!`
-        )}
-      </Description>
-      {showForm && (
+          )}
+        </Description>
+      )}
+      {showForm && !loading && (
         <form onSubmit={onSubmit} className="flex flex-col sm:flex-row">
           <Input
-            type="text"
+            type="email"
             required
-            disabled={loading}
             placeholder="Enter your email"
             value={email}
             onChange={onChange}
           />
           <Button
             type="submit"
-            disabled={loading}
             variant="primary"
             className="mt-5 sm:mt-0 sm:ml-5"
           >
