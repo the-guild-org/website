@@ -10,7 +10,7 @@ import { ServicesSection } from '../ui/services-section';
 import { GetInTouchSection } from '../ui/get-in-touch-section';
 import { ClientLogosSection } from '../ui/client-logos-section';
 import { RecommendedReadingSection } from '../ui/recommended-reading-section';
-import { Button, Description, Heading } from '../ui/components';
+import { Button, Description, Heading, Newsletter } from '../ui/components';
 
 type Props = {
   articles: MetaWithLink[];
@@ -52,7 +52,9 @@ const IndexPage: FC<Props> = ({ articles }) => {
       <PlatformSection />
       <ServicesSection />
       <GetInTouchSection />
-      <RecommendedReadingSection articles={articles.slice(0, 4)} />
+      <RecommendedReadingSection articles={articles.slice(0, 4)}>
+        <Newsletter />
+      </RecommendedReadingSection>
     </Page>
   );
 };
