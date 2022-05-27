@@ -35,7 +35,7 @@ const ProjectSeparator = styled('div', {
   margin: '30px auto',
   width: 50,
   height: 2,
-  backgroundColor: 'var(--colors-accent-light)',
+  backgroundColor: 'var(--colors-accent)',
 });
 
 const OpenSource: FC<Props> = ({ projectsOrder }) => {

@@ -1,10 +1,16 @@
 import clsx from 'clsx';
-import { FC, ChangeEvent, useCallback, useState, useEffect } from 'react';
+import {
+  useCallback,
+  useState,
+  useEffect,
+  ReactElement,
+  ComponentProps,
+} from 'react';
 import Confetti from 'react-confetti';
 import { useMutation } from '../hooks/use-graphql';
 import { Heading, Description, Button, Anchor, Input } from './components';
 
-export const Newsletter: FC = () => {
+export const Newsletter = (): ReactElement => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -13,7 +19,8 @@ export const Newsletter: FC = () => {
   const [result, mutate] = useMutation(
     `mutation sayHi($email: String!, $name: String) { sayHi(email: $email, name: $name, project: "WEBSITE") { ok } }`
   );
-  const onSubmit = useCallback(
+
+  const onSubmit = useCallback<ComponentProps<'form'>['onSubmit']>(
     (e) => {
       e.preventDefault();
       setLoading(true);
@@ -22,7 +29,7 @@ export const Newsletter: FC = () => {
     [mutate, email]
   );
 
-  const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+  const onChange = useCallback<ComponentProps<'input'>['onChange']>((event) => {
     setEmail(event.target.value);
   }, []);
 
@@ -58,16 +65,17 @@ export const Newsletter: FC = () => {
           className="!fixed"
         />
       )}
-      <p className="border-0 text-gray-300">
+      <p className="border-0 text-gray-400">
         {success
-          ? `Thank you, we'll contact you soon!`
+          ? "Thank you, we'll contact you soon!"
           : error && (
-              <>
+              <span className="text-red-500">
                 <b>Something went wrong</b>, please try again or contact us
                 directly through email.
-              </>
+              </span>
             )}
       </p>
+
       {!success && (
         <form onSubmit={onSubmit} className="flex flex-col sm:flex-row">
           <Input
@@ -92,10 +100,13 @@ export const Newsletter: FC = () => {
   );
 };
 
-export const GetInTouchSection: FC<{
+export const GetInTouchSection = ({
+  hideCover,
+  hideHeading,
+}: {
   hideCover?: boolean;
   hideHeading?: boolean;
-}> = ({ hideCover, hideHeading }) => {
+}): ReactElement => {
   return (
     <div className={clsx('relative my-[200px]', !hideCover && 'md:mb-[400px]')}>
       <div className="container flex">

@@ -1,4 +1,10 @@
-import { FC, ChangeEvent, useCallback, useState, useEffect } from 'react';
+import {
+  useCallback,
+  useState,
+  useEffect,
+  ReactElement,
+  ComponentProps,
+} from 'react';
 import Confetti from 'react-confetti';
 import clsx from 'clsx';
 import { useMutation } from '../../hooks/use-graphql';
@@ -8,10 +14,13 @@ import Description from './description';
 import Input from './input';
 import { GenericLink } from './link';
 
-const Newsletter: FC<{ className?: string; hideLinkToIssues?: boolean }> = ({
+const Newsletter = ({
   className,
   hideLinkToIssues,
-}) => {
+}: {
+  className?: string;
+  hideLinkToIssues?: boolean;
+}): ReactElement => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -20,7 +29,7 @@ const Newsletter: FC<{ className?: string; hideLinkToIssues?: boolean }> = ({
   const [result, mutate] = useMutation(
     `mutation subscribe($email: String!) { subscribe(email: $email) { ok } }`
   );
-  const onSubmit = useCallback(
+  const onSubmit = useCallback<ComponentProps<'form'>['onSubmit']>(
     (e) => {
       e.preventDefault();
       setLoading(true);
@@ -30,7 +39,7 @@ const Newsletter: FC<{ className?: string; hideLinkToIssues?: boolean }> = ({
     [mutate, email]
   );
 
-  const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+  const onChange = useCallback<ComponentProps<'input'>['onChange']>((event) => {
     setEmail(event.target.value);
   }, []);
 
@@ -81,13 +90,12 @@ const Newsletter: FC<{ className?: string; hideLinkToIssues?: boolean }> = ({
           {success ? (
             'Thank you for joining!'
           ) : error ? (
-            <>
+            <span className="text-red-500">
               <b>Something went wrong</b>, please try again or contact us
               directly
-            </>
+            </span>
           ) : (
-            `Want to hear from us when there's something new? Sign up and stay up to
-        date!`
+            "Want to hear from us when there's something new? Sign up and stay up to date!"
           )}
         </Description>
       )}
@@ -109,7 +117,7 @@ const Newsletter: FC<{ className?: string; hideLinkToIssues?: boolean }> = ({
           </Button>
         </form>
       )}
-      {hideLinkToIssues === true ? null : (
+      {!hideLinkToIssues && (
         <div className="mt-5 text-gray-500">
           <GenericLink href="/newsletter">
             Recent issues of our newsletter

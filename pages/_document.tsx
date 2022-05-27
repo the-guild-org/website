@@ -44,6 +44,15 @@ export default class MyDocument extends Document {
             rel="stylesheet"
           />
           <style dangerouslySetInnerHTML={{ __html: getCssText() }} />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta charSet="utf-8" />
+          <link rel="shortcut icon" href="/fav.ico" />
+          <link
+            rel="alternate"
+            type="application/rss+xml"
+            title="RSS Feed for the-guild.dev"
+            href="/feed.xml"
+          />
         </Head>
         <body>
           <script dangerouslySetInnerHTML={{ __html: noFlashCode }} />
