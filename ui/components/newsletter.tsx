@@ -6,8 +6,12 @@ import Button from './button';
 import Heading from './heading';
 import Description from './description';
 import Input from './input';
+import { GenericLink } from './link';
 
-const Newsletter: FC<{ className?: string }> = ({ className }) => {
+const Newsletter: FC<{ className?: string; hideLinkToIssues?: boolean }> = ({
+  className,
+  hideLinkToIssues,
+}) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -104,6 +108,13 @@ const Newsletter: FC<{ className?: string }> = ({ className }) => {
             Submit
           </Button>
         </form>
+      )}
+      {hideLinkToIssues === true ? null : (
+        <div className="mt-5 text-gray-500">
+          <GenericLink href="/newsletter">
+            Recent issues of our newsletter
+          </GenericLink>
+        </div>
       )}
     </div>
   );

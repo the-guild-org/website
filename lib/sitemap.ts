@@ -1,5 +1,5 @@
 import { writeFile } from 'node:fs/promises';
-import { MetaWithLink } from './meta';
+import { MetaWithLink, NewsletterMetaWithLink } from './meta';
 
 const createUrl = (
   pathname: string,
@@ -13,7 +13,10 @@ const createUrl = (
   <priority>${priority}</priority>
 </url>`;
 
-export async function generateSitemap(articles: MetaWithLink[]) {
+export async function generateSitemap(
+  articles: MetaWithLink[],
+  newsletters: NewsletterMetaWithLink[]
+) {
   const sitemap = `
 <urlset
   xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'
@@ -26,9 +29,12 @@ export async function generateSitemap(articles: MetaWithLink[]) {
   ${createUrl('/', 0.6)}
   ${createUrl('/contact')}
   ${createUrl('/services')}
+  ${createUrl('/newsletter')}
   ${createUrl('/open-source')}
   ${createUrl('/blog', 0.8, 'daily')}
+  ${createUrl('/newsletter', 0.5, 'weekly')}
   ${articles.map((art) => createUrl(art.link)).join('\n')}
+  ${newsletters.map((art) => createUrl(art.link)).join('\n')}
 </urlset>`;
 
   await writeFile(
