@@ -64,6 +64,15 @@ export const Layout: FC = ({ children }) => {
               router.push('/services');
             },
           },
+          {
+            children: 'Newsletter',
+            title: 'Newsletter',
+            href: '/newsletter',
+            onClick(e) {
+              e.preventDefault();
+              router.push('/newsletter');
+            },
+          },
         ]}
         // TODO: Add me in the future as is it in mockup
         // onNewsletterSubmit={(e, email) => {

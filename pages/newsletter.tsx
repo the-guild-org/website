@@ -1,8 +1,26 @@
+import { FC } from 'react';
+import NextLink from 'next/link';
+import { GetStaticProps } from 'next/types';
+import { format } from 'date-fns';
+import { getAllNewsletters } from '../lib/get-all-newsletters';
+import { NewsletterMetaWithLink } from '../lib/meta';
 import { Page } from '../ui/shared/Page';
 import { HeroSection } from '../ui/hero-section';
 import { Newsletter, Heading, Description } from '../ui/components';
 
-const NewsletterPage = () => {
+interface Props {
+  issues: NewsletterMetaWithLink[];
+}
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  return {
+    props: {
+      issues: await getAllNewsletters(),
+    },
+  };
+};
+
+const NewsletterPage: FC<Props> = ({ issues }) => {
   return (
     <Page
       title="The Guild Blog"
@@ -12,16 +30,51 @@ const NewsletterPage = () => {
       <HeroSection>
         <Heading>The Guild's newsletter</Heading>
         <Description>
-          <p>A monthly newsletter that shares:</p>
-          <ul style={{ textAlign: 'left' }}>
-            <li> - The Guild and GraphQL Foundation projects releases</li>
-            <li> - Blogposts about GraphQL</li>
-            <li> - Tips on how to get the best of our tools</li>
+          <ul style={{ textAlign: 'left', listStyleType: 'disc' }}>
+            <li>The Guild and GraphQL Foundation projects releases</li>
+            <li>Articles about GraphQL</li>
+            <li>Tips on how to get the best of our tools</li>
           </ul>
         </Description>
       </HeroSection>
       <div className="container max-w-[1200px]">
-        <Newsletter className="mb-14" />
+        <Newsletter className="mb-14" hideLinkToIssues />
+        <div className={'my-6 flex flex-wrap justify-center gap-x-7 gap-y-10'}>
+          {issues.map((issue) => {
+            return (
+              <NextLink key={issue.link} href={issue.link} passHref>
+                <a
+                  className="
+        flex
+        w-[278px]
+        cursor-pointer
+        flex-col
+        overflow-hidden
+        rounded-[20px]
+        border
+        border-solid
+        bg-white
+        transition-colors
+        hover:border-[#7F818C]
+        dark:border-transparent
+        dark:bg-[#101218]
+        hover:dark:border-[#7F818C]"
+                >
+                  <div className="flex grow flex-col p-5">
+                    <Heading size="md" className="line-clamp-3 [hyphens:auto]">
+                      Issue #{issue.link.replace('/newsletter/issue-', '')}
+                    </Heading>
+                    <div className="mt-auto text-xs">
+                      <span className="dark:text-gray-500">
+                        {format(new Date(issue.date), 'LLL do y')}
+                      </span>
+                    </div>
+                  </div>
+                </a>
+              </NextLink>
+            );
+          })}
+        </div>
       </div>
     </Page>
   );
