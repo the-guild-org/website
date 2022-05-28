@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, ReactElement, useEffect, useState } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -40,7 +40,7 @@ const Content = styled('div', {
   },
 });
 
-const Authors: FC<{ meta: Meta }> = ({ meta }) => {
+const Authors = ({ meta }: { meta: Meta }): ReactElement => {
   const date = meta.date ? new Date(meta.date) : new Date();
   const updatedDate = meta.updateDate ? new Date(meta.updateDate) : null;
 
@@ -217,7 +217,7 @@ const Article = (meta: Meta): FC =>
                 <BlogCardList articles={similarArticles} />
               </>
             )}
-            <Newsletter className="mx-auto max-w-[650px]" />
+            <Newsletter />
           </div>
         </Page>
       </MDXProvider>

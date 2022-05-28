@@ -1,6 +1,7 @@
 import App, { NextWebVitalsMetric } from 'next/app';
 import Router from 'next/router';
 import Script from 'next/script';
+import Head from 'next/head';
 import { extendTheme } from '@chakra-ui/react';
 import { CombinedThemeProvider, AppSeoProps } from '@guild-docs/client';
 import 'prism-theme-night-owl/build/no-italics.css';
@@ -60,6 +61,9 @@ export default class MyApp extends App {
 
     return (
       <>
+        <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+        </Head>
         <style global jsx>{`
           :root {
             --colors-text: white;
@@ -103,6 +107,13 @@ export default class MyApp extends App {
             header ul > nav {
               background: transparent !important;
             }
+          }
+
+          // Remove autocomplete color in Chrome
+          input:-webkit-autofill {
+            -webkit-transition: color 9999s ease-out,
+              background-color 9999s ease-out;
+            -webkit-transition-delay: 9999s;
           }
         `}</style>
 

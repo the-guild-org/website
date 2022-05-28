@@ -1,12 +1,12 @@
-import { FC, ReactElement } from 'react';
-import NativeLink from 'next/link';
+import { ReactElement, ReactNode } from 'react';
+import NextLink from 'next/link';
 import LazyLoad from 'react-lazyload';
 import clsx from 'clsx';
 import { styled } from '../../stitches.config';
 import { Image } from '../components';
 import { withPlaceholder } from '../../lib/images';
 
-const Link = styled(NativeLink, {
+const Link = styled(NextLink, {
   '&:hover > *': {
     opacity: 'var(--hover-opacity)',
   },
@@ -44,16 +44,24 @@ const Container = styled('div', {
   },
 });
 
-export const Featured: FC<{
+export const Featured = ({
+  title,
+  description,
+  image,
+  link,
+  className,
+  noShadow,
+  width,
+}: {
   title: string;
-  description: string | ReactElement;
+  description: ReactNode;
   image: string;
   link: string;
   noShadow?: boolean;
   width?: number;
   maxCoverSize?: number;
   className?: string;
-}> = ({ title, description, image, link, className, noShadow, width }) => {
+}): ReactElement => {
   const { placeholder, hasPlaceholder } = withPlaceholder(image);
   return (
     <Container className={className}>
@@ -75,9 +83,7 @@ export const Featured: FC<{
                   'max-w-[200px]',
                   !noShadow && '[box-shadow:0_2px_6px_0_rgba(0,0,0,0.18)]'
                 )}
-              >
-                <div />
-              </Cover>
+              />
             ) : (
               <Placeholder />
             )

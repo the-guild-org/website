@@ -36,11 +36,7 @@ const NewsletterPage = (meta: NewsletterMeta): FC =>
 
     const markupData: OpenGraph = {
       title,
-      images: [
-        {
-          url: `https://the-guild.dev/img/ogimage.png`,
-        },
-      ],
+      images: [{ url: 'https://the-guild.dev/img/ogimage.png' }],
       article: {
         authors: ['The Guild'],
         publishedTime: new Date(meta.date).toISOString(),
@@ -66,15 +62,15 @@ const NewsletterPage = (meta: NewsletterMeta): FC =>
           url={`https://the-guild.dev${router.route}`}
           publisherName="The Guild"
           publisherLogo="https://the-guild.dev/static/logo.svg"
-          authorName={'The Guild'}
+          authorName="The Guild"
           datePublished={new Date(meta.date).toISOString()}
           dateModified={new Date(meta.date).toISOString()}
-          images={[`https://the-guild.dev/img/ogimage.png`]}
+          images={['https://the-guild.dev/img/ogimage.png']}
         />
 
         <Page
           title={title}
-          image={`https://the-guild.dev/img/ogimage.png`}
+          image="https://the-guild.dev/img/ogimage.png"
           description={meta.description}
         >
           <div className="mx-auto w-[790px] max-w-[100vw] px-4 pt-32 sm:px-6 md:px-8">
@@ -93,9 +89,7 @@ const NewsletterPage = (meta: NewsletterMeta): FC =>
             </div>
             <Content className="dark:text-[#7F818C]">{children}</Content>
           </div>
-          <div className="container my-20">
-            <Newsletter className="mx-auto max-w-[650px]" />
-          </div>
+          <Newsletter />
         </Page>
       </MDXProvider>
     );

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import { GetStaticProps } from 'next/types';
 import { styled } from '../stitches.config';
 import { Page } from '../ui/shared/Page';
@@ -38,7 +38,7 @@ const ProjectSeparator = styled('div', {
   backgroundColor: 'var(--colors-accent)',
 });
 
-const OpenSource: FC<Props> = ({ projectsOrder }) => {
+const OpenSource = ({ projectsOrder }: Props): ReactElement => {
   return (
     <Page
       title="Open Source - The Guild"

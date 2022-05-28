@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import { Observer } from '../Observer';
 
 export interface IStackBlitzProps {
@@ -7,7 +7,10 @@ export interface IStackBlitzProps {
   file?: string;
 }
 
-export const StackBlitz: FC<IStackBlitzProps> = ({ stackBlitzId, file }) => (
+export const StackBlitz = ({
+  stackBlitzId,
+  file,
+}: IStackBlitzProps): ReactElement => (
   <Observer>
     <iframe
       title={`stackBlitz-${stackBlitzId}`}
