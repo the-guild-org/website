@@ -1,0 +1,91 @@
+import withArticle from '../../ui/blog/article'
+
+export const meta = {
+  title: 'KitQL & Houdini are joining forces',
+  tags: ['graphql', 'svelte'],
+  authors: ['jycouet', 'alecAivazis'],
+  date: '2022-05-30',
+  description:
+    "After a few months of discussing, experimenting and testing, it's about time to explain how KitQL and Houdini are working together from now!",
+  image: '/blog-assets/kitql-and-houdini/2022 05 25 - KitQL & Houdini.gif',
+  thumbnail: '/blog-assets/kitql-and-houdini/thumbnail.png'
+}
+
+export default withArticle(meta)
+
+## Motivations
+
+SvelteKit is an excellent alternative to all popular frameworks and simplifies the creation of "WebApp" _(put what you want behind this term ^^)_. Houdini and KitQL were created to manage GraphQL in this environment and use _(and abuse!)_ the new way of programming as much as possible.
+
+A few months back, we had the chance to meet and decided to have a deeper look at the pros&cons of Houdini and KitQL approaches. From a high-level perspective:
+
+#### General
+
+- We were not satisfied by Apollo or URQL client for svelte
+
+#### For Houdini
+
+- A simple and effective normalized cache
+- A way to augment operations (Pagination / List)
+- Optimistic UI / Partial
+- Client scalar
+- Fragment masking
+
+#### For KitQL
+
+- Stores
+- Debugging widget
+- Making us of existing tools (Yoga / Envelop / Modules / Scalars / CodeGen / eslint / ...)
+
+## How it looks like to use GraphQL in SvelteKit?
+
+Doing a query that will manage SSR or CSR without thinking about anything:
+
+```
+<script context="module" lang="ts">
+    export async function load(loadInput: LoadInput) {
+        await GQL_AllItems.queryLoad(loadInput, { variables: { completed: true } })
+    }
+</script>
+
+{#each $GQL_AllItems.data.items as item}
+    {item.title}
+{/each}
+```
+
+Extend the example with a loadmore button
+
+```
+<script lang="ts">
+    function loadMore() {
+        await GQL_AllItems.loadMore()
+    }
+</script>
+
+{#each $GQL_AllItems.data.items as item}
+    {item.title}
+{/each}
+<button on:click={loadMore}>Load More</button>
+```
+
+## What does it mean for `KitQL` users?
+
+Follow the [migration guide]() and enjoy all new features:
+
+- xxx
+- xxx
+- xxx
+- xxx
+
+## What does it mean for `Houdini` users?
+
+Follow the [migration guide]() and enjoy all new features:
+
+- xxx
+- xxx
+- xxx
+- xxx
+
+## Conclusion
+
+... We hope to see you soon on ...
