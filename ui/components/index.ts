@@ -8,3 +8,5 @@ export { Input } from './input';
 export * from './link';
 export { Newsletter } from './newsletter';
 export { TagList } from './tag-list';
+export { Tooltip } from './tooltip';
+export { CopyToClipboard } from './copy-to-clipboard';
