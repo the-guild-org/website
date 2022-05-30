@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import Head from 'next/head';
 import { NextSeo } from 'next-seo';
 import { Layout } from './Layout';
@@ -7,11 +7,17 @@ function ensureAbsolute(url: string): string {
   return url.startsWith('/') ? `https://the-guild.dev${url}` : url;
 }
 
-export const Page: FC<{
+export const Page = ({
+  title,
+  description,
+  image,
+  children,
+}: {
   description: string;
   image?: string;
   title: string;
-}> = ({ title, description, image, children }) => {
+  children: ReactNode;
+}): ReactElement => {
   return (
     <Layout>
       <Head>

@@ -61,7 +61,7 @@ const Blog: FC<Props> = ({ articles, tagFilter }) => {
       </HeroSection>
       <div className="container max-w-[1200px]">
         <TagList tags={allTags} withCount asLink className="mt-10 mb-20" />
-        {!tagFilters && <Newsletter className="mb-14" />}
+        {!tagFilters && <Newsletter />}
         <BlogCardList articles={articles} />
       </div>
     </Page>

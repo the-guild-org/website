@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import NextLink from 'next/link';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { keyframes, styled } from '../stitches.config';
@@ -37,7 +37,7 @@ const StyledContent = styled(Tooltip.Content, {
   },
 });
 
-export const PlatformSection: FC = () => {
+export const PlatformSection = (): ReactElement => {
   return (
     <Tooltip.Provider>
       <div

@@ -1,4 +1,4 @@
-import { forwardRef, HTMLProps } from 'react';
+import { ComponentProps, forwardRef, HTMLProps, ReactElement } from 'react';
 import NextLink from 'next/link';
 import clsx from 'clsx';
 
@@ -21,25 +21,43 @@ export const Anchor = forwardRef<
   );
 });
 
-export const GenericLink = (props) => {
-  if (props.href.startsWith('/') && !props.href.startsWith('/blog')) {
+export const GenericLink = ({
+  children,
+  href,
+  className,
+  ...props
+}: ComponentProps<'a'>): ReactElement => {
+  if (href.startsWith('/') && !href.startsWith('/blog')) {
     return (
-      <NextLink href={props.href} as={props.as}>
-        <a className="text-[#1cc8ee] hover:underline">{props.children}</a>
+      <NextLink href={href} passHref>
+        <a className={clsx('text-[#1cc8ee] hover:underline', className)}>
+          {children}
+        </a>
       </NextLink>
     );
   }
 
-  if (props.href.startsWith('#')) {
-    return <a className="text-[#1cc8ee] hover:underline" {...props} />;
+  if (href.startsWith('#')) {
+    return (
+      <a
+        href={href}
+        className={clsx('text-[#1cc8ee] hover:underline', className)}
+        {...props}
+      >
+        {children}
+      </a>
+    );
   }
 
   return (
     <a
-      className="text-[#1cc8ee] hover:underline"
+      href={href}
+      className={clsx('text-[#1cc8ee] hover:underline', className)}
       target="_blank"
-      rel="noopener noreferrer"
+      rel="noreferrer"
       {...props}
-    />
+    >
+      {children}
+    </a>
   );
 };

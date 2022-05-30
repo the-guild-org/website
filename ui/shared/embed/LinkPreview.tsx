@@ -1,4 +1,4 @@
-import { FC, useEffect, useLayoutEffect, useState } from 'react';
+import { ReactElement, useEffect, useLayoutEffect, useState } from 'react';
 import { styled } from '../../../stitches.config';
 import { GenericLink } from '../../components';
 import { Observer } from '../Observer';
@@ -98,7 +98,7 @@ const useIsomorphicLayoutEffect =
     ? useLayoutEffect
     : useEffect;
 
-export const LinkPreview: FC<{ link: string }> = ({ link }) => {
+export const LinkPreview = ({ link }: { link: string }): ReactElement => {
   const [data, setData] = useState<PreviewData>(null);
 
   useIsomorphicLayoutEffect(() => {

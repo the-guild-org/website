@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import { Observer } from '../Observer';
 import { getPadding } from './utils';
 
@@ -17,12 +17,12 @@ export interface IYouTubeProps {
   autoPlay: boolean;
 }
 
-export const YouTube: FC<IYouTubeProps> = ({
+export const YouTube = ({
   youTubeId,
   aspectRatio = '16:9',
   autoPlay = false,
   skipTo = { h: 0, m: 0, s: 0 },
-}) => {
+}: IYouTubeProps): ReactElement => {
   const { h, m, s } = skipTo;
 
   const tH = h * 60;

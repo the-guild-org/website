@@ -1,7 +1,11 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import clsx from 'clsx';
 
-export const TheGuildLogo: FC<{ className?: string }> = ({ className }) => {
+export const TheGuildLogo = ({
+  className,
+}: {
+  className?: string;
+}): ReactElement => {
   return (
     <div className={clsx('flex items-center', className)}>
       <svg

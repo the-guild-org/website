@@ -1,10 +1,13 @@
-import { FC } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import clsx from 'clsx';
 
-export const HeroSection: FC<{ hideCirclesOnMobile?: boolean }> = ({
+export const HeroSection = ({
   children,
   hideCirclesOnMobile = false,
-}) => {
+}: {
+  children: ReactNode;
+  hideCirclesOnMobile?: boolean;
+}): ReactElement => {
   return (
     <div>
       <img

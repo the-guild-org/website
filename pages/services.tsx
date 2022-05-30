@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import clsx from 'clsx';
 import { styled } from '../stitches.config';
 import { Page } from '../ui/shared/Page';
@@ -24,7 +24,7 @@ const ServiceContainer = styled(Container, {
   },
 });
 
-const Services: FC = () => {
+const Services = (): ReactElement => {
   return (
     <Page
       title="Our Services - The Guild"
