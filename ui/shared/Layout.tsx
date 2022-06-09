@@ -55,6 +55,15 @@ export const Layout: FC = ({ children }) => {
               router.push('/services');
             },
           },
+          {
+            children: 'Logos',
+            title: 'Logos',
+            href: '/logos',
+            onClick(e) {
+              e.preventDefault();
+              router.push('/logos');
+            },
+          },
         ]}
         // TODO: Add me in the future as is it in mockup
         // onNewsletterSubmit={(e, email) => {
