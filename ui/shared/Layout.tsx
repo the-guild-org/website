@@ -56,12 +56,12 @@ export const Layout: FC = ({ children }) => {
             },
           },
           {
-            children: 'Logos',
-            title: 'Logos',
-            href: '/logos',
+            children: 'Branding',
+            title: 'Branding',
+            href: '/branding',
             onClick(e) {
               e.preventDefault();
-              router.push('/logos');
+              router.push('/branding');
             },
           },
         ]}
