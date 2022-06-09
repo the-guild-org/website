@@ -1,10 +1,14 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 
-const Image: FC<{
+export const Image = ({
+  alt,
+  src,
+  className,
+}: {
   alt: string;
   src: string;
   className?: string;
-}> = ({ alt, src, className }) => {
+}): ReactElement => {
   if (!src) {
     return null;
   }
@@ -29,5 +33,3 @@ const Image: FC<{
 
   return <img className={className} src={src} alt={alt} />;
 };
-
-export default Image;

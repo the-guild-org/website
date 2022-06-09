@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import Document, { Head, Main, NextScript, Html } from 'next/document';
+import { OrganizationJsonLd } from 'next-seo';
 import { getCssText } from '../stitches.config';
 import { GA_TRACKING_ID } from '../lib/gtag';
 
@@ -15,21 +16,13 @@ const noFlashCode = readFileSync(
 
 export default class MyDocument extends Document {
   render() {
-    const richData = {
-      '@context': 'https://schema.org',
-      '@type': 'Organization',
-      name: 'The Guild',
-      url: 'https://the-guild.dev',
-      email: 'contact@the-guild.dev',
-      logo: 'https://the-guild.dev/static/logo.svg',
-    };
-
     return (
       <Html lang="en">
         <Head>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(richData) }}
+          <OrganizationJsonLd
+            url="https://the-guild.dev"
+            logo="https://the-guild.dev/static/logo.svg"
+            name="The Guild"
           />
           <script
             async
@@ -51,6 +44,14 @@ export default class MyDocument extends Document {
             rel="stylesheet"
           />
           <style dangerouslySetInnerHTML={{ __html: getCssText() }} />
+          <meta charSet="utf-8" />
+          <link rel="shortcut icon" href="/fav.ico" />
+          <link
+            rel="alternate"
+            type="application/rss+xml"
+            title="RSS Feed for the-guild.dev"
+            href="/feed.xml"
+          />
         </Head>
         <body>
           <script dangerouslySetInnerHTML={{ __html: noFlashCode }} />

@@ -1,36 +1,20 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import { Page } from '../ui/shared/Page';
-import { Hero } from '../ui/shared/Layout';
-import { Contact } from '../ui/shared/Contact';
+import { HeroSection } from '../ui/hero-section';
+import { Heading } from '../ui/components';
+import { GetInTouchSection } from '../ui/get-in-touch-section';
 
-const ContactPage: FC = () => {
+const ContactPage = (): ReactElement => {
   return (
     <Page
       title="Contact Us - The Guild"
       description="Looking to work with The Guild or to learn more about our projects? We will be happy to speak with you!"
       image="/img/ogimage.png"
     >
-      <Hero shrink>
-        <span>Contact us</span>
-      </Hero>
-      <section
-        className="
-          relative
-          bg-gray-100
-          before:absolute
-          before:left-1/2
-          before:-top-10
-          before:-translate-x-1/2
-          before:border-transparent
-          before:border-b-gray-100
-          before:content-['']
-          before:[border-width:0_40px_40px_40px]
-          dark:bg-[#16171c]
-          before:dark:border-b-[#16171c]
-      "
-      >
-        <Contact />
-      </section>
+      <HeroSection>
+        <Heading>Get in Touch</Heading>
+      </HeroSection>
+      <GetInTouchSection hideHeading />
     </Page>
   );
 };

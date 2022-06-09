@@ -153,6 +153,14 @@ function pickPrefix(url) {
     return 'GraphQL Shield';
   }
 
+  if (url.startsWith('https://graphql-yoga.com')) {
+    return 'GraphQL Yoga';
+  }
+
+  if (url.startsWith('https://kitql.dev')) {
+    return 'KitQL';
+  }
+
   if (url.startsWith('https://the-guild.dev/blog')) {
     return 'The Guild Blog';
   }

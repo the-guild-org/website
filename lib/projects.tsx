@@ -35,8 +35,8 @@ export const projects = {
   yoga: {
     featured: true,
     title: 'GraphQL-Yoga: Modern GraphQL Server',
-    image: 'https://graphql-yoga.vercel.app/assets/logo.svg',
-    link: 'https://graphql-yoga.vercel.app/',
+    image: 'https://graphql-yoga.com/assets/logo.svg',
+    link: 'https://graphql-yoga.com/',
     description: (
       <>
         <p>

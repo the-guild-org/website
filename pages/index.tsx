@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import { GetStaticProps } from 'next/types';
 import { Page } from '../ui/shared/Page';
 import { MetaWithLink } from '../lib/meta';
@@ -10,7 +10,7 @@ import { ServicesSection } from '../ui/services-section';
 import { GetInTouchSection } from '../ui/get-in-touch-section';
 import { ClientLogosSection } from '../ui/client-logos-section';
 import { RecommendedReadingSection } from '../ui/recommended-reading-section';
-import { Button, Description, Heading } from '../ui/components';
+import { Button, Description, Heading, Newsletter } from '../ui/components';
 
 type Props = {
   articles: MetaWithLink[];
@@ -30,7 +30,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
-const IndexPage: FC<Props> = ({ articles }) => {
+const IndexPage = ({ articles }: Props): ReactElement => {
   return (
     <Page
       title="The Guild - Open Source"
@@ -45,7 +45,7 @@ const IndexPage: FC<Props> = ({ articles }) => {
           platform
         </Description>
         <Button as="a" href="#platform">
-          Explore The Platform
+          Explore The Ecosystem
         </Button>
       </HeroSection>
       <ClientLogosSection />
@@ -53,6 +53,7 @@ const IndexPage: FC<Props> = ({ articles }) => {
       <ServicesSection />
       <GetInTouchSection />
       <RecommendedReadingSection articles={articles.slice(0, 4)} />
+      <Newsletter />
     </Page>
   );
 };

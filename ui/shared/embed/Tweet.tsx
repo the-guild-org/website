@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import { Observer } from '../Observer';
 import { handleTwttrLoad } from './utils';
 
@@ -11,11 +11,11 @@ export interface ITweetProps {
   align?: 'left' | 'center' | 'right';
 }
 
-export const Tweet: FC<ITweetProps> = ({
+export const Tweet = ({
   tweetLink,
   theme = 'light',
   align = 'left',
-}) => (
+}: ITweetProps): ReactElement => (
   <Observer onEnter={() => handleTwttrLoad()}>
     <div className="flex justify-center">
       <blockquote

@@ -1,19 +1,25 @@
 import clsx from 'clsx';
-import { FC } from 'react';
+import { ReactElement, ReactNode } from 'react';
 
 type Size = 'lg' | 'md';
 
-const Description: FC<{ size?: Size; className?: string }> = ({
+export const Description = ({
   className,
   size = 'lg',
   children,
-}) => {
+}: {
+  size?: Size;
+  className?: string;
+  children: ReactNode;
+}): ReactElement => {
   return (
     <p
       className={clsx(
         'text-gray-500',
-        size === 'lg' && 'mb-7 leading-6',
-        size === 'md' && 'mb-6 text-xs leading-4',
+        {
+          lg: 'mb-7 leading-6',
+          md: 'mb-6 text-xs leading-4',
+        }[size],
         className
       )}
     >
@@ -21,5 +27,3 @@ const Description: FC<{ size?: Size; className?: string }> = ({
     </p>
   );
 };
-
-export default Description;

@@ -37,3 +37,13 @@ export type Meta = MetaWithAuthor | MetaWithAuthors;
 export type MetaWithLink = Meta & {
   link: string;
 };
+
+export interface NewsletterMeta {
+  title: string;
+  date: string;
+  description: string;
+}
+
+export interface NewsletterMetaWithLink extends NewsletterMeta {
+  link: string;
+}

@@ -7,13 +7,13 @@ export const meta = {
   description: 'How to use Prisma models with GraphQL Code Generator',
   image: '/blog-assets/prisma-codegen/prismacodegen.png'
 }
-export default withArticle({ ...meta })
+export default withArticle(meta)
 
 # Introduction
 
 GraphQL has some amazing tools that can make your life easier. One of those tools is [GraphQL Code-Generator](https://graphql-code-generator.com/) which helps you create types (and more) based on your GraphQL schema.
 
-If you're creating a GraphQL server you'd probably want to have a database behind it with somthing like [Prisma](https://www.prisma.io/).
+If you're creating a GraphQL server you'd probably want to have a database behind it with something like [Prisma](https://www.prisma.io/).
 
 So, how can you use [Prisma](https://www.prisma.io/) for your database and still use the GraphQL-Codegen? this article covers the process of using [Prisma](https://www.prisma.io/) with [GraphQL Code-Generator](https://graphql-code-generator.com/), and the configuration flags that will boost your developer experience.
 
@@ -52,7 +52,7 @@ Here are a few examples of how Prisma achieves this:
 
 # GraphQL Code Generator
 
-The [GraphQL Code-Generator](https://graphql-code-generator.com/) is an easy way to create type saftey with your GraphQL project.
+The [GraphQL Code-Generator](https://graphql-code-generator.com/) is an easy way to create type safety with your GraphQL project.
 
 It automatically generates TypeScript types based on your GraphQL schema. This is very useful because it reduces the chances to write mistakes, and you can locate bugs at build-time.
 
@@ -74,7 +74,7 @@ const resolver = {
 }
 ```
 
-But, with the codegen, the manual types are no longer needed, because it genereates the types, so typescript will now know which TypeScript types to use and validate:
+But, with the codegen, the manual types are no longer needed, because it generates the types, so typescript will now know which TypeScript types to use and validate:
 
 ```ts
 import { Resolvers } from './generated/graphql'
@@ -152,7 +152,7 @@ Using the two configuration flags mentioned above, we can tell GraphQL codegen w
 
 Mappers are actually really easy to use, all you need to do is add them to your `codegen.yml`!
 
-For exapmle, lets say I have a Prisma model which is called `User`, and my GraphQL schema also uses a `type User`.
+For example, lets say I have a Prisma model which is called `User`, and my GraphQL schema also uses a `type User`.
 
 For my project to work with its database, it needs to use the Prisma model instead of the GraphQL one, so I should map my User model from prisma to my User type in GraphQL.
 

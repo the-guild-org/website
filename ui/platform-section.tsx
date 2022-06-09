@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import NextLink from 'next/link';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { keyframes, styled } from '../stitches.config';
@@ -37,7 +37,7 @@ const StyledContent = styled(Tooltip.Content, {
   },
 });
 
-export const PlatformSection: FC = () => {
+export const PlatformSection = (): ReactElement => {
   return (
     <Tooltip.Provider>
       <div
@@ -48,7 +48,7 @@ export const PlatformSection: FC = () => {
         "
       >
         <div className="container flex flex-col items-center px-4 pt-20 pb-28 text-center sm:px-6 md:px-8">
-          <Heading>The Platform</Heading>
+          <Heading>The Ecosystem</Heading>
           <Description className="max-w-[400px] md:max-w-[700px]">
             Our advanced, modular solutions can be adopted gradually as
             individual open source libraries or as a complete unified API
@@ -145,7 +145,7 @@ const PRODUCTS: {
   {
     name: 'Yoga',
     description: `A Fully-featured, simple to set up, performant and extendable server`,
-    url: 'https://graphql-yoga.vercel.app',
+    url: 'https://graphql-yoga.com',
     icon: 'yoga.svg',
   },
   {
@@ -225,6 +225,13 @@ const PRODUCTS: {
     description: 'Full Stack, open source tutorial',
     url: 'https://github.com/Urigo/WhatsApp-Clone-Tutorial',
     icon: 'whatsapp.svg',
+  },
+  {
+    name: 'KitQL',
+    description:
+      'A set of tools, helping you building efficient apps in a fast way. >> SvelteKit & GraphQL <<',
+    url: 'https://kitql.dev',
+    icon: 'kitql-wow.svg',
   },
   {
     name: 'Stencil',

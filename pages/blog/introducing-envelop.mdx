@@ -11,7 +11,7 @@ export const meta = {
   image: '/blog-assets/envelop/envelop_cover.png'
 }
 
-export default withArticle({ ...meta })
+export default withArticle(meta)
 
 **Today we are super excited to share with you a new open-source library we've been working on for the past few months!**
 
@@ -23,7 +23,7 @@ export default withArticle({ ...meta })
 - Envelop is not a GraphQL server, it's just a wrapper on top of the GraphQL engine.
 - Make “hard” **GraphQL capabilities easy** by installing **powerful plugins** ([Caching](https://github.com/dotansimha/envelop/pull/311), Tracing with [Prometheus](https://www.envelop.dev/plugins/use-prometheus)/DataDog/[NewRelic](https://www.envelop.dev/plugins/use-newrelic)/[Sentry](https://www.envelop.dev/plugins/use-sentry)/[OpenTelemetry](https://www.envelop.dev/plugins/use-open-telemetry)/[ApolloTracing](https://www.envelop.dev/plugins/use-apollo-tracing), [Loggers](https://www.envelop.dev/plugins/use-logger), [GraphQL-Jit](https://www.envelop.dev/plugins/use-graphql-jit), [Persisted Operations](https://www.envelop.dev/plugins/use-persisted-operations), Security with [rate-limit](https://www.envelop.dev/plugins/use-rate-limiter)/[depth-limit](https://www.envelop.dev/plugins/use-depth-limit)/[Auth0](https://www.envelop.dev/plugins/use-auth0) and many others from the [Plugins Hub](https://www.envelop.dev/plugins))
 - **Solve once and share across the ecosystem** - Each plugin works with any HTTP server or deployment (Express/Fastify/Netlify/Vercel/AWS Lambda/Azure Functions/Cloudflare Workers/Google Cloud Functions) and any schema builder (SDL, Apollo Federation, Nexus, TypeGraphQL and others)
-- **Framework for Frameworks** - Envelop will become the new basis for GraphQL Frameworks. [It's already availble if you are using RedwoodJS](https://community.redwoodjs.com/t/using-graphql-envelop-helix-in-redwood-v0-35/2276), and we have PRs open for Loopback, NestJS, Parse and others.
+- **Framework for Frameworks** - Envelop will become the new basis for GraphQL Frameworks. [It's already available if you are using RedwoodJS](https://community.redwoodjs.com/t/using-graphql-envelop-helix-in-redwood-v0-35/2276), and we have PRs open for Loopback, NestJS, Parse and others.
 - **"Babel for GraphQL"** - Envelop also aims to be the "enrichment layer" for GraphQL. You can use any new GraphQL Features today (@defer/@stream, @live queries, OneOf and any open RFC already today, even if graphql-js has not yet implemented or released it)
 - `envelop` is also available on [ProductHunt](https://www.producthunt.com/posts/envelop-3)!
 
@@ -207,7 +207,7 @@ We also created [Envelop Plugins Hub](https://www.envelop.dev/plugins) : a place
 
 Writing plugins for Envelop is super simple. We allow you to write code that connects to the phases that you need, and we'll make sure to run your functions at the right time.
 
-Plugins can either live as internal plugins that are relevent only to your project, or you can share it with the community as NPM package.
+Plugins can either live as internal plugins that are relevant only to your project, or you can share it with the community as NPM package.
 
 To get started with a custom plugin, choose what phases you need, and create functions that handle what you need. Envelop will provide a low-level, flexible api in each phase, so you can communicate with the core pipeline.
 
