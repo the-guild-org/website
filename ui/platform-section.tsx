@@ -1,41 +1,6 @@
 import { ReactElement } from 'react';
 import NextLink from 'next/link';
-import * as Tooltip from '@radix-ui/react-tooltip';
-import { keyframes, styled } from '../stitches.config';
-import { Anchor, Description, Heading } from './components';
-
-const slideUpOrLeftAndFade = keyframes({
-  '0%': { opacity: 0, transform: 'translateY(2px)' },
-  '100%': { opacity: 1, transform: 'translateY(0)' },
-});
-
-const slideDownOrRightAndFade = keyframes({
-  '0%': { opacity: 0, transform: 'translateY(-2px)' },
-  '100%': { opacity: 1, transform: 'translateY(0)' },
-});
-
-const StyledContent = styled(Tooltip.Content, {
-  borderRadius: 4,
-  padding: '10px 15px',
-  fontSize: 12,
-  lineHeight: 1,
-  color: '#fff',
-  background: '#16171c',
-  boxShadow: `hsl(206 22% 7% / 35%) 0 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px`,
-  '@media (prefers-reduced-motion: no-preference)': {
-    animationDuration: '400ms',
-    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-    willChange: 'transform, opacity',
-    '&[data-state="delayed-open"]': {
-      '&[data-side="top"], &[data-side="left"]': {
-        animationName: slideDownOrRightAndFade,
-      },
-      '&[data-side="bottom"], &[data-side="right"]': {
-        animationName: slideUpOrLeftAndFade,
-      },
-    },
-  },
-});
+import { Anchor, Description, Heading, Tooltip } from './components';
 
 export const PlatformSection = (): ReactElement => {
   return (
@@ -64,46 +29,41 @@ export const PlatformSection = (): ReactElement => {
 
           <div className="mt-10 flex max-w-[900px] flex-wrap justify-center">
             {PRODUCTS.map((product) => (
-              <Tooltip.Root key={product.name}>
-                <Tooltip.Trigger asChild>
-                  <a
-                    className="
-                      m-2
-                      rounded
-                      border
-                      border-solid
-                      border-transparent
-                      py-3
-                      px-5
-                      contrast-0
-                      grayscale
-                      transition-all
-                      duration-200
-                      ease-linear
-                      hover:text-gray-600
-                      hover:filter-none
-                      dark:hover:border-gray-800
-                      dark:hover:text-white
-                      lg:first:ml-6
-                    "
-                    href={product.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <img
-                      src={`/static/shared-logos/products/${product.icon}`}
-                      alt={`${product.name} logo`}
-                      className="h-[60px] drag-none"
-                    />
-                    <h4 className="mt-2 mb-0 text-xs font-medium">
-                      {product.name}
-                    </h4>
-                  </a>
-                </Tooltip.Trigger>
-                <StyledContent sideOffset={5}>
-                  {product.description}
-                </StyledContent>
-              </Tooltip.Root>
+              <Tooltip key={product.name} content={product.description}>
+                <a
+                  className="
+                  m-2
+                  rounded
+                  border
+                  border-solid
+                  border-transparent
+                  py-3
+                  px-5
+                  contrast-0
+                  grayscale
+                  transition-all
+                  duration-200
+                  ease-linear
+                  hover:text-gray-600
+                  hover:filter-none
+                  dark:hover:border-gray-800
+                  dark:hover:text-white
+                  lg:first:ml-6
+                "
+                  href={product.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src={`/static/shared-logos/products/${product.icon}`}
+                    alt={`${product.name} logo`}
+                    className="h-[60px] drag-none"
+                  />
+                  <h4 className="mt-2 mb-0 text-xs font-medium">
+                    {product.name}
+                  </h4>
+                </a>
+              </Tooltip>
             ))}
           </div>
         </div>
