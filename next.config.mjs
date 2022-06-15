@@ -23,19 +23,20 @@ const nextConfig = {
       destination: '/_next/static/sitemap.xml',
     },
   ],
-  async redirects() {
-    return [{
+  redirects: () => [
+    {
       source: '/chat',
-      destination: 'https://go.crisp.chat/chat/embed/?website_id=af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
+      destination:
+        'https://go.crisp.chat/chat/embed/?website_id=af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
       permanent: true,
-    }]
-  },
+    },
+  ],
   webpack(config) {
     config.resolve.alias.Public = join(CWD, 'public');
 
     //❗️ need for Next 12 with next-optimized-images
     config.module.rules.push({
-      test: /\.(gif|mp4|webm|svg|ico)$/,
+      test: /\.(gif|mp4|webm|svg|ico|zip)$/,
       use: {
         loader: 'file-loader',
       },
