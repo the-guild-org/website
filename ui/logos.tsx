@@ -7,8 +7,8 @@ import { Heading } from './components';
 import { GetInTouchSection } from './get-in-touch-section';
 import { HeroSection } from './hero-section';
 
-const Branding = (): FC<Meta> =>
-  function BrandingRender({ children, title, description }) {
+const Logos = (): FC<Meta> =>
+  function LogosRender({ children, title, description }) {
     return (
       <MDXProvider components={components}>
         <Page title={title} description={description}>
@@ -24,4 +24,4 @@ const Branding = (): FC<Meta> =>
     );
   };
 
-export default Branding;
+export default Logos;

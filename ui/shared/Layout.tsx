@@ -74,12 +74,12 @@ export const Layout = ({ children }: { children: ReactNode }): ReactElement => {
             },
           },
           {
-            children: 'Branding',
-            title: 'Branding',
-            href: '/branding',
+            children: 'Logos',
+            title: 'Logos',
+            href: '/logos',
             onClick(e) {
               e.preventDefault();
-              router.push('/branding');
+              router.push('/logos');
             },
           },
         ]}
