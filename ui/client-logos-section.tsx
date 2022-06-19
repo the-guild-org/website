@@ -1,7 +1,7 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import { logos } from '../lib/logos';
 
-export const ClientLogosSection: FC = () => {
+export const ClientLogosSection = (): ReactElement => {
   return (
     <div className="container">
       <div className="mx-auto mt-44 flex max-w-[1260px] flex-wrap items-center justify-center pb-20">

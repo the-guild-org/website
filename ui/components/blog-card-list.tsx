@@ -1,16 +1,19 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import clsx from 'clsx';
 import NextLink from 'next/link';
 import { format } from 'date-fns';
-import Description from './description';
-import Heading from './heading';
+import { Description } from './description';
+import { Heading } from './heading';
 import { authors } from '../authors';
 import { MetaWithLink, pickAuthor } from '../../lib/meta';
 
-const BlogCardList: FC<{ articles: MetaWithLink[]; className?: string }> = ({
+export const BlogCardList = ({
   articles,
   className,
-}) => {
+}: {
+  articles: MetaWithLink[];
+  className?: string;
+}): ReactElement => {
   return (
     <div
       className={clsx(
@@ -68,5 +71,3 @@ const BlogCardList: FC<{ articles: MetaWithLink[]; className?: string }> = ({
     </div>
   );
 };
-
-export default BlogCardList;

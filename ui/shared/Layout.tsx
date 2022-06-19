@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { useRouter } from 'next/router';
 import { GlobalStyles, Header, FooterExtended } from '@theguild/components';
 import clsx from 'clsx';
@@ -13,7 +13,7 @@ export const Container = styled('div', {
   },
 });
 
-export const Layout: FC = ({ children }) => {
+export const Layout = ({ children }: { children: ReactNode }): ReactElement => {
   const router = useRouter();
 
   return (
@@ -94,7 +94,13 @@ const HeroHeader = styled('div', {
   },
 });
 
-export const Hero: FC<{ shrink?: boolean }> = ({ shrink, children }) => {
+export const Hero = ({
+  shrink,
+  children,
+}: {
+  shrink?: boolean;
+  children: ReactNode;
+}): ReactElement => {
   return (
     <div
       // eslint-disable-next-line tailwindcss/no-contradicting-classname -- false positive for background image on before and after
@@ -140,7 +146,7 @@ export const Hero: FC<{ shrink?: boolean }> = ({ shrink, children }) => {
   );
 };
 
-export const Arrow: FC<{ className?: string }> = ({ className }) => (
+export const Arrow = ({ className }: { className?: string }): ReactElement => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={20}

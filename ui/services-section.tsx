@@ -1,8 +1,8 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import NextLink from 'next/link';
 import { Anchor, Description, Heading } from './components';
 
-export const ServicesSection: FC = () => {
+export const ServicesSection = (): ReactElement => {
   return (
     <>
       <div className="flex flex-col items-center px-4 pt-28 text-center sm:px-6 md:px-8">

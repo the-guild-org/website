@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import { GetStaticProps } from 'next/types';
 import { Page } from '../ui/shared/Page';
 import { MetaWithLink } from '../lib/meta';
@@ -30,7 +30,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
-const IndexPage: FC<Props> = ({ articles }) => {
+const IndexPage = ({ articles }: Props): ReactElement => {
   return (
     <Page
       title="The Guild - Open Source"
@@ -52,9 +52,8 @@ const IndexPage: FC<Props> = ({ articles }) => {
       <PlatformSection />
       <ServicesSection />
       <GetInTouchSection />
-      <RecommendedReadingSection articles={articles.slice(0, 4)}>
-        <Newsletter />
-      </RecommendedReadingSection>
+      <RecommendedReadingSection articles={articles.slice(0, 4)} />
+      <Newsletter />
     </Page>
   );
 };
