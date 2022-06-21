@@ -2,13 +2,13 @@ import { FC } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import { components } from './blog/elements';
 import { Page } from './shared/Page';
-import { Meta } from '../lib/meta';
+import type { Meta } from '../lib/meta';
 import { Heading, Description, Button } from './components';
 import { GetInTouchSection } from './get-in-touch-section';
 import { HeroSection } from './hero-section';
 
-const Logos = (): FC<Meta> =>
-  function LogosRender({ children, title, description }) {
+const Logos = ({ title, description }: Meta): FC =>
+  function LogosRender({ children }) {
     return (
       <MDXProvider components={components}>
         <Page title={title} description={description}>
