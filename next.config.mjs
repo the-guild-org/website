@@ -37,7 +37,7 @@ const nextConfig = {
 
     //❗️ need for Next 12 with next-optimized-images
     config.module.rules.push({
-      test: /\.(gif|mp4|webm|svg|ico)$/,
+      test: /\.(gif|mp4|webm|svg|ico|zip)$/,
       use: {
         loader: 'file-loader',
       },

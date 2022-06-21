@@ -73,6 +73,15 @@ export const Layout = ({ children }: { children: ReactNode }): ReactElement => {
               router.push('/newsletter');
             },
           },
+          {
+            children: 'Logos',
+            title: 'Logos',
+            href: '/logos',
+            onClick(e) {
+              e.preventDefault();
+              router.push('/logos');
+            },
+          },
         ]}
         // TODO: Add me in the future as is it in mockup
         // onNewsletterSubmit={(e, email) => {
