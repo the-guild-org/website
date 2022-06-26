@@ -7,8 +7,8 @@ export const meta = {
   date: '2022-05-30',
   description:
     "After a few months of discussing, experimenting and testing, it's about time to explain how KitQL and Houdini are working together from now!",
-  image: '/blog-assets/kitql-and-houdini/2022 05 25 - KitQL & Houdini.gif',
-  thumbnail: '/blog-assets/kitql-and-houdini/thumbnail.png'
+  image: '/blog-assets/houdini-and-kitql/2022 05 25 - KitQL & Houdini.gif',
+  thumbnail: '/blog-assets/houdini-and-kitql/thumbnail.png'
 }
 
 export default withArticle(meta)
@@ -41,16 +41,14 @@ A few months back, we had the chance to meet and decided to have a deeper look a
 
 Doing a query that will manage SSR or CSR without thinking about anything:
 
-```
+```html
 <script context="module" lang="ts">
-    export async function load(loadInput: LoadInput) {
-        await GQL_AllItems.queryLoad(loadInput, { variables: { completed: true } })
-    }
+  export async function load(loadInput: LoadInput) {
+    await GQL_AllItems.queryLoad(loadInput, { variables: { completed: true } })
+  }
 </script>
 
-{#each $GQL_AllItems.data.items as item}
-    {item.title}
-{/each}
+{#each $GQL_AllItems.data.items as item} {item.title} {/each}
 ```
 
 Extend the example with a loadmore button
