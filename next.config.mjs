@@ -2,7 +2,8 @@ import { join } from 'node:path';
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import withMDX from '@next/mdx';
 import withOptimizedImages from 'next-optimized-images';
-import rehypePrism from '@mapbox/rehype-prism';
+import withShiki from '@stefanprobst/rehype-shiki';
+import { getHighlighter } from 'shiki';
 
 const CWD = process.cwd();
 
@@ -23,19 +24,20 @@ const nextConfig = {
       destination: '/_next/static/sitemap.xml',
     },
   ],
-  async redirects() {
-    return [{
+  redirects: () => [
+    {
       source: '/chat',
-      destination: 'https://go.crisp.chat/chat/embed/?website_id=af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
+      destination:
+        'https://go.crisp.chat/chat/embed/?website_id=af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
       permanent: true,
-    }]
-  },
+    },
+  ],
   webpack(config) {
     config.resolve.alias.Public = join(CWD, 'public');
 
     //❗️ need for Next 12 with next-optimized-images
     config.module.rules.push({
-      test: /\.(gif|mp4|webm|svg|ico)$/,
+      test: /\.(gif|mp4|webm|svg|ico|zip)$/,
       use: {
         loader: 'file-loader',
       },
@@ -59,11 +61,38 @@ const analyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
+const highlighter = await getHighlighter({ theme: 'github-dark' });
+
+// Add alias for `yml`
+await highlighter.loadLanguage({
+  id: 'yaml',
+  scopeName: 'source.yaml',
+  path: 'yaml.tmLanguage.json',
+  aliases: ['yml'],
+});
+
+// Add alias for `json5`
+await highlighter.loadLanguage({
+  id: 'javascript',
+  scopeName: 'source.js',
+  path: 'javascript.tmLanguage.json',
+  samplePath: 'javascript.sample',
+  aliases: ['js', 'json5'],
+});
+
 const mdx = withMDX({
   extension: /\.mdx?$/,
   options: {
     providerImportSource: '@mdx-js/react',
-    rehypePlugins: [rehypePrism],
+    rehypePlugins: [
+      [
+        withShiki,
+        {
+          highlighter,
+          ignoreUnknownLanguage: false,
+        },
+      ],
+    ],
   },
 });
 

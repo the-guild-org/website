@@ -77,7 +77,7 @@ export const projects = {
           improve GraphQL API as well as GraphQL consumers.
         </p>
         <p>
-          Integrates with GitHub and runs in any Continous Integration and
+          Integrates with GitHub and runs in any Continuous Integration and
           Delivery pipeline.
         </p>
       </>

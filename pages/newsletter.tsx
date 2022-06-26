@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import NextLink from 'next/link';
 import { GetStaticProps } from 'next/types';
 import { format } from 'date-fns';
@@ -20,7 +20,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
-const NewsletterPage: FC<Props> = ({ issues }) => {
+const NewsletterPage = ({ issues }: Props): ReactElement => {
   return (
     <Page
       title="The Guild Blog"
@@ -38,13 +38,12 @@ const NewsletterPage: FC<Props> = ({ issues }) => {
         </Description>
       </HeroSection>
       <div className="container max-w-[1200px]">
-        <Newsletter className="mb-14" hideLinkToIssues />
-        <div className={'my-6 flex flex-wrap justify-center gap-x-7 gap-y-10'}>
-          {issues.map((issue) => {
-            return (
-              <NextLink key={issue.link} href={issue.link} passHref>
-                <a
-                  className="
+        <Newsletter hideLinkToIssues />
+        <div className="my-6 flex flex-wrap justify-center gap-x-7 gap-y-10">
+          {issues.map((issue) => (
+            <NextLink key={issue.link} href={issue.link} passHref>
+              <a
+                className="
         flex
         w-[278px]
         cursor-pointer
@@ -59,21 +58,20 @@ const NewsletterPage: FC<Props> = ({ issues }) => {
         dark:border-transparent
         dark:bg-[#101218]
         hover:dark:border-[#7F818C]"
-                >
-                  <div className="flex grow flex-col p-5">
-                    <Heading size="md" className="line-clamp-3 [hyphens:auto]">
-                      Issue #{issue.link.replace('/newsletter/issue-', '')}
-                    </Heading>
-                    <div className="mt-auto text-xs">
-                      <span className="dark:text-gray-500">
-                        {format(new Date(issue.date), 'LLL do y')}
-                      </span>
-                    </div>
+              >
+                <div className="flex grow flex-col p-5">
+                  <Heading size="md" className="line-clamp-3 [hyphens:auto]">
+                    Issue #{issue.link.replace('/newsletter/issue-', '')}
+                  </Heading>
+                  <div className="mt-auto text-xs">
+                    <span className="dark:text-gray-500">
+                      {format(new Date(issue.date), 'LLL do y')}
+                    </span>
                   </div>
-                </a>
-              </NextLink>
-            );
-          })}
+                </div>
+              </a>
+            </NextLink>
+          ))}
         </div>
       </div>
     </Page>

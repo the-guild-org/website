@@ -1,6 +1,7 @@
 import clsx from 'clsx';
-import { css, styled } from '../../../stitches.config';
-import { GenericLink, Image } from '../../components';
+import { ReactElement, ReactNode } from 'react';
+import { onlyText } from 'react-children-utilities';
+import { CopyToClipboard, GenericLink, Image } from '../../components';
 import { CodeSandbox } from '../../shared/embed/CodeSandbox';
 import { Gfycat } from '../../shared/embed/Gfycat';
 import { StackBlitz } from '../../shared/embed/StackBlitz';
@@ -8,12 +9,21 @@ import { Tweet } from '../../shared/embed/Tweet';
 import { YouTube } from '../../shared/embed/YouTube';
 import { LinkPreview } from '../../shared/embed/LinkPreview';
 
-const Ul = styled('ul', {});
-const Blockquote = styled('blockquote', {});
-const Code = styled('code', {});
-const InlineCode = styled('code', {});
+const PreComponent = ({ children }: { children: ReactNode }): ReactElement => {
+  return (
+    <pre className="relative overflow-x-scroll rounded-md bg-[#161b22] p-4">
+      <style jsx>{`
+        pre:hover > :global(button) {
+          display: block;
+        }
+      `}</style>
+      <CopyToClipboard value={onlyText(children)} />
+      {children}
+    </pre>
+  );
+};
 
-export const components = {
+export const components: Record<string, (props: any) => ReactElement> = {
   h1: ({ className, children, ...props }) => (
     <h1
       className={clsx(
@@ -64,70 +74,35 @@ export const components = {
     </li>
   ),
   ul: ({ className, children, ...props }) => (
-    <Ul className={clsx('relative mb-8 list-disc pl-8', className)} {...props}>
+    <ul className={clsx('relative mb-8 list-disc pl-8', className)} {...props}>
       {children}
-    </Ul>
+    </ul>
   ),
   ol: ({ className, children, ...props }) => (
     <ol className={clsx('mb-8', className)} {...props}>
       {children}
     </ol>
   ),
-  pre: styled('pre', {
-    background: '#1d1f21',
-    borderRadius: 4,
-    padding: 24,
-    color: '#f8f8f2',
-    whiteSpace: 'pre-wrap',
-    wordBreak: 'break-all',
-  }),
+  pre: PreComponent,
   code: ({ className, syntax, children, ...props }) => (
-    <Code
-      className={clsx('', syntax, className)}
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- TODO: find a way to fix type error
-      // @ts-ignore
-      css={css({
-        background: '#1d1f21',
-        overflow: 'auto',
-        borderRadius: 3,
-        '-webkit-overflow-scrolling': 'touch',
-        fontSize: '1rem',
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-word',
-        letterSpacing: 0,
-        fontWeight: 400,
-        lineHeight: 1.4,
-      })}
-      {...props}
-    >
+    <code className={clsx(syntax, className)} {...props}>
       {children}
-    </Code>
+    </code>
   ),
   inlineCode: ({ className, wrap, children, ...props }) => (
-    <InlineCode
+    <code
       className={clsx(
         'rounded-[5px] border border-solid border-gray-500/20 px-1 py-0.5',
         wrap && 'wrap',
         className
       )}
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- TODO: find a way to fix type error
-      // @ts-ignore
-      // css={css({
-      //   backgroundColor: 'rgba(0, 0, 0, 0.05)',
-      //   border: '1px solid rgba(255, 255, 255, 0.2)',
-      //   padding: 2,
-      //   paddingLeft: 5,
-      //   paddingRight: 5,
-      //   fontFamily:
-      //     "Monaco, Consolas, 'Andale  Mono', 'DejaVu Sans Mono', monospace",
-      // })}
       {...props}
     >
       {children}
-    </InlineCode>
+    </code>
   ),
   blockquote: ({ className, children, ...props }) => (
-    <Blockquote
+    <blockquote
       className={clsx(
         `
     my-8
@@ -144,17 +119,10 @@ export const components = {
     `,
         className
       )}
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- TODO: find a way to fix type error
-      // @ts-ignore
-      css={css({
-        '& > p': {
-          lineHeight: '2.5rem',
-        },
-      })}
       {...props}
     >
       {children}
-    </Blockquote>
+    </blockquote>
   ),
   a: GenericLink,
   p: ({ className, children, ...props }) => (

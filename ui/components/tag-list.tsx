@@ -1,12 +1,12 @@
 import clsx from 'clsx';
-import { FC, forwardRef, HTMLProps } from 'react';
+import { ComponentProps, forwardRef, ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 
 // forwardRef fixes Warning: Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?
 const Tag = forwardRef<
   HTMLAnchorElement,
-  HTMLProps<HTMLAnchorElement> & { clickable?: boolean; isActive?: boolean }
+  ComponentProps<'a'> & { clickable?: boolean; isActive?: boolean }
 >(function Tag(
   { children, clickable = false, isActive = false, ...props },
   forwardedRef
@@ -34,12 +34,18 @@ const Tag = forwardRef<
   );
 });
 
-const TagList: FC<{
+export const TagList = ({
+  tags,
+  asLink = false,
+  withCount = false,
+  className,
+  ...props
+}: {
   tags: (string | [string, number])[];
   asLink?: boolean;
   withCount?: boolean;
   className?: string;
-}> = ({ tags, asLink = false, withCount = false, className, ...props }) => {
+}): ReactElement => {
   const router = useRouter();
   return (
     <div
@@ -68,5 +74,3 @@ const TagList: FC<{
     </div>
   );
 };
-
-export default TagList;

@@ -1,10 +1,10 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import { Page } from '../ui/shared/Page';
 import { HeroSection } from '../ui/hero-section';
 import { Heading } from '../ui/components';
 import { GetInTouchSection } from '../ui/get-in-touch-section';
 
-const ContactPage: FC = () => {
+const ContactPage = (): ReactElement => {
   return (
     <Page
       title="Contact Us - The Guild"

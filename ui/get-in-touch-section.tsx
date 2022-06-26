@@ -1,48 +1,47 @@
 import clsx from 'clsx';
-import { FC, ChangeEvent, useCallback, useState, useEffect } from 'react';
+import { useState, ReactElement } from 'react';
 import Confetti from 'react-confetti';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { useMutation } from '../hooks/use-graphql';
 import { Heading, Description, Button, Anchor, Input } from './components';
 
-export const Newsletter: FC = () => {
-  const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
+export const Newsletter = (): ReactElement => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [confetti, setConfetti] = useState(false);
-  const [result, mutate] = useMutation(
+  const mutate = useMutation(
     `mutation sayHi($email: String!, $name: String) { sayHi(email: $email, name: $name, project: "WEBSITE") { ok } }`
   );
-  const onSubmit = useCallback(
-    (e) => {
-      e.preventDefault();
-      setLoading(true);
-      mutate({ email, name: email });
-    },
-    [mutate, email]
-  );
 
-  const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
-  }, []);
-
-  useEffect(() => {
-    if (result.complete) {
-      setLoading(false);
-
-      if (result.error) {
+  const {
+    handleSubmit,
+    values,
+    handleChange,
+    handleBlur,
+    isSubmitting,
+    errors,
+    touched,
+  } = useFormik({
+    initialValues: { email: '' },
+    validationSchema: Yup.object().shape({
+      email: Yup.string().email().required(),
+    }),
+    async onSubmit({ email }) {
+      const { errors } = await mutate({ email, name: email });
+      if (errors) {
         setError(true);
-      } else {
-        setSuccess(true);
-        setEmail('');
-        setConfetti(true);
-
-        setTimeout(() => {
-          setConfetti(false);
-        }, 5000);
+        return;
       }
-    }
-  }, [result.complete, result.error]);
+
+      setSuccess(true);
+      setConfetti(true);
+
+      setTimeout(() => {
+        setConfetti(false);
+      }, 5000);
+    },
+  });
 
   const hasPower =
     typeof window === 'object' &&
@@ -58,33 +57,41 @@ export const Newsletter: FC = () => {
           className="!fixed"
         />
       )}
-      <p className="border-0 text-gray-300">
+      <p className="border-0 text-gray-400">
         {success
-          ? `Thank you, we'll contact you soon!`
+          ? "Thank you, we'll contact you soon!"
           : error && (
-              <>
+              <span className="text-red-500">
                 <b>Something went wrong</b>, please try again or contact us
                 directly through email.
-              </>
+              </span>
             )}
       </p>
+
       {!success && (
-        <form onSubmit={onSubmit} className="flex flex-col sm:flex-row">
-          <Input
-            type="email"
-            required
-            disabled={loading}
-            placeholder="Your Email Address"
-            value={email}
-            onChange={onChange}
-          />
+        <form onSubmit={handleSubmit} className="flex items-start gap-2">
+          <div className="grow">
+            <Input
+              name="email"
+              placeholder="Enter your email"
+              className="peer"
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isSubmitting}
+              isInvalid={touched.email && Boolean(errors.email)}
+            />
+            {touched.email && errors.email && (
+              <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+            )}
+          </div>
           <Button
             type="submit"
-            disabled={loading}
+            disabled={isSubmitting}
             variant="primary"
-            className="mt-5 sm:mt-0 sm:ml-5"
+            loading={isSubmitting}
           >
-            {loading ? '. . .' : 'Submit'}
+            Submit
           </Button>
         </form>
       )}
@@ -92,10 +99,13 @@ export const Newsletter: FC = () => {
   );
 };
 
-export const GetInTouchSection: FC<{
+export const GetInTouchSection = ({
+  hideCover,
+  hideHeading,
+}: {
   hideCover?: boolean;
   hideHeading?: boolean;
-}> = ({ hideCover, hideHeading }) => {
+}): ReactElement => {
   return (
     <div className={clsx('relative my-[200px]', !hideCover && 'md:mb-[400px]')}>
       <div className="container flex">

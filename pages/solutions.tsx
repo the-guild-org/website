@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import { GetStaticProps } from 'next/types';
 import { styled } from '../stitches.config';
 import { Page } from '../ui/shared/Page';
@@ -87,16 +87,16 @@ const Section = styled('div', {
   marginBottom: '20px',
 });
 
-const OpenSource: FC<Props> = ({ resources }) => {
+const OpenSource = ({ resources }: Props): ReactElement => {
   return (
     <Page
       title="Solutions"
-      description="Recommended GraphQL ressources"
+      description="Recommended GraphQL resources"
       image="/img/ogimage.png"
     >
       <HeroSection>
         <Heading>Solutions</Heading>
-        <Description>Essential GraphQL ressources</Description>
+        <Description>Essential GraphQL resources</Description>
       </HeroSection>
 
       <Container>
@@ -115,7 +115,6 @@ const OpenSource: FC<Props> = ({ resources }) => {
           </Section>
         ))}
       </Container>
-      <p>&nbsp;</p>
     </Page>
   );
 };
