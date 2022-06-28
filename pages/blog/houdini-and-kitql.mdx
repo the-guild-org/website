@@ -3,69 +3,45 @@ import withArticle from '../../ui/blog/article'
 export const meta = {
   title: 'KitQL & Houdini projects are joining forces',
   tags: ['graphql', 'svelte'],
-  authors: ['jycouet', 'alecAivazis'],
+  authors: ['jycouet', 'AlecAivazis'],
   date: '2022-07-04',
   description:
-    "After a few months of discussing, experimenting and testing, it's about time to explain how KitQL and Houdini are working together from now!",
+    "After a few months of design, experimentation, and testing, it's time to unveil a massive effort by the KitQL and Houdini maintainers to join forces!",
   image: '/blog-assets/houdini-and-kitql/2022 05 25 - KitQL & Houdini.gif',
   thumbnail: '/blog-assets/houdini-and-kitql/thumbnail.png'
 }
 
 export default withArticle(meta)
 
-## Motivations
+## A Tale of Two Projects
 
-SvelteKit is an excellent alternative to all popular frameworks and simplifies the creation of "WebApp"
-_(put what you want behind this term ^^)_.
-Houdini and KitQL were created to manage GraphQL in this environment to use
-_(and abuse!)_ the new way of programming as much as possible.
+SvelteKit is taking the web dev community by storm by providing an excellent solution for server-side rendered web applications and simplifying the creation of "WebApp"s
+... whatever that means 😅. While most of the common libraries for GraphQL apps do have svelte bindings, none of them really _spark joy_. It was hard to avoid this feeling
+that people were trying to smash a React-shaped wedge into a Svelte-shaped hole. Independently, [Alec](https://github.com/AlecAivazis) and [Jean-Yves](https://twitter.com/jycouet) 
+set out to give the Svelte community something better and took very different approaches to the problem. Eventually they connected on GitHub started to discuss the pros and cons 
+of each approach. During this team, one  question kept popping up:
 
-A few months back, [Alec](https://twitter.com/AlecAivazis) and [Jean-Yves](https://twitter.com/jycouet) meet and
-we had a very open discussion about our libraries, pros & cons about different approaches and one question keep coming back:
+> What would the best experience for using #Svelte and #GraphQL look like?
 
-> How to provide the best experience of #Svelte with #GraphQL to the community?
+It was very clear we both wanted to provide "the best" solution for using GraphQL and Svelte. It seemed silly to work independently since we shared this common goal
+so all we needed to do was figure out how to structure our joint efforts. 
 
-Where do we stand today?
+## The Best of Both Worlds 
 
-### General
+While at first we thought that Houdini and KitQL were solving the same problem, during our conversation it became clear that KitQL's scope was significantly larger than Houdini's.
+KitQL strives to provide the best possible, "batteries included" solution for fullstack applications built with GraphQL and SvelteKit. It achieves this by integrating powerful 
+tools in the GraphQL community such as Yoga, Envelop, Modules, Scalars, and CodeGen with its own custom client that ran in the browser. On the other hand, Houdini is entirely focused on the 
+client-side of the GraphQL picture and fills a similar role to libraries like Relay, Urql, and Apollo. With this realizaton, the path forward was clear: bring the best parts of the KitQL
+client into Houdini and integrate it with the rest of the tools in the KitQL Stack.
 
-- We were not satisfied by Apollo or URQL client that are quite generic. Not ideal to unlock all the power of svelte!
+Now users no longer have to choose between KitQL or Houdini. If you are looking for:
 
-### Houdini key points
-
-- Inline documents with preprocessor that avoids a lot of boilerplate code for the user
-- A simple and effective normalized cache
-- Out of the box features like Pagination, List
-- Optimistic UI / Partial
-- Client scalar
-- Fragment masking to get collocated code
-- Subscription
-
-> Focus on the client part of GraphQL
-
-### KitQL key points
-
-- External documents working well with all the graphql ecosystem
-- Stores per operation
-- Query cache
-- Debugging widget
-- Making us of existing tools (Yoga / Envelop / Modules / Scalars / CodeGen / eslint / ...)
-
-> Focus on making a full-stack app with GraphQL
-
-### Summary
-
-Seeing all this, we decided to join forces.
-KitQL will move client related things in Houdini.
-
-Like this, if you are looking for:
-
-- a GraphQL client, we recommend to use Houdini.
+- a GraphQL client, we recommend to use Houdini
 - building a full-stack app, we recommend KitQL _(including Houdini of course 😉)_
 
-> And it's effective Today!!! 🥳🥳🥳
+> And it works Today!!! 🥳🥳🥳
 
-## How it looks like to use GraphQL in SvelteKit?
+## How does it looks like to use GraphQL in SvelteKit?
 
 You have now two ways that you can mix and match in your application:
 
@@ -97,14 +73,9 @@ And you can use the generated store everywhere in your app like:
 ```
 
 Pretty simple, right? You can put this code in a component or in a route.
-Here, you are doing `CSR` (Client Side Rendering), the browser is doing a network call to get data.
+Here, you are doing `CSR` (Client Side Rendering). The browser is doing a network call to get data.
 
-If you want to enjoy `SSR` (Server Side Rendering), you have to add a bit your code as follow.
-FYI, `SSR` means that on the first load of the page the server will get the data and put it directly in your html.
-And when you navigate from the client already, we fallback automatically in `CSR` mode.
-But don't worry, it's the default behavior of SvelteKit!
-
-This code is to be added in the route page where you want SSR data.
+If you want to enjoy `SSR` (Server Side Rendering), you have to add a small bit of code to your route:
 
 ```svelte
 <script context="module" lang="ts">
@@ -117,8 +88,8 @@ This code is to be added in the route page where you want SSR data.
 
 ### Inline Documents
 
-With inline documents, the approache is a bit different but relies on the same store API under the hood.
-Here is what your write, and you get automagically `CSR` and `SSR` depending on where you are!
+With inline documents, the approach is a bit different but relies on the same store API under the hood.
+Here is the only thing you write and you automagically get `CSR` and `SSR` depending on your situation:
 
 ```svelte
 <script>
@@ -139,9 +110,20 @@ Here is what your write, and you get automagically `CSR` and `SSR` depending on 
 {/each}
 ```
 
-### All features are available for both way of working
+### Pros and Cons?
 
-#### Pagination example
+While the two APIs are equivalent, there are pros and cons to both approaches. 
+What you gain in simplicity with the preprocessor, you lose in flexibility. The 
+preprocessor can only run on .svelte files so if you want to do things inside of 
+an endpoint or any random file, you’ll need to use the store api. If you want to send 
+custom headers for just a single request, you’ll need the store api.
+
+## Some examples
+
+Just to give you a feel for what we have built, here are a few common situations you 
+have probably seen.
+
+### Pagination example
 
 For example, you want to do an infinite scroll pagination? And load more items?
 Simply do 👇
@@ -162,9 +144,10 @@ Simply do 👇
 
 And that's it!
 
-#### Mutation example to append the list
+### Mutation example to append the list
 
-First, you need to inform graphql that this is a "special" list with a directive.
+Want to take the result of a mutation and add it to a list in your cache? First, you need to inform 
+graphql that this is a "special" list with a directive:
 
 ```graphql
 query AllItems {
@@ -175,7 +158,7 @@ query AllItems {
 }
 ```
 
-Then, call your mutation and that's it! No need to retrigger a query to get the new data in the list, No need to append the list manually!
+Then, call your mutation and that's it!
 
 ```svelte
 <script lang="ts">
@@ -199,13 +182,17 @@ Then, call your mutation and that's it! No need to retrigger a query to get the 
 {/each}
 ```
 
+No need to retrigger a query to get the new data in the list. No need to append the 
+list manually. No don't even need remember exactly what fields need to ask for the item.
+Houdini takes care of all of that for you.
+
 ## Now what?
 
 If you were a Houdini user, please follow the dedicated [migration guide]()
 
 If you were a KitQL user, please follow the dedicated [migration guide]()
 
-If you are new to all this, you are welcome too 😉
-Please come and enjoy the two projects on GitHub [Houdini](https://github.com/HoudiniGraphql/houdini) and [KitQL](https://www.kitql.dev/)
+If you are new to all this, you are welcome too 😉 Please come and join us on GitHub in either the 
+[Houdini](https://github.com/HoudiniGraphql/houdini) or [KitQL](https://www.kitql.dev/) repos.
 
 Speak to you soon!
