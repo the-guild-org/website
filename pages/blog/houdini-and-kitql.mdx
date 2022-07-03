@@ -102,20 +102,20 @@ Here is the only thing you write and you automagically get `CSR` and `SSR` depen
 
 ```svelte
 <script>
-    import { query, graphql } from '$houdini'
+  import { query, graphql } from '$houdini';
 
-    const { data } = query(graphql`
-        query AllItems {
-            items {
-                id
-                name
-            }
-        }
-    `)
+  const { data } = query(graphql`
+    query AllItems {
+      items {
+        id
+        name
+      }
+    }
+  `);
 </script>
 
 {#each $data.items as item}
-    <div>{item.name}</div>
+  <div>{item.name}</div>
 {/each}
 ```
 
@@ -139,15 +139,15 @@ Simply do 👇
 
 ```svelte
 <script lang="ts">
-    function loadMore() {
-        await GQL_AllItems.loadMore()
-    }
+  function loadMore() {
+    await GQL_AllItems.loadMore()
+  }
 </script>
 
 <button on:click={loadMore}>Load More</button>
 
 {#each $GQL_AllItems.data.items as item}
-    {item.title}
+  {item.title}
 {/each}
 ```
 
@@ -190,7 +190,7 @@ And that's it! Call your Mutation and your data will apprend the list automagica
 <button on:click={add}>Add</button>
 
 {#each $GQL_AllItems.data.items as item}
-    {item.title}
+  {item.title}
 {/each}
 ```
 
