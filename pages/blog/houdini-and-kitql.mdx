@@ -48,7 +48,7 @@ Now users no longer have to choose between KitQL or Houdini. If you are looking 
 - a GraphQL client, we recommend to use Houdini
 - building a full-stack app, we recommend KitQL _(including Houdini of course 😉)_
 
-> And it works Today!!! 🥳🥳🥳
+> And it's available Today 🎉🎉🎉
 
 ## How does it looks like to use GraphQL in SvelteKit?
 
@@ -155,8 +155,9 @@ And that's it!
 
 ### Mutation example to append the list
 
-Want to take the result of a mutation and add it to a list in your cache? First, you need to inform
-graphql that this is a "special" list with a directive:
+Want to take the result of a mutation and add it to a list?
+
+First, you need to inform graphql that this is a "special" list with a directive:
 
 ```graphql
 query AllItems {
@@ -167,7 +168,9 @@ query AllItems {
 }
 ```
 
-Then, call your mutation and that's it!
+After the generate, a fragment is created for you: `All_Items_insert` (to be used in the mutation).
+
+And that's it! Call your Mutation and your data will apprend the list automagically!
 
 ```svelte
 <script lang="ts">
@@ -191,17 +194,23 @@ Then, call your mutation and that's it!
 {/each}
 ```
 
-No need to retrigger a query to get the new data in the list. No need to append the
-list manually. No don't even need remember exactly what fields need to ask for the item.
-Houdini takes care of all of that for you.
+- No need to retrigger a query to get the new data in the list.
+- No need to append the list manually.
+- Don't even need remember exactly what fields need to ask for the item.
 
-## Now what?
+=> Houdini takes care of all of that for you.
 
-If you were a Houdini user, please follow the dedicated [migration guide]()
+## Join us in building the future
 
-If you were a KitQL user, please follow the dedicated [migration guide]()
+We showed here two examples... but a lot more is availble in the two projects.
 
-If you are new to all this, you are welcome too 😉 Please come and join us on GitHub in either the
-[Houdini](https://github.com/HoudiniGraphql/houdini) or [KitQL](https://www.kitql.dev/) repos.
+Please come on our GitHub repos to ⭐ star, 🗣️ discuss, 🎉 ask for new features, and more:
 
-Speak to you soon!
+- [Houdini](https://github.com/HoudiniGraphql/houdini)
+- [KitQL](https://github.com/jycouet/kitql)
+
+_If you were already using these projects, please follow
+[Houdini migration to 0.15.0](https://www.houdinigraphql.com/guides/migrating-to-0.15.0) or
+[KitQL migration to 0.7.0](https://www.kitql.dev/docs/migrating-to-0.7.0) to be up-to-date._
+
+Speak to you soon! 🤟
