@@ -68,7 +68,7 @@ export const projects = {
   inspector: {
     featured: true,
     title: 'GraphQL-Inspector',
-    image: 'https://graphql-inspector.com/img/logo.svg',
+    image: 'https://graphql-inspector.com/assets/img/logo.svg',
     link: 'https://graphql-inspector.com',
     description: (
       <>
