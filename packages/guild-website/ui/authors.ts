@@ -136,4 +136,9 @@ export const AUTHORS: Record<string, Author> = {
     link: 'https://graphql.wtf',
     github: 'notrab',
   },
+  tuvalSimha: {
+    name: 'Tuval Simha',
+    link: 'https://twitter.com/SimhaTuval',
+    github: 'TuvalSimha',
+  },
 };
