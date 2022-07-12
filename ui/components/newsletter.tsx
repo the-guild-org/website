@@ -34,45 +34,31 @@ export const Newsletter = ({
         target="_blank"
         className="flex items-start gap-2"
       >
-        <div className="grow">
-          <Input
-            type="email"
-            name="member[email]"
-            id="member_email"
-            placeholder="Enter your email"
-            className="peer"
-          />
-        </div>
+        <Input
+          type="email"
+          name="member[email]"
+          id="member_email"
+          placeholder="Enter your email"
+        />
         <Button type="submit" variant="primary">
           Submit
         </Button>
       </form>
       <Description className="!mt-2">
         By subscribing, you agree with Revue’s{' '}
-        <a
-          className="text-black"
-          target="_blank"
-          href="https://www.getrevue.co/terms"
-          rel="noreferrer"
-        >
+        <GenericLink href="https://www.getrevue.co/terms">
           Terms of Service
-        </a>{' '}
+        </GenericLink>{' '}
         and{' '}
-        <a
-          className="text-black"
-          target="_blank"
-          href="https://www.getrevue.co/privacy"
-          rel="noreferrer"
-        >
+        <GenericLink href="https://www.getrevue.co/privacy">
           Privacy Policy
-        </a>
+        </GenericLink>
         .
       </Description>
       {!hideLinkToIssues && (
         <GenericLink
           href="https://www.getrevue.co/profile/TheGuild"
           className="self-start"
-          target="_blank"
         >
           Recent issues of our newsletter
         </GenericLink>
