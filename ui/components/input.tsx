@@ -19,6 +19,9 @@ export const Input = ({
           placeholder:text-gray-500
           focus:outline-none
           focus:ring-1
+          invalid:focus:border-red-500
+          invalid:focus:bg-red-500/20
+          invalid:focus:ring-red-500
           disabled:cursor-not-allowed
           disabled:opacity-30
           `,
