@@ -119,12 +119,12 @@ You can basically achieve routing like below however it looks a bit unsafe.
 createServerAdapter({
   handleRequest(request: Request) {
     if (request.url.endsWith('/hello')) {
-	    return new Response('{ "message": "hello" }', {
-	      status: 200,
-        headers: {
-         **'Content-Type': 'application/json',
-        }**
-	    })
+      return new Response('{ "message": "hello" }', {
+        status: 200,
+	headers: {
+	 'Content-Type': 'application/json',
+	}
+      })
     } else if (request.url.endsWith('/secret')) {
       return new Response('No way!', {
         status: 401
