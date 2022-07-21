@@ -46,7 +46,7 @@ Currently, in the older LTS versions of Node.js, we don’t have an implementati
     Polyfill patches the native parts of an environment while ponyfill just exports the “patched” stuff without touching the environment’s internals. We prefer pony filling because it prevents us from breaking other libraries and environmental functionalities.
     
 
-## Is it possible to have a library that creates a platform-independent server?
+## Is it possible to have a library that creates a cross-platform server?
 
 When rebuilding GraphQL Yoga from scratch, this was one of the most important features we wanted to implement. We wanted to create a GraphQL server library that can be integrated with different Node.js server frameworks, and other JS environments like CF Workers and Deno with a few additional lines of code.
 
