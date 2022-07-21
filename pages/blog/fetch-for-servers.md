@@ -1,23 +1,23 @@
 import withArticle from '../../ui/blog/article'
 
 export const meta = {
-  title: 'JavaScript runs everywhere, so should your servers - here is how',
-  author: 'ardatan',
-  tags: ['fetch', 'whatwg', 'node', 'graphql', 'graphql-yoga'],
-  date: '2022-07-21',
-  description:
-    'The new way of building servers in JavaScript',
-  image:
-    'https://user-images.githubusercontent.com/727224/104328926-56b0a700-54ba-11eb-9ad3-f6d2b971d55d.jpg',
-  thumbnail:
-    'https://user-images.githubusercontent.com/727224/104328777-29fc8f80-54ba-11eb-87d0-9982af1d8281.jpg'
+title: 'JavaScript runs everywhere, so should your servers - here is how',
+author: 'ardatan',
+tags: ['fetch', 'whatwg', 'node', 'graphql', 'graphql-yoga'],
+date: '2022-07-21',
+description:
+'The new way of building servers in JavaScript',
+image:
+'https://user-images.githubusercontent.com/727224/104328926-56b0a700-54ba-11eb-9ad3-f6d2b971d55d.jpg',
+thumbnail:
+'https://user-images.githubusercontent.com/727224/104328777-29fc8f80-54ba-11eb-87d0-9982af1d8281.jpg'
 }
 
 export default withArticle(meta)
 
-At the beginning of the year, we’ve launched GraphQL Yoga 2.0 - a server framework for GraphQL APIs. 
+At the beginning of the year, we’ve launched GraphQL Yoga 2.0 - a server framework for GraphQL APIs.
 
-While planning version 2.0 of Yoga, we were thinking about all the things that changed in the ecosystem and what developers using JavaScript expect from their server frameworks now and in the future. 
+While planning version 2.0 of Yoga, we were thinking about all the things that changed in the ecosystem and what developers using JavaScript expect from their server frameworks now and in the future.
 
 One of the most powerful trend in the JS ecosystem was the proliferation of new environments and platforms that can run JS(Lambdas, Cloudflare Workers, Deno, Bun etc.). So we set up to build a single GraphQL server framework that could run on any of these platforms.
 
@@ -29,7 +29,7 @@ While Node.js is the most popular environment, multiple platforms can run JavaSc
 
 When you send a request from the client, you basically use `fetch(...requestArgs)` that uses `Request` object under the hood that contains all the details(headers, method, etc) and the data stream you need for that communication, then you take `Response` object that contains the connection stream and it processes it as you want with `.json`, `.arrayBuffer`, `.formData` or you can just access the stream itself by `.body` as `ReadableStream`
 
-On the server side, you can take `Request` object as a server and then process it with the same methods without dealing with the internals of your platform. 
+On the server side, you can take `Request` object as a server and then process it with the same methods without dealing with the internals of your platform.
 
 Streaming responses like SSE, we just use `ReadableStream` and for Multipart requests (e.g. file uploads), we just take `FormData` which is exactly the same passed from the browser or any other client uses Fetch API.
 
@@ -39,12 +39,10 @@ SSE; [https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src
 
 ## What about Node.js?
 
-Currently, in the older LTS versions of Node.js, we don’t have an implementation of the Fetch API builtin. Furthermore, Node.js doesn’t use Web standard streams and the Fetch API in its `http` and `https` modules. That’s why we created the  `@whatwg-node/fetch` package (previously known as `cross-undici-fetch` ) that fills in the gaps of different `fetch` implementations in all the LTS Node.js versions. Under the hood, `@whatwg-node/fetch` utilizes `undici` if available or otherwise falls back to using `node-fetch`, which you are probably already familiar with. In case `@whatwg-node/fetch` is imported in an environment that already has Fetch API built in like Cloudflare Workers, no ponyfills are added to your built application bundle.
+Currently, in the older LTS versions of Node.js, we don’t have an implementation of the Fetch API builtin. Furthermore, Node.js doesn’t use Web standard streams and the Fetch API in its `http` and `https` modules. That’s why we created the `@whatwg-node/fetch` package (previously known as `cross-undici-fetch` ) that fills in the gaps of different `fetch` implementations in all the LTS Node.js versions. Under the hood, `@whatwg-node/fetch` utilizes `undici` if available or otherwise falls back to using `node-fetch`, which you are probably already familiar with. In case `@whatwg-node/fetch` is imported in an environment that already has Fetch API built in like Cloudflare Workers, no ponyfills are added to your built application bundle.
 
 - Ponyfill vs Polyfill
-    
-    Polyfill patches the native parts of an environment while ponyfill just exports the “patched” stuff without touching the environment’s internals. We prefer pony filling because it prevents us from breaking other libraries and environmental functionalities.
-    
+  Polyfill patches the native parts of an environment while ponyfill just exports the “patched” stuff without touching the environment’s internals. We prefer pony filling because it prevents us from breaking other libraries and environmental functionalities.
 
 ## Is it possible to have a library that creates a cross-platform server?
 
@@ -60,7 +58,7 @@ As we realized, how well this works out for our users, we decided that we need t
 
 ```tsx
 import { createServerAdapter } from '@whatwg-node/server'
-import { Request, Response } from '@whatwg-node/fetch'  
+import { Request, Response } from '@whatwg-node/fetch'
 
 const myServer = createServerAdapter({
   handleRequest(request: Request) {
@@ -71,21 +69,21 @@ const myServer = createServerAdapter({
 })
 
 // Node.js
-import { createServer } from 'http';
+import { createServer } from 'http'
 
-const nodeServer = createServer(myServer);
-nodeServer.listen(4000);
+const nodeServer = createServer(myServer)
+nodeServer.listen(4000)
 
 // CF Workers
-self.addEventListener('fetch', myServer);
+self.addEventListener('fetch', myServer)
 
 // Next.js
-export default myServer;
+export default myServer
 
 // Deno
 serve(myServer, {
-  addr: ':4000',
-});
+  addr: ':4000'
+})
 ```
 
 ### How does it look in real-life usage today?
@@ -103,17 +101,16 @@ Finally how small the code is when we want to process the request and the respon
 [https://github.com/dotansimha/graphql-yoga/tree/no-more-node/packages/graphql-yoga/src/plugins](https://github.com/dotansimha/graphql-yoga/tree/no-more-node/packages/graphql-yoga/src/plugins)
 
 > There is literally nothing platform-specific in GraphQL Yoga, and this allows us to focus on creating a good GraphQL Server implementation for the entire GraphQL JS ecosystem.
-> 
 
 ## Node.js Server Frameworks, Routers & Middlewares
 
-Node.js was there in the JS community for years before the web standards were not as complete as today. We think Node.js inspired a lot of ideas on how server-side stuff can be easily managed with JavaScript by implementing all the Stream and HTTP APIs. But now we have Fetch, Web Streams, and so on as a web standard in the JavaScript ecosystem. 
+Node.js was there in the JS community for years before the web standards were not as complete as today. We think Node.js inspired a lot of ideas on how server-side stuff can be easily managed with JavaScript by implementing all the Stream and HTTP APIs. But now we have Fetch, Web Streams, and so on as a web standard in the JavaScript ecosystem.
 
 There are many mature libraries such as Fastify, Koa, Express, and Hapi that are implemented only for Node.js which Fetch API doesn’t have in its ecosystem for now. The experience with those libraries in the current era of Node.js taught us a lot about how the server can be designed but maybe it is time to reduce the environment-specific APIs in the JS ecosystem.
 
 The major reason for using a server framework is usually “Routing” then “Middlewares” so the question is “Why cannot we just have that with Fetch API?”
 
-You can basically achieve routing like below however it looks a bit unsafe. 
+You can basically achieve routing like below however it looks a bit unsafe.
 
 ```tsx
 createServerAdapter({
@@ -121,18 +118,18 @@ createServerAdapter({
     if (request.url.endsWith('/hello')) {
       return new Response('{ "message": "hello" }', {
         status: 200,
-	headers: {
-	 'Content-Type': 'application/json',
-	}
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
     } else if (request.url.endsWith('/secret')) {
       return new Response('No way!', {
         status: 401
       })
     }
-     return new Response('Nothing here!', {
-       status: 404
-     })
+    return new Response('Nothing here!', {
+      status: 404
+    })
   }
 })
 ```
@@ -141,7 +138,7 @@ There is another library called `itty-router` which can be used for Routing with
 
 ```tsx
 import { Router } from 'itty-router'
-import { createServerAdapter } from '@whatwg-node/server' 
+import { createServerAdapter } from '@whatwg-node/server'
 
 // now let's create a router (note the lack of "new")
 const router = Router()
@@ -153,7 +150,7 @@ router.get('/todos', () => new Response('Todos Index!'))
 router.get('/todos/:id', ({ params }) => new Response(`Todo #${params.id}`))
 
 // POST to the collection (we'll use async here)
-router.post('/todos', async request => {
+router.post('/todos', async (request) => {
   const content = await request.json()
 
   return new Response('Creating Todo: ' + JSON.stringify(content))
@@ -165,11 +162,11 @@ router.all('*', () => new Response('Not Found.', { status: 404 }))
 // attach the router "handle" to our server adapter
 const myServer = createServerAdapter({
   handleRequest: router.handle
-});
+})
 
 // Then use it in any environment
-import { createServer } from 'http';
- 
-const httpServer = createServer(myServer);
-httpServer.listen(4000);
+import { createServer } from 'http'
+
+const httpServer = createServer(myServer)
+httpServer.listen(4000)
 ```
