@@ -13,12 +13,14 @@ export const meta = {
 }
 
 export default withArticle(meta)
+
 ## TLDR
-* We made GraphQL Yoga 2.0 **platform agnostic**, so it is able to run anywhere JavaScript can run (Cloudflare Workers, sdfsdf......) thanks to the new **Fetch API standard**
-* We've created <ins>Ponyfills</ins> so it will work the same on older versions of Node that don't support the standard
-* We've made a **new library** out of it so that any framework and app could achieve the same
-* Help other frameworks in the ecosystem to migrate to this new library and standard
-At the beginning of the year, we’ve launched GraphQL Yoga 2.0 - a server framework for GraphQL APIs.
+
+- We made GraphQL Yoga 2.0 **platform agnostic**, so it is able to run anywhere JavaScript can run (Cloudflare Workers, sdfsdf......) thanks to the new **Fetch API standard**
+- We've created <ins>Ponyfills</ins> so it will work the same on older versions of Node that don't support the standard
+- We've made a **new library** out of it so that any framework and app could achieve the same
+- Help other frameworks in the ecosystem to migrate to this new library and standard
+  At the beginning of the year, we’ve launched GraphQL Yoga 2.0 - a server framework for GraphQL APIs.
 
 While planning version 2.0 of Yoga, we were thinking about all the things that changed in the ecosystem and what developers using JavaScript expect from their server frameworks now and in the future.
 
@@ -34,11 +36,11 @@ This is where we realized that WHATWG Fetch API that uses `Request`, `Response`,
 
 ## Why Fetch API?
 
-When you send a request from the client, `fetch(...requestArgs)`  uses `Request` object under the hood that contains all the details(headers, method, etc) and the data stream you need for that communication. Then you take the `Response` object that contains the connection stream, and process it as you want with `.json()`, `.arrayBuffer()`, `.formData()` or just access the stream itself by `.body()` as `ReadableStream`
+When you send a request from the client, `fetch(...requestArgs)` uses `Request` object under the hood that contains all the details(headers, method, etc) and the data stream you need for that communication. Then you take the `Response` object that contains the connection stream, and process it as you want with `.json()`, `.arrayBuffer()`, `.formData()` or just access the stream itself by `.body()` as `ReadableStream`
 
 On the server side, you can take `Request` object and process it with the same methods without dealing with the internals of your platform.
 
-Streaming responses like SSE uses `ReadableStream`, and for Multipart requests (e.g. file uploads)uses  `FormData` which is exactly the same forwarded from the browser or any other client using Fetch API.
+Streaming responses like SSE uses `ReadableStream`, and for Multipart requests (e.g. file uploads)uses `FormData` which is exactly the same forwarded from the browser or any other client using Fetch API.
 
 File Uploads; [https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src/plugins/requestParser/POSTMultipart.ts#L18](https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src/plugins/requestParser/POSTMultipart.ts#L18)
 
@@ -49,7 +51,7 @@ SSE; [https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src
 Currently, in the older LTS versions of Node.js, we don’t have an implementation of the Fetch API built in. Furthermore, Node.js doesn’t use Web standard streams and the Fetch API in its `http` and `https` modules. That’s why we created the `@whatwg-node/fetch` package (previously known as `cross-undici-fetch` ) that fills in the gaps of different `fetch` implementations in all the LTS Node.js versions. Under the hood, `@whatwg-node/fetch` utilizes `undici` if available or otherwise falls back to using `node-fetch`, which you are probably already familiar with. In case `@whatwg-node/fetch` is imported in an environment that already has Fetch API built in like Cloudflare Workers, no ponyfills are added to your built application bundle.
 
 **Ponyfill vs Polyfill**
-  Polyfill patches the native parts of an environment while ponyfill just exports the “patched” stuff without touching the environment’s internals. We prefer pony filling because it prevents us from breaking other libraries and environmental functionalities.
+Polyfill patches the native parts of an environment while ponyfill just exports the “patched” stuff without touching the environment’s internals. We prefer pony filling because it prevents us from breaking other libraries and environmental functionalities.
 
 ## Is it possible to have a library that creates a cross-platform server?
 
