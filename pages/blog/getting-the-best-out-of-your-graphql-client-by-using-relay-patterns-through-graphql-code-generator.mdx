@@ -13,7 +13,6 @@ export const meta = {
 
 export default withArticle(meta)
 
-# Getting the best out of your GraphQL client by using Relay patterns through GraphQL Code Generator
 
 There is no doubt that Relay is the most advanced JavaScript GraphQL Client that is out there. However, at the same time, the learning curve and adoption is yet very sparse compared to other popular alternatives such as Apollo Client, Urql, or GraphQL Request.
 
@@ -28,9 +27,33 @@ On a high level these benefits are the following:
 
 ![Fragmentized Component Tree](/blog-assets/getting-the-best-out-of-your-graphql-client-by-using-relay-patterns-through-graphql-code-generator.mdx/component-tree-diagram.png)
 
+**Colocate GraphQL documents with the component code.** Instead of writing GraphQL operations in a dedicated file, the operations are written within the component code.
+
+```tsx
+import { gql, useFragment, FragmentType } from './gql'
+
+const Avatar_UserFragment = gql(/* GraphQL */ `
+  fragment Avatar_UserFragment on User {
+    avatarUrl
+  }
+`)
+
+type AvatarProps = {
+  user: FragmentType<typeof Avatar_UserFragment>
+}
+
+export function Avatar(props: AvatarProps) {
+  const user = useFragment(Avatar_UserFragment, props.user)
+  return <CircleImage src={user.avatarUrl} />
+}
+```
+
 **Data (fragment) masking.** Ensure that a componenent can only access the data defined in it's fragment definitions in order to keep the component a self-contained building block that can be re-used.
 
-Fortunately, we are happy to announce that we now have a preset for bringing the above Relay patterns to your existing projects, no matter what client library you are currently using, without having to switch over and commit to the Relay eco-system.
+
+_____
+
+We are happy to announce that we now have a preset for bringing the above Relay patterns to your existing projects, no matter what client library you are currently using, without having to switch over and commit to the Relay eco-system.
 
 ## A new GraphQL Code Generator preset
 
@@ -108,7 +131,7 @@ export function Avatar(props: AvatarProps) {
 }
 ```
 
-## Restrict which data can be accessed through fragments
+## Restrict data access with fragments
 
 By utilizing the `useFragment` hook we ensure that the component can only access the properties of the data that are declared directly within the fragment selection set. The other data declared through the additional fragment spread(`Avatar_UserFragment`), cannot be accessed within the `UserListItem` .
 
@@ -259,6 +282,10 @@ export function UserProfileRoute_Query() {
   )
 }
 ```
+
+Finally, we have the following component tree as mentioned before.
+
+![Fragmentized Component Tree](/blog-assets/getting-the-best-out-of-your-graphql-client-by-using-relay-patterns-through-graphql-code-generator.mdx/component-tree-diagram.png)
 
 ## Conclusion
 
