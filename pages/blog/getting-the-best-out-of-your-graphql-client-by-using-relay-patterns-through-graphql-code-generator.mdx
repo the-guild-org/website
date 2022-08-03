@@ -2,11 +2,11 @@ import withArticle from '../../ui/blog/article'
 
 export const meta = {
   title:
-    'Getting the best out of your GraphQL client by using Relay patterns through GraphQL Code Generator',
-  author: 'arda',
+    'Getting the best out of your existing GraphQL client by using Relay patterns with GraphQL Code Generator',
+  author: 'laurin',
   tags: ['graphql'],
   date: '2022-08-01',
-  description: 'TBA',
+  description: 'The most important parts of Relay are the concepts of building and scaling applications, let\'s show how you can use these patterns in your existing project, no matter what client library you are currently using.',
   image:
     '/blog-assets/getting-the-best-out-of-your-graphql-client-by-using-relay-patterns-through-graphql-code-generator/cover.jpg'
 }
@@ -17,15 +17,19 @@ export default withArticle(meta)
 
 There is no doubt that Relay is the most advanced JavaScript GraphQL Client that is out there. However, at the same time, the learning curve and adoption is yet very sparse compared to other popular alternatives such as Apollo Client, Urql, or GraphQL Request.
 
-As a consequence, many people don’t even know about all the benefits and patterns used within (and so far being exclusive to ) the relay-compiler, the GraphQL Code Generator counter-part tailored for Relay applications.
+As a consequence, many people don’t even know about all the benefits and patterns used within (and so far being exclusive to) Relay.
 
-The Guild gathered and worked on projects whose GraphQL client usage spans across all the available solutions today. In our opinion, the most important parts of Relay are the concepts of building and scaling applications. These patterns are actually applicable to any GraphQL Client, you just need the right code generation tool for the job.
 
-Fortunately, we are happy to announce that we now have an opinionated preset for bringing the Relay patterns to your existing project without having to switch over to the Relay eco-system.
+The Guild gathered and worked on projects whose GraphQL client usage spans across all the available solutions today.
+In our opinion, the most important parts of Relay are the concepts of building and scaling applications.
+These patterns are actually applicable to any GraphQL Client, you just need the right code generation tool for the job.
+
+Fortunately, we are happy to announce that we now have an opinionated preset for bringing the above Relay patterns to your existing projects, no matter what client library you are currently using, without having to switch over and commit to the Relay eco-system.
 
 ## Describe component data needs via GraphQL fragments
 
 Instead of writing one big GraphQL Operation for our whole page and passing that down to the components, start with describing the component's data dependencies through a GraphQL fragment.
+This way, you are making the data-dependency of your component colocated and explicit in the same way that some would colocate the TypeScript definitions or CSS if you are using the styled components pattern.
 
 ```tsx
 import { gql, useFragment, FragmentType } from '@gql'
@@ -201,11 +205,15 @@ export function UserProfileRoute_Query() {
 
 This pattern allows you to re-use and scale your components to the maximum while having a clear and sane data dependency flow from the top route down to the ends of the UI component trees.
 
-You can start adopting this pattern within your GraphQL application with any GraphQL client that supports `TypedDocumentNode` through our new and battle-tested GraphQL Code Generator preset `[gql-tag-operations-preset](https://www.graphql-code-generator.com/plugins/presets/gql-tag-operations-preset)`.
+You can start adopting this pattern within your existing GraphQL application with any GraphQL client that supports `TypedDocumentNode` through our new and battle-tested GraphQL Code Generator preset `[gql-tag-operations-preset](https://www.graphql-code-generator.com/plugins/presets/gql-tag-operations-preset)`.
+
+All of the following clients are supported with **ANY** framework (React, Vue, Angular, etc.)
+- Urql
+- Apollo Client
+- "Vanilla" Node.js
+- graphql-request ([we recently added support](https://github.com/prisma-labs/graphql-request/pull/350))
 
 [You can start quickly without much configuration by following the preset documentation.](https://www.graphql-code-generator.com/plugins/presets/gql-tag-operations-preset)
-
-What are you waiting for? Nobody is stopping you from incrementally bringing sanity to your GraphQL application!
 
 Maybe this even inspires you to dig deeper into the optimizations the Relay client runtime does on top of these patterns and convince you to use Relay within your next project. You can learn more about those on [relay.dev](https://relay.dev/).
 
