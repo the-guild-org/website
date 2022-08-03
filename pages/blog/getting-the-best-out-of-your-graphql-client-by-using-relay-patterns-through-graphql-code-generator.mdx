@@ -4,15 +4,23 @@ export const meta = {
   title:
     'Getting the best out of your existing GraphQL client by using Relay patterns with GraphQL Code Generator',
   author: 'laurin',
-  tags: ['graphql', 'codegen', 'react', 'typescript', 'relay', 'apollo', 'urql'],
+  tags: [
+    'graphql',
+    'codegen',
+    'react',
+    'typescript',
+    'relay',
+    'apollo',
+    'urql'
+  ],
   date: '2022-08-01',
-  description: 'The most important parts of Relay are the concepts of building and scaling applications, let\'s show how you can use these patterns in your existing project, no matter what client library you are currently using.',
+  description:
+    "The most important parts of Relay are the concepts of building and scaling applications, let's show how you can use these patterns in your existing project, no matter what client library you are currently using.",
   image:
     '/blog-assets/getting-the-best-out-of-your-graphql-client-by-using-relay-patterns-through-graphql-code-generator/cover.jpg'
 }
 
 export default withArticle(meta)
-
 
 There is no doubt that Relay is the most advanced JavaScript GraphQL Client that is out there. However, at the same time, the learning curve and adoption is yet very sparse compared to other popular alternatives such as Apollo Client, Urql, or GraphQL Request.
 
@@ -50,8 +58,7 @@ export function Avatar(props: AvatarProps) {
 
 **Data (fragment) masking.** Ensure that a componenent can only access the data defined in it's fragment definitions in order to keep the component a self-contained building block that can be re-used.
 
-
-_____
+---
 
 We are happy to announce that we now have a preset for bringing the above Relay patterns to your existing projects, no matter what client library you are currently using, without having to switch over and commit to the Relay eco-system.
 
@@ -82,7 +89,7 @@ In your application code you will now effectifely write the following code.
 ```tsx
 import { useQuery } from 'urql'
 import { gql } from './gql'
- 
+
 const ViewerQueryDocument = gql(/* GraphQL */ `
   query ViewerQuery {
     viewer {
@@ -160,7 +167,6 @@ export function UserListItem(props: UserListItemProps) {
   return <ListItem icon={icon}>{user.fullName}</ListItem>
 }
 ```
-
 
 ## Compose fragments for UI components
 
@@ -294,6 +300,7 @@ This pattern allows you to re-use and scale your components to the maximum while
 You can start adopting this pattern within your existing GraphQL application with any GraphQL client that supports `TypedDocumentNode` through our new and battle-tested GraphQL Code Generator preset [gql-tag-operations-preset](https://www.graphql-code-generator.com/plugins/presets/gql-tag-operations-preset).
 
 All of the following clients are supported with **ANY** framework (React, Vue, Angular, etc.)
+
 - Urql
 - Apollo Client
 - "Vanilla" Node.js
