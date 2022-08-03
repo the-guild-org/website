@@ -24,7 +24,59 @@ The Guild gathered and worked on projects whose GraphQL client usage spans acros
 In our opinion, the most important parts of Relay are the concepts of building and scaling applications.
 These patterns are actually applicable to any GraphQL Client, you just need the right code generation tool for the job.
 
-Fortunately, we are happy to announce that we now have an opinionated preset for bringing the above Relay patterns to your existing projects, no matter what client library you are currently using, without having to switch over and commit to the Relay eco-system.
+Fortunately, we are happy to announce that we now have a preset for bringing the above Relay patterns to your existing projects, no matter what client library you are currently using, without having to switch over and commit to the Relay eco-system.
+
+## A new GraphQL Code Generator preset
+
+The new preset serves as a drop-in replacement for all the plugins that generate hooks for existing clients such as urql and apollo-client.
+
+```bash
+yarn add -D @graphql-codegen/gql-tag-operations-preset
+```
+
+```yaml
+schema: ./schema.graphql
+documents:
+  - 'src/**/*.ts'
+  - '!src/gql/**/*'
+generates:
+  ./src/gql/:
+    preset: gql-tag-operations-preset
+```
+
+Instead of generating the hooks for the existing clients, the preset works with function signature overloading and [`TypedDocumentNode`](https://www.the-guild.dev/blog/typed-document-node)) for inferring the correct GraphQL operation and variables type.
+
+> You can learn more about TypedDocumentNode in [graphql.wtf episode #41](https://www.youtube.com/watch?v=cYIhx8dusa4).
+
+In your application code you will now effectifely write the following code.
+
+```tsx
+import { useQuery } from 'urql'
+import { gql } from './gql'
+ 
+const ViewerQueryDocument = gql(/* GraphQL */ `
+  query ViewerQuery {
+    viewer {
+      id
+      name
+    }
+  }
+`)
+
+const Viewer = () => {
+  const [result] = useQuery({ query: ViewerQueryDocument })
+  const { data, fetching, error } = result
+
+  if (fetching) return <p>Loading…</p>
+  if (error) return <p>Oh no… {error.message}</p>
+  // data is fully typed!
+  return <p>{data?.viewer?.name}</p>
+}
+```
+
+Because the client has built in support for TypedDocumentNode, it will extract the correct operation and variables type from the document passed to `useQuery`.
+
+[Head over to the GraphQL Code Generator documentation](https://www.graphql-code-generator.com/plugins/presets/gql-tag-operations-preset) for more details.
 
 ## Describe component data needs via GraphQL fragments
 
@@ -32,7 +84,7 @@ Instead of writing one big GraphQL Operation for our whole page and passing that
 This way, you are making the data-dependency of your component colocated and explicit in the same way that some would colocate the TypeScript definitions or CSS if you are using the styled components pattern.
 
 ```tsx
-import { gql, useFragment, FragmentType } from '@gql'
+import { gql, useFragment, FragmentType } from './gql'
 
 const Avatar_UserFragment = gql(/* GraphQL */ `
   fragment Avatar_UserFragment on User {
@@ -55,7 +107,7 @@ export function Avatar(props: AvatarProps) {
 As we compose simple visual UI components into bigger functional UI components we can also compose the fragments of the consumed UI component.
 
 ```tsx
-import { gql, useFragment, FragmentType } from '@gql'
+import { gql, useFragment, FragmentType } from './gql'
 import { Avatar } from './avatar'
 
 const UserListItem_UserFragment = gql(/* GraphQL */ `
@@ -82,7 +134,7 @@ By utilizing the `useFragment` hook we ensure that the component can only access
 The following example would raise a TypeScript error, as the `avatarUrl` field is not selected within the `UserListItem_UserFragment` fragment.
 
 ```tsx
-import { gql, useFragment, FragmentType } from '@gql'
+import { gql, useFragment, FragmentType } from './gql'
 import { Avatar } from './avatar'
 
 const UserListItem_UserFragment = gql(/* GraphQL */ `
@@ -110,7 +162,7 @@ export function UserListItem(props: UserListItemProps) {
 We can now further compose our components till we reach those components that select the root Query object type.
 
 ```tsx
-import { gql, useFragment, FragmentType } from '@gql'
+import { gql, useFragment, FragmentType } from './gql'
 import { UserListItem } from './user-list-item'
 
 const FriendList_QueryFragment = gql(/* GraphQL */ `
@@ -141,7 +193,7 @@ export function FriendList(props: FriendListProps) {
 Earlier, we declared the `Avatar` component with the `Avatar_UserFragment` fragment. We can now re-use this Avatar in a different context by again spreading the fragment and then passing the relevant data to the `Avatar` component `user` property.
 
 ```tsx
-import { gql, useFragment, FragmentType } from '@gql'
+import { gql, useFragment, FragmentType } from './gql'
 
 const UserProfileHeader_QueryFragment = gql(/* GraphQL */ `
   fragment UserProfileHeader_QueryFragment on Query {
@@ -177,7 +229,7 @@ Now, we have two UI components that require data from the root Query type, `Frie
 Finally, we can spread all our fragments into a single GraphQL Query operation that fetches all the data on our route component. This allows us to efficiently fetch all the data required for the route in one server roundtrip.
 
 ```jsx
-import { gql, useFragment, FragmentType } from '@gql'
+import { gql, useFragment, FragmentType } from './gql'
 import { UserProfileHeader } from './user-profile-header'
 import { FriendList } from './friend-list'
 
