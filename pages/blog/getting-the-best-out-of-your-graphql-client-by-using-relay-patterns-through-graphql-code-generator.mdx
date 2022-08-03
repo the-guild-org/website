@@ -17,7 +17,7 @@ export default withArticle(meta)
 
 There is no doubt that Relay is the most advanced JavaScript GraphQL Client that is out there. However, at the same time, the learning curve and adoption is yet very sparse compared to other popular alternatives such as Apollo Client, Urql, or GraphQL Request.
 
-As a consequence, many people don’t even know about all the benefits and patterns used within (and so far being exclusive to) Relay.
+As a consequence, many people don't even know about all the benefits and patterns used within (and so far being exclusive to) Relay.
 
 
 The Guild gathered and worked on projects whose GraphQL client usage spans across all the available solutions today.
@@ -102,31 +102,6 @@ export function Avatar(props: AvatarProps) {
 }
 ```
 
-## Compose fragments for UI components
-
-As we compose simple visual UI components into bigger functional UI components we can also compose the fragments of the consumed UI component.
-
-```tsx
-import { gql, useFragment, FragmentType } from './gql'
-import { Avatar } from './avatar'
-
-const UserListItem_UserFragment = gql(/* GraphQL */ `
-  fragment UserListItem_UserFragment on User {
-    fullName
-    ...Avatar_UserFragment
-  }
-`)
-
-type UserListItemProps = {
-  user: FragmentType<typeof UserListItem_UserFragment>
-}
-
-export function UserListItem(props: UserListItemProps) {
-  const user = useFragment(Item_UserFragment, props.user)
-  return <ListItem icon={<Avatar user={user} />}>{user.fullName}</ListItem>
-}
-```
-
 ## Restrict which data can be accessed through fragments
 
 By utilizing the `useFragment` hook we ensure that the component can only access the properties of the data that are declared directly within the fragment selection set. The other data declared through the additional fragment spread(`Avatar_UserFragment`), cannot be accessed within the `UserListItem` .
@@ -154,6 +129,32 @@ export function UserListItem(props: UserListItemProps) {
   // ERROR: Property 'avatarUrl' does not exist on type
   const icon = <img src={user.avatarUrl} />
   return <ListItem icon={icon}>{user.fullName}</ListItem>
+}
+```
+
+
+## Compose fragments for UI components
+
+As we compose simple visual UI components into bigger functional UI components we can also compose the fragments of the consumed UI component.
+
+```tsx
+import { gql, useFragment, FragmentType } from './gql'
+import { Avatar } from './avatar'
+
+const UserListItem_UserFragment = gql(/* GraphQL */ `
+  fragment UserListItem_UserFragment on User {
+    fullName
+    ...Avatar_UserFragment
+  }
+`)
+
+type UserListItemProps = {
+  user: FragmentType<typeof UserListItem_UserFragment>
+}
+
+export function UserListItem(props: UserListItemProps) {
+  const user = useFragment(Item_UserFragment, props.user)
+  return <ListItem icon={<Avatar user={user} />}>{user.fullName}</ListItem>
 }
 ```
 
