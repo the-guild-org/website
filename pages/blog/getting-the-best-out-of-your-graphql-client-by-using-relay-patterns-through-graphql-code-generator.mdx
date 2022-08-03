@@ -18,11 +18,17 @@ export default withArticle(meta)
 There is no doubt that Relay is the most advanced JavaScript GraphQL Client that is out there. However, at the same time, the learning curve and adoption is yet very sparse compared to other popular alternatives such as Apollo Client, Urql, or GraphQL Request.
 
 As a consequence, many people don't even know about all the benefits and patterns used within (and so far being exclusive to) Relay.
-
-
 The Guild gathered and worked on projects whose GraphQL client usage spans across all the available solutions today.
 In our opinion, the most important parts of Relay are the concepts of building and scaling applications.
 These patterns are actually applicable to any GraphQL Client, you just need the right code generation tool for the job.
+
+On a high level these benefits are the following:
+
+**A fragmentized component tree.** Colocating the GraphQL operation and fragment definitions with the components and composing them up for only sending a single request to our server.
+
+![Fragmentized Component Tree](/blog-assets/getting-the-best-out-of-your-graphql-client-by-using-relay-patterns-through-graphql-code-generator.mdx/component-tree-diagram.png)
+
+**Data (fragment) masking.** Ensure that a componenent can only access the data defined in it's fragment definitions in order to keep the component a self-contained building block that can be re-used.
 
 Fortunately, we are happy to announce that we now have a preset for bringing the above Relay patterns to your existing projects, no matter what client library you are currently using, without having to switch over and commit to the Relay eco-system.
 
@@ -239,7 +245,7 @@ const UserProfileRoute_Query = gql(/* GraphQL */ `
     ...UserProfileHeader_QueryFragment
     ...UserList_QueryFragment
   }
-`)
+`)›
 
 export function UserProfileRoute_Query() {
   const { data, loading, error } = useQuery(UserProfile_Query)
@@ -258,7 +264,7 @@ export function UserProfileRoute_Query() {
 
 This pattern allows you to re-use and scale your components to the maximum while having a clear and sane data dependency flow from the top route down to the ends of the UI component trees.
 
-You can start adopting this pattern within your existing GraphQL application with any GraphQL client that supports `TypedDocumentNode` through our new and battle-tested GraphQL Code Generator preset `[gql-tag-operations-preset](https://www.graphql-code-generator.com/plugins/presets/gql-tag-operations-preset)`.
+You can start adopting this pattern within your existing GraphQL application with any GraphQL client that supports `TypedDocumentNode` through our new and battle-tested GraphQL Code Generator preset [gql-tag-operations-preset](https://www.graphql-code-generator.com/plugins/presets/gql-tag-operations-preset).
 
 All of the following clients are supported with **ANY** framework (React, Vue, Angular, etc.)
 - Urql
