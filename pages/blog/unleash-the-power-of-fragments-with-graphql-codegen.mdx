@@ -23,7 +23,7 @@ export const meta = {
 
 export default withArticle(meta)
 
-There is no doubt that Relay is the most advanced JavaScript GraphQL Client that is out there. However, at the same time, the learning curve and adoption is yet very sparse compared to other popular alternatives such as Apollo Client, Urql, or GraphQL Request.
+There is no doubt that Relay is the most advanced JavaScript GraphQL Client out there. However, at the same time, the learning curve and adoption is yet very sparse compared to other popular alternatives such as Apollo Client, Urql, or GraphQL Request.
 
 As a consequence, many people don't even know about all the benefits and patterns used within (and so far being exclusive to) Relay.
 The Guild gathered and worked on projects whose GraphQL client usage spans across all the available solutions today.
@@ -32,11 +32,13 @@ These patterns are actually applicable to any GraphQL Client, you just need the 
 
 On a high level these benefits are the following:
 
-**A fragmentized component tree.** Colocating the GraphQL operation and fragment definitions with the components and composing them up for only sending a single request to our server.
+**A fragmentized component tree.** Instead of writing a single GraphQL operation document per visible component or extracting the component properties from a single query operation document type, which is often cumbersome), multiple fragment definitions can be composed up to a single query operation that is sent to the server.
+This reduces the amount of concurrent requests and together with `@defer` and `@stream` is an actual improvement in the performance of the application ([compared to batching GraphQL operations](https://www.apollographql.com/blog/apollo-client/performance/batching-client-graphql-queries/)).
 
 ![Fragmentized Component Tree](/blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/component-tree-diagram.png)
 
-**Colocate GraphQL documents with the component code.** Instead of writing GraphQL operations in a dedicated file, the operations are written within the component code.
+**Colocate GraphQL documents with the component code.** Instead of writing GraphQL operations in a dedicated file, the operations are written within the component code. Have you ever deleted component code and forgot to delete the corresponding operation or fragment definitions that are in some other field?
+We encountered this issue over and over again generating a lot of dead code.
 
 ```tsx
 import { gql, useFragment, FragmentType } from './gql'
@@ -58,7 +60,6 @@ export function Avatar(props: AvatarProps) {
 ```
 
 **Data (fragment) masking.** Ensure that a componenent can only access the data defined in it's fragment definitions in order to keep the component a self-contained building block that can be re-used.
-
 
 > We are happy to announce that we now have a preset for bringing the above Relay patterns to your existing projects, no matter what client library you are currently using, without having to switch over and commit to the Relay eco-system.
 
