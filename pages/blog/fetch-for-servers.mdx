@@ -30,19 +30,47 @@ While Node.js is the most popular environment, multiple platforms can run JavaSc
 
 On the other hand, the JavaScript client-side has mostly migrated over the years to a common set of standards (`fetch`), independently of the underlying platform.
 
-This is where we realized that WHATWG Fetch API that uses `Request`, `Response`, and `ReadableStream` could also be used on the server side to provide a unified API to run JavaScript HTTP servers everywhere.
+This is where we realized that WHATWG Fetch API that uses [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request), [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response), and `ReadableStream` could also be used on the server side to provide a unified API to run JavaScript HTTP servers everywhere.
 
 ## Why Fetch API?
 
-When you send a request from the client, `fetch(...requestArgs)` uses `Request` object under the hood that contains all the details(headers, method, etc) and the data stream you need for that communication. Then you take the `Response` object that contains the connection stream, and process it as you want with `.json()`, `.arrayBuffer()`, `.formData()` or just access the stream itself by `.body()` as `ReadableStream`
+When you send a request from the client, `fetch(...requestArgs)` uses [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) object under the hood that contains all the details(headers, method, etc) and the data stream you need for that communication. Then you take the [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response) object that contains the connection stream, and process it as you want with `.json()`, `.arrayBuffer()`, `.formData()` or just access the stream itself by `.body()` as `ReadableStream`
 
-On the server side, you can take `Request` object and process it with the same methods without dealing with the internals of your platform.
+On the server side, you can take [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) object and process it with the same methods without dealing with the internals of your platform.
 
 Streaming responses like SSE uses `ReadableStream`, and for Multipart requests (e.g. file uploads)uses `FormData` which is exactly the same forwarded from the browser or any other client using Fetch API.
 
-File Uploads; [https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src/plugins/requestParser/POSTMultipart.ts#L18](https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src/plugins/requestParser/POSTMultipart.ts#L18)
+You can see how easy to handle file uploads;
+```ts
+const formData = await request.formData();
+const myFile = await formData.get('myFile');
+const fileContents = await myFile.text();
+```
 
-SSE; [https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src/plugins/resultProcessor/push.ts#L42](https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src/plugins/resultProcessor/push.ts#L42)
+See more in our code; [https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src/plugins/requestParser/POSTMultipart.ts#L18](https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src/plugins/requestParser/POSTMultipart.ts#L18)
+
+And also streaming responses like [Server Sent Events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events)
+```ts
+let interval;
+new Response(
+  new ReadableStream({
+    start() {
+      interval = setInterval(() => {
+        this.enqueue(`data: ${Date.now()}\n\n`);
+      }, 1000);
+    },
+    cancel() {
+      clearInterval(interval);
+    }
+  }), {
+    headers: {
+      'Content-Type': 'text/event-stream'
+    }
+  }
+)
+```
+
+See more in our code; [https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src/plugins/resultProcessor/push.ts#L42](https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src/plugins/resultProcessor/push.ts#L42)
 
 ## What about Node.js?
 
@@ -59,9 +87,9 @@ After a few iterations, it was clear to us that this is certainly possible and f
 
 GraphQL Yoga instance itself can be used directly as a request listener that you pass to Express’s `app.use`, Node’s native `http.createServer`, Next.js functions. and same for other non-Node.js environments; we just pass GraphQL Yoga as an event listener for CF Workers’ `self.addEventListener('fetch', yoga)`.
 
-As we already mentioned in the “Why Fetch API?” part, the server library itself doesn’t need to care about the platform’s connection-specific details like Node’s `IncomingMessage` and `ServerResponse` or Next.js’s `NextApi.Request` objects. You are now able to focus on your server implementation details by consuming a “universal standard” `Request` and returning “another standard” `Response`
+As we already mentioned in the “Why Fetch API?” part, the server library itself doesn’t need to care about the platform’s connection-specific details like Node’s `IncomingMessage` and `ServerResponse` or Next.js’s `NextApi.Request` objects. You are now able to focus on your server implementation details by consuming a “universal standard” [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) and returning “another standard” [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response)
 
-As we realized, how well this works out for our users, we decided that we need to bring this to the next level and extract that logic into a standalone library called `@whatwg-node/server` . You simply provide your request handler that has a single `Request` parameter and expects you to return a `Response` instance. The generated request handler instance can be integrated with regular Node HTTP servers, Fastify, Koa, Deno, CF Workers, Next.js, etc with a few lines of code.
+As we realized, how well this works out for our users, we decided that we need to bring this to the next level and extract that logic into a standalone library called `@whatwg-node/server` . You simply provide your request handler that has a single [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) parameter and expects you to return a [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response) instance. The generated request handler instance can be integrated with regular Node HTTP servers, Fastify, Koa, Deno, CF Workers, Next.js, etc with a few lines of code.
 
 ```tsx
 import { createServerAdapter } from '@whatwg-node/server'
@@ -178,5 +206,6 @@ const httpServer = createServer(myServer)
 httpServer.listen(4000)
 ```
 
-What NodeJS frameworks are you using today?
+## What NodeJS frameworks are you using today?
+
 Maybe it is worth while to open a new issue on their repo and see if we could all help them to become platform agnostic, while still supporting older versions of Node, thanks to this new library!
