@@ -131,4 +131,9 @@ export const authors: Record<string, Author> = {
     link: 'https://github.com/B2o5T',
     github: 'B2o5T',
   },
+  notrab: {
+    name: 'Jamie Barton',
+    link: 'https://graphql.wtf',
+    github: 'notrab',
+  },
 };
