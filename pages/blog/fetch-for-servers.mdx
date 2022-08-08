@@ -14,7 +14,7 @@ export default withArticle(meta)
 
 ## TLDR
 
-- We made GraphQL Yoga 2.0 **platform agnostic**, so it is able to run anywhere JavaScript can run (Cloudflare Workers, sdfsdf......) thanks to the new **Fetch API standard**
+- We made GraphQL Yoga 2.0 **platform agnostic**, so it is able to run anywhere JavaScript can run (Cloudflare Workers, Deno, Next.js. AWS Lambdas etc.) thanks to the new **Fetch API standard**
 - We've created <ins>Ponyfills</ins> so it will work the same on older versions of Node that don't support the standard
 - We've made a [**new general library**](https://github.com/ardatan/whatwg-node) out of it so that any other framework or app could achieve the same
 - Let's help other frameworks in the ecosystem to migrate to this new library and standard
@@ -41,28 +41,31 @@ On the server side, you can take [`Request`](https://developer.mozilla.org/en-US
 Streaming responses like SSE uses `ReadableStream`, and for Multipart requests (e.g. file uploads)uses `FormData` which is exactly the same forwarded from the browser or any other client using Fetch API.
 
 You can see how easy to handle file uploads;
+
 ```ts
-const formData = await request.formData();
-const myFile = await formData.get('myFile');
-const fileContents = await myFile.text();
+const formData = await request.formData()
+const myFile = await formData.get('myFile')
+const fileContents = await myFile.text()
 ```
 
 See more in our code; [https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src/plugins/requestParser/POSTMultipart.ts#L18](https://github.com/dotansimha/graphql-yoga/blob/master/packages/common/src/plugins/requestParser/POSTMultipart.ts#L18)
 
 Streaming responses like [Server Sent Events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events) example:
+
 ```ts
-let interval;
+let interval
 new Response(
   new ReadableStream({
     start() {
       interval = setInterval(() => {
-        this.enqueue(`data: ${Date.now()}\n\n`);
-      }, 1000);
+        this.enqueue(`data: ${Date.now()}\n\n`)
+      }, 1000)
     },
     cancel() {
-      clearInterval(interval);
+      clearInterval(interval)
     }
-  }), {
+  }),
+  {
     headers: {
       'Content-Type': 'text/event-stream'
     }
@@ -76,13 +79,14 @@ See more in our code; [https://github.com/dotansimha/graphql-yoga/blob/master/pa
 
 Even though many new platforms support the Fetch API Standard, which means we can have a single solution for all, currently, in the older LTS versions of Node.js, we don’t have an implementation of the Fetch API built in.
 
-Furthermore, Node.js doesn’t use Web standard streams and the Fetch API in its `http` and `https` modules. 
+Furthermore, Node.js doesn’t use Web standard streams and the Fetch API in its `http` and `https` modules.
 
-That’s why we created the [`@whatwg-node/fetch` package](https://github.com/ardatan/whatwg-node) (previously known as `cross-undici-fetch` ) that fills in the gaps of different `fetch` implementations in all the LTS Node.js versions. Under the hood, `@whatwg-node/fetch` utilizes `undici` if available or otherwise falls back to using `node-fetch`, which you are probably already familiar with. 
+That’s why we created the [`@whatwg-node/fetch` package](https://github.com/ardatan/whatwg-node) (previously known as `cross-undici-fetch` ) that fills in the gaps of different `fetch` implementations in all the LTS Node.js versions. Under the hood, `@whatwg-node/fetch` utilizes `undici` if available or otherwise falls back to using `node-fetch`, which you are probably already familiar with.
 
 > In case [`@whatwg-node/fetch`](https://github.com/ardatan/whatwg-node) is imported in an environment that already has Fetch API built in like Cloudflare Workers, no ponyfills are added to your built application bundle.
 
 #### Ponyfill vs Polyfill
+
 Polyfill patches the native parts of an environment while ponyfill just exports the “patched” stuff without touching the environment’s internals. We prefer pony filling because it prevents us from breaking other libraries and environmental functionalities.
 
 ## Is it possible to have a library that creates a cross-platform server?
@@ -95,7 +99,7 @@ GraphQL Yoga instance itself can be used directly as a request listener that you
 
 As we already mentioned in the “Why Fetch API?” part, the server library itself doesn’t need to care about the platform’s connection-specific details like Node’s `IncomingMessage` and `ServerResponse` or Next.js’s `NextApi.Request` objects. You are now able to focus on your server implementation details by consuming a “universal standard” [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) and returning “another standard” [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response)
 
-As we realized how well this works out for our users, we decided that we need to bring this to the next level and extract that logic into a standalone library called [`@whatwg-node/server` ](https://github.com/ardatan/whatwg-node). 
+As we realized how well this works out for our users, we decided that we need to bring this to the next level and extract that logic into a standalone library called [`@whatwg-node/server` ](https://github.com/ardatan/whatwg-node).
 
 You simply provide your request handler that has a single [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) parameter and expects you to return a [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response) instance. The generated request handler instance can be integrated with regular Node HTTP servers, Fastify, Koa, Deno, CF Workers, Next.js, etc with a few lines of code.
 
