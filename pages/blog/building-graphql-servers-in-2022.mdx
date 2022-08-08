@@ -1,0 +1,55 @@
+import withArticle from '../../ui/blog/article'
+
+export const meta = {
+  title: 'Building GraphQL Servers in 2022',
+  author: 'notrab',
+  tags: ['graphql', 'conference', 'yoga'],
+  date: '2022-06-28',
+  description:
+    "In this talk we'll learn about the tools needed to build your own GraphQL server from scratch using GraphQL Yoga.",
+  image:
+    '/blog-assets/building-graphql-servers-in-2022/building-graphql-servers-in-2022.png',
+  thumbnail:
+    '/blog-assets/building-graphql-servers-in-2022/building-graphql-servers-in-2022-thumbnail.png'
+}
+
+export default withArticle(meta)
+
+Building GraphQL servers in 2022 couldn't be any easier thanks to GraphQL Yoga. This year at [HasuraCon](https://hasura.io/events/hasura-con-2022/building-graphql-servers-in-2022-overview-of-the-bestnew-tools-you-should-add-to-your-toolbelt/) I discussed how Yoga started, how it evolved, and what we can expect from the future.
+
+For many years building GraphQL servers in the Node ecosystem our choices have been limited. One server library has dominated the ecosystem. With it's pairing client library it was often a good fit for a very long time. However, I believe there are more mature and battle tested solutions available today, thanks to the evolution of Yoga.
+
+[GraphQL Yoga](https://www.graphql-yoga.com) takes a different approach by providing enough bells and whistles that make you production-ready, but builds itself on top of the core primitives of HTTP. Yoga is runtime agnostic too, so if you're currently working with Cloudflare Workers, Vercel Functions, AWS Lambda or something else, Yoga will fit right in.
+
+GraphQL Yoga comes with [Envelop](https://envelop.dev/), and is the recommended way you should be using Envelop today to extend your GraphQL server.
+
+<YouTube youTubeId="XnmB1-2i8mI" />
+
+If you haven't used Yoga before, this is how easy it is to create a production-ready GraphQL server:
+
+```ts
+import { createServer } from '@graphql-yoga/node'
+
+const server = createServer({
+  schema: {
+    typeDefs: /* GraphQL */ `
+      type Query {
+        hello: String
+      }
+    `,
+    resolvers: {
+      Query: {
+        hello: () => 'Hello from Yoga!'
+      }
+    }
+  }
+})
+
+server.start()
+```
+
+If you are interested in following along with me to build a server, add plugins and more, you can watch the recording of the workshop:
+
+<YouTube youTubeId="zS-1SizRPnU" />
+
+Hopefully you find this talk interesting, and you learn more about building GraphQL severs with Yoga!
