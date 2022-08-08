@@ -89,7 +89,9 @@ GraphQL Yoga instance itself can be used directly as a request listener that you
 
 As we already mentioned in the “Why Fetch API?” part, the server library itself doesn’t need to care about the platform’s connection-specific details like Node’s `IncomingMessage` and `ServerResponse` or Next.js’s `NextApi.Request` objects. You are now able to focus on your server implementation details by consuming a “universal standard” [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) and returning “another standard” [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response)
 
-As we realized, how well this works out for our users, we decided that we need to bring this to the next level and extract that logic into a standalone library called `@whatwg-node/server` . You simply provide your request handler that has a single [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) parameter and expects you to return a [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response) instance. The generated request handler instance can be integrated with regular Node HTTP servers, Fastify, Koa, Deno, CF Workers, Next.js, etc with a few lines of code.
+As we realized how well this works out for our users, we decided that we need to bring this to the next level and extract that logic into a standalone library called [`@whatwg-node/server` ](https://github.com/ardatan/whatwg-node). 
+
+You simply provide your request handler that has a single [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) parameter and expects you to return a [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response) instance. The generated request handler instance can be integrated with regular Node HTTP servers, Fastify, Koa, Deno, CF Workers, Next.js, etc with a few lines of code.
 
 ```tsx
 import { createServerAdapter } from '@whatwg-node/server'
