@@ -3,7 +3,7 @@ export const projects = {
     featured: true,
     title: 'GraphQL Code Generator',
     image:
-      'https://www.graphql-code-generator.com/assets/illustrations/gql-codegen-cover.svg',
+      'https://graphql-code-generator.com/assets/illustrations/gql-codegen-cover.svg',
     link: 'https://graphql-code-generator.com',
     description: (
       <>
@@ -21,8 +21,8 @@ export const projects = {
   envelop: {
     featured: true,
     title: 'Envelop: The missing GraphQL plugin system',
-    image: 'https://www.envelop.dev/assets/home-claw.png',
-    link: 'https://www.envelop.dev/',
+    image: 'https://envelop.dev/assets/home-claw.png',
+    link: 'https://envelop.dev/',
     description: (
       <>
         <p>
@@ -86,7 +86,7 @@ export const projects = {
   mesh: {
     featured: true,
     title: 'GraphQL-Mesh',
-    image: 'https://www.graphql-mesh.com/assets/subheader-logo.svg',
+    image: 'https://graphql-mesh.com/assets/subheader-logo.svg',
     link: 'https://graphql-mesh.com',
     description: (
       <p>
@@ -176,7 +176,7 @@ export const projects = {
     featured: false,
     title: 'Collection of GraphQL Scalars',
     image: '/img/logos/scalars.svg',
-    link: 'https://www.graphql-scalars.dev',
+    link: 'https://graphql-scalars.dev',
     description: (
       <>
         <p>

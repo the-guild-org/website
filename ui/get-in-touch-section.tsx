@@ -3,8 +3,10 @@ import { useState, ReactElement } from 'react';
 import Confetti from 'react-confetti';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { Image } from '@theguild/components';
 import { useMutation } from '../hooks/use-graphql';
 import { Heading, Description, Button, Anchor, Input } from './components';
+import getInTouch from '../public/img/get-in-touch.png';
 
 export const Newsletter = (): ReactElement => {
   const [success, setSuccess] = useState(false);
@@ -129,11 +131,10 @@ export const GetInTouchSection = ({
           <Newsletter />
         </div>
         {!hideCover && (
-          <img
-            src="/img/get-in-touch.png"
+          <Image
+            src={getInTouch}
             alt="Hive website"
-            width={768}
-            className="absolute right-0 hidden drag-none xl:block"
+            className="absolute right-0 hidden max-w-3xl drag-none xl:block"
           />
         )}
       </div>

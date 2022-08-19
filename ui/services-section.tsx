@@ -1,6 +1,11 @@
 import { ReactElement } from 'react';
 import NextLink from 'next/link';
-import { Anchor, Description, Heading } from './components';
+import { StaticImageData } from 'next/image';
+import { Description, Heading } from './components';
+import consulting from '../public/img/illustrations/consulting.svg'
+import training from '../public/img/illustrations/training.svg'
+import engineering from '../public/img/illustrations/engineering.svg'
+import openSource from '../public/img/illustrations/open-source.svg'
 
 export const ServicesSection = (): ReactElement => {
   return (
@@ -67,7 +72,7 @@ export const SERVICES: {
   description: string;
   longDescription: string;
   list?: string[];
-  icon: `${string}.svg`;
+  icon: StaticImageData;
   url: `/services#${string}`;
 }[] = [
   {
@@ -75,7 +80,7 @@ export const SERVICES: {
     description: 'Make the right choices, for now and the future.',
     longDescription:
       'Plan together your next big steps. Get wide and deep perspectives from our experience working with the largest companies and applications in the world, to make sure you reach your ambitions goals with success!',
-    icon: 'consulting.svg',
+    icon: consulting,
     url: '/services#consulting',
     list: [
       'Current state assessment',
@@ -88,7 +93,7 @@ export const SERVICES: {
   {
     name: 'Training',
     description: 'Strengthen your team, tailored to your people and mission.',
-    icon: 'training.svg',
+    icon: training,
     url: '/services#training',
     longDescription:
       'Strengthen, mentor and inspire your team by the leaders of the community. Tailored to your people and mission, aimed to help establish long lasting teams.',
@@ -96,7 +101,7 @@ export const SERVICES: {
   {
     name: 'Engineering',
     description: `Working side by side, us being an integral part of your team.`,
-    icon: 'engineering.svg',
+    icon: engineering,
     url: '/services#engineering',
     longDescription:
       'We take pride in the fact that our open source and infrastructure comes from working side by side with the best developers in the world, on the largest applications in the world.',
@@ -110,7 +115,7 @@ export const SERVICES: {
   {
     name: 'Open Source',
     description: 'Get Open Source support from the actual creators.',
-    icon: 'open-source.svg',
+    icon: openSource,
     url: '/services#open-source',
     longDescription:
       'Safe Open Source. Make open source work for you and take your needs into the highest priority. Instead of structuring your whole app on top of open source you have no control or say about.',
