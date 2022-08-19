@@ -23,8 +23,8 @@ export const RecommendedReadingSection = ({
         <Description className="max-w-[700px] text-center">
           Read and follow the most popular blog in the GraphQL Ecosystem
         </Description>
-        <NextLink href="/blog" passHref>
-          <Anchor>View all posts ➔</Anchor>
+        <NextLink href="/blog">
+          View all posts ➔
         </NextLink>
         <BlogCardList articles={articles} />
       </div>

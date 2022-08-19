@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -30,7 +30,7 @@ const Content = styled('div', {
 });
 
 const NewsletterPage = (meta: NewsletterMeta): FC =>
-  function NewsletterRender({ children }) {
+  function NewsletterRender({ children }: { children: ReactNode }) {
     const title = `${meta.title} - The Guild Newsletter`;
     const router = useRouter();
 

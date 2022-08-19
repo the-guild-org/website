@@ -1,4 +1,4 @@
-import { FC, ReactElement, useEffect, useState } from 'react';
+import { FC, ReactElement, ReactNode, useEffect, useState } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -107,7 +107,7 @@ const Authors = ({ meta }: { meta: Meta }): ReactElement => {
 };
 
 const Article = (meta: Meta): FC =>
-  function ArticleRender({ children }) {
+  function ArticleRender({ children }: { children: ReactNode }) {
     const title = `${meta.title} - The Guild Blog`;
     const router = useRouter();
 

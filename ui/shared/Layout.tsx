@@ -1,6 +1,6 @@
 import { ReactElement, ReactNode } from 'react';
 import { useRouter } from 'next/router';
-import { GlobalStyles, Header, FooterExtended } from '@theguild/components';
+import { Header, FooterExtended } from '@theguild/components';
 import clsx from 'clsx';
 import { styled } from '../../stitches.config';
 
@@ -14,29 +14,20 @@ export const Container = styled('div', {
 });
 
 export const Layout = ({ children }: { children: ReactNode }): ReactElement => {
-  const router = useRouter();
+  const { asPath } = useRouter();
 
   return (
     <>
-      <GlobalStyles includeFonts={false} />
       <Header
-        activeLink={router.asPath}
+        sameSite
+        activeLink={asPath}
         accentColor="var(--colors-accent)"
         searchBarProps={{ version: 'v2' }}
         themeSwitch
-        linkProps={{
-          onClick(e) {
-            const { href } = e.currentTarget;
-            if (href) {
-              const { pathname } = new URL(href);
-              router.push(pathname);
-            }
-          },
-        }}
         transformLinks={(links) => [
           ...links,
           {
-            href: '/contact',
+            href: 'https://the-guild.dev/contact',
             label: 'Contact',
             title: 'Get in touch',
           },
@@ -50,37 +41,21 @@ export const Layout = ({ children }: { children: ReactNode }): ReactElement => {
             children: 'Blog',
             title: 'Blog',
             href: '/blog',
-            onClick(e) {
-              e.preventDefault();
-              router.push('/blog');
-            },
           },
           {
             children: 'Services',
             title: 'Services',
             href: '/services',
-            onClick(e) {
-              e.preventDefault();
-              router.push('/services');
-            },
           },
           {
             children: 'Newsletter',
             title: 'Newsletter',
             href: '/newsletter',
-            onClick(e) {
-              e.preventDefault();
-              router.push('/newsletter');
-            },
           },
           {
             children: 'Logos',
             title: 'Logos',
             href: '/logos',
-            onClick(e) {
-              e.preventDefault();
-              router.push('/logos');
-            },
           },
         ]}
         // TODO: Add me in the future as is it in mockup

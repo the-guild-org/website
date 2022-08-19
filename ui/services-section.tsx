@@ -11,16 +11,15 @@ export const ServicesSection = (): ReactElement => {
           Work directly with the most powerful group of API developers that
           created the open source infrastructure you use today
         </Description>
-        <NextLink href="/services" passHref>
-          <Anchor>Learn more about our services ➔</Anchor>
-        </NextLink>
+        <NextLink href="/services">Learn more about our services ➔</NextLink>
       </div>
       <div className="container mt-[117px] flex flex-wrap justify-center">
         {SERVICES.map((service) => (
-          <NextLink key={service.name} href={service.url} passHref>
-            <a
-              title={service.name}
-              className="
+          <NextLink
+            key={service.name}
+            href={service.url}
+            title={service.name}
+            className="
               m-4
               h-[370px]
               w-[278px]
@@ -36,27 +35,26 @@ export const ServicesSection = (): ReactElement => {
               hover:[box-shadow:0_-6px_34px_rgba(117,117,117,0.15)]
               dark:bg-[#24272E4C]
               dark:hover:border-[#24272E]"
-            >
-              <img
-                src={`/img/illustrations/${service.icon}`}
-                alt={`${service.name} illustration`}
-              />
-              <Heading size="md">{service.name}</Heading>
-              <Description className="mb-4 px-4 text-sm">
-                {service.description}
-              </Description>
-              <span
-                className="
+          >
+            <img
+              src={`/img/illustrations/${service.icon}`}
+              alt={`${service.name} illustration`}
+            />
+            <Heading size="md">{service.name}</Heading>
+            <Description className="mb-4 px-4 text-sm">
+              {service.description}
+            </Description>
+            <span
+              className="
                 text-xs
                 text-gray-500
                 transition-colors
                 duration-200
                 hover:text-gray-600
                 dark:hover:text-gray-300"
-              >
-                Learn more ➔
-              </span>
-            </a>
+            >
+              Learn more ➔
+            </span>
           </NextLink>
         ))}
       </div>

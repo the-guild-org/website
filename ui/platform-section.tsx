@@ -23,8 +23,8 @@ export const PlatformSection = (): ReactElement => {
 
           {/* TODO: Add this when we'll have `/products` route */}
           {/* <Anchor href="#">View All Products ➔</Anchor> */}
-          <NextLink href="/about-us" passHref>
-            <Anchor>Learn more about The Guild ➔</Anchor>
+          <NextLink href="/about-us">
+            Learn more about The Guild ➔
           </NextLink>
 
           <div className="mt-10 flex max-w-[900px] flex-wrap justify-center">

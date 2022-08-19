@@ -1,26 +1,26 @@
 import clsx from 'clsx';
-import { ComponentProps, forwardRef, ReactElement } from 'react';
+import { ComponentProps, ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 
-// forwardRef fixes Warning: Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?
-const Tag = forwardRef<
-  HTMLAnchorElement,
-  ComponentProps<'a'> & { clickable?: boolean; isActive?: boolean }
->(function Tag(
-  { children, clickable = false, isActive = false, ...props },
-  forwardedRef
-) {
+const Tag = ({
+  children,
+  isActive = false,
+  href = '',
+  ...props
+}: Omit<ComponentProps<'a'>, 'ref'> & {
+  isActive?: boolean;
+}): ReactElement => {
   return (
-    <a
-      ref={forwardedRef}
+    <NextLink
+      href={href}
       className="overflow-hidden rounded-[5px] bg-gray-200 dark:bg-[#24272E]"
       {...props}
     >
       <span
         className={clsx(
           'flex py-1.5 px-2.5 text-sm font-medium transition-colors',
-          clickable
+          href
             ? 'hover:text-black hover:dark:bg-[#15AFD04C] hover:dark:text-[#82E9FF]'
             : 'cursor-default',
           isActive
@@ -30,9 +30,9 @@ const Tag = forwardRef<
       >
         {children}
       </span>
-    </a>
+    </NextLink>
   );
-});
+};
 
 export const TagList = ({
   tags,
@@ -56,19 +56,14 @@ export const TagList = ({
         const [tag, count] = Array.isArray(tagOrTagCount)
           ? tagOrTagCount
           : [tagOrTagCount, 0];
-
-        const content = (
-          <Tag isActive={tag === router.query.tag} clickable={asLink}>
+        return (
+          <Tag
+            key={tag}
+            href={asLink ? `/blog/tag/${tag}` : ''}
+            isActive={tag === router.query.tag}
+          >
             {withCount && count > 0 ? `${tag} (${count})` : tag}
           </Tag>
-        );
-
-        return asLink ? (
-          <NextLink key={tag} href={`/blog/tag/${tag}`} passHref>
-            {content}
-          </NextLink>
-        ) : (
-          content
         );
       })}
     </div>

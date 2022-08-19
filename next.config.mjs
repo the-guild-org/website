@@ -11,7 +11,7 @@ const nextConfig = {
   pageExtensions: ['tsx', 'md', 'mdx', 'ts', 'cts', 'mts'],
   experimental: {
     esmExternals: 'loose',
-    optimizeFonts: true,
+    newNextLinkBehavior: true,
     optimizeCss: true,
   },
   rewrites: () => [

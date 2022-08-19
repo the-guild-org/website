@@ -29,10 +29,8 @@ export const GenericLink = ({
 }: ComponentProps<'a'>): ReactElement => {
   if (href.startsWith('/') && !href.startsWith('/blog')) {
     return (
-      <NextLink href={href} passHref>
-        <a className={clsx('text-[#1cc8ee] hover:underline', className)}>
-          {children}
-        </a>
+      <NextLink href={href} className={clsx('text-[#1cc8ee] hover:underline', className)}>
+        {children}
       </NextLink>
     );
   }
