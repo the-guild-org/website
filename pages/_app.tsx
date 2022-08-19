@@ -71,7 +71,6 @@ export default class MyApp extends App {
           }
 
           body {
-            font-family: Poppins, sans-serif;
             z-index: -1; /* needs for blue and pink circles */
           }
 

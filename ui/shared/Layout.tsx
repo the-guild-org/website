@@ -32,6 +32,7 @@ export const Layout = ({ children }: { children: ReactNode }): ReactElement => {
             title: 'Get in touch',
           },
         ]}
+        className="[&_ul>div]:right-32"
       />
       {children}
       <FooterExtended
