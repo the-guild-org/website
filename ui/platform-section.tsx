@@ -1,8 +1,7 @@
 import { ReactElement } from 'react';
 import { StaticImageData } from 'next/image';
-import NextLink from 'next/link';
 import { Image } from '@theguild/components';
-import { Description, Heading, Tooltip } from './components';
+import { Description, Heading, Tooltip, Link } from './components';
 import envelop from '../public/static/shared-logos/products/envelop.svg';
 import codegen from '../public/static/shared-logos/products/code-generator.svg';
 import mesh from '../public/static/shared-logos/products/mesh.svg';
@@ -44,8 +43,13 @@ export const PlatformSection = (): ReactElement => {
           </Description>
 
           {/* TODO: Add this when we'll have `/products` route */}
-          {/* <Anchor href="#">View All Products ➔</Anchor> */}
-          <NextLink href="/about-us">Learn more about The Guild ➔</NextLink>
+          {/* <Link href="#">View All Products ➔</Link> */}
+          <Link
+            href="/about-us"
+            className="font-bold !text-gray-500 hover:!text-gray-600 hover:no-underline dark:hover:!text-gray-300"
+          >
+            Learn more about The Guild ➔
+          </Link>
 
           <div className="mt-10 flex max-w-[900px] flex-wrap justify-center">
             {PRODUCTS.map((product) => (

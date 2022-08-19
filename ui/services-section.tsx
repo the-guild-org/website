@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
-import NextLink from 'next/link';
 import { StaticImageData } from 'next/image';
-import { Description, Heading } from './components';
-import consulting from '../public/img/illustrations/consulting.svg'
-import training from '../public/img/illustrations/training.svg'
-import engineering from '../public/img/illustrations/engineering.svg'
-import openSource from '../public/img/illustrations/open-source.svg'
+import { Anchor, Image } from '@theguild/components';
+import { Description, Heading, Link } from './components';
+import consulting from '../public/img/illustrations/consulting.svg';
+import training from '../public/img/illustrations/training.svg';
+import engineering from '../public/img/illustrations/engineering.svg';
+import openSource from '../public/img/illustrations/open-source.svg';
 
 export const ServicesSection = (): ReactElement => {
   return (
@@ -16,11 +16,16 @@ export const ServicesSection = (): ReactElement => {
           Work directly with the most powerful group of API developers that
           created the open source infrastructure you use today
         </Description>
-        <NextLink href="/services">Learn more about our services ➔</NextLink>
+        <Link
+          href="/services"
+          className="font-bold !text-gray-500 hover:!text-gray-600 hover:no-underline dark:hover:!text-gray-300"
+        >
+          Learn more about our services ➔
+        </Link>
       </div>
       <div className="container mt-[117px] flex flex-wrap justify-center">
         {SERVICES.map((service) => (
-          <NextLink
+          <Anchor
             key={service.name}
             href={service.url}
             title={service.name}
@@ -41,9 +46,10 @@ export const ServicesSection = (): ReactElement => {
               dark:bg-[#24272E4C]
               dark:hover:border-[#24272E]"
           >
-            <img
-              src={`/img/illustrations/${service.icon}`}
+            <Image
+              src={service.icon}
               alt={`${service.name} illustration`}
+              placeholder="empty"
             />
             <Heading size="md">{service.name}</Heading>
             <Description className="mb-4 px-4 text-sm">
@@ -60,7 +66,7 @@ export const ServicesSection = (): ReactElement => {
             >
               Learn more ➔
             </span>
-          </NextLink>
+          </Anchor>
         ))}
       </div>
     </>

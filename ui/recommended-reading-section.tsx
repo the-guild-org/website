@@ -1,7 +1,6 @@
 import { ReactElement } from 'react';
-import NextLink from 'next/link';
 import { MetaWithLink } from '../lib/meta';
-import { Heading, Description, Anchor, BlogCardList } from './components';
+import { Heading, Description, Link, BlogCardList } from './components';
 
 export const RecommendedReadingSection = ({
   articles = [],
@@ -23,9 +22,12 @@ export const RecommendedReadingSection = ({
         <Description className="max-w-[700px] text-center">
           Read and follow the most popular blog in the GraphQL Ecosystem
         </Description>
-        <NextLink href="/blog">
+        <Link
+          href="/blog"
+          className="font-bold !text-gray-500 hover:!text-gray-600 hover:no-underline dark:hover:!text-gray-300"
+        >
           View all posts ➔
-        </NextLink>
+        </Link>
         <BlogCardList articles={articles} />
       </div>
     </div>

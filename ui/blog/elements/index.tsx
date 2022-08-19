@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { ReactElement, ReactNode } from 'react';
 import { onlyText } from 'react-children-utilities';
-import { CopyToClipboard, GenericLink, Image } from '../../components';
+import { CopyToClipboard, Link, Image } from '../../components';
 import { CodeSandbox } from '../../shared/embed/CodeSandbox';
 import { Gfycat } from '../../shared/embed/Gfycat';
 import { StackBlitz } from '../../shared/embed/StackBlitz';
@@ -124,7 +124,7 @@ export const components: Record<string, (props: any) => ReactElement> = {
       {children}
     </blockquote>
   ),
-  a: GenericLink,
+  a: Link,
   p: ({ className, children, ...props }) => (
     <p className={clsx('my-5 leading-relaxed', className)} {...props}>
       {children}

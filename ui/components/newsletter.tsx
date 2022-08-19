@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { Button } from './button';
 import { Heading } from './heading';
 import { Input } from './input';
-import { GenericLink } from './link';
+import { Link } from './link';
 import { Description } from './description';
 
 export const Newsletter = ({
@@ -46,22 +46,22 @@ export const Newsletter = ({
       </form>
       <Description className="!mt-2">
         By subscribing, you agree with Revue’s{' '}
-        <GenericLink href="https://www.getrevue.co/terms">
+        <Link href="https://www.getrevue.co/terms">
           Terms of Service
-        </GenericLink>{' '}
+        </Link>{' '}
         and{' '}
-        <GenericLink href="https://www.getrevue.co/privacy">
+        <Link href="https://www.getrevue.co/privacy">
           Privacy Policy
-        </GenericLink>
+        </Link>
         .
       </Description>
       {!hideLinkToIssues && (
-        <GenericLink
+        <Link
           href="https://www.getrevue.co/profile/TheGuild"
           className="self-start"
         >
           Recent issues of our newsletter
-        </GenericLink>
+        </Link>
       )}
     </div>
   );

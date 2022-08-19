@@ -7,7 +7,7 @@ import { OpenGraph } from 'next-seo/lib/types';
 
 import { styled } from '../stitches.config';
 import { components } from './blog/elements';
-import { Newsletter, GenericLink, Heading } from './components';
+import { Newsletter, Link, Heading } from './components';
 import { Page } from './shared/Page';
 import { NewsletterMeta } from '../lib/meta';
 
@@ -79,12 +79,12 @@ const NewsletterPage = (meta: NewsletterMeta): FC =>
               Looking for experts? We offer consulting and trainings.
               <br />
               Explore{' '}
-              <GenericLink
+              <Link
                 href="/services"
                 title="Explore our services. Consulting and Trainings."
               >
                 our services
-              </GenericLink>{' '}
+              </Link>{' '}
               and get in touch.
             </div>
             <Content className="dark:text-[#7F818C]">{children}</Content>

@@ -5,7 +5,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Image } from '@theguild/components';
 import { useMutation } from '../hooks/use-graphql';
-import { Heading, Description, Button, Anchor, Input } from './components';
+import { Heading, Description, Button, Input, Link } from './components';
 import getInTouch from '../public/img/get-in-touch.png';
 
 export const Newsletter = (): ReactElement => {
@@ -123,9 +123,9 @@ export const GetInTouchSection = ({
             Looking to work with The Guild, learn more about our solutions or
             just validate with us your API strategy? We will be happy to speak
             with you and learn about your efforts for free!{' '}
-            <Anchor href="mailto:contact@the-guild.dev">
+            <Link href="mailto:contact@the-guild.dev">
               contact@the-guild.dev
-            </Anchor>
+            </Link>
           </Description>
 
           <Newsletter />

@@ -12,7 +12,7 @@ import {
   Newsletter,
   Image,
   Avatar,
-  GenericLink,
+  Link,
   TagList,
   Heading,
   BlogCardList,
@@ -198,12 +198,12 @@ const Article = (meta: Meta): FC =>
               Looking for experts? We offer consulting and trainings.
               <br />
               Explore{' '}
-              <GenericLink
+              <Link
                 href="/services"
                 title="Explore our services. Consulting and Trainings."
               >
                 our services
-              </GenericLink>{' '}
+              </Link>{' '}
               and get in touch.
             </div>
             <Content className="dark:text-[#7F818C]">{children}</Content>
