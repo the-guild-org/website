@@ -78,7 +78,7 @@ const OpenSource = (): ReactElement => {
       </HeroSection>
 
       {categories.map((cat) => (
-        <div className="text-center mb-10" key={cat.title}>
+        <div className="mb-10 text-center" key={cat.title}>
           <Heading size="md">{cat.title}</Heading>
           <ul className="flex flex-col gap-2">
             {cat.items.map((item) => (

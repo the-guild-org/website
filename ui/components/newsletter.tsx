@@ -46,14 +46,8 @@ export const Newsletter = ({
       </form>
       <Description className="!mt-2">
         By subscribing, you agree with Revue’s{' '}
-        <Link href="https://www.getrevue.co/terms">
-          Terms of Service
-        </Link>{' '}
-        and{' '}
-        <Link href="https://www.getrevue.co/privacy">
-          Privacy Policy
-        </Link>
-        .
+        <Link href="https://www.getrevue.co/terms">Terms of Service</Link> and{' '}
+        <Link href="https://www.getrevue.co/privacy">Privacy Policy</Link>.
       </Description>
       {!hideLinkToIssues && (
         <Link
