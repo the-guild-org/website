@@ -1,9 +1,15 @@
 /* eslint-disable no-undef */
-const mappings = JSON.parse(MAPPINGS);
+const jsonConfig = JSON.parse(JSON_CONFIG);
+const {
+  mappings,
+  crispWebsiteId,
+  gaTrackingId,
+  slackChannelId,
+  clientToWorkerMaxAge,
+  cfFetchCacheTtl,
+  cacheStorageId,
+} = jsonConfig;
 const KEYS = Object.keys(mappings);
-
-const CLIENT_WORKER_CACHE_TTL = 60; // seconds
-const ROUTER_TO_UPSTREAM_CACHE_TTL = 60; // seconds
 
 function createSlackClient(token) {
   return {
@@ -60,9 +66,9 @@ function handleErrorResponse(event, requestedEndpoint, endpoint, response) {
   const shouldReport = response.status >= 400;
 
   // We notify Slack on some user/server errors, this is useful for debugging and making sure we always on top of broken links.
-  if (shouldReport && SLACK_TOKEN && SLACK_CHANNEL_ID) {
+  if (shouldReport && SLACK_TOKEN && slackChannelId) {
     console.error(
-      `notifing Slack on 404 error ${endpoint}, channel id: ${SLACK_CHANNEL_ID}`,
+      `notifing Slack on 404 error ${endpoint}, channel id: ${slackChannelId}`,
       response.status
     );
 
@@ -71,7 +77,7 @@ function handleErrorResponse(event, requestedEndpoint, endpoint, response) {
     event.waitUntil(
       client
         .sendMessage(
-          SLACK_CHANNEL_ID,
+          slackChannelId,
           `\`\`\`client request url: ${requestedEndpoint}\nupstream hostname: ${endpoint}\`\`\``,
           `:boom: Website visitor encountered a ${response.status} error`
         )
@@ -91,16 +97,49 @@ function handleErrorResponse(event, requestedEndpoint, endpoint, response) {
 }
 
 class HeadElementHandler {
+  constructor(websiteRecord) {
+    this.websiteRecord = websiteRecord;
+  }
+
   element(element) {
-    if (GA_TRACKING_ID) {
+    if (crispWebsiteId) {
+      element.append(
+        `<script>
+          window.$crisp = [];
+          window.CRISP_WEBSITE_ID = '${crispWebsiteId}';
+          (function () {
+            d = document;
+            s = d.createElement('script');
+            s.src = 'https://client.crisp.chat/l.js';
+            s.async = 1;
+            d.getElementsByTagName('head')[0].appendChild(s);
+          })();
+          ${
+            this.websiteRecord.crispSegments &&
+            this.websiteRecord.crispSegments.length > 0
+              ? `
+            window.$crisp.push([
+              'set',
+              'session:segments',
+              [${JSON.stringify(this.websiteRecord.crispSegments)}],
+            ]);
+            `
+              : ''
+          }
+        </script>`,
+        { html: true }
+      );
+    }
+
+    if (gaTrackingId) {
       element.append(
         `
-        <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}" />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=${gaTrackingId}" />
         <script>
           window.dataLayer = window.dataLayer || [];
           function gtag(){window.dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', '${GA_TRACKING_ID}');
+          gtag('config', '${gaTrackingId}');
         </script>`,
         { html: true }
       );
@@ -108,14 +147,14 @@ class HeadElementHandler {
   }
 }
 
-function applyHtmlTransformations(response) {
+function applyHtmlTransformations(record, response) {
   if (
     response &&
     response.headers &&
     response.headers.get('content-type').startsWith('text/html')
   ) {
     return new HTMLRewriter()
-      .on('head', new HeadElementHandler())
+      .on('head', new HeadElementHandler(record))
       .transform(response);
   }
 
@@ -139,7 +178,7 @@ async function handleEvent(event) {
       )}`;
       console.debug(`Rewriting ${request.url} to ${url}`);
       const cacheKey = new Request(url, request);
-      const cache = await caches.open(CACHE_ID);
+      const cache = await caches.open(cacheStorageId);
       let response = await cache.match(cacheKey);
 
       if (!response) {
@@ -147,7 +186,7 @@ async function handleEvent(event) {
           // This cache will force caching between the CF Worker and the upstream website, based on Cache-Control headers that are
           // being set by Vercel or CloudFlare Pages.
           cf: {
-            cacheTtl: ROUTER_TO_UPSTREAM_CACHE_TTL,
+            cacheTtl: cfFetchCacheTtl,
             cacheEverything: true,
           },
         });
@@ -158,7 +197,7 @@ async function handleEvent(event) {
           return handleErrorResponse(event, request.url, url, freshResponse);
         }
 
-        response = applyHtmlTransformations(freshResponse);
+        response = applyHtmlTransformations(record, freshResponse);
 
         // Modify response and add client side caching headers
         response = new Response(response.body, response);
@@ -166,7 +205,7 @@ async function handleEvent(event) {
         // TODO: Are they any special headers we need to consider to add? SEO-related?
         response.headers.append(
           'Cache-Control',
-          `s-maxage=${CLIENT_WORKER_CACHE_TTL}`
+          `s-maxage=${clientToWorkerMaxAge}`
         );
 
         // Make sure the worker wait behind the scenes, for the Response content.
