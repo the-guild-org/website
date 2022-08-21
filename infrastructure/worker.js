@@ -90,30 +90,34 @@ function handleErrorResponse(event, requestedEndpoint, endpoint, response) {
   return response;
 }
 
-// class ElementHandler {
-//   constructor(origin) {
-//     this.origin = origin;
-//   }
-//   element(element) {
-//     element.append(`<base href="https://the-guild.dev/" target="_self">`, {
-//       html: true,
-//     });
-//   }
-// }
+class HeadElementHandler {
+  element(element) {
+    if (GA_TRACKING_ID) {
+      element.append(
+        `
+        <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}" />
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){window.dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GA_TRACKING_ID}');
+        </script>`,
+        { html: true }
+      );
+    }
+  }
+}
 
 function applyHtmlTransformations(response) {
-  /*
   if (
     response &&
     response.headers &&
     response.headers.get('content-type').startsWith('text/html')
   ) {
-    return (
-      new HTMLRewriter()
-        // .on('head', new ElementHandler())
-        .transform(response)
-    );
-  }*/
+    return new HTMLRewriter()
+      .on('head', new HeadElementHandler())
+      .transform(response);
+  }
 
   return response;
 }

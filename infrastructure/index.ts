@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import * as cloudflare from '@pulumi/cloudflare';
 
 // Change if you wish to invalidate/drop all caches
-const PAGES_CACHE_ID = 41;
+const PAGES_CACHE_ID = 42;
 
 const mappings = {
   '/graphql/codegen': {
@@ -64,6 +64,10 @@ const myScript = new cloudflare.WorkerScript('routingWorker', {
     {
       name: 'SLACK_CHANNEL_ID',
       text: process.env.SLACK_CHANNEL_ID!,
+    },
+    {
+      name: 'GA_TRACKING_ID',
+      text: process.env.GA_TRACKING_ID!,
     },
   ],
   secretTextBindings: [
