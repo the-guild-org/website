@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import clsx from 'clsx';
+import { Image } from '@theguild/components';
 import { styled } from '../stitches.config';
 import { Page } from '../ui/shared/Page';
 import { Container, Arrow } from '../ui/shared/Layout';
@@ -53,13 +54,12 @@ const Services = (): ReactElement => {
                 isOdd ? 'md:flex-row-reverse' : 'md:flex-row'
               )}
             >
-              <div>
-                <img
-                  src={`/img/illustrations/${service.icon}`}
-                  alt={service.name}
-                  className="mx-auto mb-12"
-                />
-              </div>
+              <Image
+                src={service.icon}
+                placeholder="empty"
+                alt={service.name}
+                className="mx-auto"
+              />
               <div>
                 <h2 className="text-gray-900 dark:text-gray-50">
                   {service.name}

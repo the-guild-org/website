@@ -1,19 +1,12 @@
 const plugin = require('tailwindcss/plugin');
+const config = require('@theguild/tailwind-config');
 
 module.exports = {
-  darkMode: 'class',
-  content: ['./{pages,ui}/**/*.{html,ts,tsx,js,jsx,cjs,mjs}'],
-  theme: {
-    container: {
-      center: true,
-    },
-    extend: {
-      zIndex: {
-        '-1': -1,
-        1: 1,
-      },
-    },
-  },
+  ...config,
+  content: [
+    ...config.content,
+    './{pages,ui}/**/*.{html,ts,tsx,js,jsx,cjs,mjs}',
+  ],
   plugins: [
     plugin(({ addUtilities }) => {
       addUtilities({

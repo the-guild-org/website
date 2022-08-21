@@ -3,7 +3,6 @@ import { GetStaticProps } from 'next/types';
 import { Page } from '../ui/shared/Page';
 import { MetaWithLink } from '../lib/meta';
 import { getAllArticles } from '../lib/get-all-articles';
-import { projects } from '../lib/projects';
 import { HeroSection } from '../ui/hero-section';
 import { PlatformSection } from '../ui/platform-section';
 import { ServicesSection } from '../ui/services-section';
@@ -14,18 +13,12 @@ import { Button, Description, Heading, Newsletter } from '../ui/components';
 
 type Props = {
   articles: MetaWithLink[];
-  projectsOrder: string[];
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const projectsOrder = Object.keys(projects)
-    .filter((name) => projects[name].featured === true)
-    .sort(() => 0.5 - Math.random());
-
   return {
     props: {
       articles: await getAllArticles(),
-      projectsOrder,
     },
   };
 };
@@ -49,7 +42,12 @@ const IndexPage = ({ articles }: Props): ReactElement => {
         </Button>
       </HeroSection>
       <ClientLogosSection />
-      <PlatformSection />
+      <PlatformSection
+        className={`
+          [background:linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(41,40,40,0.1)100%)]
+          dark:[background:linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(41,40,40,0.2)100%),#0b0d11]
+        `}
+      />
       <ServicesSection />
       <GetInTouchSection />
       <RecommendedReadingSection articles={articles.slice(0, 4)} />

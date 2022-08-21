@@ -1,11 +1,22 @@
-import { FC, useRef, useEffect, useState, RefObject } from 'react';
+import {
+  useRef,
+  useEffect,
+  useState,
+  RefObject,
+  ReactElement,
+  ReactNode,
+} from 'react';
 
 interface ObserverProps {
   /** Fires when IntersectionObserver enters viewport */
   onEnter?: (id?: string) => void;
+  children: ReactNode;
 }
 
-export const Observer: FC<ObserverProps> = ({ children, onEnter }) => {
+export const Observer = ({
+  children,
+  onEnter,
+}: ObserverProps): ReactElement => {
   const ref = useRef<HTMLElement>(null);
   const [isChildVisible, setIsChildVisible] = useState(false);
   useEffect(() => {

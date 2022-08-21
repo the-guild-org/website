@@ -1,6 +1,11 @@
 import { ReactElement } from 'react';
-import NextLink from 'next/link';
-import { Anchor, Description, Heading } from './components';
+import { StaticImageData } from 'next/image';
+import { Anchor, Image } from '@theguild/components';
+import { Description, Heading, Link } from './components';
+import consulting from '../public/img/illustrations/consulting.svg';
+import training from '../public/img/illustrations/training.svg';
+import engineering from '../public/img/illustrations/engineering.svg';
+import openSource from '../public/img/illustrations/open-source.svg';
 
 export const ServicesSection = (): ReactElement => {
   return (
@@ -11,16 +16,20 @@ export const ServicesSection = (): ReactElement => {
           Work directly with the most powerful group of API developers that
           created the open source infrastructure you use today
         </Description>
-        <NextLink href="/services" passHref>
-          <Anchor>Learn more about our services ➔</Anchor>
-        </NextLink>
+        <Link
+          href="/services"
+          className="font-bold !text-gray-500 hover:!text-gray-600 hover:no-underline dark:hover:!text-gray-300"
+        >
+          Learn more about our services ➔
+        </Link>
       </div>
       <div className="container mt-[117px] flex flex-wrap justify-center">
         {SERVICES.map((service) => (
-          <NextLink key={service.name} href={service.url} passHref>
-            <a
-              title={service.name}
-              className="
+          <Anchor
+            key={service.name}
+            href={service.url}
+            title={service.name}
+            className="
               m-4
               h-[370px]
               w-[278px]
@@ -36,28 +45,28 @@ export const ServicesSection = (): ReactElement => {
               hover:[box-shadow:0_-6px_34px_rgba(117,117,117,0.15)]
               dark:bg-[#24272E4C]
               dark:hover:border-[#24272E]"
-            >
-              <img
-                src={`/img/illustrations/${service.icon}`}
-                alt={`${service.name} illustration`}
-              />
-              <Heading size="md">{service.name}</Heading>
-              <Description className="mb-4 px-4 text-sm">
-                {service.description}
-              </Description>
-              <span
-                className="
+          >
+            <Image
+              src={service.icon}
+              alt={`${service.name} illustration`}
+              placeholder="empty"
+            />
+            <Heading size="md">{service.name}</Heading>
+            <Description className="mb-4 px-4 text-sm">
+              {service.description}
+            </Description>
+            <span
+              className="
                 text-xs
                 text-gray-500
                 transition-colors
                 duration-200
                 hover:text-gray-600
                 dark:hover:text-gray-300"
-              >
-                Learn more ➔
-              </span>
-            </a>
-          </NextLink>
+            >
+              Learn more ➔
+            </span>
+          </Anchor>
         ))}
       </div>
     </>
@@ -69,7 +78,7 @@ export const SERVICES: {
   description: string;
   longDescription: string;
   list?: string[];
-  icon: `${string}.svg`;
+  icon: StaticImageData;
   url: `/services#${string}`;
 }[] = [
   {
@@ -77,7 +86,7 @@ export const SERVICES: {
     description: 'Make the right choices, for now and the future.',
     longDescription:
       'Plan together your next big steps. Get wide and deep perspectives from our experience working with the largest companies and applications in the world, to make sure you reach your ambitions goals with success!',
-    icon: 'consulting.svg',
+    icon: consulting,
     url: '/services#consulting',
     list: [
       'Current state assessment',
@@ -90,7 +99,7 @@ export const SERVICES: {
   {
     name: 'Training',
     description: 'Strengthen your team, tailored to your people and mission.',
-    icon: 'training.svg',
+    icon: training,
     url: '/services#training',
     longDescription:
       'Strengthen, mentor and inspire your team by the leaders of the community. Tailored to your people and mission, aimed to help establish long lasting teams.',
@@ -98,7 +107,7 @@ export const SERVICES: {
   {
     name: 'Engineering',
     description: `Working side by side, us being an integral part of your team.`,
-    icon: 'engineering.svg',
+    icon: engineering,
     url: '/services#engineering',
     longDescription:
       'We take pride in the fact that our open source and infrastructure comes from working side by side with the best developers in the world, on the largest applications in the world.',
@@ -112,7 +121,7 @@ export const SERVICES: {
   {
     name: 'Open Source',
     description: 'Get Open Source support from the actual creators.',
-    icon: 'open-source.svg',
+    icon: openSource,
     url: '/services#open-source',
     longDescription:
       'Safe Open Source. Make open source work for you and take your needs into the highest priority. Instead of structuring your whole app on top of open source you have no control or say about.',

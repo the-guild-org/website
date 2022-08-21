@@ -1,4 +1,4 @@
-import { FC, ReactElement, useEffect, useState } from 'react';
+import { FC, ReactElement, ReactNode, useEffect, useState } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -12,7 +12,7 @@ import {
   Newsletter,
   Image,
   Avatar,
-  GenericLink,
+  Link,
   TagList,
   Heading,
   BlogCardList,
@@ -107,7 +107,7 @@ const Authors = ({ meta }: { meta: Meta }): ReactElement => {
 };
 
 const Article = (meta: Meta): FC =>
-  function ArticleRender({ children }) {
+  function ArticleRender({ children }: { children: ReactNode }) {
     const title = `${meta.title} - The Guild Blog`;
     const router = useRouter();
 
@@ -198,12 +198,12 @@ const Article = (meta: Meta): FC =>
               Looking for experts? We offer consulting and trainings.
               <br />
               Explore{' '}
-              <GenericLink
+              <Link
                 href="/services"
                 title="Explore our services. Consulting and Trainings."
               >
                 our services
-              </GenericLink>{' '}
+              </Link>{' '}
               and get in touch.
             </div>
             <Content className="dark:text-[#7F818C]">{children}</Content>

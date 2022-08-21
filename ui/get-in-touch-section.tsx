@@ -3,8 +3,10 @@ import { useState, ReactElement } from 'react';
 import Confetti from 'react-confetti';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { Image } from '@theguild/components';
 import { useMutation } from '../hooks/use-graphql';
-import { Heading, Description, Button, Anchor, Input } from './components';
+import { Heading, Description, Button, Input, Link } from './components';
+import getInTouch from '../public/img/get-in-touch.png';
 
 export const Newsletter = (): ReactElement => {
   const [success, setSuccess] = useState(false);
@@ -121,19 +123,18 @@ export const GetInTouchSection = ({
             Looking to work with The Guild, learn more about our solutions or
             just validate with us your API strategy? We will be happy to speak
             with you and learn about your efforts for free!{' '}
-            <Anchor href="mailto:contact@the-guild.dev">
+            <Link href="mailto:contact@the-guild.dev">
               contact@the-guild.dev
-            </Anchor>
+            </Link>
           </Description>
 
           <Newsletter />
         </div>
         {!hideCover && (
-          <img
-            src="/img/get-in-touch.png"
+          <Image
+            src={getInTouch}
             alt="Hive website"
-            width={768}
-            className="absolute right-0 hidden drag-none xl:block"
+            className="absolute right-0 hidden max-w-3xl drag-none xl:block"
           />
         )}
       </div>

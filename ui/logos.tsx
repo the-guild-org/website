@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import { components } from './blog/elements';
 import { Page } from './shared/Page';
@@ -8,7 +8,7 @@ import { GetInTouchSection } from './get-in-touch-section';
 import { HeroSection } from './hero-section';
 
 const Logos = ({ title, description }: Meta): FC =>
-  function LogosRender({ children }) {
+  function LogosRender({ children }: { children: ReactNode }) {
     return (
       <MDXProvider components={components}>
         <Page title={title} description={description}>

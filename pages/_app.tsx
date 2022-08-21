@@ -2,15 +2,14 @@ import App, { NextWebVitalsMetric } from 'next/app';
 import Router from 'next/router';
 import Script from 'next/script';
 import Head from 'next/head';
-import { extendTheme } from '@chakra-ui/react';
-import { CombinedThemeProvider, AppSeoProps } from '@guild-docs/client';
+import { ThemeProvider } from '@theguild/components';
 import 'prism-theme-night-owl/build/no-italics.css';
 import * as gtag from '../lib/gtag';
 import { globalStyles } from '../styles/global';
 
 import '../styles/global.css';
 import '@algolia/autocomplete-theme-classic';
-import '@theguild/components/dist/static/css/SearchBarV2.css';
+import '@theguild/components/dist/search-bar-v2.css';
 
 Router.events.on('routeChangeComplete', (url) => gtag.pageview(url));
 
@@ -30,29 +29,13 @@ export function reportWebVitals({
   });
 }
 
-const accentColor = '#1cc8ee';
-
-const theme = extendTheme({
-  colors: {
-    accentColor,
-  },
-  fonts: {
-    heading: 'TGCFont, sans-serif',
-    body: 'TGCFont, sans-serif',
-  },
-  config: {
-    initialColorMode: 'light',
-    useSystemColorMode: false,
-  },
-});
-
-const defaultSeo: AppSeoProps = {
-  title: 'The Guild',
-  description: 'Modern API Platform and Ecosystem that scales',
-  logo: {
-    url: 'https://guild.dev/static/logo.svg',
-  },
-};
+// const defaultSeo: AppSeoProps = {
+//   title: 'The Guild',
+//   description: 'Modern API Platform and Ecosystem that scales',
+//   logo: {
+//     url: 'https://guild.dev/static/logo.svg',
+//   },
+// };
 
 export default class MyApp extends App {
   render() {
@@ -88,7 +71,6 @@ export default class MyApp extends App {
           }
 
           body {
-            font-family: Poppins, sans-serif;
             z-index: -1; /* needs for blue and pink circles */
           }
 
@@ -118,13 +100,9 @@ export default class MyApp extends App {
         `}</style>
 
         <Script async src="/static/crisp.js" />
-        <CombinedThemeProvider
-          theme={theme}
-          accentColor={accentColor}
-          defaultSeo={defaultSeo}
-        >
+        <ThemeProvider>
           <Component {...pageProps} />
-        </CombinedThemeProvider>
+        </ThemeProvider>
       </>
     );
   }

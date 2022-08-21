@@ -22,9 +22,10 @@ export const BlogCardList = ({
       )}
     >
       {articles.map((article) => (
-        <NextLink key={article.title} href={article.link} passHref>
-          <a
-            className="
+        <NextLink
+          key={article.title}
+          href={article.link}
+          className="
           flex
           w-[278px]
           cursor-pointer
@@ -39,33 +40,32 @@ export const BlogCardList = ({
           dark:border-transparent
           dark:bg-[#101218]
           hover:dark:border-[#7F818C]"
-          >
-            <img
-              src={article.thumbnail ?? article.image}
-              alt="Article logo"
-              className="h-[164px] w-full object-cover drag-none"
-            />
-            <div className="flex grow flex-col p-5">
-              <Heading size="md" className="line-clamp-3 [hyphens:auto]">
-                {article.title}
-              </Heading>
-              <Description
-                size="md"
-                className="overflow-hidden text-ellipsis !leading-[18px] line-clamp-3 [hyphens:auto]"
-              >
-                {article.description}
-              </Description>
-              <div className="mt-auto text-xs">
-                <span className="font-bold dark:text-[#C4C4C4]">
-                  {authors[pickAuthor(article)].name}
-                </span>
-                <span className="dark:text-gray-500">
-                  <span className="select-none"> • </span>
-                  {format(new Date(article.date), 'LLL do y')}
-                </span>
-              </div>
+        >
+          <img
+            src={article.thumbnail ?? article.image}
+            alt="Article logo"
+            className="h-[164px] w-full object-cover drag-none"
+          />
+          <div className="flex grow flex-col p-5">
+            <Heading size="md" className="line-clamp-3 [hyphens:auto]">
+              {article.title}
+            </Heading>
+            <Description
+              size="md"
+              className="overflow-hidden text-ellipsis !leading-[18px] line-clamp-3 [hyphens:auto]"
+            >
+              {article.description}
+            </Description>
+            <div className="mt-auto text-xs">
+              <span className="font-bold dark:text-[#C4C4C4]">
+                {authors[pickAuthor(article)].name}
+              </span>
+              <span className="dark:text-gray-500">
+                <span className="select-none"> • </span>
+                {format(new Date(article.date), 'LLL do y')}
+              </span>
             </div>
-          </a>
+          </div>
         </NextLink>
       ))}
     </div>
