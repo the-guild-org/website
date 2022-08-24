@@ -5,8 +5,7 @@ export const meta = {
   author: 'laurin',
   tags: ['graphql', 'graphql-tools', 'security'],
   date: '2022-08-24',
-  description:
-    'Bringing security by default to GraphQL and Yoga Server',
+  description: 'Bringing security by default to GraphQL and Yoga Server',
   image:
     '/blog-assets/improved-security-with-graphql-armor-support-for-yoga-server-2/cover.png',
   thumbnail:
@@ -15,13 +14,14 @@ export const meta = {
 
 export default withArticle(meta)
 
-We are utterly excited to introduce [GraphQL Armor](https://github.com/Escape-Technologies/graphql-armor) compatibility with Yoga 2. 
+We are utterly excited to introduce [GraphQL Armor](https://github.com/Escape-Technologies/graphql-armor) compatibility with Yoga 2.
 
 ## When the GraphQL Ecosystem encounters Security
 
 A few weeks ago, the GraphQL Security company [Escape](https://escape.tech) released GraphQL Armor, an open-source middleware to add a security layer on top of GraphQL endpoints and mitigate common attacks.
 
-GraphQL Armor blocks abusive requests by putting reasonable and clever limits to Queries. To us, this represent the go-to solution when using [persisted operations](https://www.envelop.dev/plugins/use-persisted-operations) is not possible, like when building a public GraphQL API. Also, even if you are building an internal API, these tools can be handy for preventing too heavy GraphQL queries. This technical approach is also complementary to the existing set of plugins for hardening endpoints: 
+GraphQL Armor blocks abusive requests by putting reasonable and clever limits to Queries. To us, this represent the go-to solution when using [persisted operations](https://www.envelop.dev/plugins/use-persisted-operations) is not possible, like when building a public GraphQL API. Also, even if you are building an internal API, these tools can be handy for preventing too heavy GraphQL queries. This technical approach is also complementary to the existing set of plugins for hardening endpoints:
+
 - [GraphQL Authz](https://www.the-guild.dev/blog/graphql-authz) and [use-operation-field-permissions](https://www.envelop.dev/plugins/use-operation-field-permissions) for Access Control & Business logic
 - [use-generic-auth](https://www.envelop.dev/plugins/use-generic-auth) and [use-auth0](https://www.envelop.dev/plugins/use-auth0) for Authorization
 
@@ -53,35 +53,35 @@ Getting started is dead-simple: `npm install -S graphql-armor` (or `yarn add gra
 Then let's take a minimalistic Yoga server:
 
 ```ts
-import { createServer } from '@graphql-yoga/node';
+import { createServer } from '@graphql-yoga/node'
 
-import { schema } from './schema';
+import { schema } from './schema'
 
 export function initServer() {
   const server = createServer({
-    schema,
-  });
-  return server;
+    schema
+  })
+  return server
 }
 ```
 
 Adding GraphQL armor is just a matter of adding a few envelop plugins:
 
 ```ts
-import { EnvelopArmor } from '@escape.tech/graphql-armor';
-import { createServer } from '@graphql-yoga/node';
+import { EnvelopArmor } from '@escape.tech/graphql-armor'
+import { createServer } from '@graphql-yoga/node'
 
-import { schema } from './schema';
+import { schema } from './schema'
 
-const armor = new EnvelopArmor();
-const enhancements = armor.protect();
+const armor = new EnvelopArmor()
+const enhancements = armor.protect()
 
 export function initServer() {
   const server = createServer({
     schema,
-    plugins: [...enhancements.plugins],
-  });
-  return server;
+    plugins: [...enhancements.plugins]
+  })
+  return server
 }
 ```
 
