@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
-import { Page } from '../ui/shared/Page';
-import { PlatformSection } from '../ui/platform-section';
+import { Page } from '@/shared/Page';
+import { PlatformSection } from '@/platform-section';
 
 export default function OpenSource(): ReactElement {
   return (

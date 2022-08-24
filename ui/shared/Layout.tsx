@@ -1,6 +1,4 @@
 import { ReactElement, ReactNode } from 'react';
-import { useRouter } from 'next/router';
-import { Header, FooterExtended } from '@theguild/components';
 import clsx from 'clsx';
 import { styled } from '../../stitches.config';
 
@@ -12,32 +10,6 @@ export const Container = styled('div', {
     margin: '0 15px',
   },
 });
-
-export const Layout = ({ children }: { children: ReactNode }): ReactElement => {
-  const { asPath } = useRouter();
-
-  return (
-    <>
-      <Header
-        sameSite
-        activeLink={asPath}
-        accentColor="var(--colors-accent)"
-        searchBarProps={{ version: 'v2' }}
-        themeSwitch
-        transformLinks={(links) => [
-          ...links,
-          {
-            href: 'https://the-guild.dev/contact',
-            label: 'Contact',
-            title: 'Get in touch',
-          },
-        ]}
-        className="[&_ul>div]:right-32"
-      />
-      {children}
-    </>
-  );
-};
 
 const HeroHeader = styled('div', {
   color: 'var(--colors-primary)',

@@ -1,10 +1,10 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import { GetStaticProps } from 'next/types';
-import { Page } from '../ui/shared/Page';
-import { Newsletter, Heading, BlogCardList, TagList } from '../ui/components';
+import { Page } from '@/shared/Page';
+import { Newsletter, Heading, BlogCardList, TagList } from '@/components';
+import { HeroSection } from '@/hero-section';
 import { MetaWithLink } from '../lib/meta';
 import { getAllArticles } from '../lib/get-all-articles';
-import { HeroSection } from '../ui/hero-section';
 
 interface Props {
   articles: MetaWithLink[];
@@ -43,7 +43,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
-const Blog: FC<Props> = ({ articles, tagFilter }) => {
+const Blog = ({ articles, tagFilter }: Props): ReactElement => {
   const tagFilters = tagFilter?.join(', ');
   const allTags = extractRelevantTags(articles);
 
