@@ -1,17 +1,11 @@
-import withArticle from '../../ui/blog/article'
-
-export const meta = {
-  title:
-    'Apollo-Angular 1.2 - using GraphQL in your apps just got a whole lot easier!',
-  tags: ['graphql', 'angular', 'apollo-angular'],
-  author: 'kamil',
-  date: '2018-08-21',
-  description:
-    "Check what's new in Apollo Angular and how to get the full potential benefits of using Angular + GraphQL + TypeScript combined thanks to GraphQL-Code-Generator",
-  image: '/medium/351c722f184845c0b6f792f4da534e96.png'
-}
-
-export default withArticle(meta)
+---
+title: Apollo-Angular 1.2 - using GraphQL in your apps just got a lot easier!
+tags: [graphql, angular, apollo-angular]
+author: kamil
+date: 2018-08-21
+description: Check what's new in Apollo Angular and how to get the full potential benefits of using Angular + GraphQL + TypeScript combined thanks to GraphQL-Code-Generator
+image: /medium/351c722f184845c0b6f792f4da534e96.png
+---
 
 _Check what's new in Apollo Angular and how to get the full potential benefits of using Angular + GraphQL + TypeScript combined thanks to GraphQL-Code-Generator._
 
@@ -40,7 +34,7 @@ With the current API, having `query` and `watchQuery` methods sometimes confused
 
 > We decided to add a new approach of working with GraphQL in Angular.
 
-```typescript
+```ts
 import { Injectable } from '@angular/core';
 import { Query } from 'apollo-angular';
 import gql from 'graphql-tag';
@@ -62,18 +56,18 @@ There are now 3 new simpler APIs: `Query`, `Mutation` and `Subscription`. Each o
 
 The only thing you need to do is to set the `document` property, That's it, and now you use it as a regular Angular service:
 
-```typescript
-import { Component } from '@angular/core';
-import { FeedGQL } from './feed-gql.ts';
+```ts
+import { Component } from '@angular/core'
+import { FeedGQL } from './feed-gql.ts'
 
-@Component({ … })
+@Component({
+  /* … */
+})
 export class FeedComponent {
   constructor(feedGQL: FeedGQL) {
-    feedGQL.watch()
-       .valueChanges
-       .subscribe(result => {
-         // ...
-       })
+    feedGQL.watch().valueChanges.subscribe((result) => {
+      // ...
+    })
   }
 }
 ```
@@ -117,7 +111,7 @@ Next, you run the [**GraphQL Code Generator — Angular Apollo Plugin**](https:/
 
 Then you simply import and use it as a regular, Angular service.
 
-```javascript
+```js
 import { FeedGQL } from './generated'
 ```
 
