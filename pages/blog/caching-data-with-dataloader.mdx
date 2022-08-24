@@ -1,14 +1,11 @@
-import withArticle from '../../ui/blog/article'
-
-export const meta = {
-  title: 'Caching data with DataLoader',
-  author: 'giladtidhar',
-  tags: ['cache', 'data', 'server', 'graphql'],
-  date: '2022-01-26',
-  description: 'How to use DataLoader to cache data',
-  image: '/blog-assets/caching-data-with-dataloader/cover.png'
-}
-export default withArticle(meta)
+---
+title: Caching data with DataLoader
+author: giladtidhar
+tags: [cache, data, server, graphql]
+date: 2022-01-26
+description: How to use DataLoader to cache data
+image: /blog-assets/caching-data-with-dataloader/cover.png
+---
 
 # Caching
 
@@ -33,7 +30,7 @@ Using a cache for compute-intensive data is faster for a few reasons:
 
 ## Caching with `dataloader`
 
-My prefered platform for caching is dataloader, and in this tutorial I will explain how to use dataloader with Node.js and Typescript, to have caching in your server.
+My preferred platform for caching is dataloader, and in this tutorial I will explain how to use dataloader with Node.js and Typescript, to have caching in your server.
 
 :::tip `dataloader` outside of GraphQL
 
@@ -61,12 +58,12 @@ import { LRUMap } from 'lru_map'
 ### 3. Define the types that would be saved to our cache
 
 The first type should be a way to represent the data, like a string with a name, and the other is the data itself.
-For example, let's say we're trying to cache books. Our package name will be the books id, so we can tell which book is which.
-Our package data will be the books length, writer, price etc...
+For example, let's say we're trying to cache books. Our package name will be the books' id, so we can tell which book is which.
+Our package data will be the books' length, writer, price etc...
 
 so in this case, our schema would look like this:
 
-```ts
+```graphql
 type book {
   id: ID!
   name: String!
@@ -85,6 +82,7 @@ and the corresponding data type would look like this:
 
 ```ts
 type packageId = string
+
 type PackageData = /* note that this is the type of the data we represent. */ {
   id: string
   name: string
@@ -106,12 +104,12 @@ The reason we write types is for type safety, let's say we have books and toys w
 const dataLoader = new DataLoader<packageId, PackageData>(
   async (/* (1) */keys: readonly packageId[]) => { /* (2) */
     return await Promise.all(
-      keys.map((packageId) => {
+      keys.map(async (packageId) => {
         await getData(packageId).catch((e) => e);
       })
     );
-  },{
-    cacheMap: new LRUMap(100); /* (3) */
+  }, {
+    cacheMap: new LRUMap(100) /* (3) */
   }
 );
 ```
@@ -172,12 +170,12 @@ type PackageData = Package;
 
 export type GraphQLContext = {
   dataLoader: DataLoader<packageId, PackageData>;
-  ...
+  // ...
 };
 const dataLoader = new DataLoader<packageId, PackageData>(
   async (keys: readonly PackageId[]) => {
     return await Promise.all(
-      keys.map((packageId) => {
+      keys.map(async (packageId) => {
         await getData(packageId).catch((e) => e);
       })
     );
@@ -186,7 +184,7 @@ const dataLoader = new DataLoader<packageId, PackageData>(
     cacheMap: new LRUMap(100),
   }
 );
-...
+// ...
 export async function contextFactory() {
   return { dataLoader, ... };
 }
@@ -199,7 +197,7 @@ An example of a resolver implementation:
 ```ts
 export const resolvers = {
   Query: {
-    getBook: async (parent, input, context) => {
+    getBook(parent, input, context) {
       return context.dataLoader.load(input.bookId)
     }
   }

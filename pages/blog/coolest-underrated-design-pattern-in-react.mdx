@@ -1,15 +1,11 @@
-import withArticle from '../../ui/blog/article'
-
-export const meta = {
-  title: 'The coolest, most underrated design pattern in React',
-  author: 'eytan',
-  tags: ['react', 'child-props'],
-  date: '2019-07-31',
-  description: 'The coolest, most underrated design pattern in React',
-  image: '/medium/8da637649866c3f3ebcc4e5c90437d89.png'
-}
-
-export default withArticle(meta)
+---
+title: The coolest, most underrated design pattern in React
+author: eytan
+tags: [react, child-props]
+date: 2019-07-31
+description: The coolest, most underrated design pattern in React
+image: /medium/8da637649866c3f3ebcc4e5c90437d89.png
+---
 
 There will be times when we would like to pass props and control the behavior of child elements. Let me explain. Let's take the following modal for example:
 
@@ -107,7 +103,7 @@ Now that sounds promising. Let's have a look at an example. We will use the Boot
 const ModalFromTheFuture = ({ showCloseButton, children }) => {
   const childProps = useChildProps(props.children, [
     'title',
-    'contents'
+    'contents',
     'dismissButton',
     'actionButton',
   ]);

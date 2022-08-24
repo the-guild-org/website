@@ -12,15 +12,15 @@ export const meta = {
 
 export default withArticle(meta)
 
-_tl;dr: How to build a Node.JS script to re-write history. pre-requisites: Familiarity with git rebase --interacitve._
+_tl;dr: How to build a Node.JS script to re-write history. pre-requisites: Familiarity with git rebase --interactive._
 
-Once upon a time, there was a [Whatsapp clone tutorial](https://github.com/Urigo/whatsapp-textrepo-angularcli-express) was born. Since then it has been through different incantations, but they all shared a common principle — the tutorial used git as a version control.
+Once upon a time, there was a [Whatsapp clone tutorial](https://github.com/Urigo/whatsapp-textrepo-angularcli-express) was born. Since then, it has been through different incantations, but they all shared a common principle — the tutorial used git as a version control.
 
-What's special about this tutorial is its commits history — every commit represents a step in the tutorial; this way it's very easy to navigate through it and reference a specific part of it.
+What's special about this tutorial is its commits' history — every commit represents a step in the tutorial; this way it's very easy to navigate through it and reference a specific part of it.
 
 For the end user it was all cakes and ale, but maintenance was hell. To put things simple, imagine you had the following git-log:
 
-```bash
+```sh
 Step 100: description of step 100th
 .
 .
@@ -32,7 +32,7 @@ Step 1: description of first step
 
 Now let's say that you would like to remove step 2. The only solution for that would be using a git-rebase --interactive starting step 2 and save the following file:
 
-```bash
+```sh
 reword xxxxxxx Step 100: description of step 100th
 .
 .
@@ -44,9 +44,9 @@ This means that the editor process would have to be opened and closed 98 times (
 
 The obvious question is — what if a script could do that for me? Followed by — how can I implement such a script?
 
-Following that, I have wandered across git's documentation and Stack Overflow and have found an answer. Here's the method which starts the editing process written in git-rebase--interactive.sh, a file in git's implementation:
+Following that, I have wandered across git's documentation and Stack Overflow and have found an answer. Here's the method which starts the editing process written in `git-rebase--interactive.sh`, a file in git's implementation:
 
-```shell
+```sh
 git_sequence_editor () {
 	if test -z "$GIT_SEQUENCE_EDITOR"
 	then
@@ -146,4 +146,4 @@ function gitEdit(fn, args) {
 
 Using the code snippet above we can take an initial step towards solving the problem presented at the beginning of this article by simply running `$ git-remove.js` \[where `anchor` represents a git object and `amount` represents the amount of commits that we would like to remove].
 
-Sure, we still need to figure out which step we would like to remove by its index, and we need to take care of automatic rewording, but at least now you have the idea behind such method where you can solve problems like these as well as far more complex ones, with a little bit of creativity.
+Sure, we still need to figure out which step we would like to remove by its index, and we need to take care of automatic rewording, but at least now you have the idea behind such method where you can solve problems like these as well as far more complex ones, with a little of creativity.
