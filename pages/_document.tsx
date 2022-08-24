@@ -1,18 +1,7 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import Document, { Head, Main, NextScript, Html } from 'next/document';
 import { OrganizationJsonLd } from 'next-seo';
 import { getCssText } from '../stitches.config';
 import { GA_TRACKING_ID } from '../lib/gtag';
-
-const JS_COMMENT_REGEX = /\/\*[\s\S]*?\*\/|\/\/.*/g;
-
-const noFlashCode = readFileSync(
-  join(process.cwd(), '/public/static/no-flash.mjs'),
-  'utf8'
-)
-  .replace(JS_COMMENT_REGEX, '')
-  .trim();
 
 export default class MyDocument extends Document {
   render() {
@@ -54,7 +43,6 @@ export default class MyDocument extends Document {
           />
         </Head>
         <body>
-          <script dangerouslySetInnerHTML={{ __html: noFlashCode }} />
           <Main />
           <NextScript />
         </body>

@@ -2,11 +2,6 @@ import { withGuildDocs } from 'guild-docs/next.config';
 
 export default withGuildDocs({
   experimental: {
-    esmExternals: true,
-    images: {
-      allowFutureImage: true,
-    },
-    newNextLinkBehavior: true,
     optimizeCss: true,
   },
   rewrites: () => [
@@ -27,8 +22,4 @@ export default withGuildDocs({
       permanent: true,
     },
   ],
-  eslint: {
-    // TODO: Remove this when all eslint errors will be fixed
-    ignoreDuringBuilds: true,
-  },
 });

@@ -3,10 +3,7 @@ const config = require('@theguild/tailwind-config');
 
 module.exports = {
   ...config,
-  content: [
-    ...config.content,
-    './{pages,ui}/**/*.{html,ts,tsx,js,jsx,cjs,mjs}',
-  ],
+  content: [...config.content, './{pages,ui}/**/*.{tsx,mdx}'],
   plugins: [
     plugin(({ addUtilities }) => {
       addUtilities({

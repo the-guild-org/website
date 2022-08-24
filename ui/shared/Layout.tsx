@@ -35,35 +35,6 @@ export const Layout = ({ children }: { children: ReactNode }): ReactElement => {
         className="[&_ul>div]:right-32"
       />
       {children}
-      <FooterExtended
-        sameSite
-        resources={[
-          {
-            children: 'Blog',
-            title: 'Blog',
-            href: '/blog',
-          },
-          {
-            children: 'Services',
-            title: 'Services',
-            href: '/services',
-          },
-          {
-            children: 'Newsletter',
-            title: 'Newsletter',
-            href: '/newsletter',
-          },
-          {
-            children: 'Logos',
-            title: 'Logos',
-            href: '/logos',
-          },
-        ]}
-        // TODO: Add me in the future as is it in mockup
-        // onNewsletterSubmit={(e, email) => {
-        //   console.log({ email })
-        // }}
-      />
     </>
   );
 };
