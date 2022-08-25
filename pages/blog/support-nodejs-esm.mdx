@@ -7,6 +7,10 @@ description: I have worked on all The Guild's libraries and graphql-js to suppor
 image: /blog-assets/nodejs-esm/nodejs_logo.png
 ---
 
+import { Article } from '@/blog/article'
+
+<Article />
+
 **ECMAScript modules**, also known as **ESM**, is the [official standard format](https://tc39.es/ecma262/#sec-modules) to package JavaScript, and fortunately [Node.js supports it](https://nodejs.org/api/esm.html#esm_modules_ecmascript_modules) 🎉.
 
 But if you have been in the Node.js Ecosystem for some time and developing libraries, you have probably encountered the fact that ESM compatibility has been a struggle, behind experimental flags and/or broken for practical usage.
@@ -22,9 +26,8 @@ This post is intended to work as a guide to support both CommonJS **and** ESM an
 
 The official Node.js documentation about it is available [here](https://nodejs.org/api/packages.html#packages_exports), but the most interesting section is [Conditional exports](https://nodejs.org/api/packages.html#packages_conditional_exports), which enables libraries to support both CommonJS and ESM:
 
-```json
+```json filename="package.json"
 {
-  // package.json
   "name": "foo",
   "exports": {
     "require": "./main.js",
@@ -184,10 +187,9 @@ But this will
 import { foo } from 'foo/lib/main.js'
 ```
 
-**BUT** there is a **`big exception`** to this, which is the node_modules package you are importing uses the [`exports`](#exports) `package.json` field, because generally the exports field will have to extension in the alias itself, and if you specify the extension on those packages, it will result in a double extension:
+**BUT** there is a **big exception** to this, which is the node_modules package you are importing uses the [`exports`](#exports) `package.json` field, because generally the `exports` field will have to extension in the alias itself, and if you specify the extension on those packages, it will result in a double extension:
 
-```ts
-// bar/package.json
+```json filename="bar/package.json"
 {
   "name": "bar",
   "exports": {
@@ -197,9 +199,9 @@ import { foo } from 'foo/lib/main.js'
     }
   }
 }
+```
 
-// ...
-
+```ts
 import { bar } from "bar/main.js"
 ```
 
@@ -223,9 +225,8 @@ Until this issue [TypeScript#33069](https://github.com/microsoft/TypeScript/issu
 
 The original usage for this TypeScript feature [was not for this purpose](https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html#version-selection-with-typesversions), but it works, and it's a fine workaround until TypeScript actually supports it
 
-```json
+```json filename="package.json"
 {
-  // package.json
   "typesVersions": {
     "*": {
       "dist/index.d.ts": ["dist/index.d.ts"],
@@ -239,9 +240,8 @@ The original usage for this TypeScript feature [was not for this purpose](https:
 
 This method requires tooling and/or support from the package manager. For example, using the package.json field `publishConfig.directory`, [pnpm supports it](https://pnpm.io/package_json#publishconfigdirectory) and [lerna publish as well](https://github.com/lerna/lerna/tree/main/commands/publish#publishconfigdirectory). This allows you to publish a modified version of the package that can contain a modified version of the "exports", following the types with the file structure in the root, and TypeScript will understand it without needing to specify anything special in the package.json for it to work.
 
-```json
+```json filename="dist/package.json"
 {
-  // dist/package.json
   "exports": {
     "./*": {
       "require": "./*.js",
@@ -259,9 +259,9 @@ This method requires tooling and/or support from the package manager. For exampl
 
 ### Support for ".mjs" output
 
-Currently the TypeScript compiler can't output `.mjs`, Check the issue [TypeScript#18442](https://github.com/microsoft/TypeScript/issues/18442).
+Currently, the TypeScript compiler can't output `.mjs`, Check the issue [TypeScript#18442](https://github.com/microsoft/TypeScript/issues/18442).
 
-There are workarounds, but nothing actually works in 100% of the possible use-cases (see for example, [ts-jest issue](https://github.com/kulshekhar/ts-jest/issues/1057)), and for that reason, we recommend tooling that enables this type of building without needing any workaround, usually using [Rollup](https://rollupjs.org/) and/or [esbuild](https://esbuild.github.io/).
+There are workarounds, but nothing actually works in 100% of the possible use-cases (see for example, [ts-jest issue](https://github.com/kulshekhar/ts-jest/issues/1057)), and for that reason, we recommend tooling that enables this type of building without needing any workaround, usually using [Rollup](https://rollupjs.org) and/or [esbuild](https://esbuild.github.io).
 
 ## ESM needs our attention
 

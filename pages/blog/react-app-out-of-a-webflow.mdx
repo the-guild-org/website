@@ -1,31 +1,31 @@
-import withArticle from '../../ui/blog/article'
+---
+title: How to create a React app out of a Webflow project
+author: eytan
+tags: [react, webflow]
+date: 2018-09-07
+description: How to create a React app out of a Webflow project.
+image: /medium/50ea860594889aa4f1b96a509c886b9c.jpg
+---
 
-export const meta = {
-  title: 'How to create a React app out of a Webflow project',
-  author: 'eytan',
-  tags: ['react', 'webflow'],
-  date: '2018-09-07',
-  description: 'How to create a React app out of a Webflow project',
-  image: '/medium/50ea860594889aa4f1b96a509c886b9c.jpg'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 _tl;dr: It can be transpiled with a single command._
 
-As a freelancer I get to work with designers many times. Not once and not twice I have stumbled upon [Webflow](https://webflow.com/) — a web design studio, where the designer can assmble all his assets into responsive demonstrable webpages. These webpages look neat and responsive and can be downloaded as HTML/CSS files along with their scripts, images and fonts.
+As a freelancer I get to work with designers many times. Not once and not twice I have stumbled upon [Webflow](https://webflow.com) — a web design studio, where the designer can assemble all his assets into responsive demonstrable webpages. These webpages look neat and responsive and can be downloaded as HTML/CSS files along with their scripts, images and fonts.
 
-At a glance, this can ease the process of getting an app done; after all we're provided with a working website, so surely binding some logic to it with React shouldn't be too complicated, right? All we need to do is take the HTML, put under a `render()`method of of a `React.Component`, and `import` its corresponding style with an external CSS file. Well, this is nothing but a walk in the park.
+At a glance, this can ease the process of getting an app done; after all we're provided with a working website, so surely binding some logic to it with React shouldn't be too complicated, right? All we need to do is take the HTML, put under a `render()`method of a `React.Component`, and `import` its corresponding style with an external CSS file. Well, this is nothing but a walk in the park.
 
 When Webflow was first presented to me by a client of mine, I assumed the above. He showed me his website, which looked quiet complete, and we've proceeded to composing a plan sheet, with all the desired behavioral features of the future application and a matching price for each of that feature. I was quiet happy with our deal.
 
 On the next morning, I've received an email by my client's designer with all the exported assets by Webflow. When I looked around expecting to find the optimal starting point to go with it, my world collapsed.
 
-The HTML files were big and massive, with lots of duplicated parts in it, the CSS was just a one big global style sheet with all the rules (that were very generic), and the images just had random machine generated names. When I started to tear it apart into React components, I've called my client after few hours of trial and canceled the plan; since the budget was limited and I wasn't willing to spend so much time on a project with a very little value in return.
+The HTML files were big and massive, with lots of duplicated parts in it, the CSS was just a one big global style sheet with all the rules (that were very generic), and the images just had random machine generated names. When I started to tear it apart into React components, I've called my client after few hours of trial and canceled the plan; since the budget was limited, and I wasn't willing to spend so much time on a project with a very little value in return.
 
 ![](/medium/50ea860594889aa4f1b96a509c886b9c.jpg)
 
-> _Above: A Webflow page whose HTML file can be found [here](https://gist.github.com/DAB0mB/1979ac9cfa5fbe52e6375d80841200ae). Credit: [campaignkit.co](https://www.campaignkit.co/)._
+> _Above: A Webflow page whose HTML file can be found [here](https://gist.github.com/DAB0mB/1979ac9cfa5fbe52e6375d80841200ae). Credit: [campaignkit.co](https://campaignkit.co)._
 >
 > “What shall I do then?!” — A React developer
 
@@ -37,11 +37,11 @@ Appfairy is a CLI tool which can be easily installed using NPM and can integrate
 
 To get started, first install `appfairy` globally:
 
-```
-$ sudo npm install appfairy -g
+```sh
+sudo npm install appfairy -g
 ```
 
-Now let's think of what React components should exist in our application besides the main pages. Once we identify them we should select their corresponding element in the Webflow project and set a new attribute; the key's gonna be `af-el` (Appfairy element) and the value should be set to the name of the component e.g. `consult-form`:
+Now let's think of what React components should exist in our application besides the main pages. Once we identify them we should select their corresponding element in the Webflow project and set a new attribute; the key's going to be `af-el` (Appfairy element) and the value should be set to the name of the component e.g. `consult-form`:
 
 ![](/medium/4133a89b94c1797a726c64732a6acb4a.jpg)
 
@@ -66,24 +66,24 @@ So back to our ConsultantForm in our Webflow project example, let's think which 
 
 Our Webflow project is now ready for migration! To do so, we will first need to create a directory named `.appfairy` in the root of our project:
 
-```
-$ mkdir .appfairy
+```sh
+mkdir .appfairy
 ```
 
 This directory is used by Appfairy as an input for the CLI function, which means that we will need to export our project and extract the generated zip file's content into the directory we've just created:
 
 ![](/medium/da0137e3b38b30be41a5c32479e3c4cd.jpg)
 
-```
-$ unzip ~/Downloads/project.webflow.zip -d .appfairy
+```sh
+unzip ~/Downloads/project.webflow.zip -d .appfairy
 ```
 
 > _Above: Exporting the project and unzipping it to `.appfairy` dir_
 
 All is left to do now is to run `appfairy` and our Webflow React components will be created and ready to use!
 
-```
-$ appfairy
+```sh
+appfairy
 ```
 
 As a result a message will be printed to the terminal signifying that a new git commit has been created with modifications which consist of the following:
@@ -99,15 +99,15 @@ As a result a message will be printed to the terminal signifying that a new git 
    🗀 views (contains ConsultFormView - further explanation below)
 ```
 
-The reason for the modifications to be laid out this way is because `create-react-app` (which is the most common app starter for React) uses this folders structure. The output can be mapped differently using a config file - more details about that can be found in the official [README.md](http://readme.md/) file over [here](https://github.com/DAB0mB/Appfairy).
+The reason for the modifications to be laid out this way is because `create-react-app` (which is the most common app starter for React) uses this folders structure. The output can be mapped differently using a config file - more details about that can be found in the official [README.md](http://readme.md) file over [here](https://github.com/DAB0mB/Appfairy).
 
-Non of these files should be edited or removed and should only be managed by the `appfairy` command, so whenever we update the Webflow project we should simply repeat the recent process and the files should updated accordingly.
+None of these files should be edited or removed and should only be managed by the `appfairy` command, so whenever we update the Webflow project we should simply repeat the recent process and the files should update accordingly.
 
 If you'll take a look at the `views` folder you'll see that it contains a file named `ConsultFormView.js`. As I already mentioned, Appfairy's design pattern consists of a view and a controller, therefore the exported ConsultFormView component needs to be bound to a controller.
 
-To define a controller simply create a new file named `ConsultFormController.js` under the `controllers` folder where the corresponding controller's gonna be exported as a React component. The controller should contain proxies to the original elements and each proxy should forward the necessary props. Rather than giving further explanation I would like to give you an example of a possible implementation of a ConsultFormController:
+To define a controller simply create a new file named `ConsultFormController.js` under the `controllers` folder where the corresponding controller's going to be exported as a React component. The controller should contain proxies to the original elements and each proxy should forward the necessary props. Rather than giving further explanation I would like to give you an example of a possible implementation of a ConsultFormController:
 
-```javascript
+```js
 import React from 'react'
 import ConsultFormView from '../views/ConsultFormView'
 
@@ -127,20 +127,14 @@ class ConsultFormController extends React.Component {
   }
 
   setName = (e) => {
-    this.setState({
-      name: e.target.value
-    })
+    this.setState({ name: e.target.value })
   }
   setPhone = (e) => {
-    this.setState({
-      phone: e.target.value
-    })
+    this.setState({ phone: e.target.value })
   }
 
   setEmail = (e) => {
-    this.setState({
-      email: e.target.value
-    })
+    this.setState({ email: e.target.value })
   }
 
   setDescription = (e) => {
@@ -170,10 +164,10 @@ That's it! Now you can just import the controller and use it anywhere and anytim
 
 References:
 
-- The full app's source code can be [found here](https://github.com/DAB0mB/Appfairy/tree/master/examples/prefetch).
+- The full app's source code can be [found here](https://github.com/DAB0mB/Appfairy/tree/master/examples/prefetch)
 
-- For an in-depth tutorial check out [this video](https://youtu.be/6hJe6pZld0o).
+- For an in-depth tutorial check out [this video](https://youtu.be/6hJe6pZld0o)
 
-- API docs can be found in [the official Github repo](https://github.com/DAB0mB/Appfairy).
+- API docs can be found in [the official GitHub repo](https://github.com/DAB0mB/Appfairy)
 
 Have fun designing/coding 🙂
