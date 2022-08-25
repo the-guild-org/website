@@ -1,16 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Meteor with Webpack in 2018 — Faster compilation and better source handling
+tags: [meteor, webpack]
+author: arda
+date: 2018-07-13
+description: Faster compilation and better source handling.
+image: /blog-assets/meteor-with-webpack-in-2018/cover.png
+---
 
-export const meta = {
-  title:
-    'Meteor with Webpack in 2018 — Faster compilation and better source handling',
-  tags: ['meteor', 'webpack'],
-  author: 'arda',
-  date: '2018-07-13',
-  description: 'Faster compilation and better source handling',
-  image: '/blog-assets/meteor-with-webpack-in-2018/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 ## Introduction to Meteor-Webpack
 
@@ -28,11 +27,11 @@ Meteor-Webpack is here as a solution to this kind of problems and lack of featur
 
 For example, you have a Progressive Web Application using Service Workers, written in Angular, then you have to create a service worker manifest based on your output files. We don't have a solution for this on Meteor CLI natively. However, Webpack has a lot of community plugins such as [`OfflinePlugin`](https://github.com/NekR/offline-plugin) , [`Workbox`](https://developers.google.com/web/tools/workbox/guides/codelabs/webpack) and many others for this problem as a solution. Just install them, and add to your [`webpack.config.js`](https://webpack.js.org/configuration/) . Meteor-Webpack will handle it like you're working on a pure Webpack project.
 
-Other example is server-side rendering. [Angular CLI](https://cli.angular.io) is based on Webpack, and the project can be compiled for SSR by Angular CLI; but you need a different server application to serve your Angular Universal application seperate from Meteor backend. By using Meteor-Webpack, it is possible only by ejecting Angular CLI's `webpack.config.js` , and use it on Meteor project.
+Other example is server-side rendering. [Angular CLI](https://cli.angular.io) is based on Webpack, and the project can be compiled for SSR by Angular CLI; but you need a different server application to serve your Angular Universal application separate from Meteor backend. By using Meteor-Webpack, it is possible only by ejecting Angular CLI's `webpack.config.js` , and use it on Meteor project.
 
 # Hot Module Replacement; even for server (Beta)
 
-![HMR hot module replacement ile ilgili gÃ¶rsel sonucu](/medium/274cf118280e652e8e0f63c442c59d9b.png 'Hot Module Replacement')
+![HMR hot module replacement](/medium/274cf118280e652e8e0f63c442c59d9b.png 'Hot Module Replacement')
 
 Reloading on recompilation while developing your app may take a lot of time. HMR comes to save us from this time loss on development. If you don't know, what HMR is. You can [check out Webpack's documentation.](https://webpack.js.org/concepts/hot-module-replacement/)
 

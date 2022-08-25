@@ -1,24 +1,23 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Modular Encapsulation in Large-Scale GraphQL Projects
+author: arda
+tags: [graphql, graphql-modules]
+date: 2019-01-07
+description: Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects? — GraphQL Modules is your savior!
+image: /medium/a6fcd73268ea14133c0ec3f5cc4f0728.png
+---
 
-export const meta = {
-  title: 'Modular Encapsulation in Large-Scale GraphQL Projects',
-  author: 'arda',
-  tags: ['graphql', 'graphql-modules'],
-  date: '2019-01-07',
-  description:
-    'Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects? — GraphQL Modules is your savior!',
-  image: '/medium/a6fcd73268ea14133c0ec3f5cc4f0728.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 **TL;DR**: If you are writing a large-scale project, it's necessary to understand the relations between your pieces of code, and how they effect each other. Otherwise, it might be difficult to deal with changes later.
 
-While developing a **large-scale project**, removing, changing and modifying parts of the project can become a very time consuming and risky task, because understanding the full side-effects of those changes is very hard.
+While developing a **large-scale project**, removing, changing and modifying parts of the project can become a very time-consuming and risky task, because understanding the full side-effects of those changes is very hard.
 
 In [GraphQL-Modules](https://graphql-modules.com/), you can declare your modules in a feature-based structure, with clear enforced boundaries and avoid unexpected side-effects during development.
 
-Each module can declare it's own scope of the complete schema:
+Each module can declare its own scope of the complete schema:
 
 ![](/medium/c806f0ae70dca7a4d1e434736f241ed5.png 'Every module has its own schema, context and DI container. Here you can see AuthModule is appended to UserModule. But, other modules don't import AuthModule. So, they cannot access directly AuthModule DI container or context.')
 
@@ -30,9 +29,9 @@ Let's assume you have an authentication module;
 
 After a while, you decided to use **_AccountsJS_** in your **_GraphQL_** project which has completely different implementation than the existing one.
 
-This can be a risky change, because you're afraid of breaking a lot of things and you can't be sure about the all the places in your code that uses values affected by the authentication module, for example the global context.
+This can be a risky change, because you're afraid of breaking a lot of things, and you can't be sure about the all the places in your code that uses values affected by the authentication module, for example the global context.
 
-With GraphQL-Modules's approach of encapsulation, even the context is completely encapsulated, so every module that uses your existing **_AuthenticationModule_**'s **_context_** in defined on the`imports` of the dependent modules, and its interface is already extended by **_AuthenticationModule_**'s **_context_** if you're using _TypeScript_. When it is removed, you will notice that change on compile-time immediately.
+With GraphQL-Modules' approach of encapsulation, even the context is completely encapsulated, so every module that uses your existing **_AuthenticationModule_**'s **_context_** in defined on the `imports` of the dependent modules, and its interface is already extended by **_AuthenticationModule_**'s **_context_** if you're using _TypeScript_. When it is removed, you will notice that change on compile-time immediately.
 
 Let's take a look at some code, to show how GraphQL Modules makes you create those dependencies explicitly.
 
@@ -46,7 +45,7 @@ const AppModule = new GraphQLModule({
     imports: [
         AuthenticationModule, //this module has `user` in its context
         SomeImportantModuleThatUsesAuthenticatedContext,
-        ...
+        // ...
     ],
 });
 
@@ -58,18 +57,18 @@ And there is another module that tries to use `AuthenticationModule`'s context, 
 const SomeImportantModuleThatUsesAuthenticatedContext = new GraphQLModule({
     typeDefs: SOME_TYPE_DEFS_HERE
     imports: [
-        ...,
+        // ...
         // This module doesn't import AuthenticationModule
-        ...
+        // ...
     ],
     resolvers: {
-        ...,
+        // ...
         Query: {
-            getUser: (root, args, context) => {
+            getUser(root, args, context) {
                 return context.user; // Oops! Undefined!
             }
         }
-        ...
+        // ...
     }
 });
 ```
@@ -80,19 +79,19 @@ To fix this, we need to import `AuthenticationModule` into that 'important' modu
 const SomeImportantModuleThatUsesAuthenticatedContext = new GraphQLModule({
     typeDefs: SOME_TYPE_DEFS_HERE
     imports: [
-        ...,
+        // ...
         // This module imports AuthenticationModule
         AuthenticationModule,
-        ...
+        // ...
     ],
     resolvers: {
-        ...,
+        // ...
         Query: {
-            getUser: (root, args, context) => {
+            getUser(root, args, context) {
                 return context.user; // Yes, we have that user HERE!
             }
         }
-        ...,
+        // ...
     }
 });
 ```

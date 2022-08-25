@@ -1,15 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Manage Circular Imports Hell in GraphQL-Modules
+author: arda
+tags: [graphql, graphql-modules, di]
+date: 2019-03-18
+description: Manage Circular Imports Hell in GraphQL-Modules.
+image: /medium/e057400fd0eccf986e581abce77dd3d5.png
+---
 
-export const meta = {
-  title: 'Manage Circular Imports Hell in GraphQL-Modules',
-  author: 'arda',
-  tags: ['graphql', 'graphql-modules', 'di'],
-  date: '2019-03-18',
-  description: 'Manage Circular Imports Hell in GraphQL-Modules',
-  image: '/medium/e057400fd0eccf986e581abce77dd3d5.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 Designing and building modular GraphQL API may not look straight-forward the first time you start. It is hard to keep a perfect modularity with standalone and encapsulated modules.
 
@@ -23,7 +23,7 @@ Finally, we decided to **remove this** support; then **force** people to have **
 
 <LinkPreview link="/blog/modular-encapsulation-graphql-modules" />
 
-Forcing people out of a way of developing is always hard and we've got [questions from you](https://github.com/Urigo/graphql-modules/issues/317) about how to solve some specific issues — so in this blog post and new doc section we will help you understand why this was a bad practice and how to migrate from it with different use cases.
+Forcing people out of a way of developing is always hard, and we've got [questions from you](https://github.com/Urigo/graphql-modules/issues/317) about how to solve some specific issues — so in this blog post and new doc section we will help you understand why this was a bad practice and how to migrate from it with different use cases.
 
 # The Problem
 

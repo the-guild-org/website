@@ -1,17 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Use this magical Babel plugin and get a performance boost for your React components
+tags: [babel, react]
+author: eytan
+date: 2019-01-21
+description: Use this magical Babel plugin and get a performance boost for your React components.
+image: /medium/5f2a07bb7a73727cca4707c0e85f75e8.jpeg
+---
 
-export const meta = {
-  title:
-    'Use this magical Babel plugin and get a performance boost for your React components',
-  tags: ['babel', 'react'],
-  author: 'eytan',
-  date: '2019-01-21',
-  description:
-    'Use this magical Babel plugin and get a performance boost for your React components',
-  image: '/medium/5f2a07bb7a73727cca4707c0e85f75e8.jpeg'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 With the introduction of React hooks (in React 16.8-alpha) arose an issue — calculations are being unnecessarily re-evaluated due to declarations being done within the rendering phase.
 
@@ -32,9 +30,9 @@ class MyComponent extends React.Component {
       <div>
         <button onClick={this.goBack} />
         <ul>
-          {this.transformedData.map(({ id, value }) => {
+          {this.transformedData.map(({ id, value }) => (
             <li key={id}>{value}</li>
-          )}
+          ))}
         </ul>
       </div>
     )
@@ -67,9 +65,9 @@ const MyComponent = ({
     <div>
       <button onClick={goBack} />
       <ul>
-        {transformedData.map(({ id, value }) => {
+        {transformedData.map(({ id, value }) => (
           <li key={id}>{value}</li>
-        )}
+        ))}
       </ul>
     </div>
   )
@@ -103,9 +101,9 @@ const MyComponent = ({
     <div>
       <button onClick={goBack} />
       <ul>
-        {transformedData.map(({ id, value }) => {
+        {transformedData.map(({ id, value }) => (
           <li key={id}>{value}</li>
-        )}
+        ))}
       </ul>
     </div>
   )
