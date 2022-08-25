@@ -34,15 +34,15 @@ You asked and we listened! With the integration of the Guild's [graphql-toolkit]
 - **import schemas** within.. (previously [graphql-import](https://github.com/ardatan/graphql-import)).
 - optimize client side queries with relay compiler (relay-operation-optimizer)
 - load resolvers and type definitions from your file system using glob expressions
-- [much, much more ...](https://www.graphql-tools.com/docs/introduction)
+- [much, much more ...](https://graphql-tools.com/docs/introduction)
 
 ## New Monorepo Structure
 
 The new GraphQL Tools is split into different packages by functionality under the @graphql-tools scope. You can pick individual packages according to your needs instead of having one large package with unused functionalities in your project, which will **significantly decrease bundle size**. When bundle size is not an issue, you can still directly import all functionality directly from the `graphql-tools` package...
 
-Some of the functions have been renamed to avoid conflicts between packages - see the migration guide for further help in upgrading.
+Some functions have been renamed to avoid conflicts between packages - see the migration guide for further help in upgrading.
 
-<LinkPreview link="https://www.graphql-tools.com/docs/migration-from-tools-v5" />
+<LinkPreview link="https://graphql-tools.com/docs/migration-from-tools-v5" />
 
 Let's talk about the improvements we have made in each area.
 
@@ -64,7 +64,7 @@ The getDirectives function reaches from a given GraphQL entity to retrieve the d
 
 By passing user-defined mapping functions to mapSchema that make use of getDirectives function, one can introspect a schema for one (or more!) directives in as simple or complex a fashion as desired.
 
-<LinkPreview link="https://www.graphql-tools.com/docs/schema-directives" />
+<LinkPreview link="https://graphql-tools.com/docs/schema-directives" />
 
 ## Create and Transform “Remote“ GraphQL Schemas
 
@@ -74,7 +74,7 @@ In a performance boost, GraphQL Tools no longer requires two rounds of delegatio
 
 In v6, wrapSchema now takes a GraphQL Tools-defined “schema config“ object instead of a schema, where the schema config properties allow specifying how to delegate to the remote schema as well as the transforms to apply. These changes mean that transforming a remote schema only requires one round of delegation instead of two.
 
-Another important v6 change is that remote schema configuration properties are now executor and subscriber functions that return generic graphql-js results -- rather than Apollo specific links. This increases interoperability between GraphQL Tools and the entire ecosystem, including paving the way for any changes to the Apollo link protocol coming in the future. Don't worry, we provide linkToExecutor and linkToSubscriber functions [for full Apollo link backwards compatibility!](https://www.graphql-tools.com/docs/remote-schemas)
+Another important v6 change is that remote schema configuration properties are now executor and subscriber functions that return generic graphql-js results -- rather than Apollo specific links. This increases interoperability between GraphQL Tools and the entire ecosystem, including paving the way for any changes to the Apollo link protocol coming in the future. Don't worry, we provide linkToExecutor and linkToSubscriber functions [for full Apollo link backwards compatibility!](https://graphql-tools.com/docs/remote-schemas)
 
 ## Stitch Together Multiple Subschemas
 
@@ -84,7 +84,7 @@ Schema stitching previously used up to at least three rounds of delegation when 
 
 Schema stitching also now supports type merging from multiple remote subschemas, a la Federation -- without requiring the remote schemas to be annotated with the Federation directives.
 
-<LinkPreview link="https://www.graphql-tools.com/docs/schema-stitching" />
+<LinkPreview link="https://graphql-tools.com/docs/schema-stitching" />
 
 At the Guild, we use the schema stitching approach in our own tools. For example, you can see how we apply schema stitching to the different remote schemas generated from different sources in [GraphQL Mesh repository](https://graphql-mesh.com).
 

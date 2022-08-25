@@ -258,7 +258,7 @@ function main() {
                 <img src="${linkUrl}/img/logos/scalars.svg" width="100" />
               </div>
               <div class="ossContentCells">
-                <a href="https://www.graphql-scalars.dev/" target="_blank">
+                <a href="https://graphql-scalars.dev" target="_blank">
                   <h4>GraphQL Scalars</h4>
                 </a>
                 A library of custom GraphQL Scalars for creating precise
@@ -328,7 +328,7 @@ function main() {
                 <img src="${linkUrl}/img/logos/sofa.svg" width="100" />
               </div>
               <div class="ossContentCells">
-                <a href="https://www.sofa-api.com/" target="_blank">
+                <a href="https://sofa-api.com" target="_blank">
                   <h4>GraphQL SOFA</h4>
                 </a>
                 Generate RESTful APIs from your GraphQL Server

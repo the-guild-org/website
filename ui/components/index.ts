@@ -10,3 +10,4 @@ export { Newsletter } from './newsletter';
 export { TagList } from './tag-list';
 export { Tooltip } from './tooltip';
 export { CopyToClipboard } from './copy-to-clipboard';
+export { Video } from './video';

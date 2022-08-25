@@ -2,9 +2,9 @@ import { ReactElement } from 'react';
 import clsx from 'clsx';
 import NextLink from 'next/link';
 import { format } from 'date-fns';
+import { authors } from '@/authors';
 import { Description } from './description';
 import { Heading } from './heading';
-import { authors } from '../authors';
 import { MetaWithLink, pickAuthor } from '../../lib/meta';
 
 export const BlogCardList = ({

@@ -34,17 +34,17 @@ In short, GraphQL gave the control back to the data consumers (mobile apps, web 
 
 However, starting in 2018, the GraphQL ecosystem started to grow, especially on the back-end side, where new horizons of GraphQL were developed.
 
-Many open-source actors started to propose solutions for unified schema/services orchestration, to name the major ones: [GraphQL Tools](https://www.graphql-tools.com/docs/introduction), [Apollo Federation](https://www.apollographql.com/docs/federation/), [Hasura](https://hasura.io/), [GraphQL Mesh](https://www.graphql-mesh.com/docs/getting-started/introduction).
+Many open-source actors started to propose solutions for unified schema/services orchestration, to name the major ones: [GraphQL Tools](https://graphql-tools.com/docs/introduction), [Apollo Federation](https://apollographql.com/docs/federation), [Hasura](https://hasura.io), [GraphQL Mesh](https://graphql-mesh.com/docs/getting-started/introduction).
 
 ![graphql gateway.png](/blog-assets/how-not-to-learn-graphql/how-not-to-learn-graphql-2.png)
 
-Rapidly, some companies started to offer enterprise solutions such as SaaS/PaaS to manage GraphQL schema at scale: [Apollo Studio](https://www.apollographql.com/docs/studio/), [AWS AppSync](https://aws.amazon.com/fr/appsync/), [Hasura Cloud](https://hasura.io/cloud/).
+Rapidly, some companies started to offer enterprise solutions such as SaaS/PaaS to manage GraphQL schema at scale: [Apollo Studio](https://apollographql.com/docs/studio), [AWS AppSync](https://aws.amazon.com/fr/appsync), [Hasura Cloud](https://hasura.io/cloud).
 
 ## GraphQL's path on back-end use-cases
 
 Not limited to services orchestration, GraphQL continued its goal to become the go-to language for data.
 
-Recent projects such as [GraphQL Mesh](https://www.graphql-mesh.com/) or products such as [Hasura Cloud](https://hasura.io/cloud/) proved that GraphQL has a purpose beyond the simple front-end/mobile apps fetching challenges.
+Recent projects such as [GraphQL Mesh](https://graphql-mesh.com) or products such as [Hasura Cloud](https://hasura.io/cloud) proved that GraphQL has a purpose beyond the simple front-end/mobile apps fetching challenges.
 
 Other actors, such as Neo4J, a historical graph database actor, [announced support for GraphQL](https://neo4j.com/developer/graphql/#_the_neo4j_graphql_library) as a data query language.
 
@@ -193,14 +193,14 @@ Nest.js is an excellent alternative for GraphQL APIs building for Angular design
 
 Nest.js is a great choice if you look into an opinionated and structured way to build your GraphQL APIs.
 
-On the other hand, other non-opinionated libraries such as [GraphQL Yoga](https://www.graphql-yoga.com/docs/quick-start) focus on bringing the best developer experience in building extensible GraphQL servers.
+On the other hand, other non-opinionated libraries such as [GraphQL Yoga](https://graphql-yoga.com/docs/quick-start) focus on bringing the best developer experience in building extensible GraphQL servers.
 
 GraphQL Yoga comes with a performant HTTP server that provides:
 
 - subscriptions over HTTP (SEE)
 - support for [`@defer` and `@stream`](https://github.com/graphql/graphql-js/pull/2839)
 - out of the box uploads and CORS capabilities
-- Extensible design with [the Envelop plugins system](https://www.graphql-yoga.com/docs/features/envelop-plugins)
+- Extensible design with [the Envelop plugins system](https://graphql-yoga.com/docs/features/envelop-plugins)
 - Apollo Federation support
 - Easy integration with Next.js, Svelte Kit, Cloudflare workers, and more!
 
@@ -301,7 +301,7 @@ Now, the fetched response **reflects the correct errors in a type-safe and coloc
 
 More details are available in the [Handling GraphQL errors like a champ with unions and interfaces](https://blog.logrocket.com/handling-graphql-errors-like-a-champ-with-unions-and-interfaces/) article.
 
-Note: _Error masking_ is also an excellent approach that does not require updating the schema: [https://www.graphql-yoga.com/docs/features/error-masking](https://www.graphql-yoga.com/docs/features/error-masking).
+Note: _Error masking_ is also an excellent approach that does not require updating the schema: [https://graphql-yoga.com/docs/features/error-masking](https://graphql-yoga.com/docs/features/error-masking).
 
 # Mistake #5: "Federation is the only viable way to compose schemas"
 
@@ -381,11 +381,11 @@ extend type Query {
 
 ### **Modern Stitching**
 
-Modern Stitching ([GraphQL Tools](https://www.graphql-tools.com/docs/schema-stitching/stitch-type-merging) v7+) is relying on a programmatic approach where **each subschema is totally independent**.
+Modern Stitching ([GraphQL Tools](https://graphql-tools.com/docs/schema-stitching/stitch-type-merging) v7+) is relying on a programmatic approach where **each subschema is totally independent**.
 
 Only the gateway must provide type merging information to indicate who must resolve fields shared across multiple services.
 
-After simply adding the `posts: [Post!]!` field to `User`, in the ”posts” subschema:
+After simply adding the `posts: [Post!]!` field to `User`, in the "posts" subschema:
 
 ```graphql
 # Posts subschema
@@ -535,12 +535,12 @@ export const schema = stitchSchemas({
 
 ## Modern Stitching architecture
 
-> [Schema Stitching](https://www.graphql-tools.com/docs/stitch-combining-schemas) (a component of [GraphQL Tools](https://www.graphql-tools.com/)[*v6 and under*]) got a bad rap when it was famously abandoned by Apollo in favor of their [Federation](https://www.apollographql.com/docs/federation/) architecture some years back.
-> However, Stitching came under the stewardship of [The Guild](https://the-guild.dev/) and friends in 2020, and they've since overhauled it with numerous automation and performance enhancements. Seemingly out of nowhere, Schema Stitching has reemerged as something of a nimble hummingbird racing alongside the stallion that is Apollo Federation.
+> [Schema Stitching](https://graphql-tools.com/docs/stitch-combining-schemas) (a component of [GraphQL Tools](https://graphql-tools.com/)[*v6 and under*]) got a bad rap when it was famously abandoned by Apollo in favor of their [Federation](https://apollographql.com/docs/federation) architecture some years back.
+> However, Stitching came under the stewardship of [The Guild](/) and friends in 2020, and they've since overhauled it with numerous automation and performance enhancements. Seemingly out of nowhere, Schema Stitching has reemerged as something of a nimble hummingbird racing alongside the stallion that is Apollo Federation.
 
 [https://product.voxmedia.com/2020/11/2/21494865/to-federate-or-stitch-a-graphql-gateway-revisited](https://product.voxmedia.com/2020/11/2/21494865/to-federate-or-stitch-a-graphql-gateway-revisited)
 
-While initial Schema Stitching implementation (similar to Schema Extensions) had verbose configuration and performance issues (lack of batching), the Modern Stitching ([GraphQL Tools](https://www.graphql-tools.com/docs/schema-stitching/stitch-type-merging) v7+) relies on Type Merging that provides great performance and developer experience.
+While initial Schema Stitching implementation (similar to Schema Extensions) had verbose configuration and performance issues (lack of batching), the Modern Stitching ([GraphQL Tools](https://graphql-tools.com/docs/schema-stitching/stitch-type-merging) v7+) relies on Type Merging that provides great performance and developer experience.
 
 Let's review the main features of Modern Stitching and how it differentiates from Federation.
 
@@ -598,7 +598,7 @@ query UserPosts {
 
 We need to add the `postsByUserId(userId: ID!)` query to resolve the `User` type on the "Posts" service.
 
-As explained in the [GraphQL Tools v7+ documentation](https://www.graphql-tools.com/docs/schema-stitching/stitch-type-merging#merging-flow), here is the merging flow performed when processing the `UserPosts` operation:
+As explained in the [GraphQL Tools v7+ documentation](https://graphql-tools.com/docs/schema-stitching/stitch-type-merging#merging-flow), here is the merging flow performed when processing the `UserPosts` operation:
 
 ![Untitled](/blog-assets/how-not-to-learn-graphql/how-not-to-learn-graphql-3.png)
 
@@ -686,9 +686,7 @@ query {
 }
 ```
 
-Those two features ([Batching](https://www.graphql-tools.com/docs/schema-stitching/stitch-type-merging#batching) and [Query batching](https://www.graphql-tools.com/docs/batch-execution)) significantly improve the performance of a Modern Stitching architecture at scale.
-
-<br />
+Those two features ([Batching](https://graphql-tools.com/docs/schema-stitching/stitch-type-merging#batching) and [Query batching](https://graphql-tools.com/docs/batch-execution)) significantly improve the performance of a Modern Stitching architecture at scale.
 
 ### **The flexibility of server implementations: no subscriptions limitation**
 

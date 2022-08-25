@@ -43,7 +43,6 @@ export const YouTube = ({
         <iframe
           title={`youTube-${youTubeId}`}
           src={`https://www.youtube.com/embed/${youTubeId}?&autoplay=${autoPlay}&start=${startTime}`}
-          frameBorder="0"
           allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           style={{
