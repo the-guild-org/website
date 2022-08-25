@@ -30,13 +30,13 @@ There are two ways you can understand our challenges:
 - [Go and play the game](http://geo-strike.com) — Feel free to open the network tab on the dev tools and look at the `subscriptions` websocket frames.
 - Read what our game is all about.
 
-![](/blog-assets/graphql-geo-strike/gameplay.webm)
+<Video src="/blog-assets/graphql-geo-strike/gameplay.webm" />
 
 For those of you that have not played the game (yet!) I'll explain a bit what it is.
 
 Our game is a multiplayer shooting game that is taking place in the vicinity of the Times Square. The game mode is a "team deathmatch" battle where you spawn on the map with your team, and you need to find and shoot the other team's players. The winning team is the one that stayed alive while the other team's players are dead. If you die, you can only view the rest of the game from a bird's eye view.
 
-![](/blog-assets/graphql-geo-strike/map.webm)
+<Video src="/blog-assets/graphql-geo-strike/map.webm" />
 
 We use CesiumJS — a Google Earth like, open source, mapping engine — as our scene, so when I say the game takes place in the Times Square, It's an actual representation of the Times Square with the buildings being streamed to the client using Cesium's 3d Tiles. As a matter of fact, there is nothing keeping you at the Times Square only, you can wonder off to anywhere on earth. Keep in mind that you will be able to see buildings only in Manhattan.
 
@@ -48,7 +48,7 @@ In order to do just that, we decided that our game server will be the only sourc
 
 It ended up looking like so:
 
-![](/blog-assets/graphql-geo-strike/structure.png)
+![](../../public/blog-assets/graphql-geo-strike/structure.png)
 
 Some parts of this graph will change very rapidly (~10 times a sec) and some parts of it will change rarely. Getting to this realization we decided to expose this graph with both Query type for less frequently changed data and Subscription type for higher rate changes.
 
@@ -56,13 +56,13 @@ This gives the client the flexibility to decide what parts of the data graph he 
 
 In our game, this subscription query turned out to be the only parts we need updated frequently:
 
-![](/blog-assets/graphql-geo-strike/game-state.png)
+![](../../public/blog-assets/graphql-geo-strike/game-state.png)
 
 At the beginning we went with the naive implementation and set things up so that we will get any change made by any client as it happens. Basically publish on the mutation resolver. But we quickly realized this is not a good approach as this is not very scalable and we, quickly over-stress our graphql server.
 
 The approach we decided on taking is usually referred to as “game tick”. We set up a timer that triggers every 200ms and publishes the game state to the gameData subscription. This was one of the most significant changes we made to allow for low latency, in our state synchronization process, and it was done with a couple lines of code, thanks to the way GraphQL subscriptions work.
 
-![](/blog-assets/graphql-geo-strike/game-flow.png)
+![](../../public/blog-assets/graphql-geo-strike/game-flow.png)
 
 Not only that we were able to reduce latency, we were also able to scale the number of players quite easily.
 
@@ -74,7 +74,7 @@ But for those challenges, Apollo and `angular-apollo` had us covered! Apollo cli
 
 `angular-apollo` exposes the state as a Rx Observable which allowed us to plug that stream to our amazing angular-cesium framework and have the players magically move and update on a 3d scene rendered with CesiumJS!
 
-![](/blog-assets/graphql-geo-strike/game-client.png)
+![](../../public/blog-assets/graphql-geo-strike/game-client.png)
 
 # Not just one subscription
 
@@ -84,7 +84,7 @@ After analyzing our graph, we determined that there are two such events. Shootin
 
 # Further improvements
 
-![](/blog-assets/graphql-geo-strike/pov.png)
+![](../../public/blog-assets/graphql-geo-strike/pov.png)
 
 As our game is played on the same size scene as our own earth, we cannot help but thinking of future game modes where whole armies could play one against the other to take over / save the world!
 

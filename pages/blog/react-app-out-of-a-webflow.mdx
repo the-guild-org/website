@@ -23,7 +23,7 @@ On the next morning, I've received an email by my client's designer with all the
 
 The HTML files were big and massive, with lots of duplicated parts in it, the CSS was just a one big global style sheet with all the rules (that were very generic), and the images just had random machine generated names. When I started to tear it apart into React components, I've called my client after few hours of trial and canceled the plan; since the budget was limited, and I wasn't willing to spend so much time on a project with a very little value in return.
 
-![](/medium/50ea860594889aa4f1b96a509c886b9c.jpg)
+![](../../public/medium/50ea860594889aa4f1b96a509c886b9c.jpg)
 
 > _Above: A Webflow page whose HTML file can be found [here](https://gist.github.com/DAB0mB/1979ac9cfa5fbe52e6375d80841200ae). Credit: [campaignkit.co](https://campaignkit.co)._
 >
@@ -43,7 +43,7 @@ sudo npm install appfairy -g
 
 Now let's think of what React components should exist in our application besides the main pages. Once we identify them we should select their corresponding element in the Webflow project and set a new attribute; the key's going to be `af-el` (Appfairy element) and the value should be set to the name of the component e.g. `consult-form`:
 
-![](/medium/4133a89b94c1797a726c64732a6acb4a.jpg)
+![](../../public/medium/4133a89b94c1797a726c64732a6acb4a.jpg)
 
 > _Above: Selecting the element and setting its attribute_
 
@@ -56,13 +56,13 @@ Since Webflow's code is machine generated and for the most part is not optimal, 
 
 To solve that problem, Appfairy takes on an old school approach where we separate the component into a view and a controller, where we treat the view as a black-box and don't touch it while the controller is controlling what's going on in there; it would tell the view what to render, when to render, and how to render.
 
-![](/medium/31360e1c8ab84c672e68d7faa4af0846.jpg)
+![](../../public/medium/31360e1c8ab84c672e68d7faa4af0846.jpg)
 
 In the picture above we have a schematic description which shows the view/controller flow. In a brief, the controller holds elements which are proxies to the real elements, so whatever we pass to the proxy will be forwarded automatically to the real element. A proxy and an element can be matched based on the socket name (`af-sock`), which opens an interfacing point to the view by any given controller.
 
 So back to our ConsultantForm in our Webflow project example, let's think which elements should be bound to a certain logic. Generally speaking, a form has several input fields and a submit button, which will submit the data received by the inputs, therefore we would probably apply logic to these elements in our React controller components. Accordingly, we will define socket attributes to each of the elements with distinct names:
 
-![](/medium/9cf1c0081093630fe6dfeeab6055e0d3.jpg)
+![](../../public/medium/9cf1c0081093630fe6dfeeab6055e0d3.jpg)
 
 Our Webflow project is now ready for migration! To do so, we will first need to create a directory named `.appfairy` in the root of our project:
 
@@ -72,7 +72,7 @@ mkdir .appfairy
 
 This directory is used by Appfairy as an input for the CLI function, which means that we will need to export our project and extract the generated zip file's content into the directory we've just created:
 
-![](/medium/da0137e3b38b30be41a5c32479e3c4cd.jpg)
+![](../../public/medium/da0137e3b38b30be41a5c32479e3c4cd.jpg)
 
 ```sh
 unzip ~/Downloads/project.webflow.zip -d .appfairy
@@ -158,7 +158,7 @@ export default ConsultFormController
 
 That's it! Now you can just import the controller and use it anywhere and anytime you want, without having to deal with the hustle of maintaining a complex machine generated Webflow code; and any time you update the design just update your code using the `appfairy` command.
 
-![](/medium/55d6dee0027f11ee6061a0e3e140c028.webm)
+<Video src="/medium/55d6dee0027f11ee6061a0e3e140c028.webm" />
 
 > _Above: An example usage of an Appfairy generated React component_
 
