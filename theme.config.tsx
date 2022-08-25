@@ -2,7 +2,7 @@ import { DocsThemeConfig, useConfig } from '@theguild/components';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Callout } from 'nextra-theme-docs';
-import { NextSeo } from 'next-seo';
+import { ArticleJsonLd, NextSeo } from 'next-seo';
 import { BlogCardList, Newsletter, Video } from '@/components';
 import { MetaWithLink } from './lib/meta';
 import blogsMeta from './dist/blogs-meta.json';
@@ -27,16 +27,52 @@ const config: DocsThemeConfig = {
   logo: null,
   head: function Head() {
     const { title, meta: frontMatter } = useConfig();
+    const { route } = useRouter();
     const description = frontMatter.description || `${SITE_NAME}: Modern API Platform and Ecosystem that scales`;
     const image = frontMatter.image || '/img/ogimage.png';
     console.log({ image }, frontMatter.image);
+
+    const head = route.startsWith('/newsletter/') ? (
+      <>
+        <NextSeo
+          title={title}
+          description={description}
+          openGraph={{
+            title,
+            images: [{ url: 'https://the-guild.dev/img/ogimage.png' }],
+            article: {
+              authors: ['The Guild'],
+              publishedTime: new Date(frontMatter.date).toISOString(),
+              modifiedTime: new Date(frontMatter.date).toISOString(),
+              tags: ['newsletter', 'graphql'],
+            },
+          }}
+        />
+        <ArticleJsonLd
+          title={title}
+          description={description}
+          url={`https://the-guild.dev${route}`}
+          publisherName="The Guild"
+          publisherLogo="https://the-guild.dev/static/logo.svg"
+          authorName="The Guild"
+          datePublished={new Date(frontMatter.date).toISOString()}
+          dateModified={new Date(frontMatter.date).toISOString()}
+          images={['https://the-guild.dev/img/ogimage.png']}
+        />
+      </>
+    ) : (
+      <NextSeo title={title} description={description} openGraph={{ images: [{ url: ensureAbsolute(image) }] }} />
+    );
+
     return (
       <>
+        {head}
         <meta name="og:title" content={title} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content={description} />
         <meta property="og:site_name" content="the-guild.dev" key="ogsitename" />
-        <NextSeo title={title} description={description} openGraph={{ images: [{ url: ensureAbsolute(image) }] }} />
+        <link rel="canonical" href={`https://the-guild.dev${route}`} />
+        <meta name="twitter:card" content="summary_large_image" />
       </>
     );
   },
