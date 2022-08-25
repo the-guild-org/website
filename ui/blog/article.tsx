@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { format } from 'date-fns';
-import { useConfig } from '@theguild/components';
+import { useConfig, Anchor } from '@theguild/components';
 import { Image, Avatar, TagList } from '@/components';
 import { LookingForExperts } from '@/looking-for-experts';
 import { AUTHORS } from '@/authors';
@@ -18,13 +18,13 @@ const Authors = ({ meta }: { meta: Meta }): ReactElement => {
 
     return (
       <div className="my-5 flex flex-row items-center justify-center">
-        <a href={author.link} title={author.name}>
+        <Anchor href={author.link} title={author.name}>
           <Avatar author={author} />
-        </a>
+        </Anchor>
         <div className="ml-2.5 flex flex-col">
-          <a href={author.link} title={author.name} className="text-[#1cc8ee]">
+          <Anchor href={author.link} title={author.name} className="text-[#1cc8ee]">
             {author.name}
-          </a>
+          </Anchor>
           <time
             dateTime={date.toISOString()}
             title={
@@ -56,10 +56,10 @@ const Authors = ({ meta }: { meta: Meta }): ReactElement => {
           const author = AUTHORS[authorId];
           return (
             <div key={authorId}>
-              <a href={author.link} title={author.name}>
+              <Anchor href={author.link} title={author.name}>
                 <Avatar author={author} />
                 <span className="ml-2.5 text-sm text-[#1cc8ee]">{author.name}</span>
-              </a>
+              </Anchor>
             </div>
           );
         })}

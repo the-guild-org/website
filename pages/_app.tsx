@@ -55,10 +55,9 @@ export default class MyApp extends App {
             height: 100%;
           }
 
-          html {
-            /* For smooth scrolling effect when click on '#' hash links */
-            scroll-behavior: smooth;
-          }
+          ${router.route === '/'
+            ? `/* For smooth scrolling effect when click on '#' hash links */ html { scroll-behavior: smooth }`
+            : ''}
 
           body {
             z-index: -1; /* needs for blue and pink circles */

@@ -22,7 +22,7 @@ I felt like sharing this experience is really valuable, and the current state of
 
 This post is intended to work as a guide to support both CommonJS **and** ESM and will be updated accordingly in the future as needed, and one key feature to be able to make this happens, is the `package.json` `exports` field.
 
-## "exports"
+## `exports` field
 
 The official Node.js documentation about it is available [here](https://nodejs.org/api/packages.html#packages_exports), but the most interesting section is [Conditional exports](https://nodejs.org/api/packages.html#packages_conditional_exports), which enables libraries to support both CommonJS and ESM:
 
@@ -40,7 +40,7 @@ This field basically tells Node.js what file to use when importing/requiring the
 
 But very often you will encounter the situation that a library can (and should, in my opinion) ship the library keeping their file structure, which allows for the library user to import/require only the modules they need for their application, or simply for the fact that a library can have more than a single entry-point.
 
-For the reason just mentioned, the standard "package.exports" should look something like this (even for single entry-point libraries, it won't hurt in any way):
+For the reason just mentioned, the standard `package.json#exports` should look something like this (even for single entry-point libraries, it won't hurt in any way):
 
 > Assuming that the build/compilation/transpilation is outputted into the "dist" folder
 
@@ -89,22 +89,22 @@ If you don't want to break backward compatibility on import/require with the exp
 }
 ```
 
-## Using the ".mjs" extension
+## Using the `.mjs` extension
 
 To add support ESM for Node.js, you have two alternatives:
 
-1. build your library into [ESM Compatible](#esm-compatible) modules with the extension ".mjs", and keep the CommonJS version with the standard ".js" extension
-2. build your library into [ESM Compatible](#esm-compatible) modules with the extension ".js", set `"type": "module"`, and the CommonJS version of your modules with the ".cjs" extension.
+1. build your library into [ESM Compatible](#esm-compatible) modules with the extension `.mjs`, and keep the CommonJS version with the standard `.js` extension
+2. build your library into [ESM Compatible](#esm-compatible) modules with the extension `.js`, set `"type": "module"`, and the CommonJS version of your modules with the `.cjs` extension.
 
-Clearly using the ".mjs" extension is the cleaner solution, and everything should work just fine.
+Clearly using the `.mjs` extension is the cleaner solution, and everything should work just fine.
 
 ## ESM Compatible
 
 This section assumes that your library is written in TypeScript or has at least has a transpilation process, if your library is targeting the browser and/or React.js, it most likely already does.
 
-Building for a library to be compatible with ESM might not be as straight-forward as we would like, and it's for the simple fact that in the pure ESM world, `require` doesn't exists, as simple as that, **You will need to refactor any "require" into "import"**.
+Building for a library to be compatible with ESM might not be as straight-forward as we would like, and it's for the simple fact that in the pure ESM world, `require` doesn't exists, as simple as that, **You will need to refactor any `require` into `import`**.
 
-### Changing "require"
+### Changing `require`
 
 If you have a top-level `require`, changing it to ESM should be straight-forward:
 
@@ -215,13 +215,13 @@ There is a relatively small but effective way of automated testing for all the t
 
 ## TypeScript
 
-In regards to TypeScript supporting ESM, it divides into two subjects:
+In regard to TypeScript supporting ESM, it divides into two subjects:
 
-### Support for "exports"
+### Support for `exports`
 
 Until this issue [TypeScript#33069](https://github.com/microsoft/TypeScript/issues/33079) is closed, TypeScript doesn't have complete support for it, fortunately, there are 2 workarounds:
 
-- Using "typesVersions"
+- Using `typesVersions`
 
 The original usage for this TypeScript feature [was not for this purpose](https://typescriptlang.org/docs/handbook/declaration-files/publishing.html#version-selection-with-typesversions), but it works, and it's a fine workaround until TypeScript actually supports it
 
@@ -238,7 +238,7 @@ The original usage for this TypeScript feature [was not for this purpose](https:
 
 - Publishing a modified version of the package
 
-This method requires tooling and/or support from the package manager. For example, using the package.json field `publishConfig.directory`, [pnpm supports it](https://pnpm.io/package_json#publishconfigdirectory) and [lerna publish as well](https://github.com/lerna/lerna/tree/main/commands/publish#publishconfigdirectory). This allows you to publish a modified version of the package that can contain a modified version of the "exports", following the types with the file structure in the root, and TypeScript will understand it without needing to specify anything special in the package.json for it to work.
+This method requires tooling and/or support from the package manager. For example, using the package.json field `publishConfig.directory`, [pnpm supports it](https://pnpm.io/package_json#publishconfigdirectory) and [lerna publish as well](https://github.com/lerna/lerna/tree/main/commands/publish#publishconfigdirectory). This allows you to publish a modified version of the package that can contain a modified version of the `exports`, following the types with the file structure in the root, and TypeScript will understand it without needing to specify anything special in the package.json for it to work.
 
 ```json filename="dist/package.json"
 {
@@ -257,7 +257,7 @@ This method requires tooling and/or support from the package manager. For exampl
 
 > In [The Guild](/) we use this method using tooling that creates the temporary package.json automatically. See [bob-the-bundler](https://github.com/kamilkisiela/bob) & [bob-esbuild](https://github.com/PabloSzx/bob-esbuild)
 
-### Support for ".mjs" output
+### Support for `.mjs` output
 
 Currently, the TypeScript compiler can't output `.mjs`, Check the issue [TypeScript#18442](https://github.com/microsoft/TypeScript/issues/18442).
 
