@@ -3,24 +3,23 @@ title: Add reactivity to an existing source using GraphQL Mesh
 author: jycouet
 tags: [graphql, graphql-mesh, subscription]
 date: 2020-12-15
-description: How To extend an existing endpoint with subscriptions to bring reactivity to your application
+description: How To extend an existing endpoint with subscriptions to bring reactivity to your application.
 image: /blog-assets/add-reactivity-to-an-existing-source/PimpMyGraphQL.jpg
 ---
 
 import { Video } from '@/components'
-import { Callout } from '@theguild/components'
 import { Article } from '@/blog/article'
 
 <Article />
 
-# Introduction
+## Introduction
 
 Working on the [code generator for svelte plugin](https://github.com/ticruz38/graphql-codegen-svelte-apollo), I was looking for a public graphQL endpoint having queries, mutations and subscriptions for nice examples.
 Unfortunately I didn't find anything out of the box, ready to use for my demos. So I decided to extend an existing source!
 
-# Starting point
+## Starting point
 
-Across my researches I found one cool public endpoint regarding [SpaceX](https://api.spacex.land/graphql/). It has `Queries` and `Mutations` ready to use!
+Across my researches I found one cool public endpoint regarding [SpaceX](https://api.spacex.land/graphql). It has `Queries` and `Mutations` ready to use!
 So I decided to pimp this endpoint, and bring a bit of reactivity with subscriptions.
 
 The idea is to publish the new user when it's inserted with this `mutation`:
@@ -51,23 +50,23 @@ _Multiple ways are possible!_
   Thanks to `graphql-mesh`, it's dead easy! 🚀🚀🚀
 </details>
 
-1. Create a new repo
+### 1. Create a new repo
 
-```bash
+```sh
 mkdir newRepo
 cd newRepo
 yarn init
 ```
 
-2. Add `graphql-mesh` packages
+### 2. Add `graphql-mesh` packages
 
-```bash
+```sh
 yarn add @graphql-mesh/cli @graphql-mesh/graphql @graphql-mesh/transform-resolvers-composition graphql
 ```
 
-3. Add `.meshrc.yaml` file in the root folder with
+### 3. Add `.meshrc.yaml` file in the root folder with
 
-```yaml
+```yaml filename=".meshrc.yaml"
 sources:
   - name: spacexGQL
     handler:
@@ -96,9 +95,9 @@ Where I
 - extend `Subscription` to listen to user added users
 - compose the existing `Mutation.insert_users`
 
-4. Add `./src/composition/insert_user.js` file with all the logic for this new mutation composition.
+### 4. Add `./src/composition/insert_user.js` file with all the logic for this new mutation composition.
 
-```js
+```js filename="insert_user.js"
 module.exports = (next) => async (root, args, context, info) => {
   // add returning.id to the selection
   info.operation.selectionSet.selections[0].selectionSet.selections.push({
@@ -156,16 +155,19 @@ module.exports = (next) => async (root, args, context, info) => {
 
 That's it!
 
-# Wrap up
+## Wrap up
 
 - Extending an endpoint with subscription is easy! _Thx to tooling._
 
-- You can find the source on [github](https://github.com/jycouet/space-x-land-with-sub).
+- You can find the source on [GitHub](https://github.com/jycouet/space-x-land-with-sub)
 
-- You see all this in action directly in the [playground](https://space-x-land-with-sub.herokuapp.com/)
+- You see all this in action directly in the [playground](https://space-x-land-with-sub.herokuapp.com)
 
 I'm now ready to work on the demo for [**Svelte Codegen**](https://github.com/ticruz38/graphql-codegen-svelte-apollo)! Stay tunned ;)
 
-[//JYC](https://twitter.com/jycouet)
+[@jycouet](https://twitter.com/jycouet)
 
-_Special thanks to [n1ru4l](https://twitter.com/n1rual) who helped me finding the nicest way to do it ;)_
+<Callout>
+  Special thanks to [n1ru4l](https://twitter.com/n1rual) who helped me find the
+  nicest way to do it ;)
+</Callout>
