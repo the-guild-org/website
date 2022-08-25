@@ -1,6 +1,5 @@
 import { ReactElement } from 'react';
 import { GetStaticProps } from 'next/types';
-import { Page } from '@/shared/Page';
 import { Newsletter, Heading, BlogCardList, TagList } from '@/components';
 import { HeroSection } from '@/hero-section';
 import { MetaWithLink } from '../lib/meta';
@@ -11,8 +10,10 @@ interface Props {
   tagFilter?: string[];
 }
 
+const Page = ({ children }) => children;
+
 function extractRelevantTags(articles: Props['articles']) {
-  const allTags = articles.flatMap((article) => article.tags || []);
+  const allTags = articles.flatMap(article => article.tags || []);
 
   const map: Record<string, number> = Object.create(null);
 
@@ -47,9 +48,7 @@ const Blog = ({ articles, tagFilter }: Props): ReactElement => {
   const tagFilters = tagFilter?.join(', ');
   const allTags = extractRelevantTags(articles);
 
-  const title = tagFilters
-    ? `The Guild Blog - ${tagFilters}`
-    : 'The Guild Blog';
+  const title = tagFilters ? `The Guild Blog - ${tagFilters}` : 'The Guild Blog';
   const description = tagFilters
     ? `List of articles related to ${tagFilters}`
     : 'Announcements about our Open-Source projects';

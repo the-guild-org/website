@@ -64,7 +64,7 @@ const config: DocsThemeConfig = {
     //   setSimilarArticles(newSimilarArticles);
     // }, [tags, route]);
 
-    if (!route.startsWith('/blog/')) {
+    if (!route.startsWith('/blog/') && !route.startsWith('/newsletter/')) {
       return null;
     }
 
