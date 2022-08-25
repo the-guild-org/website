@@ -30,10 +30,7 @@ class Hello extends React.Component {
   }
 }
 
-ReactDOM.render(
-  jsx`<${Hello} name="World" />`,
-  document.getElementById('container')
-)
+ReactDOM.render(jsx`<${Hello} name="World" />`, document.getElementById('container'))
 ```
 
 Before we go ahead and rush to implementing the parser let's understand what we're aiming for. JSX simply takes an HTML-like syntax and transforms it into nested `React.createElement()` calls. What makes JSX unique is that we can use string interpolation within our HTML templates, so we can provide it with data which doesn't necessarily has to be serialized, things like functions, arrays, or objects.
@@ -41,7 +38,7 @@ Before we go ahead and rush to implementing the parser let's understand what we'
 So given the following code:
 
 ```jsx
-const el = (props) => (
+const el = props => (
   <div onClick={props.onClick}>
     <Icon src={props.icon} />
     <span>{props.text}</span>
@@ -52,7 +49,7 @@ const el = (props) => (
 We should get the following output once compiling it with Babel:
 
 ```javascript
-const el = (props) =>
+const el = props =>
   React.createElement(
     'div',
     { onClick: props.onClick },
@@ -368,7 +365,7 @@ The HTML parsing part is finished! Now we can call the `parseElement()` for any 
 
 Now we're going to add string interpolation on top of the HTML string parsing logic. Since we still want to use the power of regexp at its full potential, we're going to assume that the given string would be a template with placeholders, where each of them should be replaced with a value. That would be the easiest and most efficient way, rather than accepting an array of string splits.
 
-```javascript
+```text
 [
   '<__jsxPlaceholder>Hello __jsxPlaceholder</__jsxPlaceholder>',
   [MyComponent, 'World', MyComponent]
@@ -602,7 +599,7 @@ At this point we should have a function which can transform a JSX code into an A
 
 The main function of the module should be called with a template tag. If you went through the previous step, you should know that a consistent string has an advantage over an array of splits of strings, since we can unleash the full potential of a regexp with ease. Accordingly, we will take all the given splits and join them with the `placeholder` constant.
 
-```js
+```text
 ['<', '> Hello ', '</', '>'] // '<__jsxPlaceholder>Hello __jsxPlaceholder</__jsxPlaceholder>'
 ```
 

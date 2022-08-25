@@ -36,15 +36,15 @@ export const getStaticProps = async () => {
     props: {
       ssg: {
         articles: await getAllArticles()
-      },
-    },
-  };
-};
+      }
+    }
+  }
+}
 
 export default function Blog() {
   const { articles, tagFilter } = useSSG()
-  const tagFilters = tagFilter?.join(', ');
-  const allTags = extractRelevantTags(articles);
+  const tagFilters = tagFilter?.join(', ')
+  const allTags = extractRelevantTags(articles)
   return (
     <>
       <HeroSection>
@@ -56,5 +56,5 @@ export default function Blog() {
         <BlogCardList articles={articles} />
       </div>
     </>
-  );
+  )
 }
