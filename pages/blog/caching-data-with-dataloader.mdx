@@ -106,16 +106,16 @@ The reason we write types is for type safety, let's say we have books and toys w
 
 ```ts
 const dataLoader = new DataLoader<packageId, PackageData>(
-  async (/* (1) */keys: readonly packageId[]) => { /* (2) */
-    return await Promise.all(
-      keys.map(async (packageId) => {
-        await getData(packageId).catch((e) => e);
+  async (/* (1) */ keys: readonly packageId[]) =>
+    /* (2) */ Promise.all(
+      keys.map(async packageId => {
+        await getData(packageId).catch(e => e)
       })
-    );
-  }, {
+    ),
+  {
     cacheMap: new LRUMap(100) /* (3) */
   }
-);
+)
 ```
 
 As you can see, we give the keys that the user asks for to the dataloader (1).

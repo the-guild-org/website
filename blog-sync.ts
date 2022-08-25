@@ -18,13 +18,9 @@ const files = globbySync('*.mdx', {
   cwd: baseDir,
 });
 
-const processor = unified()
-  .use(parse, { position: false })
-  .use(stringify)
-  .use(mdx)
-  .use(extractMeta);
+const processor = unified().use(parse, { position: false }).use(stringify).use(mdx).use(extractMeta);
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function syncToDevTo(items) {
   console.log(`=== Syncing ${items.length} articles to dev.to... ===`);
@@ -37,27 +33,18 @@ async function syncToDevTo(items) {
   for (const item of items) {
     try {
       const canonicalUrl = item.meta.canonical || item.canonical;
-      const exists = allArticles.find((t) => t.canonicalUrl === canonicalUrl);
-      const author =
-        AUTHORS[
-          Array.isArray(item.meta.authors)
-            ? item.meta.authors[0]
-            : item.meta.author
-        ];
+      const exists = allArticles.find(t => t.canonicalUrl === canonicalUrl);
+      const author = AUTHORS[Array.isArray(item.meta.authors) ? item.meta.authors[0] : item.meta.author];
       const markdown = `> This article was published on ${item.meta.date} by [${author.name}](${author.link}) @ [The Guild Blog](https://the-guild.dev/)\n\n${item.markdown} `;
       const image = item.meta.image
         ? item.meta.image.startsWith('/')
           ? `https://the-guild.dev${item.meta.image}`
           : item.meta.image
         : undefined;
-      const tags = (item.meta.tags || [])
-        .map((t) => t.replace(/[-_ ]/g, ''))
-        .slice(0, 4);
+      const tags = (item.meta.tags || []).map(t => t.replace(/[-_ ]/g, '')).slice(0, 4);
 
       if (exists) {
-        console.log(
-          `Article "${item.meta.title}" already exists, updating if needed...`
-        );
+        console.log(`Article "${item.meta.title}" already exists, updating if needed...`);
 
         if (exists.bodyMarkdown !== markdown) {
           console.log(`   -> Updating...`);
@@ -73,9 +60,7 @@ async function syncToDevTo(items) {
             },
           });
           console.log(`   -> Done!`);
-          console.log(
-            `... waiting before next request to avoid rate-limit ...`
-          );
+          console.log(`... waiting before next request to avoid rate-limit ...`);
           await sleep(30 * 1000);
         } else {
           console.log(`   -> Up to date!`);
@@ -158,9 +143,7 @@ function extractMeta() {
             enter(node) {
               if (node.type === 'Property') {
                 meta[node.key.name] =
-                  node.value.type === 'ArrayExpression'
-                    ? node.value.elements.map((n) => n.value)
-                    : node.value.value;
+                  node.value.type === 'ArrayExpression' ? node.value.elements.map(n => n.value) : node.value.value;
               }
             },
           });
@@ -169,9 +152,7 @@ function extractMeta() {
             enter(node) {
               if (node.type === 'Property') {
                 embedOptions[node.key.name] =
-                  node.value.type === 'ArrayExpression'
-                    ? node.value.elements.map((n) => n.value)
-                    : node.value.value;
+                  node.value.type === 'ArrayExpression' ? node.value.elements.map(n => n.value) : node.value.value;
               }
             },
           });
@@ -180,9 +161,7 @@ function extractMeta() {
         return;
       } else if (node.type === 'mdxJsxFlowElement') {
         if (node.name === 'Gfycat') {
-          const gifId = node.attributes
-            .find((a) => a.name === 'gifId')
-            .value.value.replace(/['"]/g, '');
+          const gifId = node.attributes.find(a => a.name === 'gifId').value.value.replace(/['"]/g, '');
 
           parent.children.splice(index, 1, {
             type: 'text',
@@ -190,7 +169,7 @@ function extractMeta() {
             position: node.position,
           });
         } else if (node.name === 'iframe') {
-          const src = node.attributes.find((a) => a.name === 'src').value;
+          const src = node.attributes.find(a => a.name === 'src').value;
 
           if (src && src.includes('youtube')) {
             const parts = src.split('/');
@@ -203,9 +182,7 @@ function extractMeta() {
             });
           }
         } else if (node.name === 'LinkPreview') {
-          const link = node.attributes
-            .find((a) => a.name === 'link')
-            .value.replace(/['"]/g, '');
+          const link = node.attributes.find(a => a.name === 'link').value.replace(/['"]/g, '');
 
           parent.children.splice(index, 1, {
             type: 'text',
@@ -213,9 +190,7 @@ function extractMeta() {
             position: node.position,
           });
         } else if (node.name === 'Tweet') {
-          const tweetLink = node.attributes
-            .find((a) => a.name === 'tweetLink')
-            .value.replace(/['"]/g, '');
+          const tweetLink = node.attributes.find(a => a.name === 'tweetLink').value.replace(/['"]/g, '');
           const parts = tweetLink.split('/');
           const tweetId = parts[parts.length - 1];
 
@@ -227,9 +202,7 @@ function extractMeta() {
             });
           }
         } else if (node.name === 'YouTube') {
-          const youTubeId = node.attributes
-            .find((a) => a.name === 'youTubeId')
-            .value.replace(/['"]/g, '');
+          const youTubeId = node.attributes.find(a => a.name === 'youTubeId').value.replace(/['"]/g, '');
 
           parent.children.splice(index, 1, {
             type: 'text',
@@ -237,37 +210,25 @@ function extractMeta() {
             position: node.position,
           });
         } else if (node.name === 'StackBlitz') {
-          const stackBlitzId = node.attributes
-            .find((a) => a.name === 'stackBlitzId')
-            .value.replace(/['"]/g, '');
-          const file = node.attributes
-            .find((a) => a.name === 'file')
-            .value?.replace(/['"]/g, '');
+          const stackBlitzId = node.attributes.find(a => a.name === 'stackBlitzId').value.replace(/['"]/g, '');
+          const file = node.attributes.find(a => a.name === 'file').value?.replace(/['"]/g, '');
 
           parent.children.splice(index, 1, {
             type: 'text',
-            value: `{% stackblitz ${stackBlitzId} ${
-              file ? `file=${file}` : ''
-            } %}`,
+            value: `{% stackblitz ${stackBlitzId} ${file ? `file=${file}` : ''} %}`,
             position: node.position,
           });
         } else if (node.name === 'CodeSandbox') {
-          const boxId = node.attributes
-            .find((a) => a.name === 'codeSandboxId')
-            .value.value.replace(/['"]/g, '');
+          const boxId = node.attributes.find(a => a.name === 'codeSandboxId').value.value.replace(/['"]/g, '');
           const childEmbedOptions = {};
-          const childEmbedOptionsNode = node.attributes.find(
-            (a) => a.name === 'embedOptions'
-          );
+          const childEmbedOptionsNode = node.attributes.find(a => a.name === 'embedOptions');
 
           if (childEmbedOptionsNode) {
             walk(childEmbedOptionsNode.value.data.estree, {
               enter(node) {
                 if (node.type === 'Property') {
                   childEmbedOptions[node.key.name] =
-                    node.value.type === 'ArrayExpression'
-                      ? node.value.elements.map((n) => n.value)
-                      : node.value.value;
+                    node.value.type === 'ArrayExpression' ? node.value.elements.map(n => n.value) : node.value.value;
                 }
               },
             });
@@ -280,7 +241,7 @@ function extractMeta() {
 
           if (boxId.startsWith('github/')) {
             const optionsQueryString = Object.keys(allEmbedOptions)
-              .map((k) => `${k}=${allEmbedOptions[k]}`)
+              .map(k => `${k}=${allEmbedOptions[k]}`)
               .join('&');
 
             parent.children.splice(index, 1, {
@@ -290,10 +251,8 @@ function extractMeta() {
             });
           } else {
             const optionsQueryString = Object.keys(allEmbedOptions)
-              .filter((k) =>
-                ['module', 'runonclick', 'initialpath'].includes(k)
-              )
-              .map((k) => {
+              .filter(k => ['module', 'runonclick', 'initialpath'].includes(k))
+              .map(k => {
                 const [item] = allEmbedOptions[k].split(',');
 
                 return `${k}=${item.startsWith('/') ? item.substr(1) : item}`;

@@ -20,9 +20,7 @@ export async function getAllNewsletters(): Promise<NewsletterMetaWithLink[]> {
     absolute: false,
   });
 
-  const issues = await Promise.all(
-    filenames.map((file) => readMeta(newsletterDir, file))
-  );
+  const issues = await Promise.all(filenames.map(file => readMeta(newsletterDir, file)));
 
   return issues.sort(sortByDateDesc);
 }
@@ -30,10 +28,7 @@ export async function getAllNewsletters(): Promise<NewsletterMetaWithLink[]> {
 /**
  * Reads frontMatter
  */
-async function readMeta(
-  dir: string,
-  file: string
-): Promise<NewsletterMetaWithLink> {
+async function readMeta(dir: string, file: string): Promise<NewsletterMetaWithLink> {
   const raw = await readFile(join(dir, file), 'utf8');
 
   try {
@@ -61,10 +56,7 @@ async function readMeta(
   }
 }
 
-function sortByDateDesc(
-  left: NewsletterMetaWithLink,
-  right: NewsletterMetaWithLink
-) {
+function sortByDateDesc(left: NewsletterMetaWithLink, right: NewsletterMetaWithLink) {
   const date1 = new Date(left.date);
   const date2 = new Date(right.date);
 

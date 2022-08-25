@@ -153,7 +153,7 @@ const config: DocsThemeConfig = {
     Gfycat,
     YouTube,
     Tweet,
-    StackBlitz
+    StackBlitz,
   },
 };
 

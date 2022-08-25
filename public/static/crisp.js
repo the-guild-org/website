@@ -15,7 +15,7 @@ function guildCrisp() {
     'swift-graphql.com': ['swift'],
     'envelop.dev': ['envelop'],
     'graphql-yoga.com': ['yoga'],
-    'kitql.dev': ['kitql']
+    'kitql.dev': ['kitql'],
   };
   /* eslint-env browser */
   /* eslint-disable */
@@ -33,11 +33,7 @@ function guildCrisp() {
   const normHost = window.location.host.replace(/^www\./, '');
 
   if (HOST_TO_SEGMENTS[normHost]) {
-    window.$crisp.push([
-      'set',
-      'session:segments',
-      [HOST_TO_SEGMENTS[normHost]],
-    ]);
+    window.$crisp.push(['set', 'session:segments', [HOST_TO_SEGMENTS[normHost]]]);
   }
 }
 

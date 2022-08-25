@@ -29,31 +29,23 @@ export async function ensureContact(contact) {
 
   const { email, name, url, segments } = contact;
 
-  const [existingAccount] = await useCatch(() =>
-    CrispClient.websitePeople.findByEmail(WEBSITE_ID, email)
-  );
+  const [existingAccount] = await useCatch(() => CrispClient.websitePeople.findByEmail(WEBSITE_ID, email));
 
   if (existingAccount) {
     const updates = [];
 
     if (!existingAccount.person.website) {
-      updates.push((profile) => {
+      updates.push(profile => {
         profile.person.website = url;
       });
     }
 
     if (
       !existingAccount.segments ||
-      !existingAccount.segments.some(
-        (segment) => segment === segments.includes(segment)
-      )
+      !existingAccount.segments.some(segment => segment === segments.includes(segment))
     ) {
-      updates.push((profile) => {
-        profile.segments = []
-          .concat(segments)
-          .concat(existingAccount.segments)
-          .filter(Boolean)
-          .filter(unique);
+      updates.push(profile => {
+        profile.segments = [].concat(segments).concat(existingAccount.segments).filter(Boolean).filter(unique);
       });
     }
 
@@ -61,8 +53,8 @@ export async function ensureContact(contact) {
       await CrispClient.websitePeople.updatePeopleProfile(
         WEBSITE_ID,
         existingAccount.people_id,
-        produce(existingAccount, (profile) => {
-          updates.forEach((update) => update(profile));
+        produce(existingAccount, profile => {
+          updates.forEach(update => update(profile));
         })
       );
     }
@@ -70,17 +62,14 @@ export async function ensureContact(contact) {
     return existingAccount.people_id;
   }
 
-  const createProfile = await CrispClient.websitePeople.createNewPeopleProfile(
-    WEBSITE_ID,
-    {
-      email,
-      person: {
-        nickname: name,
-        website: url,
-      },
-      segments,
-    }
-  );
+  const createProfile = await CrispClient.websitePeople.createNewPeopleProfile(WEBSITE_ID, {
+    email,
+    person: {
+      nickname: name,
+      website: url,
+    },
+    segments,
+  });
 
   return createProfile.people_id;
 }

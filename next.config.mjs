@@ -17,8 +17,7 @@ export default withGuildDocs({
   redirects: () => [
     {
       source: '/chat',
-      destination:
-        'https://go.crisp.chat/chat/embed/?website_id=af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
+      destination: 'https://go.crisp.chat/chat/embed/?website_id=af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
       permanent: true,
     },
   ],
