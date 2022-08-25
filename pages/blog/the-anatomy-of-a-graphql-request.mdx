@@ -1,16 +1,12 @@
-import withArticle from '../../ui/blog/article'
-
-export const meta = {
-  title: 'The Anatomy of a GraphQL Request',
-  author: 'laurin',
-  tags: ['graphql'],
-  date: '2022-01-30',
-  description: "Let's go back to the basics and break down a GraphQL request.",
-  thumbnail: '/blog-assets/the-anatomy-of-a-graphql-request/thumbnail.png',
-  image: '/blog-assets/the-anatomy-of-a-graphql-request/image.png'
-}
-
-export default withArticle(meta)
+---
+title: The Anatomy of a GraphQL Request
+author: laurin
+tags: [graphql]
+date: 2022-01-30
+description: Let's go back to the basics and break down a GraphQL request.
+thumbnail: /blog-assets/the-anatomy-of-a-graphql-request/thumbnail.png
+image: /blog-assets/the-anatomy-of-a-graphql-request/image.png
+---
 
 On a high-level, GraphQL servers are pretty easy to set up.
 Just passing a GraphQL schema and starting the server does the job.
@@ -311,21 +307,21 @@ We can serve frequently executed GraphQL operation results from a cache instead 
 
 ### Add tracing information
 
-We can collect statistics by measuring how long it takes to resolve each field in our documents selection set and narrow down bottle-necks.
+We can collect statistics by measuring how long it takes to resolve each field in our documents' selection set and narrow down bottlenecks.
 
 ### Mask and report errors
 
-We wanna make sure the errors occurring during the execution do not contain sensitive information and are properly reported, so they do not go unnoticed and are properly reported.
+We want to make sure the errors occurring during the execution do not contain sensitive information and are properly reported, so they do not go unnoticed and are properly reported.
 
 ### Add new functionality
 
-We could customize the algorithm that is used by `graphql-js` in order to add new features or make it more performant e.g. by using [graphql-executor](https://www.npmjs.com/package/graphql-executor).
+We could customize the algorithm that is used by `graphql-js` in order to add new features or make it more performant e.g. by using [graphql-executor](https://npmjs.com/package/graphql-executor).
 
 # Use envelop for extending the phases
 
 While making our GraphQL servers production ready and working with our clients we discovered that we were writing the same custom code over and over again.
 
-Envelop provides us a user friendly way of hooking into the before and after phases of `parse`, `validate`, `execute` and `subscribe`.
+Envelop provides us a user-friendly way of hooking into the before and after phases of `parse`, `validate`, `execute` and `subscribe`.
 
 ```ts
 import  { Plugin, envelop } from '@envelop/core';
@@ -363,14 +359,14 @@ const { parse, validate, execute, subscribe } = getEnveloped();
 
 Furthermore, the plugins can be easily shared across projects.
 
-[You can learn more about Envelop on our introduction blog post](/blog/introducing-envelop) or by [visiting the Envelop documentation](https://www.envelop.dev/).
+[You can learn more about Envelop on our introduction blog post](/blog/introducing-envelop) or by [visiting the Envelop documentation](https://envelop.dev).
 
 # Why is GraphQL Yoga V2 so important?
 
 As you might have noticed [we adopted GraphQL Yoga to The Guild ecosystem quite a while ago](https://github.com/dotansimha/graphql-yoga/issues/670). [We have been thinking a lot on how version 2 should look like](https://github.com/dotansimha/graphql-yoga/issues/704) and while building and using envelop within our customer projects we realized a few limitations that can only be solved by owning/wrapping the whole HTTP GraphQL request pipeline.
 
-While envelop is strictly about wrapping the `graphql-js` core functions (`parse`, `validate`, `execute` and `subscribe`). GraphQL Yoga will provide a unified plugin interface for writing plugins that hook into ALL of those phases envelop has plus all the encapsulated phases for parsing and normalizing the HTTP request, allowing you to write powerful GraphQL servers and making features such as Automatic Persisted Queries or Response Cachning more powerful and easy to adopt.
+While envelop is strictly about wrapping the `graphql-js` core functions (`parse`, `validate`, `execute` and `subscribe`). GraphQL Yoga will provide a unified plugin interface for writing plugins that hook into ALL of those phases envelop has plus all the encapsulated phases for parsing and normalizing the HTTP request, allowing you to write powerful GraphQL servers and making features such as Automatic Persisted Queries or Response Caching more powerful and easy to adopt.
 
-For a small sneak peak check out [GraphQL.wtf Episode 24 - Batteries Included GraphQL Server](https://graphql.wtf/episodes/24-graphql-yoga) or [try the GraphQL Yoga alpha](https://www.graphql-yoga.com/).
+For a small sneak peek check out [GraphQL.wtf Episode 24 - Batteries Included GraphQL Server](https://graphql.wtf/episodes/24-graphql-yoga) or [try the GraphQL Yoga alpha](https://graphql-yoga.com).
 
 We are excited to announce more details soon.

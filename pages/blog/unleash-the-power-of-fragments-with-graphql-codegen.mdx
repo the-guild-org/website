@@ -1,29 +1,14 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Unleash the power of Fragments with GraphQL Codegen
+author: laurin
+tags: [graphql, codegen, react, typescript, relay, apollo, urql]
+date: 2022-08-05
+description: The most important parts of Relay are the concepts of building and scaling applications, let's show how you can use these patterns in your existing project, no matter what client library you are currently using.
+image: /blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/cover.png
+thumbnail: /blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/thumbnail.png
+---
 
-export const meta = {
-  title: 'Unleash the power of Fragments with GraphQL Codegen',
-  author: 'laurin',
-  tags: [
-    'graphql',
-    'codegen',
-    'react',
-    'typescript',
-    'relay',
-    'apollo',
-    'urql'
-  ],
-  date: '2022-08-05',
-  description:
-    "The most important parts of Relay are the concepts of building and scaling applications, let's show how you can use these patterns in your existing project, no matter what client library you are currently using.",
-  image:
-    '/blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/cover.png',
-  thumbnail:
-    '/blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/thumbnail.png'
-}
-
-export default withArticle(meta)
-
-There is no doubt that Relay is the most advanced JavaScript GraphQL Client out there. However, at the same time, the learning curve and adoption is yet very sparse compared to other popular alternatives such as Apollo Client, Urql, or GraphQL Request.
+There is no doubt that Relay is the most advanced JavaScript GraphQL Client out there. However, at the same time, the learning curve and adoption is yet very sparse compared to other popular alternatives such as Apollo Client, urql, or GraphQL Request.
 
 As a consequence, many people don't even know about all the benefits and patterns used within (and so far being exclusive to) Relay.
 The Guild gathered and worked on projects whose GraphQL client usage spans across all the available solutions today.
@@ -33,7 +18,7 @@ These patterns are actually applicable to any GraphQL Client, you just need the 
 On a high level these benefits are the following:
 
 **A fragmentized component tree.** Instead of writing a single GraphQL operation document per visible component or extracting the component properties from a single query operation document type, which is often cumbersome), multiple fragment definitions can be composed up to a single query operation that is sent to the server.
-This reduces the amount of concurrent requests and together with `@defer` and `@stream` is an actual improvement in the performance of the application ([compared to batching GraphQL operations](https://www.apollographql.com/blog/apollo-client/performance/batching-client-graphql-queries/)).
+This reduces the amount of concurrent requests and together with `@defer` and `@stream` is an actual improvement in the performance of the application ([compared to batching GraphQL operations](https://apollographql.com/blog/apollo-client/performance/batching-client-graphql-queries)).
 
 ![Fragmentized Component Tree](/blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/component-tree-diagram.png)
 
@@ -277,7 +262,7 @@ const UserProfileRoute_Query = gql(/* GraphQL */ `
     ...UserProfileHeader_QueryFragment
     ...UserList_QueryFragment
   }
-`)›
+`)
 
 export function UserProfileRoute_Query() {
   const { data, loading, error } = useQuery(UserProfile_Query)
@@ -324,7 +309,6 @@ I also talked about this topic recently at the GraphQL Berlin meetup!
   height="400"
   src="https://www.youtube.com/embed/YLytItSZCII"
   title="Are you using GraphQL the intended way?"
-  frameBorder="0"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
   allowFullScreen
-></iframe>
+/>
