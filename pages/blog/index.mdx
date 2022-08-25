@@ -1,24 +1,19 @@
-import { ReactElement } from 'react';
-import { GetStaticProps } from 'next/types';
+---
+title: Blog
+description: Announcements about our Open-Source projects
+---
+
 import { Newsletter, Heading, BlogCardList, TagList } from '@/components';
 import { HeroSection } from '@/hero-section';
-import { MetaWithLink } from '../lib/meta';
-import { getAllArticles } from '../lib/get-all-articles';
+import { useSSG } from 'nextra/ssg';
+import { getAllArticles } from '../../lib/get-all-articles';
 
-interface Props {
-  articles: MetaWithLink[];
-  tagFilter?: string[];
-}
-
-const Page = ({ children }) => children;
-
-function extractRelevantTags(articles: Props['articles']) {
+export function extractRelevantTags(articles) {
   const allTags = articles.flatMap(article => article.tags || []);
-
-  const map: Record<string, number> = Object.create(null);
+  const map = Object.create(null);
 
   for (const tag of allTags) {
-    map[tag] ??= 0;
+    map[tag] = map[tag] == null ? 0 : map[tag];
     map[tag] += 1;
   }
 
@@ -36,25 +31,22 @@ function extractRelevantTags(articles: Props['articles']) {
   return sorted.slice(0, 10);
 }
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+export const getStaticProps = async () => {
   return {
     props: {
-      articles: await getAllArticles(),
+      ssg: {
+        articles: await getAllArticles()
+      },
     },
   };
 };
 
-const Blog = ({ articles, tagFilter }: Props): ReactElement => {
+export default function Blog() {
+  const { articles, tagFilter } = useSSG()
   const tagFilters = tagFilter?.join(', ');
   const allTags = extractRelevantTags(articles);
-
-  const title = tagFilters ? `The Guild Blog - ${tagFilters}` : 'The Guild Blog';
-  const description = tagFilters
-    ? `List of articles related to ${tagFilters}`
-    : 'Announcements about our Open-Source projects';
-
   return (
-    <Page title={title} description={description} image="/img/ogimage.png">
+    <>
       <HeroSection>
         <Heading>The Guild's blog</Heading>
       </HeroSection>
@@ -63,8 +55,6 @@ const Blog = ({ articles, tagFilter }: Props): ReactElement => {
         {!tagFilters && <Newsletter />}
         <BlogCardList articles={articles} />
       </div>
-    </Page>
+    </>
   );
-};
-
-export default Blog;
+}

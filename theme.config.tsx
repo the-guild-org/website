@@ -1,11 +1,14 @@
 import { DocsThemeConfig, useConfig } from '@theguild/components';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Callout } from 'nextra-theme-docs';
 import { ArticleJsonLd, NextSeo } from 'next-seo';
 import { BlogCardList, Newsletter, Video } from '@/components';
+import { AUTHORS } from '@/authors';
+import { CodeSandbox } from '@/shared/embed/CodeSandbox';
 import { MetaWithLink } from './lib/meta';
 import blogsMeta from './dist/blogs-meta.json';
+import { asArray } from './lib/as-array';
 
 const SITE_NAME = 'The Guild';
 
@@ -17,8 +20,8 @@ const config: DocsThemeConfig = {
   titleSuffix: ` – ${SITE_NAME}`,
   projectLink: 'https://github.com/the-guild-org/the-guild-website', // GitHub link in the navbar
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/pages', // base URL for the docs repository
-  nextLinks: true,
-  prevLinks: true,
+  nextLinks: false,
+  prevLinks: false,
   search: false,
   floatTOC: true,
   darkMode: true,
@@ -26,52 +29,73 @@ const config: DocsThemeConfig = {
   footerEditLink: 'Edit this page on GitHub',
   logo: null,
   head: function Head() {
-    const { title, meta: frontMatter } = useConfig();
+    let { title, meta: frontMatter } = useConfig();
     const { route } = useRouter();
     const description = frontMatter.description || `${SITE_NAME}: Modern API Platform and Ecosystem that scales`;
     const image = frontMatter.image || '/img/ogimage.png';
-    console.log({ image }, frontMatter.image);
 
-    const head = route.startsWith('/newsletter/') ? (
-      <>
-        <NextSeo
-          title={title}
-          description={description}
-          openGraph={{
-            title,
-            images: [{ url: 'https://the-guild.dev/img/ogimage.png' }],
-            article: {
-              authors: ['The Guild'],
-              publishedTime: new Date(frontMatter.date).toISOString(),
-              modifiedTime: new Date(frontMatter.date).toISOString(),
-              tags: ['newsletter', 'graphql'],
-            },
-          }}
-        />
-        <ArticleJsonLd
-          title={title}
-          description={description}
-          url={`https://the-guild.dev${route}`}
-          publisherName="The Guild"
-          publisherLogo="https://the-guild.dev/static/logo.svg"
-          authorName="The Guild"
-          datePublished={new Date(frontMatter.date).toISOString()}
-          dateModified={new Date(frontMatter.date).toISOString()}
-          images={['https://the-guild.dev/img/ogimage.png']}
-        />
-      </>
-    ) : (
-      <NextSeo title={title} description={description} openGraph={{ images: [{ url: ensureAbsolute(image) }] }} />
-    );
+    let head: ReactElement;
+
+    if (route.startsWith('/newsletter/') || (route.startsWith('/blog/') && !route.startsWith('/blog/tag/'))) {
+      let authors: string[];
+      let tags: string[];
+
+      if (route.startsWith('/newsletter/')) {
+        title += ` - ${SITE_NAME} Newsletter`;
+        authors = [SITE_NAME];
+        tags = ['newsletter', 'graphql'];
+      } else {
+        title += ` - ${SITE_NAME} Blog`;
+        authors = asArray(frontMatter.authors);
+        tags = asArray(frontMatter.tags);
+      }
+      authors = authors.map(authorId => AUTHORS[authorId]?.name || authorId);
+
+      const ogImage =
+        (image.endsWith('.webm') || image.endsWith('.mp4')) && frontMatter.thumbnail ? frontMatter.thumbnail : image;
+      const imageUrl = ogImage.startsWith('/') ? `https://the-guild.dev${ogImage}` : (ogImage as string);
+
+      head = (
+        <>
+          <NextSeo
+            title={title}
+            description={description}
+            openGraph={{
+              title,
+              images: [{ url: imageUrl }],
+              article: {
+                authors,
+                publishedTime: new Date(frontMatter.date).toISOString(),
+                modifiedTime: new Date(frontMatter.updateDate || frontMatter.date).toISOString(),
+                tags,
+              },
+            }}
+          />
+          <ArticleJsonLd
+            title={title}
+            description={description}
+            url={`https://the-guild.dev${route}`}
+            publisherName={SITE_NAME}
+            publisherLogo="https://the-guild.dev/static/logo.svg"
+            authorName={authors[0]}
+            datePublished={new Date(frontMatter.date).toISOString()}
+            dateModified={new Date(frontMatter.updateDate || frontMatter.date).toISOString()}
+            images={[imageUrl]}
+          />
+        </>
+      );
+    }
 
     return (
       <>
-        {head}
+        {head || (
+          <NextSeo title={title} description={description} openGraph={{ images: [{ url: ensureAbsolute(image) }] }} />
+        )}
         <meta name="og:title" content={title} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content={description} />
         <meta property="og:site_name" content="the-guild.dev" key="ogsitename" />
-        <link rel="canonical" href={`https://the-guild.dev${route}`} />
+        <link rel="canonical" href={frontMatter.canonical || `https://the-guild.dev${route}`} />
         <meta name="twitter:card" content="summary_large_image" />
       </>
     );
@@ -86,21 +110,21 @@ const config: DocsThemeConfig = {
     const config = useConfig();
     const { tags } = config.meta;
 
-    // useEffect(() => {
-    //   if (!tags) {
-    //     return;
-    //   }
-    //   const newSimilarArticles = blogsMeta
-    //     .filter(article => tags.length === 0 || article.link !== route || article.tags?.some(tag => tags.includes(tag)))
-    //     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    //     .slice(0, 12)
-    //     .sort(() => 0.5 - Math.random())
-    //     .slice(0, 4);
-    //
-    //   setSimilarArticles(newSimilarArticles);
-    // }, [tags, route]);
+    useEffect(() => {
+      if (!tags) {
+        return;
+      }
+      const newSimilarArticles = blogsMeta
+        .filter(article => tags.length === 0 || article.link !== route || article.tags?.some(tag => tags.includes(tag)))
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 12)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 4);
 
-    if (!route.startsWith('/blog/') && !route.startsWith('/newsletter/')) {
+      setSimilarArticles(newSimilarArticles);
+    }, [tags, route]);
+
+    if (!route.startsWith('/blog/') && !route.startsWith('/newsletter/') && route !== '/about-us') {
       return null;
     }
 
@@ -119,6 +143,7 @@ const config: DocsThemeConfig = {
   components: {
     Callout,
     Video,
+    CodeSandbox,
   },
 };
 
