@@ -3,8 +3,8 @@ import { format } from 'date-fns';
 import { useConfig } from '@theguild/components';
 import { Image, Avatar, TagList } from '@/components';
 import { LookingForExperts } from '@/looking-for-experts';
+import { AUTHORS } from '@/authors';
 import { Meta } from '../../lib/meta';
-import { AUTHORS } from '../authors';
 import { asArray } from '../../lib/as-array';
 
 const Authors = ({ meta }: { meta: Meta }): ReactElement => {
@@ -74,7 +74,7 @@ export const Article = (): ReactElement => {
   return (
     <>
       <h1>{frontMatter.title}</h1>
-      <Authors meta={frontMatter} />
+      <Authors meta={frontMatter as Meta} />
       <TagList tags={frontMatter.tags} asLink className="mt-4" />
       <Image src={frontMatter.image} className="mx-auto mt-6" />
       <LookingForExperts />

@@ -6,7 +6,6 @@ import { AUTHORS } from '@/authors';
 import { Description } from './description';
 import { Heading } from './heading';
 import { MetaWithLink } from '../../lib/meta';
-import { asArray } from '../../lib/as-array';
 
 export const BlogCardList = ({
   articles,
@@ -60,7 +59,7 @@ export const BlogCardList = ({
             </Description>
             <div className="mt-auto text-xs">
               <span className="font-bold dark:text-[#C4C4C4]">
-                {AUTHORS[asArray(article.authors)[0]].name}
+                {AUTHORS[article.authors[0]].name}
               </span>
               <span className="dark:text-gray-500">
                 <span className="select-none"> • </span>
