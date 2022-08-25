@@ -5,7 +5,7 @@ export const Image = ({
   src,
   className,
 }: {
-  alt: string;
+  alt?: string;
   src: string;
   className?: string;
 }): ReactElement => {

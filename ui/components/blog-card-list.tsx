@@ -2,10 +2,11 @@ import { ReactElement } from 'react';
 import clsx from 'clsx';
 import NextLink from 'next/link';
 import { format } from 'date-fns';
-import { authors } from '@/authors';
+import { AUTHORS } from '@/authors';
 import { Description } from './description';
 import { Heading } from './heading';
-import { MetaWithLink, pickAuthor } from '../../lib/meta';
+import { MetaWithLink } from '../../lib/meta';
+import { asArray } from '../../lib/as-array';
 
 export const BlogCardList = ({
   articles,
@@ -23,7 +24,7 @@ export const BlogCardList = ({
     >
       {articles.map((article) => (
         <NextLink
-          key={article.title}
+          key={article.link}
           href={article.link}
           className="
           flex
@@ -58,7 +59,7 @@ export const BlogCardList = ({
             </Description>
             <div className="mt-auto text-xs">
               <span className="font-bold dark:text-[#C4C4C4]">
-                {authors[pickAuthor(article)].name}
+                {AUTHORS[asArray(article.authors)[0]].name}
               </span>
               <span className="dark:text-gray-500">
                 <span className="select-none"> • </span>
