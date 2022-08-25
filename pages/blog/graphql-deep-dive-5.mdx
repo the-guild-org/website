@@ -1,16 +1,16 @@
-import withArticle from '../../ui/blog/article'
+---
+title: The Stack #3
+author: tvvignesh
+tags: [graphql, deepdive, techstack]
+date: 2020-12-06
+description: The GraphQL Stack - Part 3.
+image: /blog-assets/graphql-deep-dive-5/cover.png
+thumbnail: /blog-assets/graphql-deep-dive-5/cover.png
+---
 
-export const meta = {
-  title: 'The Stack #3',
-  author: 'tvvignesh',
-  tags: ['graphql', 'deepdive', 'techstack'],
-  date: '2020-12-06',
-  description: 'The GraphQL Stack - Part 3',
-  image: '/blog-assets/graphql-deep-dive-5/cover.png',
-  thumbnail: '/blog-assets/graphql-deep-dive-5/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 _This blog is a part of a series on GraphQL where we will dive deep into GraphQL and its ecosystem one piece at a time_
 
@@ -21,19 +21,19 @@ _This blog is a part of a series on GraphQL where we will dive deep into GraphQL
 - Part 5: [**The Stack #3**](/blog/graphql-deep-dive-5)
 - Part 6: [**The Workflow**](/blog/graphql-deep-dive-6)
 
-In this series, we had looked at some of the interesting parts of the GraphQL stack so far with a range of tools, libraries and frameworks from the community.
+In this series, we had looked at some interesting parts of the GraphQL stack so far with a range of tools, libraries and frameworks from the community.
 Let us continue the journey in this blog looking at more such tools and services which have created a great impact in the GraphQL ecosystem.
 
 **[GraphiQL](https://github.com/graphql/graphiql)**
 
-The evolution of GraphQL clients have been really amazing and I would say, this is one of the great things about GraphQL given its powerful introspection capabilities,
+The evolution of GraphQL clients have been really amazing, and I would say, this is one of the great things about GraphQL given its powerful introspection capabilities,
 being self documenting and also providing ability to extend everything with extensions.
 
 It all started with GraphiQL demonstrating all these back in the day, but then came Playground ([which had recently merged with the GraphiQL team](https://foundation.graphql.org/news/2020/04/03/web-based-graphql-ides-for-the-win-how-why-playground-graphiql-are-joining-forces/) to make things even more interesting),
-[Altair](https://github.com/imolorhe/altair) and even desktop/web/editor based clients like [Insomnia](https://insomnia.rest/), [Postman](https://www.postman.com/graphql/), [Hoppscotch](https://hoppscotch.io/), [VSCode Rest Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) and the list
+[Altair](https://github.com/imolorhe/altair) and even desktop/web/editor based clients like [Insomnia](https://insomnia.rest), [Postman](https://postman.com/graphql), [Hoppscotch](https://hoppscotch.io), [VSCode Rest Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) and the list
 goes on all proving that the developer experience with GraphQL can be made really better with just some sugar on top.
 
-But, some of the reasons why thinking about the future of GraphiQL feels really great is cause of the [upcoming support for Monaco mode](https://github.com/graphql/graphiql/issues/1445) ,
+But, some reasons why thinking about the future of GraphiQL feels really great is cause of the [upcoming support for Monaco mode](https://github.com/graphql/graphiql/issues/1445) ,
 [support for plugins](https://github.com/graphql/graphiql/issues/983) and a lot of amazing features from Playground to now become as part of GraphiQL as part of the transition according to the blog linked above.
 
 Also, embedding a GraphiQL editor is as simple as importing the HTML and related assets as specified in their [README](https://github.com/graphql/graphiql/blob/main/packages/graphiql/README.md).
@@ -47,7 +47,7 @@ Source: GraphiQL
 
 [Codemirror](https://github.com/graphql/graphiql/tree/main/packages/codemirror-graphql) used to be the interface which used to provide the editor support for GraphiQL,
 Playground, Insomnia and other editors in the ecosystem in `1.x` which is now being succeeded by the [language service](https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service)
-which takes care of providing a web/desktop IDE experience if you are using editors like VSCode, [Language Parser](https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-parser) which takes care of parsing the GraphQL SDL and operations you write and convert them to GraphQL AST (If you are curious about how the AST looks, like, you can try going to [ASTExplorer](https://astexplorer.net/)
+which takes care of providing a web/desktop IDE experience if you are using editors like VSCode, [Language Parser](https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-parser) which takes care of parsing the GraphQL SDL and operations you write and convert them to GraphQL AST (If you are curious about how the AST looks, like, you can try going to [ASTExplorer](https://astexplorer.net)
 select GraphQL, enter your operation and have a look at the AST which is what the final representation will look like) and so on becoming a platform for not just GraphiQL
 but the entire editor ecosystem.
 
@@ -65,7 +65,7 @@ It is just a React component which you include with your GraphiQL instance and t
 
 **[GraphQL Voyager](https://github.com/APIs-guru/graphql-voyager)**
 
-The next beautiful tool I would talk about here is the GraphQL Voyager. Infact, this is the first tool I used when I was new to GraphQL few years back and it drove me nuts seeing the potential of
+The next beautiful tool I would talk about here is the GraphQL Voyager. In fact, this is the first tool I used when I was new to GraphQL few years back and it drove me nuts seeing the potential of
 what GraphQL can do.
 
 The reason this is great is because, this leverages the complete power of introspection from GraphQL. You get to see all the entities and how they are related,
@@ -80,8 +80,8 @@ hierarchy making it really a great tool for anyone who wants to quickly work thr
 
 **[GraphQL Upload](https://github.com/jaydenseric/graphql-upload)**
 
-One important thing which GraphQL Spec did not discuss about is a way to transmit files over the wire when using GraphQL. This is where GraphQL Upload comes in.
-While not an official spec from GraphQL foundation, Jayden had done a great job to put together a [multi part spec](https://github.com/jaydenseric/graphql-multipart-request-spec)
+One important thing which GraphQL Spec did not discuss is a way to transmit files over the wire when using GraphQL. This is where GraphQL Upload comes in.
+While not an official spec from GraphQL foundation, Jayden had done a great job to put together a [multipart spec](https://github.com/jaydenseric/graphql-multipart-request-spec)
 to address exactly this problem.
 
 GraphQL Upload is the library which provides a great implementation of this spec with an ability to work with various frameworks. One thing to remember is that,
@@ -103,11 +103,11 @@ But do remember that, websocket might loose its lead in the future especially wi
 
 Also note that subscriptions are not the only way to do real time communications in GraphQL. There are also things like Live Queries with [great libraries like this](https://github.com/n1ru4l/graphql-live-query) from Laurin which you can use
 
-**[Apollo Federation](https://www.apollographql.com/docs/federation/)**
+**[Apollo Federation](https://apollographql.com/docs/federation)**
 
 While Schema Stitching was initially advocated by Apollo with introduction of many helper functions in GraphQL Tools, their [direction did change soon](https://www.apollographql.com/docs/federation/migrating-from-stitching/) after hearing a lot of feedback from their customers and took their call to introduce Apollo Federation. You can read their reasoning in [this blog](https://www.apollographql.com/blog/apollo-federation-f260cf525d21/) but this does not mean that [stitching has lost its relevance](https://github.com/ardatan/graphql-tools/issues/1286) especially with the introduction of Type Merging.
 
-Apollo Federation does a great job especially when you use it with the rest of the ecosystem from Apollo like the [Apollo Studio](https://www.apollographql.com/docs/studio/). Apollo Stack does offer [a lot of features](https://www.apollographql.com/pricing) which might be relevant to working with a data graph in an organization starting from providing a registry where you can upload parts of the combined schema from all services, version control the changes to your schema validating breaking changes, providing metrics regarding all the clients consuming the schema, tracing of all operations, multiple variants to manage multiple environments, alerting across multiple channels, and a CLI to work with all of these.
+Apollo Federation does a great job especially when you use it with the rest of the ecosystem from Apollo like the [Apollo Studio](https://apollographql.com/docs/studio). Apollo Stack does offer [a lot of features](https://apollographql.com/pricing) which might be relevant to working with a data graph in an organization starting from providing a registry where you can upload parts of the combined schema from all services, version control the changes to your schema validating breaking changes, providing metrics regarding all the clients consuming the schema, tracing of all operations, multiple variants to manage multiple environments, alerting across multiple channels, and a CLI to work with all of these.
 
 And this can definitely help teams who want to maintain their own part of the schema.
 
@@ -139,23 +139,23 @@ Execute GraphQL operations against your schema
 
 and does offer a lot more especially when you are a paying customer.
 
-**NOTE:** [Federation with Apollo Server does not support subscriptions yet](https://github.com/apollographql/apollo-server/issues/2360) and you might want to stick with stitching if you are looking for subscriptions support or switch to some other server like Mercurius [since it does allow subscriptions over federation](https://github.com/mercurius-js/mercurius/issues/268).
+**NOTE:** [Federation with Apollo Server does not support subscriptions yet](https://github.com/apollographql/apollo-server/issues/2360), and you might want to stick with stitching if you are looking for subscriptions support or switch to some other server like Mercurius [since it does allow subscriptions over federation](https://github.com/mercurius-js/mercurius/issues/268).
 
-**[Gatsby](https://www.gatsbyjs.com/)**
+**[Gatsby](https://gatsbyjs.com)**
 
-Gatsby is a static site generator powered by React, GraphQL and a lot of plugins contributed by the community which helps you sites simply by pooling in data from multiple different sources in multiple different ways and it really popularized the idea of doing this all via GraphQL. If you want to know why and how Gatsby uses GraphQL, you can [give this a read](https://www.gatsbyjs.com/docs/why-gatsby-uses-graphql/). And while Gatsby does offer both [Server Side Rendering](https://www.gatsbyjs.com/docs/glossary/server-side-rendering/) and [Static Site Generation](https://www.gatsbyjs.com/docs/glossary/static-site-generator/), I would say it all boils down to your [usecase](https://frontarm.com/james-k-nelson/static-vs-server-rendering/).
+Gatsby is a static site generator powered by React, GraphQL and a lot of plugins contributed by the community which helps you sites simply by pooling in data from multiple different sources in multiple different ways, and it really popularized the idea of doing this all via GraphQL. If you want to know why and how Gatsby uses GraphQL, you can [give this a read](https://gatsbyjs.com/docs/why-gatsby-uses-graphql). And while Gatsby does offer both [Server Side Rendering](https://gatsbyjs.com/docs/glossary/server-side-rendering/) and [Static Site Generation](https://gatsbyjs.com/docs/glossary/static-site-generator), I would say it all boils down to your [use case](https://frontarm.com/james-k-nelson/static-vs-server-rendering).
 
-While Gatsby did popularize the idea of using GraphQL for static sites, there are a lot of other static site generators out there like [Eleventy](https://www.11ty.dev/), [Jekyll](https://github.com/jekyll/jekyll), [Hugo](https://gohugo.io/), etc. and I find myself personally aligning towards Eleventy because of quite a few reasons which may not be right for this blog. But if you are curious, you can read blogs like [this](https://mtm.dev/static) and [this](https://snipcart.com/blog/choose-best-static-site-generator) which gives a comparison.
+While Gatsby did popularize the idea of using GraphQL for static sites, there are a lot of other static site generators out there like [Eleventy](https://11ty.dev), [Jekyll](https://github.com/jekyll/jekyll), [Hugo](https://gohugo.io/), etc. and I find myself personally aligning towards Eleventy because of quite a few reasons which may not be right for this blog. But if you are curious, you can read blogs like [this](https://mtm.dev/static) and [this](https://snipcart.com/blog/choose-best-static-site-generator) which gives a comparison.
 
 **[Opentelemetry - GraphQL](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/master/plugins/node/opentelemetry-instrumentation-graphql)**
 
 Opentelemetry is the new standard for instrumentation (especially after [Open Tracing and Open Census merging](https://medium.com/opentracing/a-roadmap-to-convergence-b074e5815289) together) and this makes things really amazing for people since there were quite a few overlap before in between them which can now be avoided to bring about a powerful tracing standard.
 
-Opentelemetry is not specific to any language or implementation and you can find all the amazing projects from Open Telemetry hosted [here](https://github.com/open-telemetry)
+Opentelemetry is not specific to any language or implementation, and you can find all the amazing projects from Open Telemetry hosted [here](https://github.com/open-telemetry)
 
 Now, the exciting thing is that there is now a reference implementation to the same using GraphQL which you can find [here](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/master/plugins/node/opentelemetry-instrumentation-graphql) and also an example to help you out with the same [here](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/master/examples/graphql)
 
-This when used with [Jaeger](https://www.jaegertracing.io/), [Zipkin](https://zipkin.io/) or [Tempo](https://grafana.com/oss/tempo/) can provide you with Traces for your GraphQL operations which you can track across your resolvers. Do note that it is not advisable to be turned on for everything since it has a performance overhead.
+This when used with [Jaeger](https://jaegertracing.io), [Zipkin](https://zipkin.io) or [Tempo](https://grafana.com/oss/tempo) can provide you with Traces for your GraphQL operations which you can track across your resolvers. Do note that it is not advisable to be turned on for everything since it has a performance overhead.
 
 This can give you a context on how your data and context flow irrespective of your architecture in your resolvers and functions.
 
@@ -169,13 +169,13 @@ This has become even more amazing with GraphQL Faker since it allows you to use 
 
 Source: GraphQL Faker
 
-If you are using `@graphql-tools` you can also use `faker.js` directly and combine it with [Mocking](https://www.graphql-tools.com/docs/mocking/) to get similar results, but without the need to change your SDL.
+If you are using `@graphql-tools` you can also use `faker.js` directly and combine it with [Mocking](https://graphql-tools.com/docs/mocking) to get similar results, but without the need to change your SDL.
 
 While there are a lot of other tools we can discuss, the GraphQL ecosystem is huge and this pretty much has no end. But I do presume that these are all the tools you mainly need to start your GraphQL journey and leverage the ecosystem in the best way possible.
 
 But with this the GraphQL journey is still not over. We will continue the next blog discussing a few more interesting things as part of the GraphQL series.
 
-Is there anything you would like to see me address in this series? Do let me know and we can probably do that in an another post.
+Is there anything you would like to see me address in this series? Do let me know, and we can probably do that in an another post.
 
 If you have any questions or are looking for help, feel free to reach out to me [@techahoy](https://twitter.com/techahoy) anytime.
 

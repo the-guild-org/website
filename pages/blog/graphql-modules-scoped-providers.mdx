@@ -1,16 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Scoped Providers in GraphQL-Modules
+author: arda
+tags: [graphql, graphql-modules, di]
+date: 2019-01-11
+description: Understand how scoped providers work in GraphQL-Modules Dependency Injection.
+image: /medium/330126a7ddd518886b068e1f1e23ee41.png
+---
 
-export const meta = {
-  title: 'Scoped Providers in GraphQL-Modules',
-  author: 'arda',
-  tags: ['graphql', 'graphql-modules', 'di'],
-  date: '2019-01-11',
-  description:
-    'Understand how scoped providers work in GraphQL-Modules Dependency Injection',
-  image: '/medium/330126a7ddd518886b068e1f1e23ee41.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 We recently released a new version of GraphQL-Modules with a new feature called Scoped Providers in the dependency injection system of GraphQL-Modules.
 
@@ -22,7 +21,7 @@ This new feature allows you to define `Provider`s to be used in different scopes
 
 If you define a provider in this scope which is default, the provider will be instantiated on application-start and will be same in the entire application and all the following requests. The providers in this scope can be considered as a shared state across all users' interactions with our application. It's basically means that the instance will be treated as [Singleton](https://en.wikipedia.org/wiki/Singleton_pattern).
 
-For example you have a provider called `ExampleApplicationProvider` , then this provider has a counter in it;
+For example, you have a provider called `ExampleApplicationProvider` , then this provider has a counter in it;
 
 ```typescript
 import { Injectable, ProviderScope } from '@graphql-modules/di'
@@ -41,7 +40,7 @@ export class ExampleApplicationProvider {
 
 And let's assume that we have a module declaration something like below;
 
-```typescript
+```ts
 import { GraphQLModule } from '@graphql-modules/core'
 import { ExampleApplicationProvider } from './ExampleApplicationProvider'
 

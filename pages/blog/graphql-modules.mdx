@@ -1,19 +1,19 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL Modules  —  Feature based GraphQL Modules at scale
+author: uri
+tags: [graphql, graphql-modules]
+date: 2018-11-05
+description: Feature based GraphQL Modules at scale.
+image: /medium/a4a2c4f56993a801a7ffe394fc0f95f1.png
+---
 
-export const meta = {
-  title: 'GraphQL Modules  —  Feature based GraphQL Modules at scale',
-  author: 'uri',
-  tags: ['graphql', 'graphql-modules'],
-  date: '2018-11-05',
-  description: 'Feature based GraphQL Modules at scale',
-  image: '/medium/a4a2c4f56993a801a7ffe394fc0f95f1.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 Today we are happy to announce that we are open sourcing a framework we've been using for the past couple of months in production — [GraphQL Modules](https://graphql-modules.com/)!
 
-Yet another framework? well, kind of.. GraphQL Modules is a set of extra libraries, structures and guidelines around the amazing [Apollo Server 2.0](https://www.apollographql.com/docs/apollo-server/).
+Yet another framework? well, kind of GraphQL Modules is a set of extra libraries, structures and guidelines around the amazing [Apollo Server 2.0](https://apollographql.com/docs/apollo-server).
 
 You can and should use them as completely separate packages, each one is good for different use cases, but all together they represent our current philosophy of building large scale GraphQL servers.
 
@@ -25,7 +25,7 @@ A basic and initial implementation of a GraphQL server usually includes:
 
 ![](/medium/d57986e2af5dd85000392ee831ba0162.png)
 
-A more advanced implementation will usually use a context to inject things like data models, data sources, fetchers, etc, like Apollo Server 2.0 provides us with:
+A more advanced implementation will usually use a context to inject things like data models, data sources, fetchers, etc., like Apollo Server 2.0 provides us with:
 
 ![](/medium/297c11db8129c64380966f6a15dc8dd8.png)
 
@@ -37,7 +37,7 @@ Some of the more old school, MVC frameworks adds few more layers after the resol
 
 We argue that there is a better approach of writing your GraphQL Schema and implementation.
 
-We believe you should **separates your GraphQL schema by modules**, or **features**, and includes anything related to a specific part of the app under a “module” — which is just a simple directory. Each one of the GraphQL Modules libraries would help you in the gradual process of doing that.
+We believe you should **separate your GraphQL schema by modules**, or **features**, and includes anything related to a specific part of the app under a “module” — which is just a simple directory. Each one of the GraphQL Modules libraries would help you in the gradual process of doing that.
 
 The modules are being defined by their GraphQL schema — so we've taken the “GraphQL First” approach lead by Apollo and combined it together with classic modularization tooling to create new ways of writing GraphQL servers!
 
