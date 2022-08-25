@@ -1,10 +1,4 @@
-import {
-  ComponentProps,
-  ReactElement,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { ComponentProps, ReactElement, useCallback, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { Tooltip } from './tooltip';
 
@@ -59,9 +53,7 @@ export const CopyToClipboard = ({ value }: { value: string }): ReactElement => {
     };
   }, [isCopied]);
 
-  const handleClick = useCallback<
-    ComponentProps<'button'>['onClick']
-  >(async () => {
+  const handleClick = useCallback<ComponentProps<'button'>['onClick']>(async () => {
     setCopied(true);
     if (!navigator?.clipboard) {
       console.error('Access to clipboard rejected!');
@@ -77,11 +69,7 @@ export const CopyToClipboard = ({ value }: { value: string }): ReactElement => {
 
   return (
     <Tooltip.Provider>
-      <Tooltip
-        content={isCopied ? 'Copied!' : ''}
-        side="left"
-        delayDuration={0}
-      >
+      <Tooltip content={isCopied ? 'Copied!' : ''} side="left" delayDuration={0}>
         <button
           onClick={handleClick}
           className={clsx(

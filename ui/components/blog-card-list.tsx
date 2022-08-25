@@ -15,13 +15,8 @@ export const BlogCardList = ({
   className?: string;
 }): ReactElement => {
   return (
-    <div
-      className={clsx(
-        'my-6 flex flex-wrap justify-center gap-x-7 gap-y-10',
-        className
-      )}
-    >
-      {articles.map((article) => (
+    <div className={clsx('my-6 flex flex-wrap justify-center gap-x-7 gap-y-10', className)}>
+      {articles.map(article => (
         <NextLink
           key={article.link}
           href={article.link}
@@ -37,9 +32,9 @@ export const BlogCardList = ({
           bg-white
           transition-colors
           hover:border-[#7F818C]
+          hover:!no-underline
           dark:border-transparent
           dark:bg-[#101218]
-          hover:!no-underline
           hover:dark:border-[#7F818C]"
         >
           <img
@@ -58,9 +53,7 @@ export const BlogCardList = ({
               {article.description}
             </Description>
             <div className="mt-auto text-xs">
-              <span className="font-bold dark:text-[#C4C4C4]">
-                {AUTHORS[article.authors[0]].name}
-              </span>
+              <span className="font-bold dark:text-[#C4C4C4]">{AUTHORS[article.authors[0]].name}</span>
               <span className="dark:text-gray-500">
                 <span className="select-none"> • </span>
                 {format(new Date(article.date), 'LLL do y')}

@@ -22,13 +22,7 @@ const HeroHeader = styled('div', {
   },
 });
 
-export const Hero = ({
-  shrink,
-  children,
-}: {
-  shrink?: boolean;
-  children: ReactNode;
-}): ReactElement => {
+export const Hero = ({ shrink, children }: { shrink?: boolean; children: ReactNode }): ReactElement => {
   return (
     <div
       // eslint-disable-next-line tailwindcss/no-contradicting-classname -- false positive for background image on before and after

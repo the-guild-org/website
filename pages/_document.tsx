@@ -28,19 +28,11 @@ export default class MyDocument extends Document {
                 gtag('config', '${GA_TRACKING_ID}');`,
             }}
           />
-          <link
-            href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap"
-            rel="stylesheet"
-          />
+          <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet" />
           <style dangerouslySetInnerHTML={{ __html: getCssText() }} />
           <meta charSet="utf-8" />
           <link rel="shortcut icon" href="/fav.ico" />
-          <link
-            rel="alternate"
-            type="application/rss+xml"
-            title="RSS Feed for the-guild.dev"
-            href="/feed.xml"
-          />
+          <link rel="alternate" type="application/rss+xml" title="RSS Feed for the-guild.dev" href="/feed.xml" />
         </Head>
         <body>
           <Main />

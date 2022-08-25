@@ -11,5 +11,5 @@ export function LookingForExperts() {
       </Link>{' '}
       and get in touch.
     </div>
-  )
+  );
 }

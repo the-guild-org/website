@@ -3,21 +3,16 @@ import { Image, PRODUCTS, Anchor } from '@theguild/components';
 import { Description, Heading, Tooltip, Link } from './components';
 import helix from '../public/static/shared-logos/products/helix.svg';
 
-export const PlatformSection = ({
-  className,
-}: {
-  className?: string;
-}): ReactElement => {
+export const PlatformSection = ({ className }: { className?: string }): ReactElement => {
   return (
     <Tooltip.Provider>
       <div id="platform" className={className}>
         <div className="container flex flex-col items-center px-4 pt-20 pb-28 text-center sm:px-6 md:px-8">
           <Heading>The Ecosystem</Heading>
           <Description className="max-w-[400px] md:max-w-[700px]">
-            Our advanced, modular solutions can be adopted gradually as
-            individual open source libraries or as a complete unified API
-            platform. Explore our suite of sustainable, open source API tools
-            that covers everything you need to scale your API infrastructure:
+            Our advanced, modular solutions can be adopted gradually as individual open source libraries or as a
+            complete unified API platform. Explore our suite of sustainable, open source API tools that covers
+            everything you need to scale your API infrastructure:
           </Description>
 
           {/* TODO: Add this when we'll have `/products` route */}
@@ -30,7 +25,7 @@ export const PlatformSection = ({
           </Link>
 
           <div className="mt-10 flex max-w-[900px] flex-wrap justify-center">
-            {PRODUCTS.map((product) => (
+            {PRODUCTS.map(product => (
               <Tooltip key={product.children} content={product.title}>
                 <Anchor
                   className="
@@ -58,12 +53,7 @@ export const PlatformSection = ({
                   href={product.href}
                 >
                   {product.children === 'Helix' ? (
-                    <Image
-                      src={helix}
-                      alt={`${product.children} logo`}
-                      placeholder="empty"
-                      className="h-16 w-auto"
-                    />
+                    <Image src={helix} alt={`${product.children} logo`} placeholder="empty" className="h-16 w-auto" />
                   ) : (
                     <product.logo className="h-16 w-auto" />
                   )}

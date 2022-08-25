@@ -31,12 +31,7 @@ export interface ICodeSandboxProps {
   size?: string;
 }
 
-export const CodeSandbox: FC<ICodeSandboxProps> = ({
-  codeSandboxId,
-  embedOptions = {},
-  readonly,
-  size,
-}) => {
+export const CodeSandbox: FC<ICodeSandboxProps> = ({ codeSandboxId, embedOptions = {}, readonly, size }) => {
   const allOptions = {
     fontsize: 11,
     autoresize: '1',
@@ -44,7 +39,7 @@ export const CodeSandbox: FC<ICodeSandboxProps> = ({
   };
 
   const optionsQueryString = Object.keys(allOptions)
-    .map((k) => `${k}=${allOptions[k]}`)
+    .map(k => `${k}=${allOptions[k]}`)
     .join('&');
 
   return (

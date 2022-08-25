@@ -199,9 +199,7 @@ const TweetsQueryWithFragment = gql(/* GraphQL */ `
   }
 `)
 
-const TweetComponent = (props: {
-  tweet: FragmentType<typeof TweetFragment>
-}) => {
+const TweetComponent = (props: { tweet: FragmentType<typeof TweetFragment> }) => {
   return <Tweet>{props.tweet.body}</Tweet>
 }
 ```
@@ -282,16 +280,14 @@ const AppComponent = () => {
 
   return (
     <>
-      {data.Tweets.map((tweet) => (
+      {data.Tweets.map(tweet => (
         <TweetComponent key={tweet.id} tweet={tweet} />
       ))}
     </>
   )
 }
 
-const TweetComponent = (props: {
-  tweet: FragmentProperty<typeof TweetFragment>
-}) => {
+const TweetComponent = (props: { tweet: FragmentProperty<typeof TweetFragment> }) => {
   // accessing props.tweet.body here is legit.
   return <Tweet>{props.tweet.body}</Tweet>
 }

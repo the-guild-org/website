@@ -25,46 +25,22 @@ const PreComponent = ({ children }: { children: ReactNode }): ReactElement => {
 
 export const components: Record<string, (props: any) => ReactElement> = {
   h1: ({ className, children, ...props }) => (
-    <h1
-      className={clsx(
-        'mb-5 text-3xl font-extrabold dark:text-[#FCFCFC]',
-        className
-      )}
-      {...props}
-    >
+    <h1 className={clsx('mb-5 text-3xl font-extrabold dark:text-[#FCFCFC]', className)} {...props}>
       {children}
     </h1>
   ),
   h2: ({ className, children, ...props }) => (
-    <h2
-      className={clsx(
-        'mt-12 mb-3 text-2xl font-extrabold dark:text-[#FCFCFC]',
-        className
-      )}
-      {...props}
-    >
+    <h2 className={clsx('mt-12 mb-3 text-2xl font-extrabold dark:text-[#FCFCFC]', className)} {...props}>
       {children}
     </h2>
   ),
   h3: ({ className, children, ...props }) => (
-    <h3
-      className={clsx(
-        'mt-8 mb-2 text-xl font-extrabold dark:text-[#FCFCFC]',
-        className
-      )}
-      {...props}
-    >
+    <h3 className={clsx('mt-8 mb-2 text-xl font-extrabold dark:text-[#FCFCFC]', className)} {...props}>
       {children}
     </h3>
   ),
   h4: ({ className, children, ...props }) => (
-    <h4
-      className={clsx(
-        'mt-8 mb-2 text-lg font-extrabold dark:text-[#FCFCFC]',
-        className
-      )}
-      {...props}
-    >
+    <h4 className={clsx('mt-8 mb-2 text-lg font-extrabold dark:text-[#FCFCFC]', className)} {...props}>
       {children}
     </h4>
   ),
@@ -91,11 +67,7 @@ export const components: Record<string, (props: any) => ReactElement> = {
   ),
   inlineCode: ({ className, wrap, children, ...props }) => (
     <code
-      className={clsx(
-        'rounded-[5px] border border-solid border-gray-500/20 px-1 py-0.5',
-        wrap && 'wrap',
-        className
-      )}
+      className={clsx('rounded-[5px] border border-solid border-gray-500/20 px-1 py-0.5', wrap && 'wrap', className)}
       {...props}
     >
       {children}
@@ -130,16 +102,9 @@ export const components: Record<string, (props: any) => ReactElement> = {
       {children}
     </p>
   ),
-  hr: ({ className, ...props }) => (
-    <hr className={clsx('my-10 border-[#24272E]', className)} {...props} />
-  ),
+  hr: ({ className, ...props }) => <hr className={clsx('my-10 border-[#24272E]', className)} {...props} />,
   img: ({ className, alt, src, ...props }) => (
-    <Image
-      className={clsx('mx-auto block max-w-full', className)}
-      src={src}
-      alt={alt}
-      {...props}
-    />
+    <Image className={clsx('mx-auto block max-w-full', className)} src={src} alt={alt} {...props} />
   ),
   iframe: ({ className, children, ...props }) => (
     <iframe className={clsx('mx-auto block', className)} {...props}>
