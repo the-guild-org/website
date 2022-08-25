@@ -138,10 +138,7 @@ _codegen.yml_
 And after running `graphql-codegen` CLI, we can refactor our `<Login>` component:
 
 ```ts
-import {
-  currentUserDocument,
-  CurrentUserQueryResult
-} from '../graphql/generated.ts'
+import { currentUserDocument, CurrentUserQueryResult } from '../graphql/generated.ts'
 
 // no need to create the User type or `gql` query, we import them from the generated file
 const Login = () => {
@@ -209,10 +206,7 @@ export const CurrentUserDocument = gql`
   }
 `
 
-export type CurrentUserQueryResult = Apollo.QueryResult<
-  CurrentUserQuery,
-  CurrentUserQueryVariables
->
+export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>
 ```
 
 _src/graphql/generated.ts_
@@ -270,22 +264,13 @@ export const CurrentUserDocument = gql`
 `
 
 export function useCurrentUserQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    CurrentUserQuery,
-    CurrentUserQueryVariables
-  >
+  baseOptions?: Apollo.QueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<CurrentUserQuery, CurrentUserQueryVariables>(
-    CurrentUserDocument,
-    options
-  )
+  return Apollo.useQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options)
 }
 export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>
-export type CurrentUserQueryResult = Apollo.QueryResult<
-  CurrentUserQuery,
-  CurrentUserQueryVariables
->
+export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>
 ```
 
 _src/graphql/generated.ts_
@@ -337,10 +322,7 @@ export type CurrentUserQuery = { __typename?: 'Query' } & {
   me: { __typename?: 'User' } & Pick<User, 'id'>
 }
 
-export const CurrentUserDocument: DocumentNode<
-  CurrentUserQuery,
-  CurrentUserQueryVariables
-> = {
+export const CurrentUserDocument: DocumentNode<CurrentUserQuery, CurrentUserQueryVariables> = {
   kind: 'Document',
   definitions: [
     {
@@ -355,9 +337,7 @@ export const CurrentUserDocument: DocumentNode<
             name: { kind: 'Name', value: 'me' },
             selectionSet: {
               kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } }
-              ]
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }]
             }
           }
         ]

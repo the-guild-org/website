@@ -76,10 +76,10 @@ If you client-side application only needs `id`, `title` and `date` from the `Eve
 You can also use it in your component code:
 
 ```tsx
-export const ListEvents = (listEvents) => {
+export const ListEvents = listEvents => {
   return (
     <ul className="list-events">
-      {listEvents.map((event) => (
+      {listEvents.map(event => (
         <li key={event.id}>
           {event.title} ({event.date})
         </li>
@@ -330,9 +330,7 @@ export class FeedComponent {
   feed: Observable<MyFeedQuery['feed']>
 
   constructor(feedGQL: MyFeedGQL) {
-    this.feed = feedGQL
-      .watch()
-      .valueChanges.pipe(map((result) => result.data.feed))
+    this.feed = feedGQL.watch().valueChanges.pipe(map(result => result.data.feed))
   }
 }
 ```
@@ -404,18 +402,16 @@ And then use it in your code:
 </template>
 
 <script lang="ts">
-import { createComponent } from "@vue/composition-api";
-import {
-  useTestQuery,
-} from "../generated-types";
+import { createComponent } from '@vue/composition-api'
+import { useTestQuery } from '../generated-types'
 
 export default createComponent({
   setup() {
-    const { result } = useMessagesQuery();
+    const { result } = useMessagesQuery()
 
-    return { result };
+    return { result }
   }
-});
+})
 </script>
 ```
 
@@ -614,7 +610,7 @@ export const TodoList: React.FC = () => {
 
   return (
     <>
-      {data.todos.map((todo) => (
+      {data.todos.map(todo => (
         <TodoItem todo={todo} />
       ))}
     </>

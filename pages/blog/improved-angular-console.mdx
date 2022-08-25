@@ -100,11 +100,11 @@ new GraphQLObjectType({
   fields: {
     id: {
       type: GraphQLString,
-      resolve: (parent) => parent._id
+      resolve: parent => parent._id
     },
     text: {
       type: GraphQLString,
-      resolve: (parent) => parent.content
+      resolve: parent => parent.content
     }
   }
 })
@@ -123,8 +123,8 @@ const PostType = gql`
 `
 
 const Post = {
-  id: (parent) => parent._id,
-  text: (parent) => parent.content
+  id: parent => parent._id,
+  text: parent => parent.content
 }
 ```
 
@@ -148,8 +148,8 @@ Here's how it might look like.
 import { PostResolvers } from './generated-types'
 
 const Post: PostResolvers.Resolvers = {
-  id: (parent) => parent._id,
-  text: (parent) => parent.content
+  id: parent => parent._id,
+  text: parent => parent.content
 }
 ```
 
@@ -224,7 +224,7 @@ export class PostComponent {
           id: this.postId
         }
       })
-      .valueChanges.pipe(map((result) => result.data.post))
+      .valueChanges.pipe(map(result => result.data.post))
   }
 }
 ```

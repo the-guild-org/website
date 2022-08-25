@@ -230,7 +230,7 @@ We believe `extensions` should actually **extend** GraphQL Config's behavior.
 Take for example loaders. Imagine you want to collect operations and fragments from your Relay project. With the new GraphQL Config, you can write a loader and register it through a Relay Extension.
 
 ```typescript
-const RelayExtension = (api) => {
+const RelayExtension = api => {
   api.loaders.documents.register(RelayLoader)
 
   return {

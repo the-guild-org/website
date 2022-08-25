@@ -152,7 +152,7 @@ What's nice about this method is that it will open a communication channel betwe
 const { fork } = require('child_process')
 const n = fork(`${__dirname}/child.js`)
 
-n.on('message', (m) => {
+n.on('message', m => {
   console.log('PARENT got message:', m)
 })
 
@@ -161,7 +161,7 @@ n.send({ hello: 'world' })
 
 /* Child process script - child.js */
 
-process.on('message', (m) => {
+process.on('message', m => {
   console.log('CHILD got message:', m)
 })
 
@@ -180,7 +180,7 @@ const cluster = require('cluster')
 
 if (cluster.isMaster) {
   const n = cluster.fork(`${__dirname}/child.js`)
-  n.on('message', (m) => {
+  n.on('message', m => {
     console.log('PARENT got message:', m)
   })
   // Causes the child to print: CHILD got message: { hello: 'world' }
@@ -188,7 +188,7 @@ if (cluster.isMaster) {
 }
 
 if (cluster.isWorker) {
-  process.on('message', (m) => {
+  process.on('message', m => {
     console.log('CHILD got message:', m)
   })
   // Causes the parent to print: PARENT got message: { foo: 'bar', baz: null }

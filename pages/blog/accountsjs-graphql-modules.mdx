@@ -14,7 +14,8 @@ import { Article } from '@/blog/article'
 When starting a backend project, two of the biggest concerns will usually be the right structure of the project and authentication. If you could skip thinking and planning about these two, starting a new backend project can be much easier.
 
 <Callout>
-If you haven't checked out our [blog post about authentication and authorization in GraphQL Modules](/blog/graphql-modules-auth), please read that before!
+  If you haven't checked out our [blog post about authentication and authorization in GraphQL
+  Modules](/blog/graphql-modules-auth), please read that before!
 </Callout>
 
 Internally, we use [GraphQL-Modules](https://graphql-modules.com) and [accounts-js](https://github.com/accounts-js/accounts) to help us with those two decisions, GraphQL-Modules helps us solve our architectural problems in modular, schema-first approaches with the power of GraphQL and accounts-js helps us create our authentication solutions by providing a simple API together with client and server libraries that saves us a lot of the groundwork around authentication.
@@ -92,7 +93,7 @@ async function main() {
   })
   const apolloServer = new ApolloServer({
     schema,
-    context: (session) => session,
+    context: session => session,
     introspection: true
   })
   const { url } = await apolloServer.listen(PORT)
@@ -151,11 +152,7 @@ export const resolvers = {
     }
   },
   Mutation: {
-    addPost(
-      root,
-      { title, content },
-      { injector, userId }: ModuleContext<AccountsContext>
-    ) {
+    addPost(root, { title, content }, { injector, userId }: ModuleContext<AccountsContext>) {
       const db = injector.get(Db)
       const Posts = db.collection('posts')
       const { insertedId } = Posts.insertOne({ title, content, userId })
@@ -214,10 +211,7 @@ type Mutation {
   impersonate(accessToken: String!, username: String!): ImpersonateReturn
   refreshTokens(accessToken: String!, refreshToken: String!): LoginResult
   logout: Boolean
-  authenticate(
-    serviceName: String!
-    params: AuthenticateParamsInput!
-  ): LoginResult
+  authenticate(serviceName: String!, params: AuthenticateParamsInput!): LoginResult
   addPost(title: String, content: String): Post
 }
 
@@ -375,7 +369,7 @@ class App extends Component {
               Username:
               <input
                 value={this.state.credentials.username}
-                onChange={(e) =>
+                onChange={e =>
                   this.setState({
                     credentials: {
                       ...this.state.credentials,
@@ -391,7 +385,7 @@ class App extends Component {
               Password:
               <input
                 value={this.state.credentials.password}
-                onChange={(e) =>
+                onChange={e =>
                   this.setState({
                     credentials: {
                       ...this.state.credentials,
@@ -404,7 +398,7 @@ class App extends Component {
           </p>
           <p>
             <button
-              onClick={(e) => {
+              onClick={e => {
                 e.preventDefault()
                 accountsPassword
                   .login({
@@ -421,7 +415,7 @@ class App extends Component {
           </p>
           <p>
             <button
-              onClick={(e) => {
+              onClick={e => {
                 e.preventDefault()
                 accountsPassword
                   .createUser({
@@ -449,7 +443,7 @@ class App extends Component {
   renderAddPost() {
     return (
       <Mutation mutation={ADD_POST_MUTATION}>
-        {(addPost) => (
+        {addPost => (
           <fieldset>
             <legend>Add Post</legend>
             <form>
@@ -458,7 +452,7 @@ class App extends Component {
                   Title:
                   <input
                     value={this.state.newPost.title}
-                    onChange={(e) => {
+                    onChange={e => {
                       this.setState({
                         newPost: {
                           ...this.state.newPost,
@@ -474,7 +468,7 @@ class App extends Component {
                   Content:
                   <input
                     value={this.state.newPost.content}
-                    onChange={(e) => {
+                    onChange={e => {
                       this.setState({
                         newPost: {
                           ...this.state.newPost,
@@ -488,7 +482,7 @@ class App extends Component {
               <p>
                 <input
                   type="submit"
-                  onClick={(e) => {
+                  onClick={e => {
                     e.preventDefault()
                     addPost({
                       variables: {

@@ -20,9 +20,7 @@ class MyComponent extends React.Component {
   constructor(props) {
     super(props)
 
-    this.transformedData = props.data
-      .filter(props.filterPredicate)
-      .sort(props.sortComparator)
+    this.transformedData = props.data.filter(props.filterPredicate).sort(props.sortComparator)
   }
 
   render() {
@@ -47,15 +45,8 @@ class MyComponent extends React.Component {
 In the near future, we will have no choice but to do everything within the rendering method itself, dictated by hooks:
 
 ```jsx
-const MyComponent = ({
-  data,
-  history,
-  filterPredicate,
-  sortComparator,
-}) => {
-  const transformedData = data
-    .filter(filterPredicate)
-    .sort(sortComparator)
+const MyComponent = ({ data, history, filterPredicate, sortComparator }) => {
+  const transformedData = data.filter(filterPredicate).sort(sortComparator)
 
   const goBack = () => {
     history.pop()
@@ -77,21 +68,11 @@ const MyComponent = ({
 To solve this problem, the React team invented a couple of methods: `useCallback()` and `useMemo()`. Each of them is used for different reasons but they're quiet similar, and essentially they're used as guard functions that will re-activate themselves only if certain parameters were changed. I recommend you to go through the [official React docs](https://reactjs.org/docs/hooks-reference.html#usecallback) to get a better perspective on these. If we were to implement it in the example above, it should look like so:
 
 ```jsx
-const MyComponent = ({
-  data,
-  history,
-  filterPredicate,
-  sortComparator,
-}) => {
-  const transformedData = useMemo(() =>
-    data
-      .filter(filterPredicate)
-      .sort(sortComparator)
-  , [
-    history,
-    filterPredicate,
-    sortComparator,
-  ])
+const MyComponent = ({ data, history, filterPredicate, sortComparator }) => {
+  const transformedData = useMemo(
+    () => data.filter(filterPredicate).sort(sortComparator),
+    [history, filterPredicate, sortComparator]
+  )
 
   const goBack = useCallback(() => {
     history.pop()
@@ -129,11 +110,7 @@ export default ({ data, sortComparator, filterPredicate, history }) => {
       <button className="back-btn" onClick={() => history.pop()} />
       <ul className="data-list">
         {transformedData.map(({ id, value }) => (
-          <li
-            className="data-item"
-            key={id}
-            onClick={() => history.push(`data/${id}`)}
-          >
+          <li className="data-item" key={id} onClick={() => history.push(`data/${id}`)}>
             {value}
           </li>
         ))}
@@ -158,10 +135,7 @@ export default ({ data, sortComparator, filterPredicate, history }) => {
     (_anonymousFnComponent2 =
       _anonymousFnComponent2 ||
       (() => {
-        const _onClick2 = React.useCallback(
-          () => history.pop(),
-          [history, history.pop]
-        )
+        const _onClick2 = React.useCallback(() => history.pop(), [history, history.pop])
 
         return (
           <div>
@@ -172,10 +146,7 @@ export default ({ data, sortComparator, filterPredicate, history }) => {
                   (_anonymousFnComponent =
                     _anonymousFnComponent ||
                     (() => {
-                      const _onClick = React.useCallback(
-                        () => history.push(`data/${id}`),
-                        [history, history.push, id]
-                      )
+                      const _onClick = React.useCallback(() => history.push(`data/${id}`), [history, history.push, id])
 
                       return (
                         <li className="data-item" key={id} onClick={_onClick}>

@@ -225,7 +225,7 @@ import { emitter } from './event-emitter'
 
 const cache = createInMemoryCache()
 
-emitter.on('invalidate', (entity) => {
+emitter.on('invalidate', entity => {
   cache.invalidate([
     {
       typename: entity.type,
@@ -280,10 +280,9 @@ const getEnveloped = envelop({
     // ... other plugins ...
     useResponseCache({
       // context is the GraphQL context that would be used for execution
-      session: (context) => (context.user ? String(context.user.id) : null),
+      session: context => (context.user ? String(context.user.id) : null),
       // never serve cache for admin users
-      enabled: (context) =>
-        context.user ? isAdmin(context.user) === false : true
+      enabled: context => (context.user ? isAdmin(context.user) === false : true)
     })
   ]
 })

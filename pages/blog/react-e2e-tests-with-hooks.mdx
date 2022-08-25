@@ -171,10 +171,7 @@ const _BobcatRunner = ({ children }) => {
       run({
         onPass({ route, date, payload }) {
           console.log(
-            [
-              `[PASS] (${date.toISOString()}) ${route.join(' -> ')}`,
-              payload && payload.message
-            ]
+            [`[PASS] (${date.toISOString()}) ${route.join(' -> ')}`, payload && payload.message]
               .filter(Boolean)
               .join('\n')
           )
@@ -182,10 +179,7 @@ const _BobcatRunner = ({ children }) => {
 
         onFail({ route, date, payload }) {
           console.error(
-            [
-              `[FAIL] (${date.toISOString()}) ${route.join(' -> ')}`,
-              payload && payload.message
-            ]
+            [`[FAIL] (${date.toISOString()}) ${route.join(' -> ')}`, payload && payload.message]
               .filter(Boolean)
               .join('\n')
           )
@@ -212,7 +206,7 @@ const _BobcatRunner = ({ children }) => {
   return <React.Fragment key={route}>{children}</React.Fragment>
 }
 
-const BobcatRunner = (props) => {
+const BobcatRunner = props => {
   return (
     <BobcatProvider>
       <_BobcatRunner {...props} />
@@ -244,14 +238,8 @@ module.exports = {
       'module-resolver',
       {
         alias: {
-          'react-bobcat':
-            process.env.NODE_ENV === 'test'
-              ? 'react-bobcat'
-              : 'react-bobcat/mock',
-          'my-bobcat-runner':
-            process.env.NODE_ENV === 'test'
-              ? './BobcatRunner'
-              : './components/Fragment'
+          'react-bobcat': process.env.NODE_ENV === 'test' ? 'react-bobcat' : 'react-bobcat/mock',
+          'my-bobcat-runner': process.env.NODE_ENV === 'test' ? './BobcatRunner' : './components/Fragment'
         }
       }
     ]

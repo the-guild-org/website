@@ -153,7 +153,7 @@ const schema = makeExecutableSchema({
 Then we can start our server. The helix fastify server can be started via `yarn start`.
 
 ```sh
-C:\Users\laurin\Projects\envelop\examples\graphql-helix> yarn start
+C:\Users\laurin\Projects\envelop\examples\graphql-helix > yarn start
 yarn run v1.22.10
 $ ts-node index.ts
 GraphQL server is running.
@@ -215,7 +215,7 @@ app.route({
               domain: '{account_name}.{region}.auth0.com',
               client_id: '<client_id>',
               audience: 'http://localhost:3000/graphql'
-            }).then(async (auth0) => {
+            }).then(async auth0 => {
               await auth0.loginWithPopup()
               const accessToken = await auth0.getTokenSilently()
               window.document.body.innerText = accessToken
@@ -279,7 +279,7 @@ const getEnveloped = envelop({
   plugins: [
     useSchema(schema),
     useAuth0(auth0Config),
-    useExtendContext(async (context) => {
+    useExtendContext(async context => {
       if (context.auth0) {
         return {
           user: await context.db.loadUserBySub(context.auth0.sub)

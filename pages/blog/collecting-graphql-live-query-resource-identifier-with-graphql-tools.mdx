@@ -190,9 +190,7 @@ import { mapSchema, MapperKind } from '@graphql-tools/utils'
 
 const ORIGINAL_CONTEXT_SYMBOL = Symbol('ORIGINAL_CONTEXT_SYMBOL')
 
-const isNonNullIDScalarType = (
-  type: GraphQLOutputType
-): type is GraphQLScalarType => {
+const isNonNullIDScalarType = (type: GraphQLOutputType): type is GraphQLScalarType => {
   if (isNonNullType(type)) {
     return isScalarType(type.ofType) && type.ofType.name === 'ID'
   }
@@ -200,10 +198,7 @@ const isNonNullIDScalarType = (
 }
 
 // invokes the callback with the resolved or sync input. Handy when you don't know whether the input is a Promise or the actual value you want.
-export const runWith = <T>(
-  input: T | Promise<T>,
-  callback: (value: T) => void
-) => {
+export const runWith = <T>(input: T | Promise<T>, callback: (value: T) => void) => {
   if (input instanceof Promise) {
     input.then(callback, () => undefined)
   } else {
@@ -211,16 +206,12 @@ export const runWith = <T>(
   }
 }
 
-const addResourceIdentifierCollectorToSchema = (
-  schema: GraphQLSchema,
-  idFieldName: string
-): GraphQLSchema =>
+const addResourceIdentifierCollectorToSchema = (schema: GraphQLSchema, idFieldName: string): GraphQLSchema =>
   mapSchema(schema, {
     [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typename) => {
       const newFieldConfig = { ...fieldConfig }
 
-      let isIDField =
-        fieldName === idFieldName && isNonNullIDScalarType(fieldConfig.type)
+      let isIDField = fieldName === idFieldName && isNonNullIDScalarType(fieldConfig.type)
       let resolve = fieldConfig.resolve ?? defaultFieldResolver
 
       newFieldConfig.resolve = (src, args, context, info) => {
@@ -228,15 +219,12 @@ const addResourceIdentifierCollectorToSchema = (
           return resolve(src, args, context, info)
         }
 
-        const collectResourceIdentifier: ResourceIdentifierCollectorFunction =
-          context.collectResourceIdentifier
+        const collectResourceIdentifier: ResourceIdentifierCollectorFunction = context.collectResourceIdentifier
         context = context[ORIGINAL_CONTEXT_SYMBOL]
         const result = resolve(src, args, context, info)
 
         if (isIDField) {
-          runWith(result, (id: string) =>
-            collectResourceIdentifier({ typename, id })
-          )
+          runWith(result, (id: string) => collectResourceIdentifier({ typename, id }))
         }
         return result
       }

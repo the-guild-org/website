@@ -189,8 +189,8 @@ const resolvers = {
     me: (root, args, context) => context.currentUser
   },
   User: {
-    id: (user) => user._id,
-    username: (user) => user.username
+    id: user => user._id,
+    username: user => user.username
   }
 }
 
@@ -233,7 +233,7 @@ So let's implement a simple guard, and use it in our server.
 I also added a _public_ part of the schema (`Query.serverTime`), that should be public, and not effected by the authentication flow. So it's not wrapped with our guard.
 
 ```ts filename="authenticated-guard.ts"
-export const authenticated = (next) => (root, args, context, info) => {
+export const authenticated = next => (root, args, context, info) => {
   if (!context.currentUser) {
     throw new Error(`Unauthenticated!`)
   }
@@ -266,8 +266,8 @@ const resolvers = {
     serverTime: () => new Date()
   },
   User: {
-    id: (user) => user._id,
-    username: (user) => user.username
+    id: user => user._id,
+    username: user => user.username
   }
 }
 
@@ -352,8 +352,8 @@ const resolvers = {
     )
   },
   User: {
-    id: (user) => user._id,
-    username: (user) => user.username
+    id: user => user._id,
+    username: user => user.username
   }
 }
 
@@ -387,7 +387,7 @@ server.listen().then(({ url }) => {
 ```
 
 ```ts filename="validate-role.ts"
-export const validateRole = (role) => (next) => (root, args, context, info) => {
+export const validateRole = role => next => (root, args, context, info) => {
   if (context.currentUser.role !== role) {
     throw new Error(`Unauthorized!`)
   }
@@ -431,8 +431,7 @@ export const articlesModule = new GraphQLModule({
   `,
   resolvers: {
     Mutation: {
-      publishArticle: (root, { title, content }, { currentUser }) =>
-        createNewArticle(title, content, currentUser)
+      publishArticle: (root, { title, content }, { currentUser }) => createNewArticle(title, content, currentUser)
     }
   }
 })
@@ -460,8 +459,8 @@ export const authModule = new GraphQLModule({
       me: (root, args, { currentUser }) => currentUser
     },
     User: {
-      id: (user) => user._id,
-      username: (user) => user.username
+      id: user => user._id,
+      username: user => user.username
     }
   },
   async contextBuilder({ req }) {
@@ -567,7 +566,7 @@ export const resolversComposition = ({ typeDefs }) => {
 
     if (directives.length > 0) {
       result[fieldPath] = directives
-        .map((directive) => {
+        .map(directive => {
           if (DIRECTIVE_TO_GUARD[directive.name]) {
             const mapperFn = DIRECTIVE_TO_GUARD[directive.name]
 
@@ -576,7 +575,7 @@ export const resolversComposition = ({ typeDefs }) => {
 
           return null
         })
-        .filter((a) => a)
+        .filter(Boolean)
     }
   }
 
@@ -588,9 +587,7 @@ The, you add the directives to your schema declaration:
 
 ```graphql
 type Mutation {
-  publishArticle(title: String!, content: String!): Article!
-    @auth
-    @protect(role: "EDITOR")
+  publishArticle(title: String!, content: String!): Article! @auth @protect(role: "EDITOR")
 }
 
 type Query {

@@ -168,7 +168,7 @@ class AppComponent {
   currentUser: User
 
   ngOnInit() {
-    this.apollo.watchQuery<Data>({ query }).subscribe((result) => {
+    this.apollo.watchQuery<Data>({ query }).subscribe(result => {
       this.currentUser = result.data.currentUser
     })
   }
@@ -188,7 +188,7 @@ class AppComponent {
   user: ApolloQueryObservable<ApolloQueryResult<Data>>
 
   getUser() {
-    this.user.subscribe((result) => {
+    this.user.subscribe(result => {
       // result is of type ApolloQueryResult<Data>
     })
   }
@@ -200,7 +200,7 @@ class AppComponent {
   user: ApolloQueryObservable<Data>
 
   getUser() {
-    this.user.subscribe((result) => {
+    this.user.subscribe(result => {
       // result is of type ApolloQueryResult<Data>
     })
   }

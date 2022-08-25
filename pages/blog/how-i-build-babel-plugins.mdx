@@ -139,14 +139,8 @@ module.exports = ({ types: t }) => {
   return {
     visitor: {
       AssignmentExpression(path) {
-        if (
-          path.node.left.type === 'Identifier' &&
-          !path.scope.hasBinding(path.node.left.name)
-        ) {
-          path.node.left = t.memberExpression(
-            t.identifier('window'),
-            t.identifier(path.node.left.name)
-          )
+        if (path.node.left.type === 'Identifier' && !path.scope.hasBinding(path.node.left.name)) {
+          path.node.left = t.memberExpression(t.identifier('window'), t.identifier(path.node.left.name))
         }
       }
     }
@@ -184,29 +178,13 @@ module.exports = ({ types: t }) => {
   return {
     visitor: {
       AssignmentExpression(path) {
-        if (
-          path.node.left.type === 'Identifier' &&
-          !path.scope.hasBinding(path.node.left.name)
-        ) {
-          path.node.left = t.memberExpression(
-            t.identifier('window'),
-            t.identifier(path.node.left.name)
-          )
+        if (path.node.left.type === 'Identifier' && !path.scope.hasBinding(path.node.left.name)) {
+          path.node.left = t.memberExpression(t.identifier('window'), t.identifier(path.node.left.name))
         }
-        if (
-          path.node.left.type == 'MemberExpression' &&
-          path.node.left.object.name == 'window'
-        ) {
+        if (path.node.left.type == 'MemberExpression' && path.node.left.object.name == 'window') {
           const typeofNode = t.unaryExpression('typeof', path.node.left)
-          const isNodeUndefined = t.binaryExpression(
-            '===',
-            typeofNode,
-            t.stringLiteral('undefined')
-          )
-          const ifNodeUndefined = t.ifStatement(
-            isNodeUndefined,
-            t.expressionStatement(path.node)
-          )
+          const isNodeUndefined = t.binaryExpression('===', typeofNode, t.stringLiteral('undefined'))
+          const ifNodeUndefined = t.ifStatement(isNodeUndefined, t.expressionStatement(path.node))
 
           path.replaceWith(ifNodeUndefined)
           path.skip()

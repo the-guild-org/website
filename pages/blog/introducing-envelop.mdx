@@ -185,12 +185,7 @@ For example, here's a cool snippet for boosting things in your execution layer:
 
 ```ts
 const getEnveloped = envelop({
-  plugins: [
-    useSchema(schema),
-    useParserCache(),
-    useValidationCache(),
-    useGraphQLJit()
-  ]
+  plugins: [useSchema(schema), useParserCache(), useValidationCache(), useGraphQLJit()]
 })
 ```
 
@@ -219,7 +214,7 @@ const myPlugin: Plugin = {
   onParse({ params }) {
     console.log('Parse started!', { args })
 
-    return (result) => {
+    return result => {
       console.log('Parse done!', { result })
     }
   },
@@ -262,11 +257,7 @@ const myBaseEnvelop = envelop({
 // Later, when you create your own Envelop, you can extend that and add custom plugins.
 // You can also specify the schema only at this point
 const myEnvelop = envelop({
-  plugins: [
-    useEnvelop(myBaseEnvelop),
-    useSchema(myServerSchema),
-    useMyCustomPlugin()
-  ]
+  plugins: [useEnvelop(myBaseEnvelop), useSchema(myServerSchema), useMyCustomPlugin()]
 })
 ```
 

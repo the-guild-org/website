@@ -105,12 +105,7 @@ Now that sounds promising. Let's have a look at an example. We will use the Boot
 
 ```jsx
 const ModalFromTheFuture = ({ showCloseButton, children }) => {
-  const childProps = useChildProps(props.children, [
-    'title',
-    'contents',
-    'dismissButton',
-    'actionButton',
-  ]);
+  const childProps = useChildProps(props.children, ['title', 'contents', 'dismissButton', 'actionButton'])
 
   return (
     <Modal.Dialog>
@@ -118,17 +113,15 @@ const ModalFromTheFuture = ({ showCloseButton, children }) => {
         {childProps.title && <Modal.Title {...childProps.title} />}
       </Modal.Header>
 
-      <Modal.Body>
-        {childProps.contents && <p {...childProps.contents} />}
-      </Modal.Body>
+      <Modal.Body>{childProps.contents && <p {...childProps.contents} />}</Modal.Body>
 
       <Modal.Footer>
         {childProps.actionButton && <Button {...childProps.actionButton} variant="secondary" />}
         {childProps.dismissButton && <Button {...childProps.dismissButton} variant="primary" />}
       </Modal.Footer>
     </Modal.Dialog>
-  );
-};
+  )
+}
 ```
 
 As you can see, the new modal component uses a hook called `useChildProps()`. This hook will go through \`props.children\` and will basically flatten nested props. In addition, it will validate them against a provided white list, to make sure that the right element names were addressed. This is how its implementation should look like:

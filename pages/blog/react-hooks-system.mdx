@@ -147,12 +147,7 @@ function useXXX() {
   // ...
 }
 
-function updateFunctionComponent(
-  recentFiber,
-  workInProgressFiber,
-  Component,
-  props
-) {
+function updateFunctionComponent(recentFiber, workInProgressFiber, Component, props) {
   prepareHooks(recentFiber, workInProgressFiber)
   Component(props)
   finishHooks()
@@ -212,9 +207,9 @@ const ParentComponent = () => {
   return <ChildComponent toUpperCase={setName} />
 }
 
-const ChildComponent = (props) => {
+const ChildComponent = props => {
   useEffect(() => {
-    props.toUpperCase((state) => state.toUpperCase())
+    props.toUpperCase(state => state.toUpperCase())
   }, [true])
 
   return null

@@ -38,17 +38,16 @@ Let's take a look at some code, to show how GraphQL Modules makes you create tho
 `AppModule` is our top Application Module;
 
 ```typescript
-import { GraphQLModule } from '@graphql-modules/core';
-import { AuthenticationModule } from './modules/auth.module';
+import { GraphQLModule } from '@graphql-modules/core'
+import { AuthenticationModule } from './modules/auth.module'
 
 const AppModule = new GraphQLModule({
-    imports: [
-        AuthenticationModule, //this module has `user` in its context
-        SomeImportantModuleThatUsesAuthenticatedContext,
-        // ...
-    ],
-});
-
+  imports: [
+    AuthenticationModule, //this module has `user` in its context
+    SomeImportantModuleThatUsesAuthenticatedContext
+    // ...
+  ]
+})
 ```
 
 And there is another module that tries to use `AuthenticationModule`'s context, but it doesn't import `AuthenticationModule`. In this case, it is not possible to get anything from `AuthenticationModule` in the resolvers, because it is not imported. The following module doesn't know anything about `AuthenticationModule`.

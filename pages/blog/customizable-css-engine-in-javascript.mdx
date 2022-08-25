@@ -103,7 +103,7 @@ function handleMutations(
   observer,
   { addedNodes, removedNodes, modifiedNodes } = normalizeMutations(mutations)
 ) {
-  addedNodes.concat(modifiedNodes).forEach((mutation) => {
+  addedNodes.concat(modifiedNodes).forEach(mutation => {
     this.removeEventListeners(mutation)
     this.addEventListeners(mutation)
   })
@@ -136,7 +136,7 @@ The module will add and remove events for given event target as normally, but in
 
 ```javascript
 function addEventListener(target, event, handler) {
-  const wrappedHandler = (e) => {
+  const wrappedHandler = e => {
     const dispose = handler(e)
 
     if (dispose != null && typeof dispose != 'function') {

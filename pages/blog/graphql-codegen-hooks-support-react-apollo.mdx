@@ -97,7 +97,7 @@ function Todos() {
 
       return (
         <ul>
-          {data.todos.map((todo) => (
+          {data.todos.map(todo => (
             <li key={todo.id}>{todo.description}</li>
           ))}
         </ul>
@@ -120,13 +120,8 @@ Just use GraphQL Code Generator's [Typescript-React-Apollo Plugin](https://graph
 This is an example generated hook, with proper typings:
 
 ```tsx
-export function useUserListQuery(
-  baseOptions?: QueryHookOptions<UserListQueryVariables>
-) {
-  return useApolloQuery<UserListQueryQuery, UserListQueryVariables>(
-    UserListQueryDocument,
-    baseOptions
-  )
+export function useUserListQuery(baseOptions?: QueryHookOptions<UserListQueryVariables>) {
+  return useApolloQuery<UserListQueryQuery, UserListQueryVariables>(UserListQueryDocument, baseOptions)
 }
 ```
 

@@ -34,11 +34,9 @@ mutation addUser {
 }
 ```
 
-<Callout emoji='🏎'>
-How hard is to do this? Let's find out... **Let's Pimp this GraphQL!**
-</Callout>
+<Callout emoji="🏎">How hard is to do this? Let's find out... **Let's Pimp this GraphQL!**</Callout>
 
-<Video src='/blog-assets/add-reactivity-to-an-existing-source/PimpMyGraphQL.webm' title='Pimp my graphQL'/>
+<Video src="/blog-assets/add-reactivity-to-an-existing-source/PimpMyGraphQL.webm" title="Pimp my graphQL" />
 
 ## Implementation
 
@@ -97,7 +95,7 @@ Where I
 ### 4. Add `./src/composition/insert_user.js` file with all the logic for this new mutation composition.
 
 ```js filename="insert_user.js"
-module.exports = (next) => async (root, args, context, info) => {
+module.exports = next => async (root, args, context, info) => {
   // add returning.id to the selection
   info.operation.selectionSet.selections[0].selectionSet.selections.push({
     kind: 'Field',
@@ -127,7 +125,7 @@ module.exports = (next) => async (root, args, context, info) => {
   const result = await next(root, args, context, info)
 
   // select returned ids
-  const ids = result.returning.map((c) => c.id)
+  const ids = result.returning.map(c => c.id)
 
   // Query users enforcing fields to return
   const responseUser = await context.spacexGQL.apiQuery.users(
@@ -166,7 +164,4 @@ I'm now ready to work on the demo for [**Svelte Codegen**](https://github.com/ti
 
 [@jycouet](https://twitter.com/jycouet)
 
-<Callout>
-  Special thanks to [n1ru4l](https://twitter.com/n1rual) who helped me find the
-  nicest way to do it ;)
-</Callout>
+<Callout>Special thanks to [n1ru4l](https://twitter.com/n1rual) who helped me find the nicest way to do it ;)</Callout>

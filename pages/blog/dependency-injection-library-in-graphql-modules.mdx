@@ -118,21 +118,18 @@ In Angular, there is one injector that is shared across all the application whil
 > Our Dependency Injection implementation is more strict in terms of encapsulation than Angular's.
 
 ```typescript
-import { NgModule } from '@angular/core';
-import { FooModule, FooProvider } from '@foo';
-import { BarModule } from '@bar';
+import { NgModule } from '@angular/core'
+import { FooModule, FooProvider } from '@foo'
+import { BarModule } from '@bar'
 
 @NgModule({
-    imports: [
-        FooModule,
-        BarModule
-    ],
-    providers: [
-        {
-            provide: FooProvider,
-            useClass: MyFooProvider
-        }
-    ]
+  imports: [FooModule, BarModule],
+  providers: [
+    {
+      provide: FooProvider,
+      useClass: MyFooProvider
+    }
+  ]
 })
 export class AppModule {}
 ```
@@ -140,22 +137,19 @@ export class AppModule {}
 This is an example top module written in Angular. Let's assume `FooProvider` originally implemented and defined inside `FooModule` and used by `BarModule` . When `FooProvider` token is replaced by `MyFooProvider` in `AppModule` scope, `BarModule` also uses our `MyFooProvider` inside its logic. This explicitly violates encapsulation in the modular approach, because Angular is supposed to send to `BarModule` `FooModule` 's `FooProvider` implementation instead of the one defined outside of `BarModule` ; because it shouldn't know what is defined in the higher level.
 
 ```typescript
-import { GraphQLModule } from '@graphql-modules/core';
-import { FooModule, FooProvider } from '@foo';
-import { BarModule } from '@bar';
+import { GraphQLModule } from '@graphql-modules/core'
+import { FooModule, FooProvider } from '@foo'
+import { BarModule } from '@bar'
 
 export const AppModule = new GraphQLModule({
-    imports: [
-        FooModule,
-        BarModule
-    ],
-    providers: [
-        {
-            provide: FooProvider,
-            useClass: MyFooProvider
-        }
-    ]
-});
+  imports: [FooModule, BarModule],
+  providers: [
+    {
+      provide: FooProvider,
+      useClass: MyFooProvider
+    }
+  ]
+})
 ```
 
 However, GraphQL-Modules will send to `BarModule` the correct `FooProvider` , because `BarModule` imports `FooModule` not `AppModule` . So, `MyFooProvider` will be sent if the current injector is inside `AppModule` scope.

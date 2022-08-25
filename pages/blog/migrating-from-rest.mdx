@@ -48,24 +48,26 @@ And you would also need a thin business logic that proxies upcoming GraphQL requ
 
 ```js
 module.exports = {
-   Query: {
-      user: (root, args) => fetch('https://myrest.com/user/' + args.id)
-      .then(res => res.json())
-   },
+  Query: {
+    user: (root, args) => fetch('https://myrest.com/user/' + args.id).then(res => res.json())
+  },
   Mutation: {
-     createUser: (root, args) => fetch('https://myrest.com/user', {
-       method: 'PUT',
-       body: JSON.stringify(args.input)
+    createUser: (root, args) =>
+      fetch('https://myrest.com/user', {
+        method: 'PUT',
+        body: JSON.stringify(args.input)
       }).then(res => res.json()),
-    updateUser:  (root, args) => fetch('https://myrest.com/user' + args.id, {
-       method: 'POST',
-       body: JSON.stringify(args.input)
-    }).then(res => res.json()),
-    deleteUser:  (root, args) => fetch('https://myrest.com/user' + args.id, {
-       method: 'DELETE'
-    }).then(res => res.json()),
+    updateUser: (root, args) =>
+      fetch('https://myrest.com/user' + args.id, {
+        method: 'POST',
+        body: JSON.stringify(args.input)
+      }).then(res => res.json()),
+    deleteUser: (root, args) =>
+      fetch('https://myrest.com/user' + args.id, {
+        method: 'DELETE'
+      }).then(res => res.json())
   }
-};
+}
 ```
 
 This example assumes that you have `/user/:id` endpoint that gets a `User` entity with `HTTP GET`, deletes user with `HTTP DELETE` and updates a `User` that has the given id with the given input. Also `/user` endpoint creates a new `User` with the given input.

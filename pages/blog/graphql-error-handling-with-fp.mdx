@@ -42,6 +42,7 @@ You'll get a 5xx error in case the server is not available at all.
 This is actually a common practice, but it is not mandatory. You could send GraphQL responses with different Status Codes. It would however need to be implemented at the server level and not at the operation resolvers level.
 
 As an example, you can check out [graphql-helix implementation](https://github.com/contra/graphql-helix/blob/a796f9d2afdd8c2d91b745edbc53c5d49b716ba6/packages/core/lib/process-request.ts#L92-L281) of some error cases' responses with different Status Codes, e.g. 400 for GraphQL syntax or validation error, 405 when using not allowed HTTP method (e.g. GET for mutations or using anything else than POST or GET for queries).
+
 </Callout>
 
 The standard error handling mechanism from GraphQL with return a JSON containing:
@@ -76,6 +77,7 @@ GraphQL has support for Union types. We can take advantage of it and design our 
 GraphQL Union is available for Types only, not for Inputs. However, the [`oneOf` directive](https://github.com/graphql/graphql-spec/pull/825) will bridge the gap in the future.
 
 If you use [Envelop](https://envelop.dev) or [GraphQL Yoga](https://graphql-yoga.com) (both developed by [The Guild](/)), you can already benefit from it today by using this [Envelop plugin](https://envelop.dev/plugins/use-extended-validation#schema-directive-flow))
+
 </Callout>
 
 We can then do queries like the following:
@@ -189,12 +191,7 @@ type Entity {
   name: String!
 }
 
-union EntityResult =
-    Entity
-  | NotFoundError
-  | NotAllowedError
-  | InvalidInputError
-  | UnknownError
+union EntityResult = Entity | NotFoundError | NotAllowedError | InvalidInputError | UnknownError
 
 type Query {
   entity(id: ID!, userId: ID!): EntityResult!
@@ -273,8 +270,11 @@ export class UnknownError extends Error {}
 ```
 
 <Callout>
-When using remote APIs, we often have the possibility to generate the types automatically [from a JSON schema](https://json-schema.org/implementations.html#code-generation) for REST APIs, [from protobuf files](https://github.com/improbable-eng/ts-protoc-gen) for gRPC-based APIs, [from a database schema](https://github.com/SweetIQ/schemats), etc. You might even be using an external API through an SDK that already provides you with all types. In such cases, the creation of specialized Error classes is not mandatory. However, it might still be a good idea to do so to provide application-specific errors rather than bubbling up 3rd-party low-level errors.
-For such cases, the upcoming Ecma TC39 proposal for [Error Cause](https://github.com/tc39/proposal-error-cause) is useful as it allows to chain errors. Polyfills exist: [Pony Cause](https://github.com/voxpelli/pony-cause) or [error-cause](https://npmjs.com/package/error-cause).
+  When using remote APIs, we often have the possibility to generate the types automatically [from a JSON
+  schema](https://json-schema.org/implementations.html#code-generation) for REST APIs, [from protobuf
+  files](https://github.com/improbable-eng/ts-protoc-gen) for gRPC-based APIs, [from a database
+  schema](https://github.com/SweetIQ/schemats), etc. You might even be using an external API through an SDK that already provides you with all types. In such cases, the creation of specialized Error classes is not mandatory. However, it might still be a good idea to do so to provide application-specific errors rather than bubbling up 3rd-party low-level errors. For such cases, the upcoming Ecma TC39 proposal for [Error
+  Cause](https://github.com/tc39/proposal-error-cause) is useful as it allows to chain errors. Polyfills exist: [Pony Cause](https://github.com/voxpelli/pony-cause) or [error-cause](https://npmjs.com/package/error-cause).
 </Callout>
 
 <Callout>
@@ -291,6 +291,7 @@ export const wrappedError = <E extends Error>(err: E) => ({
   err
 })
 ```
+
 </Callout>
 
 ## `codegen` mapping
@@ -326,6 +327,7 @@ We use the `add` plugin to import the `WrappedError` generic wrapper type and th
 ```yaml
 NotFoundError: 'import("./src/errors").WrappedError<import("./src/errors").NotFoundError>'
 ```
+
 </Callout>
 
 This `codegen` configuration generates the Typescript types from the Schema and the proper signatures for the operations (query/mutation/subscription) and types resolvers. Now we have static type safety and type inference and hints in the code editor.
@@ -457,13 +459,13 @@ This is now our safe APIs:
 export const getEntity = (id: number): TE.TaskEither<NotFoundError, Entity> =>
   TE.tryCatch(
     () => fetchEntity(id),
-    (e) => new NotFoundError(e.message)
+    e => new NotFoundError(e.message)
   )
 
 export const getUser = (id: UserId): TE.TaskEither<Error, User> =>
   TE.tryCatch(
     () => fetchUser(id),
-    (e) => new NotFoundError(e.message)
+    e => new NotFoundError(e.message)
   )
 ```
 
@@ -473,10 +475,7 @@ Now that we have dealt with the data fetching, let's consume this data. The firs
 
 ```typescript
 // unsafe API
-const isUserAllowedForEntity = async (
-  user: User,
-  entity: Entity
-): Promise<boolean> => {
+const isUserAllowedForEntity = async (user: User, entity: Entity): Promise<boolean> => {
   try {
     return !entity.restrictions.includes(user.country)
   } catch (e) {
@@ -485,13 +484,10 @@ const isUserAllowedForEntity = async (
 }
 
 // safe API
-export const getIsUserAllowedForEntity = (
-  user: User,
-  entity: Entity
-): TE.TaskEither<UnknownError, boolean> =>
+export const getIsUserAllowedForEntity = (user: User, entity: Entity): TE.TaskEither<UnknownError, boolean> =>
   TE.tryCatch(
     () => isUserAllowedForEntity(user, entity),
-    (e) => new UnknownError(e.message)
+    e => new UnknownError(e.message)
   )
 
 const isNotAllowedAsError =
@@ -499,7 +495,7 @@ const isNotAllowedAsError =
   (isAllowed: boolean): TE.TaskEither<NotAllowedError, boolean> =>
     pipe(
       isAllowed,
-      TE.fromPredicate(Boolean, (_) => new NotAllowedError(errorMsg))
+      TE.fromPredicate(Boolean, _ => new NotAllowedError(errorMsg))
     )
 
 export const isUserAllowedForEntityAsError =
@@ -507,26 +503,17 @@ export const isUserAllowedForEntityAsError =
   (entity: Entity): TE.TaskEither<NotAllowedError | UnknownError, boolean> =>
     pipe(
       getIsUserAllowedForEntity(user, entity),
-      TE.chainW(
-        isNotAllowedAsError(
-          `User ${user.id} isn't allowed to access entity ${entity.id}`
-        )
-      )
+      TE.chainW(isNotAllowedAsError(`User ${user.id} isn't allowed to access entity ${entity.id}`))
     )
 ```
 
 Now that both the Entity and User permission fetching calls are safer, we can combine them to create the Entity fetching function with User permission check incorporated:
 
 ```typescript
-export const getEntityForUser = (
-  id: number,
-  userId: UserId
-): TE.TaskEither<NotFoundError | NotAllowedError, Entity> =>
+export const getEntityForUser = (id: number, userId: UserId): TE.TaskEither<NotFoundError | NotAllowedError, Entity> =>
   pipe(
     getUser(userId),
-    TE.chainW((user) =>
-      pipe(getEntity(id), TE.chainFirstW(isUserAllowedForEntityAsError(user)))
-    )
+    TE.chainW(user => pipe(getEntity(id), TE.chainFirstW(isUserAllowedForEntityAsError(user))))
   )
 ```
 
@@ -547,26 +534,19 @@ The `Do` notation is an adaptation of its native Haskell counterpart. It allows 
 Let's rewrite our function using the `Do` notation:
 
 ```typescript
-export const getEntityForUser = (
-  id: number,
-  userId: UserId
-): TE.TaskEither<NotFoundError | NotAllowedError, Entity> =>
+export const getEntityForUser = (id: number, userId: UserId): TE.TaskEither<NotFoundError | NotAllowedError, Entity> =>
   pipe(
     getUser(userId),
     TE.bindTo('user'),
-    TE.bind('entity', (_) => getEntity(id)),
-    TE.bind('isAllowed', ({ user, entity }) =>
-      isUserAllowedForEntityAsError(user)(entity)
-    ),
+    TE.bind('entity', _ => getEntity(id)),
+    TE.bind('isAllowed', ({ user, entity }) => isUserAllowedForEntityAsError(user)(entity)),
     TE.map(({ entity }) => entity)
   )
 ```
 
 Because the `bind`/`bindTo` functions return instances of ADTs (`TaskEither` here), we keep the fail-fast behaviour. In this example, if the `getUser` call returns a `Left<NotFoundError>`, we won't call `getEntity` nor `isUserAllowedForEntityAsError`, it will return the `TaskEither` holding the `NotFoundError`.
 
-<Callout>
-With the `Do` notation, we gain nest-free pipeline, but we lose point-free programming.
-</Callout>
+<Callout>With the `Do` notation, we gain nest-free pipeline, but we lose point-free programming.</Callout>
 
 ## Query resolver
 
@@ -648,7 +628,7 @@ The `isUserAllowedForEntityAsError` is a curried function: when called with the 
 pipe(
   // ...
   getEntity(id),
-  TE.chainFirstW((entity) => isUserAllowedForEntityAsError(user, entity))
+  TE.chainFirstW(entity => isUserAllowedForEntityAsError(user, entity))
   // ...
 )
 ```

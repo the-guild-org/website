@@ -58,7 +58,7 @@ Once the `AsyncIterator` publishes a value (the payload or event), the optional 
 The most basic implementation for a counter would look similar to this:
 
 ```ts
-const sleep = (t = 1000) => new Promise((res) => setTimeout(res, t))
+const sleep = (t = 1000) => new Promise(res => setTimeout(res, t))
 
 const resolvers = {
   Subscription: {
@@ -86,17 +86,13 @@ If there is not need for scaling horizontally the `graphql-subscriptions` packag
 ```tsx
 import { EventEmitter, on } from 'events'
 
-export const createPubSub = <TTopicPayload extends { [key: string]: unknown }>(
-  eventEmitter: EventEmitter
-) => {
+export const createPubSub = <TTopicPayload extends { [key: string]: unknown }>(eventEmitter: EventEmitter) => {
   return {
-    publish: <TTopic extends Extract<keyof TTopicPayload, string>>(
-      topic: TTopic,
-      payload: TTopicPayload[TTopic]
-    ) => void emitter.emit(topic as string, payload),
-    subscribe: async function* <
-      TTopic extends Extract<keyof TTopicPayload, string>
-    >(topic: TTopic): AsyncIterableIterator<TTopicPayload[TTopic]> {
+    publish: <TTopic extends Extract<keyof TTopicPayload, string>>(topic: TTopic, payload: TTopicPayload[TTopic]) =>
+      void emitter.emit(topic as string, payload),
+    subscribe: async function* <TTopic extends Extract<keyof TTopicPayload, string>>(
+      topic: TTopic
+    ): AsyncIterableIterator<TTopicPayload[TTopic]> {
       const asyncIterator = on(emitter, topic)
       for await (const [value] of asyncIterator) {
         yield value
@@ -192,12 +188,7 @@ Like an AsyncIterator, an Observable can represent multiple values. As already m
 The example is taken straight from the `graphql-ws` section.
 
 ```ts
-import {
-  Network,
-  Observable,
-  RequestParameters,
-  Variables
-} from 'relay-runtime'
+import { Network, Observable, RequestParameters, Variables } from 'relay-runtime'
 import { createClient } from 'graphql-ws'
 
 const subscriptionsClient = createClient({
@@ -215,7 +206,7 @@ const subscriptionsClient = createClient({
 
 // yes, both fetch AND subscribe handled in one implementation
 function fetchOrSubscribe(operation: RequestParameters, variables: Variables) {
-  return Observable.create((sink) => {
+  return Observable.create(sink => {
     if (!operation.text) {
       return sink.error(new Error('Operation text cannot be empty'))
     }
@@ -227,7 +218,7 @@ function fetchOrSubscribe(operation: RequestParameters, variables: Variables) {
       },
       {
         ...sink,
-        error: (err) => {
+        error: err => {
           if (err instanceof Error) {
             sink.error(err)
           } else if (err instanceof CloseEvent) {
@@ -360,10 +351,7 @@ const PostRenderer = ({ postId }: { postId: string }) => {
       updater: (store, payload) => {
         const record = store.get(postId)
         if (record) {
-          record.setValue(
-            'totalLikeCount',
-            payload.onPostLikeCountChanged.totalCount
-          )
+          record.setValue('totalLikeCount', payload.onPostLikeCountChanged.totalCount)
         }
       }
     }
@@ -440,21 +428,13 @@ const UserListRenderer = ({ postId }: { postId: string }) => {
         if (users) {
           switch (payload.onUserListChange.__typename) {
             case 'OnUserAdded': {
-              const newUser = store.create(
-                payload.onUserListChange.user.id,
-                'User'
-              )
+              const newUser = store.create(payload.onUserListChange.user.id, 'User')
               newUser.setValue('name', payload.onUserListChange.user.name)
               rootField.setLinkedRecords('users', [...users, newUser])
               break
             }
             case 'onUserRemoved': {
-              rootField.setLinkedRecords(
-                users.map(
-                  (user) =>
-                    user.getDataID() !== payload.onUserListChange.removedUserId
-                )
-              )
+              rootField.setLinkedRecords(users.map(user => user.getDataID() !== payload.onUserListChange.removedUserId))
               break
             }
           }
@@ -491,7 +471,7 @@ const ChatRenderer = () => {
   useSubscription(
     OnPlaySound,
     useMemo({
-      onNext: (payload) => {
+      onNext: payload => {
         playSound(payload.onPlayChatSound.soundUrl)
       }
     })
@@ -627,10 +607,7 @@ const PostSubscription = graphql`
 `
 
 const PostRenderer = ({ postId }: { postId: string }) => {
-  const { props } = useSubscription(
-    PostChangedSubscription,
-    /* variables */ { postId }
-  )
+  const { props } = useSubscription(PostChangedSubscription, /* variables */ { postId })
 
   return <Post {...props} />
 }
@@ -887,10 +864,7 @@ const schema = new GraphQLSchema({
   query,
   mutation,
   subscription,
-  directives: [
-    GraphQLLiveDirective,
-    /* Keep @defer/@stream/@if/@skip */ ...specifiedDirectives
-  ]
+  directives: [GraphQLLiveDirective, /* Keep @defer/@stream/@if/@skip */ ...specifiedDirectives]
 })
 ```
 
@@ -949,7 +923,7 @@ inMemoryLiveQueryStore
     variableValues: null,
     operationName: 'todosQuery'
   })
-  .then(async (result) => {
+  .then(async result => {
     if (isAsyncIterable(result)) {
       for (const value of result) {
         // Send to client in real-world app :)
@@ -979,7 +953,7 @@ prisma.$use(async (params, next) => {
   const resultPromise = next(params)
 
   if (params.action === 'update') {
-    resultPromise.then((res) => {
+    resultPromise.then(res => {
       if (res?.id) {
         // invalidate `Post:1` on update
         liveQueryStore.invalidate(`${params.model}:${res.id}`)
@@ -1105,8 +1079,7 @@ const applyLiveQueryPatchGenerator = createApplyLiveQueryPatchGenerator()
 
 const execute = flow(liveQueryStore.execute, applyLiveQueryPatchGenerator)
 // same as
-const execute0 = (...args) =>
-  applyLiveQueryPatchGenerator(liveQueryStore.execute(...args))
+const execute0 = (...args) => applyLiveQueryPatchGenerator(liveQueryStore.execute(...args))
 ```
 
 On the client we now need to build a execution result out of the initial result and the patch results, because our clients do not understand the graphql live query json patch protocol!
@@ -1121,8 +1094,7 @@ const applyLiveQueryPatch = createApplyLiveQueryPatch()
 
 const execute = flow(networkInterface.execute, applyLiveQueryPatch)
 // same as
-const execute0 = (...args) =>
-  applyLiveQueryPatch(networkInterface.execute(...args))
+const execute0 = (...args) => applyLiveQueryPatch(networkInterface.execute(...args))
 ```
 
 The library is optimized for network interfaces that return AsyncIterables. We can easily wrap out favorite network interface (that uses observable style sinks) in an AsyncIterable with [`@n1ru4l/push-pull-async-iterable-iterator`](https://github.com/n1ru4l/push-pull-async-iterable-iterator)!
@@ -1142,7 +1114,7 @@ const client = createClient({
 const applyLiveQueryPatch = createApplyLiveQueryPatch()
 
 const asyncIterator = pipe(
-  makeAsyncIterableIteratorFromSink((sink) => {
+  makeAsyncIterableIteratorFromSink(sink => {
     const dispose = client.subscribe(
       {
         query: 'query @live { hello }'

@@ -46,17 +46,15 @@ The obvious question is â€” what if a script could do that for me? Followed by â
 Following that, I have wandered across git's documentation and Stack Overflow and have found an answer. Here's the method which starts the editing process written in `git-rebase--interactive.sh`, a file in git's implementation:
 
 ```sh
-git_sequence_editor () {
-	if test -z "$GIT_SEQUENCE_EDITOR"
-	then
-		GIT_SEQUENCE_EDITOR="$(git config sequence.editor)"
-		if [ -z "$GIT_SEQUENCE_EDITOR" ]
-		then
-			GIT_SEQUENCE_EDITOR="$(git var GIT_EDITOR)" || return $?
-		fi
-	fi
+git_sequence_editor() {
+  if test -z "$GIT_SEQUENCE_EDITOR"; then
+    GIT_SEQUENCE_EDITOR="$(git config sequence.editor)"
+    if [ -z "$GIT_SEQUENCE_EDITOR" ]; then
+      GIT_SEQUENCE_EDITOR="$(git var GIT_EDITOR)" || return $?
+    fi
+  fi
 
-	eval "$GIT_SEQUENCE_EDITOR" '"$@"'
+  eval "$GIT_SEQUENCE_EDITOR" '"$@"'
 }
 ```
 
@@ -89,9 +87,7 @@ gitRebaseInteractive(
       .filter(Boolean)
 
     // Commits we would like to drop
-    const dropOperations = operations
-      .slice(0, amount)
-      .map((operation) => operation.replace('pick', 'drop'))
+    const dropOperations = operations.slice(0, amount).map(operation => operation.replace('pick', 'drop'))
 
     // Commits we would like to pick
     const pickOperations = operations.slice(amount)
@@ -118,7 +114,7 @@ function gitRebaseInteractive(head, fn, args) {
 // The input of the provided function should be the contents of the file and the output
 // should be the new contents of the file
 function gitEdit(fn, args) {
-  args = args.map((arg) => `'${arg}'`).join(', ')
+  args = args.map(arg => `'${arg}'`).join(', ')
 
   const body = fn.toString().replace(/\\/g, '\\\\').replace(/`/g, '\\`')
 

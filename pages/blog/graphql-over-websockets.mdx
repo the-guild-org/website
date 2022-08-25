@@ -122,7 +122,7 @@ uWS
       { schema, roots }
     )
   )
-  .listen(4000, (listenSocket) => {
+  .listen(4000, listenSocket => {
     if (listenSocket) {
       console.log('Listening to port 4000')
     }
@@ -148,7 +148,7 @@ fastify.get(
   )
 )
 
-fastify.listen(4000, (err) => {
+fastify.listen(4000, err => {
   if (err) {
     fastify.log.error(err)
     return process.exit(1)
@@ -175,7 +175,7 @@ const client = createClient({
         query: '{ hello }'
       },
       {
-        next: (data) => (result = data),
+        next: data => (result = data),
         error: reject,
         complete: () => resolve(result)
       }

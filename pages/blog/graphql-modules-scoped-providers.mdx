@@ -53,8 +53,7 @@ export const ExampleModule = new GraphQLModule({
  `,
   resolvers: {
     Mutation: {
-      increment: (root, args, context) =>
-        context.injector.get(ExampleApplicationProvider).increment()
+      increment: (root, args, context) => context.injector.get(ExampleApplicationProvider).increment()
     }
   }
 })
@@ -108,8 +107,7 @@ export const ExampleModule = new GraphQLModule({
  `,
   resolvers: {
     Mutation: {
-      increment: (root, args, context) =>
-        context.injector.get(ExampleSessionProvider).increment()
+      increment: (root, args, context) => context.injector.get(ExampleSessionProvider).increment()
     }
   }
 })
@@ -160,10 +158,8 @@ export const ExampleModule = new GraphQLModule({
  `,
   resolvers: {
     Mutation: {
-      increment: (root, args, context) =>
-        context.injector.get(ExampleApplicationProvider).increment(),
-      multiply: (root, args, context) =>
-        context.injector.get(ExampleApplicationProvider).multiply(args.times)
+      increment: (root, args, context) => context.injector.get(ExampleApplicationProvider).increment(),
+      multiply: (root, args, context) => context.injector.get(ExampleApplicationProvider).multiply(args.times)
     }
   }
 })

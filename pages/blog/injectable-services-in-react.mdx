@@ -18,7 +18,7 @@ React provides a fantastic API for building components. It's light-weight and in
 So far, when we wanted a component to use an external service, we would simply implement it in a separate module, import it, and use its exported methods, like so:
 
 ```ts filename="auth-service.js"
-export const signUp = (body) => {
+export const signUp = body => {
   return fetch({
     method: 'POST',
     url: `${API}/sign-up`,
@@ -29,7 +29,7 @@ export const signUp = (body) => {
   })
 }
 
-export const signIn = (body) => {
+export const signIn = body => {
   return fetch({
     method: 'POST',
     url: `${API}/sign-in`,
@@ -55,12 +55,7 @@ export const SignInButton = ({ username, password, onSignIn }) => {
   return <button onClick={signIn}>Sign-In</button>
 }
 
-export const SignUpButton = ({
-  username,
-  password,
-  verifiedPass,
-  onSignUp
-}) => {
+export const SignUpButton = ({ username, password, verifiedPass, onSignUp }) => {
   const signUp = useCallback(() => {
     auth.signUp({ username, password, verifiedPass }).then(onSignUp)
   }, [username, password, verifiedPass, onSignUp])
@@ -120,22 +115,17 @@ I know what you're probably thinking right now… What is this guy thinking, pro
 In the Angular team, they came up with a clever approach. Instead of relying on hard-coded imports, what they did they provided a mechanism that would let us inject our services before we initialize the component. With that approach, we can easily mock-up our services, because with the injection system it's very easy to control what implementation of the services is it gonna use. So this is how it would practically look like:
 
 ```ts filename="auth-module.ts"
-import { NgModule } from '@angular/core';
-import { SignInButton, SignUpButton } from './auth-components';
-import AuthService from './auth-service';
+import { NgModule } from '@angular/core'
+import { SignInButton, SignUpButton } from './auth-components'
+import AuthService from './auth-service'
 
 @NgModule({
-  declarations: [
-    SignInButton,
-    SignUpButton,
-  ],
-  providers: [
-    AuthService
-  ],
+  declarations: [SignInButton, SignUpButton],
+  providers: [AuthService]
 })
 class AuthModule {}
 
-export default AuthModule;
+export default AuthModule
 ```
 
 ```ts filename="auth-components.ts"
@@ -262,28 +252,24 @@ import React, { createContext, useContext } from 'react'
 
 const AuthContext = createContext(null)
 
-export const AuthProvider = (props) => {
+export const AuthProvider = props => {
   const value = {
     signIn: props.signIn || signIn,
     signUp: props.signUp || signUp
   }
 
-  return (
-    <AuthProvider.Provider value={value}>
-      {props.children}
-    </AuthProvider.Provider>
-  )
+  return <AuthProvider.Provider value={value}>{props.children}</AuthProvider.Provider>
 }
 
 export const useAuth = () => {
   return useContext(AuthContext)
 }
 
-const signUp = (body) => {
+const signUp = body => {
   // ...
 }
 
-const signIn = (body) => {
+const signIn = body => {
   // ...
 }
 ```
@@ -295,28 +281,24 @@ import React, { createContext, useContext } from 'react'
 
 const AuthContext = createContext(null)
 
-export const AuthProvider = (props) => {
+export const AuthProvider = props => {
   const value = {
     signIn: props.signIn || signIn,
     signUp: props.signUp || signUp
   }
 
-  return (
-    <AuthProvider.Provider value={value}>
-      {props.children}
-    </AuthProvider.Provider>
-  )
+  return <AuthProvider.Provider value={value}>{props.children}</AuthProvider.Provider>
 }
 
 export const useAuth = () => {
   return useContext(AuthContext)
 }
 
-const signUp = (body) => {
+const signUp = body => {
   // ...
 }
 
-const signIn = (body) => {
+const signIn = body => {
   // ...
 }
 ```
@@ -339,12 +321,7 @@ export const SignInButton = ({ username, password, onSignIn }) => {
   // ...
 }
 
-export const SignInButton = ({
-  username,
-  password,
-  verifiedPass,
-  onSignUp
-}) => {
+export const SignInButton = ({ username, password, verifiedPass, onSignUp }) => {
   const auth = useAuth()
 
   const signUp = useCallback(() => {

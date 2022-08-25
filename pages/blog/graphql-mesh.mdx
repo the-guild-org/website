@@ -152,14 +152,10 @@ Here's a simple example for fetching and aggregating data across multiple extern
 **Before:**
 
 ```typescript
-function getCityAndWeather(city: string): { city: string; weather: any } {
-  const cities /* any */ = await fetchApi(
-    `https://cities-api/cities?search=${city}`
-  )
+async function getCityAndWeather(city: string): Promise<{ city: string; weather: any }> {
+  const cities /* any */ = await fetchApi(`https://cities-api/cities?search=${city}`)
   const city /* any */ = cities.data[0]
-  const weather /* any */ = await fetchApi(
-    `https://weather-api/forecast?lat=${city.latitude}&lon=${city.longitude}`
-  )
+  const weather /* any */ = await fetchApi(`https://weather-api/forecast?lat=${city.latitude}&lon=${city.longitude}`)
 
   return { city, weather }
 }
@@ -203,9 +199,7 @@ import { Resolvers } from './mesh/types.generated'
 
 export const resolvers: Resolvers = {
   dailyForecast: async (city, args, { Weather }) => {
-    return Weather.api
-      .forecastDailyByLatLon(city.latitude, city.longitude)
-      .then((r) => r.data)
+    return Weather.api.forecastDailyByLatLon(city.latitude, city.longitude).then(r => r.data)
   }
 }
 ```

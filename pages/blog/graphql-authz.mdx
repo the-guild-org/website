@@ -62,9 +62,9 @@ This technique works the best for authorization logic that is not dependent on r
 ```typescript
 // creating pre-execution rules
 
-const IsAuthenticated = preExecRule()((context) => !!context.user)
+const IsAuthenticated = preExecRule()(context => !!context.user)
 
-const IsEditor = preExecRule()((context) => context.roles.has('editor'))
+const IsEditor = preExecRule()(context => context.roles.has('editor'))
 ```
 
 However, if you need the flexibility for fetching data from a remote source such as a database before you can determine whether an operation should be executed, you still have the power to leverage those data sources with async code.
@@ -123,10 +123,7 @@ For example, if your rule is attached to some object field it could require addi
 
 const CanReadPost = postExecRule({
   selectionSet: '{ status author { id } }'
-})(
-  (context, fieldArgs, post, parent) =>
-    post.status === 'public' || post.author.id === context.user?.id
-)
+})((context, fieldArgs, post, parent) => post.status === 'public' || post.author.id === context.user?.id)
 ```
 
 By using this technique we reduce remote procedure calls to individual data sources by executing authorization logic on top of GraphQL execution result that is enriched with the additional data specified by the authorization rules. Since related data is often stored in the same place it can be fetched from a data source in one roundtrip (via the GraphQL schema) instead of performing one remote procedure call for the authorization and one call for the actual data populating.
