@@ -1,19 +1,16 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL Response Caching with Envelop
+tags: [graphql]
+author: laurin
+date: 2021-08-19
+description: Caching GraphQL endpoints can be tricky. Let's take a look at the theory behind making it possible and learn how to do it with Envelop.
+image: /blog-assets/graphql-response-caching-with-envelop/graphql-response-caching-with-envelop-cover.png
+canonical: https://envelop.dev/docs/guides/adding-a-graphql-response-cache
+---
 
-export const meta = {
-  title: 'GraphQL Response Caching with Envelop',
-  tags: ['graphql'],
-  author: 'laurin',
-  date: '2021-08-19',
-  description:
-    "Caching GraphQL endpoints can be tricky. Let's take a look at the theory behind making it possible and learn how to do it with Envelop.",
-  image:
-    '/blog-assets/graphql-response-caching-with-envelop/graphql-response-caching-with-envelop-cover.png',
-  canonical:
-    'https://www.envelop.dev/docs/guides/adding-a-graphql-response-cache'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 ## A brief Introduction to Caching
 
@@ -27,7 +24,7 @@ Having a cache comes with the drawback of requiring some kind of cache invalidat
 
 In a strict REST API environment, caching entities is significantly easier, as each endpoint represents one resource, and thus a `GET` method can be cached and a `PATCH` method can be used for automatically invalidating the cache for the corresponding `GET` request, which is described via the HTTP path (`/api/user/12`).
 
-With GraphQL such things become much harder and complicated. First of all, we usually only have a single HTTP endpoint `/graphql` that only accepts `POST` requests. A query operation execution result could contain many different types of entities, thus, we need different strategies for caching GraphQL APIs.
+With GraphQL such things become much harder and complicated. First, we usually only have a single HTTP endpoint `/graphql` that only accepts `POST` requests. A query operation execution result could contain many different types of entities, thus, we need different strategies for caching GraphQL APIs.
 
 SaaS services like FastQL and GraphCDN started popping providing proxies for your existing GraphQL API, that magically add response based caching. But how does this even work?
 
@@ -145,7 +142,7 @@ For the execution result entity IDS that could be used for invalidating the oper
 
 And also keep a register that maps entities to operation cache keys.
 
-```
+```text
 Entity   List of Operation cache keys that reference a entity
 
 User:1   OperationCacheKey1, OperationCacheKey2, ...
@@ -292,7 +289,7 @@ const getEnveloped = envelop({
 })
 ```
 
-Don't want to automatically invalidate based on mutations? Also configurable!
+Don't want to automatically invalidate based on mutations? Also, configurable!
 
 ```ts
 import { envelop } from '@envelop/core'
@@ -336,19 +333,18 @@ More information about all possible configuration options can be found on [the r
 <iframe
   width="100%"
   height="400"
-  src="https://www.youtube.com/embed/1EBphPltkA4"
+  src="https://youtube.com/embed/1EBphPltkA4"
   title="YouTube video player"
-  frameBorder="0"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
   allowFullScreen
-></iframe>
+/>
 
 ## What is next?
 
 We are excited to explore new directions and make enterprise solutions accessible for all kinds of developers.
 
 What if the response cache could be used as a proxy on edge cloud functions distributed around the world, which would allow using envelop as a http proxy to your existing GraphQL server?
-This is something we would love to explore more (or even see contirbutions and projects from other open-source developers).
+This is something we would love to explore more (or even see contributions and projects from other open-source developers).
 
 We also want to make other practices such as rate limits based on operation cost calculation as used by huge corporations like Shopify available as envelop plugins.
 

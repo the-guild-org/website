@@ -1,26 +1,22 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL with TypeScript done right
+author: charlypoly
+tags: [graphql, typescript, codegen, node, react]
+date: 2021-04-29
+description: How to get the most of React application types with GraphQL Code Generator.
+image: /blog-assets/graphql-code-generator/cover.png
+canonical: https://charlypoly.com/publications/typescript-with-graphql-done-right
+---
 
-export const meta = {
-  title: 'GraphQL with TypeScript done right',
-  author: 'charlypoly',
-  tags: ['graphql', 'typescript', 'codegen', 'node', 'react'],
-  date: '2021-04-29',
-  description:
-    'How to get the most of React application types with GraphQL Code Generator',
-  image: '/blog-assets/graphql-code-generator/cover.png',
-  canonical:
-    'https://charlypoly.com/publications/typescript-with-graphql-done-right'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 [Generics](https://charlypoly.com/publications/typescript-generics-and-overloads), and Mapped types, are key to build types on top of existing ones by making them configurable (Generics) or iterables (Mapped types).
 
 Advanced types give to your code and open-source libraries the power of providing an API that manipulates data (your application objects) without breaking the “types chain”.
 
 > The best TypeScript configuration ensures that the “types chain” is continuous
-
-<br />
 
 # The TypeScript “types chain”
 
@@ -49,8 +45,6 @@ _Most modern React applications have the following data setup: centralized data 
 Since React applications are built on top of data, we can conclude that:
 
 > The strength of your React application's types is based on the stability of your data types
-
-<br />
 
 ## The flawed “handwritten” data types
 
@@ -102,8 +96,6 @@ _In our hypothetical application, the User type has some typos that will impact 
 
 Fortunately, thanks to the GraphQL introspection feature, many tools arose to solve this problem by providing data-types - and even more - generation tools.
 
-<br />
-
 # Robust React application's types with GraphQL
 
 [GraphQL Code Generator](https://www.graphql-code-generator.com/), given the mutations and queries used by the app and the access to the target GraphQL API, generates the corresponding TypeScript types.
@@ -118,7 +110,7 @@ Let's see an example with our hypothetical application Login component relying o
 
 First, let's create a `queries.graphql` file in a `src/graphql` folder:
 
-```graphql
+```graphql filename="queries.graphql"
 query currentUser {
   me {
     id
@@ -231,13 +223,11 @@ However, we can agree that having to provide both the query TypeScript type (`Cu
 
 Let's see how we can improve that in the next configuration mode.
 
-<br />
-
 **Generate Typed React Hooks**
 
 GraphQL Code Generator is capable of more than just generating TypeScript types, it can also generate JavaScript/TypeScript code.
 
-Let's see how we can ask to GraphQL Code Generator to generate Typed React hooks, so we don't have to provide the TypeScript types to `useQuery()` every time.
+Let's see how we can ask GraphQL Code Generator to generate Typed React hooks, so we don't have to provide the TypeScript types to `useQuery()` every time.
 
 Let's use the following configuration:
 
@@ -320,8 +310,6 @@ _src/components/Login.tsx_
 
 Nice! Isn't it?
 
-<br />
-
 **Generate Typed Documents**
 
 GraphQL Code Generator is providing another simple way to use typed GraphQL Query and Mutations, called [`TypedDocumentNode`](https://graphql-code-generator.com/docs/plugins/typed-document-node).
@@ -403,8 +391,6 @@ In my experience, it is more scalable to go for the [`TypedDocumentNode`](https:
 
 The generation of one custom hook per GraphQL operation (`Query`/`Mutation`) can generate a LOT of hooks at scale along with a lot of imports, which is not necessary given the `useMutation()` `useQuery` provided by Apollo Client.
 
-<br />
-
 ## Tips: Leverage GraphQL Fragments for scalable types
 
 Now that we have many ways to generate **stable **data types, let's see how to make them easier to use and maintain in time.
@@ -479,8 +465,6 @@ A good practice is to ensure that all your Query and Mutations responses use fra
 - `User` type carries the necessary base properties
 - `UserProfile` type carries the minimum user info for display
 - `UserExtended` type carries all the `users` properties
-
-<br />
 
 # Conclusion
 

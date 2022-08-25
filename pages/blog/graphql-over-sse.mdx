@@ -1,16 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL over SSE (Server-Sent Events)
+tags: [graphql, graphql-subscriptions]
+author: enisdenjo
+date: 2021-09-01
+description: Zero-dependency, HTTP/1 safe, simple, GraphQL over Server-Sent Events Protocol server and client.
+image: /blog-assets/graphql-over-sse/graphql-over-sse.jpg
+---
 
-export const meta = {
-  title: 'GraphQL over SSE (Server-Sent Events)',
-  tags: ['graphql', 'graphql-subscriptions'],
-  author: 'enisdenjo',
-  date: '2021-09-01',
-  description:
-    'Zero-dependency, HTTP/1 safe, simple, GraphQL over Server-Sent Events Protocol server and client.',
-  image: '/blog-assets/graphql-over-sse/graphql-over-sse.jpg'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 ## Introduction
 
@@ -40,7 +39,7 @@ Not only are you not able to customise the HTTP request by providing custom head
 
 If you've done your Googling, you probably came across hot discussions like ["Does HTTP/2 make websockets obsolete?"](https://stackoverflow.com/questions/28582935/does-http-2-make-websockets-obsolete) or ["WebSockets vs. Server-Sent events/EventSource"](https://stackoverflow.com/questions/5195452/websockets-vs-server-sent-events-eventsource). Or even the somewhat harsh ["@deprecate WebSockets: GraphQL Subscriptions using SSE"](https://wundergraph.com/blog/deprecate_graphql_subscriptions_over_websockets) article from WunderGraph.
 
-With all this insightful talking and knowledgable discussions, you'd expect integrating SSE in your next project would be easy? You should have options, not be limited to Socket.IO or WebSockets, right? Absolutely, it _is_ easy and you _do_ have options!
+With all this insightful talking and knowledgeable discussions, you'd expect integrating SSE in your next project would be easy? You should have options, not be limited to Socket.IO or WebSockets, right? Absolutely, it _is_ easy and you _do_ have options!
 
 ## Bye bye limitations, hello [`graphql-sse`](https://github.com/enisdenjo/graphql-sse) 👋
 
@@ -56,8 +55,8 @@ I thought you'd never ask! Here is how:
 
 #### Install
 
-```shell
-$ yarn add graphql-sse
+```sh
+yarn add graphql-sse
 ```
 
 #### Create a GraphQL schema
@@ -128,8 +127,8 @@ console.log('Listening to port 4000')
 
 _Browsers might complain about self-signed SSL/TLS certificates. [Help can be found on StackOverflow.](https://stackoverflow.com/questions/7580508/getting-chrome-to-accept-self-signed-localhost-certificate)_
 
-```shell
-$ openssl req -x509 -newkey rsa:2048 -nodes -sha256 -subj '/CN=localhost' \
+```sh
+openssl req -x509 -newkey rsa:2048 -nodes -sha256 -subj '/CN=localhost' \
   -keyout localhost-privkey.pem -out localhost-cert.pem
 ```
 

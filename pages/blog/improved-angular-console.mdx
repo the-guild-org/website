@@ -1,16 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: How I helped improve Angular Console
+author: kamil
+tags: [angular, console]
+date: 2018-11-30
+description: How I helped improve Angular Console. By doing GraphQL the right way.
+image: /medium/78d0f670476d24762cc05eefd42a0321.png
+---
 
-export const meta = {
-  title: 'How I helped improve Angular Console',
-  author: 'kamil',
-  tags: ['angular', 'console'],
-  date: '2018-11-30',
-  description:
-    'How I helped improve Angular Console. By doing GraphQL the right way',
-  image: '/medium/78d0f670476d24762cc05eefd42a0321.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 # By doing GraphQL right
 
@@ -18,7 +17,7 @@ Did you know that **Angular Console** uses **GraphQL** under the hood? I want to
 
 > [Angular Console](http://angularconsole.com) is a user interface for Angular CLI created by [Nrwl](http://medium.com/nrwl), widely used in Angular Community.
 >
-> I will link to the PRs I've made to Angular Console throughout the article so you could see everything I recommend in practice.
+> I will link to the PRs I've made to Angular Console throughout the article, so you could see everything I recommend in practice.
 
 After reading [the announcement](https://blog.nrwl.io/angular-console-the-ui-for-the-angular-cli-a5d0924240b7) of **Angular Console** I got very excited about the tool and immediately decided to explore the codebase. I noticed **Electron** and that the project is based on **Angular CLI** and Nrwl's **NX**.
 
@@ -42,7 +41,7 @@ Okay, but just like in REST, you don't need sophisticated tools to communicate w
 
 Having a client, like Apollo, allows you to easily execute GraphQL operations and by having a cache layer, fetched data stays consistent across all components. Dhaivat Pandya explains it well in his [_“Why you might want a GraphQL client_](https://blog.apollographql.com/why-you-might-want-a-graphql-client-e864050f789c)_” post_.
 
-Apollo has a comprehensive [documentation](https://www.apollographql.com/docs/angular/) that covers a lot of use cases and I highly recommend to read it.
+Apollo has a comprehensive [documentation](https://apollographql.com/docs/angular) that covers a lot of use cases, and I highly recommend to read it.
 
 ---
 
@@ -64,7 +63,7 @@ SDL, in short, is a syntax that allows to define GraphQL Schema, so instead of u
 
 For example, using `GraphQLObjectType` might look like this:
 
-```typescript
+```ts
 new GraphQLObjectType({
   name: 'Post',
   fields: {
@@ -95,7 +94,7 @@ In our projects, we try to group resolvers by GraphQL type and have them nearby 
 
 Having both, type definition and resolve functions in the `GraphQLObjectType` looks like that:
 
-```typescript
+```ts
 new GraphQLObjectType({
   name: 'Post',
   fields: {
@@ -115,7 +114,7 @@ I personally think it was a good choice because it forces developers to write lo
 
 With Schema Definition Language, it's looks way better.
 
-```typescript
+```ts
 const PostType = gql`
   type Post {
     id: String
@@ -137,7 +136,7 @@ Apollo Server 2.0 Latest Apollo Angular refactoring — moved files under /api d
 
 # Strongly typed resolvers
 
-We love [TypeScript](https://typescriptlang.org) and we saw an opportunity to take our GraphQL servers to the next level. Instead of having `any` or defining interfaces for each resolver by hand, we decided to take advantage of one of our tools, called [GraphQL Code Generator](https://graphql-code-generator.com/) (thanks Dotan Simha for creating it).
+We love [TypeScript](https://typescriptlang.org), and we saw an opportunity to take our GraphQL servers to the next level. Instead of having `any` or defining interfaces for each resolver by hand, we decided to take advantage of one of our tools, called [GraphQL Code Generator](https://graphql-code-generator.com) (thanks Dotan Simha for creating it).
 
 In short, it's a tool to generate pretty much any piece of code, based on a GraphQL Schema. We use it a lot, mostly for types (server and client) but also to create MongoDB models, introspection files, Angular components and more.
 
@@ -145,7 +144,7 @@ In Angular Console, I used the TypeScript plugins to generate types for a schema
 
 Here's how it might look like.
 
-```typescript
+```ts
 import { PostResolvers } from './generated-types'
 
 const Post: PostResolvers.Resolvers = {
@@ -154,7 +153,7 @@ const Post: PostResolvers.Resolvers = {
 }
 ```
 
-```typescript
+```ts
 export interface PostParent {
   _id: string
   content: string
@@ -189,43 +188,43 @@ Fetching data with Apollo Angular, requires few steps:
 That's a lot, and in order to have everything strongly typed you even have to define extra interfaces that are specific for each operation.
 
 ```typescript
-import { Apollo } from 'apollo-angular';
-import gql from 'graphql-tag';
+import { Apollo } from 'apollo-angular'
+import gql from 'graphql-tag'
 
 interface Post {
-  id: string;
-  text: string;
+  id: string
+  text: string
 }
 
 interface PostQuery {
-  post: Post;
+  post: Post
 }
 
-@Component({...})
+@Component({
+  /*...*/
+})
 export class PostComponent {
-  @Input() postId: string;
-  post: Observable<Post>;
+  @Input() postId: string
+  post: Observable<Post>
 
   constructor(private apollo: Apollo) {}
 
   ngOnInit() {
-    this.post = this.apollo.watchQuery<PostQuery>({
-      query: gql`
-        query getPost ($id: String!) {
-          post(id: $id) {
-            id
-            text
+    this.post = this.apollo
+      .watchQuery<PostQuery>({
+        query: gql`
+          query getPost($id: String!) {
+            post(id: $id) {
+              id
+              text
+            }
           }
+        `,
+        variables: {
+          id: this.postId
         }
-     `,
-     variables: {
-       id: this.postId
-     }
-   })
-     .valueChanges
-     .pipe(
-       map(result => result.data.post)
-     );
+      })
+      .valueChanges.pipe(map((result) => result.data.post))
   }
 }
 ```
