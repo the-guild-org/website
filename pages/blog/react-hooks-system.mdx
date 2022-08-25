@@ -227,13 +227,13 @@ Lastly, effect hooks — which made a major impact on a component's life cycle a
 
 # Effect hooks
 
-Effect hooks behave slightly differently and has an additional layer of logic that I would like to explain. Again, there are things I would like you to bare in mind regards the properties of the effect hooks before I dive into the implementation:
+Effect hooks behave slightly differently and has an additional layer of logic that I would like to explain. Again, there are things I would like you to bear in mind regards the properties of the effect hooks before I dive into the implementation:
 
 - They're created during render time, but they run _after_ painting.
 - If given so, they'll be destroyed right before the next painting.
 - They're called in their definition order.
 
-> _Note that I'm using the “painting” term and not “rendering”. These two are different things, and I've seen many speakers in the recent [React Conf](https://conf.reactjs.org/) use the wrong term! Even in the official [React docs](https://reactjs.org/docs/hooks-reference.html#useeffect) they say “after the render is committed to the screen”, which is kind of like “painting”. The render method just creates the fiber node but doesn't paint anything yet._
+> _Note that I'm using the "painting" term and not "rendering". These two are different things, and I've seen many speakers in the recent [React Conf](https://conf.reactjs.org) use the wrong term! Even in the official [React docs](https://reactjs.org/docs/hooks-reference.html#useeffect) they say “after the render is committed to the screen”, which is kind of like "painting". The render method just creates the fiber node but doesn't paint anything yet._
 
 Accordingly, there should be another an additional queue that should hold these effects and should be addressed after painting. Generally speaking, a fiber holds a queue which contains effect nodes. Each effect is of a different type and should be addressed at its appropriate phase:
 

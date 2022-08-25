@@ -75,7 +75,7 @@ GraphQL has support for Union types. We can take advantage of it and design our 
 <Callout>
 GraphQL Union is available for Types only, not for Inputs. However, the [`oneOf` directive](https://github.com/graphql/graphql-spec/pull/825) will bridge the gap in the future.
 
-If you use [Envelop](https://www.envelop.dev/) or [GraphQL Yoga](https://www.graphql-yoga.com/) (both developed by [The Guild](https://the-guild.dev/)), you can already benefit from it today by using this [Envelop plugin](https://www.envelop.dev/plugins/use-extended-validation#schema-directive-flow))
+If you use [Envelop](https://envelop.dev) or [GraphQL Yoga](https://graphql-yoga.com) (both developed by [The Guild](/)), you can already benefit from it today by using this [Envelop plugin](https://envelop.dev/plugins/use-extended-validation#schema-directive-flow))
 </Callout>
 
 We can then do queries like the following:
@@ -207,7 +207,7 @@ Then, we define the query result as a Union type of the expected result (an `Ent
 For a more detailed explanation, you can read these articles:
 
 1. By [Sasha Solomon](https://twitter.com/sachee): [200 OK! Error Handling in GraphQL](https://sachee.medium.com/200-ok-error-handling-in-graphql-7ec869aec9bc)
-2. By [Laurin Quast](https://twitter.com/n1rual): [Handling GraphQL errors like a champ with unions and interfaces](https://blog.logrocket.com/handling-graphql-errors-like-a-champ-with-unions-and-interfaces/)
+2. By [Laurin Quast](https://twitter.com/n1rual): [Handling GraphQL errors like a champ with unions and interfaces](https://blog.logrocket.com/handling-graphql-errors-like-a-champ-with-unions-and-interfaces)
 3. By [Marc-André Giroux](https://twitter.com/__xuorig__): [A Guide to GraphQL Errors](https://productionreadygraphql.com/2020-08-01-guide-to-graphql-errors)
 4. Watch this video by [@notrab](https://github.com/notrab):
 
@@ -249,17 +249,17 @@ const resolvers = {
 
 Since we include the `__typename` and the fields match the Schema type definitions, there is no need to define type resolvers.
 
-For more details on this solution, you can read this article from [Laurin Quast](https://github.com/n1ru4l): [Handling GraphQL errors like a champ with unions and interfaces](https://blog.logrocket.com/handling-graphql-errors-like-a-champ-with-unions-and-interfaces/).
+For more details on this solution, you can read this article from [Laurin Quast](https://github.com/n1ru4l): [Handling GraphQL errors like a champ with unions and interfaces](https://blog.logrocket.com/handling-graphql-errors-like-a-champ-with-unions-and-interfaces).
 
 # Typesafe error handling on the client-side
 
 Let's now take it to the next level using Typescript and GraphQL Code Generator.
 
-[GraphQL Code Generator](https://www.graphql-code-generator.com/) is a tool developed by [The Guild](https://the-guild.dev/) which generates type definitions which corresponds to the GraphQL schema. It has several plugins and we'll use 3 of those:
+[GraphQL Code Generator](https://graphql-code-generator.com) is a tool developed by [The Guild](/) which generates type definitions which corresponds to the GraphQL schema. It has several plugins and we'll use 3 of those:
 
-- [typescript](https://www.graphql-code-generator.com/plugins/typescript): generates the type definitions for Typescript
-- [typescript-resolvers](https://www.graphql-code-generator.com/plugins/typescript-resolvers): generates type definitions for all operations resolvers
-- [add](https://www.graphql-code-generator.com/plugins/add): append/prepend text to the generated type definitions file, it allows us to `import` some of our types into the generated file
+- [typescript](https://graphql-code-generator.com/plugins/typescript): generates the type definitions for Typescript
+- [typescript-resolvers](https://graphql-code-generator.com/plugins/typescript-resolvers): generates type definitions for all operations resolvers
+- [add](https://graphql-code-generator.com/plugins/add): append/prepend text to the generated type definitions file, it allows us to `import` some of our types into the generated file
 
 ## Specific Error classes for all GraphQL schema Error types
 
@@ -274,7 +274,7 @@ export class UnknownError extends Error {}
 
 <Callout>
 When using remote APIs, we often have the possibility to generate the types automatically [from a JSON schema](https://json-schema.org/implementations.html#code-generation) for REST APIs, [from protobuf files](https://github.com/improbable-eng/ts-protoc-gen) for gRPC-based APIs, [from a database schema](https://github.com/SweetIQ/schemats), etc. You might even be using an external API through an SDK that already provides you with all types. In such cases, the creation of specialized Error classes is not mandatory. However, it might still be a good idea to do so to provide application-specific errors rather than bubbling up 3rd-party low-level errors.
-For such cases, the upcoming Ecma TC39 proposal for [Error Cause](https://github.com/tc39/proposal-error-cause) is useful as it allows to chain errors. Polyfills exist: [Pony Cause](https://github.com/voxpelli/pony-cause) or [error-cause](https://www.npmjs.com/package/error-cause).
+For such cases, the upcoming Ecma TC39 proposal for [Error Cause](https://github.com/tc39/proposal-error-cause) is useful as it allows to chain errors. Polyfills exist: [Pony Cause](https://github.com/voxpelli/pony-cause) or [error-cause](https://npmjs.com/package/error-cause).
 </Callout>
 
 <Callout>
@@ -410,7 +410,7 @@ We want to handle those errors, transform meaningless and unsafe `null` values i
 
 ## Monads to the rescue
 
-In order to make our throwing and unsafe APIs into safe data fetching functions, we'll use data types and techniques from the Functional Programming paradigm. In particular, we'll use the [fp-ts](https://gcanti.github.io/fp-ts/) library (but you can choose the FP library of your choice, e.g. [purify](https://gigobyte.github.io/purify/getting-started), [effect](https://github.com/Effect-TS/core), [monio](https://github.com/getify/monio), and [others](https://github.com/stoeffel/awesome-fp-js#libraries)).
+In order to make our throwing and unsafe APIs into safe data fetching functions, we'll use data types and techniques from the Functional Programming paradigm. In particular, we'll use the [fp-ts](https://gcanti.github.io/fp-ts) library (but you can choose the FP library of your choice, e.g. [purify](https://gigobyte.github.io/purify/getting-started), [effect](https://github.com/Effect-TS/core), [monio](https://github.com/getify/monio), and [others](https://github.com/stoeffel/awesome-fp-js#libraries)).
 
 `fp-ts` exposes several useful data types and functions which allows to work on safe abstractions using composable functions. In particular, we'll use:
 

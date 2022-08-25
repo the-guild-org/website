@@ -209,7 +209,7 @@ That will translate into `node_modules/bar/main.js.js` in CommonJS and `node_mod
 
 ### Can we test if everything is actually ESM compatible?
 
-The best solution for this is to have ESM examples in a monorepo testing firsthand if everything with the logic included doesn't break, using tools that output both CommonJS & ESM like [tsup](https://tsup.egoist.sh/) might become very handy, but that might not be straightforward, especially for big projects.
+The best solution for this is to have ESM examples in a monorepo testing firsthand if everything with the logic included doesn't break, using tools that output both CommonJS & ESM like [tsup](https://tsup.egoist.sh) might become very handy, but that might not be straightforward, especially for big projects.
 
 There is a relatively small but effective way of automated testing for all the top-level imports in ESM, you can have an ESM script that imports every `.mjs` file of your project, it will quickly scan, importing everything, and if nothing breaks, you are good to go 👍, here is a small example of a script that does this, and it's currently used in some projects that support ESM https://gist.github.com/PabloSzx/6f9a34a677e27d2ee3e4826d02490083.
 
@@ -255,7 +255,7 @@ This method requires tooling and/or support from the package manager. For exampl
 }
 ```
 
-> In [The Guild](https://the-guild.dev/) we use this method using tooling that creates the temporary package.json automatically. See [bob-the-bundler](https://github.com/kamilkisiela/bob) & [bob-esbuild](https://github.com/PabloSzx/bob-esbuild)
+> In [The Guild](/) we use this method using tooling that creates the temporary package.json automatically. See [bob-the-bundler](https://github.com/kamilkisiela/bob) & [bob-esbuild](https://github.com/PabloSzx/bob-esbuild)
 
 ### Support for ".mjs" output
 
