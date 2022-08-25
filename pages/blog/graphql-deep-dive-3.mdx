@@ -1,16 +1,16 @@
-import withArticle from '../../ui/blog/article'
+---
+title: The Stack #1
+author: tvvignesh
+tags: [graphql, deepdive, techstack]
+date: 2020-12-03
+description: The GraphQL Stack - Part 1.
+image: /blog-assets/graphql-deep-dive-3/cover.png,
+thumbnail: /blog-assets/graphql-deep-dive-3/cover.png
+---
 
-export const meta = {
-  title: 'The Stack #1',
-  author: 'tvvignesh',
-  tags: ['graphql', 'deepdive', 'techstack'],
-  date: '2020-12-03',
-  description: 'The GraphQL Stack - Part 1',
-  image: '/blog-assets/graphql-deep-dive-3/cover.png',
-  thumbnail: '/blog-assets/graphql-deep-dive-3/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 _This blog is a part of a series on GraphQL where we will dive deep into GraphQL and its ecosystem one piece at a time_
 
@@ -21,13 +21,13 @@ _This blog is a part of a series on GraphQL where we will dive deep into GraphQL
 - Part 5: [**The Stack #3**](/blog/graphql-deep-dive-5)
 - Part 6: [**The Workflow**](/blog/graphql-deep-dive-6)
 
-Now that we have discussed about GraphQL, and also about some of the architectural considerations when starting off, let's look at the next important step in the puzzle — choosing the right tech stack for your usecase and building the development workflow which suits you best in this blog.
+Now that we have discussed GraphQL, and also about some architectural considerations when starting off, let's look at the next important step in the puzzle — choosing the right tech stack for your use case and building the development workflow which suits you best in this blog.
 
-Technology changes and evolves constantly as we have already seen it happening all these days. So, rather than worrying too much about the technology you choose, it is better to choose a tool, library or platform which allows for incremental changes without lockin. Using the list in the [**previous blog post**](/blog/graphql-deep-dive-2) might actually help in your decision making process.
+Technology changes and evolves constantly as we have already seen it happening all these days. So, rather than worrying too much about the technology you choose, it is better to choose a tool, library or platform which allows for incremental changes without lockin. Using the list in the [**previous blog post**](/blog/graphql-deep-dive-2) might actually help in your decision-making process.
 
-But, today I am going to assume a tech stack (the GraphQL Tech Stack that I work with everyday to build [Timecampus](https://www.twitter.com/timecampus)) and walk you through. The reason I say **“GraphQL” Tech Stack** is because, this is just a part of the complete stack I use and there is more to it which we will discuss sometime down the line in a different blog.
+But, today I am going to assume a tech stack (the GraphQL Tech Stack that I work with every day to build [Timecampus](https://twitter.com/timecampus)) and walk you through. The reason I say **"GraphQL" Tech Stack** is because, this is just a part of the complete stack I use and there is more to it which we will discuss sometime down the line in a different blog.
 
-**NOTE:** While these work great for me, this is an area of continuous exploration for me and I don't mind replacing X with Y as long as the effort is really worth it from a future perspective (we will explore more on what they are and why we use these as we go along). With that, let's start.
+**NOTE:** While these work great for me, this is an area of continuous exploration for me, and I don't mind replacing X with Y as long as the effort is really worth it from a future perspective (we will explore more on what they are and why we use these as we go along). With that, let's start.
 
 [**VSCode**](https://code.visualstudio.com/)
 
@@ -37,7 +37,7 @@ For instance, just do a search for “GraphQL” in the marketplace, and this is
 
 ![Image for post](/blog-assets/graphql-deep-dive-3/1.png)
 
-and the ecosystem is growing even more everyday and this makes VSCode indispensable for our stack.
+and the ecosystem is growing even more every day and this makes VSCode indispensable for our stack.
 
 [**GraphQL Config**](https://graphql-config.com/)
 
@@ -103,7 +103,7 @@ And on top of this, the beauty is that, with GraphQL and Typescript, we can actu
 
 There are a lot of GraphQL servers out there. And we even spoke about some of those in our [**first blog post**](/blog/graphql-deep-dive-1). While it is not necessary to pick an out of the box GraphQL server since you can build your own using `graphql-js` , it may not be a smart choice since you might not want to reinvent the wheel.
 
-This is where I use GraphQL Helix which provides me a GraphQL server and also the option to selectively replace any module that I need to work for your usecase. This is very evident from the [**examples folder**](https://github.com/contrawork/graphql-helix/tree/master/examples) of the repository demonstrating various usecases like subscriptions, csp, graphql-modules, persisted-queries and so on and also with various frameworks like express, fastify, koa.
+This is where I use GraphQL Helix which provides me a GraphQL server and also the option to selectively replace any module that I need to work for your use case. This is very evident from the [**examples folder**](https://github.com/contrawork/graphql-helix/tree/master/examples) of the repository demonstrating various usecases like subscriptions, csp, graphql-modules, persisted-queries and so on and also with various frameworks like express, fastify, koa.
 
 And since there are no outside dependencies except for `graphql-js` there is also no bloat to the same unlike other graphql servers. If you want to see how other GraphQL servers perform, you might want to have a look at [this](https://github.com/benawad/node-graphql-benchmarks).
 
@@ -111,13 +111,13 @@ And since there are no outside dependencies except for `graphql-js` there is als
 
 We did discuss how Typescript and GraphQL works seamlessly well with each other. But what if we can generate all that we can from our SDL which provides majority of the information that one needs including name of the schema, fields, types, and so on.
 
-And this is where GraphQL Codegen plays a major role. You can generate all the types, interfaces and so on and it also comes with a lot of [**plugins**](https://graphql-code-generator.com/docs/plugins/index) and [**presets**](https://graphql-code-generator.com/docs/presets/presets-index) to help you work with not just Typescript, but also other languages and tooling. All we have to do is import the type we need and just use it making it really simple. And every time we change the schema, we can just regenerate the types. Also, it integrates seamlessly with GraphQL Config making it really easy to maintain.
+And this is where GraphQL Codegen plays a major role. You can generate all the types, interfaces and so on, and it also comes with a lot of [**plugins**](https://graphql-code-generator.com/docs/plugins/index) and [**presets**](https://graphql-code-generator.com/docs/presets/presets-index) to help you work with not just Typescript, but also other languages and tooling. All we have to do is import the type we need and just use it making it really simple. And every time we change the schema, we can just regenerate the types. Also, it integrates seamlessly with GraphQL Config making it really easy to maintain.
 
 For eg. this is how the generated types look like:
 
 ![Image for post](/blog-assets/graphql-deep-dive-3/6.png)
 
-There are more tools, libraries and platforms we have to talk about as part of our GraphQL Stack and we will be continuing our discussion in the next blog post. Hope this was insightful.
+There are more tools, libraries and platforms we have to talk about as part of our GraphQL Stack, and we will be continuing our discussion in the next blog post. Hope this was insightful.
 
 If you have any questions or are looking for help, feel free to reach out to me [@techahoy](https://twitter.com/techahoy) anytime.
 

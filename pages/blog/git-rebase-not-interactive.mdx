@@ -1,18 +1,17 @@
-import withArticle from '../../ui/blog/article'
+--
+title: git rebase (not) --interactive
+author: eytan
+tags: [git]
+date: 2018-09-03
+description: How to build a Node.js script to re-write history. pre-requisites: Familiarity with git rebase --interactive.
+image: /medium/aaf7b6a36c30ab802f51d8ecb40478e9.png
+---
 
-export const meta = {
-  title: 'git rebase (not) --interactive',
-  author: 'eytan',
-  tags: ['git'],
-  date: '2018-09-03',
-  description:
-    'How to build a Node.JS script to re-write history. pre-requisites: Familiarity with git rebase --interacitve',
-  image: '/medium/aaf7b6a36c30ab802f51d8ecb40478e9.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
-_tl;dr: How to build a Node.JS script to re-write history. pre-requisites: Familiarity with git rebase --interactive._
+_tl;dr: How to build a Node.JS script to re-write history. pre-requisites: Familiarity with `git rebase --interactive`._
 
 Once upon a time, there was a [Whatsapp clone tutorial](https://github.com/Urigo/whatsapp-textrepo-angularcli-express) was born. Since then, it has been through different incantations, but they all shared a common principle — the tutorial used git as a version control.
 
@@ -63,7 +62,7 @@ git_sequence_editor () {
 
 As you can see (or not), git looks for the editor's file path in a global var named `GIT_SEQUENCE_EDITOR` and executes it with all the given arguments. Without getting into more of the implementation, knowing `nano` and `vim` which are the most commonly used git-editors, the first argument that their process accepts the edited file's path, which makes total sense.
 
-BUT! Why does the `GIT_SEQUENCE_EDITOR` environment variable has to reference an actual text editor? What if we set that to reference Node.JS's executable? Aha! JACKPOT!
+BUT! Why does the `GIT_SEQUENCE_EDITOR` environment variable has to reference an actual text editor? What if we set that to reference Node.js' executable? Aha! JACKPOT!
 
 Now, hypothetically instead of opening `nano` or `vim` and editing the file manually we can run whatever manipulation we want on the file using a script and then once the process exists with no errors (code 0) git will just proceed with the rebase as usual.
 
@@ -76,38 +75,36 @@ const fs = require('fs')
 const tmp = require('tmp')
 
 // Main
-{
-  const [anchor, amount = 1] = process.argv.slice(-2).map(Number)
+const [anchor, amount = 1] = process.argv.slice(-2).map(Number)
 
-  gitRebaseInteractive(
-    anchor,
-    function (operations, amount) {
-      operations = operations
-        // Replace comments
-        .replace(/#.*/g, '')
-        // Each line would be a cell
-        .split('\n')
-        // Get rid of empty lines
-        .filter(Boolean)
+gitRebaseInteractive(
+  anchor,
+  (operations, amount) => {
+    operations = operations
+      // Replace comments
+      .replace(/#.*/g, '')
+      // Each line would be a cell
+      .split('\n')
+      // Get rid of empty lines
+      .filter(Boolean)
 
-      // Commits we would like to drop
-      const dropOperations = operations
-        .slice(0, amount)
-        .map((operation) => operation.replace('pick', 'drop'))
+    // Commits we would like to drop
+    const dropOperations = operations
+      .slice(0, amount)
+      .map((operation) => operation.replace('pick', 'drop'))
 
-      // Commits we would like to pick
-      const pickOperations = operations.slice(amount)
+    // Commits we would like to pick
+    const pickOperations = operations.slice(amount)
 
-      // Composing final rebase file
-      return [].concat(dropOperations).concat(pickOperations).join('\n')
-    },
-    [amount]
-  )
+    // Composing final rebase file
+    return [...dropOperations, ...pickOperations].join('\n')
+  },
+  [amount]
+)
 
-  console.log(`Removed ${amount} commits starting ${anchor}`)
-}
+console.log(`Removed ${amount} commits starting ${anchor}`)
 
-// Runs a git-rebase-interactive in a non interactive manner by providing a script
+// Runs a git-rebase-interactive in a non-interactive manner by providing a script
 // which will handle things automatically
 function gitRebaseInteractive(head, fn, args) {
   execa.sync('git', ['rebase', '-i', head], {
@@ -133,7 +130,7 @@ function gitEdit(fn, args) {
     const fs = require('fs')
 
     const file = process.argv[process.argv.length - 1]
-    let content = fs.readFileSync(file).toString()
+    let content = fs.readFileSync(file, 'utf8')
     content = new Function(\`return (${body}).apply(this, arguments)\`)(content, ${args})
     fs.writeFileSync(file, content)
     fs.unlinkSync('${scriptFile.name}')
@@ -144,6 +141,6 @@ function gitEdit(fn, args) {
 }
 ```
 
-Using the code snippet above we can take an initial step towards solving the problem presented at the beginning of this article by simply running `$ git-remove.js` \[where `anchor` represents a git object and `amount` represents the amount of commits that we would like to remove].
+Using the code snippet above we can take an initial step towards solving the problem presented at the beginning of this article by simply running `$ git-remove.js` where `anchor` represents a git object and `amount` represents the amount of commits that we would like to remove.
 
 Sure, we still need to figure out which step we would like to remove by its index, and we need to take care of automatic rewording, but at least now you have the idea behind such method where you can solve problems like these as well as far more complex ones, with a little of creativity.

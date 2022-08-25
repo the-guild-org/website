@@ -1,18 +1,16 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL Code Generator - Introducing Hooks support for React Apollo plugin
+author: leonardo
+tags: [graphql, codegen, react, react-apollo, hooks]
+date: 2019-03-01
+updateDate: 2020-05-20
+description: Use and generate React Hooks with Apollo and Typescript with the new version of GraphQL Code Generator.
+image: /blog-assets/graphql-codegen-hooks-support-react-apollo/cover.png
+---
 
-export const meta = {
-  title:
-    'GraphQL Code Generator - Introducing Hooks support for React Apollo plugin',
-  author: 'leonardo',
-  tags: ['graphql', 'codegen', 'react', 'react-apollo', 'hooks'],
-  date: '2019-03-01',
-  updateDate: '2020-05-20',
-  description:
-    'Use and generate React Hooks with Apollo and Typescript with the new version of GraphQL Code Generator',
-  image: '/blog-assets/graphql-codegen-hooks-support-react-apollo/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 If you follow the React community, you'll know for sure that [React Hooks](https://reactjs.org/docs/hooks-intro.html) had been one of the most awaited feature in the ecosystem since their first gist. They have been available since React v16.7-alpha, and many libraries already started adopting them — [officially](https://react.i18next.com/latest/usetranslation-hook) or with [auxiliary libraries](https://github.com/facebookincubator/redux-react-hook).
 
@@ -22,7 +20,7 @@ In case you don't know what hooks are, you may be wondering **what all this buzz
 
 > Hooks let you use state and other React features without writing a class.
 
-This could be a huge improvement by itself (you know, you create a Functional Component, mess with it and then you need a bit of state so.. let's refactor this to a class, hooray! 🎉 — sarcasm is intentional), but there is more.
+This could be a huge improvement by itself (you know, you create a Functional Component, mess with it, and then you need a bit of state so.. let's refactor this to a class, hooray! 🎉 — sarcasm is intentional), but there is more.
 
 # React Apollo and Hooks
 
@@ -36,8 +34,8 @@ There are many hooks, like `useEffect` or `useReducer`, that may simplify your c
 
 What I want to talk about, instead, is `useContext` and how you will fall in love with it, especially when talking about `react-apollo`.
 
-_**Note:** If you haven't used Context before, just think of it as a way to pass props down the components tree without passing props down component-by-component._
-\_It should not replace normal React usage, but is useful when talking about cross-application values like state, translations, themes, etc.\_If
+**Note:** If you haven't used Context before, just think of it as a way to pass props down the components' tree without passing props down component-by-component.
+It should not replace normal React usage, but is useful when talking about cross-application values like state, translations, themes, etc.
 
 The new hook `useContext` allows us to access a React Context ([with its Consumer/Provider api](https://reactjs.org/docs/context.html)) directly from a functional component, without props nor contextType:
 

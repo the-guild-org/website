@@ -1,26 +1,25 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Dependency Injection in GraphQL-Modules
+author: arda
+tags: [di, graphql, graphql-modules]
+date: 2019-01-11
+description: Why did we implement our own Dependency Injection library for GraphQL-Modules?
+image: /medium/783e92a762ee3c5b1580336b00f76d46.png
+---
 
-export const meta = {
-  title: 'Dependency Injection in GraphQL-Modules',
-  author: 'arda',
-  tags: ['di', 'graphql', 'graphql-modules'],
-  date: '2019-01-11',
-  description:
-    'Why did we implement our own Dependency Injection library for GraphQL-Modules?',
-  image: '/medium/783e92a762ee3c5b1580336b00f76d46.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 ## Why not Inversify/Angular/NestJS?
 
-When designing GraphQL Modules, we tried different approaches to encapsulate modules safely. We created a solution where you won't need to use Dependency Injection when you start, but after you are getting to a certain scale, you can make use of our separate DI library to ease the separation and make the boundaries stricter, only at the point when it really makes sense and helps you. When you get to that point, DI helps you mostly for ease of mocking providers for testing and encapsulation for less error prone implementation.
+When designing GraphQL Modules, we tried different approaches to encapsulate modules safely. We created a solution where you won't need to use Dependency Injection when you start, but after you are getting to a certain scale, you can make use of our separate DI library to ease the separation and make the boundaries stricter, only at the point when it really makes sense and helps you. When you get to that point, DI helps you mostly for ease of mocking providers for testing and encapsulation for less error-prone implementation.
 
 In the early stages of GraphQL-Modules, it used to have [Inversify](https://github.com/inversify/InversifyJS) internally for Dependency Injection in GraphQL-Modules. Inversify is a platform-agnostic Dependency Injection library written in JavaScript. Unfortunately, **_Inversify_** didn't fit our needs for modular DI (Dependency Injection) due to some critical reasons that we'll expand on this article.
 
 That's why, we implemented our own platform-agnostic Dependency Injection library called `@graphql-modules/di` which is independent from `@graphql-modules/core`, and it can be used by itself.
 
-It supports factory, class and value providers that can have _Symbol_, _string_, _number_, _function_ and _object_ tokens in a `provide` definition, and it can address constructable classes, factory functions and constant values as injected values. It has some features that are similar to [Angular's Dependency Injection](https://angular.io/guide/dependency-injection) that is mentioned in their documentation. In this article we'll explain the similarities and differences between those solutions.
+It supports factory, class and value providers that can have `Symbol`, `string`, `number`, `function` and `object` tokens in a `provide` definition, and it can address constructable classes, factory functions and constant values as injected values. It has some features that are similar to [Angular's Dependency Injection](https://angular.io/guide/dependency-injection) that is mentioned in their documentation. In this article we'll explain the similarities and differences between those solutions.
 
 **Let's start with the principles we wanted to have in our DI logic, and we will finish with the comparisons with Angular and NestJS.**
 
@@ -50,9 +49,7 @@ const AppModule = new GraphQLModule({
 })
 
 const DatabaseModule = new GraphQLModule({
-    providers: [
-        SomeDbProvider
-    ],
+    providers: [SomeDbProvider],
     configRequired: true, // makes this module prevent to be used without a valid configuration in any part of the application
 });
 
@@ -129,7 +126,7 @@ import { BarModule } from '@bar';
     imports: [
         FooModule,
         BarModule
-    ]
+    ],
     providers: [
         {
             provide: FooProvider,
@@ -151,7 +148,7 @@ export const AppModule = new GraphQLModule({
     imports: [
         FooModule,
         BarModule
-    ]
+    ],
     providers: [
         {
             provide: FooProvider,
@@ -169,21 +166,21 @@ Angular doesn't care about that. it has a single injector for the all applicatio
 
 > That ability is not so important for Angular applications; because they are running on the browser, not on the server. But still you can notice the similar behavior to GraphQL-Modules DI's if you load an Angular module lazily using router's `loadChildren` property.
 
-And Angular's DI library doesn't differentiate _Application and Session scopes_ because it doesn't need that. An Angular application has a life time until `window` is terminated by closing it or refreshing page; the session and application runtime can be considered same in the client application. That's why, our DI implementation is more complex than Angular's as it need to handle multiple clients by running a single application. You can read more about [_Scoped Providers_](/blog/graphql-modules-scoped-providers) in the beginning of this article
+And Angular's DI library doesn't differentiate _Application and Session scopes_ because it doesn't need that. An Angular application has a lifetime until `window` is terminated by closing it or refreshing page; the session and application runtime can be considered same in the client application. That's why, our DI implementation is more complex than Angular's as it need to handle multiple clients by running a single application. You can read more about [_Scoped Providers_](/blog/graphql-modules-scoped-providers) in the beginning of this article
 
-## Comparison with NestJS's DI implementation
+## Comparison with NestJS' DI implementation
 
-NestJS is a server-side model-view-controller full fledged framework that has all the principles of MVC Backend framework. exposing a GraphQL API is only one of its various features. Our goal with GraphQL Modules was to create a set of tools and libraries that answer needs for the GraphQL ecosystem, and can be (and should be) used by NestJS users as well.
+NestJS is a server-side model-view-controller full-fledged framework that has all the principles of MVC Backend framework. exposing a GraphQL API is only one of its various features. Our goal with GraphQL Modules was to create a set of tools and libraries that answer needs for the GraphQL ecosystem, and can be (and should be) used by NestJS users as well.
 
 > The principles and approaches we're trying to apply in GraphQL Modules is not only for Dependency Injection but also for GraphQL Schemas and Context.
 
-In comparison to Nest's goals, GraphQL-Modules is a platform agnostic library that can be used even with the plain `graphqljs` package **without a server**; because it was designed to work exactly same in all GraphQL Server platforms such as Apollo, Yoga, graphql-express etc. For example, you can **use _Apollo_'s data sources with graphql-express**; because GraphQL Modules **passes its own cache mechanism into the dataloaders thanks to our independent DI logic**.
+In comparison to Nest's goals, GraphQL-Modules is a platform-agnostic library that can be used even with the plain `graphqljs` package **without a server**; because it was designed to work exactly same in all GraphQL Server platforms such as Apollo, Yoga, graphql-express etc. For example, you can **use _Apollo_'s data sources with graphql-express**; because GraphQL Modules **passes its own cache mechanism into the dataloaders thanks to our independent DI logic**.
 
-> The result of a GraphQLModule is a context builder and a schema while NestJS's GraphQLModule is a NestJS module that exposes an API using Apollo.
+> The result of a GraphQLModule is a context builder and a schema while NestJS' GraphQLModule is a NestJS module that exposes an API using Apollo.
 
-NestJS has its own dependency injection system which is similar to Angular's but **more strict**; you can define both global (not by default like Angular) and encapsulated providers at the same time. We preferred not to have global providers like Angular (you can see how it works above in the Angular comparison); because we consider it can be more **error prone** and it has to be done by **passing configuration**. You can read more with an example about passing configuration and keeping safe boundaries between your modules in the [_Encapsulation_](/blog/modular-encapsulation-graphql-modules) article.
+NestJS has its own dependency injection system which is similar to Angular's but **more strict**; you can define both global (not by default like Angular) and encapsulated providers at the same time. We preferred not to have global providers like Angular (you can see how it works above in the Angular comparison); because we consider it can be more **error-prone**, and it has to be done by **passing configuration**. You can read more with an example about passing configuration and keeping safe boundaries between your modules in the [_Encapsulation_](/blog/modular-encapsulation-graphql-modules) article.
 
-Also, NestJS DI system doesn't share the important feature of defining providers that has the life-time of the client request (we call it **session scope**). We think a backend system would need to differentiate DI containers according to these different scopes. You can read more about it in [_Scoped Providers_](/blog/graphql-modules-scoped-providers) part of this article above.
+Also, NestJS DI system doesn't share the important feature of defining providers that have the life-time of the client request (we call it **session scope**). We think a backend system would need to differentiate DI containers according to these different scopes. You can read more about it in [_Scoped Providers_](/blog/graphql-modules-scoped-providers) part of this article above.
 
 # Working together
 

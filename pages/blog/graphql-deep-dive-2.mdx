@@ -1,16 +1,16 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL - Use case and Architecture
+author: tvvignesh
+tags: [graphql, deepdive, architecture]
+date: 2020-12-02
+description: Architecting for GraphQL and its ecosystem.
+image: /blog-assets/graphql-deep-dive-2/cover.png
+thumbnail: /blog-assets/graphql-deep-dive-2/cover.png
+---
 
-export const meta = {
-  title: 'GraphQL - Usecase and Architecture',
-  author: 'tvvignesh',
-  tags: ['graphql', 'deepdive', 'architecture'],
-  date: '2020-12-02',
-  description: 'Architecting for GraphQL and its ecosystem',
-  image: '/blog-assets/graphql-deep-dive-2/cover.png',
-  thumbnail: '/blog-assets/graphql-deep-dive-2/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 _This blog is a part of a series on GraphQL where we will dive deep into GraphQL and its ecosystem one piece at a time_
 
@@ -27,7 +27,7 @@ In this blog, we will start looking at how your architecture can look like when 
 
 **The Architecture**
 
-Your architecture hugely revolves around your usecase and you have to be very careful in getting it right and take proper consultation if needed from experts. While it is very important to get it right before you start, mistakes can happen, and with a lot of research happening these days, you can often find any revolution happen any day which can make your old way of thinking obsolete.
+Your architecture hugely revolves around your usecase, and you have to be very careful in getting it right and take proper consultation if needed from experts. While it is very important to get it right before you start, mistakes can happen, and with a lot of research happening these days, you can often find any revolution happen any day which can make your old way of thinking obsolete.
 
 That is why, I would highly recommend you to **Architect for Change** and make your architecture as **Modular** as possible so that you have the flexibility to do incremental changes in the future if needed. Let's just talk about architecture in context with GraphQL here. We will explore more deeper into the rest of the architecture in an another blog post.
 
@@ -105,9 +105,9 @@ Depending on your usecase, you might also want to decide if you need something l
 
 **The Backend**
 
-And then comes the backend which you are going to use to store/retrieve data from. There are a huge number of options out there and to be honest, there is no one database which fits all usecases. And they even come with different variants — SQL, NoSQL, Search, Time Series and even Graph Databases. You can refer [**DBEngines**](https://db-engines.com/en/ranking) for a complete list.
+And then comes the backend which you are going to use to store/retrieve data from. There are a huge number of options out there and to be honest, there is no one database which fits all use-cases. And they even come with different variants — SQL, NoSQL, Search, Time Series and even Graph Databases. You can refer [**DBEngines**](https://db-engines.com/en/ranking) for a complete list.
 
-And you can even put a GraphQL layer or ORM on top of all of them if you want and take the complexity away from the services (eg. with [**Prisma 2**](https://www.prisma.io/) or [**GraphQL Mesh**](https://graphql-mesh.com/)).
+And you can even put a GraphQL layer or ORM on top of all of them if you want and take the complexity away from the services (e.g. with [**Prisma 2**](https://www.prisma.io/) or [**GraphQL Mesh**](https://graphql-mesh.com/)).
 
 You might also want to look at how you minimize the amount of calls you make to the main database. Do you need caching and have it setup? Have you addressed the N+1 problem with [**Dataloader**](https://github.com/graphql/dataloader)?
 
@@ -115,7 +115,7 @@ You might also want to look at how you minimize the amount of calls you make to 
 
 Now, there are a lot of other things you might want to have in your architecture like Hybrid Cloud support, CI/CD pipelines, caching and so on. We will probably explore them in future blog posts as we go along.
 
-Remember to keep your stack as simple as possible and you can incrementally have them setup as you go along.
+Remember to keep your stack as simple as possible, and you can incrementally have them setup as you go along.
 
 **Some Tips**
 
@@ -140,11 +140,11 @@ Before I pick any tool or technology as part of my tech stack, I do ask a set of
 - Does it follow standards and is free of Vendor Lockin?
 - Are there any security concerns which this tool or library might create?
 
-While not all of these questions might have been addressed by the library or tool well, what I see is atleast the intent to address them in near-time.
+While not all of these questions might have been addressed by the library or tool well, what I see is at least the intent to address them in near-time.
 
-While most of the things in this blog may not be related to GraphQL itself, these are some things which you need to keep in mind before starting your journey with GraphQL. In the next blog, I will show you how my GraphQL Tech Stack looks like as I use it to build [Timecampus](https://www.twitter.com/timecampus) and we will dive deeper into each layer of the stack, one piece at a time.
+While most of the things in this blog may not be related to GraphQL itself, these are some things which you need to keep in mind before starting your journey with GraphQL. In the next blog, I will show you how my GraphQL Tech Stack looks like as I use it to build [Timecampus](https://twitter.com/timecampus), and we will dive deeper into each layer of the stack, one piece at a time.
 
-Hope this was informative. Do let us know how you prefer to architect with GraphQL in the comments below and we will be happy to know more about it.
+Hope this was informative. Do let us know how you prefer to architect with GraphQL in the comments below, and we will be happy to know more about it.
 
 If you have any questions or are looking for help, feel free to reach out to me [@techahoy](https://twitter.com/techahoy) anytime.
 
