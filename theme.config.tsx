@@ -6,8 +6,13 @@ import { ArticleJsonLd, NextSeo } from 'next-seo';
 import { BlogCardList, Newsletter, Video } from '@/components';
 import { AUTHORS } from '@/authors';
 import { CodeSandbox } from '@/shared/embed/CodeSandbox';
-import { MetaWithLink } from './lib/meta';
+import { LinkPreview } from '@/shared/embed/LinkPreview';
+import { Gfycat } from '@/shared/embed/Gfycat';
+import { YouTube } from '@/shared/embed/YouTube';
+import { Tweet } from '@/shared/embed/Tweet';
+import { StackBlitz } from '@/shared/embed/StackBlitz';
 import blogsMeta from './dist/blogs-meta.json';
+import { MetaWithLink } from './lib/meta';
 import { asArray } from './lib/as-array';
 
 const SITE_NAME = 'The Guild';
@@ -144,6 +149,11 @@ const config: DocsThemeConfig = {
     Callout,
     Video,
     CodeSandbox,
+    LinkPreview,
+    Gfycat,
+    YouTube,
+    Tweet,
+    StackBlitz
   },
 };
 
