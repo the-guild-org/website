@@ -2,27 +2,17 @@ import App, { NextWebVitalsMetric } from 'next/app';
 import Router from 'next/router';
 import Script from 'next/script';
 import Head from 'next/head';
-import { ThemeProvider } from '@theguild/components';
-import 'prism-theme-night-owl/build/no-italics.css';
+import { FooterExtended, Header, ThemeProvider } from '@theguild/components';
 import * as gtag from '../lib/gtag';
 import { globalStyles } from '../styles/global';
+import 'guild-docs/style.css';
 
-import '../styles/global.css';
-import '@algolia/autocomplete-theme-classic';
-import '@theguild/components/dist/search-bar-v2.css';
+Router.events.on('routeChangeComplete', url => gtag.pageview(url));
 
-Router.events.on('routeChangeComplete', (url) => gtag.pageview(url));
-
-export function reportWebVitals({
-  id,
-  name,
-  label,
-  value,
-}: NextWebVitalsMetric) {
+export function reportWebVitals({ id, name, label, value }: NextWebVitalsMetric) {
   gtag.event({
     action: name,
-    event_category:
-      label === 'web-vital' ? 'Web Vitals' : 'Next.js custom metric',
+    event_category: label === 'web-vital' ? 'Web Vitals' : 'Next.js custom metric',
     value: Math.round(name === 'CLS' ? value * 1000 : value), // values must be integers
     event_label: id,
     non_interaction: true,
@@ -40,7 +30,7 @@ export function reportWebVitals({
 export default class MyApp extends App {
   render() {
     globalStyles();
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, router } = this.props;
 
     return (
       <>
@@ -65,10 +55,9 @@ export default class MyApp extends App {
             height: 100%;
           }
 
-          html {
-            /* For smooth scrolling effect when click on '#' hash links */
-            scroll-behavior: smooth;
-          }
+          ${router.route === '/'
+            ? `/* For smooth scrolling effect when click on '#' hash links */ html { scroll-behavior: smooth }`
+            : ''}
 
           body {
             z-index: -1; /* needs for blue and pink circles */
@@ -93,15 +82,42 @@ export default class MyApp extends App {
 
           // Remove autocomplete color in Chrome
           input:-webkit-autofill {
-            -webkit-transition: color 9999s ease-out,
-              background-color 9999s ease-out;
+            -webkit-transition: color 9999s ease-out, background-color 9999s ease-out;
             -webkit-transition-delay: 9999s;
+          }
+          .nextra-nav-container {
+            display: none;
           }
         `}</style>
 
         <Script async src="/static/crisp.js" />
         <ThemeProvider>
+          <Header
+            sameSite
+            activeLink={router.asPath}
+            accentColor="var(--colors-accent)"
+            searchBarProps={{ version: 'v2' }}
+            themeSwitch
+            transformLinks={links => [
+              ...links,
+              {
+                href: 'https://the-guild.dev/contact',
+                label: 'Contact',
+                title: 'Get in touch',
+              },
+            ]}
+            className="[&_ul>div]:right-32"
+          />
           <Component {...pageProps} />
+          <FooterExtended
+            sameSite
+            resources={[
+              { children: 'Blog', title: 'Blog', href: '/blog' },
+              { children: 'Services', title: 'Services', href: '/services' },
+              { children: 'Newsletter', title: 'Newsletter', href: '/newsletter' },
+              { children: 'Logos', title: 'Logos', href: '/logos' },
+            ]}
+          />
         </ThemeProvider>
       </>
     );

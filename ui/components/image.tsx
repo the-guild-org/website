@@ -1,14 +1,6 @@
 import { ReactElement } from 'react';
 
-export const Image = ({
-  alt,
-  src,
-  className,
-}: {
-  alt: string;
-  src: string;
-  className?: string;
-}): ReactElement => {
+export const Image = ({ alt, src, className }: { alt?: string; src: string; className?: string }): ReactElement => {
   if (!src) {
     return null;
   }
@@ -16,12 +8,8 @@ export const Image = ({
   const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
 
   if (isVideo) {
-    const webm: string = src.endsWith('.webm')
-      ? src
-      : src.replace('.mp4', '.webm');
-    const mp4: string = src.endsWith('.mp4')
-      ? src
-      : src.replace('.webm', '.mp4');
+    const webm: string = src.endsWith('.webm') ? src : src.replace('.mp4', '.webm');
+    const mp4: string = src.endsWith('.mp4') ? src : src.replace('.webm', '.mp4');
 
     return (
       <video className={className} playsInline autoPlay loop muted>

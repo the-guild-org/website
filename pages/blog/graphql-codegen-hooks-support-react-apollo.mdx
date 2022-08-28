@@ -1,18 +1,16 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL Code Generator - Introducing Hooks support for React Apollo plugin
+authors: leonardo
+tags: [graphql, codegen, react, react-apollo, hooks]
+date: 2019-03-01
+updateDate: 2020-05-20
+description: Use and generate React Hooks with Apollo and Typescript with the new version of GraphQL Code Generator.
+image: /blog-assets/graphql-codegen-hooks-support-react-apollo/cover.png
+---
 
-export const meta = {
-  title:
-    'GraphQL Code Generator - Introducing Hooks support for React Apollo plugin',
-  author: 'leonardo',
-  tags: ['graphql', 'codegen', 'react', 'react-apollo', 'hooks'],
-  date: '2019-03-01',
-  updateDate: '2020-05-20',
-  description:
-    'Use and generate React Hooks with Apollo and Typescript with the new version of GraphQL Code Generator',
-  image: '/blog-assets/graphql-codegen-hooks-support-react-apollo/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 If you follow the React community, you'll know for sure that [React Hooks](https://reactjs.org/docs/hooks-intro.html) had been one of the most awaited feature in the ecosystem since their first gist. They have been available since React v16.7-alpha, and many libraries already started adopting them — [officially](https://react.i18next.com/latest/usetranslation-hook) or with [auxiliary libraries](https://github.com/facebookincubator/redux-react-hook).
 
@@ -22,12 +20,12 @@ In case you don't know what hooks are, you may be wondering **what all this buzz
 
 > Hooks let you use state and other React features without writing a class.
 
-This could be a huge improvement by itself (you know, you create a Functional Component, mess with it and then you need a bit of state so.. let's refactor this to a class, hooray! 🎉 — sarcasm is intentional), but there is more.
+This could be a huge improvement by itself (you know, you create a Functional Component, mess with it, and then you need a bit of state so.. let's refactor this to a class, hooray! 🎉 — sarcasm is intentional), but there is more.
 
 # React Apollo and Hooks
 
 :::tip
-If you already know all about hooks and [@apollo/react-hooks](https://www.apollographql.com/docs/react/api/react-hooks/), and want to see the news about `graphql-code-generator`, just skip this section.
+If you already know all about hooks and [@apollo/react-hooks](https://apollographql.com/docs/react/api/react-hooks), and want to see the news about `graphql-code-generator`, just skip this section.
 
 If you are interested in the long story instead, keep reading!
 :::
@@ -36,8 +34,8 @@ There are many hooks, like `useEffect` or `useReducer`, that may simplify your c
 
 What I want to talk about, instead, is `useContext` and how you will fall in love with it, especially when talking about `react-apollo`.
 
-_**Note:** If you haven't used Context before, just think of it as a way to pass props down the components tree without passing props down component-by-component._
-\_It should not replace normal React usage, but is useful when talking about cross-application values like state, translations, themes, etc.\_If
+**Note:** If you haven't used Context before, just think of it as a way to pass props down the components' tree without passing props down component-by-component.
+It should not replace normal React usage, but is useful when talking about cross-application values like state, translations, themes, etc.
 
 The new hook `useContext` allows us to access a React Context ([with its Consumer/Provider api](https://reactjs.org/docs/context.html)) directly from a functional component, without props nor contextType:
 
@@ -58,7 +56,7 @@ function MyComponent(props: Props) {
 
 Given this sweet feature, we can now think about all our HOCs / Render Props in our codebase, well, almost all: Every time we need to access context (_State Management, API Calls, Translations, Localization_) we can now use hooks.
 
-Especially using TypeScript, deep [HOCs tree-hell](https://www.reddit.com/r/reactjs/comments/85h93f/higher_order_component_hell/) or [render-props callback hell](https://medium.com/@ntgard/why-i-dont-use-render-props-in-react-10f18abdff11) are a nightmare (Reminding Node.js callback hell, anyone?). Typings are always wrong, you need to define twenty different interfaces, etc.
+Especially using TypeScript, deep [HOCs tree-hell](https://reddit.com/r/reactjs/comments/85h93f/higher_order_component_hell) or [render-props callback hell](https://medium.com/@ntgard/why-i-dont-use-render-props-in-react-10f18abdff11) are a nightmare (Reminding Node.js callback hell, anyone?). Typings are always wrong, you need to define twenty different interfaces, etc.
 
 With hooks, you can just use them in a straight, linear, fashion:
 
@@ -99,7 +97,7 @@ function Todos() {
 
       return (
         <ul>
-          {data.todos.map((todo) => (
+          {data.todos.map(todo => (
             <li key={todo.id}>{todo.description}</li>
           ))}
         </ul>
@@ -111,7 +109,7 @@ function Todos() {
 
 Since the first time I saw hooks, I thought about removing the callback hell caused by render props in my codebase. Given the awesome work done by Daniel Trojanowski with `react-apollo-hooks`, I wanted to use **hooks** in our projects, replacing React Apollo classic components (_render-props based_).
 
-However, I love even more the [`graphql-code-generator`](https://graphql-code-generator.com/) project, since I want proper **typings** with my Query, Mutation and Subscription components. Accessing `data` with proper autocomplete and type checking is definitely a game-changer!
+However, I love even more the [`graphql-code-generator`](https://graphql-code-generator.com) project, since I want proper **typings** with my Query, Mutation and Subscription components. Accessing `data` with proper autocomplete and type checking is definitely a game-changer!
 
 > I'm glad to have the honor to announce the next release of GraphQL Code Generator, that will add React Apollo hooks generation to its arsenal
 
@@ -122,19 +120,14 @@ Just use GraphQL Code Generator's [Typescript-React-Apollo Plugin](https://graph
 This is an example generated hook, with proper typings:
 
 ```tsx
-export function useUserListQuery(
-  baseOptions?: QueryHookOptions<UserListQueryVariables>
-) {
-  return useApolloQuery<UserListQueryQuery, UserListQueryVariables>(
-    UserListQueryDocument,
-    baseOptions
-  )
+export function useUserListQuery(baseOptions?: QueryHookOptions<UserListQueryVariables>) {
+  return useApolloQuery<UserListQueryQuery, UserListQueryVariables>(UserListQueryDocument, baseOptions)
 }
 ```
 
 And here we can see autocomplete at work:
 
-![](/blog-assets/graphql-codegen-hooks-support-react-apollo/vscode.png)
+![](../../public/blog-assets/graphql-codegen-hooks-support-react-apollo/vscode.png)
 
 If you want to see `graphql-code-generator` in action, you can look at the awesome [WhatsApp-Clone-Client-React](https://github.com/Urigo/WhatsApp-Clone-Client-React) project made by [The Guild](https://the-guild.dev). Here is the diff (thanks to [Eytan Manor](https://medium.com/u/5a6962cd709e)) showcasing the generated hooks applied to a real codebase.
 

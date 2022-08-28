@@ -2,11 +2,7 @@ import { ReactElement } from 'react';
 import { MetaWithLink } from '../lib/meta';
 import { Heading, Description, Link, BlogCardList } from './components';
 
-export const RecommendedReadingSection = ({
-  articles = [],
-}: {
-  articles: MetaWithLink[];
-}): ReactElement => {
+export const RecommendedReadingSection = ({ articles = [] }: { articles: MetaWithLink[] }): ReactElement => {
   return (
     <div
       className="

@@ -1,15 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Stencil-Apollo - Stencil meets GraphQL
+authors: arda
+tags: [graphql, stencil, stencil-apollo]
+date: 2019-03-06
+description: Stencil-Apollo lets you easily use GraphQL in Web Components.
+image: /medium/de2fef916d1624b5a70599ef50687bf6.png
+---
 
-export const meta = {
-  title: 'Stencil-Apollo - Stencil meets GraphQL',
-  author: 'arda',
-  tags: ['graphql', 'stencil', 'stencil-apollo'],
-  date: '2019-03-06',
-  description: 'Stencil-Apollo lets you easily use GraphQL in Web Components.',
-  image: '/medium/de2fef916d1624b5a70599ef50687bf6.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 ## Stencil-Apollo lets you easily use GraphQL in Web Components.
 
@@ -47,7 +47,7 @@ Now it is much easier to use StencilJS and create GraphQL-based applications. **
     if (loading) return 'Loading...'
     return (
       <ul>
-        {data.posts.map((post) => (
+        {data.posts.map(post => (
           <li>
             {post.title}({post.votes} votes)
           </li>
@@ -87,13 +87,16 @@ Stencil Apollo Library. Contribute to ardatan/stencil-apollo development by crea
 
 # Ready-to-use and strongly typed GraphQL components
 
-The [GraphQL Code Generator](https://graphql-code-generator.com/) can be used to generate TypeScript typings for both server and client.
+The [GraphQL Code Generator](https://graphql-code-generator.com) can be used to generate TypeScript typings for both server and client.
 
 This tool also generates strongly typed [React-Apollo components](/blog/codegen-typescript-react-apollo) and [Apollo-Angular services](/blog/apollo-angular-12) to improve the development experience. It turns your GraphQL operations into ready to use elements.
 
 > Now it also supports Stencil-Apollo!
 
-![](/medium/9ad57bf147ea578815342c2f5fc1b1b5.webm 'How Stencil-Apollo works with GraphQL-Code-Generator')
+<Video
+  src="/medium/9ad57bf147ea578815342c2f5fc1b1b5.webm"
+  title="How Stencil-Apollo works with GraphQL-Code-Generator"
+/>
 
 > [Check out our example](https://github.com/ardatan/stencil-apollo/tree/master/example-with-codegen) with GraphQL-Code-Generator
 

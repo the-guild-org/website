@@ -1,16 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: I wrote a customizable CSS engine in JavaScript
+authors: eytan
+tags: [css, javascript]
+date: 2019-07-24
+description: I wrote a customizable CSS engine in JavaScript. Custom selectors, custom rules and custom events. You determine its behavior.
+image: /medium/9ecd4800956fc386f893c8730a0beb63.jpeg
+---
 
-export const meta = {
-  title: 'I wrote a customizable CSS engine in JavaScript',
-  author: 'eytan',
-  tags: ['css', 'javascript'],
-  date: '2019-07-24',
-  description:
-    'I wrote a customizable CSS engine in JavaScript. Custom selectors, custom rules and custom events. You determine its behavior',
-  image: '/medium/9ecd4800956fc386f893c8730a0beb63.jpeg'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 # Custom selectors, custom rules and custom events. You determine its behavior
 
@@ -38,14 +37,14 @@ If you'll look at the demo's source code ([**which I highly advice before you co
 
 - Separation of concerns for styles and events. They can still be used and modified outside the stylesheet.
 - Re-evaluation of style if stylesheet gets updated.
-- Selector context specifiers e.g. [`>`](https://www.w3schools.com/cssref/sel_element_gt.asp) or [`+`](https://www.w3schools.com/cssref/sel_element_pluss.asp) (e.g. `div + span`)
-- Any kind of query ([`@media`](https://www.w3schools.com/cssref/css3_pr_mediaquery.asp), [`@keyframes`](https://www.w3schools.com/cssref/css3_pr_animation-keyframes.asp), [`@import`](https://www.w3schools.com/cssref/pr_import_rule.asp), etc).
+- Selector context specifiers e.g. [`>`](https://w3schools.com/cssref/sel_element_gt.asp) or [`+`](https://w3schools.com/cssref/sel_element_pluss.asp) (e.g. `div + span`)
+- Any kind of query ([`@media`](https://w3schools.com/cssref/css3_pr_mediaquery.asp), [`@keyframes`](https://w3schools.com/cssref/css3_pr_animation-keyframes.asp), [`@import`](https://w3schools.com/cssref/pr_import_rule.asp), etc).
 
-Since this is a customizable engine, with a little bit of creativity you can implement a lot of things, such as animations, URLs, selection and transformation functions, etc.
+Since this is a customizable engine, with a little of creativity you can implement a lot of things, such as animations, URLs, selection and transformation functions, etc.
 
 Indeed, there's a lot going on under the hood and a lot to go through, so let's get into the interesting bits.
 
-![](/medium/33a00b9051bfb0894f2d6964afed0de9.png)
+![](../../public/medium/33a00b9051bfb0894f2d6964afed0de9.png)
 
 # Keynotes from the implementation
 
@@ -57,11 +56,11 @@ AST stands for Abstract Syntax Tree, and it's made out of a hierarchy of nodes; 
 
 The CSS is broken down into AST nodes like following:
 
-![](/medium/4d50875c67ddc3d9139635c8597a1ea1.png)
+![](../../public/medium/4d50875c67ddc3d9139635c8597a1ea1.png)
 
 The AST is now presented as a plain JSON. To make things even more convenient, I run it through a second iteration where it's gonna get wrapped with the classes defined in the registry of the stylesheet, e.g. [`BoomRule`](https://github.com/DAB0mB/eventsheet/blob/9224349b895ee15efc43d879ceed8786bac660bb/demo.js#L31) and [`ClassNameSelector`](https://github.com/DAB0mB/eventsheet/blob/9224349b895ee15efc43d879ceed8786bac660bb/demo.js#L19). A node will be wrapped if it matches the properties of the target class:
 
-![](/medium/2b3e4b1d4204649da2b520229d0a3b5d.png)
+![](../../public/medium/2b3e4b1d4204649da2b520229d0a3b5d.png)
 
 With a wrapped AST, not only we can get information about the given CSS string, but we can also call related methods directly from a specific node. So given a node of `Selector` type, we can call the [`test`](https://github.com/DAB0mB/eventsheet/blob/9224349b895ee15efc43d879ceed8786bac660bb/demo.js#L24) method to see whether an element actually matches the selector or not.
 
@@ -71,13 +70,13 @@ The engine is heavily based on the [`MutationObserver`](https://developer.mozill
 
 To overcome this issue, I've normalized the collection of mutation records to include only the mutations which are relevant, based on the logic that I just mentioned (see [`normalizeMutations()`](https://github.com/DAB0mB/eventsheet/blob/9224349b895ee15efc43d879ceed8786bac660bb/src/utils/mutations.js#L3)).
 
-![](/medium/7e4dac18ecbfa0f679d7d2c41134b75d.png)
+![](../../public/medium/7e4dac18ecbfa0f679d7d2c41134b75d.png)
 
 One of the core behaviors of CSS is that once it's loaded, the style is immediately applied. The catch here, is that the mutation observer callback will not be invoked unless real mutations occurred. One way to apply the loaded style is to force the mutations; remove all nodes and re-add them to the observed element. However, this would be very inefficient.
 
 The other, more efficient way of solving this is to synthesize the mutations. Yes, go through each and every node in the DOM tree recursively and create a fake mutation JSON. Once it's done, the set of mutation records can be injected to the observation callback and the style should be applied based defined customizations to the engine (see [`synthesizeMutations()`](https://github.com/DAB0mB/eventsheet/blob/9224349b895ee15efc43d879ceed8786bac660bb/src/utils/mutations.js#L90)).
 
-![](/medium/dee039857e0e507016a5fb742f50c814.png)
+![](../../public/medium/dee039857e0e507016a5fb742f50c814.png)
 
 One thing to note is that we're likely to change the `style` attribute inside rule event handlers, which will unnecessarily re-trigger the mutation callback and might potentially cause an infinite mutation loop. To avoid that I used the [`takeRecords()`](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/takeRecords) function to dispose the pending mutations from triggering.
 
@@ -104,7 +103,7 @@ function handleMutations(
   observer,
   { addedNodes, removedNodes, modifiedNodes } = normalizeMutations(mutations)
 ) {
-  addedNodes.concat(modifiedNodes).forEach((mutation) => {
+  addedNodes.concat(modifiedNodes).forEach(mutation => {
     this.removeEventListeners(mutation)
     this.addEventListeners(mutation)
   })
@@ -137,7 +136,7 @@ The module will add and remove events for given event target as normally, but in
 
 ```javascript
 function addEventListener(target, event, handler) {
-  const wrappedHandler = (e) => {
+  const wrappedHandler = e => {
     const dispose = handler(e)
 
     if (dispose != null && typeof dispose != 'function') {
@@ -170,7 +169,7 @@ Right now all registered events for a specific element are being disposed and re
 
 This is a not all-too-bad yet naive approach. It works well, but it's inefficient, something which will become very noticeable once the stylesheet will grow bigger and bigger. One thing that can be done is to run the [`test()`](https://github.com/DAB0mB/eventsheet/blob/9224349b895ee15efc43d879ceed8786bac660bb/demo.js#L24) function of a specific selector **before** event listeners are disposed. If there has been a change in the outcome of tests, only then proceed to disposing and reallocating the event listeners.
 
-![](/medium/b8088e43c6db651c5daa8ed96b65125a.png)
+![](../../public/medium/b8088e43c6db651c5daa8ed96b65125a.png)
 
 This can be taken a step further by observing which properties of the element has changed during the application of specific rule, and store them all in-order. Once a selector becomes irrelevant and its rules don't apply anymore, the style would be re-evaluated only relatively to the style properties which are not affected anymore. This is a very complex mechanism to implement but still achievable.
 
@@ -198,13 +197,13 @@ This can be taken a step further by observing which properties of the element ha
 
 # **Unleashing the full potential using web-assembly and WebGL**
 
-One of the clear advantages of a native CSS engine over its JavaScript equivalent, is that it's written in a low level language such as C or C++. That can be compensated with the usage of [Web Assembly](https://webassembly.org/), where we can write our code with [Rust](https://www.rust-lang.org/) and compile it to a low-level language that can run on the browser. To top things up, we can use [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API) or a library such as [GPU.JS](https://gpu.rocks/) to run vector calculations in parallel using all cores of the GPU.
+One of the clear advantages of a native CSS engine over its JavaScript equivalent, is that it's written in a low level language such as C or C++. That can be compensated with the usage of [Web Assembly](https://webassembly.org), where we can write our code with [Rust](https://rust-lang.org) and compile it to a low-level language that can run on the browser. To top things up, we can use [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API) or a library such as [GPU.JS](https://gpu.rocks) to run vector calculations in parallel using all cores of the GPU.
 
-Needless to say that this is only relevant if you want to implement graphical manipulations such as element shadows, text stroke or image filtering. It's better to keep things simple and use only the style API which is offered to us right out of the box by the browser.
+Needless to say that this is only relevant if you want to implement graphical manipulations such as element shadows, text stroke or image filtering. It's better to keep things simple and use only the style API which is offered to us right out-of-the-box by the browser.
 
 # Concept: Rethink event handling in UI frameworks
 
-Most modern UI frameworks such as [React](https://reactjs.org/), [Angular](https://angular.io) and [Vue](https://vuejs.org/) are tightly coupling event registering and handing with the component itself. While this has proven itself to work (greatly) over the years, a customizable stylesheet (or eventsheet as you may call it) can be an alternative that can offer some benefits.
+Most modern UI frameworks such as [React](https://reactjs.org), [Angular](https://angular.io) and [Vue](https://vuejs.org) are tightly coupling event registering and handing with the component itself. While this has proven itself to work (greatly) over the years, a customizable stylesheet (or event sheet as you may call it) can be an alternative that can offer some benefits.
 
 ```javascript
 eventSheet.attach(`
@@ -235,7 +234,7 @@ eventSheet.observe(formEl)
 - The sheet is heavily customizable and can easily share rules and behaviors between different DOM elements.
 - The sheet is very declarative and easy to go through. It's flat with no indentions of few levels deep.
 - different sheets can be loaded on top of different customizations of selectors and rules.
-- The sheet is light weight and can be loaded quickly.
+- The sheet is lightweight and can be loaded quickly.
 
 Have any counter claims? Prove me wrong! Or maybe prove me right :-) Constructive criticism with solid arguments from any side of the divide will be more than welcome.
 

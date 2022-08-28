@@ -94,9 +94,7 @@ const ImageLink = styled('a', {
 });
 
 const useIsomorphicLayoutEffect =
-  typeof window !== 'undefined' && window.document?.createElement
-    ? useLayoutEffect
-    : useEffect;
+  typeof window !== 'undefined' && window.document?.createElement ? useLayoutEffect : useEffect;
 
 export const LinkPreview = ({ link }: { link: string }): ReactElement => {
   const [data, setData] = useState<PreviewData>(null);
@@ -107,9 +105,7 @@ export const LinkPreview = ({ link }: { link: string }): ReactElement => {
     }
 
     const fetchData = async () => {
-      const absoluteLink = link.startsWith('/')
-        ? `https://the-guild.dev${link}`
-        : link;
+      const absoluteLink = link.startsWith('/') ? `https://the-guild.dev${link}` : link;
       const previewData = await fetchPreview(absoluteLink);
 
       setData(previewData);

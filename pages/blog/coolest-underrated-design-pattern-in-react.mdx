@@ -1,19 +1,19 @@
-import withArticle from '../../ui/blog/article'
+---
+title: The coolest, most underrated design pattern in React
+authors: eytan
+tags: [react, child-props]
+date: 2019-07-31
+description: The coolest, most underrated design pattern in React
+image: /medium/8da637649866c3f3ebcc4e5c90437d89.png
+---
 
-export const meta = {
-  title: 'The coolest, most underrated design pattern in React',
-  author: 'eytan',
-  tags: ['react', 'child-props'],
-  date: '2019-07-31',
-  description: 'The coolest, most underrated design pattern in React',
-  image: '/medium/8da637649866c3f3ebcc4e5c90437d89.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 There will be times when we would like to pass props and control the behavior of child elements. Let me explain. Let's take the following modal for example:
 
-![](/medium/f8270eba98b7fce153579c2607ca2eb8.png)
+![](../../public/medium/f8270eba98b7fce153579c2607ca2eb8.png)
 
 As you can see, the modal contains the following elements:
 
@@ -105,12 +105,7 @@ Now that sounds promising. Let's have a look at an example. We will use the Boot
 
 ```jsx
 const ModalFromTheFuture = ({ showCloseButton, children }) => {
-  const childProps = useChildProps(props.children, [
-    'title',
-    'contents'
-    'dismissButton',
-    'actionButton',
-  ]);
+  const childProps = useChildProps(props.children, ['title', 'contents', 'dismissButton', 'actionButton'])
 
   return (
     <Modal.Dialog>
@@ -118,17 +113,15 @@ const ModalFromTheFuture = ({ showCloseButton, children }) => {
         {childProps.title && <Modal.Title {...childProps.title} />}
       </Modal.Header>
 
-      <Modal.Body>
-        {childProps.contents && <p {...childProps.contents} />}
-      </Modal.Body>
+      <Modal.Body>{childProps.contents && <p {...childProps.contents} />}</Modal.Body>
 
       <Modal.Footer>
         {childProps.actionButton && <Button {...childProps.actionButton} variant="secondary" />}
         {childProps.dismissButton && <Button {...childProps.dismissButton} variant="primary" />}
       </Modal.Footer>
     </Modal.Dialog>
-  );
-};
+  )
+}
 ```
 
 As you can see, the new modal component uses a hook called `useChildProps()`. This hook will go through \`props.children\` and will basically flatten nested props. In addition, it will validate them against a provided white list, to make sure that the right element names were addressed. This is how its implementation should look like:

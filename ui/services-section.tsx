@@ -13,8 +13,8 @@ export const ServicesSection = (): ReactElement => {
       <div className="flex flex-col items-center px-4 pt-28 text-center sm:px-6 md:px-8">
         <Heading>The Guild's Services</Heading>
         <Description className="max-w-[700px] px-2 md:px-0">
-          Work directly with the most powerful group of API developers that
-          created the open source infrastructure you use today
+          Work directly with the most powerful group of API developers that created the open source infrastructure you
+          use today
         </Description>
         <Link
           href="/services"
@@ -24,7 +24,7 @@ export const ServicesSection = (): ReactElement => {
         </Link>
       </div>
       <div className="container mt-[117px] flex flex-wrap justify-center">
-        {SERVICES.map((service) => (
+        {SERVICES.map(service => (
           <Anchor
             key={service.name}
             href={service.url}
@@ -46,15 +46,9 @@ export const ServicesSection = (): ReactElement => {
               dark:bg-[#24272E4C]
               dark:hover:border-[#24272E]"
           >
-            <Image
-              src={service.icon}
-              alt={`${service.name} illustration`}
-              placeholder="empty"
-            />
+            <Image src={service.icon} alt={`${service.name} illustration`} placeholder="empty" />
             <Heading size="md">{service.name}</Heading>
-            <Description className="mb-4 px-4 text-sm">
-              {service.description}
-            </Description>
+            <Description className="mb-4 px-4 text-sm">{service.description}</Description>
             <span
               className="
                 text-xs
@@ -111,12 +105,7 @@ export const SERVICES: {
     url: '/services#engineering',
     longDescription:
       'We take pride in the fact that our open source and infrastructure comes from working side by side with the best developers in the world, on the largest applications in the world.',
-    list: [
-      'Integral part of your team',
-      'Coding practical tasks',
-      'Code reviews',
-      'Mentorship',
-    ],
+    list: ['Integral part of your team', 'Coding practical tasks', 'Code reviews', 'Mentorship'],
   },
   {
     name: 'Open Source',
@@ -125,10 +114,6 @@ export const SERVICES: {
     url: '/services#open-source',
     longDescription:
       'Safe Open Source. Make open source work for you and take your needs into the highest priority. Instead of structuring your whole app on top of open source you have no control or say about.',
-    list: [
-      'Technical support',
-      'Covers the entire stack',
-      'Part of decision making process',
-    ],
+    list: ['Technical support', 'Covers the entire stack', 'Part of decision making process'],
   },
 ];

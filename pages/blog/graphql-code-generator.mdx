@@ -1,15 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Introducing GraphQL Code Generator
+authors: dotan
+tags: [graphql, codegen]
+date: 2017-10-12
+description: The True GraphQL-First platform.
+image: /blog-assets/graphql-code-generator/cover.png
+---
 
-export const meta = {
-  title: 'Introducing GraphQL Code Generator',
-  author: 'dotan',
-  tags: ['graphql', 'codegen'],
-  date: '2017-10-12',
-  description: 'The True GraphQL-First platform',
-  image: '/blog-assets/graphql-code-generator/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 # TL;DR
 
@@ -27,9 +27,9 @@ export default withArticle(meta)
 
 ---
 
-:::danger Note:
-This blog post refers to an outdated version, please check http://graphql-code-generator.com/ for the latest docs!
-:::
+<Callout type="warning" emoji="⚠️">
+  This blog post refers to an outdated version, please check http://graphql-code-generator.com for the latest docs!
+</Callout>
 
 # Do more than just generating
 
@@ -57,7 +57,7 @@ And that means that you don't need to rely on us to create the generator that yo
 
 **Generate your backend** — From your GraphQL definitions, you can generate your backend code! You can generate your resolvers, your data models, query builders, mutations, filters and more! Now maybe you can understand what the GraphQL Backend as a service platforms are doing… exactly that! So you can use the GraphQL-First approach and generate a full functioning backend from just your GraphQL schema! But there is a big difference — it's completely open source, you can generate just parts of it and write your own custom code or even change the templates! So you generate backend can be Node, Typescript, .NET, Java, Ruby, Python or anything you wish! And you can learn from the other community generators from other languages.
 
-This is just the start and there is much more to explore, but we are already using it for a few production apps (for example Schneider-Electric's new online management platform), generating from a GraphQL schema with decorators a complete [Mongoose ORM](http://mongoosejs.com/) models with Typescript for the whole app! (the generator's templates are [available here](https://github.com/dotansimha/graphql-code-generator-usage-example/tree/master/src/models), and soon will be available as part of the built-in generators!)
+This is just the start and there is much more to explore, but we are already using it for a few production apps (for example Schneider-Electric's new online management platform), generating from a GraphQL schema with decorators a complete [Mongoose ORM](http://mongoosejs.com) models with Typescript for the whole app! (the generator's templates are [available here](https://github.com/dotansimha/graphql-code-generator-usage-example/tree/master/src/models), and soon will be available as part of the built-in generators!)
 
 In the next weeks we will release more generators and templates using SQL ORMs, but we would love to hear your use cases and to see which generators the community will come up with.
 
@@ -78,15 +78,19 @@ In the next weeks we will release more generators and templates using SQL ORMs, 
 
 To get started with the GraphQL code generator, start by installing NodeJS, and then install:
 
-    npm install graphql-code-generator
+```sh
+npm install graphql-code-generator
+```
 
 Then, make sure that your GraphQL schema is available for use — either in JSON file or development server.
 
-Also, make sure your GraphQL documents are inside .graphql or .graphqls files (you don't have to, you can also put in JavaScript files with `graphql-tag` package, and the generator will find it automatically!).
+Also, make sure your GraphQL documents are inside .graphql or `.graphqls` files (you don't have to, you can also put in JavaScript files with `graphql-tag` package, and the generator will find it automatically!).
 
 Now, run the generator with your config (this example uses remote GraphQL server with local GraphQL documents, and generates TypeScript typings to ./types/ directory):
 
-    gql-gen — url http://localhost:3010/graphql — template typescript — out ./types/graphql-typings.d.ts “./src/**/*.graphql”
+```sh
+gql-gen — url http://localhost:3010/graphql — template typescript — out ./types/graphql-typings.d.ts "./src/**/*.graphql"
+```
 
 That's it! your schema and documents are now TypeScript typings! and you won't see any IDE or linter error when using GraphQL!
 
@@ -161,10 +165,10 @@ Now, we have a generic JSON structure, and if we want to turn our schema into Ty
 
 Now when we use the two together, we will get:
 
-```typescript
-export type Person {
-  name: string;
-  age?: number;
+```ts
+export type Person = {
+  name: string
+  age?: number
 }
 ```
 
@@ -180,7 +184,7 @@ The idea is basically the same: we take the client side documents, transform it 
 
 The code generator is a CLI util, written in TypeScript and NodeJS, that every developer can use, regardless the environment or the language in use.
 
-Using `graphql` npm package, I was able to load the schema and execute [Introspection query](http://graphql.org/learn/introspection/), then recursively iterate over the types and links, and define a custom structure for the Models.
+Using `graphql` npm package, I was able to load the schema and execute [Introspection query](http://graphql.org/learn/introspection), then recursively iterate over the types and links, and define a custom structure for the Models.
 
 Then, do the same for client side documents, while assisting the server side schema to understand the types (the full custom structure [is here](https://github.com/dotansimha/graphql-code-generator/blob/master/src/models/interfaces.ts)).
 
@@ -213,9 +217,9 @@ We want to generate a new type, called MyQuery_Me which based on the server side
 
 So while building the custom structure, we use a config flag called flatten per each language, because there are languages that allows us to flatten the inner types we just explained, and group them all together (for example, TypeScript allows you to create module or namespace, but in Swift, you have to create a recursive structs).
 
-The next step is to implement the template for for server side and client side, the template engine I picked is [Handlebars.js](http://handlebarsjs.com/) because it comes with a set of great template utils (such as each, if and unless), but allows you to create a custom helpers — and this is a feature I wanted to preserve and allow other developers use when creating custom templates — so each language template can implement it own template, config and template helpers!
+The next step is to implement the template for server side and client side, the template engine I picked is [Handlebars.js](http://handlebarsjs.com) because it comes with a set of great template utils (such as each, if and unless), but allows you to create a custom helpers — and this is a feature I wanted to preserve and allow other developers use when creating custom templates — so each language template can implement it own template, config and template helpers!
 
-Also, with Handlebars.js you can create a partial templates and use them inside each other, so you can easily create a recursive template to load itself — which it very useful when dealing with infinite inner-types (exactly what's GraphQL has)
+Also, with Handlebars.js you can create a partial templates and use them inside each other, so you can easily create a recursive template to load itself — which is very useful when dealing with infinite inner-types (exactly what's GraphQL has)
 
 ---
 
@@ -225,7 +229,7 @@ I'm very excited about this release.
 
 The graphql code-gen has come a long way and is used in many production apps, both from our users and our clients.
 
-But it's just the beginning! Please join our community and feel free to [contact me directly](https://github.com/dotansimha/) for any question or help you might need.
+But it's just the beginning! Please join our community and feel free to [contact me directly](https://github.com/dotansimha) for any question or help you might need.
 
 ---
 

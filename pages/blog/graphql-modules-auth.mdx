@@ -1,17 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Authentication and Authorization in GraphQL (and how GraphQL-Modules can help)
+authors: dotan
+tags: [graphql, graphql-modules, authentication]
+date: 2019-06-19
+description: After a few years of working with GraphQL, as open-source developers and as infrastructure team in large enterprises, we've learned some lessons about GraphQL, and how to authenticate and authorize GraphQL API.
+image: /blog-assets/graphql-modules-auth/cover.jpeg
+---
 
-export const meta = {
-  title:
-    'Authentication and Authorization in GraphQL (and how GraphQL-Modules can help)',
-  author: 'dotan',
-  tags: ['graphql', 'graphql-modules', 'authentication'],
-  date: '2019-06-19',
-  description:
-    "After a few years of working with GraphQL, as open-source developers and as infrastructure team in large enterprises, we've learned some lessons about GraphQL, and how to authenticate and authorize GraphQL API.",
-  image: '/blog-assets/graphql-modules-auth/cover.jpeg'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 After a few years of working with GraphQL, as open-source developers and as infrastructure team in large enterprises, we've learned some lessons about GraphQL, and how to authenticate and authorize GraphQL API.
 
@@ -23,9 +21,9 @@ In this article we'll go through all the different ways of implementing authenti
 
 I found [good answer in StackOverflow](https://stackoverflow.com/questions/6367865/is-there-a-difference-between-authentication-and-authorization/6367931#6367931) covers the main differences between authentication and authorization:
 
-![StackOverflow Answer](/blog-assets/graphql-modules-auth/stackoverflow-answer.png 'StackOverflow Answer')
+![StackOverflow Answer](../../public/blog-assets/graphql-modules-auth/stackoverflow-answer.png 'StackOverflow Answer')
 
-In this article, I'll cover the difference between authentication and authorization with GraphQL APIs, explain how to implement them with GraphQL server, and with the [GraphQL-Modules framework](http://graphql-modules.com/).
+In this article, I'll cover the difference between authentication and authorization with GraphQL APIs, explain how to implement them with GraphQL server, and with the [GraphQL-Modules framework](http://graphql-modules.com).
 
 We learned that a good implementation for GraphQL authentication has the following features regarding _authentication_:
 
@@ -44,9 +42,9 @@ And the following features regarding _authorization_:
 
 To understand why implementing authentication in GraphQL might be tricky, let's start with the following chart:
 
-![Where to put your authentication?](/blog-assets/graphql-modules-auth/where-to-put-graph.png 'Where to put your authentication?')
+![Where to put your authentication?](../../public/blog-assets/graphql-modules-auth/where-to-put-graph.png 'Where to put your authentication?')
 
-A request comes from the network, go through a HTTP server (for example, `express`) — That's **#1** in the chart.
+A request comes from the network, go through an HTTP server (for example, `express`) — That's **#1** in the chart.
 Then it goes through GraphQL server, which builds a `context`, and then it runs your resolvers — **#2**.
 Then, you have your business logic, that you might want to separate from the resolvers, that's **#3**.
 
@@ -61,7 +59,7 @@ The benefit in this is the separation between authentication logic and your busi
 
 Regarding **#3**:
 Implementing authentication as part of your resolver code or business logic code isn't a good idea. It usually means that your app code knows too much about the authentication, and it's probably coupled to it.
-It's might to simpler to implement, but much more difficult to reuse later.
+It might to simpler to implement, but much more difficult to reuse later.
 
 And, **#2**:
 **You can implement authentication between your HTTP server and your GraphQL server, by using the GraphQL `context`**.
@@ -80,7 +78,7 @@ I'm assuming that you already have your own favorite way to authenticate, whethe
 
 Let's start by creating a simple Apollo-Server instance, with a very simple schema. We'll focus on exposing the `currentUser` as a query field.
 
-```typescript
+```ts
 import { ApolloServer } from 'apollo-server'
 import gql from 'graphql-tag'
 
@@ -104,25 +102,23 @@ server.listen().then(({ url }) => {
 Now, let's implement `context` , and see if we can get a valid user out of the values we get there.
 Our goal in this part is only to validate the token, and try to trade it for a user.
 If the token or the user are not valid — we don't want to throw an exception here, because that way, our server will not support public queries.
-So we just trying to get a user and a token, and return them to Apollo-Server, so it will use it as the context for our resolvers. If something went wrong with the validation — we just return `null` for the `user` and `authToken`.
+So we're just trying to get a user and a token, and return them to Apollo-Server, so it will use it as the context for our resolvers. If something went wrong with the validation — we just return `null` for the `user` and `authToken`.
 
-```typescript
-// auth-helpers.ts
-
+```ts filename="auth-helpers.ts"
 export interface User {
   _id: string
   username: string
 }
 
 export async function tradeTokenForUser(token: string): Promise<User> {
-  // Here, use the `token` argument, check it's validity, and return
+  // Here, use the `token` argument, check its validity, and return
   // the user only if the token is valid.
   // You can also use external auth libraries, such as jsaccounts / passport, and
-  // trigger it's logic from here.
+  // trigger its logic from here.
 }
 ```
 
-```typescript
+```ts
 import { ApolloServer } from 'apollo-server'
 import gql from 'graphql-tag'
 import { tradeTokenForUser } from './auth-helpers'
@@ -171,7 +167,7 @@ _Note that in a good GraphQL server implementation, the `context` is built once 
 
 Now, we can finally implement the `resolvers` for the server:
 
-```typescript
+```ts
 import { ApolloServer } from 'apollo-server'
 import gql from 'graphql-tag'
 import { tradeTokenForUser } from './auth-helpers'
@@ -193,8 +189,8 @@ const resolvers = {
     me: (root, args, context) => context.currentUser
   },
   User: {
-    id: (user) => user._id,
-    username: (user) => user.username
+    id: user => user._id,
+    username: user => user.username
   }
 }
 
@@ -236,10 +232,8 @@ You are getting full control over your authentication flow, because you can choo
 So let's implement a simple guard, and use it in our server.
 I also added a _public_ part of the schema (`Query.serverTime`), that should be public, and not effected by the authentication flow. So it's not wrapped with our guard.
 
-```typescript
-// authenticated-guard.ts
-
-export const authenticated = (next) => (root, args, context, info) => {
+```ts filename="authenticated-guard.ts"
+export const authenticated = next => (root, args, context, info) => {
   if (!context.currentUser) {
     throw new Error(`Unauthenticated!`)
   }
@@ -248,7 +242,7 @@ export const authenticated = (next) => (root, args, context, info) => {
 }
 ```
 
-```typescript
+```ts
 import { ApolloServer } from 'apollo-server'
 import gql from 'graphql-tag'
 import { tradeTokenForUser } from './auth-helpers'
@@ -272,8 +266,8 @@ const resolvers = {
     serverTime: () => new Date()
   },
   User: {
-    id: (user) => user._id,
-    username: (user) => user.username
+    id: user => user._id,
+    username: user => user.username
   }
 }
 
@@ -313,11 +307,11 @@ It also protects only the part of the GraphQL schema that we wanted to protect, 
 
 Now that we understand the concept of authentication in GraphQL servers, we can also implement authorization.
 
-Implementing Authorization is no different than implementing the `authenticated` guard we did before. It's just another guard, or resolver wrapper we can use.
+Implementing Authorization is no different from implementing the `authenticated` guard we did before. It's just another guard, or resolver wrapper we can use.
 
 Let's add `type Article` to the schema, and allow creating article only to users with `role` set to `EDITOR` . It's that simple:
 
-```typescript
+```ts
 import { ApolloServer } from 'apollo-server'
 import gql from 'graphql-tag'
 import { tradeTokenForUser } from './auth-helpers'
@@ -358,15 +352,15 @@ const resolvers = {
     )
   },
   User: {
-    id: (user) => user._id,
-    username: (user) => user.username
+    id: user => user._id,
+    username: user => user.username
   }
 }
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: async ({ req }) => {
+  async context({ req }) {
     let authToken = null
     let currentUser = null
 
@@ -392,10 +386,8 @@ server.listen().then(({ url }) => {
 })
 ```
 
-```typescript
-// validate-role.ts
-
-export const validateRole = (role) => (next) => (root, args, context, info) => {
+```ts filename="validate-role.ts"
+export const validateRole = role => next => (root, args, context, info) => {
   if (context.currentUser.role !== role) {
     throw new Error(`Unauthorized!`)
   }
@@ -406,7 +398,7 @@ export const validateRole = (role) => (next) => (root, args, context, info) => {
 
 # Next-Level implementation with GraphQL-Modules
 
-![GraphQL Modules](/blog-assets/graphql-modules-auth/graphql-modules.png 'GraphQL Modules')
+![GraphQL Modules](../../public/blog-assets/graphql-modules-auth/graphql-modules.png 'GraphQL Modules')
 
 If you wish to take your GraphQL server to the next level, and build a scalable, testable and readable server, I recommend to give [GraphQL-Modules](https://graphql-modules.com) a try.
 
@@ -420,9 +412,7 @@ Then, create another module called `common` and the general parts, and articles 
 
 ## This way — each module is in charge of a different feature of our app.
 
-```typescript
-// articles-module.ts
-
+```ts filename="articles-module.ts"
 import { GraphQLModule } from '@graphql-modules/core'
 
 export const articlesModule = new GraphQLModule({
@@ -441,16 +431,13 @@ export const articlesModule = new GraphQLModule({
   `,
   resolvers: {
     Mutation: {
-      publishArticle: (root, { title, content }, { currentUser }) =>
-        createNewArticle(title, content, currentUser)
+      publishArticle: (root, { title, content }, { currentUser }) => createNewArticle(title, content, currentUser)
     }
   }
 })
 ```
 
-```typescript
-// auth-module.ts
-
+```ts filename="auth-module.ts"
 import { GraphQLModule } from '@graphql-modules/core'
 import { tradeTokenForUser } from './auth-helpers'
 
@@ -472,11 +459,11 @@ export const authModule = new GraphQLModule({
       me: (root, args, { currentUser }) => currentUser
     },
     User: {
-      id: (user) => user._id,
-      username: (user) => user.username
+      id: user => user._id,
+      username: user => user.username
     }
   },
-  contextBuilder: ({ req }) => {
+  async contextBuilder({ req }) {
     let authToken = null
     let currentUser = null
 
@@ -486,7 +473,7 @@ export const authModule = new GraphQLModule({
       if (authToken) {
         currentUser = await tradeTokenForUser(authToken)
       }
-    } catch (e) {
+    } catch {
       console.warn(`Unable to authenticate using auth token: ${authToken}`)
     }
 
@@ -498,9 +485,7 @@ export const authModule = new GraphQLModule({
 })
 ```
 
-```typescript
-// common-module.ts
-
+```ts filename="common-module.ts"
 import { GraphQLModule } from '@graphql-modules/core'
 
 export const commonModule = new GraphQLModule({
@@ -518,9 +503,7 @@ export const commonModule = new GraphQLModule({
 })
 ```
 
-```typescript
-// resolvers-composition.ts
-
+```ts filename="resolvers-composition.ts"
 import { authenticated } from './authenticated-guard'
 import { validateRole } from './validate-role'
 
@@ -530,11 +513,8 @@ export const resolversComposition = {
 }
 ```
 
-```typescript
-// server.ts
-
+```ts filename="server.ts"
 import { ApolloServer } from 'apollo-server'
-import gql from 'graphql-tag'
 import { resolversComposition } from './resolvers-composition'
 
 const app = new GraphQLModule({
@@ -568,8 +548,7 @@ directive @protect(role: String) on FIELD
 
 Then, you can easily alter your `resolversComposition` into a function that accepts `GraphQLSchema` , and then check using your schema object, which resolves require which logic, and do a mapping:
 
-```typescript
-import { GraphQLSchema } from 'graphql'
+```ts
 import { getFieldsWithDirectives } from '@graphql-modules/utils'
 import { authenticated } from './authenticated-guard'
 import { validateRole } from './validate-role'
@@ -587,7 +566,7 @@ export const resolversComposition = ({ typeDefs }) => {
 
     if (directives.length > 0) {
       result[fieldPath] = directives
-        .map((directive) => {
+        .map(directive => {
           if (DIRECTIVE_TO_GUARD[directive.name]) {
             const mapperFn = DIRECTIVE_TO_GUARD[directive.name]
 
@@ -596,7 +575,7 @@ export const resolversComposition = ({ typeDefs }) => {
 
           return null
         })
-        .filter((a) => a)
+        .filter(Boolean)
     }
   }
 
@@ -608,9 +587,7 @@ The, you add the directives to your schema declaration:
 
 ```graphql
 type Mutation {
-  publishArticle(title: String!, content: String!): Article!
-    @auth
-    @protect(role: "EDITOR")
+  publishArticle(title: String!, content: String!): Article! @auth @protect(role: "EDITOR")
 }
 
 type Query {
@@ -622,7 +599,7 @@ type Query {
 
 Another thing we are working on, is having some of your repeated authentication and authorization logic installable through npm!
 
-We are working with the creators of the [js-accounts](https://github.com/accounts-js/accounts) libraries to create a [GraphQL Modules module](https://github.com/accounts-js/accounts/pull/493) out of their awesome packages so you could just add it from npm and extend your server and schema.
+We are working with the creators of the [js-accounts](https://github.com/accounts-js/accounts) libraries to create a [GraphQL Modules module](https://github.com/accounts-js/accounts/pull/493) out of their awesome packages, so you could just add it from npm and extend your server and schema.
 
 You can read this blog post to learn to use this library with GraphQL-Modules in a few steps;
 

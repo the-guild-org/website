@@ -1,0 +1,36 @@
+---
+title: Blog
+description: List of related articles
+---
+
+import Blog from '../index.mdx';
+import { getAllArticles } from '../../../lib/get-all-articles';
+
+export const getStaticProps = async ({ params }) => {
+  const tagFilter = !params.tag
+    ? []
+    : Array.isArray(params.tag)
+    ? params.tag
+    : [params.tag];
+
+  return {
+    props: {
+      ssg: {
+        articles: await getAllArticles(tagFilter),
+        tagFilter,
+      }
+    },
+  };
+};
+
+export const getStaticPaths = async () => {
+  const allArticles = await getAllArticles();
+  const allTags = new Set(allArticles.flatMap((art) => art.tags));
+
+  return {
+    paths: Array.from(allTags).map((tag) => ({ params: { tag } })),
+    fallback: false,
+  };
+};
+
+<Blog />

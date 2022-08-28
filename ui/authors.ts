@@ -5,7 +5,7 @@ type Author = {
   twitter?: string;
 };
 
-export const authors: Record<string, Author> = {
+export const AUTHORS: Record<string, Author> = {
   eytan: {
     name: 'Eytan Manor',
     link: 'https://twitter.com/eytan_manor',

@@ -1,20 +1,19 @@
-import withArticle from '../../ui/blog/article'
+---
+title: What's new in GraphQL Codegen 0.9.0
+authors: dotan
+tags: [graphql, codegen]
+date: 2018-05-07
+description: The GraphQL codegen library can generate any code for any language — including type definitions, data models, query builder, resolvers, ORM code, complete full stack platforms!! and any specific code for your needs.
+image: /blog-assets/graphql-code-generator/cover.png
+---
 
-export const meta = {
-  title: "What's new in GraphQL Codegen 0.9.0",
-  author: 'dotan',
-  tags: ['graphql', 'codegen'],
-  date: '2018-05-07',
-  description:
-    'The GraphQL codegen library can generate any code for any language — including type definitions, data models, query builder, resolvers, ORM code, complete full stack platforms!! and any specific code for your needs.',
-  image: '/blog-assets/graphql-code-generator/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
-:::danger Note:
-This blog post refers to an outdated version, please check http://graphql-code-generator.com/ for the latest docs!
-:::
+<Callout type="warning" emoji="⚠️">
+  This blog post refers to an outdated version, please check http://graphql-code-generator.com for the latest docs!
+</Callout>
 
 The [GraphQL codegen library](https://github.com/dotansimha/graphql-code-generator) can generate **any code for any language** — including type definitions, data models, query builder, resolvers, ORM code, complete full stack platforms!! and any specific code for your needs.
 
@@ -40,11 +39,13 @@ And also a lot of bugs were fixed. [You can find the full changelog here](https:
 
 As part of the development, we understood the value of templates sharing between developers. We also understood that it's difficult to get started with writing your own codegen templates. That's why we created a new CLI util called `codegen-handlebars-templates-scripts`.
 
-With this tools, you can easily scaffold, build, test and publish your new template, and share it with other developers.
+With these tools, you can easily scaffold, build, test and publish your new template, and share it with other developers.
 
 To start with the new tool, install it globally:
 
-    yarn global add codegen-handlebars-templates-scripts
+```sh
+yarn global add codegen-handlebars-templates-scripts
+```
 
 Then, create a directory for your template, and run the init command:
 
@@ -121,7 +122,7 @@ Just import `generate` from `graphql-code-generator` and run it with your option
 ```typescript
 import { generate } from 'graphql-code-generator'
 
-function doSomething() {
+async function doSomething() {
   const generatedFiles = await generate({
     template: 'typescript',
     url: 'http://127.0.0.1:3000/graphql',
@@ -142,7 +143,7 @@ The TypeScript template now also supports multiple configuration options, so you
 
 `enumsAsTypes` - Will generate the declared enums as TypeScript `type` instead of `enums`. This is useful if you can't use `.ts` extension.
 
-`immutableTypes` - This will cause the codegen to create immtuable types as output, by adding `readonly` to the properties and `ReadonlyArray`.
+`immutableTypes` - This will cause the codegen to create immutable types as output, by adding `readonly` to the properties and `ReadonlyArray`.
 
 ---
 

@@ -7,17 +7,12 @@ export interface IStackBlitzProps {
   file?: string;
 }
 
-export const StackBlitz = ({
-  stackBlitzId,
-  file,
-}: IStackBlitzProps): ReactElement => (
+export const StackBlitz = ({ stackBlitzId, file }: IStackBlitzProps): ReactElement => (
   <Observer>
     <iframe
       title={`stackBlitz-${stackBlitzId}`}
       className="codesandbox-mdx-embed"
-      src={`https://stackblitz.com/edit/${stackBlitzId}?ctl=1&embed=1${
-        file ? `&file=${file}` : ''
-      }`}
+      src={`https://stackblitz.com/edit/${stackBlitzId}?ctl=1&embed=1${file ? `&file=${file}` : ''}`}
       allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
       sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
       style={{

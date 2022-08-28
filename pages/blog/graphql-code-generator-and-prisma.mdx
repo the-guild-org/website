@@ -1,27 +1,29 @@
-import withArticle from '../../ui/blog/article'
-export const meta = {
-  title: 'GraphQL Code Generator with TypeScript and Prisma models',
-  author: 'giladtidhar',
-  tags: ['graphql', 'typescript', 'codegen', 'prisma'],
-  date: '2021-12-19',
-  description: 'How to use Prisma models with GraphQL Code Generator',
-  image: '/blog-assets/prisma-codegen/prismacodegen.png'
-}
-export default withArticle(meta)
+---
+title: GraphQL Code Generator with TypeScript and Prisma models
+authors: giladtidhar
+tags: [graphql, typescript, codegen, prisma]
+date: 2021-12-19
+description: How to use Prisma models with GraphQL Code Generator
+image: /blog-assets/prisma-codegen/prismacodegen.png
+---
+
+import { Article } from '@/blog/article'
+
+<Article />
 
 # Introduction
 
-GraphQL has some amazing tools that can make your life easier. One of those tools is [GraphQL Code-Generator](https://graphql-code-generator.com/) which helps you create types (and more) based on your GraphQL schema.
+GraphQL has some amazing tools that can make your life easier. One of those tools is [GraphQL Code-Generator](https://graphql-code-generator.com) which helps you create types (and more) based on your GraphQL schema.
 
-If you're creating a GraphQL server you'd probably want to have a database behind it with something like [Prisma](https://www.prisma.io/).
+If you're creating a GraphQL server you'd probably want to have a database behind it with something like [Prisma](https://prisma.io).
 
-So, how can you use [Prisma](https://www.prisma.io/) for your database and still use the GraphQL-Codegen? this article covers the process of using [Prisma](https://www.prisma.io/) with [GraphQL Code-Generator](https://graphql-code-generator.com/), and the configuration flags that will boost your developer experience.
+So, how can you use [Prisma](https://prisma.io) for your database and still use the GraphQL-Codegen? this article covers the process of using [Prisma](https://prisma.io) with [GraphQL Code-Generator](https://graphql-code-generator.com), and the configuration flags that will boost your developer experience.
 
 # Prisma
 
 ## What is Prisma?
 
-[Prisma](https://www.prisma.io/) is an open source fully-typed next-generation ORM. It consists of the following parts:
+[Prisma](https://prisma.io) is an open source fully-typed next-generation ORM. It consists of the following parts:
 
 **Prisma Client**: Auto-generated and type-safe query builder for Node.js & TypeScript
 **Prisma Migrate**: Migration system
@@ -48,11 +50,11 @@ Here are a few examples of how Prisma achieves this:
 - **Less boilerplate** so developers can focus on the important parts of their app
 - **Auto-completion in code editors** instead of needing to look up documentation
 
-  [A tutorial about how to get started with Prisma](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch)
+  [A tutorial about how to get started with Prisma](https://prisma.io/docs/getting-started/setup-prisma/start-from-scratch)
 
 # GraphQL Code Generator
 
-The [GraphQL Code-Generator](https://graphql-code-generator.com/) is an easy way to create type safety with your GraphQL project.
+The [GraphQL Code-Generator](https://graphql-code-generator.com) is an easy way to create type safety with your GraphQL project.
 
 It automatically generates TypeScript types based on your GraphQL schema. This is very useful because it reduces the chances to write mistakes, and you can locate bugs at build-time.
 
@@ -90,7 +92,7 @@ const resolvers: Resolvers = {
 
 As you can see, now that the resolvers are typed, we don't need to define types for each resolver.
 
-> If you are new to GraphQL-Codegen, you can follow [a tutorial about how to get started with GraphQL codegen](https://www.graphql-code-generator.com/docs/getting-started/index)
+> If you are new to GraphQL-Codegen, you can follow [a tutorial about how to get started with GraphQL codegen](https://graphql-code-generator.com/docs/getting-started)
 
 > You can also [find here a blog post about how to use GraphQL Code-Generator with the `typescript-resolvers` plugin](/blog/better-type-safety-for-resolvers-with-graphql-codegen).
 
@@ -158,7 +160,7 @@ For my project to work with its database, it needs to use the Prisma model inste
 
 Here's an example:
 
-```yml
+```yaml
 schema: http://localhost:3000/graphql
 documents: ./src/graphql/*.graphql
 generates:
@@ -179,8 +181,8 @@ We set it to be named `UserModel`, so it won't conflict with the GraphQL definit
 
 `inputMaybeValue` is fairly simple to use, just add it under `codegen.yml` config file:
 
-```yml
-  schema: http://localhost:3000/graphql
+```yaml filename="codegen.yml"
+schema: http://localhost:3000/graphql
 documents: ./src/graphql/*.graphql
 generates:
   graphql/generated.ts:
@@ -213,7 +215,7 @@ const resolvers: Resolvers = {
     }
   },
   User: {
-    name: (user) => {
+    name: user => {
       return `${user.first_name} ${user.last_name}`
     }
   }

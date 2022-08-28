@@ -1,19 +1,18 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL Codegen adds new Apollo-Android and Java plugins
+authors: dotan
+tags: [graphql, codegen, apollo-android, android, java]
+date: 2019-06-19
+updateDate: 2020-05-20
+description: GraphQL Codegen adds a new Apollo-Android and a new Java Backend plugins!
+image: /blog-assets/graphql-codegen-java/cover.png
+---
 
-export const meta = {
-  title: 'GraphQL Codegen adds new Apollo-Android and Java plugins',
-  author: 'dotan',
-  tags: ['graphql', 'codegen', 'apollo-android', 'android', 'java'],
-  date: '2019-06-19',
-  updateDate: '2020-05-20',
-  description:
-    'GraphQL Codegen adds a new Apollo-Android and a new Java Backend plugins!',
-  image: '/blog-assets/graphql-codegen-java/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
-As you probably already know, [GraphQL Code Generator](https://graphql-code-generator.com/) has become the most popular GraphQL code generation tool in the community.
+As you probably already know, [GraphQL Code Generator](https://graphql-code-generator.com) has become the most popular GraphQL code generation tool in the community.
 
 We constantly improve the underlying tools and also create more generators and plugins.
 
@@ -25,7 +24,7 @@ But today we want to announce something new — we now have 2 new official plugi
 
 A [Apollo-Android generator](https://github.com/dotansimha/graphql-code-generator/pull/1924) and a [Java backend](https://graphql-code-generator.com/docs/plugins/java-resolvers) resolvers signature generator.
 
-We've created those plugins because we needed them for some of our clients production applications and the current tools in the ecosystem that are currently out there weren't sufficient enough for us.
+We've created those plugins because we needed them for some of our clients' production applications and the current tools in the ecosystem that are currently out there weren't sufficient enough for us.
 
 # Apollo-Android
 
@@ -105,7 +104,7 @@ The usage of the generated code is the same you had before, just follow [the ins
 
 The other plugin generates resolvers signature, that allow you to integrate your Java models classes to the generated signature, so you'll get a type-safe implementation of your resolvers.
 
-It's based on [`graphql-java`](https://www.graphql-java.com/) and compatible with it's implementation for [`DataFetcher`s](https://www.graphql-java.com/documentation/v13/data-fetching/).
+It's based on [`graphql-java`](https://graphql-java.com) and compatible with its implementation for [`DataFetcher`s](https://graphql-java.com/documentation/v13/data-fetching).
 
 Follow the instructions above, but use this `package.json`:
 
@@ -213,4 +212,4 @@ We are getting close to a stable release for those plugins and want your opinion
 
 As mentioned, the stable release will also include a Gradle plugin to make it easier to integrate the Codegen with the Java ecosystem.
 
-Please try it out today, and send us a feedback. Our goal is to make this plugin easy to use, and easy to customize and you would see how quickly we manage, respond and solve issues on our open source tools, which is something we are very proud of.
+Please try it out today, and send us a feedback. Our goal is to make this plugin easy to use, and easy to customize, and you would see how quickly we manage, respond and solve issues on our open source tools, which is something we are very proud of.

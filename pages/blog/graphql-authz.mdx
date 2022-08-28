@@ -1,16 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL AuthZ - GraphQL Authorization layer
+authors: [dimatill, laurin]
+tags: [graphql, authorization, graphql-authz]
+date: 2021-12-19
+description: Flexible modern way of adding an authorization layer on top of your existing GraphQL backend systems.
+image: /blog-assets/graphql-authz/cover.jpg
+---
 
-export const meta = {
-  title: 'GraphQL AuthZ - GraphQL Authorization layer',
-  authors: ['dimatill', 'laurin'],
-  tags: ['graphql', 'authorization', 'graphql-authz'],
-  date: '2021-12-19',
-  description:
-    'Flexible modern way of adding an authorization layer on top of your existing GraphQL backend systems.',
-  image: '/blog-assets/graphql-authz/cover.jpg'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 Today we are excited to introduce GraphQL AuthZ - a new open-source library for adding authorization layers in different GraphQL architectures.
 
@@ -63,9 +62,9 @@ This technique works the best for authorization logic that is not dependent on r
 ```typescript
 // creating pre-execution rules
 
-const IsAuthenticated = preExecRule()((context) => !!context.user)
+const IsAuthenticated = preExecRule()(context => !!context.user)
 
-const IsEditor = preExecRule()((context) => context.roles.has('editor'))
+const IsEditor = preExecRule()(context => context.roles.has('editor'))
 ```
 
 However, if you need the flexibility for fetching data from a remote source such as a database before you can determine whether an operation should be executed, you still have the power to leverage those data sources with async code.
@@ -124,10 +123,7 @@ For example, if your rule is attached to some object field it could require addi
 
 const CanReadPost = postExecRule({
   selectionSet: '{ status author { id } }'
-})(
-  (context, fieldArgs, post, parent) =>
-    post.status === 'public' || post.author.id === context.user?.id
-)
+})((context, fieldArgs, post, parent) => post.status === 'public' || post.author.id === context.user?.id)
 ```
 
 By using this technique we reduce remote procedure calls to individual data sources by executing authorization logic on top of GraphQL execution result that is enriched with the additional data specified by the authorization rules. Since related data is often stored in the same place it can be fetched from a data source in one roundtrip (via the GraphQL schema) instead of performing one remote procedure call for the authorization and one call for the actual data populating.
@@ -211,10 +207,10 @@ Another feature in GraphQL Shield is the built-in contextual caching mechanism f
 
 Let's wrap up all the use-cases mentioned above and also give a library recommendation.
 
-- If you have very few places that should be covered by authorization and you don't plan to increase such places, you can just add authorization logic right inside resolvers to not overcomplicate things.
-- If all of your authorization logic doesn't depend on the data and shouldn't perform complex calculations, you can use [operation-field-permissions](https://www.envelop.dev/plugins/use-operation-field-permissions) [Envelop](https://www.envelop.dev/) plugin.
+- If you have very few places that should be covered by authorization, and you don't plan to increase such places, you can just add authorization logic right inside resolvers to not overcomplicate things.
+- If all of your authorization logic doesn't depend on the data and shouldn't perform complex calculations, you can use [operation-field-permissions](https://envelop.dev/plugins/use-operation-field-permissions) [Envelop](https://envelop.dev) plugin.
 - If your authorization logic contains some calculations which are the same for many fields of your schema, you can use [GraphQL Shield](https://github.com/maticzav/graphql-shield) to leverage the built-in contextual caching mechanism.
-- If your authorization logic heavily depends on the data or you want to use schema directives to attach auth rules, you can use [GraphQL AuthZ](https://github.com/AstrumU/graphql-authz) to leverage the 'GraphQL schema as a data source' pattern and post-execution rules.
+- If your authorization logic heavily depends on the data, or you want to use schema directives to attach auth rules, you can use [GraphQL AuthZ](https://github.com/AstrumU/graphql-authz) to leverage the 'GraphQL schema as a data source' pattern and post-execution rules.
 
 ## Conclusion
 

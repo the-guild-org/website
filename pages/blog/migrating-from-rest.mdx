@@ -1,17 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Migrating from Schemaless REST API to GraphQL without writing any code
+tags: [graphql, rest, graphql-mesh]
+authors: arda
+date: 2020-05-31
+description: Migrating to GraphQL from a REST API has never been easier. With tools like GraphQL Mesh you can do it automatically, without writing code and even if you don't have any schema for your existing REST API sources.
+image: /blog-assets/migrating-from-rest/cover.png
+---
 
-export const meta = {
-  title:
-    'Migrating from Schemaless REST API to GraphQL without writing any code',
-  tags: ['graphql', 'rest', 'graphql-mesh'],
-  author: 'arda',
-  date: '2020-05-31',
-  description:
-    "Migrating to GraphQL from a REST API has never been easier. With tools like GraphQL Mesh you can do it automatically, without writing code and even if you don't have any schema for your existing REST API sources.",
-  image: '/blog-assets/migrating-from-rest/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 GraphQL was originally created in order to easily provide a powerful API on top of existing code.
 The current approach people are using today while migrating from REST API to GraphQL is to create a new schema and use GraphQL as a proxy.
@@ -50,23 +48,26 @@ And you would also need a thin business logic that proxies upcoming GraphQL requ
 
 ```js
 module.exports = {
-   Query: {
-      user: (root, args) => fetch('https://myrest.com/user/' + args.id)
-      .then(res => res.json())
-   },
+  Query: {
+    user: (root, args) => fetch('https://myrest.com/user/' + args.id).then(res => res.json())
+  },
   Mutation: {
-     createUser: (root, args) => fetch('https://myrest.com/user', {
-       method: 'PUT',
-       body: JSON.stringify(args.input)
+    createUser: (root, args) =>
+      fetch('https://myrest.com/user', {
+        method: 'PUT',
+        body: JSON.stringify(args.input)
       }).then(res => res.json()),
-    updateUser:  (root, args) => fetch('https://myrest.com/user' + args.id, {
-       method: 'POST',
-       body: JSON.stringify(args.input)
-    }).then(res => res.json()),
-    deleteUser:  (root, args) => fetch('https://myrest.com/user' + args.id, {
-       method: 'DELETE'
-    }).then(res => res.json()),
-};
+    updateUser: (root, args) =>
+      fetch('https://myrest.com/user' + args.id, {
+        method: 'POST',
+        body: JSON.stringify(args.input)
+      }).then(res => res.json()),
+    deleteUser: (root, args) =>
+      fetch('https://myrest.com/user' + args.id, {
+        method: 'DELETE'
+      }).then(res => res.json())
+  }
+}
 ```
 
 This example assumes that you have `/user/:id` endpoint that gets a `User` entity with `HTTP GET`, deletes user with `HTTP DELETE` and updates a `User` that has the given id with the given input. Also `/user` endpoint creates a new `User` with the given input.
@@ -93,7 +94,7 @@ yarn add @graphql-mesh/cli @graphql-mesh/json-schema graphql
 
 Create a `.meshrc.yml` which is a configuration file for GraphQL Mesh on our new project:
 
-```yml
+```yaml filename=".meshrc.yml"
 sources:
   - name: MyRest
     handler:

@@ -1,29 +1,18 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Unleash the power of Fragments with GraphQL Codegen
+authors: laurin
+tags: [graphql, codegen, react, typescript, relay, apollo, urql]
+date: 2022-08-05
+description: The most important parts of Relay are the concepts of building and scaling applications, let's show how you can use these patterns in your existing project, no matter what client library you are currently using.
+image: /blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/cover.png
+thumbnail: /blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/thumbnail.png
+---
 
-export const meta = {
-  title: 'Unleash the power of Fragments with GraphQL Codegen',
-  author: 'laurin',
-  tags: [
-    'graphql',
-    'codegen',
-    'react',
-    'typescript',
-    'relay',
-    'apollo',
-    'urql'
-  ],
-  date: '2022-08-05',
-  description:
-    "The most important parts of Relay are the concepts of building and scaling applications, let's show how you can use these patterns in your existing project, no matter what client library you are currently using.",
-  image:
-    '/blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/cover.png',
-  thumbnail:
-    '/blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/thumbnail.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
-There is no doubt that Relay is the most advanced JavaScript GraphQL Client out there. However, at the same time, the learning curve and adoption is yet very sparse compared to other popular alternatives such as Apollo Client, Urql, or GraphQL Request.
+There is no doubt that Relay is the most advanced JavaScript GraphQL Client out there. However, at the same time, the learning curve and adoption is yet very sparse compared to other popular alternatives such as Apollo Client, urql, or GraphQL Request.
 
 As a consequence, many people don't even know about all the benefits and patterns used within (and so far being exclusive to) Relay.
 The Guild gathered and worked on projects whose GraphQL client usage spans across all the available solutions today.
@@ -33,9 +22,9 @@ These patterns are actually applicable to any GraphQL Client, you just need the 
 On a high level these benefits are the following:
 
 **A fragmentized component tree.** Instead of writing a single GraphQL operation document per visible component or extracting the component properties from a single query operation document type, which is often cumbersome), multiple fragment definitions can be composed up to a single query operation that is sent to the server.
-This reduces the amount of concurrent requests and together with `@defer` and `@stream` is an actual improvement in the performance of the application ([compared to batching GraphQL operations](https://www.apollographql.com/blog/apollo-client/performance/batching-client-graphql-queries/)).
+This reduces the amount of concurrent requests and together with `@defer` and `@stream` is an actual improvement in the performance of the application ([compared to batching GraphQL operations](https://apollographql.com/blog/apollo-client/performance/batching-client-graphql-queries)).
 
-![Fragmentized Component Tree](/blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/component-tree-diagram.png)
+![Fragmentized Component Tree](../../public/blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/component-tree-diagram.png)
 
 **Colocate GraphQL documents with the component code.** Instead of writing GraphQL operations in a dedicated file, the operations are written within the component code. Have you ever deleted component code and forgot to delete the corresponding operation or fragment definitions that are in some other field?
 We encountered this issue over and over again generating a lot of dead code.
@@ -81,9 +70,9 @@ generates:
     preset: gql-tag-operations-preset
 ```
 
-Instead of generating the hooks for the existing clients, the preset works with function signature overloading and [`TypedDocumentNode`](https://www.the-guild.dev/blog/typed-document-node)) for inferring the correct GraphQL operation and variables type.
+Instead of generating the hooks for the existing clients, the preset works with function signature overloading and [`TypedDocumentNode`](https://the-guild.dev/blog/typed-document-node)) for inferring the correct GraphQL operation and variables type.
 
-> You can learn more about TypedDocumentNode in [graphql.wtf episode #41](https://www.youtube.com/watch?v=cYIhx8dusa4).
+> You can learn more about `TypedDocumentNode` in [graphql.wtf episode #41](https://youtube.com/watch?v=cYIhx8dusa4).
 
 In your application code you will now effectively write the following code.
 
@@ -113,7 +102,7 @@ const Viewer = () => {
 
 Because the client has built in support for TypedDocumentNode, it will extract the correct operation and variables type from the document passed to `useQuery`.
 
-[Head over to the GraphQL Code Generator documentation](https://www.graphql-code-generator.com/plugins/presets/gql-tag-operations-preset) for more details.
+[Head over to the GraphQL Code Generator documentation](https://graphql-code-generator.com/plugins/presets/gql-tag-operations-preset) for more details.
 
 > This is now our recommended way of using GraphQL Code Generator for front end development.
 
@@ -221,7 +210,7 @@ export function FriendList(props: FriendListProps) {
   const query = useFragment(FriendList_QueryFragment, props.query)
   return (
     <List>
-      {query.friends.map((user) => (
+      {query.friends.map(user => (
         <FriendListItem key={user.id} user={user} />
       ))}
     </List>
@@ -277,7 +266,7 @@ const UserProfileRoute_Query = gql(/* GraphQL */ `
     ...UserProfileHeader_QueryFragment
     ...UserList_QueryFragment
   }
-`)›
+`)
 
 export function UserProfileRoute_Query() {
   const { data, loading, error } = useQuery(UserProfile_Query)
@@ -294,24 +283,24 @@ export function UserProfileRoute_Query() {
 
 Finally, we have the following component tree as mentioned before.
 
-![Fragmentized Component Tree](/blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/component-tree-diagram.png)
+![Fragmentized Component Tree](../../public/blog-assets/unleash-the-power-of-fragments-with-graphql-codegen/component-tree-diagram.png)
 
 ## Conclusion
 
 This pattern allows you to re-use and scale your components to the maximum while having a clear and sane data dependency flow from the top route down to the ends of the UI component trees.
 
-You can start adopting this pattern within your existing GraphQL application with any GraphQL client that supports `TypedDocumentNode` through our new and battle-tested GraphQL Code Generator preset [gql-tag-operations-preset](https://www.graphql-code-generator.com/plugins/presets/gql-tag-operations-preset).
+You can start adopting this pattern within your existing GraphQL application with any GraphQL client that supports `TypedDocumentNode` through our new and battle-tested GraphQL Code Generator preset [gql-tag-operations-preset](https://graphql-code-generator.com/plugins/presets/gql-tag-operations-preset).
 
-All of the following clients are supported with **ANY** framework (React, Vue, Angular, etc.)
+All the following clients are supported with **ANY** framework (React, Vue, Angular, etc.)
 
-- Urql
+- urql
 - Apollo Client
 - "Vanilla" Node.js
 - graphql-request ([we recently added support](https://github.com/prisma-labs/graphql-request/pull/350))
 
-[You can start quickly without much configuration by following the preset documentation.](https://www.graphql-code-generator.com/plugins/presets/gql-tag-operations-preset)
+You can start quickly without much configuration by following [the preset documentation](https://graphql-code-generator.com/plugins/presets/gql-tag-operations-preset).
 
-Maybe this even inspires you to dig deeper into the optimizations the Relay client runtime does on top of these patterns and convince you to use Relay within your next project. You can learn more about those on [relay.dev](https://relay.dev/).
+Maybe this even inspires you to dig deeper into the optimizations the Relay client runtime does on top of these patterns and convince you to use Relay within your next project. You can learn more about those on [relay.dev](https://relay.dev).
 
 We, as The Guild, want you to find the right tool for your expertise and the application you are building. The most important thing is the patterns that are applicable anywhere!
 
@@ -319,12 +308,4 @@ We, as The Guild, want you to find the right tool for your expertise and the app
 
 I also talked about this topic recently at the GraphQL Berlin meetup!
 
-<iframe
-  width="100%"
-  height="400"
-  src="https://www.youtube.com/embed/YLytItSZCII"
-  title="Are you using GraphQL the intended way?"
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowFullScreen
-></iframe>
+<Video src="https://youtube.com/embed/YLytItSZCII" title="Are you using GraphQL the intended way?" />

@@ -1,17 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Subscriptions and Live Queries - Real Time with GraphQL
+authors: laurin
+tags: [graphql, subscription, real-time]
+date: 2021-04-21
+description: GraphQL subscriptions are used by many. Live Query adoption, however, has not advanced that much. Let's take a look at both methods for achieving real-time communication with GraphQL.
+image: /blog-assets/subscriptions-and-live-queries-real-time-with-graphql/cover.png
+---
 
-export const meta = {
-  title: 'Subscriptions and Live Queries - Real Time with GraphQL',
-  author: 'laurin',
-  tags: ['graphql', 'subscription', 'real-time'],
-  date: '2021-04-21',
-  description:
-    "GraphQL subscriptions are used by many. Live Query adoption, however, has not advanced that much. Let's take a look at both methods for achieving real-time communication with GraphQL.",
-  image:
-    '/blog-assets/subscriptions-and-live-queries-real-time-with-graphql/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 Subscriptions are the go-to solution for adding real-time capabilities to a GraphQL-powered application.
 At the same time the term GraphQL Live Query floats around and can often be found in the context of subscriptions.
@@ -25,7 +23,7 @@ So let's take a recap of GraphQL Subscriptions, take a look at existing Live Que
 # Subscription Recap
 
 The [GraphQL Subscription RFC was merged back in March 2017](https://github.com/graphql/graphql-spec/pull/267).
-The first major and wide-adopted transport implementation was (and probably is) [`subscriptions-transport-ws`](https://www.npmjs.com/package/subscriptions-transport-ws). It was developed by Apollo, but unfortunately they seem to have abandoned it since then. Fortunately, we now have a successor [`graphql-ws`](https://github.com/enisdenjo/graphql-ws).
+The first major and wide-adopted transport implementation was (and probably is) [`subscriptions-transport-ws`](https://npmjs.com/package/subscriptions-transport-ws). It was developed by Apollo, but unfortunately they seem to have abandoned it since then. Fortunately, we now have a successor [`graphql-ws`](https://github.com/enisdenjo/graphql-ws).
 
 A subscription operation looks similar to this.
 
@@ -60,7 +58,7 @@ Once the `AsyncIterator` publishes a value (the payload or event), the optional 
 The most basic implementation for a counter would look similar to this:
 
 ```ts
-const sleep = (t = 1000) => new Promise((res) => setTimeout(res, t))
+const sleep = (t = 1000) => new Promise(res => setTimeout(res, t))
 
 const resolvers = {
   Subscription: {
@@ -88,17 +86,13 @@ If there is not need for scaling horizontally the `graphql-subscriptions` packag
 ```tsx
 import { EventEmitter, on } from 'events'
 
-export const createPubSub = <TTopicPayload extends { [key: string]: unknown }>(
-  eventEmitter: EventEmitter
-) => {
+export const createPubSub = <TTopicPayload extends { [key: string]: unknown }>(eventEmitter: EventEmitter) => {
   return {
-    publish: <TTopic extends Extract<keyof TTopicPayload, string>>(
-      topic: TTopic,
-      payload: TTopicPayload[TTopic]
-    ) => void emitter.emit(topic as string, payload),
-    subscribe: async function* <
-      TTopic extends Extract<keyof TTopicPayload, string>
-    >(topic: TTopic): AsyncIterableIterator<TTopicPayload[TTopic]> {
+    publish: <TTopic extends Extract<keyof TTopicPayload, string>>(topic: TTopic, payload: TTopicPayload[TTopic]) =>
+      void emitter.emit(topic as string, payload),
+    subscribe: async function* <TTopic extends Extract<keyof TTopicPayload, string>>(
+      topic: TTopic
+    ): AsyncIterableIterator<TTopicPayload[TTopic]> {
       const asyncIterator = on(emitter, topic)
       for await (const [value] of asyncIterator) {
         yield value
@@ -194,12 +188,7 @@ Like an AsyncIterator, an Observable can represent multiple values. As already m
 The example is taken straight from the `graphql-ws` section.
 
 ```ts
-import {
-  Network,
-  Observable,
-  RequestParameters,
-  Variables
-} from 'relay-runtime'
+import { Network, Observable, RequestParameters, Variables } from 'relay-runtime'
 import { createClient } from 'graphql-ws'
 
 const subscriptionsClient = createClient({
@@ -217,7 +206,7 @@ const subscriptionsClient = createClient({
 
 // yes, both fetch AND subscribe handled in one implementation
 function fetchOrSubscribe(operation: RequestParameters, variables: Variables) {
-  return Observable.create((sink) => {
+  return Observable.create(sink => {
     if (!operation.text) {
       return sink.error(new Error('Operation text cannot be empty'))
     }
@@ -229,7 +218,7 @@ function fetchOrSubscribe(operation: RequestParameters, variables: Variables) {
       },
       {
         ...sink,
-        error: (err) => {
+        error: err => {
           if (err instanceof Error) {
             sink.error(err)
           } else if (err instanceof CloseEvent) {
@@ -362,10 +351,7 @@ const PostRenderer = ({ postId }: { postId: string }) => {
       updater: (store, payload) => {
         const record = store.get(postId)
         if (record) {
-          record.setValue(
-            'totalLikeCount',
-            payload.onPostLikeCountChanged.totalCount
-          )
+          record.setValue('totalLikeCount', payload.onPostLikeCountChanged.totalCount)
         }
       }
     }
@@ -442,21 +428,13 @@ const UserListRenderer = ({ postId }: { postId: string }) => {
         if (users) {
           switch (payload.onUserListChange.__typename) {
             case 'OnUserAdded': {
-              const newUser = store.create(
-                payload.onUserListChange.user.id,
-                'User'
-              )
+              const newUser = store.create(payload.onUserListChange.user.id, 'User')
               newUser.setValue('name', payload.onUserListChange.user.name)
               rootField.setLinkedRecords('users', [...users, newUser])
               break
             }
             case 'onUserRemoved': {
-              rootField.setLinkedRecords(
-                users.map(
-                  (user) =>
-                    user.getDataID() !== payload.onUserListChange.removedUserId
-                )
-              )
+              rootField.setLinkedRecords(users.map(user => user.getDataID() !== payload.onUserListChange.removedUserId))
               break
             }
           }
@@ -493,7 +471,7 @@ const ChatRenderer = () => {
   useSubscription(
     OnPlaySound,
     useMemo({
-      onNext: (payload) => {
+      onNext: payload => {
         playSound(payload.onPlayChatSound.soundUrl)
       }
     })
@@ -629,10 +607,7 @@ const PostSubscription = graphql`
 `
 
 const PostRenderer = ({ postId }: { postId: string }) => {
-  const { props } = useSubscription(
-    PostChangedSubscription,
-    /* variables */ { postId }
-  )
+  const { props } = useSubscription(PostChangedSubscription, /* variables */ { postId })
 
   return <Post {...props} />
 }
@@ -658,7 +633,7 @@ const resolvers = {
 
 We replace two operations with a single one!
 
-A similar approach is used by [Hasura](https://github.com/hasura/graphql-engine/blob/master/architecture/live-queries.md) and also [PostGraphile](https://www.graphile.org/postgraphile/live-queries/).
+A similar approach is used by [Hasura](https://github.com/hasura/graphql-engine/blob/master/architecture/live-queries.md) and also [PostGraphile](https://graphile.org/postgraphile/live-queries).
 
 The obvious drawback of both platforms is the lock-in into using a specific database. Of course that might not be a problem for most people, but having a general solution that works with any data source would be nice as more complex schema could fetch from different database types or other third party APIs.
 
@@ -854,7 +829,7 @@ Adding an immutable layer to our existing schema might be a pretty big change. F
 
 ## GraphQL Live Queries via the `@live` directive
 
-There are companies out there, like [Facebook](https://www.youtube.com/watch?v=BSw05rJaCpA), that are already using this approach. There is also a GraphQL framework available in Go that supports live queries out of the box! Check out thunder [here](https://github.com/samsarahq/thunder).
+There are companies out there, like [Facebook](https://youtube.com/watch?v=BSw05rJaCpA), that are already using this approach. There is also a GraphQL framework available in Go that supports live queries out of the box! Check out thunder [here](https://github.com/samsarahq/thunder).
 
 The idea behind the `@live` directive is that it is used to mark that the client is interested in keeping that query execution result as up to date as possible. The implementation, however, is up to user-land.
 
@@ -889,10 +864,7 @@ const schema = new GraphQLSchema({
   query,
   mutation,
   subscription,
-  directives: [
-    GraphQLLiveDirective,
-    /* Keep @defer/@stream/@if/@skip */ ...specifiedDirectives
-  ]
+  directives: [GraphQLLiveDirective, /* Keep @defer/@stream/@if/@skip */ ...specifiedDirectives]
 })
 ```
 
@@ -951,7 +923,7 @@ inMemoryLiveQueryStore
     variableValues: null,
     operationName: 'todosQuery'
   })
-  .then(async (result) => {
+  .then(async result => {
     if (isAsyncIterable(result)) {
       for (const value of result) {
         // Send to client in real-world app :)
@@ -981,7 +953,7 @@ prisma.$use(async (params, next) => {
   const resultPromise = next(params)
 
   if (params.action === 'update') {
-    resultPromise.then((res) => {
+    resultPromise.then(res => {
       if (res?.id) {
         // invalidate `Post:1` on update
         liveQueryStore.invalidate(`${params.model}:${res.id}`)
@@ -1107,8 +1079,7 @@ const applyLiveQueryPatchGenerator = createApplyLiveQueryPatchGenerator()
 
 const execute = flow(liveQueryStore.execute, applyLiveQueryPatchGenerator)
 // same as
-const execute0 = (...args) =>
-  applyLiveQueryPatchGenerator(liveQueryStore.execute(...args))
+const execute0 = (...args) => applyLiveQueryPatchGenerator(liveQueryStore.execute(...args))
 ```
 
 On the client we now need to build a execution result out of the initial result and the patch results, because our clients do not understand the graphql live query json patch protocol!
@@ -1123,8 +1094,7 @@ const applyLiveQueryPatch = createApplyLiveQueryPatch()
 
 const execute = flow(networkInterface.execute, applyLiveQueryPatch)
 // same as
-const execute0 = (...args) =>
-  applyLiveQueryPatch(networkInterface.execute(...args))
+const execute0 = (...args) => applyLiveQueryPatch(networkInterface.execute(...args))
 ```
 
 The library is optimized for network interfaces that return AsyncIterables. We can easily wrap out favorite network interface (that uses observable style sinks) in an AsyncIterable with [`@n1ru4l/push-pull-async-iterable-iterator`](https://github.com/n1ru4l/push-pull-async-iterable-iterator)!
@@ -1144,7 +1114,7 @@ const client = createClient({
 const applyLiveQueryPatch = createApplyLiveQueryPatch()
 
 const asyncIterator = pipe(
-  makeAsyncIterableIteratorFromSink((sink) => {
+  makeAsyncIterableIteratorFromSink(sink => {
     const dispose = client.subscribe(
       {
         query: 'query @live { hello }'
@@ -1213,7 +1183,7 @@ There is a lot more to think about such as
 
 If you are a enthusiastic tinkerer and plan to build something with the libraries above, share it with me and everyone else, so we can get more insights into different use-cases and requirements for all kind of applications!
 
-Let's continue the discussion on [Discord](https://the-guild.dev/discord), [Slack](https://slack-invite.graphql.org/) or on [GitHub](https://github.com/n1ru4l/graphql-live-query/issues/14)
+Let's continue the discussion on [Discord](https://the-guild.dev/discord), [Slack](https://slack-invite.graphql.org) or on [GitHub](https://github.com/n1ru4l/graphql-live-query/issues/14)
 
 Here are some more resource for you to thinker around with:
 

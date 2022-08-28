@@ -1,31 +1,31 @@
-import withArticle from '../../ui/blog/article'
+---
+title: JavaScript runs everywhere, so should your servers - here is how
+tags: [fetch, whatwg, node, graphql, graphql-yoga]
+authors: arda
+date: 2022-08-22
+description: A new way to make any Javascript server platform-agnostic.
+image: /blog-assets/fetch-for-servers/cover.png
+thumbnail: /blog-assets/fetch-for-servers/thumbnail.png
+---
 
-export const meta = {
-  title: 'JavaScript runs everywhere, so should your servers - here is how',
-  tags: ['fetch', 'whatwg', 'node', 'graphql', 'graphql-yoga'],
-  authors: ['arda'],
-  date: '2022-08-22',
-  description: 'A new way to make any Javascript server platform agnostic',
-  image: '/blog-assets/fetch-for-servers/cover.png',
-  thumbnail: '/blog-assets/fetch-for-servers/thumbnail.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 ## TLDR
 
-- We made GraphQL Yoga 2.0 **platform agnostic**, so it is able to run anywhere JavaScript can run (Cloudflare Workers, Deno, Next.js. AWS Lambdas etc.) thanks to the new **Fetch API standard**
+- We made GraphQL Yoga 2.0 **platform-agnostic**, so it is able to run anywhere JavaScript can run (Cloudflare Workers, Deno, Next.js. AWS Lambdas etc.) thanks to the new **Fetch API standard**
 - We've created <ins>Ponyfills</ins> so it will work the same on older versions of Node that don't have Fetch API elements globally available
 - We've made a [**new general library**](https://github.com/ardatan/whatwg-node) out of it so that any other framework or app could achieve the same
 - Let's help other frameworks in the ecosystem to migrate to this new library and standard
 
-At the beginning of the year, [we launched GraphQL Yoga 2.0](https://www.the-guild.dev/blog/announcing-graphql-yoga-v2) - a server framework for GraphQL APIs.
+At the beginning of the year, [we launched GraphQL Yoga 2.0](https://the-guild.dev/blog/announcing-graphql-yoga-v2) - a server framework for GraphQL APIs.
 
 While planning version 2.0 of Yoga, we were thinking about all the things that changed in the ecosystem and what developers using JavaScript **expect from their server** frameworks now and in the **future**.
 
-One of the most powerful trend in the JS ecosystem was the **proliferation of new environments and platforms** that can run JS(Lambdas, Cloudflare Workers, Deno, Bun etc.). So we set up to build a single GraphQL server framework that could run on any of these platforms.
+One of the most powerful trend in the JS ecosystem was the **proliferation of new environments and platforms** that can run JS (Lambdas, Cloudflare Workers, Deno, Bun etc.). So we set up to build a single GraphQL server framework that could run on any of these platforms.
 
-What we’ve found in the process was fascinating and we believe would change how any JS HTTP frameworks are being built, without any relation to GraphQL
+What we’ve found in the process was fascinating, and we believe would change how any JS HTTP frameworks are being built, without any relation to GraphQL
 
 While Node.js is the most popular environment, multiple platforms can run JavaScript, usually, having their own way of creating servers, and using different APIs.
 
@@ -80,7 +80,7 @@ See more in our code; [https://github.com/dotansimha/graphql-yoga/blob/master/pa
 
 Even though many new platforms support the Fetch API Standard, which means we can have a single solution for all, currently, in the older LTS versions of Node.js, we don’t have an implementation of the Fetch API built in.
 
-Furthermore, Node.js doesn’t use Web standard streams and the Fetch API in its `http` and `https` modules.
+Furthermore, Node.js doesn't use Web standard streams and the Fetch API in its `http` and `https` modules.
 
 That’s why we created the [`@whatwg-node/fetch` package](https://github.com/ardatan/whatwg-node) (previously known as `cross-undici-fetch` ) that fills in the gaps of different `fetch` implementations in all the LTS Node.js versions. Under the hood, `@whatwg-node/fetch` utilizes `undici` if available or otherwise falls back to using `node-fetch`, which you are probably already familiar with.
 
@@ -98,7 +98,7 @@ After a few iterations, it was clear to us that this is certainly possible and f
 
 GraphQL Yoga instance itself can be used directly as a request listener that you pass to Express’s `app.use`, Node’s native `http.createServer`, Next.js functions and other non-Node.js environments; we just pass GraphQL Yoga as an event listener for CF Workers’ `self.addEventListener('fetch', yoga)`.
 
-As we already mentioned in the “Why Fetch API?” part, the server library itself doesn’t need to care about the platform’s connection-specific details like Node’s `IncomingMessage` and `ServerResponse` or Next.js’s `NextApi.Request` objects. You are now able to focus on your server implementation details by consuming a “universal standard” [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) and returning “another standard” [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response)
+As we already mentioned in the “Why Fetch API?” part, the server library itself doesn't need to care about the platform’s connection-specific details like Node’s `IncomingMessage` and `ServerResponse` or Next.js’s `NextApi.Request` objects. You are now able to focus on your server implementation details by consuming a “universal standard” [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) and returning “another standard” [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response)
 
 As we realized how well this works out for our users, we decided that we need to bring this to the next level and extract that logic into a standalone library called [`@whatwg-node/server` ](https://github.com/ardatan/whatwg-node).
 
@@ -129,9 +129,7 @@ self.addEventListener('fetch', myServer)
 export default myServer
 
 // Deno
-serve(myServer, {
-  addr: ':4000'
-})
+serve(myServer, { addr: ':4000' })
 ```
 
 ### How does it look in real-life usage today?
@@ -170,7 +168,8 @@ createServerAdapter({
           'Content-Type': 'application/json'
         }
       })
-    } else if (request.url.endsWith('/secret')) {
+    }
+    if (request.url.endsWith('/secret')) {
       return new Response('No way!', {
         status: 401
       })
@@ -198,7 +197,7 @@ router.get('/todos', () => new Response('Todos Index!'))
 router.get('/todos/:id', ({ params }) => new Response(`Todo #${params.id}`))
 
 // POST to the collection (we'll use async here)
-router.post('/todos', async (request) => {
+router.post('/todos', async request => {
   const content = await request.json()
 
   return new Response('Creating Todo: ' + JSON.stringify(content))
@@ -221,6 +220,6 @@ httpServer.listen(4000)
 
 ## What NodeJS frameworks are you using today?
 
-Maybe it is worth while to open a new issue on their repo and see if we could all help them to become platform agnostic, while still supporting older versions of Node, thanks to this new library.
+Maybe it is worthwhile to open a new issue on their repo and see if we could all help them to become platform-agnostic, while still supporting older versions of Node, thanks to this new library.
 
 Please try it out and give us feedback [on the repo](https://github.com/ardatan/whatwg-node)!

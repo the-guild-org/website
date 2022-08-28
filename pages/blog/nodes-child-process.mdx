@@ -1,19 +1,19 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Getting to know Node's child_process module
+authors: eytan
+tags: [node]
+date: 2018-09-27
+description: How to call git, cpp, sh, etc., from a Node.js script.
+image: /medium/8e3e63cb7dfad3159760903440eb32fd.png
+---
 
-export const meta = {
-  title: "Getting to know Node's child_process module",
-  author: 'eytan',
-  tags: ['node'],
-  date: '2018-09-27',
-  description: 'How to call git, cpp, sh, etc, from a Node.JS script',
-  image: '/medium/8e3e63cb7dfad3159760903440eb32fd.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
-# How to call git, cpp, sh, etc, from a Node.JS script
+# How to call `git`, `cpp`, `sh`, etc., from a Node.js script
 
-Node.JS is one of the most powerful platforms for managing resources in our computer and has became more and more popular over the years ever since it was released. As much as it's great, and with all the love and respect that I have for it, Node.JS alone is not enough.
+Node.js is one of the most powerful platforms for managing resources on our computers and has become more and more popular over the years ever since it was released. As much as it's great, and with all the love and respect that I have for it, Node.JS alone is not enough.
 
 Despite NPM's evolved ecosystem there are more tools out there which exist outside of it for a longer time, thus they do what they do better than any Node.JS package; such as opencv — an open source computer vision utility library which was developed for C++, Python, and Java (not for Node.JS).
 
@@ -21,13 +21,13 @@ In addition, Node.JS exists for a very general purpose while some tools exist so
 
 Accordingly, I've decided to write an article about Node's child_process module — a utility module which provides you with functions that can create and manage other processes.
 
-![](/medium/8e3e63cb7dfad3159760903440eb32fd.png)
+![](../../public/medium/8e3e63cb7dfad3159760903440eb32fd.png)
 
 As you probably know, our typical OS has different processes running in the background. Each process is being managed by a single-core of our CPU and will run a series of calculations each time it is being ticked. As such, we can't take full advantage of our CPU using a single process, we would need a number of processes that is at least equal to the number of cores in our CPU. In addition, each process might be responsible for running a series of calculations of different logic, which will give the end user a better control over the CPU's behavior.
 
 Accordingly, if until this very day you've been writing Node scripts which don't involve any reference to processes at all, you might have been doing it wrong, because you've been limiting yourself to a single core, let alone to a single process. Node's `child_process` module exists to solve exactly that; it will provide you with utility functions that will provide you with the ability so spawn processes from the main process you're currently at.
 
-Why is this module called `child_process` and not just `process`? First of all, not to confuse with the main process instance `global.process`, and second, the child process is derived from the main process, which means that both can communicate - the main process will hold streams for the child process's std types and they will both share an `ipc` channel (“Inter Process Communication” channel; more on that further this article).
+Why is this module called `child_process` and not just `process`? First, not to confuse with the main process instance `global.process`, and second, the child process is derived from the main process, which means that both can communicate - the main process will hold streams for the child process's std types and they will both share an `ipc` channel (“Inter Process Communication” channel; more on that further this article).
 
 # The child_process API
 
@@ -80,9 +80,9 @@ execFile('git', ['log'], (err, out) => {
 Here's a snapshot of Node's source code that proves that `execFile()` is directly dependent on `spawn()`:
 
 ```javascript
-exports.execFile = function execFile(file /* , args, options, callback */) {
+exports.execFile = (file /* , args, options, callback */) => {
   // ...
-  var child = spawn(file, args, {
+  const child = spawn(file, args, {
     cwd: options.cwd,
     env: options.env,
     gid: options.gid,
@@ -117,7 +117,7 @@ exec('git log --format="%s" | grep foo', (err, out) => {
 Here's a snapshot of Node's source code that proves that `exec()` is directly dependent on `execFile()`, which makes it indirectly dependent on `spawn()`
 
 ```javascript
-exports.exec = function exec(/* command , options, callback */) {
+exports.exec = (/* command , options, callback */) => {
   const opts = normalizeExecArgs.apply(null, arguments)
   return exports.execFile(opts.file, opts.options, opts.callback)
 }
@@ -152,7 +152,7 @@ What's nice about this method is that it will open a communication channel betwe
 const { fork } = require('child_process')
 const n = fork(`${__dirname}/child.js`)
 
-n.on('message', (m) => {
+n.on('message', m => {
   console.log('PARENT got message:', m)
 })
 
@@ -161,7 +161,7 @@ n.send({ hello: 'world' })
 
 /* Child process script - child.js */
 
-process.on('message', (m) => {
+process.on('message', m => {
   console.log('CHILD got message:', m)
 })
 
@@ -180,7 +180,7 @@ const cluster = require('cluster')
 
 if (cluster.isMaster) {
   const n = cluster.fork(`${__dirname}/child.js`)
-  n.on('message', (m) => {
+  n.on('message', m => {
     console.log('PARENT got message:', m)
   })
   // Causes the child to print: CHILD got message: { hello: 'world' }
@@ -188,7 +188,7 @@ if (cluster.isMaster) {
 }
 
 if (cluster.isWorker) {
-  process.on('message', (m) => {
+  process.on('message', m => {
     console.log('CHILD got message:', m)
   })
   // Causes the parent to print: PARENT got message: { foo: 'bar', baz: null }

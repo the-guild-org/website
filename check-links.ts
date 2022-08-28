@@ -12,14 +12,14 @@ const files = globbySync('*.mdx', {
 
 const errors = [];
 
-files.forEach((file) =>
-  checkFile(file.replace('.mdx', ''), (error) => {
+files.forEach(file =>
+  checkFile(file.replace('.mdx', ''), error => {
     errors.push(error);
-  }),
+  })
 );
 
 if (errors.length > 0) {
-  errors.forEach((error) => {
+  errors.forEach(error => {
     console.error(error);
   });
   process.exit(1);
@@ -32,7 +32,7 @@ function checkFile(name: string, onError: (err: string) => void) {
   const doc = readFileSync(filepath, { encoding: 'utf-8' });
   const links = onlyRelative(extractLinks(doc));
 
-  links.forEach((link) => {
+  links.forEach(link => {
     if (!exists(link.href)) {
       onError(`❌  Error in \`${relative(process.cwd(), filepath)}\` link \`${link.href}\` doesn't exist`);
     }
@@ -40,14 +40,14 @@ function checkFile(name: string, onError: (err: string) => void) {
 }
 
 function exists(link: string): boolean {
-  const filepath = join(PAGES_DIR, `${link}.mdx`);
+  const filepath = join(PAGES_DIR, `${link === '/' ? 'index' : link}.mdx`);
   return existsSync(filepath);
 }
 
 type Link = {
-  title: string,
-  href: string
-}
+  title: string;
+  href: string;
+};
 
 function extractLinks(doc: string): Link[] {
   const mdLinks = extractMdLinks(doc);
@@ -63,7 +63,7 @@ function extractMdLinks(doc: string): Link[] {
     return [];
   }
 
-  return links.map((link) => {
+  return links.map(link => {
     let [title, href] = link.split('](');
 
     title = title.replace(/^\[/, '');
@@ -83,22 +83,14 @@ function extractPreviews(doc: string): Link[] {
     return [];
   }
 
-  return links.map((link) => {
+  return links.map(link => {
     return {
       title: '',
-      href: link
-        .replace(/<LinkPreview \s*link=["']{1}/, '')
-        .replace(/["']{1}\s*\/>/, ''),
+      href: link.replace(/<LinkPreview \s*link=["']{1}/, '').replace(/["']{1}\s*\/>/, ''),
     };
   });
 }
 
 function onlyRelative(links: Link[]): Link[] {
-  return links.filter(
-    (link) =>
-      link.href.startsWith('.') ||
-      (link.href.startsWith('/') &&
-        !link.href.startsWith('/blog-assets/') &&
-        !link.href.startsWith('/medium/')),
-  );
+  return links.filter(link => link.href.startsWith('./') || link.href.startsWith('/'));
 }

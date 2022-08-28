@@ -1,18 +1,16 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Improved Security with GraphQL Armor support for Yoga Server 2
+authors: laurin
+tags: [graphql, graphql-tools, security]
+date: 2022-08-24
+description: Bringing security by default to GraphQL and Yoga Server.
+image: /blog-assets/improved-security-with-graphql-armor-support-for-yoga-server-2/cover.png
+thumbnail: /blog-assets/improved-security-with-graphql-armor-support-for-yoga-server-2/cover.png
+---
 
-export const meta = {
-  title: 'Improved Security with GraphQL Armor support for Yoga Server 2',
-  author: 'laurin',
-  tags: ['graphql', 'graphql-tools', 'security'],
-  date: '2022-08-24',
-  description: 'Bringing security by default to GraphQL and Yoga Server',
-  image:
-    '/blog-assets/improved-security-with-graphql-armor-support-for-yoga-server-2/cover.png',
-  thumbnail:
-    '/blog-assets/improved-security-with-graphql-armor-support-for-yoga-server-2/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 We are utterly excited to introduce [GraphQL Armor](https://github.com/Escape-Technologies/graphql-armor) compatibility with Yoga 2.
 
@@ -20,12 +18,12 @@ We are utterly excited to introduce [GraphQL Armor](https://github.com/Escape-Te
 
 A few weeks ago, the GraphQL Security company [Escape](https://escape.tech) released GraphQL Armor, an open-source middleware to add a security layer on top of GraphQL endpoints and mitigate common attacks.
 
-GraphQL Armor blocks abusive requests by putting reasonable and clever limits to Queries. To us, this represent the go-to solution when using [persisted operations](https://www.envelop.dev/plugins/use-persisted-operations) is not possible, like when building a public GraphQL API. Also, even if you are building an internal API, these tools can be handy for preventing too heavy GraphQL queries. This technical approach is also complementary to the existing set of plugins for hardening endpoints:
+GraphQL Armor blocks abusive requests by putting reasonable and clever limits to Queries. To us, this represents the go-to solution when using [persisted operations](https://envelop.dev/plugins/use-persisted-operations) is not possible, like when building a public GraphQL API. Also, even if you are building an internal API, these tools can be handy for preventing too heavy GraphQL queries. This technical approach is also complementary to the existing set of plugins for hardening endpoints:
 
-- [GraphQL Authz](https://www.the-guild.dev/blog/graphql-authz) and [use-operation-field-permissions](https://www.envelop.dev/plugins/use-operation-field-permissions) for Access Control & Business logic
-- [use-generic-auth](https://www.envelop.dev/plugins/use-generic-auth) and [use-auth0](https://www.envelop.dev/plugins/use-auth0) for Authorization
+- [GraphQL Authz](https://the-guild.dev/blog/graphql-authz) and [use-operation-field-permissions](https://envelop.dev/plugins/use-operation-field-permissions) for Access Control & Business logic
+- [use-generic-auth](https://envelop.dev/plugins/use-generic-auth) and [use-auth0](https://envelop.dev/plugins/use-auth0) for Authorization
 
-Thus we decided to work together with Escape's team to continuously improve security standards and defaults for the Yoga and GraphQL community.
+Thus, we decided to work together with Escape's team to continuously improve security standards and defaults for the Yoga and GraphQL community.
 
 > Why couldn't you have production security best practices in Yoga by default?
 

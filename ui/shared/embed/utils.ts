@@ -53,10 +53,7 @@ export const getPadding = (aspectRatio: string) => {
   return config[aspectRatio];
 };
 
-export const createScriptTag = (
-  providerEmbedUrl: string | null,
-  providerEmbedScript: string | null
-) => {
+export const createScriptTag = (providerEmbedUrl: string | null, providerEmbedScript: string | null) => {
   const script = document.createElement(`script`);
 
   script.type = `text/javascript`;
@@ -69,7 +66,7 @@ export const createScriptTag = (
     script.innerText = providerEmbedScript;
   }
 
-  script.onerror = (error) => {
+  script.onerror = error => {
     console.error(`MdxEmbedProvider ${(error as any).type}`, error);
   };
 

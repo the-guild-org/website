@@ -1,16 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Injectable services in React
+authors: eytan
+tags: [react]
+date: 2019-06-24
+description: How they're implemented and their similarities with Angular services.
+image: /medium/59ec8df34fe4fd4bb20960e2270a12df.jpeg
+---
 
-export const meta = {
-  title: 'Injectable services in React',
-  author: 'eytan',
-  tags: ['react'],
-  date: '2019-06-24',
-  description:
-    "How they're implemented and their similarities with Angular services",
-  image: '/medium/59ec8df34fe4fd4bb20960e2270a12df.jpeg'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 ## How they're implemented and their similarities with Angular services
 
@@ -18,9 +17,8 @@ React provides a fantastic API for building components. It's light-weight and in
 
 So far, when we wanted a component to use an external service, we would simply implement it in a separate module, import it, and use its exported methods, like so:
 
-```javascript
-// auth-service.js
-export const signUp = (body) => {
+```ts filename="auth-service.js"
+export const signUp = body => {
   return fetch({
     method: 'POST',
     url: `${API}/sign-up`,
@@ -31,7 +29,7 @@ export const signUp = (body) => {
   })
 }
 
-export const signIn = (body) => {
+export const signIn = body => {
   return fetch({
     method: 'POST',
     url: `${API}/sign-in`,
@@ -43,8 +41,7 @@ export const signIn = (body) => {
 }
 ```
 
-```jsx
-// auth-components.jsx
+```tsx filename="auth-components.jsx"
 import React from 'react'
 import auth from './auth-service'
 
@@ -58,12 +55,7 @@ export const SignInButton = ({ username, password, onSignIn }) => {
   return <button onClick={signIn}>Sign-In</button>
 }
 
-export const SignUpButton = ({
-  username,
-  password,
-  verifiedPass,
-  onSignUp
-}) => {
+export const SignUpButton = ({ username, password, verifiedPass, onSignUp }) => {
   const signUp = useCallback(() => {
     auth.signUp({ username, password, verifiedPass }).then(onSignUp)
   }, [username, password, verifiedPass, onSignUp])
@@ -76,8 +68,7 @@ export const SignUpButton = ({
 
 The components above would work well within a React app, because essentially they can achieve what they were implemented for. However, if we would like to unit-test these components, we would encounter a problem, **because the only way to test these components would be via e2e tests, or by completely mocking the fetch API**. Either way, the solutions are not in our favor. Either we completely overkill it with testing, or we make use of a not-so-simple mocking solution for an ENTIRE native API. Below is an example:
 
-```jsx
-// auth-components.test.jsx
+```tsx filename="auth-components.test.jsx"
 import React from 'react'
 import { act, render, fireEvent } from '@testing-library/react'
 import { SignInButton, SignUpButton } from './auth-components'
@@ -123,28 +114,21 @@ I know what you're probably thinking right now… What is this guy thinking, pro
 
 In the Angular team, they came up with a clever approach. Instead of relying on hard-coded imports, what they did they provided a mechanism that would let us inject our services before we initialize the component. With that approach, we can easily mock-up our services, because with the injection system it's very easy to control what implementation of the services is it gonna use. So this is how it would practically look like:
 
-```typescript
-// auth-module.ts
-import { NgModule } from '@angular/core';
-import { SignInButton, SignUpButton } from './auth-components';
-import AuthService from './auth-service';
+```ts filename="auth-module.ts"
+import { NgModule } from '@angular/core'
+import { SignInButton, SignUpButton } from './auth-components'
+import AuthService from './auth-service'
 
 @NgModule({
-  declarations: [
-    SignInButton,
-    SignUpButton,
-  ],
-  providers: [
-    AuthService
-  ],
+  declarations: [SignInButton, SignUpButton],
+  providers: [AuthService]
 })
 class AuthModule {}
 
-export deafult AuthModule;
+export default AuthModule
 ```
 
-```typescript
-// auth-components.ts
+```ts filename="auth-components.ts"
 import { Component, Input, Output, EventEmitter } from '@angular/core'
 import AuthService from './auth-service'
 
@@ -210,8 +194,7 @@ export class SignInButton {
 
 And now if we would like to test it, all we have to do is to replace the injected service, like mentioned earlier:
 
-```typescript
-// auth-components.test.ts
+```ts filename="auth-components.test.ts"
 import { async, ComponentFixture, TestBed } from '@angular/core/testing'
 import AuthService from './auth-service'
 
@@ -258,86 +241,71 @@ describe('Authentication components', () => {
 
 To put things simple, I've created a diagram that describes the flow:
 
-![](/medium/ee3c78c0569b4f8d0e0e30d18fe47416.png)
+![](../../public/medium/ee3c78c0569b4f8d0e0e30d18fe47416.png)
 
 # Applying the same design pattern in React
 
 Now that we're familiar with the design pattern, thanks to Angular, let's see how we can achieve the same thing in React using its API. Let's briefly revisit [React's context API](https://reactjs.org/docs/context.html):
 
-```jsx
-// auth-service.jsx
-import React from 'react'
-
-const { createContext, useContext } = React
+```tsx filename="auth-service.jsx"
+import React, { createContext, useContext } from 'react'
 
 const AuthContext = createContext(null)
 
-export const AuthProvider = (props) => {
+export const AuthProvider = props => {
   const value = {
     signIn: props.signIn || signIn,
     signUp: props.signUp || signUp
   }
 
-  return (
-    <AuthProvider.Provider value={value}>
-      {props.children}
-    </AuthProvider.Provider>
-  )
+  return <AuthProvider.Provider value={value}>{props.children}</AuthProvider.Provider>
 }
 
 export const useAuth = () => {
   return useContext(AuthContext)
 }
 
-const signUp = (body) => {
+const signUp = body => {
   // ...
 }
 
-const signIn = (body) => {
+const signIn = body => {
   // ...
 }
 ```
 
 The context can be seen as the container that holds our service, aka the `value` prop, as we can see in the example above. The provider defines what `value` the context will hold, so when we consume it, we will be provided with it. This API is the key for a mockable test unit in React, because the `value` can be replaced with whatever we want. Accordingly, we will wrap our `auth-service.tsx`:
 
-```jsx
-// auth-service.jsx
-import React from 'react'
-
-const { createContext, useContext } = React
+```tsx filename="auth-service.jsx"
+import React, { createContext, useContext } from 'react'
 
 const AuthContext = createContext(null)
 
-export const AuthProvider = (props) => {
+export const AuthProvider = props => {
   const value = {
     signIn: props.signIn || signIn,
     signUp: props.signUp || signUp
   }
 
-  return (
-    <AuthProvider.Provider value={value}>
-      {props.children}
-    </AuthProvider.Provider>
-  )
+  return <AuthProvider.Provider value={value}>{props.children}</AuthProvider.Provider>
 }
 
 export const useAuth = () => {
   return useContext(AuthContext)
 }
 
-const signUp = (body) => {
+const signUp = body => {
   // ...
 }
 
-const signIn = (body) => {
+const signIn = body => {
   // ...
 }
 ```
 
 And we will update our component to use the new `useAuth()` hook:
 
-```jsx
-// auth-components.jsx
+```tsx filename="auth-components.jsx"
 import React from 'react'
 import { useAuth } from './auth-service'
 
@@ -353,12 +321,7 @@ export const SignInButton = ({ username, password, onSignIn }) => {
   // ...
 }
 
-export const SignInButton = ({
-  username,
-  password,
-  verifiedPass,
-  onSignUp
-}) => {
+export const SignInButton = ({ username, password, verifiedPass, onSignUp }) => {
   const auth = useAuth()
 
   const signUp = useCallback(() => {
@@ -371,8 +334,7 @@ export const SignInButton = ({
 
 Because the `useAuth()` hook uses the context API under the hood, it can be easily replaced with a different value. All we have to do is to tell the provider to store a different value under its belonging context. Once we use the context, the received value should be the same one that was defined by the provider:
 
-```jsx
-// auth-components.test.jsx
+```tsx filename="auth-components.test.jsx"
 import React from 'react'
 import { act, render, fireEvent } from '@testing-library/react'
 import { SignInButton, SignUpButton } from './auth-components'
@@ -413,9 +375,9 @@ Before I finish this article, here are some few things that I would like to see 
 - Have a 3rd party library that would wrap a service with the context API and would simplify it.
 - Have an ESLint rule that will force the usage of injectable React services.
 
-What do you think? Do you agree with the design pattern or not? Are you gonna be one of the early adopters? Write your thoughts in the comments section below. Also feel free to follow me on [Medium](https://medium.com/@eytanmanor), or alternatively you can follow me on:
+What do you think? Do you agree with the design pattern or not? Are you going to be one of the early adopters? Write your thoughts in the comments section below. Also feel free to follow me on [Medium](https://medium.com/@eytanmanor), or alternatively you can follow me on:
 
 - [GitHub](https://github.com/DAB0mB)
 - [Twitter](https://twitter.com/eytan_manor)
 
-![](/medium/734ee8644a65dfb39e62734e0a448ca7.jpeg)
+![](../../public/medium/734ee8644a65dfb39e62734e0a448ca7.jpeg)

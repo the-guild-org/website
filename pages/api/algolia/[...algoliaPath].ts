@@ -30,10 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { query } = req;
   const rawBody = await getRawBody(req);
   console.log('Hit!');
-  const client = algoliasearch(
-    query['x-algolia-application-id'] as string,
-    query['x-algolia-api-key'] as string
-  );
+  const client = algoliasearch(query['x-algolia-application-id'] as string, query['x-algolia-api-key'] as string);
   const body = JSON.parse(rawBody.toString());
   const input = body.requests[0];
   console.log('Body', input);
@@ -75,7 +72,7 @@ function sortHits(hits, referer) {
 }
 
 function modifyHits(hits, referer) {
-  return hits.map((hit) => {
+  return hits.map(hit => {
     const normalizedUrl = normalizeUrl(hit.url);
     if (normalizedUrl.startsWith(referer)) {
       return hit;

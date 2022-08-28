@@ -9,12 +9,7 @@ module.exports = {
       env: {
         es6: true,
       },
-      extends: [
-        'eslint:recommended',
-        'plugin:@typescript-eslint/recommended',
-        'next',
-        'prettier',
-      ],
+      extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'next', 'prettier'],
       files: '*.{js,jsx,cjs,mjs,ts,tsx,cts,mts}',
       parser: '@typescript-eslint/parser',
       parserOptions: {
@@ -55,13 +50,7 @@ module.exports = {
           },
           {
             name: '@stitches/react',
-            importNames: [
-              'styled',
-              'getCssText',
-              'keyframes',
-              'css',
-              'globalCss',
-            ],
+            importNames: ['styled', 'getCssText', 'keyframes', 'css', 'globalCss'],
             message: 'Use `stitches.config.ts`.',
           },
         ],

@@ -1,15 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: This is how I build Babel plug-ins
+authors: eytan
+tags: [javascript, babel]
+date: 2018-10-08
+description: The basics of AOT compilers and how to write Babel plug-ins.
+image: /medium/b00e12c482b6ba2f40860ff3471bc55c.png
+---
 
-export const meta = {
-  title: 'This is how I build Babel plug-ins',
-  author: 'eytan',
-  tags: ['javascript', 'babel'],
-  date: '2018-10-08',
-  description: 'The basics of AOT compilers and how to write Babel plug-ins',
-  image: '/medium/b00e12c482b6ba2f40860ff3471bc55c.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 https://youtu.be/67DmVvjAdJU
 
@@ -44,7 +44,7 @@ function foo(x) {
 }
 ```
 
-![](/medium/b00e12c482b6ba2f40860ff3471bc55c.png)
+![](../../public/medium/b00e12c482b6ba2f40860ff3471bc55c.png)
 
 > _Example taken from [Lachezar Nickolov's article](https://blog.sessionstack.com/how-javascript-works-parsing-abstract-syntax-trees-asts-5-tips-on-how-to-minimize-parse-time-abfcf7e8a0c8) about JS ASTs._
 
@@ -56,7 +56,7 @@ Babel is a project which originally started to transform the latest es20XX synta
 
 Babel is made out of numerous components which work together to bring the latest Ecmascript syntax to life. Specifically the code transformation flow works with the following components and following relations:
 
-![](/medium/44878b4c39410ab4dd64d38230625752.png)
+![](../../public/medium/44878b4c39410ab4dd64d38230625752.png)
 
 - The parser parses the code string into a data representational structure called AST (abstract syntax tree) using [`@babel/parser`](http://github.com/babel/babel/tree/master/packages/babel-parser).
 - The AST is being manipulated by pre-defined plug-ins which use[`@babel/traverse`](http://github.com/babel/babel/tree/master/packages/babel-traverse).
@@ -66,9 +66,9 @@ Now you have a better understanding of Babel and you can actually understand wha
 
 # Building and using a Babel plug-in
 
-First of all I would like us to understand Babel's generated AST as this is essential for building the plug-in, because the plug-in's gonna manipulate the AST and therefore we need to understand it. If you'll go to [astexplorer.net](https://dillinger.io/astexplorer.net) you'll find an amazing compiler that will transform code into AST. Let's take the code `foo = "foo"` as an example. The generated AST should look like so:
+First I would like us to understand Babel's generated AST as this is essential for building the plug-in, because the plug-in's going to manipulate the AST, and therefore we need to understand it. If you'll go to [astexplorer.net](https://dillinger.io/astexplorer.net) you'll find an amazing compiler that will transform code into AST. Let's take the code `foo = "foo"` as an example. The generated AST should look like so:
 
-![](/medium/7dcdb894fc6fc51790d358c69c98aefe.png)
+![](../../public/medium/7dcdb894fc6fc51790d358c69c98aefe.png)
 
 As you can see, each node in the tree represents a part of the code, and it's recursive. The assignment expression `foo = "foo"` uses the operator `=`, the operand on the left is an identifier named `foo` and the operand on the right is a literal with the value `"foo"`. So that's how it goes, each part of the code can be presented as a node which is made out of other nodes, each node has a type and additional properties based on its type.
 
@@ -108,9 +108,9 @@ module.exports = () => {
 }
 ```
 
-To initiate the transformation, simply run `$ node transform.js`. Now open the `out.js` file and you should see the following content:
+To initiate the transformation, simply run `node transform.js`. Now open the `out.js` file, and you should see the following content:
 
-```javascript
+```js
 foo = 'bar'
 ```
 
@@ -130,7 +130,7 @@ if (typeof window.foo === 'undefined') window.foo = 'foo'
 
 We will first take all global assignments and turn it into member assignment expressions of `window` to prevent confusions and potential misunderstandings. I like to start by first exploring the desired AST output:
 
-![](/medium/f842356c49c8c281d1e2072723f92010.png)
+![](../../public/medium/f842356c49c8c281d1e2072723f92010.png)
 
 And then writing the plug-in itself accordingly:
 
@@ -139,14 +139,8 @@ module.exports = ({ types: t }) => {
   return {
     visitor: {
       AssignmentExpression(path) {
-        if (
-          path.node.left.type === 'Identifier' &&
-          !path.scope.hasBinding(path.node.left.name)
-        ) {
-          path.node.left = t.memberExpression(
-            t.identifier('window'),
-            t.identifier(path.node.left.name)
-          )
+        if (path.node.left.type === 'Identifier' && !path.scope.hasBinding(path.node.left.name)) {
+          path.node.left = t.memberExpression(t.identifier('window'), t.identifier(path.node.left.name))
         }
       }
     }
@@ -184,29 +178,13 @@ module.exports = ({ types: t }) => {
   return {
     visitor: {
       AssignmentExpression(path) {
-        if (
-          path.node.left.type === 'Identifier' &&
-          !path.scope.hasBinding(path.node.left.name)
-        ) {
-          path.node.left = t.memberExpression(
-            t.identifier('window'),
-            t.identifier(path.node.left.name)
-          )
+        if (path.node.left.type === 'Identifier' && !path.scope.hasBinding(path.node.left.name)) {
+          path.node.left = t.memberExpression(t.identifier('window'), t.identifier(path.node.left.name))
         }
-        if (
-          path.node.left.type == 'MemberExpression' &&
-          path.node.left.object.name == 'window'
-        ) {
+        if (path.node.left.type == 'MemberExpression' && path.node.left.object.name == 'window') {
           const typeofNode = t.unaryExpression('typeof', path.node.left)
-          const isNodeUndefined = t.binaryExpression(
-            '===',
-            typeofNode,
-            t.stringLiteral('undefined')
-          )
-          const ifNodeUndefined = t.ifStatement(
-            isNodeUndefined,
-            t.expressionStatement(path.node)
-          )
+          const isNodeUndefined = t.binaryExpression('===', typeofNode, t.stringLiteral('undefined'))
+          const ifNodeUndefined = t.ifStatement(isNodeUndefined, t.expressionStatement(path.node))
 
           path.replaceWith(ifNodeUndefined)
           path.skip()

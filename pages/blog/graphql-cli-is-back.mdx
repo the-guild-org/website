@@ -1,22 +1,21 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL CLI is back!
+authors: uri
+tags: [graphql, graphql-cli]
+date: 2019-10-31
+description: Your Swiss Army Knife for the GraphQL ecosystem. Production-ready GraphQL app in seconds.
+image: /medium/23b46179aaf5f6f3422b0ab82db7ed80.webm
+---
 
-export const meta = {
-  title: 'GraphQL CLI is back!',
-  author: 'uri',
-  tags: ['graphql', 'graphql-cli'],
-  date: '2019-10-31',
-  description:
-    'Your Swiss Army Knife for the GraphQL ecosystem. Production-ready GraphQL app in seconds',
-  image: '/medium/23b46179aaf5f6f3422b0ab82db7ed80.webm'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 # TL;DR;
 
 - [GraphQL CLI](https://github.com/urigo/graphql-cli) is a **popular command-line tool** providing various tools for creating and maintaining GraphQL based applications
-- [Prisma recently transferred the project to The Guild](https://www.prisma.io/blog/the-guild-takes-over-oss-libraries-vvluy2i4uevs) — and we **completely rewrote** it and closed over 100 issues
-- We've already fixed and added many commands but we are looking to **learn and integrate** with tools and companies **across the ecosystem!**
+- [Prisma recently transferred the project to The Guild](https://prisma.io/blog/the-guild-takes-over-oss-libraries-vvluy2i4uevs) — and we **completely rewrote** it and closed over 100 issues
+- We've already fixed and added many commands, but we are looking to **learn and integrate** with tools and companies **across the ecosystem!**
 - You can now generate a **full stack working app**, from a GraphQL schema **model**, in **2 minutes** using the init+generate commands!
 - This is an alpha phase — **we want your feedback**, as a user and as a tool creator — Please [create an issue](https://github.com/Urigo/graphql-cli/issues/new/choose) and [join our Discord channel](https://discord.gg/xud7bH9)
 
@@ -44,9 +43,9 @@ Over the years the GraphQL ecosystem flourished and evolved towards more product
 
 GraphQL evolved thanks to the large community and the many supporting libraries it has created.
 
-The GraphQL CLI has become a place for the community to share ideas and best practices across different solutions and libraries thanks [to the push from Prisma](https://www.prisma.io/blog/new-tooling-to-improve-your-graphql-workflows-7240c81e1ba3).
+The GraphQL CLI has become a place for the community to share ideas and best practices across different solutions and libraries thanks [to the push from Prisma](https://prisma.io/blog/new-tooling-to-improve-your-graphql-workflows-7240c81e1ba3).
 
-[The Guild took over GraphQL CLI](https://www.prisma.io/blog/the-guild-takes-over-oss-libraries-vvluy2i4uevs) to continue on that promise:
+[The Guild took over GraphQL CLI](https://prisma.io/blog/the-guild-takes-over-oss-libraries-vvluy2i4uevs) to continue on that promise:
 
 - Making it as easy as possible create and deploy GraphQL based applications
 - Making it easier to maintain production-grade, scalable GraphQL applications
@@ -65,14 +64,14 @@ We've already refactored most of the code, created a new structure, closed and f
 
 Install new version (follow the latest alpha in the [releases page](https://github.com/Urigo/graphql-cli/releases)):
 
-```
-$ npm install graphql-cli@canary
+```sh
+npm install graphql-cli@canary
 ```
 
 Create a new project with GraphQL CLI by running:
 
-```
-$ graphql init
+```sh
+graphql init
 ```
 
 GraphQL CLI will guide you and after only few seconds, your project will be ready to use!
@@ -85,21 +84,21 @@ Code generation + end-to-end type safety is a hot topic nowadays. Thanks to tool
 
 In GraphQL CLI, you get it out of the box by running:
 
-```
-$ graphql codegen
+```sh
+graphql codegen
 ```
 
 > _Discover what can be generator on [GraphQL Codegen website](https://graphql-code-generator.com)._
 
 # Production ready GraphQL Backend
 
-Thanks to integration with [**GraphBack**](https://graphback.dev/), you're able to produce an entire Data Base, GraphQL schema with operations and strongly typed resolvers.
+Thanks to integration with [**GraphBack**](https://graphback.dev), you're able to produce an entire Data Base, GraphQL schema with operations and strongly typed resolvers.
 
-```
-$ graphql generate
+```sh
+graphql generate
 ```
 
-> Take a look at [GraphBack website](https://graphback.dev/) to learn more.
+> Take a look at [GraphBack website](https://graphback.dev) to learn more.
 
 # Bulletproof your GraphQL API
 
@@ -113,12 +112,12 @@ With just few simple commands you're able to:
 - find duplicates and similar GraphQL Types
 - serve faked GraphQL schema
 
-```bash
-$ graphql diff
-$ graphql similar
-$ graphql validate
-$ graphql coverage
-$ graphql serve
+```sh
+graphql diff
+graphql similar
+graphql validate
+graphql coverage
+graphql serve
 ```
 
 > Visit [GraphQL Inspector docs](https://graphql-inspector.com).
@@ -137,7 +136,7 @@ If you prefer to use all of the Apollo toolings and products, AppSync's solution
 
 > We won't impose any choices on the users. We want the community to lead and have template generators for any technology.
 
-This project is completely open and free from any bias and we are open to any feedback and collaboration with anyone from the community. Please reach out!
+This project is completely open and free from any bias, and we are open to any feedback and collaboration with anyone from the community. Please reach out!
 
 # Example use cases of GraphQL CLI
 
@@ -161,8 +160,8 @@ As an alternative to sample apps, developers can rely on frameworks that provide
 
 But technologies that offer rapid application development might often come at the cost of the maintenance and flexibility that can seriously limit the extensibility of your application server.
 
-```bash
-$ graphql init
+```sh
+graphql init
 ```
 
 We believe that making it easy to start with GraphQL is extremely important, but without sacrificing other factors like extensibility, scalability and wider control.
@@ -183,11 +182,11 @@ We are calling leading boilerplate creators and frameworks to collaborate with u
 
 We would also love feedback from internal infrastructure teams from companies who wish to create their own best practices and guidelines.
 
-For more information please refer to [https://github.com/aerogear/graphback](https://github.com/aerogear/graphback/)
+For more information please refer to [https://github.com/aerogear/graphback](https://github.com/aerogear/graphback)
 
 # One config to rule them all — GraphQL Config
 
-_At the heart of a project created using GraphQL CLI is the GraphQL Config file. It lets the CLI know where all of the GraphQL parts are._
+_At the heart of a project created using GraphQL CLI is the GraphQL Config file. It lets the CLI know where all the GraphQL parts are._
 
 Config is essential for CLI templates and for the command creators that can utilize its extensibility to save additional metadata. Thanks to [`graphql-config`](https://graphql-config.com), the CLI can provide seamless support for every extension and streamline development experience on top of the GraphQL CLI generated projects and corresponding templates.
 
@@ -209,4 +208,4 @@ Even though we are in an alpha phase, the CLI is fully usable and ready for the 
 
 Our team is open to any suggestions and ideas for new commands.
 
-> We will support and answer all your questions on [Github](https://github.com/urigo/graphql-cli) and on our [Discord channel](https://discord.gg/xud7bH9).
+> We will support and answer all your questions on [GitHub](https://github.com/urigo/graphql-cli) and on our [Discord channel](https://discord.gg/xud7bH9).

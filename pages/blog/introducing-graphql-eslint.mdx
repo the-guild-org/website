@@ -1,20 +1,19 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Introducing GraphQL-ESLint!
+authors: dotan
+tags: [graphql, graphql-eslint, eslint]
+date: 2020-10-03
+description: A new tool by The Guild, for making your GraphQL schema and GraphQL operations more standard and robust!
+image: https://github.com/dotansimha/graphql-eslint/raw/master/logo.png
+---
 
-export const meta = {
-  title: 'Introducing GraphQL-ESLint!',
-  author: 'dotan',
-  tags: ['graphql', 'graphql-eslint', 'eslint'],
-  date: '2020-10-03',
-  description:
-    'A new tool by The Guild, for making your GraphQL schema and GraphQL operations more standard and robust!',
-  image: 'https://github.com/dotansimha/graphql-eslint/raw/master/logo.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 **We are super excited to introduce a new development tool by The Guild!**
 
-While working on very large codebases (hundreds of developers on a single codebase), we've noticed a gap in the current state of the art development flow for GraphQL developers: it's very hard to maintain standards in GraphQL schemas and GraphQL operations.
+While working on very large codebases (hundreds of developers on a single codebase), we've noticed a gap in the current state-of-the-art development flow for GraphQL developers: it's very hard to maintain standards in GraphQL schemas and GraphQL operations.
 
 Those could be standards that are specific for a single codebase or shared in the community.
 As the GraphQL ecosystem is growing quickly, we decided it's important to create a modern integration between GraphQL and ESLint, that supports all the modern needs of a GraphQL developer: [`graphql-eslint`](https://github.com/dotansimha/graphql-eslint).
@@ -46,7 +45,7 @@ yarn add -D @graphql-eslint/eslint-plugin
 
 With `graphql-eslint` you can easily validate and lint your GraphQL schema and your GraphQL operations, enforce coding-style, best practices, and avoid runtime issues.
 
-![GraphQL-ESLint](/blog-assets/graphql-eslint/1.png 'GraphQL ESLint in action')
+![GraphQL-ESLint](../../public/blog-assets/graphql-eslint/1.png 'GraphQL ESLint in action')
 
 It can run as a syntax validation tool (without a GraphQL schema), or as a complete validation solution for your GraphQL operations (with a schema loaded into it).
 
@@ -58,13 +57,13 @@ It is fully integrated with VSCode for visualizing the reported issues, and allo
 
 This package acts as a ESLint parser, and a plugin with rules.
 
-The parser we wrote transforms the [GraphQL AST](https://graphql.org/graphql-js/language/) into [ESTree structure](https://github.com/estree/estree), so it allows you to travel the GraphQL AST tree easily.
+The parser we wrote transforms the [GraphQL AST](https://graphql.org/graphql-js/language) into [ESTree structure](https://github.com/estree/estree), so it allows you to travel the GraphQL AST tree easily.
 
-If you wish to read more about [how it works, please refer to the docs directory in the repo](https://github.com/dotansimha/graphql-eslint/blob/master/docs/README.md).
+If you wish to read more about [how it works, please refer to the docs' directory in the repo](https://github.com/dotansimha/graphql-eslint/blob/master/docs/README.md).
 
 ## Writing your own rules
 
-Since it's running as a real ESLint parser, [you can easiliy customize it and write your own rules](https://github.com/dotansimha/graphql-eslint/blob/master/docs/custom-rules.md), based on your project's needs and preferences.
+Since it's running as a real ESLint parser, [you can easily customize it and write your own rules](https://github.com/dotansimha/graphql-eslint/blob/master/docs/custom-rules.md), based on your project's needs and preferences.
 
 If you are familiar with the GraphQL AST structure, you can write custom rules very quickly, since our solution comes with a wrapper that makes it easier to write and test new rules, and have full TypeScript support.
 
@@ -103,4 +102,4 @@ We decided to write a modern library that fits our clients' needs, integrates wi
 
 We hope GraphQL-ESLint becomes a central place for the community to collaborate on best practices and bring them into your team in an automated and easy way.
 
-We already use it in companies like Microsoft on a very large codebases and it helped us share our practices across thousands of developers!
+We already use it in companies like Microsoft on a very large codebases, and it helped us share our practices across thousands of developers!

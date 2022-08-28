@@ -1,33 +1,33 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL Config
+authors: kamil
+tags: [graphql, graphql-config]
+date: 2019-10-25
+description: One configuration for all your tools.
+image: /medium/6acdca885a85960c4b5f3b5c2516a7be.webm
+---
 
-export const meta = {
-  title: 'GraphQL Config',
-  author: 'kamil',
-  tags: ['graphql', 'graphql-config'],
-  date: '2019-10-25',
-  description: 'One configuration for all your tools',
-  image: '/medium/6acdca885a85960c4b5f3b5c2516a7be.webm'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 # TLDR
 
 - Visit our website **[graphql-config.com](https://graphql-config.com)**
 - [**GraphQL Config**](https://github.com/kamilkisiela/graphql-config) is **one** simple place to store **all** your GraphQL Configurations for **any** GraphQL based tool
-- [Prisma recently transferred the project](https://www.prisma.io/blog/the-guild-takes-over-oss-libraries-vvluy2i4uevs) to [The Guild](http://the-guild.dev) — and we **completely rewrote it** and addressed **more than ⅔ of the issues** (and the remaining are waiting for feedback)
-- We've already **merged configurations** from [GCG](https://graphql-code-generator.com/), [GraphQL Inspector](https://graphql-inspector.com/), [GraphQL CLI](https://github.com/Urigo/graphql-cli) — and are looking to learn and **integrate** with GraphiQL, AppSync, Apollo, Gatsby, VS-Code extensions, Relay and the GraphQL team at Facebook and any GraphQL tool creators
+- [Prisma recently transferred the project](https://prisma.io/blog/the-guild-takes-over-oss-libraries-vvluy2i4uevs) to [The Guild](/) — and we **completely rewrote it** and addressed **more than ⅔ of the issues** (and the remaining are waiting for feedback)
+- We've already **merged configurations** from [GCG](https://graphql-code-generator.com), [GraphQL Inspector](https://graphql-inspector.com), [GraphQL CLI](https://github.com/Urigo/graphql-cli) — and are looking to learn and **integrate** with GraphiQL, AppSync, Apollo, Gatsby, VS-Code extensions, Relay and the GraphQL team at Facebook and any GraphQL tool creators
 - This is an **alpha phase** — **we want your feedback**, as a user and as a creator — Please [**create an issue**](https://github.com/kamilkisiela/graphql-config) or [**join our Discord channel**](https://discord.gg/xud7bH9)
 
 # How did we get here?
 
 About 2 years ago Prisma came up with a great idea for the GraphQL community — Why repeat yourself in creating your configuration for each tool you use in your application.
 
-So together with many developers from the GraphQL community, [they introduced the GraphQL Config library and spec](https://www.prisma.io/blog/new-tooling-to-improve-your-graphql-workflows-7240c81e1ba3) and many tools have since embraced that standard.
+So together with many developers from the GraphQL community, [they introduced the GraphQL Config library and spec](https://prisma.io/blog/new-tooling-to-improve-your-graphql-workflows-7240c81e1ba3) and many tools have since embraced that standard.
 
 But time has passed and the library slowly became unmaintained.
 
-Prisma were very kind and generous with moving the project forward and [passing it to us](https://www.prisma.io/blog/the-guild-takes-over-oss-libraries-vvluy2i4uevs).
+Prisma were very kind and generous with moving the project forward and [passing it to us](https://prisma.io/blog/the-guild-takes-over-oss-libraries-vvluy2i4uevs).
 
 So when we took over the GraphQL Config, our main goal was to bring it back to life and push it forward for the community.
 
@@ -40,7 +40,7 @@ We asked for feedback, looked at existing and new tools that came out since it w
 - Highly **customizable** and **extensible**
 - More **useful** structure
 - **Flexible** and helpful enough to become a standard in the community
-- Make it **platform agnostic** (Node, Browser)
+- Make it **platform-agnostic** (Node, Browser)
 
 ---
 
@@ -48,11 +48,11 @@ We asked for feedback, looked at existing and new tools that came out since it w
 
 We've already refactored most of the code, created a new structure, referenced all the related issues and released a new alpha version:
 
-```
+```sh
 npm install graphql-config@next
 ```
 
-```
+```sh
 yarn add graphql-config@next
 ```
 
@@ -209,11 +209,11 @@ export const RelayLoader = {
 }
 ```
 
-We maintain [a few loaders](https://github.com/ardatan/graphql-toolkit/tree/master/packages/loaders) but we believe the community will start to cover other use cases as well.
+We maintain [a few loaders](https://github.com/ardatan/graphql-toolkit/tree/master/packages/loaders), but we believe the community will start to cover other use cases as well.
 
 # All platforms
 
-Our goal is to make **GraphQL Config platform agnostic**.
+Our goal is to make **GraphQL Config platform-agnostic**.
 
 The old version relied heavily on Node's file system, which is a blocker in many cases.
 
@@ -230,7 +230,7 @@ We believe `extensions` should actually **extend** GraphQL Config's behavior.
 Take for example loaders. Imagine you want to collect operations and fragments from your Relay project. With the new GraphQL Config, you can write a loader and register it through a Relay Extension.
 
 ```typescript
-const RelayExtension = (api) => {
+const RelayExtension = api => {
   api.loaders.documents.register(RelayLoader)
 
   return {

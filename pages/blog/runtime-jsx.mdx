@@ -1,15 +1,15 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Implementing a runtime version of JSX
+authors: eytan
+tags: [react]
+date: 2018-11-12
+description: Learning how to think like a JSX parser and building an AST
+image: /medium/fadbe31be89eb8b0be9fc5f035c9617d.png
+---
 
-export const meta = {
-  title: 'Implementing a runtime version of JSX',
-  author: 'eytan',
-  tags: ['react'],
-  date: '2018-11-12',
-  description: 'Learning how to think like a JSX parser and building an AST',
-  image: '/medium/fadbe31be89eb8b0be9fc5f035c9617d.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 ## Learning how to think like a JSX parser and building an AST
 
@@ -17,7 +17,7 @@ JSX is one of the most commonly used syntax extensions out there. Originally JSX
 
 It definitely went through an evolution, but regardless of its phase, all parsers had a similar output — which is an AST. Once we have an AST representation of the JSX code, interpretation is extremely easy.
 
-Today we're gonna understand how a JSX parser thinks by implementing one of our own. Unlike Babel, rather than compiling, we're gonna evaluate the nodes in the AST according to their types, which means that we will be able to use JSX during runtime.
+Today we're going to understand how a JSX parser thinks by implementing one of our own. Unlike Babel, rather than compiling, we're going to evaluate the nodes in the AST according to their types, which means that we will be able to use JSX during runtime.
 
 ---
 
@@ -30,10 +30,7 @@ class Hello extends React.Component {
   }
 }
 
-ReactDOM.render(
-  jsx`<${Hello} name="World" />`,
-  document.getElementById('container')
-)
+ReactDOM.render(jsx`<${Hello} name="World" />`, document.getElementById('container'))
 ```
 
 Before we go ahead and rush to implementing the parser let's understand what we're aiming for. JSX simply takes an HTML-like syntax and transforms it into nested `React.createElement()` calls. What makes JSX unique is that we can use string interpolation within our HTML templates, so we can provide it with data which doesn't necessarily has to be serialized, things like functions, arrays, or objects.
@@ -41,7 +38,7 @@ Before we go ahead and rush to implementing the parser let's understand what we'
 So given the following code:
 
 ```jsx
-const el = (props) => (
+const el = props => (
   <div onClick={props.onClick}>
     <Icon src={props.icon} />
     <span>{props.text}</span>
@@ -52,7 +49,7 @@ const el = (props) => (
 We should get the following output once compiling it with Babel:
 
 ```javascript
-const el = (props) =>
+const el = props =>
   React.createElement(
     'div',
     { onClick: props.onClick },
@@ -61,7 +58,7 @@ const el = (props) =>
   )
 ```
 
-Just aquick reminder — the compiled result should be used internally by ReactDOM to differentiate changes in the virtual DOM and then render them. This is something which is React specific and has nothing to do with JSX, so at this point we have achieved our goal.
+Just a quick reminder — the compiled result should be used internally by `ReactDOM` to differentiate changes in the virtual DOM and then render them. This is something which is React specific and has nothing to do with JSX, so at this point we have achieved our goal.
 
 Essentially there are 3 things we should figure out when parsing a JSX code:
 
@@ -71,13 +68,13 @@ Essentially there are 3 things we should figure out when parsing a JSX code:
 
 As I mentioned earlier, it would be best if we could break down the code into nodes first and represent it as an AST. Looking at the input of the example above, we can roughly visualize how we would pluck the nodes from the code:
 
-![](/medium/fadbe31be89eb8b0be9fc5f035c9617d.png 'Analyzing the JSX code.')
+![](../../public/medium/fadbe31be89eb8b0be9fc5f035c9617d.png 'Analyzing the JSX code.')
 
 And to put things simple, here's a schematic representation of the analysis above:
 
-![](/medium/7c7f8978be94efed4206593bbf067568.png 'A schematic representation of the analysis.')
+![](../../public/medium/7c7f8978be94efed4206593bbf067568.png 'A schematic representation of the analysis.')
 
-Accordingly, we're gonna have 3 types of nodes:
+Accordingly, we're going to have 3 types of nodes:
 
 - Element node.
 - Props node.
@@ -87,13 +84,13 @@ Let's decide that each node has a base schema with the following properties:
 
 - node.type — which will represent the type name of the node, e.g. `element`, `props` and `value`. Based on the node type we can also determine that additional properties that the node's gonna carry. In our parser, each node type should have the following additional properties:
 
-![](/medium/55cc9640bbaec3a7b9a5948d71adfd3a.png 'Node type schemas.')
+![](../../public/medium/55cc9640bbaec3a7b9a5948d71adfd3a.png 'Node type schemas.')
 
 - node.length —which represents the length of the sub-string in the code that the node occupies. This will help us trim the code string as we go with the parsing process so we can always focus on relevant parts of the string for the current node:
 
-![](/medium/7ba5847a0000df3ef06a6913a79346f2.png 'Any time we parse a small part of the string, we slice the part we've just parsed.')
+![](../../public/medium/7ba5847a0000df3ef06a6913a79346f2.png 'Any time we parse a small part of the string, we slice the part we've just parsed.')
 
-In the function that we're gonna build we'll be taking advantage of ES6's tagged templates. Tagged templates are string literals which can be processed by a custom handler according to our needs (see [MDN docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#Tagged_templates)).
+In the function that we're going to build we'll be taking advantage of ES6's tagged templates. Tagged templates are string literals which can be processed by a custom handler according to our needs (see [MDN docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#Tagged_templates)).
 
 So essentially the signature of our function should look like this:
 
@@ -165,14 +162,14 @@ Since we had 3 node types, it means that for each of them we should have a dedic
 +┊  ┊41┊}
 ```
 
-Each function creates the basic node type and returns it. Note that at the begnning of the scope of each function I've defined a couple of variables:
+Each function creates the basic node type and returns it. Note that at the beginning of the scope of each function I've defined a couple of variables:
 
 - `let match` - which will be used to store regular expression matches on the fly.
-- `let length` - which will be used to store the length of the match so we can trim the JSX code string right after and accumulate it in `node.length`.
+- `let length` - which will be used to store the length of the match, so we can trim the JSX code string right after and accumulate it in `node.length`.
 
 For now the `parseValue()` function is pretty straight forward and just returns a node which wraps the given string.
 
-We will begin with the implementation of the element node and we will branch out to other nodes as we go. First we will try to figure out the name of the element. If an element tag opener was not found, we will assume that the current part of the code is a value:
+We will begin with the implementation of the element node, and we will branch out to other nodes as we go. First we will try to figure out the name of the element. If an element tag opener was not found, we will assume that the current part of the code is a value:
 
 ```diff
 @@ -16,6 +16,19 @@
@@ -250,7 +247,7 @@ Now that we've plucked the right substring, we can go ahead and implement the `p
 
 The logic is pretty straight forward — we iterate through the string, and each time we try match the next key->value pair. Once a pair wasn't found, we return the node with the accumulated props. Note that providing only an attribute with no value is also a valid syntax which will set its value to `true` by default, thus the `/ *\w+/` regexp. Let's proceed where we left of with the element parsing implementation.
 
-We need to figure out whether the current element is self closing or not. If it is, we will return the node, and otherwise we will continue to parsing its children:
+We need to figure out whether the current element is self-closing or not. If it is, we will return the node, and otherwise we will continue to parsing its children:
 
 ```diff
 @@ -38,6 +38,22 @@
@@ -277,7 +274,7 @@ We need to figure out whether the current element is self closing or not. If it 
  ┊42┊58┊}
 ```
 
-Accordingly, we're gonna implement the children parsing logic:
+Accordingly, we're going to implement the children parsing logic:
 
 ```diff
 @@ -54,6 +54,16 @@
@@ -366,10 +363,10 @@ The HTML parsing part is finished! Now we can call the `parseElement()` for any 
 
 ## Leveling up — string interpolation
 
-Now we're gonna add string interpolation on top of the HTML string parsing logic. Since we still wanna use the power of regexp at its full potential, we're gonna assume that the given string would be a template with placeholders, where each of them should be replaced with a value. That would be the easiest and most efficient way, rather than accepting an array of string splits.
+Now we're going to add string interpolation on top of the HTML string parsing logic. Since we still want to use the power of regexp at its full potential, we're going to assume that the given string would be a template with placeholders, where each of them should be replaced with a value. That would be the easiest and most efficient way, rather than accepting an array of string splits.
 
-```javascript
-;[
+```text
+[
   '<__jsxPlaceholder>Hello __jsxPlaceholder</__jsxPlaceholder>',
   [MyComponent, 'World', MyComponent]
 ]
@@ -474,7 +471,7 @@ We will add an additional property to the node called: `node.tag`. The tag prope
 
 We also made sure that the closing tag matches the opening tag. I've decided to “swallow” errors rather than throwing them for the sake of simplicity, but generally speaking it would make a lot of sense to implement error throws within the parsing functions.
 
-Up next would be the props node. This is fairly simple, we're only gonna add an additional regexp to the array of matchers, and that regexp will check for placeholders. If a placeholder was detected, we're gonna replace it with the next value in the values stack:
+Up next would be the props node. This is fairly simple, we're only going to add an additional regexp to the array of matchers, and that regexp will check for placeholders. If a placeholder was detected, we're gonna replace it with the next value in the values stack:
 
 ```diff
 @@ -95,6 +95,7 @@
@@ -602,8 +599,8 @@ At this point we should have a function which can transform a JSX code into an A
 
 The main function of the module should be called with a template tag. If you went through the previous step, you should know that a consistent string has an advantage over an array of splits of strings, since we can unleash the full potential of a regexp with ease. Accordingly, we will take all the given splits and join them with the `placeholder` constant.
 
-```javascript
-['<', '> Hello ', '</', '>'] -> '<__jsxPlaceholder>Hello __jsxPlaceholder</__jsxPlaceholder>'
+```text
+['<', '> Hello ', '</', '>'] // '<__jsxPlaceholder>Hello __jsxPlaceholder</__jsxPlaceholder>'
 ```
 
 Once we join the string we can create React elements recursively:
@@ -654,9 +651,9 @@ Note that if a node of value type is being iterated, we will just return the raw
 
 Our JSX runtime function is now ready to use!
 
-If you wonder how did I structure this tutorial so nicely with steps and beautiful diffs — check out [tortilla.academy](https://tortilla.academy/) by [Uri Goldshtein](https://twitter.com/UriGoldshtein).
+If you wonder how did I structure this tutorial so nicely with steps and beautiful diffs — check out [tortilla.academy](https://tortilla.academy) by [Uri Goldshtein](https://twitter.com/UriGoldshtein).
 
-Lastly, you can view the source code at the official [Github repository](https://github.com/DAB0mB/jsx-runtime) or you can download a Node.JS package using NPM:
+Lastly, you can view the source code at the official [GitHub repository](https://github.com/DAB0mB/jsx-runtime), or you can download a Node.js package using NPM:
 
 ```bash
 npm install jsx-runtime

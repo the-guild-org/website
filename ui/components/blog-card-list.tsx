@@ -2,10 +2,10 @@ import { ReactElement } from 'react';
 import clsx from 'clsx';
 import NextLink from 'next/link';
 import { format } from 'date-fns';
+import { AUTHORS } from '@/authors';
 import { Description } from './description';
 import { Heading } from './heading';
-import { authors } from '../authors';
-import { MetaWithLink, pickAuthor } from '../../lib/meta';
+import { MetaWithLink } from '../../lib/meta';
 
 export const BlogCardList = ({
   articles,
@@ -15,15 +15,10 @@ export const BlogCardList = ({
   className?: string;
 }): ReactElement => {
   return (
-    <div
-      className={clsx(
-        'my-6 flex flex-wrap justify-center gap-x-7 gap-y-10',
-        className
-      )}
-    >
-      {articles.map((article) => (
+    <div className={clsx('my-6 flex flex-wrap justify-center gap-x-7 gap-y-10', className)}>
+      {articles.map(article => (
         <NextLink
-          key={article.title}
+          key={article.link}
           href={article.link}
           className="
           flex
@@ -37,6 +32,7 @@ export const BlogCardList = ({
           bg-white
           transition-colors
           hover:border-[#7F818C]
+          hover:!no-underline
           dark:border-transparent
           dark:bg-[#101218]
           hover:dark:border-[#7F818C]"
@@ -57,9 +53,7 @@ export const BlogCardList = ({
               {article.description}
             </Description>
             <div className="mt-auto text-xs">
-              <span className="font-bold dark:text-[#C4C4C4]">
-                {authors[pickAuthor(article)].name}
-              </span>
+              <span className="font-bold dark:text-[#C4C4C4]">{AUTHORS[article.authors[0]].name}</span>
               <span className="dark:text-gray-500">
                 <span className="select-none"> • </span>
                 {format(new Date(article.date), 'LLL do y')}

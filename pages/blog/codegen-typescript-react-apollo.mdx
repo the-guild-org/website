@@ -1,15 +1,16 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL Code Generator for Typescript React Apollo
+authors: arda
+tags: [graphql, codegen, react, react-apollo, hooks]
+date: 2018-08-21
+updateDate: 2020-05-20
+description: Generate React Apollo Query, Mutation and Subscription components and hook. All completely typed by TypeScript.
+image: /medium/897186a7e3bfe61428b91f7f82c5b922.png
+---
 
-export const meta = {
-  title: 'GraphQL Code Generator for Typescript React Apollo',
-  author: 'arda',
-  tags: ['graphql', 'codegen', 'react', 'react-apollo', 'hooks'],
-  date: '2018-08-21',
-  updateDate: '2020-05-20',
-  description:
-    'Generate React Apollo Query, Mutation and Subscription components and hook. All completely typed by TypeScript.',
-  image: '/medium/897186a7e3bfe61428b91f7f82c5b922.png'
-}
+import { Article } from '@/blog/article'
+
+<Article />
 
 export const embedOptions = {
   theme: 'light',
@@ -17,9 +18,7 @@ export const embedOptions = {
   previewwindow: 'console'
 }
 
-export default withArticle(meta)
-
-[GraphQL Code Generator](https://github.com/dotansimha/graphql-code-generator/) is a template based generator that lets you generate anything out of your GraphQL schemas and queries.
+[GraphQL Code Generator](https://github.com/dotansimha/graphql-code-generator) is a template based generator that lets you generate anything out of your GraphQL schemas and queries.
 
 So we've created a new template that generates **React Apollo**'s **_Query_**, **_Mutation_** and **_Subscription_** components, as well as **_HOC_** components, all completely typed by **_TypeScript_**, so you won't have to do that work manually!
 
@@ -29,7 +28,7 @@ Whether you use the new **React Apollo API** or you prefer to use **HOC**, there
 
 Based on a GraphQL static schema and a GraphQL query, the [GraphQL Codegen - Typescript React Apollo Template](https://github.com/dotansimha/graphql-code-generator/tree/master/packages/templates/typescript-react-apollo) will generate a ready to use, fully typed components. All you need to do is to write your query, mutation or subscription and just use those components in your application.
 
-![](/medium/b58035f95547416aab98b54d3ce812f6.png)
+![](../../public/medium/b58035f95547416aab98b54d3ce812f6.png)
 
 Using **_React_**, **_TypeScript_** and **_GraphQL_** in a coordinated way, gives us new level of simplicity and power for our developer experience:
 
@@ -46,8 +45,7 @@ We prepared an example of how to use those auto generated components, [it's avai
   size={'300px'}
   embedOptions={{
     ...embedOptions,
-    module:
-      '/src/List.tsx,/codegen.yml,/src/all-posts.query.graphql,/src/generated-types.tsx'
+    module: '/src/List.tsx,/codegen.yml,/src/all-posts.query.graphql,/src/generated-types.tsx'
   }}
 />
 
@@ -112,10 +110,9 @@ Then, you simply import the auto-generated React Hook, named after your GraphQL 
   embedOptions={{ ...embedOptions, module: '/src/List.tsx' }}
 />
 
-You can learn more about [React Apollo API here](https://www.apollographql.com/docs/react/).
+You can learn more about [React Apollo API here](https://apollographql.com/docs/react).
 
-:::note
-
+<Callout>
 If you are not using React Hooks, and you prefer to use React HOC or React Components for your data fetching, you can change the codegen configuration flags according to your needs:
 
 `withHooks: true` - will generate type-safe hooks.
@@ -124,7 +121,7 @@ If you are not using React Hooks, and you prefer to use React HOC or React Compo
 
 `withHOC: true` - will generate type-safe High-Order-Components.
 
-:::
+</Callout>
 
 ---
 
@@ -134,4 +131,4 @@ The vision that guides us is that you should be able to sketch a list of data ty
 
 Once you'll write an app like that, you will ask yourself why did you write all the other boilerplate code by yourself before.
 
-This is just one template out of many, check out more things you can generate with the [GraphQL Code Generator](https://graphql-code-generator.com/) and give us ideas about other templates you would like to see implemented.
+This is just one template out of many, check out more things you can generate with the [GraphQL Code Generator](https://graphql-code-generator.com) and give us ideas about other templates you would like to see implemented.

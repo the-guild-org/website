@@ -1,22 +1,22 @@
-import withArticle from '../../ui/blog/article'
+---
+title: 'TypedDocumentNode: the next generation of GraphQL and TypeScript'
+authors: dotan
+tags: [graphql, codegen, typescript, react]
+date: 2020-07-22
+updateDate: 2020-08-02
+description: Using GraphQL and Typescript on the client just became a lot easier!
+image: /blog-assets/graphql-code-generator/cover.png
+---
 
-export const meta = {
-  title: 'TypedDocumentNode: the next generation of GraphQL and TypeScript',
-  author: 'dotan',
-  tags: ['graphql', 'codegen', 'typescript', 'react'],
-  date: '2020-07-22',
-  updateDate: '2020-08-02',
-  description:
-    'Using GraphQL and Typescript on the client just became a whole lot easier!',
-  image: '/blog-assets/graphql-code-generator/cover.png'
-}
+import { Article } from '@/blog/article'
+
+<Article />
+
 // Examples are in: https://codesandbox.io/s/quizzical-browser-1em9r?file=/index.ts
 
-export default withArticle(meta)
+**Using GraphQL and Typescript on the client just became a lot easier!**
 
-**Using GraphQL and Typescript on the client just became a whole lot easier!**
-
-The [GraphQL Code Generator](https://graphql-code-generator.com/) project has been around for 3 years, and we are constantly keep working on it and listening to your feedback!
+The [GraphQL Code Generator](https://graphql-code-generator.com) project has been around for 3 years, and we are constantly keep working on it and listening to your feedback!
 
 As we were working and thinking about [the next major version of the codegen](https://github.com/dotansimha/graphql-code-generator/discussions/3955), we came up with a really awesome tool which didn't require any breaking change!
 
@@ -26,7 +26,7 @@ A new and easier way to enjoy and integrate GraphQL and Typescript on the client
 
 `TypedDocumentNode` is a development tool for creating fully typed `DocumentNode` objects. It means that just by passing the GraphQL query/mutation/subscription/fragment to a supporting GraphQL client library, you'll get fully-typed result and variables objects.
 
-This is made possible by [TypeScript type inference](https://www.typescriptlang.org/docs/handbook/type-inference.html).
+This is made possible by [TypeScript type inference](https://typescriptlang.org/docs/handbook/type-inference.html).
 
 ## TL;DR
 
@@ -49,7 +49,7 @@ We started with manually writing TypeScript types for our operations. It worked,
 
 ### 2017: Generated Types
 
-We moved to generated TypeScript types, with the power of [GraphQL Code Generator](https://graphql-code-generator.com/) - using `@graphql-codegen/typescript` and `@graphql-codegen/typescript-operations` plugins.
+We moved to generated TypeScript types, with the power of [GraphQL Code Generator](https://graphql-code-generator.com) - using `@graphql-codegen/typescript` and `@graphql-codegen/typescript-operations` plugins.
 
 It's simpler (no need to maintain the types manually) but it requires us to manually specify the types each time we use the query.
 
@@ -80,7 +80,7 @@ With the support of the client-side libraries, we get automatic type inference a
 This project works in the following way:
 
 1. You write your GraphQL operations (`query` / `mutation` / `subscription` / `fragment`) in any way your prefer (for example - in a `.graphql` file).
-2. [GraphQL Code Generator](https://graphql-code-generator.com/) will generate a `TypedDocumentNode` for your operations (which is a bundle of pre-compiled `DocumentNode` with the operation result type and variables type).
+2. [GraphQL Code Generator](https://graphql-code-generator.com) will generate a `TypedDocumentNode` for your operations (which is a bundle of pre-compiled `DocumentNode` with the operation result type and variables type).
 3. Instead of using your `.graphql` file, import the generated `TypedDocumentNode` and use it with your GraphQL client framework.
 4. You'll get automatic type inference, auto-complete and type checking based on your GraphQL operation.
 
@@ -88,8 +88,7 @@ The definition of `TypedDocumentNode` is super simple - it's all about the TS ge
 
 ```ts
 import { DocumentNode } from 'graphql'
-export interface TypedDocumentNode<Result = {}, Variables = {}>
-  extends DocumentNode {}
+export interface TypedDocumentNode<Result = {}, Variables = {}> extends DocumentNode {}
 ```
 
 ### Can I use it now?

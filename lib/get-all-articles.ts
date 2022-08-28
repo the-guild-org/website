@@ -1,16 +1,20 @@
 import { join } from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { globby } from 'globby';
-import JSON5 from 'json5';
 import { format } from 'date-fns';
-import { MetaWithLink } from './meta';
+import { unified } from 'unified';
+import parse from 'remark-parse';
+import frontmatter from 'remark-frontmatter';
+import parseFrontmatter from 'remark-parse-frontmatter';
+import stringify from 'remark-stringify';
+import remarkMdx from 'remark-mdx';
+import { MetaWithLink, Meta } from './meta';
+import { asArray } from './as-array';
 
 /**
  * Based on the files found in `pages/blog/*.mdx`
  */
-export async function getAllArticles(
-  tagsFilter: string[] = []
-): Promise<MetaWithLink[]> {
+export async function getAllArticles(tagsFilter: string[] = []): Promise<MetaWithLink[]> {
   const blogDir = join(process.cwd(), 'pages/blog');
   const filenames = await globby('*.mdx', {
     cwd: blogDir,
@@ -18,47 +22,52 @@ export async function getAllArticles(
   });
 
   const articles = await Promise.all(
-    filenames.map((file) => readMeta(blogDir, file))
+    filenames.filter(filename => filename !== 'index.mdx').map(file => readMeta(blogDir, file))
   );
 
   return articles
-    .filter(
-      (article) =>
-        tagsFilter.length === 0 ||
-        article.tags?.some((tag) => tagsFilter.includes(tag))
-    )
+    .filter(article => tagsFilter.length === 0 || asArray(article.tags).some(tag => tagsFilter.includes(tag)))
     .sort(sortByDateDesc);
 }
 
 /**
- * Reads exported `meta` and parses with JSON5
+ * Reads frontMatter
  */
 async function readMeta(dir: string, file: string): Promise<MetaWithLink> {
-  const filepath = join(dir, file);
-  const raw = await readFile(filepath, 'utf-8');
+  const raw = await readFile(join(dir, file), 'utf8');
 
-  const [, result] = /export const meta = {([^}]+)/.exec(raw);
-
-  const parsed = JSON5.parse(`{ ${result.trim().replace(/,$/, '')} }`);
-
-  return {
-    ...parsed,
-    link: `/blog/${file.replace(/\.mdx?/, '')}`,
-    date: format(new Date(parsed.date), 'y-MM-dd'),
-  };
+  try {
+    const processor = unified()
+      .use(parse)
+      .use(remarkMdx)
+      .use(frontmatter)
+      .use(parseFrontmatter, {
+        // properties: {
+        //   title: { type: 'title', required: true },
+        //   tags: { type: 'tags', minItems: 1 },
+        // },
+      })
+      .use(stringify);
+    const vFile = await processor.process(raw);
+    const parsed = vFile.data.frontmatter as Meta;
+    return {
+      ...parsed,
+      tags: asArray(parsed.tags),
+      authors: asArray(parsed.authors),
+      link: `/blog/${file.replace(/\.mdx?/, '')}`,
+      date: format(new Date(parsed.date), 'y-MM-dd'),
+    };
+  } catch (e) {
+    console.error('Error from filepath:', file);
+    throw e;
+  }
 }
 
-function sortByDateDesc(left: MetaWithLink, right: MetaWithLink) {
+function sortByDateDesc(left: MetaWithLink, right: MetaWithLink): number {
   const date1 = new Date(left.date);
   const date2 = new Date(right.date);
 
-  if (date1 > date2) {
-    return -1;
-  }
-
-  if (date1 < date2) {
-    return 1;
-  }
-
+  if (date1 > date2) return -1;
+  if (date1 < date2) return 1;
   return 0;
 }

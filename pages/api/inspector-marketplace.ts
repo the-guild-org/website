@@ -19,10 +19,7 @@ const zapier = process.env.ZAPIER_INSPECTOR_WEBHOOK;
 const channelID = 'CLZ5BCE7K';
 
 function isAllowed(req: NextApiRequest, body: string) {
-  const signature = ((req.headers['x-hub-signature'] as string) || '').replace(
-    'sha1=',
-    ''
-  );
+  const signature = ((req.headers['x-hub-signature'] as string) || '').replace('sha1=', '');
 
   console.log('Received signature:', signature);
 
@@ -64,11 +61,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const url = sender.html_url;
   let isOrg = false;
 
-  if (
-    marketplace_purchase &&
-    marketplace_purchase.account &&
-    marketplace_purchase.account.type === 'Organization'
-  ) {
+  if (marketplace_purchase && marketplace_purchase.account && marketplace_purchase.account.type === 'Organization') {
     // eslint-disable-next-line prefer-destructuring
     login = marketplace_purchase.account.login;
     email = marketplace_purchase.account.organization_billing_email;
@@ -88,7 +81,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           `_Url:_ ${url}`,
         ].join('\n'),
       })
-      .then((result) => {
+      .then(result => {
         if (result.error) {
           console.error(result.error);
           bugsnagClient.addMetadata('slack', {
@@ -96,11 +89,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           });
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error(error);
         bugsnagClient.notify(error);
       }),
-    axios.post(zapier, payload).catch((error) => {
+    axios.post(zapier, payload).catch(error => {
       console.error(error);
       bugsnagClient.notify(error);
     }),
@@ -108,10 +101,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       name: login,
       email,
       url,
-      segments: ['inspector', 'inspector-app', isOrg ? 'org' : null].filter(
-        Boolean
-      ),
-    }).catch((error) => {
+      segments: ['inspector', 'inspector-app', isOrg ? 'org' : null].filter(Boolean),
+    }).catch(error => {
       console.error(error);
       bugsnagClient.notify(error);
     }),

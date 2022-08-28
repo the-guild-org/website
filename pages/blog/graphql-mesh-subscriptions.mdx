@@ -1,21 +1,20 @@
-import withArticle from '../../ui/blog/article'
+---
+title: Webhooks as GraphQL Subscriptions using GraphQL Mesh
+authors: arda
+tags: [subscriptions, webhooks, graphql, mesh]
+date: 2020-10-05
+description: Consume your legacy webhooks and subscriptions from any data source as GraphQL Subscriptions with GraphQL Mesh.
+image: /blog-assets/graphql-mesh-subscriptions/cover.png
+---
 
-export const meta = {
-  title: 'Webhooks as GraphQL Subscriptions using GraphQL Mesh',
-  author: 'arda',
-  tags: ['subscriptions', 'webhooks', 'graphql', 'mesh'],
-  date: '2020-10-05',
-  description:
-    'Consume your legacy webhooks and subscriptions from any data source as GraphQL Subscriptions with GraphQL Mesh',
-  image: '/blog-assets/graphql-mesh-subscriptions/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
-GraphQL Mesh lets you query any data source and protocol with GraphQL by using powerful handlers (Swagger/OpenAPI, gRPC, SOAP and others..)
+GraphQL Mesh lets you query any data source and protocol with GraphQL by using powerful handlers (Swagger/OpenAPI, gRPC, SOAP and others...)
 Today we are happy to announce that GraphQL Mesh now allows you to consume your existing HTTP Webhooks as GraphQL Subscriptions!
 
-Not only that, but you could extend the GraphQL Subscriptions result so you could subscribe to a webhook and get back an enriched data result, with data from other sources that don't have push communication abilities.
+Not only that, but you could extend the GraphQL Subscriptions result, so you could subscribe to a webhook and get back an enriched data result, with data from other sources that don't have push communication abilities.
 
 And it's also possible even if your webhooks don't have any schema!
 
@@ -27,7 +26,7 @@ Let's see how to create a GraphQL Subscription from a Webhook, once without a sc
 
 In the following example configuration, we have a regular GraphQL Mesh configuration for schemaless REST API.
 
-```yml
+```yaml
 sources:
   - name: Example
     handler:
@@ -52,7 +51,7 @@ sources:
 
 Assume that we point our REST API to send HTTP requests to our Mesh server's `/webhooks/todo_added` path, so we need to configure Mesh to listen to that path.
 
-```yml
+```yaml
 serve:
   port: 4000
   handlers:
@@ -64,7 +63,7 @@ Under `serve` we define the port we want Mesh to listen to and add a handler in 
 
 Let's define a new field under `Subscription` field under `operations` in the handler level;
 
-```yml
+```yaml
 operations:
   - type: Subscription
     field: todoAdded

@@ -1,33 +1,23 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL error handling to the max with Typescript, codegen and fp-ts
+authors: gthau
+tags: [graphql, typescript, codegen, fp-ts, error-handling, best-practices]
+date: 2022-03-07
+description: Handle unsafe APIs in a typesafe way with Typescript and Functional Programming.
+image: /blog-assets/graphql-error-handling-with-fp/graphql-error-1024x512.png
+thumbnail: /blog-assets/graphql-error-handling-with-fp/graphql-error-1024x512.png
+---
 
-export const meta = {
-  title: 'GraphQL error handling to the max with Typescript, codegen and fp-ts',
-  author: 'gthau',
-  tags: [
-    'graphql',
-    'typescript',
-    'codegen',
-    'fp-ts',
-    'error-handling',
-    'best-practices'
-  ],
-  date: '2022-03-07',
-  description:
-    'Handle unsafe APIs in a typesafe way with Typescript and Functional Programming',
-  image:
-    '/blog-assets/graphql-error-handling-with-fp/graphql-error-1024x512.png',
-  thumbnail:
-    '/blog-assets/graphql-error-handling-with-fp/graphql-error-1024x512.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
 Contrary to REST, GraphQL does not use Status Code to differentiate a successful result from an exception. In REST, one can send a response with a appropriate status code to inform the caller about the kind of exception encountered, e.g.:
 
-- 400: bad request (e.g. invalid inputs)
-- 401 or 403: unauthorized (need authentication) or forbidden (insufficient permission)
-- 404: resource not found
-- 500: internal server error
+- `400`: bad request (e.g. invalid inputs)
+- `401` or `403`: unauthorized (need authentication) or forbidden (insufficient permission)
+- `404`: resource not found
+- `500`: internal server error
 - and more.
 
 In GraphQL, we manage errors in a different way. We'll see in this article how to:
@@ -39,7 +29,7 @@ In GraphQL, we manage errors in a different way. We'll see in this article how t
 
 All the code examples can be found in this [repository](https://github.com/gthau/graphql-error-handling-with-union-and-fpts).
 
-# GraphQL default error handling
+## GraphQL default error handling
 
 In GraphQL, all requests must go to a single endpoint:
 
@@ -48,11 +38,12 @@ In GraphQL, all requests must go to a single endpoint:
 A GraphQL API will always return a `200 OK` Status Code, even in case of error.
 You'll get a 5xx error in case the server is not available at all.
 
-:::note
+<Callout>
 This is actually a common practice, but it is not mandatory. You could send GraphQL responses with different Status Codes. It would however need to be implemented at the server level and not at the operation resolvers level.
 
-As an example, you can checkout [graphql-helix implementation](https://github.com/contra/graphql-helix/blob/a796f9d2afdd8c2d91b745edbc53c5d49b716ba6/packages/core/lib/process-request.ts#L92-L281) of some error cases' responses with different Status Codes, e.g. 400 for GraphQL syntax or validation error, 405 when using not allowed HTTP method (e.g. GET for mutations or using anything else than POST or GET for queries).
-:::
+As an example, you can check out [graphql-helix implementation](https://github.com/contra/graphql-helix/blob/a796f9d2afdd8c2d91b745edbc53c5d49b716ba6/packages/core/lib/process-request.ts#L92-L281) of some error cases' responses with different Status Codes, e.g. 400 for GraphQL syntax or validation error, 405 when using not allowed HTTP method (e.g. GET for mutations or using anything else than POST or GET for queries).
+
+</Callout>
 
 The standard error handling mechanism from GraphQL with return a JSON containing:
 
@@ -78,15 +69,16 @@ This standard error handling is not satisfactory for the many reasons:
 3. it is not self-documented: by looking at the operation signature, you don't know what might fail
 4. it treats some domain results as errors / exceptions whereas they are just alternate results of the operation. E.g. an entity not found for a given id and a user not having permission to access an entity belong to the domain model, whereas runtime exceptions such as the GraphQL server failing to communicate with the database / external microservice, or an operation timing out because of slowness are real exceptions: we don't get any result that relates to domain model, just an unexpected runtime error.
 
-# Better modelisation of errors using Union and Interfaces
+## Better modelisation of errors using Union and Interfaces
 
 GraphQL has support for Union types. We can take advantage of it and design our schema to specify all possible results: expected and unexpected / error cases.
 
-:::note
+<Callout>
 GraphQL Union is available for Types only, not for Inputs. However, the [`oneOf` directive](https://github.com/graphql/graphql-spec/pull/825) will bridge the gap in the future.
 
-If you use [Envelop](https://www.envelop.dev/) or [GraphQL Yoga](https://www.graphql-yoga.com/) (both developed by [The Guild](https://the-guild.dev/)), you can already benefit from it today by using this [Envelop plugin](https://www.envelop.dev/plugins/use-extended-validation#schema-directive-flow))
-:::
+If you use [Envelop](https://envelop.dev) or [GraphQL Yoga](https://graphql-yoga.com) (both developed by [The Guild](/)), you can already benefit from it today by using this [Envelop plugin](https://envelop.dev/plugins/use-extended-validation#schema-directive-flow))
+
+</Callout>
 
 We can then do queries like the following:
 
@@ -151,7 +143,7 @@ Leveraging GraphQL Union types for error cases brings many benefits:
 3. Self-documented: the operation signature includes all possible cases (result and errors) therefore less documentation is required to explain the possible error cases
 4. The unexpected results are now just other possible results
 
-## Implementing Union types based error handling
+### Implementing Union types based error handling
 
 Given the following Schema:
 
@@ -199,12 +191,7 @@ type Entity {
   name: String!
 }
 
-union EntityResult =
-    Entity
-  | NotFoundError
-  | NotAllowedError
-  | InvalidInputError
-  | UnknownError
+union EntityResult = Entity | NotFoundError | NotAllowedError | InvalidInputError | UnknownError
 
 type Query {
   entity(id: ID!, userId: ID!): EntityResult!
@@ -217,13 +204,13 @@ Then, we define the query result as a Union type of the expected result (an `Ent
 For a more detailed explanation, you can read these articles:
 
 1. By [Sasha Solomon](https://twitter.com/sachee): [200 OK! Error Handling in GraphQL](https://sachee.medium.com/200-ok-error-handling-in-graphql-7ec869aec9bc)
-2. By [Laurin Quast](https://twitter.com/n1rual): [Handling GraphQL errors like a champ with unions and interfaces](https://blog.logrocket.com/handling-graphql-errors-like-a-champ-with-unions-and-interfaces/)
+2. By [Laurin Quast](https://twitter.com/n1rual): [Handling GraphQL errors like a champ with unions and interfaces](https://blog.logrocket.com/handling-graphql-errors-like-a-champ-with-unions-and-interfaces)
 3. By [Marc-André Giroux](https://twitter.com/__xuorig__): [A Guide to GraphQL Errors](https://productionreadygraphql.com/2020-08-01-guide-to-graphql-errors)
 4. Watch this video by [@notrab](https://github.com/notrab):
 
 <YouTube youTubeId="AJOh-0Gdvt8" />
 
-## Handle those Schema changes into the GraphQL server
+### Handle those Schema changes into the GraphQL server
 
 Since we changed the Schema, we also need to change the query, mutation and types resolvers.
 
@@ -259,19 +246,19 @@ const resolvers = {
 
 Since we include the `__typename` and the fields match the Schema type definitions, there is no need to define type resolvers.
 
-For more details on this solution, you can read this article from [Laurin Quast](https://github.com/n1ru4l): [Handling GraphQL errors like a champ with unions and interfaces](https://blog.logrocket.com/handling-graphql-errors-like-a-champ-with-unions-and-interfaces/).
+For more details on this solution, you can read this article from [Laurin Quast](https://github.com/n1ru4l): [Handling GraphQL errors like a champ with unions and interfaces](https://blog.logrocket.com/handling-graphql-errors-like-a-champ-with-unions-and-interfaces).
 
-# Typesafe error handling on the client-side
+## Typesafe error handling on the client-side
 
 Let's now take it to the next level using Typescript and GraphQL Code Generator.
 
-[GraphQL Code Generator](https://www.graphql-code-generator.com/) is a tool developed by [The Guild](https://the-guild.dev/) which generates type definitions which corresponds to the GraphQL schema. It has several plugins and we'll use 3 of those:
+[GraphQL Code Generator](https://graphql-code-generator.com) is a tool developed by [The Guild](/) which generates type definitions which corresponds to the GraphQL schema. It has several plugins and we'll use 3 of those:
 
-- [typescript](https://www.graphql-code-generator.com/plugins/typescript): generates the type definitions for Typescript
-- [typescript-resolvers](https://www.graphql-code-generator.com/plugins/typescript-resolvers): generates type definitions for all operations resolvers
-- [add](https://www.graphql-code-generator.com/plugins/add): append/prepend text to the generated type definitions file, it allows us to `import` some of our types into the generated file
+- [typescript](https://graphql-code-generator.com/plugins/typescript): generates the type definitions for Typescript
+- [typescript-resolvers](https://graphql-code-generator.com/plugins/typescript-resolvers): generates type definitions for all operations resolvers
+- [add](https://graphql-code-generator.com/plugins/add): append/prepend text to the generated type definitions file, it allows us to `import` some of our types into the generated file
 
-## Specific Error classes for all GraphQL schema Error types
+### Specific Error classes for all GraphQL schema Error types
 
 First we defined corresponding Error classes for the different error cases:
 
@@ -282,12 +269,19 @@ export class NoUserRightsError extends Error {}
 export class UnknownError extends Error {}
 ```
 
-:::note
-When using remote APIs, we often have the possibility to generate the types automatically [from a JSON schema](https://json-schema.org/implementations.html#code-generation) for REST APIs, [from protobuf files](https://github.com/improbable-eng/ts-protoc-gen) for gRPC-based APIs, [from a database schema](https://github.com/SweetIQ/schemats), etc. You might even be using an external API through an SDK that already provides you with all types. In such cases, the creation of specialized Error classes is not mandatory. However, it might still be a good idea to do so to provide application-specific errors rather than bubbling up 3rd-party low-level errors.
-For such cases, the upcoming Ecma TC39 proposal for [Error Cause](https://github.com/tc39/proposal-error-cause) is useful as it allows to chain errors. Polyfills exist: [Pony Cause](https://github.com/voxpelli/pony-cause) or [error-cause](https://www.npmjs.com/package/error-cause).
-:::
+<Callout>
+  When using remote APIs, we often have the possibility to generate the types automatically [from a JSON
+  schema](https://json-schema.org/implementations.html#code-generation) for REST APIs, [from protobuf
+  files](https://github.com/improbable-eng/ts-protoc-gen) for gRPC-based APIs, [from a database
+  schema](https://github.com/SweetIQ/schemats), etc. You might even be using an external API through an SDK that already
+  provides you with all types. In such cases, the creation of specialized Error classes is not mandatory. However, it
+  might still be a good idea to do so to provide application-specific errors rather than bubbling up 3rd-party low-level
+  errors. For such cases, the upcoming Ecma TC39 proposal for [Error
+  Cause](https://github.com/tc39/proposal-error-cause) is useful as it allows to chain errors. Polyfills exist: [Pony
+  Cause](https://github.com/voxpelli/pony-cause) or [error-cause](https://npmjs.com/package/error-cause).
+</Callout>
 
-:::note
+<Callout>
 A small workaround is needed because `graphql-js` treats error-returning and error-throwing the same in resolvers, therefore we need to wrap our Errors before we can safely return them from the resolvers. Let's use a simple custom wrapper type and constructor function:
 
 ```typescript
@@ -302,9 +296,9 @@ export const wrappedError = <E extends Error>(err: E) => ({
 })
 ```
 
-:::
+</Callout>
 
-## `codegen` mapping
+### `codegen` mapping
 
 GraphQL Code Generator is configured with a `codegen.yml` YAML file. In the `mappers` section, we map every type of our GraphQL Union type to its corresponding Typescript type.
 
@@ -331,18 +325,18 @@ generates:
         Entity: './src/model/data/entity.data#Entity'
 ```
 
-:::note
+<Callout>
 We use the `add` plugin to import the `WrappedError` generic wrapper type and the Errors types. If we don't do that, we would have to define the full path for each mapper, e.g.:
 
 ```yaml
 NotFoundError: 'import("./src/errors").WrappedError<import("./src/errors").NotFoundError>'
 ```
 
-:::
+</Callout>
 
 This `codegen` configuration generates the Typescript types from the Schema and the proper signatures for the operations (query/mutation/subscription) and types resolvers. Now we have static type safety and type inference and hints in the code editor.
 
-## Help the GraphQL engine decide which type to return
+### Help the GraphQL engine decide which type to return
 
 In the first version of the query resolver, we were returning objects that matched the GraphQL types and were tagged with the `__typename` so the GraphQL engine could just return those without the need to have type resolvers.
 But now, we are returning different objects that will be mapped to the proper GraphQL type. And those objects are not tagged with `__typename`. So how does the GraphQL engine know to map the value returned by the query resolver?
@@ -351,14 +345,14 @@ In the `codegen` configuration, we have defined mappers between the GraphQL sche
 
 The type resolvers have a special field resolver for this purpose: `__isTypeOf` is a field resolver function on each of the GraphQL type resolver of the query union type result. This field resolver is executed on all types that form the query resolver's result Union type: when one returns `true`, the GraphQL engine will use this type resolver to generate the proper result object.
 
-## Rewrite the resolvers to use the Errors types and `__isTypeOf`
+### Rewrite the resolvers to use the Errors types and `__isTypeOf`
 
 Now that we have defined the proper mapping between the GraphQL schema types and the Typescript types, let's rewrite the resolvers:
 
 ```typescript
 const resolvers = {
   Query: {
-    entity: async (parent, { id, userId }, context) => {
+    async entity(parent, { id, userId }, context) {
       const entity = await context.api.getEntityById(id);
       const isAllowed = await context.api.isUserAllowedForEntity(id, userId);
 
@@ -391,7 +385,7 @@ const resolvers = {
 };
 ```
 
-## Query fields selection
+### Query fields selection
 
 Our query can now return several types, therefore we need to adapt the query fields selection and use fragments:
 
@@ -412,7 +406,7 @@ query entity($id: ID!, $userId: ID!) {
 
 A good practice is to always have a fragment that matches the `BaseError` interface: it makes the client code future-proof in case one more error is added to the Union result type.
 
-# Even safer error handling using Functional Programming paradigm
+## Even safer error handling using Functional Programming paradigm
 
 The previous section was dedicated to showing how to get type safety and inference in resolvers and how to generate the proper GraphQL type from a query resolver Union type value.
 
@@ -420,9 +414,9 @@ The query resolver code above to get an Entity and check if User is allowed is o
 
 We want to handle those errors, transform meaningless and unsafe `null` values into meaningful errors, while also being able to bubble up those errors to the query resolvers in a safe manner.
 
-## Monads to the rescue
+### Monads to the rescue
 
-In order to make our throwing and unsafe APIs into safe data fetching functions, we'll use data types and techniques from the Functional Programming paradigm. In particular, we'll use the [fp-ts](https://gcanti.github.io/fp-ts/) library (but you can choose the FP library of your choice, e.g. [purify](https://gigobyte.github.io/purify/getting-started), [effect](https://github.com/Effect-TS/core), [monio](https://github.com/getify/monio), and [others](https://github.com/stoeffel/awesome-fp-js#libraries)).
+In order to make our throwing and unsafe APIs into safe data fetching functions, we'll use data types and techniques from the Functional Programming paradigm. In particular, we'll use the [fp-ts](https://gcanti.github.io/fp-ts) library (but you can choose the FP library of your choice, e.g. [purify](https://gigobyte.github.io/purify/getting-started), [effect](https://github.com/Effect-TS/core), [monio](https://github.com/getify/monio), and [others](https://github.com/stoeffel/awesome-fp-js#libraries)).
 
 `fp-ts` exposes several useful data types and functions which allows to work on safe abstractions using composable functions. In particular, we'll use:
 
@@ -431,7 +425,7 @@ In order to make our throwing and unsafe APIs into safe data fetching functions,
 - `Task`: lazy Promise, represents the result of an async operation
 - `TaskEither`: represents the result of an async operation that might fail (combination of `Task` and `Either` as its name implies)
 
-## Make the APIs safer
+### Make the APIs safer
 
 Let's consider a simple mock API for the purpose of this article. It represents a throwing API, such as a gRPC API.
 
@@ -469,13 +463,13 @@ This is now our safe APIs:
 export const getEntity = (id: number): TE.TaskEither<NotFoundError, Entity> =>
   TE.tryCatch(
     () => fetchEntity(id),
-    (e) => new NotFoundError(e.message)
+    e => new NotFoundError(e.message)
   )
 
 export const getUser = (id: UserId): TE.TaskEither<Error, User> =>
   TE.tryCatch(
     () => fetchUser(id),
-    (e) => new NotFoundError(e.message)
+    e => new NotFoundError(e.message)
   )
 ```
 
@@ -485,10 +479,7 @@ Now that we have dealt with the data fetching, let's consume this data. The firs
 
 ```typescript
 // unsafe API
-const isUserAllowedForEntity = async (
-  user: User,
-  entity: Entity
-): Promise<boolean> => {
+const isUserAllowedForEntity = async (user: User, entity: Entity): Promise<boolean> => {
   try {
     return !entity.restrictions.includes(user.country)
   } catch (e) {
@@ -497,13 +488,10 @@ const isUserAllowedForEntity = async (
 }
 
 // safe API
-export const getIsUserAllowedForEntity = (
-  user: User,
-  entity: Entity
-): TE.TaskEither<UnknownError, boolean> =>
+export const getIsUserAllowedForEntity = (user: User, entity: Entity): TE.TaskEither<UnknownError, boolean> =>
   TE.tryCatch(
     () => isUserAllowedForEntity(user, entity),
-    (e) => new UnknownError(e.message)
+    e => new UnknownError(e.message)
   )
 
 const isNotAllowedAsError =
@@ -511,7 +499,7 @@ const isNotAllowedAsError =
   (isAllowed: boolean): TE.TaskEither<NotAllowedError, boolean> =>
     pipe(
       isAllowed,
-      TE.fromPredicate(Boolean, (_) => new NotAllowedError(errorMsg))
+      TE.fromPredicate(Boolean, _ => new NotAllowedError(errorMsg))
     )
 
 export const isUserAllowedForEntityAsError =
@@ -519,26 +507,17 @@ export const isUserAllowedForEntityAsError =
   (entity: Entity): TE.TaskEither<NotAllowedError | UnknownError, boolean> =>
     pipe(
       getIsUserAllowedForEntity(user, entity),
-      TE.chainW(
-        isNotAllowedAsError(
-          `User ${user.id} isn't allowed to access entity ${entity.id}`
-        )
-      )
+      TE.chainW(isNotAllowedAsError(`User ${user.id} isn't allowed to access entity ${entity.id}`))
     )
 ```
 
 Now that both the Entity and User permission fetching calls are safer, we can combine them to create the Entity fetching function with User permission check incorporated:
 
 ```typescript
-export const getEntityForUser = (
-  id: number,
-  userId: UserId
-): TE.TaskEither<NotFoundError | NotAllowedError, Entity> =>
+export const getEntityForUser = (id: number, userId: UserId): TE.TaskEither<NotFoundError | NotAllowedError, Entity> =>
   pipe(
     getUser(userId),
-    TE.chainW((user) =>
-      pipe(getEntity(id), TE.chainFirstW(isUserAllowedForEntityAsError(user)))
-    )
+    TE.chainW(user => pipe(getEntity(id), TE.chainFirstW(isUserAllowedForEntityAsError(user))))
   )
 ```
 
@@ -552,45 +531,38 @@ We fetch the User, then the Entity and when we have both, we check the User perm
       3. if it is a left (`NotAllowedError`), it returns the `TaskEither` holding this Error
       4. if it is a right (`true`), it ignores it and returns the result of the previous computation (the `TaskEither` holding the `Entity`)
 
-## Avoid nested `pipe` with the `Do` notation
+### Avoid nested `pipe` with the `Do` notation
 
 The `Do` notation is an adaptation of its native Haskell counterpart. It allows to build a context object that keeps track of the unwrapped values produced by the different operations in the pipeline. After its creation using the ADT `Do` or `bind`/`bindTo` functions, every subsequent operation in the pipeline has access to this context object, therefore eliminating the need for nesting.
 
 Let's rewrite our function using the `Do` notation:
 
 ```typescript
-export const getEntityForUser = (
-  id: number,
-  userId: UserId
-): TE.TaskEither<NotFoundError | NotAllowedError, Entity> =>
+export const getEntityForUser = (id: number, userId: UserId): TE.TaskEither<NotFoundError | NotAllowedError, Entity> =>
   pipe(
     getUser(userId),
     TE.bindTo('user'),
-    TE.bind('entity', (_) => getEntity(id)),
-    TE.bind('isAllowed', ({ user, entity }) =>
-      isUserAllowedForEntityAsError(user)(entity)
-    ),
+    TE.bind('entity', _ => getEntity(id)),
+    TE.bind('isAllowed', ({ user, entity }) => isUserAllowedForEntityAsError(user)(entity)),
     TE.map(({ entity }) => entity)
   )
 ```
 
 Because the `bind`/`bindTo` functions return instances of ADTs (`TaskEither` here), we keep the fail-fast behaviour. In this example, if the `getUser` call returns a `Left<NotFoundError>`, we won't call `getEntity` nor `isUserAllowedForEntityAsError`, it will return the `TaskEither` holding the `NotFoundError`.
 
-:::note
-With the `Do` notation, we gain nest-free pipeline, but we lose point-free programming.
-:::
+<Callout>With the `Do` notation, we gain nest-free pipeline, but we lose point-free programming.</Callout>
 
-## Query resolver
+### Query resolver
 
 Now that we have a safe API, we can move on to the query resolver. We'll first validate the inputs and then query the data.
 
-### Inputs validation
+#### Inputs validation
 
 To validate the inputs, we'll also create a function that runs a validator on each input and returns an `Either`. By doing this we can integrate the result of the validation into the pipeline.
 
 ```typescript
 Query: {
-  entity: (_, args, __) => {
+  entity(_, args, _2) {
     const { id: entityId, userId } = args;
 
     const validatedInputs = validate({
@@ -610,11 +582,11 @@ The `validateIsNumber` and `validateIsUserId` are functions that return `Either<
 
 The `validate` function takes a record of field to validator function and returns either an `InvalidInputError` or an object of input name to input value.
 
-### Fetching the data and returning
+#### Fetching the data and returning
 
 ```typescript
 Query: {
-  entity: (_, args, __) => {
+  entity(_, args, _2) {
     const { id: entityId, userId } = args;
 
     const validatedInputs = validate({
@@ -637,9 +609,9 @@ Query: {
 
 Once the inputs are validated, the next step in the pipeline is to fetch the data using `getEntityForUser`. Because this call returns a `TaskEither`, we need to transform the previous `Either` into a `TaskEither` using `TaskEither.fromEither`. Of course, because of the fail-fast nature of the ADT, this won't be called if the inputs failed the validation.
 
-Finally we _exit the abstraction_ by using the `TaskEither.fold` (also called `match`) destructor: this function does pattern matching on the `TaskEither` and executes the first callback if it's a `Left`, or the second callback if it's a `Right`. At this point we want to return a `WrappedError` or an `Entity` from our query resolver, we do not want to return a `TaskEither` because we want simple type resolvers that acts on the correct type. The ADT abstraction stays within the boundaries of our program and we consider the query (or mutation or subscription) resolver to be this boundary.
+Finally, we _exit the abstraction_ by using the `TaskEither.fold` (also called `match`) destructor: this function does pattern matching on the `TaskEither` and executes the first callback if it's a `Left`, or the second callback if it's a `Right`. At this point we want to return a `WrappedError` or an `Entity` from our query resolver, we do not want to return a `TaskEither` because we want simple type resolvers that acts on the correct type. The ADT abstraction stays within the boundaries of our program and we consider the query (or mutation or subscription) resolver to be this boundary.
 
-## Bonus: make the Errors type resolvers better using `currying`
+### Bonus: make the Errors type resolvers better using `currying`
 
 `Currying` is the technique of converting a function that takes multiple arguments into a sequence of functions that each takes a single argument. It enables [point-free programming](https://en.wikipedia.org/wiki/Tacit_programming) which allows for cleaner callback or function composition in pipeline.
 
@@ -660,14 +632,14 @@ The `isUserAllowedForEntityAsError` is a curried function: when called with the 
 pipe(
   // ...
   getEntity(id),
-  TE.chainFirstW((entity) => isUserAllowedForEntityAsError(user, entity))
+  TE.chainFirstW(entity => isUserAllowedForEntityAsError(user, entity))
   // ...
 )
 ```
 
 With this knowledge, we can improve the repetitive type resolver code:
 
-```typescript
+```ts
 NotFoundError: {
   __isTypeOf: (parent) => parent.err instanceof NotFoundError,
   message: (parent) => parent.err.message,
@@ -748,6 +720,6 @@ export const queryResolvers: Resolvers = {
 }
 ```
 
-# Wrapping up
+## Wrapping up
 
 GraphQL gives you the power to model your domain errors and deliver them to the caller in a documented and type-safe way. Using Typescript you get type safety for most of your code. Combined with GraphQL Code Generator, you even get your resolvers functions fully typed. And finally with powerful functional programming concepts applied to your GraphQL resolvers, you can get the ultimate safe handling of your unsafe APIs.

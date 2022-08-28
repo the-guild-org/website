@@ -17,10 +17,7 @@ export const HeroSection = ({
         src={blueCircle}
         placeholder="empty"
         loading="eager"
-        className={clsx(
-          'absolute top-0 -left-40 z-[-1] lg:left-0',
-          hideCirclesOnMobile && 'hidden xl:block'
-        )}
+        className={clsx('absolute top-0 -left-40 z-[-1] lg:left-0', hideCirclesOnMobile && 'hidden xl:block')}
       />
       <Image
         src={pinkCircle}

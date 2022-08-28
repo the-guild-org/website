@@ -1,20 +1,19 @@
-import withArticle from '../../ui/blog/article'
+---
+title: GraphQL Code Generator v0.11
+authors: dotan
+tags: [graphql, codegen]
+date: 2018-08-21
+description: Generate React and Angular Apollo Components, Resolver signatures and much more!
+image: /blog-assets/graphql-code-generator/cover.png
+---
 
-export const meta = {
-  title: 'GraphQL Code Generator v0.11',
-  author: 'dotan',
-  tags: ['graphql', 'codegen'],
-  date: '2018-08-21',
-  description:
-    'Generate React and Angular Apollo Components, Resolver signatures and much more!',
-  image: '/blog-assets/graphql-code-generator/cover.png'
-}
+import { Article } from '@/blog/article'
 
-export default withArticle(meta)
+<Article />
 
-:::danger Note:
-This blog post refers to an outdated version, please check http://graphql-code-generator.com/ for the latest docs!
-:::
+<Callout type="warning" emoji="⚠️">
+  This blog post refers to an outdated version, please check http://graphql-code-generator.com/ for the latest docs!
+</Callout>
 
 ## Generate React and Angular Apollo Components, Resolver signatures and much more!
 
@@ -48,7 +47,7 @@ Each PR merged creates an alpha release to npm which we then test out and upgrad
 
 Only then we release a full npm version, so you can be assured that by time of the release, it has already been tested by major Enterprise applications who deploy daily into production, on top of all the unit tests on the project!
 
-So all of the new features that are being mention on this post, are already being used by us extensively.
+So all the new features that are being mention on this post, are already being used by us extensively.
 
 OK, let's start with the new features for the **client side** Typescript users:
 
@@ -109,11 +108,11 @@ const Query: QueryResolvers.Resolvers = {
 }
 ```
 
-As you can see the usage is straightforward but we recommend to explore the source code of a generated file.
+As you can see the usage is straightforward, but we recommend to explore the source code of a generated file.
 
 ## Custom scalars improvements
 
-Prior this version, scalars were declared with `any` which means we didn't take enough advantage of TypeScript here. This was an another opportunity to strengthen up your code. We're happy to tell you it's now possible to **customize a scalar** and provide a type instead of having it as `any`.
+Prior to this version, scalars were declared with `any` which means we didn't take enough advantage of TypeScript here. This was an another opportunity to strengthen up your code. We're happy to tell you it's now possible to **customize a scalar** and provide a type instead of having it as `any`.
 
 We also introduced a new option called **prepend** to add a code at the beginning of a generated file, it completes the custom scalars feature.
 
@@ -125,7 +124,7 @@ We decided to unify the naming strategy in codegen and pick just one. We chose P
 
 Maybe at some point in the future, graphql-code-generator will allow to set your own naming strategy. Contributions are welcome so don't feel afraid, we will help you!
 
-_Keep on mind that it's a breaking change, TypeScript might warn about non existing type, if so then change it to be PascalCased._
+_Keep on mind that it's a breaking change, TypeScript might warn about non-existing type, if so then change it to be PascalCased._
 
 ## Watch-mode
 
@@ -156,7 +155,7 @@ We are also [working](https://github.com/dotansimha/graphql-code-generator/pull/
 
 We are using this template in many of our apps in production, it saves us a lot of boilerplate and potential bugs, and it's also easier to maintain and keep track of the MongoDB schema objects.
 
-Basically, this template let's you generate TypeScript typings for the shape of your MongoDB objects based on your GraphQL schema.
+Basically, this template lets you generate TypeScript typings for the shape of your MongoDB objects based on your GraphQL schema.
 
 For example, using the following schema:
 
@@ -186,8 +185,7 @@ Then, you can use it with MongoDB driver for NodeJS:
 import { Collection } from 'mongodb'
 import { db } from './my-db-instance'
 
-const MyCollection: Collection<UserDbObject> =
-  db.collection<UserDbObject>('users')
+const MyCollection: Collection<UserDbObject> = db.collection<UserDbObject>('users')
 ```
 
 Now your MongoDB collection is typed, and it's easier to find bugs during development.
@@ -271,11 +269,14 @@ type User @entity(additionalFields: [
 }
 ```
 
-We also addressed GraphQL Interface and now you can use `@abstractEntity` to override your interfaces, and if you are using GraphQL Unions, you can add a custom `@discriminatorField` to your union, and it will add the field to your MongoDB schema.
+We also addressed GraphQL Interface, and now you can use `@abstractEntity` to override your interfaces, and if you are using GraphQL Unions, you can add a custom `@discriminatorField` to your union, and it will add the field to your MongoDB schema.
 
-We are also thinking about adding more templates for entities schemas in the future, such as [JSON schema](http://json-schema.org/).
+We are also thinking about adding more templates for entities schemas in the future, such as [JSON schema](http://json-schema.org).
 
-\_We are planning to release the new version of that template next week and write a dedicated blog post on it with more details.\_id
+<Callout>
+  We are planning to release the new version of that template next week and write a dedicated blog post on it with more
+  details.
+</Callout>
 
 Also, that template can be a great start for others to add the same generated features to other data sources like **SQL** and **NoSQL** databases, **DB ORMs** and more!
 

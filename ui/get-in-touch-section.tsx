@@ -16,15 +16,7 @@ export const Newsletter = (): ReactElement => {
     `mutation sayHi($email: String!, $name: String) { sayHi(email: $email, name: $name, project: "WEBSITE") { ok } }`
   );
 
-  const {
-    handleSubmit,
-    values,
-    handleChange,
-    handleBlur,
-    isSubmitting,
-    errors,
-    touched,
-  } = useFormik({
+  const { handleSubmit, values, handleChange, handleBlur, isSubmitting, errors, touched } = useFormik({
     initialValues: { email: '' },
     validationSchema: Yup.object().shape({
       email: Yup.string().email().required(),
@@ -52,20 +44,13 @@ export const Newsletter = (): ReactElement => {
 
   return (
     <>
-      {hasPower && confetti && (
-        <Confetti
-          width={window.innerWidth}
-          height={window.innerHeight}
-          className="!fixed"
-        />
-      )}
+      {hasPower && confetti && <Confetti width={window.innerWidth} height={window.innerHeight} className="!fixed" />}
       <p className="border-0 text-gray-400">
         {success
           ? "Thank you, we'll contact you soon!"
           : error && (
               <span className="text-red-500">
-                <b>Something went wrong</b>, please try again or contact us
-                directly through email.
+                <b>Something went wrong</b>, please try again or contact us directly through email.
               </span>
             )}
       </p>
@@ -83,16 +68,9 @@ export const Newsletter = (): ReactElement => {
               disabled={isSubmitting}
               isInvalid={touched.email && Boolean(errors.email)}
             />
-            {touched.email && errors.email && (
-              <p className="mt-2 text-sm text-red-600">{errors.email}</p>
-            )}
+            {touched.email && errors.email && <p className="mt-2 text-sm text-red-600">{errors.email}</p>}
           </div>
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            variant="primary"
-            loading={isSubmitting}
-          >
+          <Button type="submit" disabled={isSubmitting} variant="primary" loading={isSubmitting}>
             Submit
           </Button>
         </form>
@@ -111,31 +89,19 @@ export const GetInTouchSection = ({
   return (
     <div className={clsx('relative my-[200px]', !hideCover && 'md:mb-[400px]')}>
       <div className="container flex">
-        <div
-          className={clsx(
-            'flex-1',
-            !hideCover && 'p-4 xl:max-w-[40%] 2xl:pl-40'
-          )}
-        >
+        <div className={clsx('flex-1', !hideCover && 'p-4 xl:max-w-[40%] 2xl:pl-40')}>
           {hideHeading !== true && <Heading>Get in touch</Heading>}
 
           <Description>
-            Looking to work with The Guild, learn more about our solutions or
-            just validate with us your API strategy? We will be happy to speak
-            with you and learn about your efforts for free!{' '}
-            <Link href="mailto:contact@the-guild.dev">
-              contact@the-guild.dev
-            </Link>
+            Looking to work with The Guild, learn more about our solutions or just validate with us your API strategy?
+            We will be happy to speak with you and learn about your efforts for free!{' '}
+            <Link href="mailto:contact@the-guild.dev">contact@the-guild.dev</Link>
           </Description>
 
           <Newsletter />
         </div>
         {!hideCover && (
-          <Image
-            src={getInTouch}
-            alt="Hive website"
-            className="absolute right-0 hidden max-w-3xl drag-none xl:block"
-          />
+          <Image src={getInTouch} alt="Hive website" className="absolute right-0 hidden max-w-3xl drag-none xl:block" />
         )}
       </div>
     </div>
