@@ -56,12 +56,12 @@ export const CopyToClipboard = ({ value }: { value: string }): ReactElement => {
   const handleClick = useCallback<ComponentProps<'button'>['onClick']>(async () => {
     setCopied(true);
     if (!navigator?.clipboard) {
-      console.error('Access to clipboard rejected!');
+      return;
     }
     try {
       await navigator.clipboard.writeText(value);
     } catch {
-      console.error('Failed to copy!');
+      // nothing to do here
     }
   }, [value]);
 

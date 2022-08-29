@@ -24,12 +24,10 @@ const twttrLoad = () => {
 };
 
 export const handleTwttrLoad = () => {
-  if (document.querySelector(twttrClassNames) !== null) {
-    if (!isTwttrScriptAdded) {
+  if (document.querySelector(twttrClassNames) !== null && !isTwttrScriptAdded) {
       createScriptTag(null, twttrEmbedScript);
       isTwttrScriptAdded = true;
     }
-  }
   twttrLoad();
 };
 

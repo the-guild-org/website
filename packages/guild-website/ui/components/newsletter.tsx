@@ -24,7 +24,7 @@ export const Newsletter = ({
         Join our newsletter
       </Heading>
       <Description className="!mb-2">
-        Want to hear from us when there's something new? Sign up and stay up to date!
+        Want to hear from us when there&apos;s something new? Sign up and stay up to date!
       </Description>
       <form
         action="https://www.getrevue.co/profile/TheGuild/add_subscriber"

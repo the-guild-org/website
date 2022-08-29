@@ -32,5 +32,6 @@ export async function generateSitemap(articles: MetaWithLink[], newsletters: New
 
   await writeFile('./.next/static/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>${sitemap}`, 'utf8');
 
+  // eslint-disable-next-line no-console
   console.info('✅  Sitemap generated');
 }

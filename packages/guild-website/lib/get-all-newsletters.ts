@@ -51,6 +51,7 @@ async function readMeta(dir: string, file: string): Promise<NewsletterMetaWithLi
       date: format(new Date(parsed.date), 'y-MM-dd'),
     };
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error('Error from filepath:', file);
     throw e;
   }

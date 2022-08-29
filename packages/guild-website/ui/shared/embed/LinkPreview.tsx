@@ -22,6 +22,7 @@ async function fetchPreview(url: string): Promise<PreviewData> {
 
     return result.json();
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(error);
     return null;
   }

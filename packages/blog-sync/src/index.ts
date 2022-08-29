@@ -13,7 +13,7 @@ import { AUTHORS } from '../../guild-website/ui/authors';
 
 const DEV_TO_ORG_ID = 4467;
 
-const baseDir = './pages/blog/';
+const baseDir = '../guild-website/pages/blog/';
 const files = globbySync('*.mdx', {
   absolute: false,
   cwd: baseDir,

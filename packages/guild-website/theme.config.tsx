@@ -34,6 +34,7 @@ const config: DocsThemeConfig = {
   footerEditLink: 'Edit this page on GitHub',
   logo: null,
   head: function Head() {
+    // eslint-disable-next-line prefer-const
     let { title, meta: frontMatter } = useConfig();
     const { route } = useRouter();
     const description = frontMatter.description || `${SITE_NAME}: Modern API Platform and Ecosystem that scales`;
@@ -157,4 +158,5 @@ const config: DocsThemeConfig = {
   },
 };
 
+// eslint-disable-next-line import/no-default-export
 export default config;

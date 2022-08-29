@@ -22,5 +22,6 @@ export async function generateRSS(articles: MetaWithLink[]) {
   const rss = feed.xml({ indent: '  ' });
 
   await writeFile('./.next/static/feed.xml', rss);
+  // eslint-disable-next-line no-console
   console.info('✅  RSS generated');
 }
