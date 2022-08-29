@@ -22,9 +22,13 @@ const files = globbySync('*.mdx', {
   cwd: baseDir,
 });
 
-const processor = unified().use(parse).use(stringify).use(mdx)      .use(frontmatter)
-.use(parseFrontmatter, {
-}).use(extractMeta);
+const processor = unified()
+  .use(parse)
+  .use(stringify)
+  .use(mdx)
+  .use(frontmatter)
+  .use(parseFrontmatter, {})
+  .use(extractMeta);
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -40,7 +44,14 @@ async function syncToDevTo(items) {
     try {
       const canonicalUrl = item.meta.canonical || item.canonical;
       const exists = allArticles.find(t => t.canonicalUrl === canonicalUrl);
-      const author = AUTHORS[Array.isArray(item.meta.authors) ? item.meta.authors[0] : typeof item.meta.authors === 'string' ? item.meta.authors : item.meta.author];
+      const author =
+        AUTHORS[
+          Array.isArray(item.meta.authors)
+            ? item.meta.authors[0]
+            : typeof item.meta.authors === 'string'
+            ? item.meta.authors
+            : item.meta.author
+        ];
       const markdown = `> This article was published on ${item.meta.date} by [${author.name}](${author.link}) @ [The Guild Blog](https://the-guild.dev/)\n\n${item.markdown} `;
       const image = item.meta.image
         ? item.meta.image.startsWith('/')
@@ -50,7 +61,7 @@ async function syncToDevTo(items) {
       const tags = (item.meta.tags || []).map(t => t.replace(/[-_ ]/g, '')).slice(0, 4);
 
       if (process.env.DRY_RUN === 'true') {
-        continue; 
+        continue;
       }
 
       if (exists) {
@@ -114,7 +125,7 @@ async function main() {
     try {
       const vfile = toVFile.readSync(`${baseDir}${blogFile}`);
       const { value, data } = await processor.process(vfile);
-      
+
       if (Object.keys(data.meta).length === 0) {
         throw new Error(`No meta found in ${blogFile}`);
       }
@@ -134,7 +145,7 @@ async function main() {
       throw e;
     }
   }
-  
+
   await syncToDevTo(items);
 }
 
