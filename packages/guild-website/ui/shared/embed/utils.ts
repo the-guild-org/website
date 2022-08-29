@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 let isTwttrScriptAdded = false;
 
 export const twttrClassNames = [

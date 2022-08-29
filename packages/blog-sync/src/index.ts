@@ -8,7 +8,7 @@ import { remove } from 'unist-util-remove';
 import { walk } from 'estree-walker';
 import { Client } from 'guild-devto-nodejs-sdk';
 import { globbySync } from 'globby';
-import { AUTHORS } from './ui/authors';
+import { AUTHORS } from '../../guild-website/ui/authors';
 
 const DEV_TO_ORG_ID = 4467;
 

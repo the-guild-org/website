@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { PropsWithChildren, ReactElement } from 'react';
 import { Observer } from '../Observer';
 
 export type EmbbedBoolean = '0' | '1';
@@ -31,10 +31,11 @@ export interface ICodeSandboxProps {
   size?: string;
 }
 
-export const CodeSandbox: FC<ICodeSandboxProps> = ({ codeSandboxId, embedOptions = {}, readonly, size }) => {
+export const CodeSandbox = ({ codeSandboxId, embedOptions = {}, readonly, size }: PropsWithChildren<ICodeSandboxProps>): ReactElement => {
   const allOptions = {
     fontsize: 11,
     autoresize: '1',
+    // eslint-disable-next-line unicorn/no-useless-fallback-in-spread
     ...(embedOptions || {}),
   };
 

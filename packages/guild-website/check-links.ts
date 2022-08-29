@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { readFileSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { globbySync } from 'globby';
@@ -29,7 +30,7 @@ console.log('✅  Links checked!');
 
 function checkFile(name: string, onError: (err: string) => void) {
   const filepath = join(CWD, `${name}.mdx`);
-  const doc = readFileSync(filepath, { encoding: 'utf-8' });
+  const doc = readFileSync(filepath, 'utf-8');
   const links = onlyRelative(extractLinks(doc));
 
   links.forEach(link => {

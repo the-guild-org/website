@@ -1,6 +1,5 @@
 import App, { NextWebVitalsMetric } from 'next/app';
 import Router from 'next/router';
-import Script from 'next/script';
 import Head from 'next/head';
 import { FooterExtended, Header, ThemeProvider } from '@theguild/components';
 import * as gtag from '../lib/gtag';
@@ -90,7 +89,6 @@ export default class MyApp extends App {
           }
         `}</style>
 
-        <Script async src="/static/crisp.js" />
         <ThemeProvider>
           <Header
             sameSite

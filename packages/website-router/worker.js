@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-undef */
 const jsonConfig = JSON.parse(JSON_CONFIG);
 const {

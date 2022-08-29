@@ -4,7 +4,7 @@ import Confetti from 'react-confetti';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Image } from '@theguild/components';
-import { useMutation } from '../hooks/use-graphql';
+import { useMutation } from '../lib/use-graphql';
 import { Heading, Description, Button, Input, Link } from './components';
 import getInTouch from '../public/img/get-in-touch.png';
 

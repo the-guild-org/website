@@ -8,6 +8,7 @@ try {
 
   await Promise.all([generateRSS(articles), generateSitemap(articles, newsletters)]);
 } catch (e) {
+  // eslint-disable-next-line no-console
   console.error(e);
   process.exit(1);
 }

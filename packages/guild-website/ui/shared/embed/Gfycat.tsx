@@ -1,11 +1,11 @@
-import { FC } from 'react';
+import { PropsWithChildren, ReactElement } from 'react';
 import { Observer } from '../Observer';
 
 export interface IGfycatProps {
   gifId: string;
 }
 
-export const Gfycat: FC<IGfycatProps> = ({ gifId }) => (
+export const Gfycat = ({ gifId }: PropsWithChildren<IGfycatProps>): ReactElement => (
   <Observer>
     <div
       style={{
@@ -18,6 +18,7 @@ export const Gfycat: FC<IGfycatProps> = ({ gifId }) => (
         scrolling="no"
         width="100%"
         height="100%"
+        title='gfycat'
         style={{
           position: 'absolute',
           top: 0,
