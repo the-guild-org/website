@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
-import { GraphQLError } from 'graphql';
 
+// TODO: remove/update this one
 const ENDPOINT_URL = 'https://guild-ms-slack-bot.vercel.app/api/graphql';
 
 export function useMutation<TVariables = Record<string, unknown>>(
   query: string
-): (variables: TVariables) => Promise<{ data: any; errors: GraphQLError[] }> {
+): (variables: TVariables) => Promise<{ data: any; errors: { message: string }[] }> {
   return useCallback(
     async (variables: TVariables) => {
       const response = await fetch(ENDPOINT_URL, {

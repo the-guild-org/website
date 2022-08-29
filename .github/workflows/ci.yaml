@@ -22,8 +22,17 @@ jobs:
           packageManager: pnpm
 
       - name: build website
-        run: 'pnpm build'
+        run: 'pnpm build && pnpm export'
         working-directory: packages/guild-website
+
+      - name: Publish
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          projectName: guild-dev-website
+          directory: packages/guild-website/out
 
   blogsync:
     runs-on: ubuntu-latest
