@@ -107,7 +107,7 @@ export const components: Record<string, (props: any) => ReactElement> = {
     <Image className={clsx('mx-auto block max-w-full', className)} src={src} alt={alt} {...props} />
   ),
   iframe: ({ className, children, ...props }) => (
-    <iframe className={clsx('mx-auto block', className)} title='iframe' {...props}>
+    <iframe className={clsx('mx-auto block', className)} title="iframe" {...props}>
       {children}
     </iframe>
   ),
