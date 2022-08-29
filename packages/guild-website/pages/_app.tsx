@@ -1,12 +1,9 @@
 import App, { NextWebVitalsMetric } from 'next/app';
-import Router from 'next/router';
 import Head from 'next/head';
 import { FooterExtended, Header, ThemeProvider } from '@theguild/components';
 import * as gtag from '../lib/gtag';
 import { globalStyles } from '../styles/global';
 import 'guild-docs/style.css';
-
-Router.events.on('routeChangeComplete', url => gtag.pageview(url));
 
 export function reportWebVitals({ id, name, label, value }: NextWebVitalsMetric) {
   gtag.event({

@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import ReactAvatar from 'react-avatar';
 
-export const Avatar = ({ author }: { author: any }): ReactElement => {
+export const Avatar = ({ author }: { author: { name: string; github?: string; twitter?: string } }): ReactElement => {
   return (
     <ReactAvatar
       round

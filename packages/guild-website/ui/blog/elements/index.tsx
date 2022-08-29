@@ -23,7 +23,7 @@ const PreComponent = ({ children }: { children: ReactNode }): ReactElement => {
   );
 };
 
-export const components: Record<string, (props: any) => ReactElement> = {
+export const components: Record<string, (props: unknown) => ReactElement> = {
   h1: ({ className, children, ...props }) => (
     <h1 className={clsx('mb-5 text-3xl font-extrabold dark:text-[#FCFCFC]', className)} {...props}>
       {children}

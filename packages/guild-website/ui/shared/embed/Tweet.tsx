@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactElement } from 'react';
 import { Observer } from '../Observer';
 import { handleTwttrLoad } from './utils';

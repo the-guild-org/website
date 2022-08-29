@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { readFileSync } from 'node:fs';
 import * as cloudflare from '@pulumi/cloudflare';
 
