@@ -16,14 +16,14 @@ jobs:
         name: setup env
         with:
           nodeVersion: 18
-          workingDirectory: ./infrastructure
+          packageManager: pnpm
 
       - uses: pulumi/actions@v3
         name: Pulumi up
         with:
           stack-name: theguild/prod
           command: up
-          work-dir: ./infrastructure
+          work-dir: packages/website-router
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
