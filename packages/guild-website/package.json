@@ -7,8 +7,7 @@
     "dev": "pnpm generate:blogs-meta && next dev",
     "ts:run": "tsup",
     "generate:blogs-meta": "pnpm ts:run lib/generate-blogs-meta.ts",
-    "generate:sitemap-and-rss": "pnpm ts:run lib/build.ts",
-    "build": "pnpm check-links && pnpm generate:blogs-meta && next build && pnpm generate:sitemap-and-rss",
+    "build": "pnpm check-links && pnpm generate:blogs-meta && next build && next-sitemap",
     "export": "next export",
     "analyze": "ANALYZE=true pnpm build",
     "check-links": "pnpm ts:run check-links.ts"
@@ -39,6 +38,7 @@
     "yup": "0.32.11"
   },
   "devDependencies": {
+    "next-sitemap": "3.1.21",
     "unified": "10.1.2",
     "remark-mdx": "2.1.3",
     "remark-parse": "10.0.1",
