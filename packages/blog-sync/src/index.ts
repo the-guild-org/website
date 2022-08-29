@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { toVFile } from 'to-vfile';
 import { unified } from 'unified';
 import parse from 'remark-parse';
@@ -23,7 +24,7 @@ const processor = unified().use(parse, { position: false }).use(stringify).use(m
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function syncToDevTo(items) {
-  console.log(`=== Syncing ${items.length} articles to dev.to... ===`);
+  console.log(`=== Syncing ${items.length} articles to dev.to... (dry run: ${process.env.DRY_RUN}) ===`);
   const client = new Client(process.env.DEV_TO_TOKEN);
   const { data: allArticles } = await client.selfAllArticles({
     per_page: 1000,
@@ -42,6 +43,10 @@ async function syncToDevTo(items) {
           : item.meta.image
         : undefined;
       const tags = (item.meta.tags || []).map(t => t.replace(/[-_ ]/g, '')).slice(0, 4);
+
+      if (process.env.DRY_RUN === 'true') {
+        continue;
+      }
 
       if (exists) {
         console.log(`Article "${item.meta.title}" already exists, updating if needed...`);

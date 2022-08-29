@@ -44,7 +44,6 @@ jobs:
 
   blogsync:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -55,8 +54,10 @@ jobs:
           nodeVersion: 18
           packageManager: pnpm
 
-      - name: build website
+      - name: sync blog to dev.to
         run: 'pnpm sync:blog'
+        env:
+          DRY_RUN: ${{ github.ref == 'refs/heads/master' }}
         working-directory: packages/blog-sync
 
   prettier:
