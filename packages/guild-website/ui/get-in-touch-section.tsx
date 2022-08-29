@@ -101,7 +101,7 @@ export const GetInTouchSection = ({
           <Newsletter />
         </div>
         {!hideCover && (
-          <Image src={getInTouch} alt="Hive website" className="absolute right-0 hidden max-w-3xl drag-none xl:block" />
+          <Image src={getInTouch} alt="Hive website" className="drag-none absolute right-0 hidden max-w-3xl xl:block" />
         )}
       </div>
     </div>

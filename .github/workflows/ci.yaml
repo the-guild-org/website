@@ -28,7 +28,7 @@ jobs:
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx', '**.m[jt]s', '**.mdx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
-            
+
       - name: build website
         run: 'pnpm build && pnpm export'
         working-directory: packages/guild-website

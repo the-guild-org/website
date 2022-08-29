@@ -18,7 +18,7 @@ export const Gfycat = ({ gifId }: PropsWithChildren<IGfycatProps>): ReactElement
         scrolling="no"
         width="100%"
         height="100%"
-        title='gfycat'
+        title="gfycat"
         style={{
           position: 'absolute',
           top: 0,

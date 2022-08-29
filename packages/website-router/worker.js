@@ -41,17 +41,14 @@ function createSlackClient(token) {
 
       console.debug(`Built Slack message object:`, body);
 
-      const rawResponse = await fetch(
-        'https://slack.com/api/chat.postMessage',
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body),
-        }
-      );
+      const rawResponse = await fetch('https://slack.com/api/chat.postMessage', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
 
       const response = await rawResponse.json();
       console.debug(`Got response from sending Slack message:`, response);
@@ -68,10 +65,7 @@ function handleErrorResponse(event, requestedEndpoint, endpoint, response) {
 
   // We notify Slack on some user/server errors, this is useful for debugging and making sure we always on top of broken links.
   if (shouldReport && SLACK_TOKEN && slackChannelId) {
-    console.error(
-      `notifing Slack on 404 error ${endpoint}, channel id: ${slackChannelId}`,
-      response.status
-    );
+    console.error(`notifing Slack on 404 error ${endpoint}, channel id: ${slackChannelId}`, response.status);
 
     const client = createSlackClient(SLACK_TOKEN);
 
@@ -83,13 +77,8 @@ function handleErrorResponse(event, requestedEndpoint, endpoint, response) {
           `:boom: Website visitor encountered a ${response.status} error`
         )
         .then(console.info)
-        .catch((e) => {
-          console.error(
-            `Failed to send Slack notification`,
-            e,
-            e.message,
-            JSON.stringify(console.error)
-          );
+        .catch(e => {
+          console.error(`Failed to send Slack notification`, e, e.message, JSON.stringify(console.error));
         })
     );
   }
@@ -116,8 +105,7 @@ class HeadElementHandler {
             d.getElementsByTagName('head')[0].appendChild(s);
           })();
           ${
-            this.websiteRecord.crispSegments &&
-            this.websiteRecord.crispSegments.length > 0
+            this.websiteRecord.crispSegments && this.websiteRecord.crispSegments.length > 0
               ? `
             window.$crisp.push([
               'set',
@@ -149,14 +137,8 @@ class HeadElementHandler {
 }
 
 function applyHtmlTransformations(record, response) {
-  if (
-    response &&
-    response.headers &&
-    response.headers.get('content-type').startsWith('text/html')
-  ) {
-    return new HTMLRewriter()
-      .on('head', new HeadElementHandler(record))
-      .transform(response);
+  if (response && response.headers && response.headers.get('content-type').startsWith('text/html')) {
+    return new HTMLRewriter().on('head', new HeadElementHandler(record)).transform(response);
   }
 
   return response;
@@ -165,7 +147,7 @@ function applyHtmlTransformations(record, response) {
 async function handleEvent(event) {
   const { request } = event;
   const parsedUrl = new URL(request.url);
-  const match = KEYS.find((key) => parsedUrl.pathname.startsWith(key));
+  const match = KEYS.find(key => parsedUrl.pathname.startsWith(key));
 
   if (match) {
     const record = mappings[match];
@@ -173,10 +155,7 @@ async function handleEvent(event) {
     if (record.rewrite) {
       // Rebuilds the actual remote URL. Note that basePath in the website must be configured for remote loading, otherwise you'll have
       // issues with assets.
-      const url = `https://${record.rewrite}${parsedUrl.pathname.replace(
-        match,
-        ''
-      )}`;
+      const url = `https://${record.rewrite}${parsedUrl.pathname.replace(match, '')}`;
       console.debug(`Rewriting ${request.url} to ${url}`);
       const cacheKey = new Request(url, request);
       const cache = await caches.open(cacheStorageId);
@@ -204,10 +183,7 @@ async function handleEvent(event) {
         response = new Response(response.body, response);
 
         // TODO: Are they any special headers we need to consider to add? SEO-related?
-        response.headers.append(
-          'Cache-Control',
-          `s-maxage=${clientToWorkerMaxAge}`
-        );
+        response.headers.append('Cache-Control', `s-maxage=${clientToWorkerMaxAge}`);
 
         // Make sure the worker wait behind the scenes, for the Response content.
         event.waitUntil(cache.put(cacheKey, response.clone()));
@@ -240,6 +216,6 @@ async function handleEvent(event) {
   );
 }
 
-addEventListener('fetch', (event) => {
+addEventListener('fetch', event => {
   event.respondWith(handleEvent(event));
 });

@@ -24,7 +24,7 @@ export const HeroSection = ({
         placeholder="empty"
         loading="eager"
         className={clsx(
-          'absolute top-96 right-0 z-[-1] w-32 drag-none sm:top-80 sm:w-60 md:top-24 lg:w-96',
+          'drag-none absolute top-96 right-0 z-[-1] w-32 sm:top-80 sm:w-60 md:top-24 lg:w-96',
           hideCirclesOnMobile && 'hidden xl:block'
         )}
       />

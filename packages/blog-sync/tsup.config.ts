@@ -1,18 +1,18 @@
 import { basename } from 'path';
-import { defineConfig } from 'tsup'
+import { defineConfig } from 'tsup';
 
 const [, , filePath] = process.argv;
-const outPath = `./dist/` + basename(filePath).replace(".ts", ".mjs");
+const outPath = `./dist/` + basename(filePath).replace('.ts', '.mjs');
 
 export default defineConfig({
   entry: [filePath],
   outDir: 'dist',
   async onSuccess() {
-    console.info(`✅ Build done, loading script "${outPath}"...`)
+    console.info(`✅ Build done, loading script "${outPath}"...`);
     await import(outPath);
   },
   platform: 'node',
-  target: "node18",
+  target: 'node18',
   format: 'esm',
   bundle: true,
   banner: {

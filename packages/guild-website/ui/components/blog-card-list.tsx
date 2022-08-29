@@ -40,7 +40,7 @@ export const BlogCardList = ({
           <img
             src={article.thumbnail ?? article.image}
             alt="Article logo"
-            className="h-[164px] w-full object-cover drag-none"
+            className="drag-none h-[164px] w-full object-cover"
           />
           <div className="flex grow flex-col p-5">
             <Heading size="md" className="line-clamp-3 [hyphens:auto]">
@@ -48,7 +48,7 @@ export const BlogCardList = ({
             </Heading>
             <Description
               size="md"
-              className="overflow-hidden text-ellipsis !leading-[18px] line-clamp-3 [hyphens:auto]"
+              className="line-clamp-3 overflow-hidden text-ellipsis !leading-[18px] [hyphens:auto]"
             >
               {article.description}
             </Description>
