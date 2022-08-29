@@ -4,12 +4,15 @@ import { unified } from 'unified';
 import parse from 'remark-parse';
 import stringify from 'remark-stringify';
 import mdx from 'remark-mdx';
+import frontmatter from 'remark-frontmatter';
+import parseFrontmatter from 'remark-parse-frontmatter';
 import { visit } from 'unist-util-visit';
 import { remove } from 'unist-util-remove';
 import { walk } from 'estree-walker';
 import { Client } from 'guild-devto-nodejs-sdk';
 import { globbySync } from 'globby';
 import { AUTHORS } from '../../guild-website/ui/authors';
+import yaml from 'js-yaml';
 
 const DEV_TO_ORG_ID = 4467;
 
@@ -19,7 +22,9 @@ const files = globbySync('*.mdx', {
   cwd: baseDir,
 });
 
-const processor = unified().use(parse, { position: false }).use(stringify).use(mdx).use(extractMeta);
+const processor = unified().use(parse).use(stringify).use(mdx)      .use(frontmatter)
+.use(parseFrontmatter, {
+}).use(extractMeta);
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -35,7 +40,7 @@ async function syncToDevTo(items) {
     try {
       const canonicalUrl = item.meta.canonical || item.canonical;
       const exists = allArticles.find(t => t.canonicalUrl === canonicalUrl);
-      const author = AUTHORS[Array.isArray(item.meta.authors) ? item.meta.authors[0] : item.meta.author];
+      const author = AUTHORS[Array.isArray(item.meta.authors) ? item.meta.authors[0] : typeof item.meta.authors === 'string' ? item.meta.authors : item.meta.author];
       const markdown = `> This article was published on ${item.meta.date} by [${author.name}](${author.link}) @ [The Guild Blog](https://the-guild.dev/)\n\n${item.markdown} `;
       const image = item.meta.image
         ? item.meta.image.startsWith('/')
@@ -45,7 +50,7 @@ async function syncToDevTo(items) {
       const tags = (item.meta.tags || []).map(t => t.replace(/[-_ ]/g, '')).slice(0, 4);
 
       if (process.env.DRY_RUN === 'true') {
-        continue;
+        continue; 
       }
 
       if (exists) {
@@ -109,11 +114,14 @@ async function main() {
     try {
       const vfile = toVFile.readSync(`${baseDir}${blogFile}`);
       const { value, data } = await processor.process(vfile);
+      
+      if (Object.keys(data.meta).length === 0) {
+        throw new Error(`No meta found in ${blogFile}`);
+      }
+
       const cleanName = blogFile.split('.').slice(0, -1).join('.');
 
-      console.log(value, data);
-
-      if (String(data.meta.skipSync) !== 'true') {
+      if (data.meta.skipSync !== true) {
         items.push({
           slug: cleanName,
           canonical: `https://the-guild.dev/blog/${cleanName}`,
@@ -126,7 +134,7 @@ async function main() {
       throw e;
     }
   }
-
+  
   await syncToDevTo(items);
 }
 
@@ -134,25 +142,20 @@ main();
 
 function extractMeta() {
   return (tree, file) => {
-    const meta = {};
+    let meta = {};
     const embedOptions = {};
 
     visit(tree, (node, index, parent) => {
+      if (node.type === 'yaml') {
+        meta = yaml.load(node.value);
+      }
+
       if (node.type === 'image') {
         if (node.url.startsWith('/')) {
           node.url = `https://the-guild.dev${node.url}`;
         }
       } else if (node.type === 'mdxjsEsm') {
-        if (node.value.includes('export const meta')) {
-          walk(node.data.estree, {
-            enter(node) {
-              if (node.type === 'Property') {
-                meta[node.key.name] =
-                  node.value.type === 'ArrayExpression' ? node.value.elements.map(n => n.value) : node.value.value;
-              }
-            },
-          });
-        } else if (node.value.includes('export const embedOptions')) {
+        if (node.value.includes('export const embedOptions')) {
           walk(node.data.estree, {
             enter(node) {
               if (node.type === 'Property') {
