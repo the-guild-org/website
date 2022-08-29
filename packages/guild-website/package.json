@@ -4,19 +4,15 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "lint": "eslint --ignore-path .gitignore .",
-    "dev": "yarn generate:blogs-meta && next dev",
-    "generate:blogs-meta": "yarn compile-ts lib/generate-blogs-meta.ts dist/generate-blogs-meta.mjs && node dist/generate-blogs-meta.mjs",
-    "generate:sitemap-and-rss": "yarn compile-ts lib/build.ts dist/generate-sitemap-and-rss.mjs && node dist/generate-sitemap-and-rss.mjs",
-    "build": "yarn check-links && yarn generate:blogs-meta && next build && yarn generate:sitemap-and-rss",
-    "analyze": "ANALYZE=true yarn build",
-    "start": "next start",
-    "prettier": "prettier --write --list-different .",
-    "prettier:check": "prettier --check .",
-    "check-links": "yarn compile-ts check-links.ts dist/check-links.mjs && node dist/check-links.mjs",
-    "prepare": "husky install",
-    "sync-blog": "yarn compile-ts blog-sync.ts dist/blog-sync.mjs && node dist/blog-sync.mjs",
-    "compile-ts": "ts-node -O '{\"module\":\"commonjs\"}' scripts/compile-ts"
+    "dev": "pnpm generate:blogs-meta && next dev",
+    "ts:run": "tsup",
+    "generate:blogs-meta": "pnpm ts:run lib/generate-blogs-meta.ts",
+    "generate:sitemap-and-rss": "pnpm ts:run lib/build.ts",
+    "website:build": "pnpm check-links && pnpm generate:blogs-meta && next build && pnpm generate:sitemap-and-rss",
+    "website:export": "next export",
+    "website:analyze": "ANALYZE=true pnpm build",
+    "check-links": "pnpm ts:run check-links.ts",
+    "sync-blog": "pnpm ts:run blog-sync.ts"
   },
   "dependencies": {
     "@agentofuser/remark-oembed": "1.0.4",
@@ -51,6 +47,7 @@
     "yup": "0.32.11"
   },
   "devDependencies": {
+    "@types/node": "18.7.13",
     "@next/bundle-analyzer": "12.2.5",
     "@tailwindcss/line-clamp": "0.4.0",
     "@theguild/prettier-config": "0.0.3",
@@ -68,9 +65,9 @@
     "remark-parse": "10.0.1",
     "remark-stringify": "10.0.2",
     "to-vfile": "7.2.3",
-    "ts-node": "10.9.1",
     "esbuild": "0.15.5",
     "typescript": "4.8.2",
+    "tsup": "6.2.3",
     "unified": "10.1.2",
     "unist-util-remove": "3.1.0",
     "unist-util-visit": "4.1.1"
