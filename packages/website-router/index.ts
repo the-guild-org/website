@@ -55,8 +55,8 @@ const jsonConfig = {
       redirect: 'https://github.com/kamilkisiela/bob',
     },
     '/chat': {
-      redirect: 'https://go.crisp.chat/chat/embed/?website_id=af9adec5-ddfa-4db9-a4a3-25769daf2fc2'
-    }
+      redirect: 'https://go.crisp.chat/chat/embed/?website_id=af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
+    },
   },
 };
 
