@@ -11,9 +11,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      deployments: write
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -26,26 +23,17 @@ jobs:
           nodeVersion: 18
           packageManager: pnpm
 
-      - uses: actions/cache@v3
-        name: cache nextjs
+      - uses: the-guild-org/shared-config/website-cf@main
+        name: build and deploy website
         with:
-          path: packages/guild-website/.next
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx', '**.m[jt]s', '**.mdx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
-
-      - name: build website
-        run: 'pnpm build && pnpm export'
-        working-directory: packages/guild-website
-
-      - name: push to cloudflare pages
-        uses: cloudflare/pages-action@main
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          cloudflareApiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflareAccountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
           projectName: guild-dev-website
-          directory: packages/guild-website/out
+          prId: ${{ github.event.pull_request.number }}
+          websiteDirectory: packages/guild-website
+          buildScript: pnpm build && pnpm export
+          artifactDir: out
 
   blogsync:
     runs-on: ubuntu-latest
