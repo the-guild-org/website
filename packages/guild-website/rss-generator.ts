@@ -1,6 +1,7 @@
-import { writeFile } from 'node:fs/promises';
+import { getAllArticles } from './lib/get-all-articles';
 import RSS from 'rss';
-import { MetaWithLink } from './meta';
+import { MetaWithLink } from './lib/meta';
+import { writeFile } from 'fs/promises';
 
 export async function generateRSS(articles: MetaWithLink[]) {
   const feed = new RSS({
@@ -20,8 +21,17 @@ export async function generateRSS(articles: MetaWithLink[]) {
   }
 
   const rss = feed.xml({ indent: '  ' });
-
-  await writeFile('./.next/static/feed.xml', rss);
+  await writeFile('./out/feed.xml', rss);
   // eslint-disable-next-line no-console
   console.info('✅  RSS generated');
+}
+
+try {
+  const articles = await getAllArticles();
+
+  await Promise.all([generateRSS(articles)]);
+} catch (e) {
+  // eslint-disable-next-line no-console
+  console.error(e);
+  process.exit(1);
 }
