@@ -9,7 +9,9 @@ export const meta = {
 }
 export default withArticle(meta)
  
-# Introduction
+
+# Building Slack bot with Cloudflare Workers
+## Introduction
 
 Big or small companies are complex systems; every company must find the right way to work efficiently. There are a lot of applications that help us to manage our daily job efficiently.
 Lately, we found some non-optimized in The Guild employees-system process.
@@ -18,12 +20,12 @@ So, we thought about some solutions and decided to create an internal tool that 
 
 One of those solutions was the **GitHub Slack bot reminder in Cloudflare Workers**.
 
-## What are Cloudflare Workers?
+### What are Cloudflare Workers?
 
 Cloudflare Workers is a platform that provides a server-less execution environment. This environment allows you to create entire applications.
 This platform runs on cloud networks around the world.
 
-## What we can do with Cloudflare Workers?
+### What we can do with Cloudflare Workers?
 
 The Workers platform comes with a new set of tools and nice APIs to integrate directly into the deployment flow you want to design. At a high level, we can create a lot of cool features:
 
@@ -36,7 +38,7 @@ The Workers platform comes with a new set of tools and nice APIs to integrate di
 - Schedule processing
 - And a lot more examples… ([You can find a lot of examples in Cloudflare docs](https://developers.Cloudflare.com/workers/examples/))
 
-## Getting Started - Installation setup
+### Getting Started - Installation setup
 
 Cloudflare provides some easy and quick installation - [You can find it here](https://developers.Cloudflare.com/workers/get-started/guide/).
 
@@ -54,7 +56,7 @@ export default {
 
 This function will fetch any change in the URL of the worker.
 
-### What The Guild is building with Cloudflare Workers?
+#### What The Guild is building with Cloudflare Workers?
 
 Cloudflare also provides the option to schedule some functions. You can add this function to the index file:
 
@@ -82,7 +84,7 @@ export async function run(env: Env) {
 }
 ```
 
-### How can I schedule my function in the Cloudflare Worker?
+#### How can I schedule my function in the Cloudflare Worker?
 
 After you finish the installation, Cloudflare also creates `toml` file, this file contains the `name`, `main`, `compatibility_date`, and `triggers`. To use the triggers, Cloudflare supports Crons and looks like that:
 
@@ -93,7 +95,7 @@ crons = ["0 10 * * *"]
  //  file every day at 10:00 UTC
 ```
 
-### How can I fetch the data from GitHub?
+#### How can I fetch the data from GitHub?
 
 To get the data from GitHub, we create a GraphQL query. GitHub provides some easy and nice explorer tools - You can use it here with the following example:
 
@@ -133,12 +135,12 @@ generates:
 
 Like the example above, we define the schema path, add Authorization to the header and after that, we generate the schema and create types to use in `run` function.
 
-#### Why did I use GraphQL Codegen?
+##### Why did I use GraphQL Codegen?
 
 - GraphQL Codegen generates types-based schema - The types are fully type-safe.
 - The process to add GraphQL Codegen to the project is easy, fast and reduces type error.
 
-## What else you can do with Cloudflare Workers? (Hint? Yoga)
+### What else you can do with Cloudflare Workers? (Hint? Yoga)
 
 **GraphQL Yoga**, one of the greatest tools in The Guild, provides a GraphQL server. Our focus is on easy setup, performance, and great developer experience. So you can easily integrate it into any platform besides Node.js.
 
