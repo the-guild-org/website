@@ -59,6 +59,7 @@ function createSlackClient(token) {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function cachedErrorReporter(requestedEndpoint, endpoint, response) {
   const cache = await caches.open('error_cache');
   const existing = await cache.match(requestedEndpoint);
@@ -70,6 +71,7 @@ async function cachedErrorReporter(requestedEndpoint, endpoint, response) {
 
   const client = createSlackClient(SLACK_TOKEN);
 
+  // TODO: Experiment stuff
   await cache.put(
     requestedEndpoint,
     new Response(null, {
