@@ -17,7 +17,7 @@ In this short blog post, I want to share my last project experience and share on
 One of my assumptions in this blog post is that you know some TypeScript. If you don't, you can check out ["Basic Types"](https://www.typescriptlang.org/docs/handbook/basic-types.html) handbook.
 So, let's talk a little bit about TypeScript union types, one of the most remarkable features of this language.
 
-# What is a union type in TypeScript?
+## What is a union type in TypeScript?
 
 So TypeScript language is based on a type system.
 TypeScript union operator can be used to define a variable that can hold multiple data types: integer or number, character, string, float, etc.
@@ -33,7 +33,7 @@ pizzaLover = true // boolean type
 
 [Here's a live example in TS Playground](https://www.typescriptlang.org/play?#code/DYUwLgBADglgXnAhgGQPYDcQCcBcEDOYWMAdgOYQA+EARqqqIiQLABQbsCKG2EAvBADkATQCiAZUEQA9NIJFSFMAE8oIDvCRpMWfhCIBXEDLl0GIJvtXrWsiAD0A-GyA)
 
-# How to use union types in TypeScript
+## How to use union types in TypeScript
 
 TypeScript can also be used to combine complex types such as interfaces.
 You can think about one type that contains some others types. Here is a simple example that combines 2 types: `Sushi` and `Pizza`, both of them can be united into one type by the name `Food`.
@@ -67,7 +67,7 @@ const myPreference: PizzaAddons = 'pineapple' // error
 
 [Here's a live example in TS Playground](https://www.typescriptlang.org/play?#code/C4TwDgpgBACglgLwQQwIIBN0HsB2BnKAXigHIsAbOANwjxKgB9SBbAVzwAsAnLLZuxqUhhIPHHBIBYAFAyAxrjzAozEDC4QAZhA045EAFyxEKDNnxFSFarXoB6O1CwBreYuWr1WnRD2HjSGiYipYkYHA4EMgi5BD2jjo8XDJAA)
 
-# GraphQL union and TypeScript union type
+## GraphQL union and TypeScript union type
 
 GraphQL is a query language that is used to define the API of a server. Like TypeScript or even Go language, GraphQL supports union and interface types. The type system is one of its core principles and we can use it to make type-safe API calls. The goal is to use it to propagate our backend types to the frontend.
 When I started to learn TypeScript, I found myself making lots of type errors and annoying misspellings. These errors became more frequent as the project grew.
@@ -101,7 +101,7 @@ type Query {
 
 After we declare our types in GraphQL and create a union type to return some of the other types, we can generate TypeScript types from the GraphQL schema and use them in the frontend.
 
-# How to use GraphQL Codegen to generate code and deal with TypeScript union types
+## How to use GraphQL Codegen to generate code and deal with TypeScript union types
 
 First of all, you are more than welcome to explore all the plugins of GraphQL Codegen. [GraphQL Code Generator](https://graphql-code-generator.com/)
 Like we did in the previous example, let's talk about getting the data typed safely in the front.
@@ -111,6 +111,14 @@ First, let's create our `GetFullMenu` query as follows:
 (in this case, I'll use the `react-query` example)
 
 ```ts
+fragment Sushi  {
+    name
+    fish
+  },
+fragment Pizza  {
+    title
+    topping
+  }
 const menuQuery = gql`
   query GetFullMenu {
     menu {
