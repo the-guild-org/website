@@ -9,6 +9,7 @@ const {
   clientToWorkerMaxAge,
   cfFetchCacheTtl,
   cacheStorageId,
+  fallbackRoute,
 } = jsonConfig;
 const KEYS = Object.keys(mappings);
 
@@ -58,6 +59,39 @@ function createSlackClient(token) {
   };
 }
 
+async function cachedErrorReporter(requestedEndpoint, endpoint, response) {
+  const cache = await caches.open('error_cache');
+  const existing = await cache.match(requestedEndpoint);
+
+  if (existing) {
+    console.info(`Skipping Slack notification for ${requestedEndpoint} because it's already reported before`);
+    return;
+  }
+
+  const client = createSlackClient(SLACK_TOKEN);
+
+  await cache.put(
+    requestedEndpoint,
+    new Response(null, {
+      status: response.status,
+      headers: {
+        // 1 week
+        Expires: new Date(Date.now() + 6.048e8).toUTCString(),
+      },
+    })
+  );
+
+  return await client
+    .sendMessage(
+      slackChannelId,
+      `\`\`\`client request url: ${requestedEndpoint}\nupstream hostname: ${endpoint}\`\`\``,
+      `:boom: Website visitor encountered a ${response.status} error`
+    )
+    .catch(e => {
+      console.error(`Failed to send Slack notification`, e, e.message, JSON.stringify(console.error));
+    });
+}
+
 function handleErrorResponse(event, requestedEndpoint, endpoint, response) {
   console.error(`Failed to fetch ${endpoint}`, response.status, response);
 
@@ -66,21 +100,7 @@ function handleErrorResponse(event, requestedEndpoint, endpoint, response) {
   // We notify Slack on some user/server errors, this is useful for debugging and making sure we always on top of broken links.
   if (shouldReport && SLACK_TOKEN && slackChannelId) {
     console.error(`notifing Slack on 404 error ${endpoint}, channel id: ${slackChannelId}`, response.status);
-
-    const client = createSlackClient(SLACK_TOKEN);
-
-    event.waitUntil(
-      client
-        .sendMessage(
-          slackChannelId,
-          `\`\`\`client request url: ${requestedEndpoint}\nupstream hostname: ${endpoint}\`\`\``,
-          `:boom: Website visitor encountered a ${response.status} error`
-        )
-        .then(console.info)
-        .catch(e => {
-          console.error(`Failed to send Slack notification`, e, e.message, JSON.stringify(console.error));
-        })
-    );
+    // event.waitUntil(cachedErrorReporter(requestedEndpoint, endpoint, response));
   }
 
   return response;
@@ -144,53 +164,53 @@ function applyHtmlTransformations(record, response) {
   return response;
 }
 
+async function handleRewrite(event, record, upstreamPath) {
+  const url = `https://${record.rewrite}${upstreamPath}`;
+  console.debug(`Rewriting ${event.request.url} to ${url}`);
+  const cacheKey = new Request(url, event.request);
+  const cache = await caches.open(cacheStorageId);
+  let response = await cache.match(cacheKey);
+
+  if (!response) {
+    const freshResponse = await fetch(url, {
+      // This cache will force caching between the CF Worker and the upstream website, based on Cache-Control headers that are
+      // being set by Vercel or CloudFlare Pages.
+      cf: {
+        cacheTtl: cfFetchCacheTtl,
+        cacheEverything: true,
+      },
+    });
+
+    // In case of an error from an upstream, we are going to return the original request, and avoid caching.
+    if (freshResponse.status >= 400) {
+      // This error handler captures an error from the origin.
+      return handleErrorResponse(event, event.request.url, url, freshResponse);
+    }
+
+    response = applyHtmlTransformations(record, freshResponse);
+
+    // Modify response and add client side caching headers
+    response = new Response(response.body, response);
+
+    // TODO: Are they any special headers we need to consider to add? SEO-related?
+    response.headers.append('Cache-Control', `s-maxage=${clientToWorkerMaxAge}`);
+
+    // Make sure the worker wait behind the scenes, for the Response content.
+    event.waitUntil(cache.put(cacheKey, response.clone()));
+  }
+
+  return response;
+}
+
 async function handleEvent(event) {
-  const { request } = event;
-  const parsedUrl = new URL(request.url);
+  const parsedUrl = new URL(event.request.url);
   const match = KEYS.find(key => parsedUrl.pathname.startsWith(key));
 
   if (match) {
     const record = mappings[match];
 
     if (record.rewrite) {
-      // Rebuilds the actual remote URL. Note that basePath in the website must be configured for remote loading, otherwise you'll have
-      // issues with assets.
-      const url = `https://${record.rewrite}${parsedUrl.pathname.replace(match, '')}`;
-      console.debug(`Rewriting ${request.url} to ${url}`);
-      const cacheKey = new Request(url, request);
-      const cache = await caches.open(cacheStorageId);
-      let response = await cache.match(cacheKey);
-
-      if (!response) {
-        const freshResponse = await fetch(url, {
-          // This cache will force caching between the CF Worker and the upstream website, based on Cache-Control headers that are
-          // being set by Vercel or CloudFlare Pages.
-          cf: {
-            cacheTtl: cfFetchCacheTtl,
-            cacheEverything: true,
-          },
-        });
-
-        // In case of an error from an upstream, we are going to return the original request, and avoid caching.
-        if (freshResponse.status >= 400) {
-          // This error handler captures an error from the origin.
-          return handleErrorResponse(event, request.url, url, freshResponse);
-        }
-
-        response = applyHtmlTransformations(record, freshResponse);
-
-        // Modify response and add client side caching headers
-        response = new Response(response.body, response);
-
-        // TODO: Are they any special headers we need to consider to add? SEO-related?
-        response.headers.append('Cache-Control', `s-maxage=${clientToWorkerMaxAge}`);
-
-        // Make sure the worker wait behind the scenes, for the Response content.
-        event.waitUntil(cache.put(cacheKey, response.clone()));
-      }
-
-      // TODO: Should we have a generic solution for injecting meta tags into HTML pages? we can use HTMLRewriter to do this.
-      return response;
+      return await handleRewrite(event, record, parsedUrl.pathname.replace(match, ''));
     }
 
     if (record.redirect) {
@@ -202,18 +222,8 @@ async function handleEvent(event) {
     }
   }
 
-  // This error handler will capture non-found websites or mappings.
-  return handleErrorResponse(
-    event,
-    request.url,
-    request.url,
-    new Response(
-      { error: 'website not found' },
-      {
-        status: 404,
-      }
-    )
-  );
+  // this will delegate the request to the fallback endpoint
+  return await handleRewrite(event, fallbackRoute, parsedUrl.pathname);
 }
 
 addEventListener('fetch', event => {
