@@ -1,6 +1,6 @@
 export const jsonConfig = {
   // Change if you wish to invalidate/drop all caches for all websites
-  cacheStorageId: 43,
+  cacheStorageId: 52,
   clientToWorkerMaxAge: 60,
   cfFetchCacheTtl: 60,
   gaTrackingId: 'G-VN2KZS6FK4',
@@ -22,6 +22,7 @@ export const jsonConfig = {
     '/graphql/codegen': {
       rewrite: 'graphql-code-generator.pages.dev',
       crispSegments: ['codegen'],
+      sitemap: true,
     },
     // '/graphql/yoga-server': {
     //   rewrite: 'graphql-yoga.com',

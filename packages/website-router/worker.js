@@ -108,6 +108,16 @@ function handleErrorResponse(event, requestedEndpoint, endpoint, response) {
   return response;
 }
 
+class SitemapElementHandler {
+  constructor(additionalUrls) {
+    this.additionalUrls = additionalUrls;
+  }
+
+  element(element) {
+    element.append(this.additionalUrls.map(url => `<sitemap><loc>${url}</loc></sitemap>`).join('\n'), { html: true });
+  }
+}
+
 class HeadElementHandler {
   constructor(websiteRecord) {
     this.websiteRecord = websiteRecord;
@@ -158,6 +168,14 @@ class HeadElementHandler {
   }
 }
 
+function composeSitemap(response, additionalUrls) {
+  if (response && response.headers && response.headers.get('content-type').startsWith('application/xml')) {
+    return new HTMLRewriter().on('sitemapindex', new SitemapElementHandler(additionalUrls)).transform(response);
+  }
+
+  return response;
+}
+
 function applyHtmlTransformations(record, response) {
   if (response && response.headers && response.headers.get('content-type').startsWith('text/html')) {
     return new HTMLRewriter().on('head', new HeadElementHandler(record)).transform(response);
@@ -166,21 +184,22 @@ function applyHtmlTransformations(record, response) {
   return response;
 }
 
-async function handleRewrite(event, record, upstreamPath) {
+async function handleRewrite(event, record, upstreamPath, skipCache = false) {
   const url = `https://${record.rewrite}${upstreamPath}`;
-  console.debug(`Rewriting ${event.request.url} to ${url}`);
   const cacheKey = new Request(url, event.request);
   const cache = await caches.open(cacheStorageId);
   let response = await cache.match(cacheKey);
 
-  if (!response) {
+  if (!response || skipCache) {
     const freshResponse = await fetch(url, {
       // This cache will force caching between the CF Worker and the upstream website, based on Cache-Control headers that are
       // being set by Vercel or CloudFlare Pages.
-      cf: {
-        cacheTtl: cfFetchCacheTtl,
-        cacheEverything: true,
-      },
+      cf: skipCache
+        ? {}
+        : {
+            cacheTtl: cfFetchCacheTtl,
+            cacheEverything: true,
+          },
     });
 
     // In case of an error from an upstream, we are going to return the original request, and avoid caching.
@@ -207,12 +226,28 @@ async function handleRewrite(event, record, upstreamPath) {
 async function handleEvent(event) {
   const parsedUrl = new URL(event.request.url);
   const match = KEYS.find(key => parsedUrl.pathname.startsWith(key));
+  const isSitemap = parsedUrl.pathname === '/sitemap.xml';
+
+  if (isSitemap) {
+    const response = await handleRewrite(event, fallbackRoute, parsedUrl.pathname.replace(match, ''), true);
+    const additionalSitemaps = KEYS.flatMap(key => {
+      const item = mappings[key];
+
+      if (item && item.sitemap) {
+        return [`${parsedUrl.origin}${key}/sitemap.xml`];
+      }
+
+      return [];
+    });
+
+    return composeSitemap(response, additionalSitemaps);
+  }
 
   if (match) {
     const record = mappings[match];
 
     if (record.rewrite) {
-      return await handleRewrite(event, record, parsedUrl.pathname.replace(match, ''));
+      return await handleRewrite(event, record, parsedUrl.pathname.replace(match, ''), isSitemap);
     }
 
     if (record.redirect) {
