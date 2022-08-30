@@ -1,19 +1,18 @@
-import App, { NextWebVitalsMetric } from 'next/app';
+import App from 'next/app';
 import Head from 'next/head';
 import { FooterExtended, Header, ThemeProvider } from '@theguild/components';
-import * as gtag from '../lib/gtag';
 import { globalStyles } from '../styles/global';
 import 'guild-docs/style.css';
 
-export function reportWebVitals({ id, name, label, value }: NextWebVitalsMetric) {
-  gtag.event({
-    action: name,
-    event_category: label === 'web-vital' ? 'Web Vitals' : 'Next.js custom metric',
-    value: Math.round(name === 'CLS' ? value * 1000 : value), // values must be integers
-    event_label: id,
-    non_interaction: true,
-  });
-}
+// export function reportWebVitals({ id, name, label, value }: NextWebVitalsMetric) {
+//   gtag.event({
+//     action: name,
+//     event_category: label === 'web-vital' ? 'Web Vitals' : 'Next.js custom metric',
+//     value: Math.round(name === 'CLS' ? value * 1000 : value), // values must be integers
+//     event_label: id,
+//     non_interaction: true,
+//   });
+// }
 
 // const defaultSeo: AppSeoProps = {
 //   title: 'The Guild',
