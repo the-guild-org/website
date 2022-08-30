@@ -1,66 +1,77 @@
-name: CI
+name: ci
 
-on: [push]
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
 
 jobs:
   build:
-    name: Build
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      CI: true
-    steps:
-      - name: Checkout Master
-        uses: actions/checkout@v3
-
-      - name: Use Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        with:
-          path: '**/node_modules'
-          key: ${{runner.os}}-yarn-${{hashFiles('yarn.lock')}}
-          restore-keys: |
-            ${{runner.os}}-yarn
-
-      - name: Cache NextJS
-        uses: actions/cache@v3
-        with:
-          path: ${{github.workspace}}/.next/cache
-          key: ${{runner.os}}-nextjs-${{hashFiles('yarn.lock')}}-${{hashFiles('**.[jt]s', '**.[jt]sx', '**.mdx')}}
-          restore-keys: |
-            ${{runner.os}}-nextjs-${{hashFiles('yarn.lock')}}
-
-      - name: Install Dependencies
-        run: yarn
-
-      - name: Build
-        run: yarn build
-  prettier-check:
-    name: 🧹 Prettier Check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Master
+      - name: checkout
         uses: actions/checkout@v3
 
-      - name: Use Node
-        uses: actions/setup-node@v3
+      - uses: the-guild-org/shared-config/setup@main
+        name: setup env
         with:
-          node-version: 16
+          nodeVersion: 18
+          packageManager: pnpm
 
-      - name: Cache node_modules
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
+        name: cache nextjs
         with:
-          path: '**/node_modules'
-          key: ${{runner.os}}-yarn-${{hashFiles('yarn.lock')}}
+          path: packages/guild-website/.next
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx', '**.m[jt]s', '**.mdx') }}
           restore-keys: |
-            ${{runner.os}}-yarn
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
-      - name: Install Dependencies
-        run: yarn
+      - name: build website
+        run: 'pnpm build && pnpm export'
+        working-directory: packages/guild-website
 
-      - name: Prettier Check
-        run: 'yarn prettier:check'
+      - name: push to cloudflare pages
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          projectName: guild-dev-website
+          directory: packages/guild-website/out
+
+  blogsync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - uses: the-guild-org/shared-config/setup@main
+        name: setup env
+        with:
+          nodeVersion: 18
+          packageManager: pnpm
+
+      - name: sync blog to dev.to
+        run: 'pnpm sync:blog'
+        env:
+          DRY_RUN: ${{ github.ref != 'refs/heads/master' }}
+          DEV_TO_TOKEN: ${{ secrets.DEV_TO_TOKEN }}
+        working-directory: packages/blog-sync
+
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - uses: the-guild-org/shared-config/setup@main
+        name: setup env
+        with:
+          nodeVersion: 18
+          packageManager: pnpm
+
+      - name: prettier:check
+        run: 'pnpm prettier:check'
