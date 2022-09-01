@@ -24,46 +24,57 @@ export const jsonConfig = {
       crispSegments: ['codegen'],
       sitemap: true,
     },
-    // '/graphql/yoga-server': {
-    //   rewrite: 'graphql-yoga.com',
-    //   crispSegments: ['yoga'],
-    // },
-    // '/graphql/config': {
-    //   rewrite: 'graphql-config.com',
-    //   crispSegments: ['config'],
-    // },
-    // '/graphql/envelop': {
-    //   rewrite: 'envelop.dev',
-    //   crispSegments: ['envelop'],
-    // },
-    // '/graphql/mesh': {
-    //   rewrite: 'graphql-mesh.com',
-    //   crispSegments: ['mesh'],
-    // },
-    // '/graphql/modules': {
-    //   rewrite: 'graphql-modules.com',
-    //   crispSegments: ['modules'],
-    // },
-    // '/graphql/scalars': {
-    //   rewrite: 'graphql-scalars.dev',
-    //   crispSegments: ['scalars'],
-    // },
-    // '/graphql/sofa-api': {
-    //   rewrite: 'sofa-api.com',
-    //   crispSegments: ['sofa'],
-    // },
-    // '/graphql/inspector': {
-    //   rewrite: 'graphql-inspector.com',
-    //   crispSegments: ['inspector'],
-    // },
-    // '/graphql/tools': {
-    //   rewrite: 'graphql-tools.com',
-    //   crispSegments: ['tools'],
-    // },
-    // '/graphql/apollo-angular': {
-    //   rewrite: 'apollo-angular.com',
-    //   crispSegments: ['apollo-angular'],
-    // },
+    // TODO: Replace with rewrite when this is ready
+    '/graphql/yoga-server': {
+      redirect: `https://graphql-yoga.com`,
+      // rewrite: 'graphql-yoga.com',
+      // crispSegments: ['yoga'],
+    },
+    '/graphql/config': {
+      redirect: 'https://graphql-config.com',
+      // rewrite: 'graphql-config.com',
+      // crispSegments: ['config'],
+    },
+    '/graphql/envelop': {
+      redirect: 'https://envelop.dev',
+      // rewrite: 'envelop.dev',
+      // crispSegments: ['envelop'],
+    },
+    '/graphql/mesh': {
+      redirect: 'https://graphql-mesh.com',
+      // rewrite: 'graphql-mesh.com',
+      // crispSegments: ['mesh'],
+    },
+    '/graphql/modules': {
+      redirect: 'https://graphql-modules.com',
+      // rewrite: 'graphql-modules.com',
+      // crispSegments: ['modules'],
+    },
+    '/graphql/scalars': {
+      redirect: 'https://graphql-scalars.dev',
+      // rewrite: 'graphql-scalars.dev',
+      // crispSegments: ['scalars'],
+    },
+    '/graphql/sofa-api': {
+      redirect: 'https://sofa-api.com',
+      // rewrite: 'sofa-api.com',
+      // crispSegments: ['sofa'],
+    },
+    '/graphql/inspector': {
+      redirect: 'https://graphql-inspector.com',
+      // rewrite: 'graphql-inspector.com',
+      // crispSegments: ['inspector'],
+    },
+    '/graphql/tools': {
+      redirect: 'https://graphql-tools.com',
+      // rewrite: 'graphql-tools.com',
+      // crispSegments: ['tools'],
+    },
+    '/graphql/apollo-angular': {
+      redirect: 'https://apollo-angular.com',
+      // rewrite: 'apollo-angular.com',
+      // crispSegments: ['apollo-angular'],
+    },
     // Redirects
     '/graphql/hive': {
       redirect: 'https://graphql-hive.com',
