@@ -155,7 +155,7 @@ class HeadElementHandler {
     if (gaTrackingId) {
       element.append(
         `
-        <script async src="https://www.googletagmanager.com/gtag/js?id=${gaTrackingId}" />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=${gaTrackingId}"></script>
         <script>
           window.dataLayer = window.dataLayer || [];
           function gtag(){window.dataLayer.push(arguments);}
