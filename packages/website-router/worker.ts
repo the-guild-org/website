@@ -5,6 +5,7 @@ import type { RewriteRecord } from './config';
 import Toucan from 'toucan-js';
 
 declare const SENTRY_DSN: string;
+declare const RELEASE: string;
 
 const { mappings, crispWebsiteId, gaTrackingId, clientToWorkerMaxAge, cfFetchCacheTtl, cacheStorageId, fallbackRoute } =
   jsonConfig;
@@ -226,7 +227,7 @@ addEventListener('fetch', event => {
     dsn: SENTRY_DSN,
     context: event,
     environment: 'production',
-    release: 'v1',
+    release: RELEASE,
     attachStacktrace: true,
     allowedHeaders: [
       'content-type',
