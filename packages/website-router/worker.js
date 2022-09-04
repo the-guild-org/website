@@ -13,6 +13,14 @@ const {
 } = jsonConfig;
 const KEYS = Object.keys(mappings);
 
+const shouldSkipSlackReporting = requestedUrl => {
+  if (requestedUrl.startsWith('/.well-known') || requestedUrl.startsWith('/_next')) {
+    return true;
+  }
+
+  return false;
+};
+
 function createSlackClient(token) {
   return {
     sendMessage: async (slackChannel, text, header) => {
@@ -62,6 +70,10 @@ function createSlackClient(token) {
 }
 
 async function cachedErrorReporter(event, requestedEndpoint, endpoint, response) {
+  if (shouldSkipSlackReporting(requestedEndpoint)) {
+    return;
+  }
+
   const cache = await caches.open('error_cache');
   const existing = await cache.match(requestedEndpoint);
 
@@ -77,8 +89,8 @@ async function cachedErrorReporter(event, requestedEndpoint, endpoint, response)
     new Response(null, {
       status: response.status,
       headers: {
-        // 1 week
-        Expires: new Date(Date.now() + 6.048e8).toUTCString(),
+        // 2 week
+        Expires: new Date(Date.now() + 6.048e8 * 2).toUTCString(),
       },
     })
   );
