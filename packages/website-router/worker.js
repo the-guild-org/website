@@ -59,8 +59,7 @@ function createSlackClient(token) {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function cachedErrorReporter(requestedEndpoint, endpoint, response) {
+async function cachedErrorReporter(event, requestedEndpoint, endpoint, response) {
   const cache = await caches.open('error_cache');
   const existing = await cache.match(requestedEndpoint);
 
@@ -71,7 +70,6 @@ async function cachedErrorReporter(requestedEndpoint, endpoint, response) {
 
   const client = createSlackClient(SLACK_TOKEN);
 
-  // TODO: Experiment stuff
   await cache.put(
     requestedEndpoint,
     new Response(null, {
@@ -86,7 +84,9 @@ async function cachedErrorReporter(requestedEndpoint, endpoint, response) {
   return await client
     .sendMessage(
       slackChannelId,
-      `\`\`\`client request url: ${requestedEndpoint}\nupstream hostname: ${endpoint}\`\`\``,
+      `\`\`\`client request url: ${requestedEndpoint}\nupstream hostname: ${endpoint}\nreferer: ${event.request.headers.get(
+        'Referer'
+      )}\`\`\``,
       `:boom: Website visitor encountered a ${response.status} error`
     )
     .catch(e => {
@@ -94,7 +94,7 @@ async function cachedErrorReporter(requestedEndpoint, endpoint, response) {
     });
 }
 
-function handleErrorResponse(event, requestedEndpoint, endpoint, response) {
+async function handleErrorResponse(event, requestedEndpoint, endpoint, response) {
   console.error(`Failed to fetch ${endpoint}`, response.status, response);
 
   const shouldReport = response.status >= 400;
@@ -102,7 +102,14 @@ function handleErrorResponse(event, requestedEndpoint, endpoint, response) {
   // We notify Slack on some user/server errors, this is useful for debugging and making sure we always on top of broken links.
   if (shouldReport && SLACK_TOKEN && slackChannelId) {
     console.error(`notifing Slack on 404 error ${endpoint}, channel id: ${slackChannelId}`, response.status);
-    // event.waitUntil(cachedErrorReporter(requestedEndpoint, endpoint, response));
+    event.waitUntil(cachedErrorReporter(event, requestedEndpoint, endpoint, response));
+
+    return await fetch(`https://${fallbackRoute.rewrite}/404`, {
+      cf: {
+        cacheTtl: cfFetchCacheTtl,
+        cacheEverything: true,
+      },
+    });
   }
 
   return response;
@@ -205,7 +212,7 @@ async function handleRewrite(event, record, upstreamPath, skipCache = false) {
     // In case of an error from an upstream, we are going to return the original request, and avoid caching.
     if (freshResponse.status >= 400) {
       // This error handler captures an error from the origin.
-      return handleErrorResponse(event, event.request.url, url, freshResponse);
+      return await handleErrorResponse(event, event.request.url, url, freshResponse);
     }
 
     response = applyHtmlTransformations(record, freshResponse);
@@ -226,9 +233,9 @@ async function handleRewrite(event, record, upstreamPath, skipCache = false) {
 async function handleEvent(event) {
   const parsedUrl = new URL(event.request.url);
   const match = KEYS.find(key => parsedUrl.pathname.startsWith(key));
-  const isSitemap = parsedUrl.pathname === '/sitemap.xml';
 
-  if (isSitemap) {
+  // Handle sitemap
+  if (parsedUrl.pathname === '/sitemap.xml') {
     const response = await handleRewrite(event, fallbackRoute, parsedUrl.pathname.replace(match, ''), true);
     const additionalSitemaps = KEYS.flatMap(key => {
       const item = mappings[key];
@@ -243,11 +250,16 @@ async function handleEvent(event) {
     return composeSitemap(response, additionalSitemaps);
   }
 
+  // Handle all favicon in one place
+  if (parsedUrl.pathname.endsWith('favicon.ico')) {
+    return fetch(`https://${fallbackRoute.rewrite}/favicon.ico`);
+  }
+
   if (match) {
     const record = mappings[match];
 
     if (record.rewrite) {
-      return await handleRewrite(event, record, parsedUrl.pathname.replace(match, ''), isSitemap);
+      return await handleRewrite(event, record, parsedUrl.pathname.replace(match, ''));
     }
 
     if (record.redirect) {
