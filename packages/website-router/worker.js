@@ -18,6 +18,8 @@ function createSlackClient(token) {
     sendMessage: async (slackChannel, text, header) => {
       const body = {
         channel: slackChannel,
+        unfurl_links: false,
+        unfurl_media: false,
         blocks: [
           {
             type: 'header',
