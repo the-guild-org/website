@@ -11,7 +11,11 @@ const { mappings, crispWebsiteId, gaTrackingId, clientToWorkerMaxAge, cfFetchCac
 const KEYS = Object.keys(mappings);
 
 function shouldSkipErrorReporting(requestedUrl: string): boolean {
-  if (requestedUrl.startsWith('/.well-known') || requestedUrl.includes('/_next/')) {
+  if (
+    requestedUrl.startsWith('/.well-known') ||
+    requestedUrl.includes('/_next/') ||
+    requestedUrl.includes('/link-preview')
+  ) {
     return true;
   }
 
@@ -25,6 +29,11 @@ async function handleErrorResponse(sentry: Toucan, requestedEndpoint: string, en
 
   if (shouldReport && SENTRY_DSN) {
     sentry.setFingerprint([requestedEndpoint, String(response.status)]);
+    sentry.setExtras({
+      'User Endpoint': requestedEndpoint,
+      'Upstream Endpoint': endpoint,
+      'Error Code': response.status,
+    });
     sentry.captureException(new Error(`GET ${requestedEndpoint}: HTTP ${response.status}`));
 
     return await fetch(`https://${fallbackRoute.rewrite}/404`, {
