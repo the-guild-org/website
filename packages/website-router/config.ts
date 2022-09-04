@@ -23,6 +23,7 @@ export const jsonConfig = {
     '/graphql/yoga-server': {
       rewrite: `graphql-yoga.pages.dev`,
       crispSegments: ['yoga'],
+      sitemap: true,
     },
     // TODO: Replace with rewrite when this is ready
     '/graphql/mesh': {
