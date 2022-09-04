@@ -12,7 +12,7 @@ const KEYS = Object.keys(mappings);
 
 function shouldSkipErrorReporting(requestedUrl: string): boolean {
   if (
-    requestedUrl.startsWith('/.well-known') ||
+    requestedUrl.includes('.well-known') ||
     requestedUrl.includes('/_next/') ||
     requestedUrl.includes('/link-preview')
   ) {
