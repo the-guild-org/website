@@ -65,8 +65,6 @@ async function syncToDevTo(items) {
         : undefined;
       const tags = (item.meta.tags || []).map(t => t.replace(/[-_ ]/g, '')).slice(0, 4);
 
-      console.log(markdown);
-
       if (process.env.DRY_RUN === 'true') {
         continue;
       }
@@ -128,7 +126,7 @@ async function syncToDevTo(items) {
 async function main() {
   const items = [];
 
-  for (const blogFile of files.slice(0, 1)) {
+  for (const blogFile of files) {
     try {
       const vfile = toVFile.readSync(`${baseDir}${blogFile}`);
       const { value, data } = await processor.process(vfile);
