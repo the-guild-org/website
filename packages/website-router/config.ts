@@ -20,12 +20,16 @@ export const jsonConfig = {
       crispSegments: ['codegen'],
       sitemap: true,
     },
-    // TODO: Replace with rewrite when this is ready
     '/graphql/yoga-server': {
-      redirect: `https://graphql-yoga.com`,
+      rewrite: `graphql-yoga.pages.dev`,
+      crispSegments: ['yoga'],
+    },
+    // TODO: Replace with rewrite when this is ready
+    '/graphql/mesh': {
+      redirect: 'https://graphql-mesh.com',
       status: 302,
-      // rewrite: 'graphql-yoga.com',
-      // crispSegments: ['yoga'],
+      // rewrite: 'graphql-mesh.com',
+      // crispSegments: ['mesh'],
     },
     '/graphql/config': {
       redirect: 'https://graphql-config.com',
@@ -38,12 +42,6 @@ export const jsonConfig = {
       status: 302,
       // rewrite: 'envelop.dev',
       // crispSegments: ['envelop'],
-    },
-    '/graphql/mesh': {
-      redirect: 'https://graphql-mesh.com',
-      status: 302,
-      // rewrite: 'graphql-mesh.com',
-      // crispSegments: ['mesh'],
     },
     '/graphql/modules': {
       redirect: 'https://graphql-modules.com',
