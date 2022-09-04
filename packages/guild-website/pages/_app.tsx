@@ -88,30 +88,13 @@ export default class MyApp extends App {
         <ThemeProvider>
           <Header
             sameSite
-            activeLink={router.asPath}
             accentColor="var(--colors-accent)"
-            searchBarProps={{ version: 'v2' }}
+            activeLink={router.asPath}
             themeSwitch
-            transformLinks={links => [
-              ...links,
-              {
-                href: 'https://the-guild.dev/contact',
-                label: 'Contact',
-                title: 'Get in touch',
-              },
-            ]}
-            className="[&_ul>div]:right-32"
+            searchBarProps={{ version: 'v2' }}
           />
           <Component {...pageProps} />
-          <FooterExtended
-            sameSite
-            resources={[
-              { children: 'Blog', title: 'Blog', href: '/blog' },
-              { children: 'Services', title: 'Services', href: '/services' },
-              { children: 'Newsletter', title: 'Newsletter', href: '/newsletter' },
-              { children: 'Logos', title: 'Logos', href: '/logos' },
-            ]}
-          />
+          <FooterExtended sameSite />
         </ThemeProvider>
       </>
     );
