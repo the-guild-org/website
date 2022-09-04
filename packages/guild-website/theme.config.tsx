@@ -101,7 +101,7 @@ const config: DocsThemeConfig = {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content={description} />
         <meta property="og:site_name" content="the-guild.dev" key="ogsitename" />
-        <link rel="canonical" href={frontMatter.canonical || `https://the-guild.dev${route}`} />
+        {frontMatter.canonical ? <link rel="canonical" href={`https://the-guild.dev${route}`} /> : null}
         <meta name="twitter:card" content="summary_large_image" />
       </>
     );
