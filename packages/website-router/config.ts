@@ -20,10 +20,6 @@ export const jsonConfig = {
       crispSegments: ['codegen'],
       sitemap: true,
     },
-    '/graphql/yoga': {
-      redirect: `https://the-guild.dev/graphql/yoga-server`,
-      rewrite: 301,
-    },
     '/graphql/yoga-server': {
       rewrite: `graphql-yoga.pages.dev`,
       crispSegments: ['yoga'],
