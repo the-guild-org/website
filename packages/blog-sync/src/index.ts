@@ -52,13 +52,20 @@ async function syncToDevTo(items) {
             ? item.meta.authors
             : item.meta.author
         ];
-      const markdown = `> This article was published on ${item.meta.date} by [${author.name}](${author.link}) @ [The Guild Blog](https://the-guild.dev/)\n\n${item.markdown} `;
+      const markdown = `> This article was published on ${item.meta.date.toLocaleDateString(undefined, {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })} by [${author.name}](${author.link}) @ [The Guild Blog](https://the-guild.dev/)\n\n${item.markdown} `;
       const image = item.meta.image
         ? item.meta.image.startsWith('/')
           ? `https://the-guild.dev${item.meta.image}`
           : item.meta.image
         : undefined;
       const tags = (item.meta.tags || []).map(t => t.replace(/[-_ ]/g, '')).slice(0, 4);
+
+      console.log(markdown);
 
       if (process.env.DRY_RUN === 'true') {
         continue;
@@ -121,7 +128,7 @@ async function syncToDevTo(items) {
 async function main() {
   const items = [];
 
-  for (const blogFile of files) {
+  for (const blogFile of files.slice(0, 1)) {
     try {
       const vfile = toVFile.readSync(`${baseDir}${blogFile}`);
       const { value, data } = await processor.process(vfile);
@@ -179,7 +186,9 @@ function extractMeta() {
 
         return;
       } else if (node.type === 'mdxJsxFlowElement') {
-        if (node.name === 'Gfycat') {
+        if (node.name === 'Article') {
+          parent.children.splice(index, 1);
+        } else if (node.name === 'Gfycat') {
           const gifId = node.attributes.find(a => a.name === 'gifId').value.value.replace(/['"]/g, '');
 
           parent.children.splice(index, 1, {
@@ -290,5 +299,6 @@ function extractMeta() {
 
     file.data.meta = meta;
     remove(tree, 'mdxjsEsm');
+    remove(tree, 'yaml');
   };
 }
