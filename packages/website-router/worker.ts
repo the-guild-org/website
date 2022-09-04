@@ -1,122 +1,31 @@
 /* eslint-disable no-console */
-/* eslint-disable no-undef */
-const jsonConfig = JSON.parse(JSON_CONFIG);
-const {
-  mappings,
-  crispWebsiteId,
-  gaTrackingId,
-  slackChannelId,
-  clientToWorkerMaxAge,
-  cfFetchCacheTtl,
-  cacheStorageId,
-  fallbackRoute,
-} = jsonConfig;
+
+import { jsonConfig } from './config';
+import type { RewriteRecord } from './config';
+import Toucan from 'toucan-js';
+
+declare const SENTRY_DSN: string;
+
+const { mappings, crispWebsiteId, gaTrackingId, clientToWorkerMaxAge, cfFetchCacheTtl, cacheStorageId, fallbackRoute } =
+  jsonConfig;
 const KEYS = Object.keys(mappings);
 
-const shouldSkipSlackReporting = requestedUrl => {
-  if (requestedUrl.startsWith('/.well-known') || requestedUrl.startsWith('/_next')) {
+function shouldSkipErrorReporting(requestedUrl: string): boolean {
+  if (requestedUrl.startsWith('/.well-known') || requestedUrl.includes('/_next/')) {
     return true;
   }
 
   return false;
-};
-
-function createSlackClient(token) {
-  return {
-    sendMessage: async (slackChannel, text, header) => {
-      const body = {
-        channel: slackChannel,
-        unfurl_links: false,
-        unfurl_media: false,
-        blocks: [
-          {
-            type: 'header',
-            text: {
-              type: 'plain_text',
-              text: header || '',
-              emoji: true,
-            },
-          },
-          {
-            type: 'divider',
-          },
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text,
-            },
-          },
-        ],
-      };
-
-      console.debug(`Built Slack message object:`, body);
-
-      const rawResponse = await fetch('https://slack.com/api/chat.postMessage', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-
-      const response = await rawResponse.json();
-      console.debug(`Got response from sending Slack message:`, response);
-
-      return response;
-    },
-  };
 }
 
-async function cachedErrorReporter(event, requestedEndpoint, endpoint, response) {
-  if (shouldSkipSlackReporting(requestedEndpoint)) {
-    return;
-  }
-
-  const cache = await caches.open('error_cache');
-  const existing = await cache.match(requestedEndpoint);
-
-  if (existing) {
-    console.info(`Skipping Slack notification for ${requestedEndpoint} because it's already reported before`);
-    return;
-  }
-
-  const client = createSlackClient(SLACK_TOKEN);
-
-  await cache.put(
-    requestedEndpoint,
-    new Response(null, {
-      status: response.status,
-      headers: {
-        // 2 week
-        Expires: new Date(Date.now() + 6.048e8 * 2).toUTCString(),
-      },
-    })
-  );
-
-  return await client
-    .sendMessage(
-      slackChannelId,
-      `\`\`\`client request url: ${requestedEndpoint}\nupstream hostname: ${endpoint}\nreferer: ${event.request.headers.get(
-        'Referer'
-      )}\`\`\``,
-      `:boom: Website visitor encountered a ${response.status} error`
-    )
-    .catch(e => {
-      console.error(`Failed to send Slack notification`, e, e.message, JSON.stringify(console.error));
-    });
-}
-
-async function handleErrorResponse(event, requestedEndpoint, endpoint, response) {
+async function handleErrorResponse(sentry: Toucan, requestedEndpoint: string, endpoint: string, response: Response) {
   console.error(`Failed to fetch ${endpoint}`, response.status, response);
 
-  const shouldReport = response.status >= 400;
+  const shouldReport = response.status >= 400 && !shouldSkipErrorReporting(requestedEndpoint);
 
-  // We notify Slack on some user/server errors, this is useful for debugging and making sure we always on top of broken links.
-  if (shouldReport && SLACK_TOKEN && slackChannelId) {
-    console.error(`notifing Slack on 404 error ${endpoint}, channel id: ${slackChannelId}`, response.status);
-    event.waitUntil(cachedErrorReporter(event, requestedEndpoint, endpoint, response));
+  if (shouldReport && SENTRY_DSN) {
+    sentry.setFingerprint([requestedEndpoint, String(response.status)]);
+    sentry.captureException(new Error(`GET ${requestedEndpoint}: HTTP ${response.status}`));
 
     return await fetch(`https://${fallbackRoute.rewrite}/404`, {
       cf: {
@@ -130,7 +39,9 @@ async function handleErrorResponse(event, requestedEndpoint, endpoint, response)
 }
 
 class SitemapElementHandler {
-  constructor(additionalUrls) {
+  private additionalUrls: string[];
+
+  constructor(additionalUrls: string[]) {
     this.additionalUrls = additionalUrls;
   }
 
@@ -140,7 +51,9 @@ class SitemapElementHandler {
 }
 
 class HeadElementHandler {
-  constructor(websiteRecord) {
+  private websiteRecord: RewriteRecord;
+
+  constructor(websiteRecord: RewriteRecord) {
     this.websiteRecord = websiteRecord;
   }
 
@@ -205,10 +118,16 @@ function applyHtmlTransformations(record, response) {
   return response;
 }
 
-async function handleRewrite(event, record, upstreamPath, skipCache = false) {
+async function handleRewrite(
+  event: FetchEvent,
+  sentry: Toucan,
+  record: RewriteRecord,
+  upstreamPath: string,
+  skipCache = false
+) {
   const url = `https://${record.rewrite}${upstreamPath}`;
   const cacheKey = new Request(url, event.request);
-  const cache = await caches.open(cacheStorageId);
+  const cache = await caches.open(String(cacheStorageId));
   let response = await cache.match(cacheKey);
 
   if (!response || skipCache) {
@@ -226,10 +145,10 @@ async function handleRewrite(event, record, upstreamPath, skipCache = false) {
     // In case of an error from an upstream, we are going to return the original request, and avoid caching.
     if (freshResponse.status >= 400) {
       // This error handler captures an error from the origin.
-      return await handleErrorResponse(event, event.request.url, url, freshResponse);
+      return await handleErrorResponse(sentry, event.request.url, url, freshResponse);
     }
 
-    response = applyHtmlTransformations(record, freshResponse);
+    response = applyHtmlTransformations(record, freshResponse) as Response;
 
     // Modify response and add client side caching headers
     response = new Response(response.body, response);
@@ -244,17 +163,17 @@ async function handleRewrite(event, record, upstreamPath, skipCache = false) {
   return response;
 }
 
-async function handleEvent(event) {
+async function handleEvent(event: FetchEvent, sentry: Toucan) {
   const parsedUrl = new URL(event.request.url);
   const match = KEYS.find(key => parsedUrl.pathname.startsWith(key));
 
   // Handle sitemap
   if (parsedUrl.pathname === '/sitemap.xml') {
-    const response = await handleRewrite(event, fallbackRoute, parsedUrl.pathname.replace(match, ''), true);
+    const response = await handleRewrite(event, sentry, fallbackRoute, parsedUrl.pathname, true);
     const additionalSitemaps = KEYS.flatMap(key => {
       const item = mappings[key];
 
-      if (item && item.sitemap) {
+      if (item && 'rewrite' in item && item.sitemap) {
         return [`${parsedUrl.origin}${key}/sitemap.xml`];
       }
 
@@ -269,26 +188,54 @@ async function handleEvent(event) {
     return fetch(`https://${fallbackRoute.rewrite}/favicon.ico`);
   }
 
+  if (parsedUrl.pathname.endsWith('robots.txt')) {
+    return fetch(`https://${fallbackRoute.rewrite}/robots.txt`);
+  }
+
   if (match) {
     const record = mappings[match];
 
-    if (record.rewrite) {
-      return await handleRewrite(event, record, parsedUrl.pathname.replace(match, ''));
+    if ('rewrite' in record) {
+      return await handleRewrite(event, sentry, record, parsedUrl.pathname.replace(match, ''));
     }
 
-    if (record.redirect) {
+    if ('redirect' in record) {
       // Handle redirects for external links
       return new Response(null, {
-        status: 301,
+        status: record.status || 301,
         headers: { Location: record.redirect },
       });
     }
   }
 
   // this will delegate the request to the fallback endpoint
-  return await handleRewrite(event, fallbackRoute, parsedUrl.pathname);
+  return await handleRewrite(event, sentry, fallbackRoute, parsedUrl.pathname);
 }
 
 addEventListener('fetch', event => {
-  event.respondWith(handleEvent(event));
+  const sentry = new Toucan({
+    dsn: SENTRY_DSN,
+    context: event,
+    environment: 'production',
+    release: 'v1',
+    attachStacktrace: true,
+    allowedHeaders: [
+      'content-type',
+      'content-length',
+      'accept',
+      'accept-language',
+      'accept-encoding',
+      'user-agent',
+      'referer',
+      'host',
+    ],
+  });
+
+  event.respondWith(
+    handleEvent(event, sentry).catch(e => {
+      sentry.captureException(e);
+
+      throw e;
+    })
+  );
 });
