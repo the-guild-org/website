@@ -42,6 +42,7 @@ function shouldSkipErrorReporting(requestedUrl: string): boolean {
       'alfacgiapi',
       'wp-commentin',
       'ajax',
+      'wp-admin',
       'admin/index',
       'wp-login',
       'wp-json',
