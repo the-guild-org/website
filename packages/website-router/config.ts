@@ -31,6 +31,11 @@ export const jsonConfig = {
       crispSegments: ['scalars'],
       sitemap: true,
     },
+    '/graphql/inspector': {
+      rewrite: 'graphql-inspector.pages.dev',
+      crispSegments: ['inspector'],
+      sitemap: true,
+    },
     // TODO: Replace with rewrite when this is ready
     '/graphql/mesh': {
       redirect: 'https://graphql-mesh.com',
@@ -61,12 +66,6 @@ export const jsonConfig = {
       status: 302,
       // rewrite: 'sofa-api.com',
       // crispSegments: ['sofa'],
-    },
-    '/graphql/inspector': {
-      redirect: 'https://graphql-inspector.com',
-      status: 302,
-      // rewrite: 'graphql-inspector.com',
-      // crispSegments: ['inspector'],
     },
     '/graphql/tools': {
       redirect: 'https://graphql-tools.com',
