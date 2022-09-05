@@ -40,6 +40,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
   return (
     isBot ||
     [
+      'anything_here',
       'ViewPoint',
       '/api/experimental',
       'WidgetHandler',
