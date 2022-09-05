@@ -40,6 +40,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
   return (
     isBot ||
     [
+      'telescope/requests',
       'secure',
       'fw/mindex',
       'siteminderagent',
@@ -81,6 +82,11 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       'visualrf',
       'fmlurlsvc',
       'weathermap',
+      'rails/actions',
+      '/topic/',
+      'sftp-config.json',
+      'ftpsync.settings',
+      'pom.xml',
     ].some(v => requestedUrl.includes(v)) ||
     [
       '.tar.gz',
@@ -257,12 +263,12 @@ async function handleRewrite(
 }
 
 async function handleEvent(event: FetchEvent, sentry: Toucan) {
+  const parsedUrl = new URL(event.request.url);
+
   // Remove all trailing slashes
-  if (event.request.url.endsWith('/')) {
+  if (event.request.url.endsWith('/') && parsedUrl.pathname !== '/' && parsedUrl.pathname !== '') {
     return redirect(event.request.url.slice(0, -1));
   }
-
-  const parsedUrl = new URL(event.request.url);
 
   // Handle sitemap
   if (parsedUrl.pathname === '/sitemap.xml') {
