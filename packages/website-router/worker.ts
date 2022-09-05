@@ -40,6 +40,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
   return (
     isBot ||
     [
+      'fw/mindex',
       'siteminderagent',
       'sites/default/files',
       'webmail',
