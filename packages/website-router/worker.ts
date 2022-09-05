@@ -40,6 +40,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
   return (
     isBot ||
     [
+      'sites/default/files',
       'webmail',
       'api/1.1/jot',
       'api/2/',
@@ -71,8 +72,28 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       'humans.txt',
       'Telerik',
       'login',
+      'wgetrc',
+      '.azure-pipelines.yml',
+      'cgi-bin',
+      'visualrf',
+      'fmlurlsvc',
     ].some(v => requestedUrl.includes(v)) ||
-    ['.tar.gz', '.rar', '.zip', '.tgz', '.php', '.env', '/logos'].some(v => requestedUrl.endsWith(v))
+    [
+      '.tar.gz',
+      '.rar',
+      '.zip',
+      '.tgz',
+      '.php',
+      '.env',
+      '/logos',
+      '/images',
+      '/uploads',
+      '/files',
+      '/extension',
+      '.jsp',
+      '.yml',
+      '.yaml',
+    ].some(v => requestedUrl.endsWith(v))
   );
 }
 
@@ -229,8 +250,12 @@ async function handleRewrite(
 }
 
 async function handleEvent(event: FetchEvent, sentry: Toucan) {
+  // Remove all trailing slashes
+  if (event.request.url.endsWith('/')) {
+    return redirect(event.request.url.slice(0, -1));
+  }
+
   const parsedUrl = new URL(event.request.url);
-  const match = KEYS.find(key => parsedUrl.pathname.startsWith(key));
 
   // Handle sitemap
   if (parsedUrl.pathname === '/sitemap.xml') {
@@ -263,7 +288,13 @@ async function handleEvent(event: FetchEvent, sentry: Toucan) {
     return redirect(`https://${publicDomain}/feed.xml`);
   }
 
+  const match = KEYS.find(key => parsedUrl.pathname.startsWith(key));
+
   if (match) {
+    sentry.addBreadcrumb({
+      message: `Matched route: ${match}`,
+      level: 'debug',
+    });
     const record = mappings[match];
 
     if ('rewrite' in record) {
