@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as cloudflare from '@pulumi/cloudflare';
 import { buildSync } from 'esbuild';
+import { jsonConfig } from './config';
 
 const buildResult = buildSync({
   entryPoints: ['worker.ts'],
@@ -34,5 +35,5 @@ const myScript = new cloudflare.WorkerScript('routingWorker', {
 new cloudflare.WorkerRoute('capture-route', {
   scriptName: myScript.name,
   zoneId: process.env.CLOUDFLARE_ZONEID!,
-  pattern: `*.the-guild.dev/*`,
+  pattern: `*.${jsonConfig.publicDomain}/*`,
 });

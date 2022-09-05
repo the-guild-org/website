@@ -7,20 +7,57 @@ import Toucan from 'toucan-js';
 declare const SENTRY_DSN: string;
 declare const RELEASE: string;
 
-const { mappings, crispWebsiteId, gaTrackingId, clientToWorkerMaxAge, cfFetchCacheTtl, cacheStorageId, fallbackRoute } =
-  jsonConfig;
+const {
+  publicDomain,
+  mappings,
+  crispWebsiteId,
+  gaTrackingId,
+  clientToWorkerMaxAge,
+  cfFetchCacheTtl,
+  cacheStorageId,
+  fallbackRoute,
+} = jsonConfig;
 const KEYS = Object.keys(mappings);
 
-function shouldSkipErrorReporting(requestedUrl: string): boolean {
-  if (
-    requestedUrl.includes('.well-known') ||
-    requestedUrl.includes('/_next/') ||
-    requestedUrl.includes('/link-preview')
-  ) {
-    return true;
-  }
+function redirect(url: string, code = 301) {
+  return new Response(null, {
+    status: code,
+    headers: {
+      Location: url,
+    },
+  });
+}
 
-  return false;
+function shouldSkipErrorReporting(requestedUrl: string): boolean {
+  // Inspired by: https://mentalhealthathome.org/2020/08/09/bad-bots/
+  return (
+    [
+      'system/debug',
+      'administrator/',
+      'wp-includes',
+      'alfacgiapi',
+      'wp-commentin',
+      'ajax',
+      'admin/index',
+      'wp-login',
+      'wp-json',
+      '.well-known',
+      '/_next/',
+      '/link-preview',
+      '.php',
+      'wpadmin',
+      'wp-content',
+      'vendor',
+      'vuln.htm',
+      'fckeditor',
+      'xxxss',
+      'data/admin',
+      'ads.txt',
+      'app-ads.txt',
+      'humans.txt',
+    ].some(v => requestedUrl.includes(v)) ||
+    ['.tar.gz', '.rar', '.zip', '.tgz', '.php', '.env', '/logos'].some(v => requestedUrl.endsWith(v))
+  );
 }
 
 async function handleErrorResponse(sentry: Toucan, requestedEndpoint: string, endpoint: string, response: Response) {
@@ -198,8 +235,14 @@ async function handleEvent(event: FetchEvent, sentry: Toucan) {
     return fetch(`https://${fallbackRoute.rewrite}/favicon.ico`);
   }
 
+  // Unified robots, we do this to avoid any conflicts, so we always take the root one
   if (parsedUrl.pathname.endsWith('robots.txt')) {
-    return fetch(`https://${fallbackRoute.rewrite}/robots.txt`);
+    return redirect(`https://${publicDomain}/robots.txt`);
+  }
+
+  // Handle all feed/rss in one place
+  if (['/feed', '/feeds', '/feed/', '/feeds/', '/rss', '/rss/', '/rss.xml'].some(v => parsedUrl.pathname.endsWith(v))) {
+    return redirect(`https://${publicDomain}/feed.xml`);
   }
 
   if (match) {
@@ -210,11 +253,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan) {
     }
 
     if ('redirect' in record) {
-      // Handle redirects for external links
-      return new Response(null, {
-        status: record.status || 301,
-        headers: { Location: record.redirect },
-      });
+      return redirect(record.redirect, record.status || 301);
     }
   }
 

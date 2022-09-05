@@ -24,5 +24,10 @@ export default withGuildDocs({
       destination: '/blog/announcing-graphql-hive-release',
       permanent: true,
     },
+    {
+      source: '/newsletter',
+      destination: 'https://www.getrevue.co/profile/TheGuild',
+      permanent: true,
+    },
   ],
 });
