@@ -87,6 +87,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       'sftp-config.json',
       'ftpsync.settings',
       'pom.xml',
+      'dashboard/snapshot',
     ].some(v => requestedUrl.includes(v)) ||
     [
       '.tar.gz',
