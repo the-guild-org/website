@@ -40,6 +40,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
   return (
     isBot ||
     [
+      '/portal/',
       'telescope/requests',
       'secure',
       'fw/mindex',
@@ -127,11 +128,16 @@ async function handleErrorResponse(sentry: Toucan, request: Request, endpoint: s
     });
     sentry.captureException(new Error(`GET ${requestedEndpoint}: HTTP ${response.status}`));
 
-    return await fetch(`https://${fallbackRoute.rewrite}/404`, {
+    const errorResponseContent = await fetch(`https://${fallbackRoute.rewrite}/404`, {
       cf: {
         cacheTtl: cfFetchCacheTtl,
         cacheEverything: true,
       },
+    });
+
+    return new Response(errorResponseContent.body, {
+      status: response.status,
+      headers: errorResponseContent.headers,
     });
   }
 
