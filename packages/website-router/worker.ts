@@ -70,6 +70,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       'app-ads.txt',
       'humans.txt',
       'Telerik',
+      'login',
     ].some(v => requestedUrl.includes(v)) ||
     ['.tar.gz', '.rar', '.zip', '.tgz', '.php', '.env', '/logos'].some(v => requestedUrl.endsWith(v))
   );
