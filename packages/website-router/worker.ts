@@ -40,6 +40,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
   return (
     isBot ||
     [
+      'secure',
       'fw/mindex',
       'siteminderagent',
       'sites/default/files',
@@ -94,6 +95,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       '/files',
       '/extension',
       '.jsp',
+      '.jspa',
       '.yml',
       '.yaml',
       '.config',
