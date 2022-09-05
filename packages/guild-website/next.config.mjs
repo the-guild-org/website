@@ -34,15 +34,5 @@ export default withGuildDocs({
       destination: '/blog/announcing-graphql-yoga-v2',
       permanent: true,
     },
-    {
-      source: '/newsletter',
-      destination: 'https://www.getrevue.co/profile/TheGuild',
-      permanent: true,
-    },
-    {
-      source: '/twitter',
-      destination: 'https://twitter.com/TheGuildDev',
-      permanent: true,
-    },
   ],
 });

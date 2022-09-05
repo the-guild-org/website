@@ -95,6 +95,24 @@ export const jsonConfig = {
     '/chat': {
       redirect: 'https://go.crisp.chat/chat/embed/?website_id=af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
     },
+    '/newsletter': {
+      redirect: 'https://www.getrevue.co/profile/TheGuild',
+    },
+    '/twitter': {
+      redirect: 'https://twitter.com/TheGuildDev',
+    },
+    '/discord': {
+      redirect: 'https://discord.com/invite/xud7bH9',
+    },
+    '/medium': {
+      redirect: 'https://medium.com/the-guild',
+    },
+    '/youtube': {
+      redirect: 'https://youtube.com/watch?v=d_GBgH-L5c4&list=PLhCf3AUOg4PgQoY_A6xWDQ70yaNtPYtZd',
+    },
+    '/linkedin': {
+      redirect: 'https://linkedin.com/company/the-guild-software',
+    },
   },
 };
 
