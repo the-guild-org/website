@@ -20,6 +20,11 @@ export default withGuildDocs({
   },
   redirects: () => [
     {
+      source: '/connected-build',
+      destination: '/',
+      permanent: true,
+    },
+    {
       source: '/blog/announcing-graphql-hive-public',
       destination: '/blog/announcing-graphql-hive-release',
       permanent: true,
