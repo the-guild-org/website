@@ -237,7 +237,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan) {
   }
 
   // Unified robots, we do this to avoid any conflicts, so we always take the root one
-  if (parsedUrl.pathname.endsWith('robots.txt')) {
+  if (parsedUrl.pathname !== '/robots.txt' && parsedUrl.pathname.endsWith('robots.txt')) {
     return redirect(`https://${publicDomain}/robots.txt`);
   }
 
