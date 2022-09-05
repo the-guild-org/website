@@ -40,6 +40,11 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
   return (
     isBot ||
     [
+      'boaform',
+      'admin/proxy/tcp',
+      'tugboat',
+      'geoserver',
+      'Items/RemoteSearch',
       'cobbler_api',
       'anything_here',
       'ViewPoint',
@@ -83,6 +88,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       'wp-content',
       'vendor',
       'vuln.htm',
+      'clockwork',
       'fckeditor',
       'xxxss',
       'data/admin',
@@ -93,6 +99,15 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       'login',
       'wgetrc',
       '.azure-pipelines.yml',
+      'vcav-bootstrap',
+      '/remote/',
+      'laravel',
+      'sensorlist',
+      'debugbar',
+      'vcav-bootstrap',
+      '/api/get-organizations',
+      'interlib',
+      'finfo.html',
       'cgi-bin',
       'visualrf',
       'fmlurlsvc',
@@ -104,8 +119,12 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       'pom.xml',
       'dashboard/snapshot',
       'lab.html',
+      'backend',
+      'solr',
     ].some(v => requestedUrl.includes(v)) ||
     [
+      'wordpress',
+      '/wp',
       'var',
       '.tar.gz',
       '.rar',
