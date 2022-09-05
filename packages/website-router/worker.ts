@@ -40,6 +40,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
   return (
     isBot ||
     [
+      'siteminderagent',
       'sites/default/files',
       'webmail',
       'api/1.1/jot',
@@ -77,6 +78,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       'cgi-bin',
       'visualrf',
       'fmlurlsvc',
+      'weathermap',
     ].some(v => requestedUrl.includes(v)) ||
     [
       '.tar.gz',
@@ -93,6 +95,8 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       '.jsp',
       '.yml',
       '.yaml',
+      '.config',
+      '.conf',
     ].some(v => requestedUrl.endsWith(v))
   );
 }
@@ -331,6 +335,9 @@ addEventListener('fetch', event => {
 
   event.respondWith(
     handleEvent(event, sentry).catch(e => {
+      sentry.setExtras({
+        'User Endpoint': event.request.url,
+      });
       sentry.captureException(e);
 
       throw e;
