@@ -40,12 +40,23 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
   return (
     isBot ||
     [
+      '../',
+      'WidgetHandler',
+      '.jsp',
+      'prweb',
+      'editor_tools',
+      'user.action',
+      'casa/',
+      'blast',
+      'STATE_ID',
       '/portal/',
       'telescope/requests',
       'secure',
       'fw/mindex',
       'siteminderagent',
       'sites/default/files',
+      'component/music/',
+      'nette.micro',
       'webmail',
       'api/1.1/jot',
       'api/2/',
@@ -89,8 +100,10 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       'ftpsync.settings',
       'pom.xml',
       'dashboard/snapshot',
+      'lab.html',
     ].some(v => requestedUrl.includes(v)) ||
     [
+      'var',
       '.tar.gz',
       '.rar',
       '.zip',
@@ -346,6 +359,11 @@ addEventListener('fetch', event => {
       'user-agent',
       'referer',
       'host',
+      'cf-connecting-ip',
+      'cf-ray',
+      'cf-device-type',
+      'x-forwarded-for',
+      'x-forwarded-proto',
     ],
   });
 
