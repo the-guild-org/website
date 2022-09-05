@@ -32,6 +32,10 @@ function shouldSkipErrorReporting(requestedUrl: string): boolean {
   // Inspired by: https://mentalhealthathome.org/2020/08/09/bad-bots/
   return (
     [
+      'api/1.1/jot',
+      'api/2/',
+      '/i/api/',
+      'sw.js',
       'system/debug',
       'administrator/',
       'wp-includes',
