@@ -55,6 +55,7 @@ function shouldSkipErrorReporting(requestedUrl: string): boolean {
       'ads.txt',
       'app-ads.txt',
       'humans.txt',
+      'Telerik',
     ].some(v => requestedUrl.includes(v)) ||
     ['.tar.gz', '.rar', '.zip', '.tgz', '.php', '.env', '/logos'].some(v => requestedUrl.endsWith(v))
   );

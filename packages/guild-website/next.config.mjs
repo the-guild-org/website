@@ -25,8 +25,18 @@ export default withGuildDocs({
       permanent: true,
     },
     {
+      source: '/blog/announcing-graphql-yoga-2',
+      destination: '/blog/announcing-graphql-yoga-v2',
+      permanent: true,
+    },
+    {
       source: '/newsletter',
       destination: 'https://www.getrevue.co/profile/TheGuild',
+      permanent: true,
+    },
+    {
+      source: '/twitter',
+      destination: 'https://twitter.com/TheGuildDev',
       permanent: true,
     },
   ],
