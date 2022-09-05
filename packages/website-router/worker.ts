@@ -28,10 +28,19 @@ function redirect(url: string, code = 301) {
   });
 }
 
-function shouldSkipErrorReporting(requestedUrl: string): boolean {
+function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | null): boolean {
+  const userAgent = (rawUserAgent || '').toLowerCase();
+  const isBot =
+    userAgent.includes('bot') ||
+    userAgent.includes('spider') ||
+    userAgent.includes('crawler') ||
+    userAgent.includes('go-http-client');
+
   // Inspired by: https://mentalhealthathome.org/2020/08/09/bad-bots/
   return (
+    isBot ||
     [
+      'webmail',
       'api/1.1/jot',
       'api/2/',
       '/i/api/',
@@ -66,10 +75,12 @@ function shouldSkipErrorReporting(requestedUrl: string): boolean {
   );
 }
 
-async function handleErrorResponse(sentry: Toucan, requestedEndpoint: string, endpoint: string, response: Response) {
+async function handleErrorResponse(sentry: Toucan, request: Request, endpoint: string, response: Response) {
   console.error(`Failed to fetch ${endpoint}`, response.status, response);
+  const requestedEndpoint = request.url;
 
-  const shouldReport = response.status >= 400 && !shouldSkipErrorReporting(requestedEndpoint);
+  const shouldReport =
+    response.status >= 400 && !shouldSkipErrorReporting(requestedEndpoint, request.headers.get('user-agent'));
 
   if (shouldReport && SENTRY_DSN) {
     sentry.setFingerprint([requestedEndpoint, String(response.status)]);
@@ -198,7 +209,7 @@ async function handleRewrite(
     // In case of an error from an upstream, we are going to return the original request, and avoid caching.
     if (freshResponse.status >= 400) {
       // This error handler captures an error from the origin.
-      return await handleErrorResponse(sentry, event.request.url, url, freshResponse);
+      return await handleErrorResponse(sentry, event.request, url, freshResponse);
     }
 
     response = applyHtmlTransformations(record, freshResponse) as Response;
