@@ -8,13 +8,9 @@ export const Image = ({ alt, src, className }: { alt?: string; src: string; clas
   const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
 
   if (isVideo) {
-    const webm: string = src.endsWith('.webm') ? src : src.replace('.mp4', '.webm');
-    const mp4: string = src.endsWith('.mp4') ? src : src.replace('.webm', '.mp4');
-
     return (
       <video className={className} playsInline autoPlay loop muted>
-        <source src={webm} type="video/webm" />
-        <source src={mp4} type="video/mp4" />
+        <source src={src} type={src.endsWith('.mp4') ? 'video/mp4' : 'video/webm'} />
       </video>
     );
   }
