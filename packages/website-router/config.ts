@@ -26,6 +26,11 @@ export const jsonConfig = {
       crispSegments: ['yoga'],
       sitemap: true,
     },
+    '/graphql/scalars': {
+      rewrite: 'graphql-scalars.pages.dev',
+      crispSegments: ['scalars'],
+      sitemap: true,
+    },
     // TODO: Replace with rewrite when this is ready
     '/graphql/mesh': {
       redirect: 'https://graphql-mesh.com',
@@ -50,12 +55,6 @@ export const jsonConfig = {
       status: 302,
       // rewrite: 'graphql-modules.com',
       // crispSegments: ['modules'],
-    },
-    '/graphql/scalars': {
-      redirect: 'https://graphql-scalars.dev',
-      status: 302,
-      // rewrite: 'graphql-scalars.dev',
-      // crispSegments: ['scalars'],
     },
     '/graphql/sofa-api': {
       redirect: 'https://sofa-api.com',
