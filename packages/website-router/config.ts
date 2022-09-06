@@ -36,13 +36,12 @@ export const jsonConfig = {
       crispSegments: ['inspector'],
       sitemap: true,
     },
-    // TODO: Replace with rewrite when this is ready
     '/graphql/mesh': {
-      redirect: 'https://graphql-mesh.com',
-      status: 302,
-      // rewrite: 'graphql-mesh.com',
-      // crispSegments: ['mesh'],
+      rewrite: 'graphql-mesh.pages.dev',
+      crispSegments: ['mesh'],
+      sitemap: true,
     },
+    // TODO: Replace with rewrite when this is ready
     '/graphql/config': {
       redirect: 'https://graphql-config.com',
       status: 302,
