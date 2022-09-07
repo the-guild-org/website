@@ -155,7 +155,7 @@ async function handleErrorResponse(sentry: Toucan, request: Request, endpoint: s
     response.status >= 400 && !shouldSkipErrorReporting(requestedEndpoint, request.headers.get('user-agent'));
 
   if (shouldReport && SENTRY_DSN) {
-    sentry.setFingerprint([requestedEndpoint, String(response.status)]);
+    sentry.setFingerprint([requestedEndpoint.replace('https://www.', 'https://'), String(response.status)]);
     sentry.setExtras({
       'User Endpoint': requestedEndpoint,
       'Upstream Endpoint': endpoint,
@@ -259,28 +259,20 @@ function applyHtmlTransformations(record, response) {
   return response;
 }
 
-async function handleRewrite(
-  event: FetchEvent,
-  sentry: Toucan,
-  record: RewriteRecord,
-  upstreamPath: string,
-  skipCache = false
-) {
+async function handleRewrite(event: FetchEvent, sentry: Toucan, record: RewriteRecord, upstreamPath: string) {
   const url = `https://${record.rewrite}${upstreamPath}`;
   const cacheKey = new Request(url, event.request);
   const cache = await caches.open(String(cacheStorageId));
   let response = await cache.match(cacheKey);
 
-  if (!response || skipCache) {
+  if (!response) {
     const freshResponse = await fetch(url, {
       // This cache will force caching between the CF Worker and the upstream website, based on Cache-Control headers that are
       // being set by Vercel or CloudFlare Pages.
-      cf: skipCache
-        ? {}
-        : {
-            cacheTtl: cfFetchCacheTtl,
-            cacheEverything: true,
-          },
+      cf: {
+        cacheTtl: cfFetchCacheTtl,
+        cacheEverything: true,
+      },
     });
 
     // In case of an error from an upstream, we are going to return the original request, and avoid caching.
@@ -314,7 +306,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan) {
 
   // Handle sitemap
   if (parsedUrl.pathname === '/sitemap.xml') {
-    const response = await handleRewrite(event, sentry, fallbackRoute, parsedUrl.pathname, true);
+    const response = await handleRewrite(event, sentry, fallbackRoute, parsedUrl.pathname);
     const additionalSitemaps = KEYS.flatMap(key => {
       const item = mappings[key];
 

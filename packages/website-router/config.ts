@@ -88,24 +88,31 @@ export const jsonConfig = {
     },
     '/bob': {
       redirect: 'https://github.com/kamilkisiela/bob',
+      status: 302,
     },
     '/chat': {
       redirect: 'https://go.crisp.chat/chat/embed/?website_id=af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
+      status: 302,
     },
     '/newsletter': {
       redirect: 'https://www.getrevue.co/profile/TheGuild',
+      status: 302,
     },
     '/twitter': {
       redirect: 'https://twitter.com/TheGuildDev',
+      status: 302,
     },
     '/discord': {
       redirect: 'https://discord.com/invite/xud7bH9',
+      status: 302,
     },
     '/youtube': {
       redirect: 'https://youtube.com/watch?v=d_GBgH-L5c4&list=PLhCf3AUOg4PgQoY_A6xWDQ70yaNtPYtZd',
+      status: 302,
     },
     '/linkedin': {
       redirect: 'https://linkedin.com/company/the-guild-software',
+      status: 302,
     },
   },
 };
