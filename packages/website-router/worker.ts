@@ -52,7 +52,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan) {
 
   // Handle sitemap
   if (shouldHandleSitemap(parsedUrl)) {
-    return handleSitemap(parsedUrl, `https://${fallbackRoute}/sitemap.xml`, mappings);
+    return handleSitemap(parsedUrl, `https://${fallbackRoute.rewrite}/sitemap.xml`, mappings);
   }
 
   // Handle all favicon, manifests and so on
