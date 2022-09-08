@@ -128,7 +128,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       'ALFA_DATA',
       'adminer',
       '/news/js/',
-      '/base/'
+      '/base/',
     ].some(v => requestedUrl.includes(v)) ||
     [
       'wordpress',
