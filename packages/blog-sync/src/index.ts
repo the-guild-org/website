@@ -11,12 +11,12 @@ import { remove } from 'unist-util-remove';
 import { walk } from 'estree-walker';
 import { Client } from 'guild-devto-nodejs-sdk';
 import { globbySync } from 'globby';
-import { AUTHORS } from '../../guild-website/ui/authors';
+import { AUTHORS } from '../../../website/ui/authors';
 import yaml from 'js-yaml';
 
 const DEV_TO_ORG_ID = 4467;
 
-const baseDir = '../guild-website/pages/blog/';
+const baseDir = '../../website/pages/blog/';
 const files = globbySync('*.mdx', {
   absolute: false,
   cwd: baseDir,
