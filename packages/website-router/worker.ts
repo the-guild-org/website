@@ -121,6 +121,12 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       'lab.html',
       'backend',
       'solr',
+      '.aws/',
+      'phpinfo',
+      'beez3',
+      'cgialfa',
+      'ALFA_DATA',
+      'adminer',
     ].some(v => requestedUrl.includes(v)) ||
     [
       'wordpress',
@@ -143,6 +149,7 @@ function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | n
       '.yaml',
       '.config',
       '.conf',
+      '.sql',
     ].some(v => requestedUrl.endsWith(v))
   );
 }
