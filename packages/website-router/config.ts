@@ -4,7 +4,7 @@ export type WebsiteRecord = RewriteRecord | RedirectRecord;
 
 export const jsonConfig = {
   // Change if you wish to invalidate/drop all caches for all websites
-  cacheStorageId: 54,
+  cacheStorageId: 55,
   publicDomain: 'the-guild.dev',
   clientToWorkerMaxAge: 60,
   cfFetchCacheTtl: 60,
