@@ -8,7 +8,7 @@ Run `pnpm i` from the root directory to get all the dependencies installed.
 
 ## Running the website (Development mode)
 
-Run `cd packages/guild-website && pnpm dev` to start the server locally.
+Run `cd website && pnpm dev` to start the server locally.
 
 ## Build and run the website (Production)
 
@@ -18,8 +18,8 @@ Run `pnpm build` followed by `pnpm export` to build and export a static version 
 
 We use [MDX](https://mdxjs.com) (Markdown with JSX) for our blog posts. To add a new blog post:
 
-- Create a new mdx file in `packages/guild-website/pages/blog` directory with the same template as other blog posts
+- Create a new mdx file in `website/pages/blog` directory with the same template as other blog posts
 - Update the meta object with all the information regarding the blog post including title, thumbnails, author name, etc.
-- Any assets related to the blog can be placed in `packages/guild-website/public/blog-assets` directory within its own folder
+- Any assets related to the blog can be placed in `website/public/blog-assets` directory within its own folder
 - If you are contributing for the first time, make sure that you add your details in `ui/authors.ts` file with a new entry to the `authors` object
 - Once you send us a PR, we will review the same, provide the feedback as necessary and merge it if everything looks good
