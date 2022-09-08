@@ -1,8 +1,14 @@
-/* eslint-disable no-console */
-
 import { jsonConfig } from './config';
-import type { RewriteRecord } from './config';
 import Toucan from 'toucan-js';
+import { createSentry } from './error-handling/sentry';
+import { handleSitemap, shouldHandleSitemap } from './sitemap/handler';
+import { handleRobotsTxt, shouldHandleRobotsTxt } from './robots/handler';
+import { handleRewrite, redirect, ManipulateResponseFn } from './routing';
+import { FaviconHandler } from './favicon/transformer';
+import { CrispHandler } from './html-handlers/crisp';
+import { GoogleAnalyticsHandler } from './html-handlers/ga';
+import { handleFavicon, shouldHandleFavicon } from './favicon/handler';
+import { handleFeed, shouldHandleFeed } from './feed/handler';
 
 declare const SENTRY_DSN: string;
 declare const RELEASE: string;
@@ -17,293 +23,24 @@ const {
   cacheStorageId,
   fallbackRoute,
 } = jsonConfig;
-const KEYS = Object.keys(mappings);
 
-function redirect(url: string, code = 301) {
-  return new Response(null, {
-    status: code,
-    headers: {
-      Location: url,
-    },
-  });
-}
+const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => {
+  let result = rawResponse;
 
-function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | null): boolean {
-  const userAgent = (rawUserAgent || '').toLowerCase();
-  const isBot =
-    userAgent.includes('bot') ||
-    userAgent.includes('spider') ||
-    userAgent.includes('crawler') ||
-    userAgent.includes('go-http-client');
-
-  // Inspired by: https://mentalhealthathome.org/2020/08/09/bad-bots/
-  return (
-    isBot ||
-    [
-      'boaform',
-      'admin/proxy/tcp',
-      'tugboat',
-      'geoserver',
-      'Items/RemoteSearch',
-      'cobbler_api',
-      'anything_here',
-      'ViewPoint',
-      '/api/experimental',
-      'WidgetHandler',
-      '.jsp',
-      'prweb',
-      'editor_tools',
-      'user.action',
-      'casa/',
-      'blast',
-      'STATE_ID',
-      '/portal/',
-      'telescope/requests',
-      'secure',
-      'fw/mindex',
-      'siteminderagent',
-      'sites/default/files',
-      'component/music/',
-      'nette.micro',
-      'webmail',
-      'api/1.1/jot',
-      'api/2/',
-      '/i/api/',
-      'sw.js',
-      'system/debug',
-      'administrator/',
-      'wp-includes',
-      'alfacgiapi',
-      'wp-commentin',
-      'ajax',
-      'wp-admin',
-      'admin/index',
-      'wp-login',
-      'wp-json',
-      '.well-known',
-      '/_next/',
-      '/link-preview',
-      '.php',
-      'wpadmin',
-      'wp-content',
-      'vendor',
-      'vuln.htm',
-      'clockwork',
-      'fckeditor',
-      'xxxss',
-      'data/admin',
-      'ads.txt',
-      'app-ads.txt',
-      'humans.txt',
-      'Telerik',
-      'login',
-      'wgetrc',
-      '.azure-pipelines.yml',
-      'vcav-bootstrap',
-      '/remote/',
-      'laravel',
-      'sensorlist',
-      'debugbar',
-      'vcav-bootstrap',
-      '/api/get-organizations',
-      'interlib',
-      'finfo.html',
-      'cgi-bin',
-      'visualrf',
-      'fmlurlsvc',
-      'weathermap',
-      'rails/actions',
-      '/topic/',
-      'sftp-config.json',
-      'ftpsync.settings',
-      'pom.xml',
-      'dashboard/snapshot',
-      'lab.html',
-      'backend',
-      'solr',
-      '.aws/',
-      'phpinfo',
-      'beez3',
-      'cgialfa',
-      'ALFA_DATA',
-      'adminer',
-      '/news/js/',
-      '/base/',
-    ].some(v => requestedUrl.includes(v)) ||
-    [
-      'wordpress',
-      '/wp',
-      'var',
-      '.tar.gz',
-      '.rar',
-      '.zip',
-      '.tgz',
-      '.php',
-      '.env',
-      '/logos',
-      '/images',
-      '/uploads',
-      '/files',
-      '/extension',
-      '.jsp',
-      '.jspa',
-      '.yml',
-      '.yaml',
-      '.config',
-      '.conf',
-      '.sql',
-    ].some(v => requestedUrl.endsWith(v))
-  );
-}
-
-async function handleErrorResponse(sentry: Toucan, request: Request, endpoint: string, response: Response) {
-  console.error(`Failed to fetch ${endpoint}`, response.status, response);
-  const requestedEndpoint = request.url;
-
-  const shouldReport =
-    response.status >= 400 && !shouldSkipErrorReporting(requestedEndpoint, request.headers.get('user-agent'));
-
-  if (shouldReport && SENTRY_DSN) {
-    sentry.setFingerprint([requestedEndpoint.replace('https://www.', 'https://'), String(response.status)]);
-    sentry.setExtras({
-      'User Endpoint': requestedEndpoint,
-      'Upstream Endpoint': endpoint,
-      'Error Code': response.status,
-    });
-    sentry.captureException(new Error(`GET ${requestedEndpoint}: HTTP ${response.status}`));
-
-    const errorResponseContent = await fetch(`https://${fallbackRoute.rewrite}/404`, {
-      cf: {
-        cacheTtl: cfFetchCacheTtl,
-        cacheEverything: true,
-      },
-    });
-
-    return new Response(errorResponseContent.body, {
-      status: response.status,
-      headers: errorResponseContent.headers,
-    });
+  if (result && result.headers && result.headers.get('content-type')?.startsWith('text/html')) {
+    result = new HTMLRewriter()
+      .on('head', new FaviconHandler())
+      .on('head', new CrispHandler(crispWebsiteId, record))
+      .on('head', new GoogleAnalyticsHandler(gaTrackingId))
+      .transform(result);
   }
 
-  return response;
-}
+  // Modify response and add client side caching headers
+  result = new Response(result.body, result);
+  result.headers.append('Cache-Control', `s-maxage=${clientToWorkerMaxAge}`);
 
-class SitemapElementHandler {
-  private additionalUrls: string[];
-
-  constructor(additionalUrls: string[]) {
-    this.additionalUrls = additionalUrls;
-  }
-
-  element(element) {
-    element.append(this.additionalUrls.map(url => `<sitemap><loc>${url}</loc></sitemap>`).join('\n'), { html: true });
-  }
-}
-
-class HeadElementHandler {
-  private websiteRecord: RewriteRecord;
-
-  constructor(websiteRecord: RewriteRecord) {
-    this.websiteRecord = websiteRecord;
-  }
-
-  element(element) {
-    if (crispWebsiteId) {
-      element.append(
-        `<script>
-          window.$crisp = [];
-          window.CRISP_WEBSITE_ID = '${crispWebsiteId}';
-          (function () {
-            d = document;
-            s = d.createElement('script');
-            s.src = 'https://client.crisp.chat/l.js';
-            s.async = 1;
-            d.getElementsByTagName('head')[0].appendChild(s);
-          })();
-          ${
-            this.websiteRecord.crispSegments && this.websiteRecord.crispSegments.length > 0
-              ? `
-            window.$crisp.push([
-              'set',
-              'session:segments',
-              [${JSON.stringify(this.websiteRecord.crispSegments)}],
-            ]);
-            `
-              : ''
-          }
-        </script>`,
-        { html: true }
-      );
-    }
-
-    if (gaTrackingId) {
-      element.append(
-        `
-        <script async src="https://www.googletagmanager.com/gtag/js?id=${gaTrackingId}"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){window.dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${gaTrackingId}');
-        </script>`,
-        { html: true }
-      );
-    }
-  }
-}
-
-function composeSitemap(response, additionalUrls) {
-  if (response && response.headers && response.headers.get('content-type').startsWith('application/xml')) {
-    return new HTMLRewriter().on('sitemapindex', new SitemapElementHandler(additionalUrls)).transform(response);
-  }
-
-  return response;
-}
-
-function applyHtmlTransformations(record, response) {
-  if (response && response.headers && response.headers.get('content-type').startsWith('text/html')) {
-    return new HTMLRewriter().on('head', new HeadElementHandler(record)).transform(response);
-  }
-
-  return response;
-}
-
-async function handleRewrite(event: FetchEvent, sentry: Toucan, record: RewriteRecord, upstreamPath: string) {
-  const url = `https://${record.rewrite}${upstreamPath}`;
-  const cacheKey = new Request(url, event.request);
-  const cache = await caches.open(String(cacheStorageId));
-  let response = await cache.match(cacheKey);
-
-  if (!response) {
-    const freshResponse = await fetch(url, {
-      // This cache will force caching between the CF Worker and the upstream website, based on Cache-Control headers that are
-      // being set by Vercel or CloudFlare Pages.
-      cf: {
-        cacheTtl: cfFetchCacheTtl,
-        cacheEverything: true,
-      },
-    });
-
-    // In case of an error from an upstream, we are going to return the original request, and avoid caching.
-    if (freshResponse.status >= 400) {
-      // This error handler captures an error from the origin.
-      return await handleErrorResponse(sentry, event.request, url, freshResponse);
-    }
-
-    response = applyHtmlTransformations(record, freshResponse) as Response;
-
-    // Modify response and add client side caching headers
-    response = new Response(response.body, response);
-
-    // TODO: Are they any special headers we need to consider to add? SEO-related?
-    response.headers.append('Cache-Control', `s-maxage=${clientToWorkerMaxAge}`);
-
-    // Make sure the worker wait behind the scenes, for the Response content.
-    event.waitUntil(cache.put(cacheKey, response.clone()));
-  }
-
-  return response;
-}
+  return result;
+};
 
 async function handleEvent(event: FetchEvent, sentry: Toucan) {
   const parsedUrl = new URL(event.request.url);
@@ -314,47 +51,42 @@ async function handleEvent(event: FetchEvent, sentry: Toucan) {
   }
 
   // Handle sitemap
-  if (parsedUrl.pathname === '/sitemap.xml') {
-    const response = await handleRewrite(event, sentry, fallbackRoute, parsedUrl.pathname);
-    const additionalSitemaps = KEYS.flatMap(key => {
-      const item = mappings[key];
-
-      if (item && 'rewrite' in item && item.sitemap) {
-        return [`${parsedUrl.origin}${key}/sitemap.xml`];
-      }
-
-      return [];
-    });
-
-    return composeSitemap(response, additionalSitemaps);
+  if (shouldHandleSitemap(parsedUrl)) {
+    return handleSitemap(parsedUrl, `https://${fallbackRoute}/sitemap.xml`, mappings);
   }
 
-  // Handle all favicon in one place
-  if (parsedUrl.pathname.endsWith('favicon.ico')) {
-    return fetch(`https://${fallbackRoute.rewrite}/favicon.ico`);
+  // Handle all favicon, manifests and so on
+  if (shouldHandleFavicon(parsedUrl)) {
+    return handleFavicon(parsedUrl, fallbackRoute);
   }
 
   // Unified robots, we do this to avoid any conflicts, so we always take the root one
-  if (parsedUrl.pathname !== '/robots.txt' && parsedUrl.pathname.endsWith('robots.txt')) {
-    return redirect(`https://${publicDomain}/robots.txt`);
+  if (shouldHandleRobotsTxt(parsedUrl)) {
+    return handleRobotsTxt(publicDomain);
   }
 
   // Handle all feed/rss in one place
-  if (['/feed', '/feeds', '/feed/', '/feeds/', '/rss', '/rss/', '/rss.xml'].some(v => parsedUrl.pathname.endsWith(v))) {
-    return redirect(`https://${publicDomain}/feed.xml`);
+  if (shouldHandleFeed(parsedUrl)) {
+    return handleFeed(publicDomain);
   }
 
-  const match = KEYS.find(key => parsedUrl.pathname.startsWith(key));
+  const match = Object.keys(mappings).find(key => parsedUrl.pathname.startsWith(key));
 
   if (match) {
-    sentry.addBreadcrumb({
-      message: `Matched route: ${match}`,
-      level: 'debug',
-    });
+    sentry.addBreadcrumb({ message: `Matched route: ${match}`, level: 'debug' });
     const record = mappings[match];
 
     if ('rewrite' in record) {
-      return await handleRewrite(event, sentry, record, parsedUrl.pathname.replace(match, ''));
+      return await handleRewrite({
+        cacheStorageId,
+        cfFetchCacheTtl,
+        event,
+        fallbackRoute,
+        sentry,
+        manipulateResponse,
+        record,
+        upstreamPath: parsedUrl.pathname.replace(match, ''),
+      });
     }
 
     if ('redirect' in record) {
@@ -363,32 +95,20 @@ async function handleEvent(event: FetchEvent, sentry: Toucan) {
   }
 
   // this will delegate the request to the fallback endpoint
-  return await handleRewrite(event, sentry, fallbackRoute, parsedUrl.pathname);
+  return await handleRewrite({
+    cacheStorageId,
+    cfFetchCacheTtl,
+    event,
+    fallbackRoute,
+    sentry,
+    upstreamPath: parsedUrl.pathname,
+    manipulateResponse,
+    record: fallbackRoute,
+  });
 }
 
 addEventListener('fetch', event => {
-  const sentry = new Toucan({
-    dsn: SENTRY_DSN,
-    context: event,
-    environment: 'production',
-    release: RELEASE,
-    attachStacktrace: true,
-    allowedHeaders: [
-      'content-type',
-      'content-length',
-      'accept',
-      'accept-language',
-      'accept-encoding',
-      'user-agent',
-      'referer',
-      'host',
-      'cf-connecting-ip',
-      'cf-ray',
-      'cf-device-type',
-      'x-forwarded-for',
-      'x-forwarded-proto',
-    ],
-  });
+  const sentry = createSentry(event, SENTRY_DSN, RELEASE);
 
   event.respondWith(
     handleEvent(event, sentry).catch(e => {
