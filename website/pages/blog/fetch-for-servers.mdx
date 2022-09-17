@@ -109,7 +109,7 @@ import { createServerAdapter } from '@whatwg-node/server'
 import { Request, Response } from '@whatwg-node/fetch'
 
 const myServer = createServerAdapter({
-  handleRequest(request: Request) {
+  handle(request: Request) {
     return new Response('Hello world', {
       status: 200
     })
@@ -160,7 +160,7 @@ You can basically achieve routing like below, however it looks a bit unsafe.
 
 ```tsx
 createServerAdapter({
-  handleRequest(request: Request) {
+  handle(request: Request) {
     if (request.url.endsWith('/hello')) {
       return new Response('{ "message": "hello" }', {
         status: 200,
@@ -207,9 +207,7 @@ router.post('/todos', async request => {
 router.all('*', () => new Response('Not Found.', { status: 404 }))
 
 // attach the router "handle" to our server adapter
-const myServer = createServerAdapter({
-  handleRequest: router.handle
-})
+const myServer = createServerAdapter(router)
 
 // Then use it in any environment
 import { createServer } from 'http'
