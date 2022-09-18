@@ -173,6 +173,14 @@ export function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: str
       '/old1',
       '/old2',
       '/null',
+      '/cms',
+      '/new',
+      '/old',
+      '/blog',
+      '/dev',
+      '/main',
+      '/test',
+      `'A=0`,
     ].some(v => requestedUrl.toLowerCase().endsWith(v.toLowerCase()))
   );
 }
