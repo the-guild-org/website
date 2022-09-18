@@ -172,6 +172,7 @@ export function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: str
       '/back',
       '/old1',
       '/old2',
+      '/null',
     ].some(v => requestedUrl.toLowerCase().endsWith(v.toLowerCase()))
   );
 }
