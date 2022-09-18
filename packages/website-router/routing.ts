@@ -26,6 +26,14 @@ async function handleErrorResponse(options: {
       'Upstream Endpoint': options.endpoint,
       'Error Code': options.response.status,
     });
+
+    if (options.request.headers.has('cf-connecting-ip')) {
+      options.sentry.setUser({
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        ip_address: options.request.headers.get('cf-connecting-ip')!,
+      });
+    }
+
     options.sentry.captureException(new Error(`GET ${requestedEndpoint}: HTTP ${options.response.status}`));
 
     const errorResponseContent = await fetch(`https://${options.fallbackRoute.rewrite}/404`, {

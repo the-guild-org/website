@@ -107,7 +107,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan) {
   });
 }
 
-addEventListener('fetch', event => {
+addEventListener('fetch', (event: FetchEvent) => {
   const sentry = createSentry(event, SENTRY_DSN, RELEASE);
 
   event.respondWith(
@@ -115,6 +115,14 @@ addEventListener('fetch', event => {
       sentry.setExtras({
         'User Endpoint': event.request.url,
       });
+
+      if (event.request.headers.has('cf-connecting-ip')) {
+        sentry.setUser({
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          ip_address: event.request.headers.get('cf-connecting-ip')!,
+        });
+      }
+
       sentry.captureException(e);
 
       throw e;
