@@ -1,9 +1,14 @@
 export const FAVICON_FILES = [
   'site.webmanifest',
   'favicon.ico',
-  'apple-touch-icon.png',
   'favicon-32x32.png',
   'favicon-16x16.png',
+  'apple-touch-icon.png',
+  'apple-touch-icon-precomposed.png',
+  'apple-touch-icon-120x120-precomposed.png',
+  'apple-touch-icon-120x120.png',
+  'apple-touch-icon-152x152-precomposed.png',
+  'apple-touch-icon-152x152.png',
 ];
 
 export class FaviconHandler implements HTMLRewriterElementContentHandlers {
