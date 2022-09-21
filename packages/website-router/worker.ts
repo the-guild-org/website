@@ -86,6 +86,8 @@ async function handleEvent(event: FetchEvent, sentry: Toucan) {
         manipulateResponse,
         record,
         upstreamPath: parsedUrl.pathname.replace(match, ''),
+        match,
+        publicDomain
       });
     }
 
@@ -104,6 +106,8 @@ async function handleEvent(event: FetchEvent, sentry: Toucan) {
     upstreamPath: parsedUrl.pathname,
     manipulateResponse,
     record: fallbackRoute,
+    match: null,
+    publicDomain,
   });
 }
 

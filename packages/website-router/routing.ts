@@ -72,6 +72,8 @@ export async function handleRewrite(options: {
   upstreamPath: string;
   cfFetchCacheTtl: number;
   manipulateResponse: ManipulateResponseFn;
+  match: string | null;
+  publicDomain: string;
 }) {
   const url = `https://${options.record.rewrite}${options.upstreamPath}`;
   const cacheKey = new Request(url, options.event.request);
@@ -86,7 +88,18 @@ export async function handleRewrite(options: {
         cacheTtl: options.cfFetchCacheTtl,
         cacheEverything: true,
       },
+      redirect: 'manual',
     });
+
+    if (freshResponse.status === 301 || freshResponse.status === 302) {
+      if (options.match === null) {
+        return freshResponse;
+      }
+
+      const upstreamLocation = freshResponse.headers.get('location');
+
+      return redirect(`https://${options.publicDomain}${options.match}${upstreamLocation}`, 301);
+    }
 
     // In case of an error from an upstream, we are going to return the original request, and avoid caching.
     if (freshResponse.status >= 400) {
