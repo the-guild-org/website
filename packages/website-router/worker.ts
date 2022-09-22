@@ -87,7 +87,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan) {
         record,
         upstreamPath: parsedUrl.pathname.replace(match, ''),
         match,
-        publicDomain
+        publicDomain,
       });
     }
 
