@@ -1,13 +1,6 @@
 import { withGuildDocs } from '@theguild/components/next.config';
 
 export default withGuildDocs({
-  experimental: {
-    optimizeCss: true,
-    images: {
-      unoptimized: true,
-      allowFutureImage: true,
-    },
-  },
   redirects: () => [
     {
       source: '/connected-build',

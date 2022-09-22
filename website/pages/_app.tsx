@@ -66,15 +66,7 @@ export default class MyApp extends App {
           }
         `}</style>
 
-        <Header
-          sameSite
-          accentColor="var(--colors-accent)"
-          activeLink={router.asPath}
-          themeSwitch
-          searchBarProps={{ version: 'v2' }}
-        />
         <Component {...pageProps} />
-        <FooterExtended sameSite />
       </>
     );
   }

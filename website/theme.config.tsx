@@ -33,7 +33,7 @@ const config: DocsThemeConfig = {
   },
   navbar: props => (
     <>
-      <Header accentColor="#1cc8ee" themeSwitch searchBarProps={{ version: 'v2' }} />
+      <Header sameSite accentColor="var(--colors-accent)" themeSwitch searchBarProps={{ version: 'v2' }} />
       <Navbar {...props} />
     </>
   ),
@@ -162,6 +162,7 @@ const config: DocsThemeConfig = {
       );
     },
   },
+  
   components: {
     Callout,
     Video,

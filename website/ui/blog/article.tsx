@@ -69,7 +69,7 @@ const Authors = ({ meta }: { meta: Meta }): ReactElement => {
 };
 
 export const Article = (): ReactElement => {
-  const { meta: frontMatter } = useConfig();
+  const { frontMatter } = useConfig();
 
   return (
     <>
