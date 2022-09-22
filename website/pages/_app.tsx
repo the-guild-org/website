@@ -1,27 +1,8 @@
 import App from 'next/app';
 import Head from 'next/head';
-import { FooterExtended, Header, ThemeProvider } from '@theguild/components';
+import { FooterExtended, Header } from '@theguild/components';
 import { globalStyles } from '../styles/global';
-import 'guild-docs/style.css';
-
-// export function reportWebVitals({ id, name, label, value }: NextWebVitalsMetric) {
-//   gtag.event({
-//     action: name,
-//     event_category: label === 'web-vital' ? 'Web Vitals' : 'Next.js custom metric',
-//     value: Math.round(name === 'CLS' ? value * 1000 : value), // values must be integers
-//     event_label: id,
-//     non_interaction: true,
-//   });
-// }
-
-// const defaultSeo: AppSeoProps = {
-//   title: 'The Guild',
-//   description: 'Modern API Platform and Ecosystem that scales',
-//   logo: {
-//     url: 'https://guild.dev/static/logo.svg',
-//   },
-// };
-
+import '@theguild/components/style.css';
 export default class MyApp extends App {
   render() {
     globalStyles();
@@ -85,17 +66,15 @@ export default class MyApp extends App {
           }
         `}</style>
 
-        <ThemeProvider>
-          <Header
-            sameSite
-            accentColor="var(--colors-accent)"
-            activeLink={router.asPath}
-            themeSwitch
-            searchBarProps={{ version: 'v2' }}
-          />
-          <Component {...pageProps} />
-          <FooterExtended sameSite />
-        </ThemeProvider>
+        <Header
+          sameSite
+          accentColor="var(--colors-accent)"
+          activeLink={router.asPath}
+          themeSwitch
+          searchBarProps={{ version: 'v2' }}
+        />
+        <Component {...pageProps} />
+        <FooterExtended sameSite />
       </>
     );
   }

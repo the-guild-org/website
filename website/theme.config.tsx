@@ -1,4 +1,4 @@
-import { DocsThemeConfig, useConfig } from '@theguild/components';
+import { DocsThemeConfig, FooterExtended, Header, Navbar, useConfig } from '@theguild/components';
 import { useRouter } from 'next/router';
 import { ReactElement, useEffect, useState } from 'react';
 import { Callout } from 'nextra-theme-docs';
@@ -23,19 +23,27 @@ function ensureAbsolute(url: string): string {
 
 const config: DocsThemeConfig = {
   titleSuffix: ` – ${SITE_NAME}`,
-  projectLink: 'https://github.com/the-guild-org/the-guild-website', // GitHub link in the navbar
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/pages', // base URL for the docs repository
-  nextLinks: false,
-  prevLinks: false,
-  search: false,
-  floatTOC: true,
+  search: {
+    component: null,
+  },
   darkMode: true,
-  footer: false,
-  footerEditLink: 'Edit this page on GitHub',
+  footer: {
+    component: <FooterExtended />,
+  },
+  navbar: props => (
+    <>
+      <Header accentColor="#1cc8ee" themeSwitch searchBarProps={{ version: 'v2' }} />
+      <Navbar {...props} />
+    </>
+  ),
+  editLink: {
+    text: 'Edit this page on GitHub',
+  },
   logo: null,
   head: function Head() {
     // eslint-disable-next-line prefer-const
-    let { title, meta: frontMatter } = useConfig();
+    let { title, frontMatter } = useConfig();
     const { route } = useRouter();
     const description = frontMatter.description || `${SITE_NAME}: Modern API Platform and Ecosystem that scales`;
     const image = frontMatter.image || '/img/ogimage.png';
@@ -107,44 +115,52 @@ const config: DocsThemeConfig = {
     );
   },
   gitTimestamp: 'Last updated on',
-  defaultMenuCollapsed: true,
-  feedbackLink: 'Question? Give us feedback →',
-  feedbackLabels: 'kind/docs',
-  bodyExtraContent: function BodyFooter() {
-    const { route } = useRouter();
-    const [similarArticles, setSimilarArticles] = useState<MetaWithLink[]>([]);
-    const config = useConfig();
-    const { tags } = config.meta;
+  sidebar: {
+    defaultMenuCollapsed: true,
+  },
+  feedback: {
+    content: 'Question? Give us feedback →',
+    labels: 'kind/docs',
+  },
+  main: {
+    extraContent: function BodyFooter() {
+      const { route } = useRouter();
+      const [similarArticles, setSimilarArticles] = useState<MetaWithLink[]>([]);
+      const config = useConfig();
+      const { tags } = config.frontMatter;
 
-    useEffect(() => {
-      if (!tags) {
-        return;
+      useEffect(() => {
+        if (!tags) {
+          return;
+        }
+        const newSimilarArticles = blogsMeta
+          .filter(
+            article => tags.length === 0 || article.link !== route || article.tags?.some(tag => tags.includes(tag))
+          )
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .slice(0, 12)
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 4);
+
+        setSimilarArticles(newSimilarArticles);
+      }, [tags, route]);
+
+      if (!route.startsWith('/blog/') && !route.startsWith('/newsletter/') && route !== '/about-us') {
+        return null;
       }
-      const newSimilarArticles = blogsMeta
-        .filter(article => tags.length === 0 || article.link !== route || article.tags?.some(tag => tags.includes(tag)))
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        .slice(0, 12)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 4);
 
-      setSimilarArticles(newSimilarArticles);
-    }, [tags, route]);
-
-    if (!route.startsWith('/blog/') && !route.startsWith('/newsletter/') && route !== '/about-us') {
-      return null;
-    }
-
-    return (
-      <div className="my-20">
-        {similarArticles.length > 0 && (
-          <>
-            <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">Similar articles</h3>
-            <BlogCardList articles={similarArticles} />
-          </>
-        )}
-        <Newsletter />
-      </div>
-    );
+      return (
+        <div className="my-20">
+          {similarArticles.length > 0 && (
+            <>
+              <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">Similar articles</h3>
+              <BlogCardList articles={similarArticles} />
+            </>
+          )}
+          <Newsletter />
+        </div>
+      );
+    },
   },
   components: {
     Callout,
