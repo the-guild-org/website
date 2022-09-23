@@ -47,7 +47,7 @@ export const jsonConfig = {
       sitemap: true,
     },
     '/graphql/sofa-api': {
-      rewrite: 'sofa-api.pages.dev',
+      rewrite: 'sofa.pages.dev',
       crispSegments: ['sofa'],
       sitemap: true,
     },
