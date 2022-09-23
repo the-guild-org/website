@@ -46,6 +46,11 @@ export const jsonConfig = {
       crispSegments: ['config'],
       sitemap: true,
     },
+    '/graphql/sofa-api': {
+      rewrite: 'graphql-sofa-api.pages.dev',
+      crispSegments: ['sofa'],
+      sitemap: true,
+    },
     // TODO: Replace with rewrite when this is ready
     '/graphql/envelop': {
       redirect: 'https://envelop.dev',
@@ -58,12 +63,6 @@ export const jsonConfig = {
       status: 302,
       // rewrite: 'graphql-modules.com',
       // crispSegments: ['modules'],
-    },
-    '/graphql/sofa-api': {
-      redirect: 'https://sofa-api.com',
-      status: 302,
-      // rewrite: 'sofa-api.com',
-      // crispSegments: ['sofa'],
     },
     '/graphql/tools': {
       redirect: 'https://graphql-tools.com',
