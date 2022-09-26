@@ -51,18 +51,17 @@ export const jsonConfig = {
       crispSegments: ['sofa'],
       sitemap: true,
     },
+    '/graphql/modules': {
+      rewrite: 'graphql-modules.pages.dev',
+      crispSegments: ['modules'],
+      sitemap: true,
+    },
     // TODO: Replace with rewrite when this is ready
     '/graphql/envelop': {
       redirect: 'https://envelop.dev',
       status: 302,
       // rewrite: 'envelop.dev',
       // crispSegments: ['envelop'],
-    },
-    '/graphql/modules': {
-      redirect: 'https://graphql-modules.com',
-      status: 302,
-      // rewrite: 'graphql-modules.com',
-      // crispSegments: ['modules'],
     },
     '/graphql/tools': {
       redirect: 'https://graphql-tools.com',
