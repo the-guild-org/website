@@ -22,6 +22,7 @@ import fuse from '../public/img/logos/companies/fuse-white.png';
 import formidable from '../public/img/logos/companies/formidable-white.png';
 import parse from '../public/img/logos/companies/parse-white.png';
 import redwoodjs from '../public/img/logos/companies/redwoodjs-white.png';
+import sequence from '../public/img/logos/companies/seq-white.png';
 
 const logos: Record<string, StaticImageData> = {
   'The Graph': theGraph,
@@ -45,6 +46,7 @@ const logos: Record<string, StaticImageData> = {
   Formidable: formidable,
   'Parse Platform': parse,
   RedwoodJS: redwoodjs,
+  Sequence: sequence,
 };
 
 export const ClientLogosSection = (): ReactElement => {
@@ -60,7 +62,6 @@ export const ClientLogosSection = (): ReactElement => {
             className="
             h-8
             w-auto
-            max-w-[15rem]
             opacity-70
             invert
             transition-opacity
