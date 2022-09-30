@@ -121,17 +121,17 @@ export default defineConfig({
         setSimilarArticles(newSimilarArticles);
       }, [tags, route]);
 
-      if (!route.startsWith('/blog/') && !route.startsWith('/newsletter/') && route !== '/about-us') {
+      const isBlogPage = route.startsWith('/blog/') && !route.startsWith('/blog/tag')
+
+      if (!isBlogPage) {
         return null;
       }
 
       return (
         <>
-          {!route.startsWith('/blog/tag') && (
-            <div className="-order-1">
-              <Article />
-            </div>
-          )}
+          <div className="-order-1 mb-6">
+            <Article />
+          </div>
           <div className="my-20">
             {similarArticles.length > 0 && (
               <>
