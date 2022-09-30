@@ -7,7 +7,6 @@ import { AUTHORS } from '@/authors';
 import { CodeSandbox } from '@/shared/embed/CodeSandbox';
 import { LinkPreview } from '@/shared/embed/LinkPreview';
 import { Gfycat } from '@/shared/embed/Gfycat';
-import { YouTube } from '@/shared/embed/YouTube';
 import { Tweet } from '@/shared/embed/Tweet';
 import { StackBlitz } from '@/shared/embed/StackBlitz';
 import blogsMeta from './dist/blogs-meta.json';
@@ -144,7 +143,6 @@ export default defineConfig({
     CodeSandbox,
     LinkPreview,
     Gfycat,
-    YouTube,
     Tweet,
     StackBlitz,
   },
