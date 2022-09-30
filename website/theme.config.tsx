@@ -1,8 +1,7 @@
-import { DocsThemeConfig, FooterExtended, Header, Navbar, useConfig } from '@theguild/components';
-import { useRouter } from 'next/router';
 import { ReactElement, useEffect, useState } from 'react';
-import { Callout } from 'nextra-theme-docs';
+import { useRouter } from 'next/router';
 import { ArticleJsonLd, NextSeo } from 'next-seo';
+import { Header, useConfig, Callout, defineConfig } from '@theguild/components';
 import { BlogCardList, Newsletter, Video } from '@/components';
 import { AUTHORS } from '@/authors';
 import { CodeSandbox } from '@/shared/embed/CodeSandbox';
@@ -21,26 +20,11 @@ function ensureAbsolute(url: string): string {
   return url.startsWith('/') ? `https://the-guild.dev${url}` : url;
 }
 
-const config: DocsThemeConfig = {
+// eslint-disable-next-line import/no-default-export
+export default defineConfig({
   titleSuffix: ` – ${SITE_NAME}`,
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/pages', // base URL for the docs repository
-  search: {
-    component: null,
-  },
-  darkMode: true,
-  footer: {
-    component: <FooterExtended />,
-  },
-  navbar: props => (
-    <>
-      <Header sameSite accentColor="var(--colors-accent)" themeSwitch searchBarProps={{ version: 'v2' }} />
-      <Navbar {...props} />
-    </>
-  ),
-  editLink: {
-    text: 'Edit this page on GitHub',
-  },
-  logo: null,
+  navbar: <Header sameSite accentColor="var(--colors-accent)" themeSwitch searchBarProps={{ version: 'v2' }} />,
   head: function Head() {
     // eslint-disable-next-line prefer-const
     let { title, frontMatter } = useConfig();
@@ -114,14 +98,6 @@ const config: DocsThemeConfig = {
       </>
     );
   },
-  gitTimestamp: 'Last updated on',
-  sidebar: {
-    defaultMenuCollapsed: true,
-  },
-  feedback: {
-    content: 'Question? Give us feedback →',
-    labels: 'kind/docs',
-  },
   main: {
     extraContent: function BodyFooter() {
       const { route } = useRouter();
@@ -162,7 +138,6 @@ const config: DocsThemeConfig = {
       );
     },
   },
-  
   components: {
     Callout,
     Video,
@@ -173,7 +148,4 @@ const config: DocsThemeConfig = {
     Tweet,
     StackBlitz,
   },
-};
-
-// eslint-disable-next-line import/no-default-export
-export default config;
+});

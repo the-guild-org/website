@@ -1,8 +1,8 @@
 import App from 'next/app';
 import Head from 'next/head';
-import { FooterExtended, Header } from '@theguild/components';
 import { globalStyles } from '../styles/global';
 import '@theguild/components/style.css';
+
 export default class MyApp extends App {
   render() {
     globalStyles();
@@ -13,6 +13,7 @@ export default class MyApp extends App {
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
+        {/* eslint-disable-next-line react/no-unknown-property */}
         <style global jsx>{`
           :root {
             --colors-text: white;
@@ -60,9 +61,6 @@ export default class MyApp extends App {
           input:-webkit-autofill {
             -webkit-transition: color 9999s ease-out, background-color 9999s ease-out;
             -webkit-transition-delay: 9999s;
-          }
-          .nextra-nav-container {
-            display: none;
           }
         `}</style>
 

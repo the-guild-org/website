@@ -12,7 +12,6 @@ export default class MyDocument extends Document {
             logo="https://the-guild.dev/static/logo.svg"
             name="The Guild"
           />
-          <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet" />
           <style dangerouslySetInnerHTML={{ __html: getCssText() }} />
           <meta charSet="utf-8" />
           <link rel="alternate" type="application/rss+xml" title="RSS Feed for the-guild.dev" href="/feed.xml" />
