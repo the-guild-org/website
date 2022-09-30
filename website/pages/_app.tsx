@@ -62,6 +62,12 @@ export default class MyApp extends App {
             -webkit-transition: color 9999s ease-out, background-color 9999s ease-out;
             -webkit-transition-delay: 9999s;
           }
+
+          // Remove when will be added in Nextra
+          main[class*='max-w-4xl'] {
+            display: flex;
+            flex-direction: column;
+          }
         `}</style>
 
         <Component {...pageProps} />

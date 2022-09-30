@@ -7,15 +7,13 @@ description: Migrating to GraphQL from a REST API has never been easier. With to
 image: /blog-assets/migrating-from-rest/cover.png
 ---
 
-<Article />
-
 GraphQL was originally created in order to easily provide a powerful API on top of existing code.
 The current approach people are using today while migrating from REST API to GraphQL is to create a new schema and use GraphQL as a proxy.
 That has a lot of benefits because it gives us an opportunity to rethink the API and improve it, without changing the underlining services.
 
 Let's first start with looking at that approach:
 
-### Implementing a basic proxy GraphQL backend
+## Implementing a basic proxy GraphQL backend
 
 Let's say you have `/user` endpoint that does all CRUD operations for `User` entity with different HTTP methods, and you would need a GraphQL schema like below;
 
@@ -72,7 +70,7 @@ This example assumes that you have `/user/:id` endpoint that gets a `User` entit
 
 But this implementation will be hard to maintain when the REST API is updated and become bigger.
 
-### Using GraphQL Mesh instead without any code
+## Using GraphQL Mesh instead without any code
 
 GraphQL Mesh is a tool that handles multiple non-GraphQL data sources and generates an executable GraphQL schema on top of them with a simple configuration file. [You can check the announcement blog post to learn more](https://the-guild.dev/blog/graphql-mesh)
 
@@ -131,7 +129,7 @@ With a single command, our new GraphQL endpoint is ready to serve;
 yarn mesh serve
 ```
 
-### Not only as a Gateway but also a completely type-safe SDK
+## Not only as a Gateway but also a completely type-safe SDK
 
 Mesh is able to generate a type-safe SDK from generated GraphQL API because the generated GraphQL schema is a local `GraphQLSchema` that can be executed without binding an HTTP server.
 

@@ -23,7 +23,7 @@ function ensureAbsolute(url: string): string {
 // eslint-disable-next-line import/no-default-export
 export default defineConfig({
   titleSuffix: ` – ${SITE_NAME}`,
-  docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/pages', // base URL for the docs repository
+  docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
   navbar: <Header sameSite accentColor="var(--colors-accent)" themeSwitch searchBarProps={{ version: 'v2' }} />,
   head: function Head() {
     // eslint-disable-next-line prefer-const
@@ -126,20 +126,26 @@ export default defineConfig({
       }
 
       return (
-        <div className="my-20">
-          {similarArticles.length > 0 && (
-            <>
-              <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">Similar articles</h3>
-              <BlogCardList articles={similarArticles} />
-            </>
+        <>
+          {!route.startsWith('/blog/tag') && (
+            <div className="-order-1">
+              <Article />
+            </div>
           )}
-          <Newsletter />
-        </div>
+          <div className="my-20">
+            {similarArticles.length > 0 && (
+              <>
+                <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">Similar articles</h3>
+                <BlogCardList articles={similarArticles} />
+              </>
+            )}
+            <Newsletter />
+          </div>
+        </>
       );
     },
   },
   components: {
-    Article,
     Callout,
     Video,
     CodeSandbox,

@@ -7,15 +7,13 @@ description: Getting to know React DOM's event handling system inside out.
 image: /medium/dff8edec78c39a832292c7435ee1213b.png
 ---
 
-<Article />
-
 It all started when I've tried to redirect submitted React event handlers into another DOM element. I won't get into details regarding the use case, but what I did was fairly logical: I've redefined the `addEventListener()` method on the DOM element's instance, hoping to capture the submitted arguments and do as I wish with them. Unfortunately, it didn't work…
 
 How come?! How could it be that React handles events without calling the `addEventListener()` method? After all, it has proven itself to work, across many applications.
 
 True, but it's not what you think. First I would like you to take a snapshot of ReactDOM's implementation. It actually has a comment which explains the entire event handling system:
 
-```
+```text
 Summary of `ReactBrowserEventEmitter` event handling:
   - Top-level delegation is used to trap most native browser events. This may only occur in the main thread and is the responsibility of ReactDOMEventListener, which is injected and can therefore support pluggable event sources. This is the only work that occurs in the main thread.
   - We normalize and de-duplicate events to account for browser quirks. This may be done in the worker thread.
