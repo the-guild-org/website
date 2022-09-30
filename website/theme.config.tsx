@@ -106,33 +106,31 @@ export default defineConfig({
       const { tags } = config.frontMatter;
 
       useEffect(() => {
-        if (!tags) {
-          return;
-        }
-        const newSimilarArticles = blogsMeta
-          .filter(
-            article => tags.length === 0 || article.link !== route || article.tags?.some(tag => tags.includes(tag))
-          )
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-          .slice(0, 12)
-          .sort(() => 0.5 - Math.random())
-          .slice(0, 4);
+        const newSimilarArticles = tags
+          ? blogsMeta
+              .filter(
+                article => tags.length === 0 || article.link !== route || article.tags?.some(tag => tags.includes(tag))
+              )
+              .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+              .slice(0, 12)
+              .sort(() => 0.5 - Math.random())
+              .slice(0, 4)
+          : [];
 
         setSimilarArticles(newSimilarArticles);
       }, [tags, route]);
 
-      const isBlogPage = route.startsWith('/blog/') && !route.startsWith('/blog/tag')
-
-      if (!isBlogPage) {
-        return null;
-      }
+      const isBlogPage = route.startsWith('/blog/') && !route.startsWith('/blog/tag');
+      const isAboutUsPage = route === '/about-us';
 
       return (
-        <>
-          <div className="-order-1 mb-6">
-            <Article />
-          </div>
-          <div className="my-20">
+        (isBlogPage || isAboutUsPage) && (
+          <>
+            {isBlogPage && (
+              <div className="-order-1 mb-6">
+                <Article />
+              </div>
+            )}
             {similarArticles.length > 0 && (
               <>
                 <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">Similar articles</h3>
@@ -140,8 +138,8 @@ export default defineConfig({
               </>
             )}
             <Newsletter />
-          </div>
-        </>
+          </>
+        )
       );
     },
   },
