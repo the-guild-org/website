@@ -14,14 +14,14 @@ export const HeroSection = ({
   return (
     <div>
       <Image
-        alt=''
+        alt=""
         src={blueCircle}
         placeholder="empty"
         loading="eager"
         className={clsx('absolute top-0 -left-40 z-[-1] lg:left-0', hideCirclesOnMobile && 'hidden xl:block')}
       />
       <Image
-        alt=''
+        alt=""
         src={pinkCircle}
         placeholder="empty"
         loading="eager"

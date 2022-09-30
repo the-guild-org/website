@@ -9,7 +9,7 @@ import { LinkPreview } from '@/shared/embed/LinkPreview';
 import { Gfycat } from '@/shared/embed/Gfycat';
 import { Tweet } from '@/shared/embed/Tweet';
 import { StackBlitz } from '@/shared/embed/StackBlitz';
-import { Article } from '@/article'
+import { Article } from '@/article';
 import blogsMeta from './dist/blogs-meta.json';
 import { MetaWithLink } from './lib/meta';
 import { asArray } from './lib/as-array';
