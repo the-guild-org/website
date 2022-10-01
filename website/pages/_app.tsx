@@ -1,26 +1,7 @@
 import App from 'next/app';
 import Head from 'next/head';
-import { FooterExtended, Header, ThemeProvider } from '@theguild/components';
 import { globalStyles } from '../styles/global';
-import 'guild-docs/style.css';
-
-// export function reportWebVitals({ id, name, label, value }: NextWebVitalsMetric) {
-//   gtag.event({
-//     action: name,
-//     event_category: label === 'web-vital' ? 'Web Vitals' : 'Next.js custom metric',
-//     value: Math.round(name === 'CLS' ? value * 1000 : value), // values must be integers
-//     event_label: id,
-//     non_interaction: true,
-//   });
-// }
-
-// const defaultSeo: AppSeoProps = {
-//   title: 'The Guild',
-//   description: 'Modern API Platform and Ecosystem that scales',
-//   logo: {
-//     url: 'https://guild.dev/static/logo.svg',
-//   },
-// };
+import '@theguild/components/style.css';
 
 export default class MyApp extends App {
   render() {
@@ -32,6 +13,7 @@ export default class MyApp extends App {
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
+        {/* eslint-disable-next-line react/no-unknown-property */}
         <style global jsx>{`
           :root {
             --colors-text: white;
@@ -80,22 +62,15 @@ export default class MyApp extends App {
             -webkit-transition: color 9999s ease-out, background-color 9999s ease-out;
             -webkit-transition-delay: 9999s;
           }
-          .nextra-nav-container {
-            display: none;
+
+          // Remove when will be added in Nextra
+          main[class*='max-w-4xl'] {
+            display: flex;
+            flex-direction: column;
           }
         `}</style>
 
-        <ThemeProvider>
-          <Header
-            sameSite
-            accentColor="var(--colors-accent)"
-            activeLink={router.asPath}
-            themeSwitch
-            searchBarProps={{ version: 'v2' }}
-          />
-          <Component {...pageProps} />
-          <FooterExtended sameSite />
-        </ThemeProvider>
+        <Component {...pageProps} />
       </>
     );
   }

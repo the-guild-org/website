@@ -7,10 +7,6 @@ description: A GeoReferenced Multiplayer First-Person Shooter Game.
 image: /blog-assets/graphql-geo-strike/cover.png
 ---
 
-import { Article } from '@/blog/article'
-
-<Article />
-
 **TLDR:** We've built a multiplayer shooter and used Apollo's GraphQL subscriptions to keep game state in sync at a very high frequency. Here's our impressions!
 **Tools used:** [Angular-cesium](http://angular-cesium.com), [Apollo Angular](https://github.com/kamilkisiela/apollo-angular), [CesiumJS](https://cesiumjs.org), [Angular](https://angular.io)
 **Go Play:** [geo-strike.com](https://geo-strike.com)
@@ -48,7 +44,7 @@ In order to do just that, we decided that our game server will be the only sourc
 
 It ended up looking like so:
 
-![](../../public/blog-assets/graphql-geo-strike/structure.png)
+![](/blog-assets/graphql-geo-strike/structure.png)
 
 Some parts of this graph will change very rapidly (~10 times a sec) and some parts of it will change rarely. Getting to this realization we decided to expose this graph with both Query type for less frequently changed data and Subscription type for higher rate changes.
 
@@ -56,13 +52,13 @@ This gives the client the flexibility to decide what parts of the data graph he 
 
 In our game, this subscription query turned out to be the only parts we need updated frequently:
 
-![](../../public/blog-assets/graphql-geo-strike/game-state.png)
+![](/blog-assets/graphql-geo-strike/game-state.png)
 
 At the beginning we went with the naive implementation and set things up so that we will get any change made by any client as it happens. Basically publish on the mutation resolver. But we quickly realized this is not a good approach as this is not very scalable and we, quickly over-stress our graphql server.
 
 The approach we decided on taking is usually referred to as “game tick”. We set up a timer that triggers every 200ms and publishes the game state to the gameData subscription. This was one of the most significant changes we made to allow for low latency, in our state synchronization process, and it was done with a couple lines of code, thanks to the way GraphQL subscriptions work.
 
-![](../../public/blog-assets/graphql-geo-strike/game-flow.png)
+![](/blog-assets/graphql-geo-strike/game-flow.png)
 
 Not only that we were able to reduce latency, we were also able to scale the number of players quite easily.
 
@@ -74,7 +70,7 @@ But for those challenges, Apollo and `angular-apollo` had us covered! Apollo cli
 
 `angular-apollo` exposes the state as a Rx Observable which allowed us to plug that stream to our amazing angular-cesium framework and have the players magically move and update on a 3d scene rendered with CesiumJS!
 
-![](../../public/blog-assets/graphql-geo-strike/game-client.png)
+![](/blog-assets/graphql-geo-strike/game-client.png)
 
 # Not just one subscription
 
@@ -84,7 +80,7 @@ After analyzing our graph, we determined that there are two such events. Shootin
 
 # Further improvements
 
-![](../../public/blog-assets/graphql-geo-strike/pov.png)
+![](/blog-assets/graphql-geo-strike/pov.png)
 
 As our game is played on the same size scene as our own earth, we cannot help but thinking of future game modes where whole armies could play one against the other to take over / save the world!
 

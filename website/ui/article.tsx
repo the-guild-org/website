@@ -4,8 +4,8 @@ import { useConfig, Anchor } from '@theguild/components';
 import { Image, Avatar, TagList } from '@/components';
 import { LookingForExperts } from '@/looking-for-experts';
 import { AUTHORS } from '@/authors';
-import { Meta } from '../../lib/meta';
-import { asArray } from '../../lib/as-array';
+import { Meta } from '../lib/meta';
+import { asArray } from '../lib/as-array';
 
 const Authors = ({ meta }: { meta: Meta }): ReactElement => {
   const date = meta.date ? new Date(meta.date) : new Date();
@@ -69,7 +69,7 @@ const Authors = ({ meta }: { meta: Meta }): ReactElement => {
 };
 
 export const Article = (): ReactElement => {
-  const { meta: frontMatter } = useConfig();
+  const { frontMatter } = useConfig();
 
   return (
     <>

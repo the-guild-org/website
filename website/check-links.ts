@@ -41,7 +41,7 @@ function checkFile(name: string, onError: (err: string) => void) {
 }
 
 function exists(link: string): boolean {
-  const filepath = join(PAGES_DIR, `${link === '/' ? 'index' : link}.mdx`);
+  const filepath = join(PAGES_DIR, `${link}.mdx`);
   return existsSync(filepath);
 }
 
@@ -93,5 +93,12 @@ function extractPreviews(doc: string): Link[] {
 }
 
 function onlyRelative(links: Link[]): Link[] {
-  return links.filter(link => link.href.startsWith('./') || link.href.startsWith('/'));
+  return links.filter(
+    link =>
+      link.href.startsWith('.') ||
+      (link.href !== '/' &&
+        link.href.startsWith('/') &&
+        !link.href.startsWith('/blog-assets/') &&
+        !link.href.startsWith('/medium/'))
+  );
 }

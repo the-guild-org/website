@@ -59,6 +59,8 @@ export const ClientLogosSection = (): ReactElement => {
             src={logo}
             title={name}
             alt={`${name} logo`}
+            placeholder="empty"
+            loading="eager"
             className="
             h-8
             w-auto

@@ -7,10 +7,6 @@ description: New name, AoT support, TypeScript improvements, and Angular 4 readi
 image: /medium/cc2b3a84ee2ef485ffad79881a284b9a.png
 ---
 
-import { Article } from '@/blog/article'
-
-<Article />
-
 # New name, AoT support, TypeScript improvements, and Angular 4 readiness
 
 We recently released version `0.11.0` of [apollo-angular](http://github.com/apollographql/apollo-angular) and a lot of things have changed and improved since our last update blog!
@@ -32,13 +28,13 @@ So let's dive into it!
 
 # New name
 
-![](../../public/medium/3b47588c7a195cbb887dad8db7fb8c7f.png 'After years of research we discovered a secret formula')
+![](/medium/3b47588c7a195cbb887dad8db7fb8c7f.png 'After years of research we discovered a secret formula')
 
 As you all know, the term “Angular 2” is [no longer a thing](http://angularjs.blogspot.com/2017/01/branding-guidelines-for-angular-and.html), now it's just “Angular”, without the version suffix (#justAngular). So we renamed the package to be **“apollo-angular”**. We really wanted “angular-apollo” to match up with `react-apollo`, but it was already taken. That means that from now on the “angular2-apollo” package is deprecated.
 
 We've applied this rule to the service as well, so there is no “Angular2Apollo” anymore. It's just **Apollo**. Simpler and more convenient. The migration process is very simple:
 
-```typescript
+```ts
 import { Angular2Apollo } from 'angular2-apollo'
 
 class AppComponent {
@@ -64,15 +60,15 @@ We've updated our dependency to apollo-client 0.8 which includes a lot of improv
 
 # Ahead-of-Time Compilation
 
-![](../../public/medium/9eb65f486aae61db008b4b6f5bea90e3.png 'Ahead-of-Time Compilation')
+![](/medium/9eb65f486aae61db008b4b6f5bea90e3.png 'Ahead-of-Time Compilation')
 
 One of the most interesting features of Angular is Ahead-of-Time compilation. Angular's compiler converts the application, components, and templates to executable JavaScript code at build time. AoT compilation improves the size of the app as well as the performance and stability thanks to static-code analysis at build time.
 
-![](../../public/medium/063a3d092340209bd6e454e2fee4ac41.png 'Just-In-Time Compilation')
+![](/medium/063a3d092340209bd6e454e2fee4ac41.png 'Just-In-Time Compilation')
 
 To support this feature, we had to change the way of providing ApolloClient to ApolloModule. Instead of using an instance of ApolloClient directly, it has to be wrapped with a function. Here's an example:
 
-```typescript
+```ts
 import { ApolloClient } from 'apollo-client'
 import { ApolloModule } from 'apollo-angular'
 
@@ -89,7 +85,7 @@ ApolloModule.withClient(provideClient)
 
 # Multiple clients
 
-![](../../public/medium/251fe78b9075dac4e8088a4e174427e1.png 'Apollo service')
+![](/medium/251fe78b9075dac4e8088a4e174427e1.png 'Apollo service')
 
 We're happy to introduce a support for multiple clients. Yes, it's now possible to use many instances of the ApolloClient inside of the ApolloModule, meaning you can call multiple GraphQL endpoints from your single client app.
 
@@ -97,7 +93,7 @@ The use case for this feature came from some of our enterprise users. Some commo
 
 We decided to make it as an optional feature and to implement it in a way that doesn't break your existing app. Let me explain how it works. First thing, you need to define a function to return a map of clients:
 
-```typescript
+```ts
 function provideClients() {
   return {
     default: defaultClient,
@@ -138,7 +134,7 @@ class AppComponent {
 
 # More control
 
-![](../../public/medium/26d1e2f5199df372a39ca801d9ce936b.png 'We improved integration between frameworks')
+![](/medium/26d1e2f5199df372a39ca801d9ce936b.png 'We improved integration between frameworks')
 
 Apollo-Client and Apollo-Angular both are written in TypeScript, but we still had room for improvements for our users, here are some of them.
 
@@ -146,7 +142,7 @@ Thanks to [the recent change](https://github.com/apollographql/apollo-client/pul
 
 This gives you **more control** over the code, making it **more predictable** and easier to **prevent bugs.** Take a look at an example.
 
-```typescript
+```ts
 const query = gql`
   query currentUser {
     currentUser {
@@ -209,7 +205,7 @@ class AppComponent {
 
 # It is human nature to be lazy
 
-![](../../public/medium/1600bc44b918bf784039061e9895496f.png)
+![](/medium/1600bc44b918bf784039061e9895496f.png)
 
 We love automation, just to avoid keep repeating the same things on and on again. I have great news for you!
 
@@ -219,7 +215,7 @@ Thanks to Robin Ricard's work, Apollo Codegen now supports TypeScript, so Angula
 
 # Better Developer Experience
 
-![](../../public/medium/c6953c9d535f0c4ab8a02f8019954e99.png)
+![](/medium/c6953c9d535f0c4ab8a02f8019954e99.png)
 
 We are happy to announce that Angular integration works great with the [**Apollo Client Developer Tools**](https://dev-blog.apollodata.com/apollo-client-developer-tools-ff89181ebcf).
 
@@ -235,7 +231,7 @@ Try the dev tools in your Angular Apollo app today!
 
 # ES6 Modules and Tree Shaking
 
-![](../../public/medium/8356f13d18d0ff7af35920e4bf73f854.png 'UMD bundle and ES6 Modules')
+![](/medium/8356f13d18d0ff7af35920e4bf73f854.png 'UMD bundle and ES6 Modules')
 
 App load time is an important part of the overall user experience. Earlier, I talked about AoT compilation, which radically improves performance, but there is still room to speed things up.
 
@@ -247,7 +243,7 @@ As you know, every angular package has a **UMD bundle** (to support **CommonJS**
 
 # Ready for the future
 
-![](../../public/medium/250a232da3f4667a2feba74895729d19.png 'Coming out in March 2017')
+![](/medium/250a232da3f4667a2feba74895729d19.png 'Coming out in March 2017')
 
 With the first stable version of Angular, the core team announced a predictable release schedule. It means that every 6 months there's going to be a new major version of the framework.
 

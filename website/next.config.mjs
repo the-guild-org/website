@@ -1,22 +1,8 @@
-import { withGuildDocs } from 'guild-docs/next.config';
-import { applyUnderscoreRedirects } from 'guild-docs/underscore-redirects';
+import { withGuildDocs } from '@theguild/components/next.config';
 
 export default withGuildDocs({
-  basePath: process.env.NEXT_BASE_PATH,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  experimental: {
-    optimizeCss: true,
-    images: {
-      unoptimized: true,
-      allowFutureImage: true,
-    },
-  },
-  webpack(config, meta) {
-    applyUnderscoreRedirects(config, meta);
-
-    return config;
+  images: {
+    unoptimized: true,
   },
   redirects: () => [
     {

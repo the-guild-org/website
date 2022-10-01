@@ -8,10 +8,6 @@ image: /blog-assets/graphql-deep-dive-4/cover.png
 thumbnail: /blog-assets/graphql-deep-dive-4/cover.png
 ---
 
-import { Article } from '@/blog/article'
-
-<Article />
-
 _This blog is a part of a series on GraphQL where we will dive deep into GraphQL and its ecosystem one piece at a time_
 
 - Part 1: [**Diving Deep**](/blog/graphql-deep-dive-1)
@@ -41,15 +37,15 @@ It helps you decompose your schema, resolvers, types and context into smaller mo
 
 At Timecampus, we use a microservices architecture, and every microservice is essentially a monorepo ([PNPM Workspaces](https://pnpm.js.org/en/workspaces)) by itself covering a specific Domain. For instance, this is how portion of my directory structure looks like. If you notice, I am able to split every Microservice into multiple modules like this which allows me to manage the code better.
 
-![GraphQL Modules Directory Structure](../../public/blog-assets/graphql-deep-dive-4/1.png)
+![GraphQL Modules Directory Structure](/blog-assets/graphql-deep-dive-4/1.png)
 
 And this is how a simple provider looks like. If you notice, this makes it very simple to comprehend. The convention I use is that, I try to group CRUD operations into a single module but it need not call for a separate microservice all by itself.
 
-![Sample GraphQL Provider](../../public/blog-assets/graphql-deep-dive-4/2.png)
+![Sample GraphQL Provider](/blog-assets/graphql-deep-dive-4/2.png)
 
 And your Mutations become as simple as this, calling the injector, doing the operations and returning the results:
 
-![](../../public/blog-assets/graphql-deep-dive-4/3.png)
+![](/blog-assets/graphql-deep-dive-4/3.png)
 
 And finally all you have to do is compose the schema and resolvers from all the modules in your server giving a unified GraphQL endpoint you can use.
 
@@ -77,11 +73,11 @@ I personally use GraphQL Mesh as a SDK with my services to access the backend da
 
 Since I am just in the initial phases of development, this is how my `.meshrc` file looks like where I interface with Dgraph with GraphQL Mesh
 
-![GraphQL Meshrc file](../../public/blog-assets/graphql-deep-dive-4/4.png)
+![GraphQL Meshrc file](/blog-assets/graphql-deep-dive-4/4.png)
 
 And when I have the SDK generated with GraphQL Mesh, all I have to do is just use the methods the SDK providers me (based on the GraphQL Mutations and Queries I have provided to it as inputs) like this:
 
-![](../../public/blog-assets/graphql-deep-dive-4/5.png)
+![](/blog-assets/graphql-deep-dive-4/5.png)
 
 Which makes it really powerful to use without worrying about what happens underneath. While there is a lot we can talk about GraphQL Mesh as well, I will leave it at this for now.
 
@@ -95,15 +91,15 @@ And since it is available as scoped packages `@graphql-tools` you can just impor
 
 The reason GraphQL Tools shines is because, it stops you from reinventing the wheel, helping you focus on the other things which really matter the most in your journey with GraphQL. For eg. if you see below, I use the functions from GraphQL Tools extensively when I do operations with my schema like this:
 
-![GraphQL Tools operations](../../public/blog-assets/graphql-deep-dive-4/6.png)
+![GraphQL Tools operations](/blog-assets/graphql-deep-dive-4/6.png)
 
 And it also helps me write my own directives like this:
 
-![GraphQL Directives](../../public/blog-assets/graphql-deep-dive-4/7.png)
+![GraphQL Directives](/blog-assets/graphql-deep-dive-4/7.png)
 
 And since I have recently moved from Federation to Stitching, I am also starting to use [**Typemerging**](https://graphql-tools.com/docs/stitch-type-merging) from GraphQL Tools to have my GraphQL Gateway setup as well like this:
 
-![GraphQL Gateway](../../public/blog-assets/graphql-deep-dive-4/8.png)
+![GraphQL Gateway](/blog-assets/graphql-deep-dive-4/8.png)
 
 If you are new to schema stitching with Typemerging, I would recommend you check out [**this repository**](https://github.com/gmac/schema-stitching-demos) from Greg where he does a great job of explaining all the concepts.
 
@@ -117,13 +113,13 @@ And the reason it is really good is cause, it works well with other libraries li
 
 For eg. this is how I use TypedDocumentNode to have all my GraphQL operations typed when calling `@apollo/client/core` in my app.
 
-![Typed Document Node Example](../../public/blog-assets/graphql-deep-dive-4/9.png)
+![Typed Document Node Example](/blog-assets/graphql-deep-dive-4/9.png)
 
 All I had to do is pass the document which was generated and if you notice, even my response is fully typed.
 
 And this is how the generated Document Nodes look like:
 
-![Typed Document Node](../../public/blog-assets/graphql-deep-dive-4/10.png)
+![Typed Document Node](/blog-assets/graphql-deep-dive-4/10.png)
 
 Initially I had it running on both the server and the client side but then removed it from the server side since the SDK from GraphQL Mesh was already doing this job for me.
 

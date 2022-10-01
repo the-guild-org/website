@@ -7,10 +7,6 @@ description: Feature based GraphQL Modules at scale.
 image: /medium/a4a2c4f56993a801a7ffe394fc0f95f1.png
 ---
 
-import { Article } from '@/blog/article'
-
-<Article />
-
 Today we are happy to announce that we are open sourcing a framework we've been using for the past couple of months in production — [GraphQL Modules](https://graphql-modules.com)!
 
 Yet another framework? well, kind of GraphQL Modules is a set of extra libraries, structures and guidelines around the amazing [Apollo Server 2.0](https://apollographql.com/docs/apollo-server).
@@ -23,11 +19,11 @@ The basic concept behind GraphQL Modules is to separate your GraphQL server into
 
 A basic and initial implementation of a GraphQL server usually includes:
 
-![](../../public/medium/d57986e2af5dd85000392ee831ba0162.png)
+![](/medium/d57986e2af5dd85000392ee831ba0162.png)
 
 A more advanced implementation will usually use a context to inject things like data models, data sources, fetchers, etc., like Apollo Server 2.0 provides us with:
 
-![](../../public/medium/297c11db8129c64380966f6a15dc8dd8.png)
+![](/medium/297c11db8129c64380966f6a15dc8dd8.png)
 
 Usually, for simple use cases, the example above will do.
 
@@ -41,7 +37,7 @@ We believe you should **separate your GraphQL schema by modules**, or **features
 
 The modules are being defined by their GraphQL schema — so we've taken the “GraphQL First” approach lead by Apollo and combined it together with classic modularization tooling to create new ways of writing GraphQL servers!
 
-![](../../public/medium/0f1a8490480abbc46d06daf9cf727171.png)
+![](/medium/0f1a8490480abbc46d06daf9cf727171.png)
 
 The GraphQL Modules toolset has tools to help with:
 
@@ -247,11 +243,11 @@ Each one of these could be a module, and implement its own GraphQL schema and it
 
 Here's a simple example for a GraphQL Schema as we described:
 
-![](../../public/medium/ab6a60456476a8bc274f6d388b0c7178.png)
+![](/medium/ab6a60456476a8bc274f6d388b0c7178.png)
 
 But if we think of apps in terms of features and then separate the schema by module, the modules separation will look like so:
 
-![](../../public/medium/c806f0ae70dca7a4d1e434736f241ed5.png)
+![](/medium/c806f0ae70dca7a4d1e434736f241ed5.png)
 
 This way, each module can declare only the part of the schema that it contributes, and the complete schema is a representation of all merged type definitions. Module can also depend, import and extend and customize the contents on other modules (for example, `User` module, comes with `Auth` inside it)
 
