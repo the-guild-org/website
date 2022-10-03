@@ -91,7 +91,7 @@ export async function handleRewrite(options: {
       redirect: 'manual',
     });
 
-    if (freshResponse.status === 301 || freshResponse.status === 302) {
+    if (freshResponse.status === 301 || freshResponse.status === 302 || freshResponse.status === 308) {
       if (options.match === null) {
         return freshResponse;
       }
