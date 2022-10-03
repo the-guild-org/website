@@ -5,10 +5,10 @@ export const FAVICON_FILES = [
   'favicon-16x16.png',
   'apple-touch-icon.png',
   'apple-touch-icon-precomposed.png',
-  'apple-touch-icon-120x120-precomposed.png',
-  'apple-touch-icon-120x120.png',
-  'apple-touch-icon-152x152-precomposed.png',
-  'apple-touch-icon-152x152.png',
+  ...[57, 72, 76, 114, 120, 144, 152, 180].flatMap(size => [
+    `apple-touch-icon-${size}x${size}-precomposed.png`,
+    `apple-touch-icon-${size}x${size}.png`,
+  ]),
 ];
 
 export class FaviconHandler implements HTMLRewriterElementContentHandlers {
