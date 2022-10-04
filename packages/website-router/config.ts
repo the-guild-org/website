@@ -4,7 +4,7 @@ export type WebsiteRecord = RewriteRecord | RedirectRecord;
 
 export const jsonConfig = {
   // Change if you wish to invalidate/drop all caches for all websites
-  cacheStorageId: 57,
+  cacheStorageId: 58,
   publicDomain: 'the-guild.dev',
   clientToWorkerMaxAge: 60,
   cfFetchCacheTtl: 60,
@@ -56,18 +56,17 @@ export const jsonConfig = {
       crispSegments: ['modules'],
       sitemap: true,
     },
+    '/graphql/tools': {
+      rewrite: 'graphql-tools.pages.dev',
+      crispSegments: ['tools'],
+      sitemap: true,
+    },
     // TODO: Replace with rewrite when this is ready
     '/graphql/envelop': {
       redirect: 'https://envelop.dev',
       status: 302,
       // rewrite: 'envelop.dev',
       // crispSegments: ['envelop'],
-    },
-    '/graphql/tools': {
-      redirect: 'https://graphql-tools.com',
-      status: 302,
-      // rewrite: 'graphql-tools.com',
-      // crispSegments: ['tools'],
     },
     '/graphql/apollo-angular': {
       redirect: 'https://apollo-angular.com',
