@@ -34,7 +34,7 @@ async function handleErrorResponse(options: {
       });
     }
 
-    options.sentry.captureException(new Error(`GET ${requestedEndpoint}: HTTP ${options.response.status}`));
+    options.sentry.captureException(new Error(`${options.response.status}: ${requestedEndpoint}`));
 
     const errorResponseContent = await fetch(`https://${options.fallbackRoute.rewrite}/404`, {
       cf: {
@@ -52,11 +52,23 @@ async function handleErrorResponse(options: {
   return options.response;
 }
 
-export function redirect(url: string, code = 301) {
+export function redirect(sentry: Toucan, from: string, url: string, code = 301) {
+  sentry.addBreadcrumb({
+    type: 'debug',
+    level: 'info',
+    category: 'navigation',
+    data: {
+      from,
+      to: url,
+    },
+    message: `Redirecting`,
+  });
+
   return new Response(null, {
     status: code,
     headers: {
       Location: url,
+      Referer: from,
     },
   });
 }
@@ -80,6 +92,14 @@ export async function handleRewrite(options: {
   const cache = await caches.open(String(options.cacheStorageId));
   let response = await cache.match(cacheKey);
 
+  options.sentry.addBreadcrumb({
+    type: 'debug',
+    message: `Upstream fetch cache result is: ${response ? 'HIT' : 'MISS'}`,
+    data: {
+      url,
+    },
+  });
+
   if (!response) {
     const freshResponse = await fetch(url, {
       // This cache will force caching between the CF Worker and the upstream website, based on Cache-Control headers that are
@@ -91,18 +111,47 @@ export async function handleRewrite(options: {
       redirect: 'manual',
     });
 
-    if (freshResponse.status === 301 || freshResponse.status === 302 || freshResponse.status === 308) {
-      if (options.match === null) {
+    if (
+      freshResponse.status === 301 ||
+      freshResponse.status === 302 ||
+      freshResponse.status === 307 ||
+      freshResponse.status === 308
+    ) {
+      const upstreamLocation = freshResponse.headers.get('location');
+      const hasMatchingWebsite = options.match !== null;
+
+      options.sentry.addBreadcrumb({
+        type: 'debug',
+        message: `Received redirect response from upstream website`,
+        data: {
+          status: freshResponse.status,
+          to: upstreamLocation,
+          hasMatchingWebsite,
+        },
+      });
+
+      if (!hasMatchingWebsite) {
         return freshResponse;
       }
 
-      const upstreamLocation = freshResponse.headers.get('location');
-
-      return redirect(`https://${options.publicDomain}${options.match}${upstreamLocation}`, 301);
+      return redirect(
+        options.sentry,
+        options.event.request.url,
+        `https://${options.publicDomain}${options.match}${upstreamLocation}`,
+        301
+      );
     }
 
     // In case of an error from an upstream, we are going to return the original request, and avoid caching.
     if (freshResponse.status >= 400) {
+      options.sentry.addBreadcrumb({
+        type: 'error',
+        message: `Upstream returned HTTP error`,
+        data: {
+          status: freshResponse.status,
+        },
+      });
+
       // This error handler captures an error from the origin.
       return await handleErrorResponse({
         sentry: options.sentry,

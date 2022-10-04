@@ -1,4 +1,5 @@
 import Toucan from 'toucan-js';
+import PackageJSON from '../package.json';
 
 export function createSentry(event: FetchEvent, dsn: string, release: string) {
   return new Toucan({
@@ -6,6 +7,7 @@ export function createSentry(event: FetchEvent, dsn: string, release: string) {
     context: event,
     environment: 'production',
     release,
+    pkg: PackageJSON,
     attachStacktrace: true,
     allowedHeaders: [
       'content-type',
