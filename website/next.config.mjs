@@ -20,5 +20,10 @@ export default withGuildDocs({
       destination: '/blog/announcing-graphql-yoga-v2',
       permanent: true,
     },
+    {
+      source: '/blog/graphql-cli',
+      destination: '/blog/graphql-cli-is-back',
+      permanent: true,
+    },
   ],
 });
