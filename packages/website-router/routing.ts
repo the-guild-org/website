@@ -92,6 +92,7 @@ export async function handleRewrite(options: {
   const cache = await caches.open(String(options.cacheStorageId));
   let response = await cache.match(cacheKey);
 
+  options.sentry.setTag('cache.upstream', response ? 'hit' : 'miss');
   options.sentry.addBreadcrumb({
     type: 'debug',
     message: `Upstream fetch cache result is: ${response ? 'HIT' : 'MISS'}`,
@@ -111,12 +112,7 @@ export async function handleRewrite(options: {
       redirect: 'manual',
     });
 
-    if (
-      freshResponse.status === 301 ||
-      freshResponse.status === 302 ||
-      freshResponse.status === 307 ||
-      freshResponse.status === 308
-    ) {
+    if (freshResponse.status >= 301 && freshResponse.status <= 308) {
       const upstreamLocation = freshResponse.headers.get('location');
       const hasMatchingWebsite = options.match !== null;
 

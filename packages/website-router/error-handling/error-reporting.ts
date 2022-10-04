@@ -2,6 +2,7 @@ export function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: str
   const userAgent = (rawUserAgent || '').toLowerCase();
   const isBot =
     userAgent.includes('bot') ||
+    userAgent.includes('crisp') ||
     userAgent.includes('spider') ||
     userAgent.includes('crawler') ||
     userAgent.includes('go-http-client');

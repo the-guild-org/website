@@ -117,6 +117,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
   const match = Object.keys(mappings).find(key => parsedUrl.pathname.startsWith(key));
 
   if (match) {
+    sentry.setTag('website.match', parsedUrl.pathname);
     sentry.addBreadcrumb({
       level: 'debug',
       message: `Matched route: ${match}`,
