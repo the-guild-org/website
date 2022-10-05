@@ -109,7 +109,8 @@ export default defineConfig({
         const newSimilarArticles = tags
           ? blogsMeta
               .filter(
-                article => tags.length === 0 || article.link !== route || article.tags?.some(tag => tags.includes(tag))
+                article =>
+                  article.link !== route && (tags.length === 0 || article.tags?.some(tag => tags.includes(tag)))
               )
               .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
               .slice(0, 12)
