@@ -61,18 +61,19 @@ export const jsonConfig = {
       crispSegments: ['tools'],
       sitemap: true,
     },
-    // TODO: Replace with rewrite when this is ready
     '/graphql/envelop': {
-      redirect: 'https://envelop.dev',
-      status: 302,
-      // rewrite: 'envelop.dev',
-      // crispSegments: ['envelop'],
+      rewrite: 'envelop.pages.dev',
+      crispSegments: ['envelop'],
+      sitemap: true,
     },
+    // TODO: Replace with rewrite when this is ready
     '/graphql/apollo-angular': {
       redirect: 'https://apollo-angular.com',
       status: 302,
-      // rewrite: 'apollo-angular.com',
-      // crispSegments: ['apollo-angular'],
+    },
+    '/graphql/shield': {
+      redirect: 'https://graphql-shield.com',
+      status: 302,
     },
     // Redirects
     '/graphql/hive': {
