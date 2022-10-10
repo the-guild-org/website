@@ -66,13 +66,14 @@ export const jsonConfig = {
       crispSegments: ['envelop'],
       sitemap: true,
     },
+    '/graphql/shield': {
+      rewrite: 'graphql-shield.pages.dev',
+      crispSegments: ['shield'],
+      sitemap: true,
+    },
     // TODO: Replace with rewrite when this is ready
     '/graphql/apollo-angular': {
       redirect: 'https://apollo-angular.com',
-      status: 302,
-    },
-    '/graphql/shield': {
-      redirect: 'https://graphql-shield.com',
       status: 302,
     },
     // Redirects
