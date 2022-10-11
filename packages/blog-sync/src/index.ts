@@ -11,12 +11,12 @@ import { remove } from 'unist-util-remove';
 import { walk } from 'estree-walker';
 import { Client } from 'guild-devto-nodejs-sdk';
 import { globbySync } from 'globby';
-import { AUTHORS } from '../../guild-website/ui/authors';
+import { AUTHORS } from '../../../website/ui/authors';
 import yaml from 'js-yaml';
 
 const DEV_TO_ORG_ID = 4467;
 
-const baseDir = '../guild-website/pages/blog/';
+const baseDir = '../../website/pages/blog/';
 const files = globbySync('*.mdx', {
   absolute: false,
   cwd: baseDir,
@@ -52,7 +52,12 @@ async function syncToDevTo(items) {
             ? item.meta.authors
             : item.meta.author
         ];
-      const markdown = `> This article was published on ${item.meta.date} by [${author.name}](${author.link}) @ [The Guild Blog](https://the-guild.dev/)\n\n${item.markdown} `;
+      const markdown = `> This article was published on ${item.meta.date.toLocaleDateString(undefined, {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })} by [${author.name}](${author.link}) @ [The Guild Blog](https://the-guild.dev/)\n\n${item.markdown} `;
       const image = item.meta.image
         ? item.meta.image.startsWith('/')
           ? `https://the-guild.dev${item.meta.image}`
@@ -179,7 +184,9 @@ function extractMeta() {
 
         return;
       } else if (node.type === 'mdxJsxFlowElement') {
-        if (node.name === 'Gfycat') {
+        if (node.name === 'Article') {
+          parent.children.splice(index, 1);
+        } else if (node.name === 'Gfycat') {
           const gifId = node.attributes.find(a => a.name === 'gifId').value.value.replace(/['"]/g, '');
 
           parent.children.splice(index, 1, {
@@ -290,5 +297,6 @@ function extractMeta() {
 
     file.data.meta = meta;
     remove(tree, 'mdxjsEsm');
+    remove(tree, 'yaml');
   };
 }
