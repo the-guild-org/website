@@ -4,8 +4,8 @@ description: 'The combination of TypeScript and GraphQL can be very powerful. Bo
 authors: tuvalSimha
 tags: [graphql, typescript, codegen]
 date: 2022-10-19
-image: /blog-assets/typescript-types/cover.png
-thumbnail: /blog-assets/typescript-types/thumbnail.png
+image: /blog-assets/typescript-unions-types/cover.png
+thumbnail: /blog-assets/typescript-unions-types/thumbnail.png
 ---
 
 # Getting the best of TypeScript and GraphQL: union types
@@ -112,20 +112,20 @@ First, let's create our `GetFullMenu` query as follows:
 (in this case, I'll use the `react-query` example)
 
 ```ts
-fragment Sushi  {
-    name
-    fish
-  },
-fragment Pizza  {
-    title
-    topping
-  }
 const menuQuery = gql`
   query GetFullMenu {
     menu {
       ...Sushi
       ...Pizza
     }
+  }
+  fragment SomeSushi on Sushi {
+    name
+    fish
+  }
+  fragment SomePizza on Pizza {
+    title
+    topping
   }
 `
 ```
