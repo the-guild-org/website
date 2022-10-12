@@ -126,11 +126,6 @@ export default defineConfig({
       return (
         (isBlogPage || isAboutUsPage) && (
           <>
-            {isBlogPage && (
-              <div className="-order-1 mb-6">
-                <Article />
-              </div>
-            )}
             {similarArticles.length > 0 && (
               <>
                 <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">Similar articles</h3>
@@ -151,5 +146,6 @@ export default defineConfig({
     Gfycat,
     Tweet,
     StackBlitz,
+    Article,
   },
 });
