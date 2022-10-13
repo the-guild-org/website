@@ -71,15 +71,16 @@ export const jsonConfig = {
       crispSegments: ['shield'],
       sitemap: true,
     },
-    // TODO: Replace with rewrite when this is ready
     '/graphql/apollo-angular': {
-      redirect: 'https://apollo-angular.com',
-      status: 302,
+      rewrite: 'apollo-angular.pages.dev',
+      crispSegments: ['apollo-angular'],
+      sitemap: true,
     },
-    // Redirects
+    // TODO: Move these websites
     '/graphql/hive': {
       redirect: 'https://graphql-hive.com',
     },
+    // Redirects
     '/graphql/eslint': {
       redirect: 'https://github.com/B2o5T/graphql-eslint',
       status: 302,
