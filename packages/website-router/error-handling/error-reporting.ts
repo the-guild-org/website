@@ -39,6 +39,7 @@ export function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: str
       'webmail',
       'api/1.1/jot',
       'api/2/',
+      'magento',
       '/i/api/',
       'sw.js',
       'system/debug',
