@@ -174,6 +174,7 @@ export function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: str
       'config.js',
       '/members',
       '/site',
+      '404_icon.png',
       '/staging',
       '/beta',
       '/copy',
