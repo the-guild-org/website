@@ -132,11 +132,17 @@ export function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: str
       '/news/js/',
       'bkp',
       'wordpress-old',
+      'clockify',
       'oldwebsite',
       'newsite',
       '.env',
       '/base/',
+      'temp',
+      'temp',
       '/forum',
+      '.ashx',
+      '.cgi',
+      'mobileaffnad',
     ].some(v => requestedUrl.toLowerCase().includes(v.toLowerCase())) ||
     [
       'wordpress',
@@ -198,6 +204,20 @@ export function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: str
       'qqkf2',
       'logging.js',
       'tips.css',
+      '.asp',
+      '.aspx',
+      '*',
+      'manual-hover.png',
+      'automatic.png',
+      '.js.map',
+      'cart.json',
+      'app/css/index.css',
+      'download_pattern_left.png',
+      'safari-tip.png',
+      'apkloading.png',
+      'browser.png',
+      'top_img.jpg',
+      'pattern.png',
     ].some(v => requestedUrl.toLowerCase().endsWith(v.toLowerCase()))
   );
 }
