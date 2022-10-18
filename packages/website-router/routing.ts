@@ -34,7 +34,7 @@ async function handleErrorResponse(options: {
       });
     }
 
-    options.sentry.captureException(new Error(`${options.response.status}: ${requestedEndpoint}`));
+    options.sentry.captureException(new Error(` ${options.response.status}: ${requestedEndpoint} `));
 
     const errorResponseContent = await fetch(`https://${options.fallbackRoute.rewrite}/404`, {
       cf: {
