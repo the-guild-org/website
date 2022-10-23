@@ -87,7 +87,7 @@ export async function handleRewrite(options: {
   match: string | null;
   publicDomain: string;
 }) {
-  const url = `https://${options.record.rewrite}${options.upstreamPath}`;
+  const url = `https://${options.record.rewrite}${(options.upstreamPath || '').toLowerCase()}`;
   const cacheKey = new Request(url, options.event.request);
   const cache = await caches.open(String(options.cacheStorageId));
   let response = await cache.match(cacheKey);
