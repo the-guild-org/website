@@ -87,7 +87,7 @@ export async function handleRewrite(options: {
   match: string | null;
   publicDomain: string;
 }) {
-  const url = `https://${options.record.rewrite}${(options.upstreamPath || '').toLowerCase()}`;
+  const url = `https://${options.record.rewrite}${options.upstreamPath || ''}`;
   const cacheKey = new Request(url, options.event.request);
   const cache = await caches.open(String(options.cacheStorageId));
   let response = await cache.match(cacheKey);
@@ -147,6 +147,26 @@ export async function handleRewrite(options: {
           status: freshResponse.status,
         },
       });
+
+      const containsUppercase = /[A-Z]/.test(options.upstreamPath);
+
+      if (containsUppercase) {
+        const asLower = options.upstreamPath.toLowerCase();
+
+        options.sentry.addBreadcrumb({
+          type: 'info',
+          message: `Trying lower case now`,
+          data: {
+            original: options.upstreamPath,
+            lower: asLower,
+          },
+        });
+
+        return await handleRewrite({
+          ...options,
+          upstreamPath: asLower,
+        });
+      }
 
       // This error handler captures an error from the origin.
       return await handleErrorResponse({
