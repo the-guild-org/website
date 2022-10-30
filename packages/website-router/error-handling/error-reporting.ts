@@ -6,7 +6,8 @@ export function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: str
     userAgent.includes('spider') ||
     userAgent.includes('crawler') ||
     userAgent.includes('go-http-client') ||
-    userAgent.includes('python');
+    userAgent.includes('python') ||
+    userAgent.includes('dcrawl');
 
   // Inspired by: https://mentalhealthathome.org/2020/08/09/bad-bots/
   return (
@@ -136,6 +137,7 @@ export function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: str
       'clockify',
       'oldwebsite',
       'newsite',
+      'readme.txt',
       '.env',
       '/base/',
       'temp',
