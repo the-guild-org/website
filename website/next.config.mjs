@@ -4,7 +4,7 @@ export default withGuildDocs({
   redirects: () =>
     Object.entries({
       '/contact': '/#get-in-touch',
-      '/open-source': '/#plaform',
+      '/open-source': '/#platform',
       '/connected-build': '/',
       '/blog/announcing-graphql-hive-public': '/blog/announcing-graphql-hive-release',
       '/blog/announcing-graphql-yoga-2': '/blog/announcing-graphql-yoga-v2',
