@@ -1,26 +1,17 @@
 import { withGuildDocs } from '@theguild/components/next.config';
 
 export default withGuildDocs({
-  redirects: () => [
-    {
-      source: '/connected-build',
-      destination: '/',
+  redirects: () =>
+    Object.entries({
+      '/contact': '/#get-in-touch',
+      '/open-source': '/#plaform',
+      '/connected-build': '/',
+      '/blog/announcing-graphql-hive-public': '/blog/announcing-graphql-hive-release',
+      '/blog/announcing-graphql-yoga-2': '/blog/announcing-graphql-yoga-v2',
+      '/blog/graphql-cli': '/blog/graphql-cli-is-back',
+    }).map(([from, to]) => ({
+      source: from,
+      destination: to,
       permanent: true,
-    },
-    {
-      source: '/blog/announcing-graphql-hive-public',
-      destination: '/blog/announcing-graphql-hive-release',
-      permanent: true,
-    },
-    {
-      source: '/blog/announcing-graphql-yoga-2',
-      destination: '/blog/announcing-graphql-yoga-v2',
-      permanent: true,
-    },
-    {
-      source: '/blog/graphql-cli',
-      destination: '/blog/graphql-cli-is-back',
-      permanent: true,
-    },
-  ],
+    })),
 });
