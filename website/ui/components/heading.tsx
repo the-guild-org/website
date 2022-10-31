@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { ReactElement, ReactNode } from 'react';
+import { ComponentProps, ReactElement } from 'react';
 
 type Size = 'lg' | 'md';
 
@@ -7,11 +7,10 @@ export const Heading = ({
   className,
   size = 'lg',
   children,
+  ...props
 }: {
   size?: Size;
-  className?: string;
-  children: ReactNode;
-}): ReactElement => {
+} & ComponentProps<'h2'>): ReactElement => {
   return (
     <h2
       className={clsx(
@@ -22,6 +21,7 @@ export const Heading = ({
         }[size],
         className
       )}
+      {...props}
     >
       {children}
     </h2>

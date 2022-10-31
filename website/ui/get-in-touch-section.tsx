@@ -89,7 +89,7 @@ export const GetInTouchSection = ({
   return (
     <div className={clsx('relative my-[200px]', !hideCover && 'md:mb-[400px]')}>
       <div className="container flex">
-        <div className={clsx('flex-1', !hideCover && 'p-4 xl:max-w-[40%] 2xl:pl-40')}>
+        <div className={clsx('flex-1', !hideCover && 'p-4 xl:max-w-[40%] 2xl:pl-40')} id="get-in-touch">
           {hideHeading !== true && <Heading>Get in touch</Heading>}
 
           <Description>
