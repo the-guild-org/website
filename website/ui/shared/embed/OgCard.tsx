@@ -75,11 +75,7 @@ const ImageLink = styled('a', {
   },
 });
 
-export const OgCard = ({ description,
-  url,
-  image,
-  title,
- }: PreviewData): ReactElement => {
+export const OgCard = ({ description, url, image, title }: PreviewData): ReactElement => {
   return (
     <Observer>
       <Container>

@@ -50,20 +50,20 @@ It is important to be aware of how a GraphQL API is used and what is the experie
           "version": "0.0.1"
         }
       }
-    }, 
-		/* ... */
+    }
+    /* ... */
   ]
 }
 ```
 
-By looking at the sample above, you can get an idea of how GraphQL Hive knows when it's safe to delete a type or a field of your GraphQL API. 
+By looking at the sample above, you can get an idea of how GraphQL Hive knows when it's safe to delete a type or a field of your GraphQL API.
 This is the most important building block of all data available in GraphQL Hive.
 
 ## Why ClickHouse?
 
 The kind of data GraphQL Hive deals with is not meant to be mutated and the database has to support a good set of functions for analytics and data aggregation.
 
-Our first choice was **ElasticSearch**. It seemed like a good option, but we hit the first scaling issues very quickly. 
+Our first choice was **ElasticSearch**. It seemed like a good option, but we hit the first scaling issues very quickly.
 Right after reaching the goal of 100M operations per month, the queries to ElasticSearch were unusable.
 We tried to improve it, but we weren't happy with ElasticSearch anyway.
 
@@ -83,7 +83,7 @@ We can distinguish two parts here, the **collecting** and **processing** of data
 The `Usage service` is responsible for receiving and validating the usage report, and of course the token-based authorization.
 Once the usage report is validated, it is added to the batch of reports, and sent to **Kafka** (in one message).
 
-Besides the batching we also perform a *self-learning Kafka message size estimation*.
+Besides the batching we also perform a _self-learning Kafka message size estimation_.
 
 In short, Kafka message has a limit of 1MB, with the size estimator, we make sure to not go over the limit, but squeeze the most we can at a time.
 Instead of sending many small messages (20kb in size), we send on average about 998kb per message.
@@ -104,7 +104,7 @@ Once the processing of reports is done, the service writes data to Clickhouse.
 
 The data pipeline does not ends here, there're still a few quite interesting techniques we use within ClickHouse.
 
-ClickHouse supports Kafka natively, we could insert data directly from it, 
+ClickHouse supports Kafka natively, we could insert data directly from it,
 but the reason why we decided not to was to reduce the traffic to Kafka and have a better control of the writes.
 
 ## Squeezing the most performance
@@ -113,12 +113,12 @@ In order to understand the things we do with ClickHouse, you first need to under
 This is what ClickHouse documentation says about the MergeTree family.
 
 > Table engines from the MergeTree family are the core of ClickHouse data storage capabilities.
-> They provide most features for resilience and high-performance data retrieval: 
+> They provide most features for resilience and high-performance data retrieval:
 > columnar storage, custom partitioning, sparse primary index, secondary data-skipping indexes, etc.
 
 It sounds very technical, but you can think of the MergeTree family as a group of table engines built for different purpose, dedicated for many different use cases.
 
-We will cover only the regular `MergeTree` and `SummingMergeTree`. 
+We will cover only the regular `MergeTree` and `SummingMergeTree`.
 
 Think of `MergeTree` table engine as a regular table, the one you're familiar with from PostgreSQL. Nothing special here.
 
@@ -158,14 +158,13 @@ Without the `SummingMergeTree` we would have to either maintain our own aggregat
 or always scan through billions of rows of the `operations` table.
 
 <Callout emoji="🤓" type="info">
-  We are not data scientists, at least not yet… but what we learned by developing GraphQL Hive
-  is that in order to squeeze the most performance of a database,
-  you need to design the db structure with the end goal in mind.
+  We are not data scientists, at least not yet… but what we learned by developing GraphQL Hive is that in order to
+  squeeze the most performance of a database, you need to design the db structure with the end goal in mind.
 </Callout>
 
 What do we mean by that? Here's a good example.
 
-GraphQL Hive has the "Operations" page that presents the total number of requests, 
+GraphQL Hive has the "Operations" page that presents the total number of requests,
 latency (p90, p95, p99) of all and individual operations, and a lot more other things.
 
 The page contains a date range filter.
@@ -177,7 +176,7 @@ Maybe not for "Last 24 hours" as we get only 1/30 of all rows, comparing to the 
 Obviously it won't be performant enough at some point.
 
 Here's where the `Materialized Views` becomes super handy.
-GraphQL Hive defines two "virtual" tables, 
+GraphQL Hive defines two "virtual" tables,
 [`operations_hourly`](https://github.com/kamilkisiela/graphql-hive/blob/64e53f207b413f8bb222eabd6aeb437e3300dbfd/packages/services/storage/migrations/clickhouse.ts#L52-L82)
 and [`operations_daily`](https://github.com/kamilkisiela/graphql-hive/blob/64e53f207b413f8bb222eabd6aeb437e3300dbfd/packages/services/storage/migrations/clickhouse.ts#L86-L117)
 that are Materialized Views of the original `operations` table.
@@ -229,7 +228,7 @@ CREATE MATERIALIZED VIEW 'clients_daily'
   target LowCardinality(String) CODEC(ZSTD(1)),
   client_name String CODEC(ZSTD(1)),
   client_version String CODEC(ZSTD(1)),
-  hash String CODEC(ZSTD(1)), 
+  hash String CODEC(ZSTD(1)),
   timestamp DateTime('UTC'),
   expires_at DateTime('UTC'),
   total UInt32 CODEC(ZSTD(1)),
@@ -242,12 +241,15 @@ Now the SQL query looks like this:
 
 ```sql
 SELECT sum(total) as total, client_name, client_version
-FROM clients_daily WHERE timestamp >= subtractDays(now(), 30) 
+FROM clients_daily WHERE timestamp >= subtractDays(now(), 30)
 GROUP BY client_name, client_version
 ```
 
 <Callout type="info" emoji="🤯">
-After we shipped a dedicated table (for the component we showed you), the numbers went down from 56 seconds to **57 milliseconds**.<br />**It was almost a 1000x improvement.**
+  After we shipped a dedicated table (for the component we showed you), the numbers went down from 56 seconds to **57
+  milliseconds**.
+  <br />
+  **It was almost a 1000x improvement.**
 </Callout>
 
 ## Conclusion
@@ -261,6 +263,6 @@ There's really no need to overcomplicate things just for the sake of making it "
 We think it's better to make mistakes and learn from them, instead of copying the architecture of Cloudflare and other big tech companies.
 
 <Callout emoji="🙋">
-If you find this article interesting, please let us know and tell us what else you wish to learn about. 
-We're going to write a couple of articles about technical bits and pieces of GraphQL Hive in upcoming weeks, so stay tuned!
+  If you find this article interesting, please let us know and tell us what else you wish to learn about. We're going to
+  write a couple of articles about technical bits and pieces of GraphQL Hive in upcoming weeks, so stay tuned!
 </Callout>
