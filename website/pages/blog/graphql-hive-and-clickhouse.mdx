@@ -9,7 +9,7 @@ thumbnail: /blog-assets/announcing-graphql-hive/thumbnail.png
 ---
 
 You will learn how **ClickHouse** and **Kafka** enabled GraphQL Hive to collect billions of requests monthly without a drop of sweat.
-We will also cover the challenges we faced and how we overcame them. The article explains the architecture of our system in details.
+We will also cover the challenges we faced and how we overcame them. The article explains the architecture of our system in detail.
 
 ## What is GraphQL Hive?
 
@@ -18,7 +18,7 @@ A fully open-source tool that helps you to track the history of changes prevents
 
 GraphQL Hive makes you aware of how your GraphQL API is used and what is the experience of its final users.
 
-We [launched GraphQL Hive](https://www.the-guild.dev/blog/announcing-graphql-hive-release) a few months ago, [after a year long preview program](https://www.the-guild.dev/blog/graphql-hive-preview). In case you missed it, we recently [announced a self-hosted version](https://www.the-guild.dev/blog/announcing-self-hosted-graphql-hive).
+We [launched GraphQL Hive](https://www.the-guild.dev/blog/announcing-graphql-hive-release) a few months ago, [after a year-long preview program](https://www.the-guild.dev/blog/graphql-hive-preview). In case you missed it, we recently [announced a self-hosted version](https://www.the-guild.dev/blog/announcing-self-hosted-graphql-hive).
 
 ## Monitoring performance and usage of GraphQL API
 
@@ -68,24 +68,24 @@ Right after reaching the goal of 100M operations per month, the queries to Elast
 We tried to improve it, but we weren't happy with ElasticSearch anyway.
 
 After looking for alternatives and we decided to switch to ClickHouse.
-We highly recommend to read the “Migration from ElasticSearch to ClickHouse” article we wrote with [ClickHouse Cloud](https://clickhouse.com/cloud).
-It covers in details the problems we were facing and the decision making process that lead us to love ClickHouse.
+We highly recommend reading the "Migration from ElasticSearch to ClickHouse" article we wrote with [ClickHouse Cloud](https://clickhouse.com/cloud).
+It covers in detail the problems we were facing and the decision-making process that lead us to love ClickHouse.
 
 ## An overview of the architecture
 
-The data pipeline in GraphQL Hive is relatively simple, but proven to be highly scalable and reliable.
+The data pipeline in GraphQL Hive is relatively simple but has proven to be highly scalable and reliable.
 Here's a high-level data flow of the usage reporting part of GraphQL Hive.
 
 ![](/blog-assets/graphql-hive-and-clickhouse/data-pipeline.png 'An overview of the architecture')
 
 We can distinguish two parts here, the **collecting** and **processing** of data.
 
-The `Usage service` is responsible for receiving and validating the usage report, and of course the token-based authorization.
-Once the usage report is validated, it is added to the batch of reports, and sent to **Kafka** (in one message).
+The `Usage service` is responsible for receiving and validating the usage report and of course the token-based authorization.
+Once the usage report is validated, it is added to the batch of reports and sent to **Kafka** (in one message).
 
 Besides the batching we also perform a _self-learning Kafka message size estimation_.
 
-In short, Kafka message has a limit of 1MB, with the size estimator, we make sure to not go over the limit, but squeeze the most we can at a time.
+In short, Kafka message has a limit of 1MB, with the size estimator, we make sure to not go over the limit but squeeze the most we can at a time.
 Instead of sending many small messages (20kb in size), we send on average about 998kb per message.
 **It reduces the cost of the hosted Kafka by 20 times**.
 
@@ -102,21 +102,21 @@ Once the processing of reports is done, the service writes data to Clickhouse.
 
 ![](/blog-assets/graphql-hive-and-clickhouse/data-processing-part.png 'Data processing part')
 
-The data pipeline does not ends here, there're still a few quite interesting techniques we use within ClickHouse.
+The data pipeline does not end here, there're still a few quite interesting techniques we use within ClickHouse.
 
 ClickHouse supports Kafka natively, we could insert data directly from it,
-but the reason why we decided not to was to reduce the traffic to Kafka and have a better control of the writes.
+but the reason why we decided not to was to reduce the traffic to Kafka and have better control of the writes.
 
 ## Squeezing the most performance
 
-In order to understand the things we do with ClickHouse, you first need to understand the core of it, the MergeTree family and Materialized Views.
+To understand the things we do with ClickHouse, you first need to understand the core of it, the MergeTree family and Materialized Views.
 This is what ClickHouse documentation says about the MergeTree family.
 
 > Table engines from the MergeTree family are the core of ClickHouse data storage capabilities.
 > They provide most features for resilience and high-performance data retrieval:
 > columnar storage, custom partitioning, sparse primary index, secondary data-skipping indexes, etc.
 
-It sounds very technical, but you can think of the MergeTree family as a group of table engines built for different purpose, dedicated for many different use cases.
+It sounds very technical, but you can think of the MergeTree family as a group of table engines built for a different purposes, dedicated to many different use cases.
 
 We will cover only the regular `MergeTree` and `SummingMergeTree`.
 
@@ -147,19 +147,19 @@ Every GraphQL request from the collected billions of requests monthly is represe
 
 Even though ClickHouse is extremely fast, it's still quite a lot of rows to read and analyze data from, every second.
 
-That's why we use the `SummingMergeTree`. It is is a bit unique version of `MergeTree`.
+That's why we use the `SummingMergeTree`. It is a bit unique version of `MergeTree`.
 
 In short, it replaced all rows (grouped by a combination of columns) with one row which contains summarized values for the columns.
 
 Sounds like a good table engine for grouping GraphQL operations and aggregating data!
 We use it in the [`operation_collection` table](https://github.com/kamilkisiela/graphql-hive/blob/64e53f207b413f8bb222eabd6aeb437e3300dbfd/packages/services/storage/migrations/clickhouse.ts#L7-L25).
-It allows us to read all GraphQL operations within milliseconds and get the total numbers of calls.
+It allows us to read all GraphQL operations within milliseconds and get the total number of calls.
 Without the `SummingMergeTree` we would have to either maintain our own aggregation logic and write data to the `MergeTree` table
 or always scan through billions of rows of the `operations` table.
 
 <Callout emoji="🤓" type="info">
   We are not data scientists, at least not yet… but what we learned by developing GraphQL Hive is that in order to
-  squeeze the most performance of a database, you need to design the db structure with the end goal in mind.
+  squeeze the most performance of a database, you need to design the DB structure with the end goal in mind.
 </Callout>
 
 What do we mean by that? Here's a good example.
@@ -172,10 +172,10 @@ The page contains a date range filter.
 ![](/blog-assets/graphql-hive-and-clickhouse/date-range.png 'Operations page and the date range filter')
 
 Calculating the percentiles of the latency for a large number of GraphQL requests (stored as rows) might be a challenge, even for ClickHouse.
-Maybe not for "Last 24 hours" as we get only 1/30 of all rows, comparing to the "Last 30 days" option.
-Obviously it won't be performant enough at some point.
+Maybe not for "Last 24 hours" as we get only 1/30 of all rows, compared to the "Last 30 days" option.
+Obviously, it won't be performant enough at some point.
 
-Here's where the `Materialized Views` becomes super handy.
+Here's where the `Materialized Views` become super handy.
 GraphQL Hive defines two "virtual" tables,
 [`operations_hourly`](https://github.com/kamilkisiela/graphql-hive/blob/64e53f207b413f8bb222eabd6aeb437e3300dbfd/packages/services/storage/migrations/clickhouse.ts#L52-L82)
 and [`operations_daily`](https://github.com/kamilkisiela/graphql-hive/blob/64e53f207b413f8bb222eabd6aeb437e3300dbfd/packages/services/storage/migrations/clickhouse.ts#L86-L117)
@@ -203,7 +203,7 @@ It shows the latency of the existing queries and how we improved it.
   image="https://opengraph.githubassets.com/979a5f6740ae58d53ca7d2c363c8457fde46d7ffaac13987efe96dd98e78bbf6/kamilkisiela/graphql-hive/issues/302"
 />
 
-Here's yet another, this time extreme, example of a table designed with an end goal in mind.
+Here's yet another, this time extreme example of a table designed with an end goal in mind.
 
 []!(/blog-assets/graphql-hive-and-clickhouse/clients.png 'Operations page and the Clients section')
 
@@ -218,7 +218,7 @@ GROUP BY client_name, client_version
 ```
 
 The latency was awfully slow, the more data we had, the slower it was.
-For a few billions rows, **it took 56 seconds**, ridiculously poor performance.
+For a few billion rows, **it took 56 seconds**, a ridiculously poor performance.
 
 We decided to create a special materialized view, designed specifically for the UI component.
 
@@ -264,5 +264,5 @@ We think it's better to make mistakes and learn from them, instead of copying th
 
 <Callout emoji="🙋">
   If you find this article interesting, please let us know and tell us what else you wish to learn about. We're going to
-  write a couple of articles about technical bits and pieces of GraphQL Hive in upcoming weeks, so stay tuned!
+  write a couple of articles about technical bits and pieces of GraphQL Hive in the upcoming weeks, so stay tuned!
 </Callout>
