@@ -367,9 +367,7 @@ export const MyComponent: React.FC = () => {
 
 - [`@graphql-codegen/typescript-urql` docs](https://graphql-code-generator.com/docs/plugins/typescript-urql)
 
-:::tip
-This plugin can also generate HOC or data Component, based on your preference ;)
-:::
+<Callout>This plugin can also generate HOC or data Component, based on your preference ;)</Callout>
 
 #### Vue.js & Apollo: Generate Composition Functions
 
@@ -505,11 +503,14 @@ query {
 }
 ```
 
-:::tip Duplicate Names
+<Callout>
+**Tip**: Duplicate Names
+
 Ensure you have unique names for your operations.
 
 Libraries like Apollo Client will have issues and unexpected behavior if you re-use the same operation name, and GraphQL Code Generator will throw an error in case of name duplications.
-:::
+
+</Callout>
 
 ## Write your operations and fragments in `.graphql` files
 
@@ -526,7 +527,9 @@ So you can maintain your operations in `.graphql` files, but import it from gene
 import { MyQueryDocument, MyUserFragmentDoc } from './generated-types'
 ```
 
-:::tip No need to handle imports
+<Callout>
+**Tip**: No need to handle imports
+
 If you have a query that uses a fragment, you can just use the fragment spread as-is, without the need to import it or maintain it in the same file.
 
 For example:
@@ -547,7 +550,8 @@ fragment UserFields on User {
 ```
 
 And if you'll import `UserQueryDocument` from your generated file, it will have the fragment concatenated automatically.
-:::
+
+</Callout>
 
 ## Fragment per component
 
@@ -675,9 +679,12 @@ Accessing the actual TypeScript type of `user.profile.name.first` might look a b
 - Use TypeScript type system: `type FirstName = UserByIdQuery['user']['profile']['name']['first']`.
 - You can also do it with `Pick`: `type FirstName = Pick<UserByIdQuery, ['user', 'profile', 'name', 'first']>`.
 
-:::tip Hate `Pick` in your generated files?
+<Callout>
+**Tip**: Hate `Pick` in your generated files?
+
 The `@graphql-codegen/typescript-operations` is the TypeScript representation of your GraphQL selection set.
 Just like selection set chooses fields from the GraphQL schema, `typescript-operations` picks fields from `typescript` plugin (which is the representation of your GraphQL schema).
 
 If you wish to have simpler TypeScript output, you can set `preResolveTypes: true` in your configuration, and it will prefer to use the primitive TypeScript type when possible.
-:::
+
+</Callout>
