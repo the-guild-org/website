@@ -64,7 +64,7 @@ This is the most important building block of all data available in GraphQL Hive.
 The kind of data GraphQL Hive deals with is not meant to be mutated and the database has to support a good set of functions for analytics and data aggregation.
 
 Our first choice was **ElasticSearch**. It seemed like a good option, but we hit the first scaling issues very quickly.
-Right after reaching the goal of 100M operations per month, the queries to ElasticSearch were unusable.
+**After reaching the goal of 100M operations per month, the queries to ElasticSearch were unusable.**
 We tried to improve it, but we weren't happy with ElasticSearch anyway.
 
 After looking for alternatives and we decided to switch to ClickHouse.
@@ -83,7 +83,7 @@ We can distinguish two parts here, the **collecting** and **processing** of data
 The `Usage service` is responsible for receiving and validating the usage report and of course the token-based authorization.
 Once the usage report is validated, it is added to the batch of reports and sent to **Kafka** (in one message).
 
-Besides the batching we also perform a _self-learning Kafka message size estimation_.
+Besides the batching we also perform a **_self-learning Kafka message size estimation_**.
 
 In short, Kafka message has a limit of 1MB, with the size estimator, we make sure to not go over the limit but squeeze the most we can at a time.
 Instead of sending many small messages (20kb in size), we send on average about 998kb per message.
@@ -246,10 +246,10 @@ GROUP BY client_name, client_version
 ```
 
 <Callout type="info" emoji="🤯">
-  After we shipped a dedicated table (for the component we showed you), the numbers went down from 56 seconds to **57
+  After we shipped a dedicated table (for the component we showed you), the numbers went down from 56 seconds to **56
   milliseconds**.
-  <br />
-  **It was almost a 1000x improvement.**
+
+  **It was a 1000x improvement.**
 </Callout>
 
 ## Conclusion
