@@ -7,6 +7,7 @@ import { BlogCardList, Newsletter, Video } from '@/components';
 import { AUTHORS } from '@/authors';
 import { CodeSandbox } from '@/shared/embed/CodeSandbox';
 import { LinkPreview } from '@/shared/embed/LinkPreview';
+import { OgCard } from '@/shared/embed/OgCard';
 import { Gfycat } from '@/shared/embed/Gfycat';
 import { Tweet } from '@/shared/embed/Tweet';
 import { StackBlitz } from '@/shared/embed/StackBlitz';
@@ -127,6 +128,7 @@ export default defineConfig({
     Video,
     CodeSandbox,
     LinkPreview,
+    OgCard,
     Gfycat,
     Tweet,
     StackBlitz,
