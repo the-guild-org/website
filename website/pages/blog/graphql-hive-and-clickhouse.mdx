@@ -2,10 +2,10 @@
 title: How ClickHouse helps us track billions of GraphQL requests monthly
 tags: [graphql, graphql-hive]
 authors: [kamil]
-date: 2022-11-02
+date: 2022-11-03
 description: Learn how ClickHouse enabled GraphQL Hive to scale from millions to billions of requests monthly.
-image: /blog-assets/announcing-graphql-hive/cover.png
-thumbnail: /blog-assets/announcing-graphql-hive/thumbnail.png
+image: /blog-assets/graphql-hive-and-clickhouse/cover.png
+thumbnail: /blog-assets/graphql-hive-and-clickhouse/thumbnail.png
 ---
 
 You will learn how **ClickHouse** and **Kafka** enabled GraphQL Hive to collect billions of requests monthly without a drop of sweat.
@@ -23,6 +23,8 @@ We [launched GraphQL Hive](https://www.the-guild.dev/blog/announcing-graphql-hiv
 ## Monitoring performance and usage of GraphQL API
 
 It is important to be aware of how a GraphQL API is used and what is the experience of its final users. To answer these questions GraphQL Hive collects [Usage Reports](https://docs.graphql-hive.com/specs/usage-reports).
+By looking at the sample below, you can get an idea of how GraphQL Hive knows when it's safe to delete a type or a field of your GraphQL API.
+This is the most important building block of all data available in GraphQL Hive.
 
 ```json
 {
@@ -46,8 +48,8 @@ It is important to be aware of how a GraphQL API is used and what is the experie
       },
       "metadata": {
         "client": {
-          "name": "demo",
-          "version": "0.0.1"
+          "name": "demo", // Name of the GraphQL API consumer
+          "version": "0.0.1" // Version of the GraphQL API consumer
         }
       }
     }
@@ -56,19 +58,16 @@ It is important to be aware of how a GraphQL API is used and what is the experie
 }
 ```
 
-By looking at the sample above, you can get an idea of how GraphQL Hive knows when it's safe to delete a type or a field of your GraphQL API.
-This is the most important building block of all data available in GraphQL Hive.
-
 ## Why ClickHouse?
 
-The kind of data GraphQL Hive deals with is not meant to be mutated and the database has to support a good set of functions for analytics and data aggregation.
+The kind of data GraphQL Hive deals with is not meant to be mutated (it never changes) and the database has to support a good set of functions for analytics and data aggregation.
 
 Our first choice was **ElasticSearch**. It seemed like a good option, but we hit the first scaling issues very quickly.
 **After reaching the goal of 100M operations per month, the queries to ElasticSearch were unusable.**
 We tried to improve it, but we weren't happy with ElasticSearch anyway.
 
-After looking for alternatives and we decided to switch to ClickHouse.
-We highly recommend reading the "Migration from ElasticSearch to ClickHouse" article we wrote with [ClickHouse Cloud](https://clickhouse.com/cloud).
+After looking for alternatives we decided to switch to ClickHouse.
+We highly recommend reading the "Migration from ElasticSearch to ClickHouse" article we wrote with the [ClickHouse Cloud](https://clickhouse.com/cloud) team.
 It covers in detail the problems we were facing and the decision-making process that lead us to love ClickHouse.
 
 ## An overview of the architecture
@@ -81,13 +80,13 @@ Here's a high-level data flow of the usage reporting part of GraphQL Hive.
 We can distinguish two parts here, the **collecting** and **processing** of data.
 
 The `Usage service` is responsible for receiving and validating the usage report and of course the token-based authorization.
-Once the usage report is validated, it is added to the batch of reports and sent to **Kafka** (in one message).
+Once the report is validated, it is added to the batch of reports and sent to **Kafka** (in one message).
 
 Besides the batching we also perform a **_self-learning Kafka message size estimation_**.
 
 In short, Kafka message has a limit of 1MB, with the size estimator, we make sure to not go over the limit but squeeze the most we can at a time.
-Instead of sending many small messages (20kb in size), we send on average about 998kb per message.
-**It reduces the cost of the hosted Kafka by 20 times**.
+Instead of sending many small messages (~20kb), we send less often but almost at full capacity (on average about 998kb).
+**It reduces the cost of the hosted Kafka by 10 times**.
 
 It sounds mysterious, but we find this part extremely interesting, that's why we're going to write a dedicated article about it soon.
 
@@ -104,8 +103,8 @@ Once the processing of reports is done, the service writes data to Clickhouse.
 
 The data pipeline does not end here, there're still a few quite interesting techniques we use within ClickHouse.
 
-ClickHouse supports Kafka natively, we could insert data directly from it,
-but the reason why we decided not to was to reduce the traffic to Kafka and have better control of the writes.
+> ClickHouse supports Kafka natively, we could insert data directly from it,
+> but the reason why we decided not to was to reduce the traffic to Kafka and have better control of the writes.
 
 ## Squeezing the most performance
 
@@ -205,7 +204,7 @@ It shows the latency of the existing queries and how we improved it.
 
 Here's yet another, this time extreme example of a table designed with an end goal in mind.
 
-[]!(/blog-assets/graphql-hive-and-clickhouse/clients.png 'Operations page and the Clients section')
+![](/blog-assets/graphql-hive-and-clickhouse/clients.png 'Operations page and the Clients section')
 
 GraphQL Hive allows you to understand who are the consumers of your GraphQL API.
 
@@ -251,6 +250,16 @@ GROUP BY client_name, client_version
 
   **It was a 1000x improvement.**
 </Callout>
+
+Another fantactic feature of ClickHouse is **Asynchronous Inserts**.
+This opt-in mode allows to pile up inserted data and flush it in a single batch.
+Thanks to the async inserts we're able to accept a higher rate of INSERT queries, without worrying about the performance.
+
+![](/blog-assets/graphql-hive-and-clickhouse/async-sync-inserts.png 'Difference between synchronous and asynchronous inserts in ClickHouse')
+
+Every read operation in ClickHouse is being cached, writing too often translates to a lot of cache misses.
+To avoid that, we either use the async inserts mode or synchronously write data less often but in higher volumes.
+We decided to use the async inserts mode, as it's a built-in feature and makes our setup less complex.
 
 ## Conclusion
 
