@@ -130,15 +130,15 @@ In GraphQL Hive, we use `MergeTree` to store received GraphQL requests in the [`
 ```sql
 CREATE TABLE 'operations'
 (
-  target LowCardinality(String) CODEC(ZSTD(1)),
+  target String,
   timestamp DateTime('UTC'),
   expires_at DateTime('UTC'),
-  hash String CODEC(ZSTD(1)),
-  ok UInt8 CODEC(ZSTD(1)),
-  errors UInt16 CODEC(ZSTD(1)),
-  duration UInt64 CODEC(ZSTD(1)),
-  client_name LowCardinality(String) CODEC(ZSTD(1)),
-  client_version String CODEC(ZSTD(1))
+  hash String,
+  ok UInt8,
+  errors UInt16,
+  duration UInt64,
+  client_name String,
+  client_version String
 )
 ```
 
@@ -224,13 +224,13 @@ We decided to create a special materialized view, designed specifically for the 
 ```sql
 CREATE MATERIALIZED VIEW 'clients_daily'
 (
-  target LowCardinality(String) CODEC(ZSTD(1)),
-  client_name String CODEC(ZSTD(1)),
-  client_version String CODEC(ZSTD(1)),
-  hash String CODEC(ZSTD(1)),
+  target String,
+  client_name String,
+  client_version String,
+  hash String,
   timestamp DateTime('UTC'),
   expires_at DateTime('UTC'),
-  total UInt32 CODEC(ZSTD(1)),
+  total UInt32
 )
 ```
 
