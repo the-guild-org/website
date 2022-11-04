@@ -1,7 +1,6 @@
 /* eslint-disable import/no-default-export, react-hooks/rules-of-hooks */
 import { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { ArticleJsonLd, NextSeo } from 'next-seo';
 import { Header, useConfig, Callout, defineConfig } from '@theguild/components';
 import { BlogCardList, Newsletter, Video } from '@/components';
 import { AUTHORS } from '@/authors';
@@ -26,61 +25,38 @@ export default defineConfig({
   siteName,
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
   navbar: <Header sameSite accentColor="var(--colors-accent)" themeSwitch searchBarProps={{ version: 'v2' }} />,
-  head() {
-    let { title, frontMatter } = useConfig();
-    const { route } = useRouter();
+  getNextSeoProps() {
+    const { frontMatter } = useConfig();
     const description = frontMatter.description || `${siteName}: Modern API Platform and Ecosystem that scales`;
+    const authors =
+      frontMatter.authors && asArray(frontMatter.authors).map(authorId => AUTHORS[authorId]?.name || authorId);
+    const tags = frontMatter.tags && asArray(frontMatter.tags);
     const image = frontMatter.image || '/img/ogimage.png';
+    const ogImage =
+      (image.endsWith('.webm') || image.endsWith('.mp4')) && frontMatter.thumbnail ? frontMatter.thumbnail : image;
 
-    let head: ReactElement;
-
-    if (route.startsWith('/blog/') && !route.startsWith('/blog/tag/')) {
-      title += ` - ${siteName} Blog`;
-      const authors = asArray(frontMatter.authors).map(authorId => AUTHORS[authorId]?.name || authorId);
-      const tags = asArray(frontMatter.tags);
-
-      const ogImage =
-        (image.endsWith('.webm') || image.endsWith('.mp4')) && frontMatter.thumbnail ? frontMatter.thumbnail : image;
-      const imageUrl = ogImage.startsWith('/') ? `https://the-guild.dev${ogImage}` : (ogImage as string);
-
-      head = (
-        <>
-          <NextSeo
-            title={title}
-            description={description}
-            openGraph={{
-              title,
-              images: [{ url: imageUrl }],
-              article: {
-                authors,
-                publishedTime: new Date(frontMatter.date).toISOString(),
-                modifiedTime: new Date(frontMatter.updateDate || frontMatter.date).toISOString(),
-                tags,
-              },
-            }}
-          />
-          <ArticleJsonLd
-            title={title}
-            description={description}
-            url={`https://the-guild.dev${route}`}
-            publisherName={siteName}
-            publisherLogo="https://the-guild.dev/static/logo.svg"
-            authorName={authors[0]}
-            datePublished={new Date(frontMatter.date).toISOString()}
-            dateModified={new Date(frontMatter.updateDate || frontMatter.date).toISOString()}
-            images={[imageUrl]}
-          />
-        </>
-      );
-    }
+    return {
+      description,
+      openGraph: {
+        images: [{ url: ensureAbsolute(ogImage) }],
+        article: frontMatter.date
+          ? {
+              authors,
+              publishedTime: new Date(frontMatter.date).toISOString(),
+              modifiedTime: new Date(frontMatter.updateDate || frontMatter.date).toISOString(),
+              tags,
+            }
+          : undefined,
+      },
+    };
+  },
+  head() {
+    const { frontMatter } = useConfig();
 
     return (
       <>
-        {head || (
-          <NextSeo title={title} description={description} openGraph={{ images: [{ url: ensureAbsolute(image) }] }} />
-        )}
         <meta property="og:site_name" content="the-guild.dev" key="ogsitename" />
-        {frontMatter.canonical ? <link rel="canonical" href={frontMatter.canonical} /> : null}
+        {frontMatter.canonical && <link rel="canonical" href={frontMatter.canonical} />}
       </>
     );
   },
