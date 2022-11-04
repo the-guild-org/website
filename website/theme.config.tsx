@@ -31,7 +31,7 @@ export default defineConfig({
     const authors =
       frontMatter.authors && asArray(frontMatter.authors).map(authorId => AUTHORS[authorId]?.name || authorId);
     const tags = frontMatter.tags && asArray(frontMatter.tags);
-    const image = frontMatter.image || '/img/ogimage.png';
+    const image = frontMatter.thumbnail || '/img/ogimage.png';
     const ogImage =
       (image.endsWith('.webm') || image.endsWith('.mp4')) && frontMatter.thumbnail ? frontMatter.thumbnail : image;
 
