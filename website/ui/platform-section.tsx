@@ -1,7 +1,6 @@
 import { ReactElement } from 'react';
-import { Image, PRODUCTS, Anchor } from '@theguild/components';
+import { PRODUCTS, Anchor } from '@theguild/components';
 import { Description, Heading, Tooltip, Link } from './components';
-import helix from '../public/static/shared-logos/products/helix.svg';
 
 export const PlatformSection = ({ className }: { className?: string }): ReactElement => {
   return (
@@ -25,8 +24,8 @@ export const PlatformSection = ({ className }: { className?: string }): ReactEle
           </Link>
 
           <div className="mt-10 flex max-w-[900px] flex-wrap justify-center">
-            {PRODUCTS.map(product => (
-              <Tooltip key={product.children} content={product.title}>
+            {Object.values(PRODUCTS).map(product => (
+              <Tooltip key={product.name} content={product.title}>
                 <Anchor
                   className="
                   m-2
@@ -52,12 +51,8 @@ export const PlatformSection = ({ className }: { className?: string }): ReactEle
                 "
                   href={product.href}
                 >
-                  {product.children === 'Helix' ? (
-                    <Image src={helix} alt={`${product.children} logo`} placeholder="empty" className="h-16 w-auto" />
-                  ) : (
-                    <product.logo className="h-16 w-auto" />
-                  )}
-                  <h4 className="text-xs font-medium">{product.children}</h4>
+                  <product.logo className="h-16 w-auto" />
+                  <h4 className="text-xs font-medium">{product.name}</h4>
                 </Anchor>
               </Tooltip>
             ))}
