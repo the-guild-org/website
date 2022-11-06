@@ -1,7 +1,7 @@
 /* eslint-disable import/no-default-export, react-hooks/rules-of-hooks */
 import { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Header, useConfig, Callout, defineConfig } from '@theguild/components';
+import { Callout, defineConfig, Header, Giscus, useConfig, useTheme } from '@theguild/components';
 import { BlogCardList, Newsletter, Video } from '@/components';
 import { AUTHORS } from '@/authors';
 import { CodeSandbox } from '@/shared/embed/CodeSandbox';
@@ -65,6 +65,7 @@ export default defineConfig({
     const [similarArticles, setSimilarArticles] = useState<MetaWithLink[]>([]);
     const config = useConfig();
     const { tags } = config.frontMatter;
+    const { resolvedTheme } = useTheme();
 
     useEffect(() => {
       const newSimilarArticles = tags
@@ -89,6 +90,16 @@ export default defineConfig({
       <>
         <Article />
         {children}
+        <Giscus
+          // ensure giscus is reloaded when client side route is changed
+          key={route}
+          repo="the-guild-org/the-guild-website"
+          repoId="MDEwOlJlcG9zaXRvcnkxOTk3MTM1NzI"
+          category="Docs Discussions"
+          categoryId="DIC_kwDOC-djJM4CSZk-"
+          mapping="pathname"
+          theme={resolvedTheme}
+        />
         {similarArticles.length > 0 && (
           <>
             <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">Similar articles</h3>
