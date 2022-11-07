@@ -1,5 +1,5 @@
-import clsx from 'clsx';
 import { ComponentProps, ReactElement } from 'react';
+import clsx from 'clsx';
 import { styled } from '../../stitches.config';
 
 const ButtonWithAsProp = styled('button', {});

@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, RefObject, ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode, RefObject, useEffect, useRef, useState } from 'react';
 
 interface ObserverProps {
   /** Fires when IntersectionObserver enters viewport */

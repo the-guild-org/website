@@ -1,7 +1,7 @@
 import { ReactElement, useEffect, useLayoutEffect, useState } from 'react';
 import { styled } from '../../../stitches.config';
 import { Link } from '../../components';
-import { Observer } from '../Observer';
+import { Observer } from '../observer';
 
 type PreviewData = {
   description: string;

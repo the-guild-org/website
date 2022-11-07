@@ -73,24 +73,24 @@ Behind the scenes, hooks are represented as nodes which are linked together in t
 
 Accordingly, we need to rethink the way we view the component's state. So far we have thought about it as if it's a plain object:
 
-```javascript
+```json
 {
-  foo: 'foo',
-  bar: 'bar',
-  baz: 'baz',
+  "foo": "foo",
+  "bar": "bar",
+  "baz": "baz"
 }
 ```
 
 But when dealing with hooks it should be viewed as a queue, where each node represents a single model of the state:
 
-```javascript
+```json
 {
-  memoizedState: 'foo',
-  next: {
-    memoizedState: 'bar',
-    next: {
-      memoizedState: 'bar',
-      next: null
+  "memoizedState": "foo",
+  "next": {
+    "memoizedState": "bar",
+    "next": {
+      "memoizedState": "bar",
+      "next": null
     }
   }
 }
@@ -106,7 +106,7 @@ Unfortunately I haven't managed to get a good grasp around the reducer hook beca
 
 So back to hooks, before each and every function Component invocation, a function named [`prepareHooks()`](https://github.com/facebook/react/tree/5f06576f51ece88d846d01abd2ddd575827c6127/react-reconciler/src/ReactFiberHooks.js:123) is gonna be called, where the current fiber and its first hook node in the hooks queue are gonna be stored in global variables. This way, any time we call a hook function (`useXXX()`) it would know in which context to run.
 
-```javascript
+```js
 let currentlyRenderingFiber
 let workInProgressQueue
 let currentHook
@@ -152,7 +152,7 @@ function updateFunctionComponent(recentFiber, workInProgressFiber, Component, pr
 
 Once an update has finished, a function named [`finishHooks()`](https://github.com/facebook/react/tree/5f06576f51ece88d846d01abd2ddd575827c6127/react-reconciler/src/ReactFiberHooks.js:148) will be called, where a reference for the first node in the hooks queue will be stored on the rendered fiber in the `memoizedState` property. This means that the hooks queue and their state can be addressed externally:
 
-```javascript
+```jsx
 const ChildComponent = () => {
   useState('foo')
   useState('bar')
@@ -196,7 +196,7 @@ So as expected, we can provide the action dispatcher with the new state directly
 ~~This isn't documented anywhere in the [official React documentation](https://reactjs.org/docs/hooks-reference.html#functional-updates) (as for the time this article was written) and that's a pity because it's extremely useful!~~
 This means that when you send the state setter down the component tree you can run mutations against the current state of the parent component, without passing it as a different prop. For example:
 
-```javascript
+```jsx
 const ParentComponent = () => {
   const [name, setName] = useState()
 
@@ -283,7 +283,7 @@ if ((effect.tag & mountTag) !== NoHookEffect) {
 
 So, based on what we've just learned regards effect hooks, we can actually inject an effect to a certain fiber externally:
 
-```javascript
+```jsx
 function injectEffect(fiber) {
   const lastEffect = fiber.updateQueue.lastEffect
 

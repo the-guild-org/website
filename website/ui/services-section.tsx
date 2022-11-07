@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
 import { StaticImageData } from 'next/image';
 import { Anchor, Image } from '@theguild/components';
-import { Description, Heading, Link } from './components';
 import consulting from '../public/img/illustrations/consulting.svg';
-import training from '../public/img/illustrations/training.svg';
 import engineering from '../public/img/illustrations/engineering.svg';
 import openSource from '../public/img/illustrations/open-source.svg';
+import training from '../public/img/illustrations/training.svg';
+import { Description, Heading, Link } from './components';
 
 export const ServicesSection = (): ReactElement => {
   return (

@@ -1,6 +1,7 @@
 export { Avatar } from './avatar';
 export { BlogCardList } from './blog-card-list';
 export { Button } from './button';
+export { CopyToClipboard } from './copy-to-clipboard';
 export { Description } from './description';
 export { Heading } from './heading';
 export { Image } from './image';
@@ -9,5 +10,4 @@ export * from './link';
 export { Newsletter } from './newsletter';
 export { TagList } from './tag-list';
 export { Tooltip } from './tooltip';
-export { CopyToClipboard } from './copy-to-clipboard';
 export { Video } from './video';

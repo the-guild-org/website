@@ -324,35 +324,35 @@ While making our GraphQL servers production ready and working with our clients w
 Envelop provides us a user-friendly way of hooking into the before and after phases of `parse`, `validate`, `execute` and `subscribe`.
 
 ```ts
-import  { Plugin, envelop } from '@envelop/core';
-import { NoSchemaIntrospectionCustomRule } from 'graphql';
+import { Plugin, envelop } from '@envelop/core'
+import { NoSchemaIntrospectionCustomRule } from 'graphql'
 
 const myPlugin: Plugin = {
   onParse() {
-    console.log("before parsing")
-     return function afterParse({ result }) {
+    console.log('before parsing')
+    return function afterParse({ result }) {
       if (result instanceof Error) {
-        console.log("Error occured during parsing: ", result)
+        console.log('Error occured during parsing: ', result)
       }
     }
   },
   onValidate({ addValidationRule }) {
     // add a custom validation rule
-    addValidationRule(NoSchemaIntrospectionCustomRule);
+    addValidationRule(NoSchemaIntrospectionCustomRule)
 
     return function afterValidate({ result }) {
       if (result.length) {
-        console.log("Errors occured duting validation: ", result)
+        console.log('Errors occured duting validation: ', result)
       }
     }
   },
-  onExecute({ args }) => {
-   const myVar = args.contextValue.myVar;
-  },
-};
+  onExecute({ args }) {
+    const myVar = args.contextValue.myVar
+  }
+}
 
 const getEnveloped = envelop({ plugins: [myPlugin] })
-const { parse, validate, execute, subscribe } = getEnveloped();
+const { parse, validate, execute, subscribe } = getEnveloped()
 ```
 
 ![Envelop Plugin Illustration](/blog-assets/the-anatomy-of-a-graphql-request/envelop-breakdown.png)

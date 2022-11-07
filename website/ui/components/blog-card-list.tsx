@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
-import clsx from 'clsx';
 import NextLink from 'next/link';
+import clsx from 'clsx';
 import { format } from 'date-fns';
 import { AUTHORS } from '@/authors';
+import { MetaWithLink } from '../../lib/meta';
 import { Description } from './description';
 import { Heading } from './heading';
-import { MetaWithLink } from '../../lib/meta';
 
 export const BlogCardList = ({
   articles,

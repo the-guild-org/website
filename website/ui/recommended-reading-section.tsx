@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { MetaWithLink } from '../lib/meta';
-import { Heading, Description, Link, BlogCardList } from './components';
+import { BlogCardList, Description, Heading, Link } from './components';
 
 export const RecommendedReadingSection = ({ articles = [] }: { articles: MetaWithLink[] }): ReactElement => {
   return (

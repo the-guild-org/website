@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { Observer } from '../Observer';
+import { Observer } from '../observer';
 
 export interface IStackBlitzProps {
   /** StackBlitz id */

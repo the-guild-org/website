@@ -1,5 +1,5 @@
-import clsx from 'clsx';
 import { ComponentProps, ReactElement } from 'react';
+import clsx from 'clsx';
 
 export const Input = ({
   className,

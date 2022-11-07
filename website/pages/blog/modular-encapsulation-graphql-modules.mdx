@@ -48,47 +48,47 @@ const AppModule = new GraphQLModule({
 
 And there is another module that tries to use `AuthenticationModule`'s context, but it doesn't import `AuthenticationModule`. In this case, it is not possible to get anything from `AuthenticationModule` in the resolvers, because it is not imported. The following module doesn't know anything about `AuthenticationModule`.
 
-```typescript
+```ts
 const SomeImportantModuleThatUsesAuthenticatedContext = new GraphQLModule({
-    typeDefs: SOME_TYPE_DEFS_HERE
-    imports: [
-        // ...
-        // This module doesn't import AuthenticationModule
-        // ...
-    ],
-    resolvers: {
-        // ...
-        Query: {
-            getUser(root, args, context) {
-                return context.user; // Oops! Undefined!
-            }
-        }
-        // ...
+  typeDefs: SOME_TYPE_DEFS_HERE,
+  imports: [
+    // ...
+    // This module doesn't import AuthenticationModule
+    // ...
+  ],
+  resolvers: {
+    // ...
+    Query: {
+      getUser(root, args, context) {
+        return context.user // Oops! Undefined!
+      }
     }
-});
+    // ...
+  }
+})
 ```
 
 To fix this, we need to import `AuthenticationModule` into that 'important' module to make it able to access `AuthenticationModule`'s context like below;
 
-```typescript
+```ts
 const SomeImportantModuleThatUsesAuthenticatedContext = new GraphQLModule({
-    typeDefs: SOME_TYPE_DEFS_HERE
-    imports: [
-        // ...
-        // This module imports AuthenticationModule
-        AuthenticationModule,
-        // ...
-    ],
-    resolvers: {
-        // ...
-        Query: {
-            getUser(root, args, context) {
-                return context.user; // Yes, we have that user HERE!
-            }
-        }
-        // ...
+  typeDefs: SOME_TYPE_DEFS_HERE,
+  imports: [
+    // ...
+    // This module imports AuthenticationModule
+    AuthenticationModule
+    // ...
+  ],
+  resolvers: {
+    // ...
+    Query: {
+      getUser(root, args, context) {
+        return context.user // Yes, we have that user HERE!
+      }
     }
-});
+    // ...
+  }
+})
 ```
 
 So, these examples above show us that the encapsulation can be very important in the long term of our project development.

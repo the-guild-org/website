@@ -1,6 +1,6 @@
 import { ReactElement, ReactNode } from 'react';
-import clsx from 'clsx';
 import { Image } from '@theguild/components';
+import clsx from 'clsx';
 import blueCircle from '../public/img/blue-circle.svg';
 import pinkCircle from '../public/img/pink-circle.png';
 
