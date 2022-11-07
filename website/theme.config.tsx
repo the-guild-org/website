@@ -27,38 +27,22 @@ export default defineConfig({
   navbar: <Header sameSite accentColor="var(--colors-accent)" themeSwitch searchBarProps={{ version: 'v2' }} />,
   getNextSeoProps() {
     const { frontMatter } = useConfig();
-    const description = frontMatter.description || `${siteName}: Modern API Platform and Ecosystem that scales`;
-    const authors =
-      frontMatter.authors && asArray(frontMatter.authors).map(authorId => AUTHORS[authorId]?.name || authorId);
-    const tags = frontMatter.tags && asArray(frontMatter.tags);
-    const image = frontMatter.thumbnail || '/img/ogimage.png';
-    const ogImage =
-      (image.endsWith('.webm') || image.endsWith('.mp4')) && frontMatter.thumbnail ? frontMatter.thumbnail : image;
+    const { description, authors, tags, thumbnail, title, date, updateDate } = frontMatter;
+    const image = thumbnail || `https://open-graph-image.theguild.workers.dev/?product=GUILD&title=${title}`;
 
     return {
-      description,
+      description: description || `${siteName}: Modern API Platform and Ecosystem that scales`,
       openGraph: {
-        images: [{ url: ensureAbsolute(ogImage) }],
-        article: frontMatter.date
-          ? {
-              authors,
-              publishedTime: new Date(frontMatter.date).toISOString(),
-              modifiedTime: new Date(frontMatter.updateDate || frontMatter.date).toISOString(),
-              tags,
-            }
-          : undefined,
+        siteName,
+        images: [{ url: ensureAbsolute(image) }],
+        article: date && {
+          authors: authors && asArray(authors).map(authorId => AUTHORS[authorId]?.name || authorId),
+          publishedTime: new Date(date).toISOString(),
+          modifiedTime: new Date(updateDate || date).toISOString(),
+          tags: tags && asArray(tags),
+        },
       },
     };
-  },
-  head() {
-    const { frontMatter } = useConfig();
-
-    return (
-      <>
-        <meta property="og:site_name" content="the-guild.dev" key="ogsitename" />
-        {frontMatter.canonical && <link rel="canonical" href={frontMatter.canonical} />}
-      </>
-    );
   },
   main({ children }) {
     const { route } = useRouter();
@@ -100,13 +84,13 @@ export default defineConfig({
           mapping="pathname"
           theme={resolvedTheme}
         />
+        <Newsletter />
         {similarArticles.length > 0 && (
           <>
             <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">Similar articles</h3>
             <BlogCardList articles={similarArticles} />
           </>
         )}
-        <Newsletter />
       </>
     );
   },
