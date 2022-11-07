@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
+import { Anchor, useConfig } from '@theguild/components';
 import { format } from 'date-fns';
-import { useConfig, Anchor } from '@theguild/components';
-import { Image, Avatar, TagList } from '@/components';
-import { LookingForExperts } from '@/looking-for-experts';
 import { AUTHORS } from '@/authors';
-import { Meta } from '../lib/meta';
+import { Avatar, Image, TagList } from '@/components';
+import { LookingForExperts } from '@/looking-for-experts';
 import { asArray } from '../lib/as-array';
+import { Meta } from '../lib/meta';
 
 const Authors = ({ meta }: { meta: Meta }): ReactElement => {
   const date = meta.date ? new Date(meta.date) : new Date();

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactElement } from 'react';
-import { Observer } from '../Observer';
+import { Observer } from '../observer';
 import { handleTwttrLoad } from './utils';
 
 export interface ITweetProps {

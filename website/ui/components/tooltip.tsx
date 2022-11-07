@@ -1,13 +1,13 @@
 import { ReactElement, ReactNode } from 'react';
 import {
-  Content,
-  Root,
-  Trigger,
   Arrow,
+  Content,
   Portal,
+  Provider,
+  Root,
   TooltipContentProps,
   TooltipProps,
-  Provider,
+  Trigger,
 } from '@radix-ui/react-tooltip';
 import clsx from 'clsx';
 

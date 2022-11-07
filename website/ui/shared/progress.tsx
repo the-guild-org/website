@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unknown-property */
-import NProgress from 'nprogress';
 import Router from 'next/router';
+import NProgress from 'nprogress';
 
 let timeout;
 

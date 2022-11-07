@@ -1,19 +1,19 @@
 /* eslint-disable import/no-default-export, react-hooks/rules-of-hooks */
 import { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Callout, defineConfig, Header, Giscus, useConfig, useTheme } from '@theguild/components';
-import { BlogCardList, Newsletter, Video } from '@/components';
-import { AUTHORS } from '@/authors';
-import { CodeSandbox } from '@/shared/embed/CodeSandbox';
-import { LinkPreview } from '@/shared/embed/LinkPreview';
-import { OgCard } from '@/shared/embed/OgCard';
-import { Gfycat } from '@/shared/embed/Gfycat';
-import { Tweet } from '@/shared/embed/Tweet';
-import { StackBlitz } from '@/shared/embed/StackBlitz';
+import { Callout, defineConfig, Giscus, Header, useConfig, useTheme } from '@theguild/components';
 import { Article } from '@/article';
+import { AUTHORS } from '@/authors';
+import { BlogCardList, Newsletter, Video } from '@/components';
+import { CodeSandbox } from '@/shared/embed/code-sandbox';
+import { Gfycat } from '@/shared/embed/gfycat';
+import { LinkPreview } from '@/shared/embed/link-preview';
+import { OgCard } from '@/shared/embed/og-card';
+import { StackBlitz } from '@/shared/embed/stack-blitz';
+import { Tweet } from '@/shared/embed/tweet';
 import blogsMeta from './dist/blogs-meta.json';
-import { MetaWithLink } from './lib/meta';
 import { asArray } from './lib/as-array';
+import { MetaWithLink } from './lib/meta';
 
 const siteName = 'The Guild';
 

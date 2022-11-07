@@ -1,12 +1,12 @@
-import clsx from 'clsx';
-import { useState, ReactElement } from 'react';
-import Confetti from 'react-confetti';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import { ReactElement, useState } from 'react';
 import { Image } from '@theguild/components';
+import clsx from 'clsx';
+import { useFormik } from 'formik';
+import Confetti from 'react-confetti';
+import * as Yup from 'yup';
 import { useMutation } from '../lib/use-graphql';
-import { Heading, Description, Button, Input, Link } from './components';
 import getInTouch from '../public/img/get-in-touch.png';
+import { Button, Description, Heading, Input, Link } from './components';
 
 export const Newsletter = (): ReactElement => {
   const [success, setSuccess] = useState(false);

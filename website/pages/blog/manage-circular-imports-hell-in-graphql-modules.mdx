@@ -78,38 +78,38 @@ So let's create modules in that way,
 
 ```graphql
 type User {
- id: ID
- name: String
- username: String
- email: String
- ## Some other fields
+  id: ID
+  name: String
+  username: String
+  email: String
+  ## Some other fields
 }
 ```
 
 ```graphql
 type Post {
- id: ID
- title: String
- content: String
- user: User
+  id: ID
+  title: String
+  content: String
+  user: User
 }
 extend type User {
- posts: [Post]
+  posts: [Post]
 }
 ```
 
 ```graphql
 type Comment {
- id: ID
- content: String
- user: User
- post: Post
+  id: ID
+  content: String
+  user: User
+  post: Post
 }
 extend type Post {
- comments: [Comment]
+  comments: [Comment]
 }
 extend type User {
- comments: [Comment]
+  comments: [Comment]
 }
 ```
 

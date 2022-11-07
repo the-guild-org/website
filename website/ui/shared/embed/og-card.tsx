@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { styled } from '../../../stitches.config';
-import { Observer } from '../Observer';
+import { Observer } from '../observer';
 
 type PreviewData = {
   description: string;

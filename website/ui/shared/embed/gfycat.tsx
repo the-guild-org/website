@@ -1,11 +1,11 @@
-import { PropsWithChildren, ReactElement } from 'react';
-import { Observer } from '../Observer';
+import { ReactElement } from 'react';
+import { Observer } from '../observer';
 
 export interface IGfycatProps {
   gifId: string;
 }
 
-export const Gfycat = ({ gifId }: PropsWithChildren<IGfycatProps>): ReactElement => (
+export const Gfycat = ({ gifId }: IGfycatProps): ReactElement => (
   <Observer>
     <div
       style={{

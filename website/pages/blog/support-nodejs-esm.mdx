@@ -60,11 +60,13 @@ For the reason just mentioned, the standard `package.json#exports` should look s
 To specify specific paths for deep imports, you can specify them:
 
 ```jsonc
-"exports": {
-  // ...
-  "./utils": {
-     "require": "./dist/utils.js",
-     "import": "./dist/utils.mjs"
+{
+  "exports": {
+    // ...
+    "./utils": {
+      "require": "./dist/utils.js",
+      "import": "./dist/utils.mjs"
+    }
   }
 }
 ```
@@ -72,15 +74,17 @@ To specify specific paths for deep imports, you can specify them:
 If you don't want to break backward compatibility on import/require with the explicit `.js`, the solution is to add the extension in the export:
 
 ```jsonc
-"exports": {
-  // ...
-  "./utils": {
-     "require": "./dist/utils.js",
-     "import": "./dist/utils.mjs"
-  }
-  "./utils.js": {
-     "require": "./dist/utils.js",
-     "import": "./dist/utils.mjs"
+{
+  "exports": {
+    // ...
+    "./utils": {
+      "require": "./dist/utils.js",
+      "import": "./dist/utils.mjs"
+    },
+    "./utils.js": {
+      "require": "./dist/utils.js",
+      "import": "./dist/utils.mjs"
+    }
   }
 }
 ```
@@ -153,8 +157,8 @@ The only workaround to have an isomorphic `__dirname` or `__filename` to be used
 The workaround alongside with `createRequire` should like this
 
 ```ts
+import { createRequire } from 'node:module'
 import filedirname from 'filedirname'
-import { createRequire } from 'module'
 
 const [filename] = filedirname()
 

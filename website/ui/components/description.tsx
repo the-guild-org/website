@@ -1,5 +1,5 @@
-import clsx from 'clsx';
 import { ReactElement, ReactNode } from 'react';
+import clsx from 'clsx';
 
 type Size = 'lg' | 'md';
 

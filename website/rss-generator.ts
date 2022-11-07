@@ -1,7 +1,7 @@
-import { getAllArticles } from './lib/get-all-articles';
+import { writeFile } from 'node:fs/promises';
 import RSS from 'rss';
+import { getAllArticles } from './lib/get-all-articles';
 import { MetaWithLink } from './lib/meta';
-import { writeFile } from 'fs/promises';
 
 export async function generateRSS(articles: MetaWithLink[]) {
   const feed = new RSS({
