@@ -93,8 +93,8 @@ export default defineConfig({
         <Giscus
           // ensure giscus is reloaded when client side route is changed
           key={route}
-          repo="the-guild-org/the-guild-website"
-          repoId="MDEwOlJlcG9zaXRvcnkxOTk3MTM1NzI"
+          repo="the-guild-org/website"
+          repoId="MDEwOlJlcG9zaXRvcnkxOTk3MTM1NzI="
           category="Docs Discussions"
           categoryId="DIC_kwDOC-djJM4CSZk-"
           mapping="pathname"
