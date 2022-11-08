@@ -145,6 +145,7 @@ export function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: str
       '/forum',
       '.ashx',
       '.cgi',
+      'newmax.click',
       'mobileaffnad',
     ].some(v => requestedUrl.toLowerCase().includes(v.toLowerCase())) ||
     [
