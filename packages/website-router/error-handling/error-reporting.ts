@@ -145,6 +145,11 @@ export function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: str
       '/forum',
       '.ashx',
       '.cgi',
+      'elfinder',
+      'pgrfilemanager',
+      'ideal-img',
+      'license',
+      '/admin',
       'newmax.click',
       'mobileaffnad',
     ].some(v => requestedUrl.toLowerCase().includes(v.toLowerCase())) ||
