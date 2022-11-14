@@ -70,6 +70,27 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
     return redirect(sentry, event.request.url, to);
   }
 
+  // Remove all www && https && http from the URL
+  if (
+    event.request.url.startsWith('www') ||
+    event.request.url.startsWith('https://www') ||
+    event.request.url.startsWith('http://www')
+  ) {
+    const to = event.request.url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, '').split('.')[0];
+
+    sentry.addBreadcrumb({
+      type: 'navigation',
+      data: {
+        from: event.request.url,
+        to,
+      },
+      level: 'info',
+      message: 'Redirecting to non-trailing www URL',
+    });
+
+    return redirect(sentry, event.request.url, to);
+  }
+
   // Handle sitemap
   if (shouldHandleSitemap(parsedUrl)) {
     sentry.addBreadcrumb({
