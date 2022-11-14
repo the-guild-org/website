@@ -76,7 +76,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
     event.request.url.startsWith('https://www') ||
     event.request.url.startsWith('http://www')
   ) {
-    const to = event.request.url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, '').split('.')[0];
+    const to = event.request.url.replace(/^http(s)?(:)?(\/\/)?|(\/\/)?(www\.)?/i, '').split('.')[0];
 
     sentry.addBreadcrumb({
       type: 'navigation',
