@@ -1,6 +1,10 @@
 import { withGuildDocs } from '@theguild/components/next.config';
 
 export default withGuildDocs({
+  env: {
+    // needs for canonoical <link />
+    SITE_URL: 'https://the-guild.dev',
+  },
   redirects: () =>
     Object.entries({
       '/contact': '/#get-in-touch',
