@@ -71,12 +71,8 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
   }
 
   // Remove all www && https && http from the URL
-  if (
-    event.request.url.startsWith('www') ||
-    event.request.url.startsWith('https://www') ||
-    event.request.url.startsWith('http://www')
-  ) {
-    const to = event.request.url.replace(/^http(s)?(:)?(\/\/)?|(\/\/)?(www\.)?/i, '').split('.')[0];
+  if (parsedUrl.hostname.startsWith('www.')) {
+    const to = event.request.url.replace('//www.', '//');
 
     sentry.addBreadcrumb({
       type: 'navigation',
