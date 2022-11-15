@@ -26,9 +26,9 @@ export default defineConfig({
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
   navbar: <Header sameSite accentColor="var(--colors-accent)" themeSwitch searchBarProps={{ version: 'v2' }} />,
   getNextSeoProps() {
-    const { frontMatter } = useConfig();
-    const { description, authors, tags, thumbnail, title, date, updateDate } = frontMatter;
-    const image = thumbnail || `https://open-graph-image.theguild.workers.dev/?product=GUILD&title=${title}`;
+    const { frontMatter, title } = useConfig();
+    const { description, authors, tags, thumbnail, date, updateDate } = frontMatter;
+    const image = thumbnail || `https://open-graph-image.theguild.workers.dev/?product=GUILD&title=${encodeURI(title)}`;
 
     return {
       description: description || `${siteName}: Modern API Platform and Ecosystem that scales`,
