@@ -7,7 +7,7 @@ description: How I helped improve Angular Console. By doing GraphQL the right wa
 image: /medium/78d0f670476d24762cc05eefd42a0321.png
 ---
 
-## By doing GraphQL right
+## By Doing GraphQL Right
 
 Did you know that **Angular Console** uses **GraphQL** under the hood? I want to tell about how it used it and how I helped to improve it because that might be useful for people trying to implement GraphQL in their applications, both on client and server.
 
@@ -25,7 +25,7 @@ So when I saw the first implementation, I thought it would be nice to share some
 
 ---
 
-## Apollo Angular as the GraphQL client
+## Apollo Angular as the GraphQL Client
 
 I was hoping to find [**Apollo Angular**](https://github.com/apollographql/apollo-angular) as one of dependencies. I might be a bit bias as the author of that library but our team used it in all of our angular based projects with huge success.
 
@@ -39,7 +39,7 @@ Apollo has a comprehensive [documentation](https://apollographql.com/docs/angula
 
 ---
 
-## Using DI to create Apollo
+## Using DI to Create Apollo
 
 Angular Console used an old way of initializing Apollo. In one of the recent versions of Apollo Angular I introduced `APOLLO_OPTIONS`, an InjectionToken that provides a configuration object to Apollo service. The old API caused an issue with a race condition where a service tried to use Apollo before it got created.
 
@@ -82,7 +82,7 @@ type Post {
 
 In my opinion, it's more convenient and way more intuitive to work with.
 
-## Keeping resolve functions separated from SDL
+## Keeping Resolve Functions Separated from SDL
 
 In our projects, we try to group resolvers by GraphQL type and have them nearby the corresponding schema definition.
 
@@ -128,7 +128,7 @@ Here are the relevant changes that I've mentioned above, that allowed me to intr
 
 Apollo Server 2.0 Latest Apollo Angular refactoring — moved files under /api directory used SDL instead of classes from…github.com')
 
-## Strongly typed resolvers
+## Strongly Typed Resolvers
 
 We love [TypeScript](https://typescriptlang.org), and we saw an opportunity to take our GraphQL servers to the next level. Instead of having `any` or defining interfaces for each resolver by hand, we decided to take advantage of one of our tools, called [GraphQL Code Generator](https://graphql-code-generator.com) (thanks Dotan Simha for creating it).
 
@@ -164,11 +164,11 @@ We recently released another new version of the GraphQL Code Generator that fixe
 
 The GraphQL Code Generator is one powerful beast that enables any kind of code generation based just on GraphQL Schema (you can create your own custom generation templates).
 
-# Named operations
+# Named Operations
 
 GraphQL in most cases allows to use a shorthand syntax but putting a type and a name of an operation is very useful, simply for debugging and logging. It's easier to track down a failed operation, because it's no longer anonymous and by keeping all names unique you're able to take advantage of any tool or service. One tool I described in the next chapter.
 
-## Strongly typed operations and code generation
+## Strongly Typed Operations and Code Generation
 
 Fetching data with Apollo Angular, requires few steps:
 

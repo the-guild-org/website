@@ -7,7 +7,7 @@ description: I wrote a customizable CSS engine in JavaScript. Custom selectors, 
 image: /medium/9ecd4800956fc386f893c8730a0beb63.jpeg
 ---
 
-## Custom selectors, custom rules and custom events. You determine its behavior
+## Custom Selectors, Custom Rules and Custom Events. You Determine Its Behavior
 
 For some things CSS is simply not enough, we need JavaScript. I'm sure that we all experienced it not once, nor twice, the feeling of wanting to have a specific behavior or style that aren't supported by CSS. An arbitrary example: selecting an element based on regular expression, playing a transition dynamically to the element's changes in dimension, or sticky positioning (which is arguably working in some browsers based on my personal experience). However, this is not why I wrote the CSS engine.
 
@@ -15,7 +15,7 @@ I wrote the engine to repeat the same thinking process that the original develop
 
 > **disclaimer:** I haven't looked into the native implementation of CSS. There's a lot you can take from my article (at least I hope), yet please take my words with a grain of salt.
 
-## First thing first — demo
+## First Thing First — Demo
 
 Here's an example of a stylesheet with a custom rule named `boom`:
 
@@ -42,9 +42,9 @@ Indeed, there's a lot going on under the hood and a lot to go through, so let's 
 
 ![](/medium/33a00b9051bfb0894f2d6964afed0de9.png)
 
-## Keynotes from the implementation
+## Keynotes from the Implementation
 
-### Reading the stylesheet
+### Reading the Stylesheet
 
 Receiving information from a given CSS string is a challenge as for itself. Since I wanted to strictly preserve the original CSS experience, I didn't settle for a JSON, but rather an actual sheet with a set of rules and selectors. To parse it, you first need to be familiar with the concept of an [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree).
 
@@ -60,7 +60,7 @@ The AST is now presented as a plain JSON. To make things even more convenient, I
 
 With a wrapped AST, not only we can get information about the given CSS string, but we can also call related methods directly from a specific node. So given a node of `Selector` type, we can call the [`test`](https://github.com/DAB0mB/eventsheet/blob/9224349b895ee15efc43d879ceed8786bac660bb/demo.js#L24) method to see whether an element actually matches the selector or not.
 
-### Detecting changes in the DOM
+### Detecting Changes in the DOM
 
 The engine is heavily based on the [`MutationObserver`](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver) to detect changes in the DOM tree. The mutation observer will trigger a callback with details regards the occurred mutations (see [`MutationRecord`](https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord)) from the recent execution loop. The problem with the `MutationObserver` is that it will create a mutation record for each mutation occurred without taking into an account the final result. That means that if a DOM node was added, removed, added, removed, and then added, it will appear as if it was removed 2 times and added 3 times, rather than added just once.
 
@@ -85,7 +85,7 @@ function observerCallback(mutations, observer) {
 }
 ```
 
-### Triggering custom events
+### Triggering Custom Events
 
 Events management is a crucial part in the implementation because it will determine the efficiency of the engine. If events aren't disposed or reallocated exactly when needed, this will dramatically affect how fast will things work.
 
@@ -157,9 +157,9 @@ function removeEventListener(target, event, handler) {
 }
 ```
 
-## How can it be better?
+## How Can It Be Better?
 
-### Disposing and reallocating events only when necessary
+### Disposing and Reallocating Events Only When Necessary
 
 Right now all registered events for a specific element are being disposed and re-allocated to make sure that only the right handlers will run; this way if a selector becomes irrelevant due to recent changes to the element, it won't effect its style.
 
@@ -191,13 +191,13 @@ This can be taken a step further by observing which properties of the element ha
 }
 ```
 
-## **Unleashing the full potential using web-assembly and WebGL**
+## Unleashing the Full Potential Using WebAssembly and WebGL
 
 One of the clear advantages of a native CSS engine over its JavaScript equivalent, is that it's written in a low level language such as C or C++. That can be compensated with the usage of [Web Assembly](https://webassembly.org), where we can write our code with [Rust](https://rust-lang.org) and compile it to a low-level language that can run on the browser. To top things up, we can use [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API) or a library such as [GPU.JS](https://gpu.rocks) to run vector calculations in parallel using all cores of the GPU.
 
 Needless to say that this is only relevant if you want to implement graphical manipulations such as element shadows, text stroke or image filtering. It's better to keep things simple and use only the style API which is offered to us right out-of-the-box by the browser.
 
-## Concept: Rethink event handling in UI frameworks
+## Concept: Rethink Event Handling in UI Frameworks
 
 Most modern UI frameworks such as [React](https://reactjs.org), [Angular](https://angular.io) and [Vue](https://vuejs.org) are tightly coupling event registering and handing with the component itself. While this has proven itself to work (greatly) over the years, a customizable stylesheet (or event sheet as you may call it) can be an alternative that can offer some benefits.
 

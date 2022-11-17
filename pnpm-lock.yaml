@@ -14,6 +14,7 @@ importers:
       prettier: 2.7.1
       prettier-plugin-tailwindcss: 0.1.13
       pretty-quick: 3.1.3
+      remark-lint-chicago-heading: workspace:*
       remark-preset-lint-consistent: 5.1.1
       remark-preset-lint-markdown-style-guide: 5.1.2
       remark-preset-lint-recommended: 6.1.2
@@ -30,6 +31,7 @@ importers:
       prettier: 2.7.1
       prettier-plugin-tailwindcss: 0.1.13_prettier@2.7.1
       pretty-quick: 3.1.3_prettier@2.7.1
+      remark-lint-chicago-heading: link:packages/remark-lint-chicago-heading
       remark-preset-lint-consistent: 5.1.1
       remark-preset-lint-markdown-style-guide: 5.1.2
       remark-preset-lint-recommended: 6.1.2
@@ -73,6 +75,25 @@ importers:
       unified: 10.1.2
       unist-util-remove: 3.1.0
       unist-util-visit: 4.1.1
+
+  packages/remark-lint-chicago-heading:
+    specifiers:
+      '@types/mdast': ^3.0.0
+      hast-util-to-string: ^2.0.0
+      title: ^3.5.3
+      unified: ^10.0.0
+      unified-lint-rule: ^2.0.0
+      unist-util-generated: ^2.0.0
+      unist-util-visit: ^4.0.0
+    dependencies:
+      hast-util-to-string: 2.0.0
+      title: 3.5.3
+      unified: 10.1.2
+      unified-lint-rule: 2.1.1
+      unist-util-generated: 2.0.0
+      unist-util-visit: 4.1.1
+    devDependencies:
+      '@types/mdast': 3.0.10
 
   packages/website-router:
     specifiers:
@@ -4600,6 +4621,12 @@ packages:
     resolution: {integrity: sha512-eK0MxRX47AV2eZ+Lyr18DCpQgodvaS3fAQO2+b9Two9F5HEoRPhiUMNzoXArMJfZi2yieFzUBMRl3HNJ3Jus3w==}
     dev: false
 
+  /hast-util-to-string/2.0.0:
+    resolution: {integrity: sha512-02AQ3vLhuH3FisaMM+i/9sm4OXGSq1UhOOCpTLLQtHdL3tZt7qil69r8M8iDkZYyC0HCFylcYoP+8IO7ddta1A==}
+    dependencies:
+      '@types/hast': 2.3.4
+    dev: false
+
   /hast-util-whitespace/2.0.0:
     resolution: {integrity: sha512-Pkw+xBHuV6xFeJprJe2BBEoDV+AvQySaz3pPDRUs5PNZEMQjpXJJueqrpcHIXxnWTcAGi/UOCgVShlkY6kLoqg==}
     dev: false
@@ -8671,7 +8698,6 @@ packages:
       trough: 2.1.0
       unified: 10.1.2
       vfile: 5.3.4
-    dev: true
 
   /unified-message-control/4.0.0:
     resolution: {integrity: sha512-1b92N+VkPHftOsvXNOtkJm4wHlr+UDmTBF2dUzepn40oy9NxanJ9xS1RwUBTjXJwqr2K0kMbEyv1Krdsho7+Iw==}

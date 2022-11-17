@@ -7,7 +7,7 @@ description: Why did we implement our own Dependency Injection library for Graph
 image: /medium/783e92a762ee3c5b1580336b00f76d46.png
 ---
 
-## Why not Inversify/Angular/NestJS?
+## Why Not Inversify / Angular / NestJS?
 
 When designing GraphQL Modules, we tried different approaches to encapsulate modules safely. We created a solution where you won't need to use Dependency Injection when you start, but after you are getting to a certain scale, you can make use of our separate DI library to ease the separation and make the boundaries stricter, only at the point when it really makes sense and helps you. When you get to that point, DI helps you mostly for ease of mocking providers for testing and encapsulation for less error-prone implementation.
 
@@ -69,7 +69,7 @@ The three benefits we have with this type of DI and modular system;
 - _DatabaseModule_ is protected from an unsafe import without a valid configuration that is needed in the internal process (_SomeDbProvider_); thanks to `configRequired` again!
 - _OtherModuleThatUsesDb_ is protected from an unsafe call or import without a definition of a well-configured _DatabaseModule._
 
-## **Hierarchy**
+## Hierarchy
 
 We also have another problem about the hierarchical approach of existing DI implementations. Let me give an example;
 
@@ -97,7 +97,7 @@ You can read more about the different scopes that we have in GraphQL-Modules her
 
 <LinkPreview link="/blog/graphql-modules-scoped-providers" />
 
-## Comparisons with Other DI Implementations of frameworks
+## Comparisons with Other DI Implementations of Frameworks
 
 ### Comparison with Inversify
 
@@ -158,7 +158,7 @@ Angular doesn't care about that. it has a single injector for the all applicatio
 
 And Angular's DI library doesn't differentiate _Application and Session scopes_ because it doesn't need that. An Angular application has a lifetime until `window` is terminated by closing it or refreshing page; the session and application runtime can be considered same in the client application. That's why, our DI implementation is more complex than Angular's as it need to handle multiple clients by running a single application. You can read more about [_Scoped Providers_](/blog/graphql-modules-scoped-providers) in the beginning of this article
 
-### Comparison with NestJS' DI implementation
+### Comparison with NestJS' DI Implementation
 
 NestJS is a server-side model-view-controller full-fledged framework that has all the principles of MVC Backend framework. exposing a GraphQL API is only one of its various features. Our goal with GraphQL Modules was to create a set of tools and libraries that answer needs for the GraphQL ecosystem, and can be (and should be) used by NestJS users as well.
 
@@ -172,13 +172,13 @@ NestJS has its own dependency injection system which is similar to Angular's but
 
 Also, NestJS DI system doesn't share the important feature of defining providers that have the life-time of the client request (we call it **session scope**). We think a backend system would need to differentiate DI containers according to these different scopes. You can read more about it in [_Scoped Providers_](/blog/graphql-modules-scoped-providers) part of this article above.
 
-## Working together
+## Working Together
 
 We wanted to share the principles behind our implementation in order to get more background to our community and get feedback from other library authors.
 
 That is also one of the reasons we created our DI library as a separate library, not only so it would be optional to our users, but also to potentially share that implementation with other libraries like NestJS and Inversify for example.
 
-## All posts about GraphQL Modules
+## All Posts about GraphQL Modules
 
 - [GraphQL Modules — Feature based GraphQL Modules at scale](/blog/graphql-modules)
 - [Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?](/blog/modular-encapsulation-graphql-modules)

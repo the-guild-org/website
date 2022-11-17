@@ -50,7 +50,7 @@ The GraphQL HTTP server's first task is to parse and normalize the body or query
 
 Not officially in the specification, but also used is `text/event-stream` for event streams (e.g. when executing subscription or live query operations).
 
-## GraphQL parse
+## GraphQL Parse
 
 After parsing and normalizing the request, the server will pass on the GraphQL parameters onto the GraphQL engine that will parse the GraphQL operation document (which can contain any number of query, mutation, or subscription operations and fragment definitions).
 
@@ -176,7 +176,7 @@ For our operation it would be identical to the following JSON:
 
 This procedure is performed by the `parse` function that is exported from `graphql-js`. Other languages that are orientate themselves on the `graphql-js` reference implementation have a corresponding counterpart.
 
-## GraphQL validate
+## GraphQL Validate
 
 In the validation phase, the parsed document is validated against our GraphQL schema to ensure all selected fields in the operation are available and valid. The previously parsed AST makes it easier for the validation rules to have a common interface of traversing the document.
 Furthermore, other validation rules that ensure that the document follows the GraphQL specification are checked, E.g. whether variables referenced in the document are declared in the operation definition.
@@ -216,7 +216,7 @@ In case any error is raised the errors are forwarded to the HTTP layer which tak
 
 This procedure is performed by the `validate` function that is exported from `graphql-js`. Other languages that are orientate themselves on the `graphql-js` reference implementation have a corresponding counterpart.
 
-## GraphQL execute
+## GraphQL Execute
 
 In the execution phase we are actually resolving the data requested by the client using the parsed and validated GraphQL operation document AST and our GraphQL schema, which contains the resolvers that specify from where the data the client requests is retrieved.
 
@@ -276,7 +276,7 @@ The HTTP layer forwards those to the client that initiated the request.
 
 This procedure is performed by the `execute` and `subscribe` functions that are exported from `graphql-js`. Other languages that are orientate themselves on the `graphql-js` reference implementation have a corresponding counterpart.
 
-# Why do we want to override different phases?
+# Why Do We Want to Override Different Phases?
 
 ## Overriding `parse`
 
@@ -284,40 +284,40 @@ This procedure is performed by the `execute` and `subscribe` functions that are 
 
 Parsing a GraphQL document string comes with overhead. We could cache frequently sent document strings and serve the document from the cache instead of parsing it every single time.
 
-### Test new Functionality
+### Test New Functionality
 
 The GraphQL Type system defines the capabilities of the GraphQL service.
 This phase can be used to add new capabilities to the type system that may not yet be supported by GraphQL specification.
 
 ## Overriding `validate`
 
-### Add caching
+### Add Caching
 
 Similar to parsing, validating a GraphQL document AST comes with an overhead. We could cache recurring document ASTs and server the validation result from the cache instead of validating it every single time.
 
-### Add custom rules
+### Add Custom Rules
 
 You might wanna restrict what kind of operations are allowed to be executed. E.g. If we we only want to allow `query` operations, we can provide a custom validation rule that yields errors as soon as a `mutation` or `subscription` operation is encountered.
 
 ## Overriding `execute` or `subscribe`
 
-### Add caching
+### Add Caching
 
 We can serve frequently executed GraphQL operation results from a cache instead of calling all our resolvers and fetching from a remote database/server every time.
 
-### Add tracing information
+### Add Tracing Information
 
 We can collect statistics by measuring how long it takes to resolve each field in our documents' selection set and narrow down bottlenecks.
 
-### Mask and report errors
+### Mask and Report Errors
 
 We want to make sure the errors occurring during the execution do not contain sensitive information and are properly reported, so they do not go unnoticed and are properly reported.
 
-### Add new functionality
+### Add New Functionality
 
 We could customize the algorithm that is used by `graphql-js` in order to add new features or make it more performant e.g. by using [graphql-executor](https://npmjs.com/package/graphql-executor).
 
-## Use envelop for extending the phases
+## Use Envelop for Extending the Phases
 
 While making our GraphQL servers production ready and working with our clients we discovered that we were writing the same custom code over and over again.
 
@@ -361,7 +361,7 @@ Furthermore, the plugins can be easily shared across projects.
 
 [You can learn more about Envelop on our introduction blog post](/blog/introducing-envelop) or by [visiting the Envelop documentation](https://envelop.dev).
 
-## Why is GraphQL Yoga V2 so important?
+## Why Is GraphQL Yoga V2 so Important?
 
 As you might have noticed [we adopted GraphQL Yoga to The Guild ecosystem quite a while ago](https://github.com/dotansimha/graphql-yoga/issues/670). [We have been thinking a lot on how version 2 should look like](https://github.com/dotansimha/graphql-yoga/issues/704) and while building and using envelop within our customer projects we realized a few limitations that can only be solved by owning/wrapping the whole HTTP GraphQL request pipeline.
 

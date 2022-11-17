@@ -7,7 +7,7 @@ description: Use private class names instead of a dedicated component
 image: /medium/847a27410df9de57458f3736cf937b9b.png
 ---
 
-## TL;DR: Use private class names instead of a dedicated component. **experimental**
+## TL;DR: Use Private Class Names Instead of a Dedicated Component. **Experimental**
 
 [Styled-Components](https://styled-components.com) has brought something new to the table when in was first introduced and is one of the most popular CSS-related libraries out there with over 20k stars on GitHub. Style encapsulation has always been an issue in the web world, and people tried to solve it in many ways, of which [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM) and [Angular's emulated view encapsulation](https://angular.io/api/core/ViewEncapsulation).
 
@@ -80,7 +80,7 @@ const Dashboard = (
 
 As much as I love this approach, it doesn't achieve full encapsulation. A nested child component which has a similar class selector as its parent will result in a merged style, which is not necessarily what we want. Each component should leave independently of its ancestors, which is what Styled-Components are all about.
 
-# Introducing babel-plugin-scoped-styled-components
+## Introducing `babel-plugin-scoped-styled-components`
 
 Indeed, this problem is solvable with a transpiler. Not only we can achieve full encapsulation this way, but it's also highly efficient due to its independence from a runtime library.
 

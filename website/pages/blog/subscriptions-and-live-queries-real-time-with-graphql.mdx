@@ -691,7 +691,7 @@ Both Hasura and PostGraphile are tightly coupled to a SQL database. For any cust
 
 Switching to a server powered by PostGraphile or Hasura with an already existing GraphQL schema is no easy task.
 
-## GraphQL Live Queries over Subscriptions with JSON patch
+## GraphQL Live Queries over Subscriptions with JSON Patch
 
 Ideally, we only want to send a patch to the client that provides instructions on how to get from the previous execution result to the next. The lack of these instructions has been a big flaw in the previous two implementations.
 
@@ -823,7 +823,7 @@ We don't rely on any third party services, however, we forced into immutability 
 
 Adding an immutable layer to our existing schema might be a pretty big change. Furthermore, the library does lack support for some GraphQL features such as Interfaces and Unions.
 
-## GraphQL Live Queries via the `@live` directive
+## GraphQL Live Queries via the `@live` Directive
 
 There are companies out there, like [Facebook](https://youtube.com/watch?v=BSw05rJaCpA), that are already using this approach. There is also a GraphQL framework available in Go that supports live queries out of the box! Check out thunder [here](https://github.com/samsarahq/thunder).
 
@@ -845,7 +845,7 @@ Just adding a directive on the operation on frontend won't make the whole backen
 
 After having built an example app with `graphql-live-subscriptions` from scratch, studying the flaws of that library and being uncomfortable with the vendor lock-in of services such as PostGraphile and Hasura, I decided to approach the problem of live queries in a more pluggable way, by using the `@live` directive.
 
-### `@n1ru4l/graphql-live-query` A common definition and set of utilities for determining of a live query
+### `@n1ru4l/graphql-live-query` A Common Definition and Set of Utilities for Determining of a Live Query
 
 This module provides two things.
 
@@ -873,7 +873,7 @@ This is a simple function that takes a `OperationDefinitionNode` and returns `tr
 Those functions alone might not seem that helpful alone, but they are a contract live query execution engines could built on.
 Such as the package we are talking about next 😇.
 
-### `@n1ru4l/in-memory-live-query-store` Keep track and invalidate resources selected by a live query in an efficient, but generic way
+### `@n1ru4l/in-memory-live-query-store` Keep Track and Invalidate Resources Selected by a Live Query in an Efficient, but Generic Way
 
 The `InMemoryLiveQueryStore.execute` function is a drop in replacement for the `execute` function provided by the `graphql` package.
 
@@ -1019,7 +1019,7 @@ server.listen(443)
 The best thing is you can start playing around with it today! The fully functional implementation is available as [`@n1ru4l/in-memory-live-query-store` on Github](https://github.com/n1ru4l/graphql-live-query/tree/main/packages/in-memory-live-query-store).
 Feel free to create any issues regarding missing features or documentation. Let's shape the future for GraphQL live queries together!
 
-### `@n1ru4l/graphql-live-query-patch`: Optional JSON patch middleware for smaller payloads over the wire.
+### `@n1ru4l/graphql-live-query-patch`: Optional JSON Patch Middleware for Smaller Payloads over the Wire
 
 GraphQL execution result payloads can become quite huge. Sending those over the wire can be expensive at some point. Especially when they are sent often for fast updating state. JSON patch is a handy standard for only sending change instructions over the wire which can potentially reduce such huge payloads.
 
@@ -1163,7 +1163,7 @@ This library can be added to any existing GraphQL.js schema without any hassle i
 The possibilities of resource invalidation are endless and the logic for those can be added incrementally.
 E.g. via a ORM middleware, in our mutation code or maybe even on our GraphQL gateway.
 
-## What's next?
+## What's Next?
 
 Summed up this could be the start of a pluggable live query ecosystem that is flexible enough to be compatible with a wide range of databases, graphql transports and schema builders instead of focusing to much on a niche.
 In general, instead of having less flexible and bulky servers that try to be too opinionated and restrictive in their schema -> execution -> transport flow, GraphQL tooling should become more modular. At the same time this, however, should not imply that there is no need for opinionated framework-like approaches (as long as they give enough flexibility, e.g. by being composed out of modular packages).

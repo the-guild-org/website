@@ -18,7 +18,7 @@ A cache is a place in memory for important data, which can be delivered to the c
 For example, for a GraphQL API, we might want to cache a field value that comes from a slow external API.
 The goal of caching is to improve performance where it’s needed the most.
 
-### How is caching faster?
+### How Is Caching Faster?
 
 Using a cache for compute-intensive data is faster for a few reasons:
 
@@ -26,7 +26,7 @@ Using a cache for compute-intensive data is faster for a few reasons:
 - A cache is smaller than a database, so there are a lot less values to filter through.
 - While some cached data might be queried a lot of times, it will be fetched from the database only one time, so there's less time lost for fetching multiple times.
 
-## How do we use caching?
+## How Do We Use Caching?
 
 ### Caching with `dataloader`
 
@@ -39,9 +39,9 @@ The `dataloader` package was created specifically for GraphQL, but it can work w
 
 </Callout>
 
-## Using dataloader
+## Using DataLoader
 
-### 1. Install dataloader in your project
+### 1. Install DataLoader in Your Project
 
 Install `dataloader` by running the following:
 
@@ -56,7 +56,7 @@ import DataLoader from 'dataloader'
 import { LRUMap } from 'lru_map'
 ```
 
-### 3. Define the types that would be saved to our cache
+### 3. Define the Types That Would be Saved to Our Cache
 
 The first type should be a way to represent the data, like a string with a name, and the other is the data itself.
 For example, let's say we're trying to cache books. Our package name will be the books' id, so we can tell which book is which.
@@ -99,7 +99,7 @@ type PackageData = /* note that this is the type of the data we represent. */ {
 
 The reason we write types is for type safety, let's say we have books and toys which have different values, we wouldn't want that somehow toys will be inserted into our books cache
 
-### 4. Create the dataloader instance
+### 4. Create the DataLoader Instance
 
 ```ts
 const dataLoader = new DataLoader<packageId, PackageData>(
@@ -133,7 +133,7 @@ From now, to query data, you just run
 dataLoader.load(keys)
 ```
 
-## Dataloader with GraphQL
+## DataLoader with GraphQL
 
 Dataloader was designed to work with GraphQL, to solve the [n+1 problem](https://medium.com/the-marcy-lab-school/what-is-the-n-1-problem-in-graphql-dd4921cb3c1a)
 
@@ -156,7 +156,7 @@ query BooksWithAuthors {
 Depending on the resolver implementation, this query might trigger 20 SQL queries or API calls to resolve authors that might've wrote multiple books.
 Dataloader helps to solve this problem by caching, deferring and grouping similar resolver calls.
 
-### How to use the dataloader package with GraphQL?
+### How to Use the DataLoader package with GraphQL?
 
 To use the dataloader with GraphQL just pass it in the context!
 

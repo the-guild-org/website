@@ -7,27 +7,27 @@ description: Getting in-depth on making your application updated and safe.
 image: /blog-assets/how-should-you-pin-dependencies-and-why/cover.png
 ---
 
-## What is pinning and why is it so important?
+## What Is Pinning and Why Is It so Important?
 
 With the term pinning we are referring to the practice of making explicit the version of the libraries your application is depending on. Package managers like `npm` or `yarn` use [`semver`](https://semver.org) ranges by default, which basically allows you to install a “range” of versions instead of a specific one.
 
 By freezing the dependencies we want to achieve repeatable deployment and make sure that every developer is testing on the very same codebase.
 
-## Why did package managers default to semver?
+## Why Did Package Managers Default to Semver?
 
 The main reason is to automatically get updates every time we run `npm install` (assuming you're not using a lock file, more on that later). This is done because we want to get security fixes as fast as possible. The theory behind that is that [semantic versioning](https://docs.npmjs.com/about-semantic-versioning) should protect us against breaking chances, while still getting the security fixes.
 
-## What happens when semver fails?
+## What Happens When Semver Fails?
 
 Unfortunately semantic versioning is far from being infallible and breakage might occur. Since multiple dependencies can be updated at once when that happens you will have to manually check which one to blame and then you will be forced to pin it to fix the issue.
 
 With pinning, you will have to make a PR to update your dependencies and thus get some feedback from the automated tests. So you will know exactly which dependency is going to break your app before that happens.
 
-## Tests can fail either
+## Tests Can Fail Either
 
 Truth is that tests are not perfect either and chances are you probably didn't read the release notes looking for breaking changes before merging a green-light PR. Nevertheless pinning still has a big advantage even when the failure is not caught in time: instead of randomly looking for which dependency broke your code, you will be able to [bisect](https://git-scm.com/book/it/v2/Git-Tools-Debugging-with-Git) the issue very quickly. Git bisecting is a quick way to roll back to previous commits and find out which one introduced the regression. Instead of doing it manually a git bisect allows you to specify a good commit and a bad commit, then it will pick up a commit in the middle and ask you if it's good or bad. Depending on your answer it will divide the leftmost or rightmost interval and iterate the process until the guilty commit is detected. The whole process can be automated and it's usually very quick.
 
-## Downsides of pinning
+## Downsides of Pinning
 
 ### Automation
 
@@ -49,13 +49,13 @@ _When you publish a package that contains a `yarn.lock`, any user of that librar
 
 Since the library lock file will be ignored when it gets installed as a dependency, it won't produce any duplication.
 
-### Upgrade noise
+### Upgrade Noise
 
 Going through dozens of PRs each and every day can be annoying. Fortunately Renovate gives you several solutions to deal with the problem, like auto-merging (this may sound scary, but if you don't have full coverage you could automatically merge patch updates while manually merging minor and major updates), branch auto-merging (it's basically the same, but the dependency are merged in a test branch which can be periodically merged back into master), scheduling (which allows you to avoid immediate notifications) and packages grouping (Apollo-Client and all it's related packages in one PR).
 
-## How to pin packages
+## How to Pin Packages
 
-### package.json and the sub-dependencies problem
+### `package.json` And the Sub-Dependencies Problem
 
 Historically the most common way to pin dependencies was to specify an exact version in your `package.json`, for example using the `--save-exact` parameter with `npm install` (you can make it default by adding `save-exact=true` to your `.npmrc`). With `yarn` you can use `--exact` / `-E`.
 
@@ -68,7 +68,7 @@ _Even if we pin `@angular/compiler-cli` we would still be exposed to dozens of s
 
 To make things worse, chances that a sub-dependency will break your app increase with `package.json` pinning compared to semver: you're going to use unpinned (and thus newer) subdeps with older pinned packages and that combo will probably be less tested.
 
-### lock files to the rescue
+### Lock Files to the Rescue
 
 Both yarn and recent npm versions allow you to create a lock file. This allows you to lock each and every package you depend on, including sub-dependencies.
 
@@ -82,7 +82,7 @@ Unfortunately it won't also update package.json to reflect `~0.2.18` because tec
 
 Even with a lock file an unexperienced user could simply run `yarn upgrade` and update all dependencies at once. As we discussed previously this is very bad to keep track of dependency updates, and you could have hard times figuring out which package to blame for breakage.
 
-### Why not both?
+### Why Not Both?
 
 In theory you could get the best of both worlds if you use `--exact` while still using a lock file: a human-readable format, protection against all sources of breakage (including sub-deps), protection against unwanted mass-upgrades ( `yarn upgrade` won't update anything if package.json is pinned).
 
@@ -114,6 +114,6 @@ policy, because some packages can be more risky than others.
 
 Since we are stuck with either `major`, `minor` or `patch` for automerge, the only compelling reason to avoid package.json pinning is if you're using tools like `ng update` and you don't want to loose upstream update policies. If that doesn't bother you, you should add package.json pinning on top of your lock file.
 
-### An important note about libraries
+### An Important Note about Libraries
 
 Everything we said in the conclusion applies to normal applications, but not libraries. As we said previously with libraries we want to use wider ranges to prevent duplication. Unfortunately the `bump` [rangeStrategy](https://renovatebot.com/docs/configuration-options/#rangestrategy) basically forces you to always use latest and greatest version, which could create some duplicates. Fortunately we also have the `update-lockfile` [rangeStrategy](https://renovatebot.com/docs/configuration-options/#rangestrategy) which bumps the version in the lock file but keeps the range unchanged unless the update is out of range (if you range is ^1.9.0 and 2.0.0 gets released it will bump the range).

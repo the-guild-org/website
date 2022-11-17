@@ -11,7 +11,7 @@ thumbnail: /blog-assets/graphql-hive-and-clickhouse/thumbnail.png
 You will learn how **ClickHouse** and **Kafka** enabled GraphQL Hive to collect billions of requests monthly without a drop of sweat.
 We will also cover the challenges we faced and how we overcame them by covering Hive's architecture in detail.
 
-## What is GraphQL Hive?
+## What Is GraphQL Hive?
 
 [GraphQL Hive](https://graphql-hive.com/) is a Schema Registry, Monitoring, and Analytics solution for GraphQL APIs.
 A fully open-source tool that helps you to track the history of changes prevents breaking the API and analyzing the traffic of your API.
@@ -20,7 +20,7 @@ GraphQL Hive makes you aware of how your GraphQL API is used and what is the exp
 
 We [launched GraphQL Hive](https://www.the-guild.dev/blog/announcing-graphql-hive-release) a few months ago, [after a year-long preview program](https://www.the-guild.dev/blog/graphql-hive-preview). In case you missed it, we recently [announced a self-hosted version](https://www.the-guild.dev/blog/announcing-self-hosted-graphql-hive).
 
-## Monitoring performance and usage of GraphQL API
+## Monitoring Performance and Usage of GraphQL API
 
 It is important to be aware of how a GraphQL API is used and what is the experience of its final users. To answer these questions GraphQL Hive collects [Usage Reports](https://docs.graphql-hive.com/specs/usage-reports).
 By looking at the sample below, you can get an idea of how GraphQL Hive knows when it's safe to delete a type or a field of your GraphQL API.
@@ -70,7 +70,7 @@ After looking for alternatives we decided to switch to ClickHouse.
 We highly recommend reading the ["100x Faster: GraphQL Hive migration from Elasticsearch to ClickHouse"](https://clickhouse.com/blog/100x-faster-graphql-hive-migration-from-elasticsearch-to-clickhouse) article we wrote with the [ClickHouse Cloud](https://clickhouse.com/cloud) team.
 It covers in detail the problems we were facing and the decision-making process that lead us to love ClickHouse.
 
-## An overview of the architecture
+## An Overview of the Architecture
 
 The data pipeline in GraphQL Hive is relatively simple but has proven to be highly scalable and reliable.
 Here's a high-level data flow of the usage reporting part of GraphQL Hive.
@@ -106,7 +106,7 @@ The data pipeline does not end here, there're still a few quite interesting tech
 > ClickHouse supports Kafka natively, we could insert data directly from it,
 > but the reason why we decided not to was to reduce the traffic to Kafka and have better control of the writes.
 
-## Squeezing the most performance
+## Squeezing the Most Performance
 
 To understand the things we do with ClickHouse, you first need to understand the core of it, the MergeTree family and Materialized Views.
 This is what ClickHouse documentation says about the MergeTree family.

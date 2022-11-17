@@ -27,7 +27,7 @@ But other tools, which we use as a dependency, like [`graphql-tools` (v8) alread
 
 We've updated to the latest version of [`graphql-tools`](https://graphql-tools.com) (v8) and [`graphql-config`](https://graphql-config.com) (v4) to get some upstream bug fixes.
 
-## Human-readable Generated Types
+## Human-Readable Generated Types
 
 A few years ago, we changed the output of codegen to use `Pick` in order to build the operation types based on the schema types:
 
@@ -112,7 +112,7 @@ No worries, fragment types are still exported separately!
 
 > All your types are still fully compatible with `v1` of the tool. You can set `inlineFragmentTypes: combine` if you still prefer to keep the old behavior.
 
-## Removal of deprecations
+## Removal of Deprecations
 
 We also used the need for a major version in order to remove a few deprecations from the codebase.
 
@@ -160,7 +160,7 @@ The README on his repository contained a [list of limitations](https://github.co
 
 With a few adjustments, [`n1ru4l`](https://github.com/n1ru4l) managed to [turn that amazing idea into a plugin and a preset](https://github.com/dotansimha/graphql-code-generator/pull/6267) that extends the behavior of `typescript-operation` and `TypedDocumentNode`, and allow you to generate TypeScript types that magically matches your GraphQL query strings (this also required a few fixes in `graphql-tools`, so now the Loaders in graphql-tools are better!).
 
-#### So what does that mean?
+#### So What Does That Mean?
 
 Today, GraphQL Codegen scans your codebase and looks for all the operations that are being used by your components (or, from `.graphql` files), then it generates types and wraps `TypedDocumentNode` for you. Those are either generated to a single file, from which you import from anywhere within the app or next to the `.graphql` when using the `near-operation-file-preset`.
 **Folder structure (`near-operation-file-preset`)**
@@ -212,7 +212,7 @@ Based on your feedback we might want to make this the recommended way of using C
 
 > Huge thanks to [Maël Nison](https://github.com/arcanis), who conceptualized the foundation for this preset [over here](https://github.com/arcanis/graphql-typescript-integration). Please keep pushing the boundaries!
 
-## What's next?
+## What's Next?
 
 Like we said at the beginning, we continuously keep improving Codegen, so this release is not the end but just a start. Here are some sneak peeks on things we are currently working on:
 
@@ -292,6 +292,6 @@ const TweetComponent = (props: { tweet: FragmentProperty<typeof TweetFragment> }
 This allows building scalable components as each component only receives the data it should have access to and furthermore components higher up in the tree can not access data it did not explicitly request.
 Removing a component will thus not result in surprising behaviors.
 
-### What else is missing?
+### What Else Is Missing?
 
 Do you think something else is missing or could be improved? Reach out to us via the chat on this page, a [GitHub discussion](https://github.com/dotansimha/graphql-code-generator/discussions) or on the [GraphQL Discord](https://discord.gg/x3MYZRvMrg).

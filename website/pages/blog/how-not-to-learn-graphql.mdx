@@ -14,7 +14,7 @@ Because of its rapid ecosystem evolution in the past years, learning GraphQL in 
 
 For this reason, this article, greatly inspired by "[How not to learn TypeScript](https://fettblog.eu/how-not-to-learn-typescript)" and "[How not to learn Rust](https://dystroy.org/blog/how-not-to-learn-rust/)", will guide you to avoid common learning biases and misconceptions around GraphQL.
 
-## Mistake #1: GraphQL is a front-end technology
+## Mistake #1: GraphQL Is a Front-End Technology
 
 Yes, is it true that GraphQL was first popularized as a technology solving issues on the client-side (mobile/web apps) by:
 
@@ -26,7 +26,7 @@ Yes, is it true that GraphQL was first popularized as a technology solving issue
 
 In short, GraphQL gave the control back to the data consumers (mobile apps, web apps).
 
-### GraphQL as an innovative solution to microservices orchestration
+### GraphQL as an Innovative Solution to Microservices Orchestration
 
 However, starting in 2018, the GraphQL ecosystem started to grow, especially on the back-end side, where new horizons of GraphQL were developed.
 
@@ -36,7 +36,7 @@ Many open-source actors started to propose solutions for unified schema/services
 
 Rapidly, some companies started to offer enterprise solutions such as SaaS/PaaS to manage GraphQL schema at scale: [Apollo Studio](https://apollographql.com/docs/studio), [AWS AppSync](https://aws.amazon.com/fr/appsync), [Hasura Cloud](https://hasura.io/cloud).
 
-### GraphQL's path on back-end use-cases
+### GraphQL's Path on Back-End Use-Cases
 
 Not limited to services orchestration, GraphQL continued its goal to become the go-to language for data.
 
@@ -135,13 +135,13 @@ Remember that a GraphQL Schema is neither a back-end nor front-end owned technol
 
 Whether you build a product API or gateway of microservices, the goal of a GraphQL API is to provide a simplified abstraction of a set of business logic.
 
-## Mistake #3: Learning GraphQL only through Apollo
+## Mistake #3: Learning GraphQL Only through Apollo
 
 The Apollo company has been one of the leading early contributors of GraphQL and still is a prominent actor of the ecosystem.
 
 However, while most Apollo projects still keep a good share of usage and overall SEO presence, it is worth mentioning that new equivalent projects and alternatives rose in the past years.
 
-### Browser GraphQL clients
+### Browser GraphQL Clients
 
 Regarding web-based client GraphQL Client, `apollo-client` is no longer the only viable solution.
 
@@ -171,7 +171,7 @@ This lightweight library comes with the essential features to query a GraphQL AP
 - Promise-based API
 - TypeScript support
 
-### Server GraphQL libraries
+### Server GraphQL Libraries
 
 The same trend applies on the server-side, where many libraries are now widely used.
 
@@ -200,13 +200,13 @@ GraphQL Yoga comes with a performant HTTP server that provides:
 - Apollo Federation support
 - Easy integration with Next.js, Svelte Kit, Cloudflare workers, and more!
 
-### A new learning path
+### A New Learning Path
 
 As we can see, GraphQL offers [multiple solutions from front-end, back-end, databases to SaaS](https://landscape.graphql.org).
 
 If you start learning GraphQL, an excellent place to start is [howtographql.com](http://howtographql.com), where you'll be able to test multiple frameworks and find the ones that best fit your stack and product/project.
 
-## Mistake #4: Throwing errors from resolvers
+## Mistake #4: Throwing Errors from Resolvers
 
 For most new adopters (especially coming from REST APIs), having GraphQL APIs returning `200 OK` on errors seems like a flaw.
 
@@ -244,7 +244,7 @@ As explained by [Laurin](https://twitter.com/n1rual) from The Guild in [this art
 - Errors need to be parsed on the client-side (we "guess" the error by parsing the error message)
 - Errors are not colocated while Queries are designed to shape data on the UI
 
-### Elegant GraphQL errors with Union types
+### Elegant GraphQL Errors with Union Types
 
 A more elegant way to emit error in GraphQL is to use Union types for expressing expected errors as follows:
 
@@ -299,9 +299,9 @@ More details are available in the [Handling GraphQL errors like a champ with uni
 
 Note: _Error masking_ is also an excellent approach that does not require updating the schema: [https://graphql-yoga.com/docs/features/error-masking](https://graphql-yoga.com/docs/features/error-masking).
 
-## Mistake #5: "Federation is the only viable way to compose schemas"
+## Mistake #5: "Federation Is the Only Viable Way to Compose Schemas"
 
-### Federation is opinionated Stitching
+### Federation Is Opinionated Stitching
 
 Apollo's Federation is commonly brought as **the** solution to compose schemas or build a microservices' architecture with GraphQL.
 
@@ -338,7 +338,7 @@ type Query {
 
 Let’s see 3 distinct Stitching approaches to add the `User.posts` sub-query:
 
-### **Federation**
+### Federation
 
 **Federation architecture is actually stitching.**
 It stitches subschemas (via an Apollo Gateway) by providing a set of Type Merging directives (`@requires`, `@key`, `@external`).
@@ -375,7 +375,7 @@ extend type Query {
 }
 ```
 
-### **Modern Stitching**
+### Modern Stitching
 
 Modern Stitching ([GraphQL Tools](https://graphql-tools.com/docs/schema-stitching/stitch-type-merging) v7+) is relying on a programmatic approach where **each subschema is totally independent**.
 
@@ -474,9 +474,7 @@ type Query {
 }
 ```
 
-<br />
-
-### **Schema extensions**
+### Schema Extensions
 
 Schema extensions, **similar to the initial Stitching proposals**, is a different approach where individual subschemas are only exposing their own types.
 
@@ -529,7 +527,7 @@ export const schema = stitchSchemas({
 })
 ```
 
-## Modern Stitching architecture
+## Modern Stitching Architecture
 
 > [Schema Stitching](https://graphql-tools.com/docs/stitch-combining-schemas) (a component of [GraphQL Tools](https://graphql-tools.com)[*v6 and under*]) got a bad rap when it was famously abandoned by Apollo in favor of their [Federation](https://apollographql.com/docs/federation) architecture some years back.
 > However, Stitching came under the stewardship of [The Guild](/) and friends in 2020, and they've since overhauled it with numerous automation and performance enhancements. Seemingly out of nowhere, Schema Stitching has reemerged as something of a nimble hummingbird racing alongside the stallion that is Apollo Federation.
@@ -540,7 +538,7 @@ While initial Schema Stitching implementation (similar to Schema Extensions) had
 
 Let's review the main features of Modern Stitching and how it differentiates from Federation.
 
-### **Explicit fields resolutions via Queries**
+### Explicit Fields Resolutions via Queries
 
 Modern Stitching **does not require types to have an origin** (like Federation entities).
 
@@ -602,7 +600,7 @@ Modern Stitching's Type Merging approach follows the initial design of GraphQL r
 
 Such design leaves your subschemas independent (working on a schema only requires local knowledge) and built using vanilla-GraphQL (without a framework-specific mental model) while the stitching configuration is done at the gateway level.
 
-### **Improved performance with automatic batching**
+### Improved Performance with Automatic Batching
 
 The main reproach made to the old Stitching approach was around performance.
 
@@ -684,7 +682,7 @@ query {
 
 Those two features ([Batching](https://graphql-tools.com/docs/schema-stitching/stitch-type-merging#batching) and [Query batching](https://graphql-tools.com/docs/batch-execution)) significantly improve the performance of a Modern Stitching architecture at scale.
 
-### **The flexibility of server implementations: no subscriptions limitation**
+### The Flexibility of Server Implementations: No Subscriptions Limitation
 
 When used with the Modern Stitching programmatic API (without the `@merge` and `@canonical` directives), building subschemas is achieved with vanilla GraphQL.
 
@@ -701,9 +699,7 @@ Modern Stitching is a set of utilities that let you choose your own GraphQL-comp
 
 Finally, Modern Stitching allows you [to **support GraphQL Subscriptions in a composed schema**](https://graphql-tools.com/docs/server-setup#adding-subscriptions-support) (over WS or SEE).
 
-<br />
-
-## You might not need Stitching
+## You Might Not Need Stitching
 
 Today, the most popular solutions for composing a unified GraphQL layer are done over the network (stitching with remote schemas or via Apollo Federation gateway).
 

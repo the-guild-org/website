@@ -200,7 +200,7 @@ Because request-scoped providers are constructed on each `injector.get` call. Th
 
 As you can see the example and the results above, `ExampleApplicationProvider` is shared between different network requests, while `ExampleSessionProvider` is shared between resolver-calls inside the same network request. But, `ExampleRequestProvider` is only kept in the same resolver call.
 
-## New `ModuleSessionInfo` built-in provider
+## New `ModuleSessionInfo` Built-In Provider
 
 Let's assume that you have a token required for your authentication process. And this token is probably stored in request header. And GraphQL-Modules provides you access to network request in a built-in provider called **_ModuleSessionInfo_**. This session object is the raw request/response object passed by your HTTP Server. For example, if you're using Express, you will get something like `{ req: IncommingMessage, res: Response }` .
 
@@ -237,11 +237,11 @@ As you can see, you cannot use `ModuleSessionInfo` in Application Scope, because
 
 However, you can use `onRequest` hook to have `ModuleSessionInfo` in your Application-Scoped provider which is called on each network request.
 
-## What's next?
+## What's Next?
 
 We are constantly trying to improve the set of tools provided by **GraphQL-Modules**, and we welcome you to try it and share your experience and thoughts.
 
-### All posts about GraphQL Modules
+### All Posts about GraphQL Modules
 
 - [GraphQL Modules — Feature based GraphQL Modules at scale](/blog/graphql-modules)
 - [Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?](/blog/modular-encapsulation-graphql-modules)
