@@ -14,7 +14,7 @@ Advanced types give to your code and open-source libraries the power of providin
 
 > The best TypeScript configuration ensures that the “types chain” is continuous
 
-# The TypeScript “types chain”
+## The TypeScript “types chain”
 
 TypeScript helps with typing data and following how the data is used and transformed by subsequent functions or method calls.
 
@@ -42,7 +42,7 @@ Since React applications are built on top of data, we can conclude that:
 
 > The strength of your React application's types is based on the stability of your data types
 
-## The flawed “handwritten” data types
+### The flawed “handwritten” data types
 
 Most React projects type remote data (from APIs) manually, either at the component level with interfaces or in a global dedicated `.d.ts` file.
 
@@ -92,7 +92,7 @@ _In our hypothetical application, the User type has some typos that will impact 
 
 Fortunately, thanks to the GraphQL introspection feature, many tools arose to solve this problem by providing data-types - and even more - generation tools.
 
-# Robust React application's types with GraphQL
+## Robust React application's types with GraphQL
 
 [GraphQL Code Generator](https://graphql-code-generator.com), given the mutations and queries used by the app and the access to the target GraphQL API, generates the corresponding TypeScript types.
 
@@ -102,7 +102,7 @@ GraphQL Code Generator is doing all the heavy lifting by getting from the API th
 
 Let's see an example with our hypothetical application Login component relying on the User type.
 
-## Stronger generated TypeScript types
+### Stronger generated TypeScript types
 
 First, let's create a `queries.graphql` file in a `src/graphql` folder:
 
@@ -156,7 +156,7 @@ Maintaining data types on the front-end side only consist of running the GraphQL
 
 Let's now see some more advanced configurations that bring more stability.
 
-## Getting the most of your GraphQL Code Generator configuration
+### Getting the most of your GraphQL Code Generator configuration
 
 When used with React Apollo Client, GraphQL Code Generator offers three main configuration modes:
 
@@ -367,7 +367,7 @@ In my experience, it is more scalable to go for the [`TypedDocumentNode`](https:
 
 The generation of one custom hook per GraphQL operation (`Query`/`Mutation`) can generate a LOT of hooks at scale along with a lot of imports, which is not necessary given the `useMutation()` `useQuery` provided by Apollo Client.
 
-## Tips: Leverage GraphQL Fragments for scalable types
+### Tips: Leverage GraphQL Fragments for scalable types
 
 Now that we have many ways to generate **stable **data types, let's see how to make them easier to use and maintain in time.
 
@@ -442,7 +442,7 @@ A good practice is to ensure that all your Query and Mutations responses use fra
 - `UserProfile` type carries the minimum user info for display
 - `UserExtended` type carries all the `users` properties
 
-# Conclusion
+## Conclusion
 
 The TypeScript type system is powerful and valuable only if used properly.
 

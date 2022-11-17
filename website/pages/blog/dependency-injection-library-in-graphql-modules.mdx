@@ -19,7 +19,7 @@ It supports factory, class and value providers that can have `Symbol`, `string`,
 
 **Let's start with the principles we wanted to have in our DI logic, and we will finish with the comparisons with Angular and NestJS.**
 
-# Encapsulation
+## Encapsulation
 
 While we were still using **_Inversify_**, we used to have a single `GraphQLApp` top module. Regular GraphQL Modules cannot import each other, but can be imported by that `GraphQLApp` object. Also these modules didn't have an **_encapsulation_**, because all the **_providers_**, **_schemas_** and **_resolvers_** were getting concatenated without any **_encapsulation_**. After that, we decided to provide complete Modular approach, and make everything module. Now Each module has its own injector, valid schema and context which is independent from its parent modules. Also, each module is constructed by using the imported modules' DI containers, schema contents and context builders.
 
@@ -69,7 +69,7 @@ The three benefits we have with this type of DI and modular system;
 - _DatabaseModule_ is protected from an unsafe import without a valid configuration that is needed in the internal process (_SomeDbProvider_); thanks to `configRequired` again!
 - _OtherModuleThatUsesDb_ is protected from an unsafe call or import without a definition of a well-configured _DatabaseModule._
 
-# **Hierarchy**
+## **Hierarchy**
 
 We also have another problem about the hierarchical approach of existing DI implementations. Let me give an example;
 
@@ -87,7 +87,7 @@ For example the following case will happen in our DI;
 
 As you can see in the comparison with **_Inversify_**, **_Inversify_** can attach only one child DI container in a parent DI container; and this wouldn't fit our hierarchy-based modular approach. For example, you cannot make **B extend** both **D** and **C** by keeping **D** and **C** encapsulated. If you merge all of them into the one injector like Angular does, **D** can access **C**'s providers without importing **C**.
 
-# Scoped Providers
+## Scoped Providers
 
 In contrast with client side application, your DI system wouldn't need to have different scopes like Application Scope and Session Scope. In our implementation, we can define providers that have a life time during a single GraphQL Network Request and not the whole the application runtime; because some providers needs to belong in a single client. Unfortunately, you need to find tricky ways to manage scoped providers if you use existing DI libraries like **_Inversify_**.
 
@@ -97,9 +97,9 @@ You can read more about the different scopes that we have in GraphQL-Modules her
 
 <LinkPreview link="/blog/graphql-modules-scoped-providers" />
 
-# Comparisons with Other DI Implementations of frameworks
+## Comparisons with Other DI Implementations of frameworks
 
-## Comparison with Inversify
+### Comparison with Inversify
 
 To provide _true encapsulation_; we should have an **_injector/container_** with multiple children, and these children must not know each other and even its parent. In **_Inversify_**, they have something like that which is called **_Hierarchical_** **_DI_**. In this feature of **_Inversify_**, the`parent` term can be misunderstood. because an injector seeks for its own providers then looks for the other injector that is being defined as `parent` in that feature. But, we need is more than that. We want to have multiple `parent` according to their logic.
 
@@ -107,7 +107,7 @@ To provide _true encapsulation_; we should have an **_injector/container_** with
 
 You can read more about _Hierarchy_ and _Encapsulation_ in the beginning of this article.
 
-## Comparison with Angular's DI
+### Comparison with Angular's DI
 
 In Angular, there is one injector that is shared across all the application while there are different encapsulated injectors belonging to each module in different scope.
 
@@ -158,7 +158,7 @@ Angular doesn't care about that. it has a single injector for the all applicatio
 
 And Angular's DI library doesn't differentiate _Application and Session scopes_ because it doesn't need that. An Angular application has a lifetime until `window` is terminated by closing it or refreshing page; the session and application runtime can be considered same in the client application. That's why, our DI implementation is more complex than Angular's as it need to handle multiple clients by running a single application. You can read more about [_Scoped Providers_](/blog/graphql-modules-scoped-providers) in the beginning of this article
 
-## Comparison with NestJS' DI implementation
+### Comparison with NestJS' DI implementation
 
 NestJS is a server-side model-view-controller full-fledged framework that has all the principles of MVC Backend framework. exposing a GraphQL API is only one of its various features. Our goal with GraphQL Modules was to create a set of tools and libraries that answer needs for the GraphQL ecosystem, and can be (and should be) used by NestJS users as well.
 
@@ -172,13 +172,13 @@ NestJS has its own dependency injection system which is similar to Angular's but
 
 Also, NestJS DI system doesn't share the important feature of defining providers that have the life-time of the client request (we call it **session scope**). We think a backend system would need to differentiate DI containers according to these different scopes. You can read more about it in [_Scoped Providers_](/blog/graphql-modules-scoped-providers) part of this article above.
 
-# Working together
+## Working together
 
 We wanted to share the principles behind our implementation in order to get more background to our community and get feedback from other library authors.
 
 That is also one of the reasons we created our DI library as a separate library, not only so it would be optional to our users, but also to potentially share that implementation with other libraries like NestJS and Inversify for example.
 
-# All posts about GraphQL Modules
+## All posts about GraphQL Modules
 
 - [GraphQL Modules — Feature based GraphQL Modules at scale](/blog/graphql-modules)
 - [Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?](/blog/modular-encapsulation-graphql-modules)

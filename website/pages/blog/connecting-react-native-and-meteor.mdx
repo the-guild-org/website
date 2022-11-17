@@ -7,7 +7,7 @@ description: Introduction to new features of client bundler and React Native Met
 image: /blog-assets/connecting-react-native-and-meteor/cover.png
 ---
 
-# What was the problem and the existing solutions?
+## What was the problem and the existing solutions?
 
 I was working on a project that has RN frontend and Meteor backend, but uses [`react-native-meteor`](https://github.com/inProgress-team/react-native-meteor) npm package in RN project. I couldn't share any code between them without struggling aliasing module import names and the other stuff.
 
@@ -21,7 +21,7 @@ Also, we have another problem; older `meteor-client-bundler` versions haven't su
 
 To summarize, there were various libraries and 3rd party solutions to connect React Native to Meteor such as `react-native-meteor` and `meteor-native-packages` with the challenge in `meteor-client-bundler` .
 
-# Solution: Browser Polyfills for Official Meteor Client
+## Solution: Browser Polyfills for Official Meteor Client
 
 I've published a different package [`react-native-browser-polyfills`](https://github.com/ardatan/react-native-browser-polyfills) that shims necessary APIs of browser to make Meteor's official client compatible with React Native that is bundled by `meteor-client-bundler` .
 
@@ -35,7 +35,7 @@ As you know, Meteor has SockJS built-in which is compatible with both browser an
 
 `AsyncStorage` is used for `localStorage` , `NetInfo` is used for `navigator.connection` and `Linking` is used for `document.location` . But, the problem is that these APIs from React Native are asynchronous while they are synchronous in browser. As a workaround, `react-native-browser-polyfills` waits for resolving their promises, then emits `DOMContentsLoaded` for `document` which Meteor Client would be waiting for in order to initiate the connection between RN and Meteor backend.
 
-# Also, we have Facebook, Twitter and Google Login on React Native and Meteor stack
+## Also, we have Facebook, Twitter and Google Login on React Native and Meteor stack
 
 This was the most challenging one which is solved by another package [`react-native-meteor-polyfills`](https://github.com/ardatan/react-native-meteor-polyfills) that extends `react-native-browser-polyfills` .
 
@@ -43,13 +43,13 @@ I've released another package `react-native-meteor-polyfills` to polyfill `windo
 
 Thanks to this polyfill, you can use `accounts-{SERVICE_NAME}` packages without any extra native libraries.
 
-# Easy Start with Boilerplate
+## Easy Start with Boilerplate
 
 Just check out this up-to-date boilerplate;
 
 [https://github.com/DAB0mB/ReactNativeMeteorBoilerplate](https://github.com/DAB0mB/ReactNativeMeteorBoilerplate)
 
-# How To Add All These To Your Existing Project
+## How To Add All These To Your Existing Project
 
 If you want to learn more to integrate all these features to your existing RN and Meteor projects step-by-step;
 
@@ -116,7 +116,7 @@ If you never used Meteor with React before, check out Meteor's official document
 
 And, YOUR NEW STACK IS READY TO RUN!
 
-# Optional: Facebook, Twitter and Google Login Support
+## Optional: Facebook, Twitter and Google Login Support
 
 - If you want to make `Meteor.loginWith` work with React Native, you have to add custom URI scheme to your React Native project.
 - Then, tell Meteor what your URI scheme is;
@@ -127,13 +127,13 @@ import { setApplicationPrefix } from 'react-native-meteor-polyfills/server'
 setApplicationPrefix('myURIscheme')
 ```
 
-# Contribution
+## Contribution
 
 If you find any bugs, problems and issues, please open a new issue on GitHub. If you solve any of them, please feel free to push a pull request.
 
 I'd appreciate your claps and comments for this post!
 
-# Credits
+## Credits
 
 **Special thanks to:**
 

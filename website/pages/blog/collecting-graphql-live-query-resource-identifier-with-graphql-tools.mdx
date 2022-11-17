@@ -81,7 +81,7 @@ If a specific user updates his login we shouldn't invalidate and re-execute any 
 
 At the same time, the user could also be referenced in another operation e.g. a list of all available users (`Query.onlineUsers`). The `Query.viewer` event would not cover and schedule a re-execution for operations that select the user via that field.
 
-# There must be a better solution for uniquely identifying the selection set data
+## There must be a better solution for uniquely identifying the selection set data
 
 As you probably noticed the user has an `id` field of the `ID!` (nonnull id) type. This is a commonly used field for uniquely identifying a resource on the client-side. Apollo-client uses the `__typename` field in combination with the `id` field as the default resource cache key (`User:1`), Relay goes a step further and already assumes that the resource type is already encoded (e.g. `base64("User:1")` Note: [You are not forced to use base64 🤔](https://dev.to/daniel15/comment/np0o)) inside the id and therefore only uses the id field.
 
@@ -107,15 +107,15 @@ Furthermore, it could be possible to simply transform the query in such a way th
 
 For keeping things simple I decided to push the responsibility for selecting the id field to the client that sends the live query operation. I also could not find a use-case in my existing application where there was no `id` selection for a resource 👍.
 
-# Implementing the resource identifier collector
+## Implementing the resource identifier collector
 
 The next obstacle is to decide how the ids are extracted and I had two options in mind.
 
-## 1. Traversing the GraphQL execution result tree
+### 1. Traversing the GraphQL execution result tree
 
 This simply seemed complicated to me as I would need to traverse the whole result while somehow guessing/checking the type of each leaf based on the operation AST and the schema. I quickly dropped that idea.
 
-## 2. Manually register the resource identifier by calling a function that is injected via the context
+### 2. Manually register the resource identifier by calling a function that is injected via the context
 
 The goal of my live query store implementation is to add live query support to any schema with minimal effort. Passing something along-side the context that a library user must call inside a query resolver seemed wrong and all this should be an implementation detail the library user should not care about.
 
@@ -260,7 +260,7 @@ Now after the operation has been executed against the schema the `newIdentifier`
 
 The live query store can now use that information for re-executing queries once a resource identifier event is emitted 👌.
 
-# Conclusion
+## Conclusion
 
 Identifying resources and invalidating queries based on a resource basis rather than a query root field basis allows more efficient query re-executions and can avoid pushing unnecessary updates to clients.
 
