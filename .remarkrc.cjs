@@ -64,5 +64,6 @@ module.exports = {
         ],
       ],
     ],
+    'lint-no-dot-at-end-of-heading',
   ],
 };
