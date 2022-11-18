@@ -64,5 +64,7 @@ module.exports = {
         ],
       ],
     ],
+    'lint-no-dot-at-end-of-heading',
+    'lint-no-full-bold-heading',
   ],
 };
