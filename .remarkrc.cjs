@@ -60,6 +60,7 @@ module.exports = {
           'accounts-js',
           'Vue.js',
           'DataLoader',
+          'AoT',
         ],
       ],
     ],
