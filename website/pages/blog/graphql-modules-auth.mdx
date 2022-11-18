@@ -34,7 +34,7 @@ And the following features regarding _authorization_:
 - You wish to run custom logics that protects parts of your GraphQL schema.
 - Our custom rules should not be coupled to a specific resolver.
 
-## Where to put your authentication?
+## Where to Put Your Authentication?
 
 To understand why implementing authentication in GraphQL might be tricky, let's start with the following chart:
 
@@ -392,7 +392,7 @@ export const validateRole = role => next => (root, args, context, info) => {
 }
 ```
 
-## Next-Level implementation with GraphQL-Modules
+## Next-Level Implementation with GraphQL-Modules
 
 ![GraphQL Modules](/blog-assets/graphql-modules-auth/graphql-modules.png 'GraphQL Modules')
 
@@ -406,7 +406,7 @@ It also super powerful, because you can implement your GraphQL-Module as standal
 To implement the same example above with GraphQL-Modules, you can create a module called `auth` and move the `context` building logic to there.
 Then, create another module called `common` and the general parts, and articles to manage the articles features.
 
-### This way — each module is in charge of a different feature of our app.
+### This Way — Each Module Is in Charge of a Different Feature of Our App
 
 ```ts filename="articles-module.ts"
 import { GraphQLModule } from '@graphql-modules/core'
@@ -591,7 +591,7 @@ type Query {
 }
 ```
 
-### What's next?
+### What's Next?
 
 Another thing we are working on, is having some of your repeated authentication and authorization logic installable through npm!
 
@@ -611,7 +611,7 @@ In this article we wanted to give you a complete overview of authentication and 
 
 Please try all those different approaches and let us know your feedback about the best way for you and if we can improve it even further.
 
-### All posts about GraphQL Modules
+### All Posts about GraphQL Modules
 
 - [GraphQL Modules — Feature based GraphQL Modules at scale](/blog/graphql-modules)
 - [Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?](/blog/modular-encapsulation-graphql-modules)

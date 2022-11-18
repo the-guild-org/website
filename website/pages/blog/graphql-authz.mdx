@@ -17,7 +17,7 @@ It plays well with both code-first and schema-first (SDL) development, supports 
 
 Also, GraphQL AuthZ has integration examples for all major GraphQL frameworks and libraries. Let's dig a little deeper and break down the core features and how they can help you improve your GraphQL developer experience.
 
-## How does it work?
+## How Does It Work?
 
 GraphQL AuthZ wraps the graphql.js execution phase and runs logic for enforcing defined authorization rules before and after this phase. The key function from `graphql-js` that is responsible for running the execution logic is named `execute`.
 
@@ -49,7 +49,7 @@ By wrapping existing functionality we gain the following key benefits.
   - The pre-execution phase for static authorization rules based on the context and incoming operation
   - The post-execution phase for flexible authorization rules based on the execution result
 
-## Failing early in the pre-execution phase
+## Failing Early in the Pre-Execution Phase
 
 With GraphQL AuthZ it's possible to execute authorization logic before any of the resolvers have been executed. This empowers you to fail the request in the early stage, send back an error and reduce server workload.
 
@@ -76,7 +76,7 @@ const CanPublishPost = preExecRule()(async (context, fieldArgs) => {
 })
 ```
 
-## Using the GraphQL schema as a data source
+## Using the GraphQL Schema as a Data Source
 
 By pursuing the GraphQL AuthZ approach your executable schema does not contain any authorization logic. This simplifies using the executable schema as a data source. For example, instead of calling a remote database using an interface attached to our context object directly, the `graphql` function from `graphql.js` package could be called, with the executable schema as an argument along with graphql operation. By doing this, the authorization layer is not dependent on the underlying database(s), its architecture, and ORM(s). It is dependent only on the GraphQL schema which is a dependency of the GraphQL authorization layer by design.
 
@@ -104,7 +104,7 @@ This makes GraphQL AuthZ extremely powerful, especially for subgraphs in a micro
 
 All the subschemas could live without any authorization logic and a federated or stitched gateway can leverage GraphQL AuthZ for actually applying global authorization logic for the whole graph while leveraging the graph for fetching the data required for doing so, without having to be aware of GraphQL resolver implementation details.
 
-## Reduce remote procedure calls with post-execution rules
+## Reduce Remote Procedure Calls with Post-Execution Rules
 
 In addition to the pre-execution rules, GraphQL AuthZ also allows you to write post-execution rules.
 
@@ -199,7 +199,7 @@ The middleware approach of GraphQL shield is missing these possibilities because
 
 Another feature in GraphQL Shield is the built-in contextual caching mechanism for rules. At the moment, GraphQL AuthZ has no built-in caching, but you can implement it yourself within the GraphQL AuthZ rules, or in the future caching could even become a built-in feature. (pull requests are more than welcome)
 
-## Which approach to choose?
+## Which Approach to Choose?
 
 Let's wrap up all the use-cases mentioned above and also give a library recommendation.
 

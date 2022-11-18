@@ -7,7 +7,7 @@ description: The challenges that I've faced and how I solved them.
 image: /medium/db6c7817bbaf73790065c3e1f8ebb835.png
 ---
 
-## The challenges that I've faced and how I solved them
+## The Challenges That I've Faced and How I Solved Them
 
 When I was building [tortilla.acedemy's diff page](https://tortilla.academy/srtucker22/chatty/master/2.0.0/diff/3.0.0), I was looking to have a tree view that could represent a hierarchy of files, just like Windows' classic navigation tree. Since it was all about showing a git-diff, I also wanted to have small annotations next to each file, which will tell us whether it was added, removed, or deleted. There are definitely existing for that out there in the echo system, like [Storybook's tree beard](https://github.com/storybooks/react-treebeard), but I've decided to implement something that will work just the way I want right out of the box, because who knows, maybe someone else will need it one day.
 
@@ -160,7 +160,7 @@ function onDeselect() {
 
 One thing to note is that since the controllers are hard-wired to the view, hypothetically speaking we wouldn't be able to have any controllers for child nodes of a node that is not revealed (`node.opened === false`). I've managed to bypass this issue by using the React.Component's constructor directly. This is perfectly legal and no error is thrown, unless used irresponsibly to render something, which completely doesn't make sense (`new FSNode(props)`; see [implementation](https://github.com/DAB0mB/react-fs-tree/blob/475c394c51dca52dda205dd1ceaba2ede679609b/src/fs-node.js#L330)).
 
-## **Final Words**
+## Final Words
 
 A program can be written in many ways. I know that my way of implementing a tree view can be very distinct, but since all trees should be based around recursion, you can take a lot from what I've learnt.
 

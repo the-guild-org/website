@@ -7,7 +7,7 @@ description: Learning how to think like a JSX parser and building an AST
 image: /medium/fadbe31be89eb8b0be9fc5f035c9617d.png
 ---
 
-## Learning how to think like a JSX parser and building an AST
+## Learning How to Think like a JSX Parser and Building an AST
 
 JSX is one of the most commonly used syntax extensions out there. Originally JSX was parsed via a [Facebook fork of Esprima](https://github.com/facebookarchive/esprima) — a JavaScript syntax parser developed by jQuery. As it gained momentum, [Acorn](https://github.com/acornjs/acorn) took things to their hands and decided to make their own version of the parser which ended up being 1.5–2x faster than Esprima-fb, and is now being used by officially Babel.
 
@@ -98,7 +98,7 @@ const jsx = (splits, ...values) => {
 
 Since we're gonna heavily rely on regular expression, it will be much easier to deal with a consistent string, so we can unleash the regexp full potential. For now let's focus on the string part without the literal, and parse regular HTML string. Once we have that logic, we can implement string interpolation handling on top of it.
 
-## Starting with the core — an HTML parser
+## Starting with the Core — an HTML Parser
 
 As I already mentioned, our AST will be consisted of 3 node types, which means that we will have to create an ENUM that will contain the values `element`, `props` and `value`. This way the node types won't be hardcoded and patching the code can be very easy:
 
@@ -357,7 +357,7 @@ The HTML parsing part is finished! Now we can call the `parseElement()` for any 
 }
 ```
 
-## Leveling up — string interpolation
+## Leveling up — String Interpolation
 
 Now we're going to add string interpolation on top of the HTML string parsing logic. Since we still want to use the power of regexp at its full potential, we're going to assume that the given string would be a template with placeholders, where each of them should be replaced with a value. That would be the easiest and most efficient way, rather than accepting an array of string splits.
 
@@ -589,7 +589,7 @@ The reason why I've decided to return an array of nodes and not a singe node whi
 
 Note that we've also changed the way we accumulate children in the `parseElement()` function. Since `parseValues()`returns an array now, and not a single node, we flatten it using an empty array concatenation (`[].concat()`), and we only push the children whose contents are not empty.
 
-## **The grand finale — execution**
+## The Grand Finale — Execution
 
 At this point we should have a function which can transform a JSX code into an AST, including string interpolation. The only thing which is left to do now is build a function which will recursively create React elements out of the nodes in the tree.
 
