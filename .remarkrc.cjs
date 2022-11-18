@@ -11,6 +11,6 @@ module.exports = {
     //   "remark-lint-list-item-indent",
     //   "space"
     // ]
-    'lint-no-multiple-toplevel-headings'
+    'lint-no-multiple-toplevel-headings',
   ],
 };
