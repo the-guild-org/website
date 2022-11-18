@@ -16,12 +16,6 @@ Run `pnpm build` followed by `pnpm export` to build and export a static version 
 
 ## Contributing to Our Blog
 
-## Contributing to Our **Blog**
-
-## **Contributing** to Our Blog
-
-## Contributing **to** Our Blog
-
 We use [MDX](https://mdxjs.com) (Markdown with JSX) for our blog posts. To add a new blog post:
 
 - Create a new MDX file in `website/pages/blog` directory with the same template as other blog posts
