@@ -7,7 +7,7 @@ description: Looking at the implementation and getting to know it inside out.
 image: /medium/923d5b18cf82df80927ee5278f7048ff.jpeg
 ---
 
-## Looking at the implementation and getting to know it inside out
+## Looking at the Implementation and Getting to Know It inside Out
 
 We've all heard about it. The new hook system of React 16.7 has made a lot of noise in the community. We've all tried it and tested it, and got really excited about it and its potential. When you think about hooks they're kind of magical, somehow React manages your component without even exposing its instance (no use of `this` keyword). So how the heck does React does that?
 
@@ -21,7 +21,7 @@ Today I would like to dive into React's implementation of hooks, so we can under
 
 First, let's go through the mechanism that ensures that hooks are called within React's scope, because you'd probably know by now that hooks are meaningless if not called in the right context:
 
-# The dispatcher
+## The Dispatcher
 
 The dispatcher is the shared object that contains the hook functions. It will be dynamically allocated or cleaned up based on the rendering phase of ReactDOM, and it will ensure that the user doesn't access hooks outside a React component (see [implementation](https://github.com/facebook/react/tree/5f06576f51ece88d846d01abd2ddd575827c6127/packages/react-reconciler/src/ReactFiberDispatcher.js#L24)).
 
@@ -61,7 +61,7 @@ function renderRoot() {
 
 Now that we got that simple encapsulation mechanism covered, I would like us to move to the core of this article — the hooks. Right of the bet I'd like to introduce you to a new concept:
 
-# The hooks queue
+## The Hooks Queue
 
 Behind the scenes, hooks are represented as nodes which are linked together in their calling order. They're represented like so because hooks are not simply created and then left alone. They have a mechanism which allows them to be what they are. A hook has several properties which I would like you to bare in mind before diving into its implementation:
 
@@ -182,7 +182,7 @@ const ParentComponent = () => {
 
 Let's get more specific and talk about individual hooks, starting with the most common of all — the state hook:
 
-# State hooks
+## State Hooks
 
 You would be surprised to know, but behind the scenes the `useState` hook uses `useReducer` and it simply provides it with a pre-defined reducer handler (see [implementation](https://github.com/facebook/react/blob/5f06576f51ece88d846d01abd2ddd575827c6127/packages/react-reconciler/src/ReactFiberHooks.js#L339)). This means that the results returned by `useState` are actually a reducer state, and an action dispatcher. I would like you to take a look at the reducer handler that the state hook uses:
 
@@ -216,7 +216,7 @@ const ChildComponent = props => {
 
 Lastly, effect hooks — which made a major impact on a component's life cycle and how it works:
 
-# Effect hooks
+## Effect Hooks
 
 Effect hooks behave slightly differently and has an additional layer of logic that I would like to explain. Again, there are things I would like you to bear in mind regards the properties of the effect hooks before I dive into the implementation:
 

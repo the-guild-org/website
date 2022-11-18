@@ -18,7 +18,7 @@ I felt like sharing this experience is really valuable, and the current state of
 
 This post is intended to work as a guide to support both CommonJS **and** ESM and will be updated accordingly in the future as needed, and one key feature to be able to make this happens, is the `package.json` `exports` field.
 
-## `exports` field
+## `exports` Field
 
 The official Node.js documentation about it is available [here](https://nodejs.org/api/packages.html#packages_exports), but the most interesting section is [Conditional exports](https://nodejs.org/api/packages.html#packages_conditional_exports), which enables libraries to support both CommonJS and ESM:
 
@@ -89,7 +89,7 @@ If you don't want to break backward compatibility on import/require with the exp
 }
 ```
 
-## Using the `.mjs` extension
+## Using the `.mjs` Extension
 
 To add support ESM for Node.js, you have two alternatives:
 
@@ -142,7 +142,7 @@ async function getFoo() {
 }
 ```
 
-#### What about \_\_dirname, require.resolve, require.cache?
+#### What about `__dirname`, `require.resolve`, `require.cache`?
 
 This is when it gets complicated, [citing the Node.js documentation](https://nodejs.org/api/esm.html#esm_differences_between_es_modules_and_commonjs):
 
@@ -171,7 +171,7 @@ require_isomorphic('foo')
 
 `require.resolve` and `require.cache` are not available in the ESM world, and if you are not able to do the refactor to not use them, you could use [createRequire](https://nodejs.org/api/module.html#module_module_createrequire_filename), but keep in mind that the cache and file resolution is not the same as while using `import` in ESM.
 
-### Deep import of node_modules packages
+### Deep Import of `node_modules` Packages
 
 Part of the ESM Specification is that you have to specify the extension in explicit scripts imports, which means when you are importing a specific JavaScript file from a node_modules package you have to specify the `.js` extension, otherwise all the users will get `Error [ERR_MODULE_NOT_FOUND]: Cannot find module`
 
@@ -207,7 +207,7 @@ import { bar } from 'bar/main.js'
 
 That will translate into `node_modules/bar/main.js.js` in CommonJS and `node_modules/bar/main.js.mjs` in ESM.
 
-### Can we test if everything is actually ESM compatible?
+### Can We Test If Everything Is Actually ESM Compatible?
 
 The best solution for this is to have ESM examples in a monorepo testing firsthand if everything with the logic included doesn't break, using tools that output both CommonJS & ESM like [tsup](https://tsup.egoist.sh) might become very handy, but that might not be straightforward, especially for big projects.
 
@@ -257,13 +257,13 @@ This method requires tooling and/or support from the package manager. For exampl
 
 > In [The Guild](/) we use this method using tooling that creates the temporary package.json automatically. See [bob-the-bundler](https://github.com/kamilkisiela/bob) & [bob-esbuild](https://github.com/PabloSzx/bob-esbuild)
 
-### Support for `.mjs` output
+### Support for `.mjs` Output
 
 Currently, the TypeScript compiler can't output `.mjs`, Check the issue [TypeScript#18442](https://github.com/microsoft/TypeScript/issues/18442).
 
 There are workarounds, but nothing actually works in 100% of the possible use-cases (see for example, [ts-jest issue](https://github.com/kulshekhar/ts-jest/issues/1057)), and for that reason, we recommend tooling that enables this type of building without needing any workaround, usually using [Rollup](https://rollupjs.org) and/or [esbuild](https://esbuild.github.io).
 
-## ESM needs our attention
+## ESM Needs Our Attention
 
 There are still some rough edges while supporting ESM, this guide shows only some of them, but now it's time to rip the bandaid off.
 

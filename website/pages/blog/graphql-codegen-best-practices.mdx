@@ -13,7 +13,7 @@ Most patterns are general and can be applied to most popular frontend frameworks
 
 In this article, we'll cover the development workflow of frontend applications with _TypeScript_ and _GraphQL Code Generator_, suggest best-practices for GraphQL development for frontend developers, and try to explain the idea behind it.
 
-# Why do I need GraphQL Code Generator in my project?
+## Why Do I Need GraphQL Code Generator in My Project?
 
 Let's start by understanding the need for GraphQL Code Generator in your project.
 
@@ -23,7 +23,7 @@ It starts with the code you write - UI components, services and business logic. 
 
 The idea behind type-safety is to make sure that your code can be statically analyzed and built, before running it. It's useful because this way your can detect potential bugs before they happen in runtime.
 
-### _But what about the data your fetch from external services?_
+### _But What about the Data Your Fetch from External Services?_
 
 So if you are already using GraphQL, you probably know that your GraphQL API is typed, and built as a GraphQL schema.
 
@@ -31,7 +31,7 @@ And it doesn't matter which language or platform is used to write your GraphQL A
 
 So if your GraphQL schema is typed already, and your GraphQL operations allow you to choose specific fields from it (called Selection Set), why not leverage the schema and selection set and turn it into TypeScript types?
 
-### Basic data fetching with GraphQL
+### Basic Data Fetching with GraphQL
 
 Let's assume that we have the following simple GraphQL schema:
 
@@ -103,15 +103,15 @@ So those are the basic types that codegen can generate for your, and you can get
 
 But that's not all - you can generate much more - you can get React Hooks, Angular Services and more.
 
-### How do I start?
+### How Do I Start?
 
 You can start by [trying GraphQL Code Generator plugin in the live-demo here](https://graphql-code-generator.com) and with the [Getting started with GraphQL Code Generator](https://graphql-code-generator.com/docs/getting-started/installation).
 
-# Tips & Best Practices when using GraphQL Code Generator and TypeScript
+## Tips & Best Practices When Using GraphQL Code Generator and TypeScript
 
 Now that you understand why and how GraphQL Code Generator can help you, it's time to learn new concepts that might simplify the way your consume GraphQL API, and improve your code quality.
 
-## Watch Mode
+### Watch Mode
 
 GraphQL Code Generator also comes with a built-in watch mode. You can use it from the CLI:
 
@@ -128,13 +128,13 @@ schema: ...
 
 This way, each time you have changes for your GraphQL schema or GraphQL operations, GraphQL Code Generator will be executed again and update the generated files.
 
-## Generate more than just types
+### Generate More than Just Types
 
 GraphQL Code Generator can generate more than just TypeScript types. It can automate some of your GraphQL development workflow, generate common practices for data fetching, and add type-safety to code you usually need to write manually.
 
 Beside TypeScript types, here's a list and examples of _part_ of GraphQL Codegen capabilities:
 
-#### Dump remote schema to a local file
+#### Dump Remote Schema to a Local File
 
 If your GraphQL schema is only available for you using an HTTP endpoint, you can always get a copy of it locally. This is useful for better IDE experience.
 
@@ -150,7 +150,7 @@ generates:
 
 - [`@graphql-codegen/schema-ast` docs](https://graphql-code-generator.com/docs/plugins/schema-ast)
 
-#### Save local GraphQL Introspection
+#### Save Local GraphQL Introspection
 
 GraphQL schema can be represented in many ways. One of the is [introspection](https://graphql.org/learn/introspection).
 
@@ -166,7 +166,7 @@ generates:
 
 - [`@graphql-codegen/introspection` docs](https://graphql-code-generator.com/docs/plugins/introspection)
 
-#### Add custom content to output files
+#### Add Custom Content to Output Files
 
 I you wish to add custom content to the codegen output files, you can use `@graphql-codegen/add` plugin, and add your content this way:
 
@@ -411,7 +411,7 @@ export default createComponent({
 
 - [`@graphql-codegen/typescript-vue-apollo` docs](https://graphql-code-generator.com/docs/plugins/typescript-vue-apollo)
 
-#### Apollo: type-safe `refetchQueries`
+#### Apollo: Type-Safe `refetchQueries`
 
 If you are using Apollo Client, and you wish to refetch a query when a mutation is done, you can do add [`@graphql-codegen/named-operations-object`](https://graphql-code-generator.com/docs/plugins/named-operations-object) plugin to your setup.
 
@@ -452,7 +452,7 @@ You can use it with any other wrapper of Apollo-Client, such as `apollo-angular`
 
 - [`@graphql-codegen/named-operations-object` docs](https://graphql-code-generator.com/docs/plugins/named-operations-object)
 
-#### Apollo: auto-generated `fragmentMatcher` / `possibleTypes`
+#### Apollo: Auto-Generated `fragmentMatcher` / `possibleTypes`
 
 If you are using Apollo-Client and your schema contains GraphQL `union` or `interface`, you'll need to provide `fragmentMatcher` to your Apollo store instance.
 
@@ -483,7 +483,7 @@ const cache = new InMemoryCache({
 
 - [`@graphql-codegen/fragment-matcher` docs](https://graphql-code-generator.com/docs/plugins/fragment-matcher)
 
-## Name your operations
+## Name Your Operations
 
 It's highly important to name your GraphQL operations, because otherwise it will be difficult for your GraphQL client to cache and manage it. It will also make it difficult for the codegen to create easy-to-use types, and it will fallback to `Unnamed_Operation_`.
 
@@ -512,7 +512,7 @@ Libraries like Apollo Client will have issues and unexpected behavior if you re-
 
 </Callout>
 
-## Write your operations and fragments in `.graphql` files
+## Write Your Operations and Fragments in `.graphql` Files
 
 You can manage your GraphQL operations in `.graphql` files, without worrying about loading it into your application with Webpack loaders or anything else. Also, Most IDEs has better support for autocomplete inside `.graphql` files.
 
@@ -553,7 +553,7 @@ And if you'll import `UserQueryDocument` from your generated file, it will have 
 
 </Callout>
 
-## Fragment per component
+## Fragment per Component
 
 If you wish to have a simple way to manage your application complexity with multiple queries and fragments, consider to have small fragments that defines the needs of your components.
 
@@ -632,7 +632,7 @@ Please have some judgment before creating fragments, it should represent data st
 Don't abuse this mechanism by creating fragments with a single field. Try to group it in a way that matches your components needs.
 :::
 
-## Access to nested generated types
+## Access to Nested Generated Types
 
 If you are already familiar with plugins such as `@graphql-codegen/typescript-operations` output structure, you probably already know that it's built on operations and fragments.
 

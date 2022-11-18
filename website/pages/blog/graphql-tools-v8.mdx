@@ -33,13 +33,13 @@ The modern Schema Stitching is fairly comparable to Apollo Federation with autom
 But it is also more configurable.
 You can configure your gateway and services in service level using Stitching Directives or in the gateway level using Type Merging configuration.
 
-### Manage Apollo Federation services with Schema Stitching Gateway
+### Manage Apollo Federation Services with Schema Stitching Gateway
 
 You can even consume your existing Apollo Federation services inside Schema Stitching without any changes by using the `federationToStitchingSDL` utility function from `@graphql-tools/stitching-directives`. Please check the Stitching Handbook to learn more.
 
 [Federation Services - Stitching Handbook](https://github.com/gmac/schema-stitching-handbook/tree/master/federation-services)
 
-### Relay-based Gateway possible?
+### Relay-Based Gateway Possible?
 
 If you have multiple services using [Relay Specification](https://relay.dev/docs/guides/graphql-server-specification/#schema), you can easily combine them with the `handleRelaySubschemas` utility function from `@graphql-tools/stitch` package, and your unified schema will handle `Node` interface and `node` operation automatically using Type Merging.
 
@@ -47,7 +47,7 @@ If you have multiple services using [Relay Specification](https://relay.dev/docs
 
 It is pretty new, and we will improve the documentation for this use case gradually.
 
-### What is Type Merging?
+### What Is Type Merging?
 
 Type merging allows partial definitions of a type to exist in any subschema, all of which are merged into one unified type in the gateway schema. When querying for a merged type, the gateway smartly delegates portions of a request to each relevant subschema in dependency order, and then combines all results for the final return.
 
@@ -62,7 +62,7 @@ Check out our documentation and stitching handbook to learn more about Type Merg
 
 Also, please watch this great presentation from Greg MacWilliam!
 
-<Video src="https://youtube.com/embed/hOdGL3DepDM" title="YouTube video player" />
+<Video src="https://youtube.com/embed/hOdGL3DepDM" title="Reintroducing Schema Stitching in 2021" />
 
 ### Future-Proof Schema Delegation
 
@@ -79,7 +79,7 @@ function myExecutor({ document, variables, operationType }) {
 }
 ```
 
-### Create GraphQLSchema instances for your Remote APIs
+### Create `GraphQLSchema` Instances for Your Remote APIs
 
 URL Loader from `@graphql-tools/url-loader` package creates executable GraphQLSchema instances for you to call your remote GraphQL APIs by using different protocols;
 
@@ -101,9 +101,9 @@ const schema = await loadSchema(`https://my-graphql-api.com`, {
 })
 ```
 
-#### Create executors for Schema Stitching/Delegation;
+#### Create Executors for Schema Stitching / Delegation
 
-You can easily create executors for subschemas like below;
+You can easily create executors for subschemas like below:
 
 ```ts
 import { UrlLoader } from '@graphql-tools/url-loader'
@@ -121,7 +121,7 @@ const mySubschema = {
 const stitchedSchema = await stitchSchemas([mySubschema, myOtherSubschema])
 ```
 
-## And more...
+## And More...
 
 - Git Loader now supports glob patterns
   - GraphQL Tools is used by GraphQL Config, GraphQL Code Generator, GraphQL Inspector and more to download the type definitions and operation documents from the different sources with GraphQL Tools Loaders.

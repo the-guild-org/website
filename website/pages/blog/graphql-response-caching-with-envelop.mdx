@@ -8,7 +8,7 @@ image: /blog-assets/graphql-response-caching-with-envelop/graphql-response-cachi
 canonical: https://envelop.dev/docs/guides/adding-a-graphql-response-cache
 ---
 
-## A brief Introduction to Caching
+## A Brief Introduction to Caching
 
 Huge GraphQL query operations can slow down your server as deeply nested selection sets can cause a lot of subsequent database reads or calls to other remote services. Tools like `DataLoader` can reduce the amount of concurrent and subsequent requests via batching and caching during the execution of a single GraphQL operation. Features like `@defer` and `@stream` can help with streaming slow-to-retrieve result partials to the clients progressively. However, for subsequent requests we hit the same bottle-neck over and over again.
 
@@ -24,7 +24,7 @@ With GraphQL such things become much harder and complicated. First, we usually o
 
 SaaS services like FastQL and GraphCDN started popping providing proxies for your existing GraphQL API, that magically add response based caching. But how does this even work?
 
-## How does GraphQL Response Caching work?
+## How Does GraphQL Response Caching Work?
 
 ### Caching Query Operations
 
@@ -74,7 +74,7 @@ This allows us to identify recurring operations with the same variables and serv
 
 But in order to make our cache smart we still need a suitable cache invalidation mechanism.
 
-### Invalidating cached GraphQL Query Operations
+### Invalidating Cached GraphQL Query Operations
 
 Let's take a look at a possible execution result for the GraphQL operation.
 
@@ -325,9 +325,9 @@ export type Cache = {
 
 More information about all possible configuration options can be found on [the response cache docs on the Plugin Hub](https://envelop.dev/plugins/use-response-cache).
 
-<iframe src="https://youtube.com/embed/1EBphPltkA4" />
+<Video src="https://youtube.com/embed/1EBphPltkA4" title="Envelop Response Cache Plugin with GraphQL Yoga" />
 
-## What is next?
+## What Is Next?
 
 We are excited to explore new directions and make enterprise solutions accessible for all kinds of developers.
 

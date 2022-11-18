@@ -21,7 +21,7 @@ Not only does it fit like a glove, but it even has one more small leverage over 
 
 Ah, if the world was only that simple... There are a few limitations when considering SSEs, some of you might've already discovered them, but I'll go over them briefly.
 
-#### Maximum number of open connections
+#### Maximum Number of Open Connections
 
 > When **not used over HTTP/2**, SSE suffers from a limitation to the maximum number of open connections, which can be specially painful when opening various tabs as the limit is per browser and set to a very low number (6). The issue has been marked as "Won't fix" in [Chrome](https://bugs.chromium.org/p/chromium/issues/detail?id=275955) and [Firefox](https://bugzilla.mozilla.org/show_bug.cgi?id=906896). This limit is per browser + domain, so that means that you can open 6 SSE connections across all the tabs to `www.example1.com` and another 6 SSE connections to `www.example2.com`. (from [Stackoverflow](https://stackoverflow.com/a/5326159/1905229)). When using HTTP/2, the maximum number of simultaneous HTTP streams is negotiated between the server and the client (defaults to 100).
 
@@ -37,7 +37,7 @@ If you've done your Googling, you probably came across hot discussions like ["Do
 
 With all this insightful talking and knowledgeable discussions, you'd expect integrating SSE in your next project would be easy? You should have options, not be limited to Socket.IO or WebSockets, right? Absolutely, it _is_ easy and you _do_ have options!
 
-## Bye bye limitations, hello [`graphql-sse`](https://github.com/enisdenjo/graphql-sse) 👋
+## Bye Bye Limitations, Hello [`graphql-sse`](https://github.com/enisdenjo/graphql-sse) 👋
 
 I am happy to introduce the lost plug-n-play, zero-dependency, HTTP/1 safe, simple, [GraphQL over Server-Sent Events Protocol](https://github.com/enisdenjo/graphql-sse/blob/master/PROTOCOL.md) server and client.
 
@@ -45,7 +45,7 @@ Aforementioned limitations are taken care with a specialised SSE client (inspire
 
 [`graphql-sse`](https://github.com/enisdenjo/graphql-sse) is a reference implementation of the [GraphQL over Server-Sent Events Protocol aiming to become a part of the GraphQL over HTTP standard](https://github.com/graphql/graphql-over-http/pull/163).
 
-### How can I try it out?
+### How Can I Try It Out?
 
 I thought you'd never ask! Here is how:
 
@@ -55,7 +55,7 @@ I thought you'd never ask! Here is how:
 yarn add graphql-sse
 ```
 
-#### Create a GraphQL schema
+#### Create a GraphQL Schema
 
 ```ts
 import { GraphQLSchema, GraphQLObjectType, GraphQLString } from 'graphql'
@@ -96,7 +96,7 @@ const schema = new GraphQLSchema({
 })
 ```
 
-#### Start the server
+#### Start the Server
 
 ##### With [`http`](https://nodejs.org/api/http.html)
 
@@ -194,7 +194,7 @@ fastify.listen(4000)
 console.log('Listening to port 4000')
 ```
 
-#### Use the client
+#### Use the Client
 
 ```ts
 import { createClient } from 'graphql-sse'
@@ -250,7 +250,7 @@ const client = createClient({
 })()
 ```
 
-## Want to find out more?
+## Want to Find Out More?
 
 Check the repo out to for [Getting Started](https://github.com/enisdenjo/graphql-sse#getting-started) quickly with some [Recepies](https://github.com/enisdenjo/graphql-sse#recipes) for vanilla usage, or with [Relay](https://relay.dev) and [Apollo Client](https://apollographql.com/docs/react). Opening issues, contributing with code or simply improving the documentation is always welcome!
 

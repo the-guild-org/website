@@ -13,7 +13,7 @@ Authentication and authorization should be simple, because for most cases, it's 
 
 In this article we'll go through all the different ways of implementing authentication and authorization, the benefits and downsides to each one, and offer a solution that we believe is the best philosophy to do so.
 
-# Authentication / Authorization?
+## Authentication / Authorization?
 
 I found [good answer in StackOverflow](https://stackoverflow.com/questions/6367865/is-there-a-difference-between-authentication-and-authorization/6367931#6367931) covers the main differences between authentication and authorization:
 
@@ -34,7 +34,7 @@ And the following features regarding _authorization_:
 - You wish to run custom logics that protects parts of your GraphQL schema.
 - Our custom rules should not be coupled to a specific resolver.
 
-# Where to put your authentication?
+## Where to Put Your Authentication?
 
 To understand why implementing authentication in GraphQL might be tricky, let's start with the following chart:
 
@@ -66,7 +66,7 @@ Then, your `resolvers` getting called by the GraphQL engine.
 
 In the next chapter we'll dive in, and see how easy it's to implement in with Apollo-Server.
 
-# Getting Started with Authentication
+## Getting Started with Authentication
 
 We'll start by implementing a simple authentication flow in GraphQL server (using [Apollo-Server 2.0](https://github.com/apollographql/apollo-server)).
 
@@ -299,7 +299,7 @@ server.listen().then(({ url }) => {
 Great! So now our server is authenticated and we can get the `currentUser` in our resolvers.
 It also protects only the part of the GraphQL schema that we wanted to protect, and the authentication flow is separated from the resolvers, so each resolver does only what it needs.
 
-# Getting Started with Authorization
+## Getting Started with Authorization
 
 Now that we understand the concept of authentication in GraphQL servers, we can also implement authorization.
 
@@ -392,7 +392,7 @@ export const validateRole = role => next => (root, args, context, info) => {
 }
 ```
 
-# Next-Level implementation with GraphQL-Modules
+## Next-Level Implementation with GraphQL-Modules
 
 ![GraphQL Modules](/blog-assets/graphql-modules-auth/graphql-modules.png 'GraphQL Modules')
 
@@ -406,7 +406,7 @@ It also super powerful, because you can implement your GraphQL-Module as standal
 To implement the same example above with GraphQL-Modules, you can create a module called `auth` and move the `context` building logic to there.
 Then, create another module called `common` and the general parts, and articles to manage the articles features.
 
-## This way — each module is in charge of a different feature of our app.
+### This Way — Each Module Is in Charge of a Different Feature of Our App
 
 ```ts filename="articles-module.ts"
 import { GraphQLModule } from '@graphql-modules/core'
@@ -531,7 +531,7 @@ server.listen().then(({ url }) => {
 })
 ```
 
-## The Future of Authentication with GraphQL-Modules and GraphQL @directives
+### The Future of Authentication with GraphQL-Modules and GraphQL @directives
 
 If you wish to get rid of the `resolversComposition` wrapping, and use a more declarative way, you can use GraphQL directives to decorate your schema and put the authentication/authorization there.
 
@@ -591,7 +591,7 @@ type Query {
 }
 ```
 
-## What's next?
+### What's Next?
 
 Another thing we are working on, is having some of your repeated authentication and authorization logic installable through npm!
 
@@ -611,7 +611,7 @@ In this article we wanted to give you a complete overview of authentication and 
 
 Please try all those different approaches and let us know your feedback about the best way for you and if we can improve it even further.
 
-## All posts about GraphQL Modules
+### All Posts about GraphQL Modules
 
 - [GraphQL Modules — Feature based GraphQL Modules at scale](/blog/graphql-modules)
 - [Why is True Modular Encapsulation So Important in Large-Scale GraphQL Projects?](/blog/modular-encapsulation-graphql-modules)

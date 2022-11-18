@@ -8,7 +8,7 @@ image: /blog-assets/fetch-for-servers/cover.png
 thumbnail: /blog-assets/fetch-for-servers/thumbnail.png
 ---
 
-## TLDR
+## TL;DR
 
 - We made GraphQL Yoga 2.0 **platform-agnostic**, so it is able to run anywhere JavaScript can run (Cloudflare Workers, Deno, Next.js. AWS Lambdas etc.) thanks to the new **Fetch API standard**
 - We've created <ins>Ponyfills</ins> so it will work the same on older versions of Node that don't have Fetch API elements globally available
@@ -86,7 +86,7 @@ That’s why we created the [`@whatwg-node/fetch` package](https://github.com/ar
 
 Polyfill patches the native parts of an environment while ponyfill just exports the “patched” stuff without touching the environment’s internals. We prefer pony filling because it prevents us from breaking other libraries and environmental functionalities.
 
-## Is it possible to have a library that creates a cross-platform server?
+## Is It Possible to Have a Library That Creates a Cross-Platform Server?
 
 When rebuilding GraphQL Yoga from scratch, cross-platform support was one of the most important features we wanted to implement. We wanted to create a GraphQL server library that can be integrated with different Node.js server frameworks and other JS environments like CF Workers and Deno with a few additional lines of code.
 
@@ -128,7 +128,7 @@ export default myServer
 serve(myServer, { addr: ':4000' })
 ```
 
-### How does it look in real-life usage today?
+### How Does It Look in Real-Life Usage Today?
 
 You can check the GraphQL Yoga repository to see how we use this library;
 
@@ -212,7 +212,7 @@ const httpServer = createServer(myServer)
 httpServer.listen(4000)
 ```
 
-## What NodeJS frameworks are you using today?
+## What Node.js Frameworks Are You Using Today?
 
 Maybe it is worthwhile to open a new issue on their repo and see if we could all help them to become platform-agnostic, while still supporting older versions of Node, thanks to this new library.
 

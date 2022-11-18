@@ -17,7 +17,7 @@ So, how can you use [Prisma](https://prisma.io) for your database and still use 
 
 ## Prisma
 
-### What is Prisma?
+### What Is Prisma?
 
 [Prisma](https://prisma.io) is an open source fully-typed next-generation ORM. It consists of the following parts:
 
@@ -92,7 +92,7 @@ As you can see, now that the resolvers are typed, we don't need to define types 
 
 > You can also [find here a blog post about how to use GraphQL Code-Generator with the `typescript-resolvers` plugin](/blog/better-type-safety-for-resolvers-with-graphql-codegen).
 
-## Benefits of writing fully-typed code
+## Benefits of Writing Fully-Typed Code
 
 - Better code completion and syntax highlighting.
 - You can get hints and documentation inside your IDE while you code. This reduces the likelihood of making incorrect assumptions about the behavior of specific functions/methods.
@@ -100,7 +100,7 @@ As you can see, now that the resolvers are typed, we don't need to define types 
 - Static typing makes it easier to work with relational databases and other systems which also rely on static types — It helps you catch type mismatches sooner at compile-time.
 - It can help reduce the likelihood of some kinds of errors. For example, in dynamically typed languages, if you’re not careful with sanitising user input, you can end up doing weird stuff like (for example) trying to add a number 10 with the string “8” and you would get the string “108” as a result instead of the number 18 that you were expecting.
 
-## Using GraphQL codegen and Prisma together
+## Using GraphQL Codegen and Prisma Together
 
 After learning the benefits of Prisma and GraphQL codegen, you might want to use both together! But there's a few problems:
 
@@ -112,7 +112,7 @@ This is because the GraphQL codegen automatically uses the types from the GraphQ
 
 If your GraphQL schema is using `type User { ... }` and your Prisma model is using `model User { }`, you might have a naming conflict.
 
-### Database types !== GraphQL types
+### Database Types !== GraphQL Types
 
 The types for your database and not the same as your GraphQL types. In your GraphQL layer, you might take different limitations/constraints than you have in your database.
 
@@ -132,7 +132,7 @@ Well, for filtering and paginating prisma takes arguments which either have a va
 
 This is a problem for us because the type the codegen uses for maybe values by default (values that are `null`able), could be `null` (`null | undefined | T`).
 
-### How do we fix this?
+### How Do We Fix This?
 
 Well, for the first problem, the code generator has an option called `mappers`.
 
@@ -193,7 +193,7 @@ generates:
 
 Now, the default value to `inputMaybe` (The type of nullable arguments) will be either `undefined` or `T`, leading to an easy type-compatibility between your GraphQL `input` arguments and the Prisma SDK requirements.
 
-## What now?
+## What Now?
 
 Now, run GraphQL-Codegen and the Prisma Codegen and you should get a fully-typed resolver. Here's an example:
 

@@ -7,7 +7,7 @@ description: One configuration for all your tools.
 image: /medium/6acdca885a85960c4b5f3b5c2516a7be.jpg
 ---
 
-# TLDR
+## TL;DR
 
 - Visit our website **[graphql-config.com](https://graphql-config.com)**
 - [**GraphQL Config**](https://github.com/kamilkisiela/graphql-config) is **one** simple place to store **all** your GraphQL Configurations for **any** GraphQL based tool
@@ -15,7 +15,7 @@ image: /medium/6acdca885a85960c4b5f3b5c2516a7be.jpg
 - We've already **merged configurations** from [GCG](https://graphql-code-generator.com), [GraphQL Inspector](https://graphql-inspector.com), [GraphQL CLI](https://github.com/Urigo/graphql-cli) — and are looking to learn and **integrate** with GraphiQL, AppSync, Apollo, Gatsby, VS-Code extensions, Relay and the GraphQL team at Facebook and any GraphQL tool creators
 - This is an **alpha phase** — **we want your feedback**, as a user and as a creator — Please [**create an issue**](https://github.com/kamilkisiela/graphql-config) or [**join our Discord channel**](https://discord.gg/xud7bH9)
 
-# How did we get here?
+## How Did We Get Here?
 
 About 2 years ago Prisma came up with a great idea for the GraphQL community — Why repeat yourself in creating your configuration for each tool you use in your application.
 
@@ -31,7 +31,7 @@ We asked for feedback, looked at existing and new tools that came out since it w
 
 ---
 
-# Our main goals are
+## Our Main Goals Are
 
 - Highly **customizable** and **extensible**
 - More **useful** structure
@@ -40,7 +40,7 @@ We asked for feedback, looked at existing and new tools that came out since it w
 
 ---
 
-# Try it out today
+## Try It Out Today
 
 We've already refactored most of the code, created a new structure, referenced all the related issues and released a new alpha version:
 
@@ -58,11 +58,11 @@ Here is a deeper dive into what we've done:
 
 ---
 
-# Different formats of GraphQL Config file
+## Different Formats of GraphQL Config File
 
 The new [GraphQL Config](https://github.com/kamilkisiela/graphql-config) now allows to use JSON, YAML and JavaScript.
 
-# GraphQL Config looks for:
+## GraphQL Config Looks for:
 
 - `.graphqlrc`
 - `.graphqlrc.yaml`
@@ -77,7 +77,7 @@ It also accepts a config defined under `graphql` property in your `package.json`
 
 > We're open to expand the range of file names and looking forward to hear more of your use cases.
 
-# New structure
+## New Structure
 
 GraphQL Config allowed to indicate a single graphql file, an introspection file or a URL to an endpoint. That's the past!
 
@@ -89,13 +89,13 @@ extensions:
     value: true
 ```
 
-# **Schema**
+## Schema
 
 We've decided to expand [GraphQL Config](https://github.com/kamilkisiela/graphql-config) for variety of sources of GraphQL Schema and rename `schemaPath` to just `schema`.
 
 It accepts now not only a single file but also a glob pattern to match your modularized schema.
 
-# **Allows to generate schema from:**
+## Allows to Generate Schema from:
 
 - files matching a glob pattern (or a list of patterns)
 - an explicit list of files
@@ -106,7 +106,7 @@ It accepts now not only a single file but also a glob pattern to match your modu
 
 It was possible thanks to the concept of **Loaders** which we'll talk about later in the article.
 
-# **Documents**
+## Documents
 
 Majority of the GraphQL tools depend not only on Schema but Operations and Fragments, so we've decided to cover that use case too.
 
@@ -140,7 +140,7 @@ export function Users() {
 
 Thanks to that, you can still write your operations and fragments with `graphql-tag` and put them in your React components. GraphQL Config is smart enough to find and collect them.
 
-# **Include and Exclude**
+## Include and Exclude
 
 `Include` and `Exclude` options are still relevant, but we improved and fixed the logic behind them.
 
@@ -148,7 +148,7 @@ Thanks to that, you can still write your operations and fragments with `graphql-
 
 Files covered by schema or documents options are automatically included, there's no need to include them twice.
 
-# **Extensions**
+## Extensions
 
 We also kept `extensions` and turned them into a first class citizen in GraphQL Config, **making them way more powerful than before**.
 
@@ -163,7 +163,7 @@ extensions:
           - typescript-resolvers
 ```
 
-# Pluggable loaders
+## Pluggable Loaders
 
 The source of GraphQL Schema may differ, depending on the setup. In some projects SDL is kept within graphql files, others store it in code.
 
@@ -207,7 +207,7 @@ export const RelayLoader = {
 
 We maintain [a few loaders](https://github.com/ardatan/graphql-toolkit/tree/master/packages/loaders), but we believe the community will start to cover other use cases as well.
 
-# All platforms
+## All Platforms
 
 Our goal is to make **GraphQL Config platform-agnostic**.
 
@@ -217,7 +217,7 @@ The old version relied heavily on Node's file system, which is a blocker in many
 
 Because it's just an asynchronous function that receives an input and gives back a GraphQL Schema, it should work fine in browser and in any other environment.
 
-# Extensions
+## Extensions
 
 In the previous generation of GraphQL Config `extensions` namespace, there was a way to pass custom information to the consumers of the config file, like libraries and IDE extensions.
 
@@ -237,13 +237,13 @@ const RelayExtension = api => {
 
 The new `extensions` allows you to turn GraphQL Config into something fully customizable and to be used in tools like Webpack!
 
-# Hooks
+## Hooks
 
 We believe that there's a need to **intercept the schema building process** or to simply **validate the config**.
 
 It's not currently available but with your help and suggestions we could make it happen.
 
-# Environment Variables
+## Environment Variables
 
 In the new GraphQL Config, we've decided to support environment variables. **It was a long time hanging and highly requested issue**. Now the usage in JS config file is straightforward. It's also very easy to use environment variables in YAML and JSON files.
 
@@ -254,7 +254,7 @@ include: ${INCLUDE_GLOB}
 
 Every `${ENV_VAR}` in the config file is replaced with the actual value. We also allow for defaults. Using `${ENV_VAR:foo}` results in `foo`.
 
-# Easier to contribute
+## Easier to Contribute
 
 We also wanted to make the codebase itself easy to understand and contribute to.
 

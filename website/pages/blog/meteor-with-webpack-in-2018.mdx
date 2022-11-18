@@ -19,13 +19,13 @@ However, Meteor already has its own built-in bundler; but it needs some challeng
 
 Meteor-Webpack is here as a solution to this kind of problems and lack of features in Meteor's bundler.
 
-# Why do you need this?
+## Why Do You Need This?
 
 For example, you have a Progressive Web Application using Service Workers, written in Angular, then you have to create a service worker manifest based on your output files. We don't have a solution for this on Meteor CLI natively. However, Webpack has a lot of community plugins such as [`OfflinePlugin`](https://github.com/NekR/offline-plugin) , [`Workbox`](https://developers.google.com/web/tools/workbox/guides/codelabs/webpack) and many others for this problem as a solution. Just install them, and add to your [`webpack.config.js`](https://webpack.js.org/configuration) . Meteor-Webpack will handle it like you're working on a pure Webpack project.
 
 Other example is server-side rendering. [Angular CLI](https://cli.angular.io) is based on Webpack, and the project can be compiled for SSR by Angular CLI; but you need a different server application to serve your Angular Universal application separate from Meteor backend. By using Meteor-Webpack, it is possible only by ejecting Angular CLI's `webpack.config.js` , and use it on Meteor project.
 
-# Hot Module Replacement; even for server (Beta)
+## Hot Module Replacement, Even for Server (Beta)
 
 ![HMR hot module replacement](/medium/274cf118280e652e8e0f63c442c59d9b.png 'Hot Module Replacement')
 
@@ -43,6 +43,6 @@ devServer: {
 
 Also, you can use HMR for server side. Meteor-Webpack supports [`webpack-hot-server-middleware`](https://github.com/60frames/webpack-hot-server-middleware) , that replaces changed modules on your server without restarting all Meteor server. This also provides a lot of benefits on development.
 
-# More examples
+## More Examples
 
 There are more examples in the repository; [https://github.com/ardatan/meteor-webpack](https://github.com/ardatan/meteor-webpack)
