@@ -23,16 +23,18 @@ export const ServicesSection = (): ReactElement => {
           Learn more about our services ➔
         </Link>
       </div>
-      <div className="container mt-[117px] flex flex-wrap justify-center">
+      <div className="container mt-[117px] flex flex-wrap justify-center gap-4">
         {SERVICES.map(service => (
           <Anchor
             key={service.name}
             href={service.url}
             title={service.name}
             className="
-              m-4
-              h-[370px]
-              w-[278px]
+              flex
+              w-full
+              flex-col
+              items-center
+              justify-between
               overflow-hidden
               rounded-t-2xl
               border-2
@@ -44,13 +46,19 @@ export const ServicesSection = (): ReactElement => {
               hover:border-gray-200
               hover:[box-shadow:0_-6px_34px_rgba(117,117,117,0.15)]
               dark:bg-[#24272E4C]
-              dark:hover:border-[#24272E]"
+              dark:hover:border-[#24272E] sm:w-1/2 md:w-1/3 lg:w-1/5
+            "
           >
-            <Image src={service.icon} alt={`${service.name} illustration`} placeholder="empty" />
-            <Heading size="md">{service.name}</Heading>
-            <Description className="mb-4 px-4 text-sm">{service.description}</Description>
-            <span
+            <div className="flex-1">
+              <Image src={service.icon} alt={`${service.name} illustration`} placeholder="empty" />
+              <Heading size="md">{service.name}</Heading>
+              <Description className="line-clamp-3 px-4 text-xs leading-4 !leading-[18px]">
+                {service.description}
+              </Description>
+            </div>
+            <div
               className="
+                pb-4
                 text-xs
                 text-gray-500
                 transition-colors
@@ -59,7 +67,7 @@ export const ServicesSection = (): ReactElement => {
                 dark:hover:text-gray-300"
             >
               Learn more ➔
-            </span>
+            </div>
           </Anchor>
         ))}
       </div>
