@@ -33,7 +33,6 @@ export default defineConfig({
     return {
       description: description || `${siteName}: Modern API Platform and Ecosystem that scales`,
       openGraph: {
-        title: 'The Guild - GraphQL Tools',
         siteName,
         images: [{ url: ensureAbsolute(image) }],
         article: date && {
