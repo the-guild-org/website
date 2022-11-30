@@ -144,6 +144,6 @@ export const AUTHORS: Record<string, Author> = {
   gabotechs: {
     name: 'Gabriel Musat',
     link: 'https://github.com/gabotechs',
-    github: 'gabotechs'
-  }
+    github: 'gabotechs',
+  },
 };

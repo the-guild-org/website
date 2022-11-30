@@ -27,23 +27,25 @@ programming language would provide.
 ## Some Interesting Features
 
 It is very common to reuse a subset of fields across many types, for example:
+
 ```graphql
 type Product {
-    id: ID!
-    name: String!
-    createdAt: Date
-    modifiedAt: Date
-    ...
+  id: ID!
+  name: String!
+  createdAt: Date
+  modifiedAt: Date
+  ...
 }
 
 type User {
-    id: ID!
-    name: String!
-    createdAt: Date
-    modifiedAt: Date
-    ...
+  id: ID!
+  name: String!
+  createdAt: Date
+  modifiedAt: Date
+  ...
 }
 ```
+
 This pattern can be repeated in a lot of types in the same schema, leading to code
 duplication and potential inconsistencies.
 
@@ -65,41 +67,42 @@ In GraphQXL this would look something like:
             <td>
                 ```graphql
                 type _CommonFields {
-                    id: ID!
-                    name: String!
-                    createdAt: Date
-                    modifiedAt: Date
+                  id: ID!
+                  name: String!
+                  createdAt: Date
+                  modifiedAt: Date
                 }
 
                 type Product {
-                    ..._CommonFields
+                  ..._CommonFields
                 }
 
                 type User {
-                    ..._CommonFields
+                  ..._CommonFields
                 }
                 ```
             </td>
             <td>
                 ```graphql
                 type Product {
-                    id: ID!
-                    name: String!
-                    createdAt: Date
-                    modifiedAt: Date
+                  id: ID!
+                  name: String!
+                  createdAt: Date
+                  modifiedAt: Date
                 }
 
                 type User {
-                    id: ID!
-                    name: String!
-                    createdAt: Date
-                    modifiedAt: Date
+                  id: ID!
+                  name: String!
+                  createdAt: Date
+                  modifiedAt: Date
                 }
 
                 ```
             </td>
         </tr>
     </tbody>
+
 </table>
 
 The idea is not only to reuse code instead of copy-pasting, but also
@@ -113,39 +116,41 @@ a good number of types, would lead to a bunch of verbose types with pretty much 
 structure.
 
 For example, this vanilla GraphQL code:
+
 ```graphql
 "The Product's Edge object for pagination"
 type ProductEdge {
-    "The Product's cursor that refers to the current node"
-	cursor: String!
-    "The Product itself"
-	node: Product!
+  "The Product's cursor that refers to the current node"
+  cursor: String!
+  "The Product itself"
+  node: Product!
 }
 
 "The Connection object for paginating across the ProductEdges"
 type ProductConnection {
-    "Metadata with the current page info"
-	pageInfo: PageInfo!
-    "List of ProductEdges for the current page"
-	edges: [ProductEdge!]!
+  "Metadata with the current page info"
+  pageInfo: PageInfo!
+  "List of ProductEdges for the current page"
+  edges: [ProductEdge!]!
 }
 
 "The User's Edge object for pagination"
 type UserEdge {
-    "The User's cursor that refers to the current node"
-	cursor: String!
-    "The User itself"
-	node: User!
+  "The User's cursor that refers to the current node"
+  cursor: String!
+  "The User itself"
+  node: User!
 }
 
 "The Connection object for paginating across the UserEdges"
 type UserConnection {
-    "Metadata with the current page info"
-	pageInfo: PageInfo!
-    "List of UserEdges for the current page"
-	edges: [UserEdge!]!
+  "Metadata with the current page info"
+  pageInfo: PageInfo!
+  "List of UserEdges for the current page"
+  edges: [UserEdge!]!
 }
 ```
+
 Verbose right? and this is just for a couple of resources, there is usually a lot more in
 a GraphQL schema.
 
@@ -154,18 +159,18 @@ How could this be written using GraphQXL?
 ```graphql
 "The ${{ variables.T }}'s Edge object for pagination"
 type Edge<T> {
-    "The ${{ variables.T }}'s cursor that refers to the current node"
-    cursor: String!
-    "The ${{ variables.T }} itself"
-    node: T!
+  "The ${{ variables.T }}'s cursor that refers to the current node"
+  cursor: String!
+  "The ${{ variables.T }} itself"
+  node: T!
 }
 
 "The Connection object for paginating across the ${{ variables.T }}s"
 type Connection<T> {
-    "Metadata with the current page info"
-    pageInfo: PageInfo!
-    "List of ${{ variables.T }}s for the current page"
-    edges: [T!]!
+  "Metadata with the current page info"
+  pageInfo: PageInfo!
+  "List of ${{ variables.T }}s for the current page"
+  edges: [T!]!
 }
 
 type ProductEdge = Edge<Product>
