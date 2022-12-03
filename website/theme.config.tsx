@@ -25,7 +25,7 @@ export default defineConfig({
   siteName,
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
   navbar: {
-    component: <Header sameSite accentColor="var(--colors-accent)" themeSwitch searchBarProps={{ version: 'v2' }} />
+    component: <Header sameSite accentColor="var(--colors-accent)" themeSwitch searchBarProps={{ version: 'v2' }} />,
   },
   getNextSeoProps() {
     const { frontMatter, title } = useConfig();
