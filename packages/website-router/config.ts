@@ -76,9 +76,10 @@ export const jsonConfig = {
       crispSegments: ['apollo-angular'],
       sitemap: true,
     },
-    // TODO: Move these websites
     '/graphql/hive': {
-      redirect: 'https://graphql-hive.com',
+      rewrite: 'hive-landing-page.pages.dev',
+      crispSegments: ['hive-website'],
+      sitemap: true,
     },
     // Redirects
     '/graphql/eslint': {
