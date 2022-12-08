@@ -56,9 +56,9 @@ const Authors = ({ meta }: { meta: Meta }): ReactElement => {
           const author = AUTHORS[authorId];
           return (
             <div key={authorId}>
-              <Anchor href={author.link} title={author.name}>
+              <Anchor href={author.link} title={author.name} className="text-[#1cc8ee]">
                 <Avatar author={author} />
-                <span className="ml-2.5 text-sm text-[#1cc8ee]">{author.name}</span>
+                <span className="ml-2.5 text-sm">{author.name}</span>
               </Anchor>
             </div>
           );
