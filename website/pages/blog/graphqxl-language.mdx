@@ -1,5 +1,5 @@
 ---
-title: GraphQXL language
+title: GraphQXL - The missing GraphQL Language Extension?
 tags: [graphql]
 authors: [gabotechs]
 date: 2022-11-30
@@ -7,18 +7,27 @@ description: GraphQXL, a new language for building big and scalable GraphQL serv
 image: /blog-assets/graphqxl-language/cover.svg
 ---
 
-When building GraphQL APIs following a schema-first approach, as the project goes big,
+When building GraphQL APIs following a schema-first approach and the project goes big,
 people usually find themselves repeating almost identical structures across the schema and
 copy-pasting common fields across the different types and inputs.
 
 ## The Need of a New Language
 
-GraphQL is a really nice language for writing API schemas, but it tends to fall short on
-features as it is not a programming language (and it is not meant to be).
+The GraphQL schema definition language (commonly referred to as SDL) is really nice
+for writing API schemas, but it tends to fall short on features as it is not a programming
+language (and it is not meant to be).
 
 With a code-first approach it is very easy to autogenerate repetitive graphql
 code as it is the programming language of choice the one that does all the hard work,
 but with a schema-first approach the limits are set by the capabilities of vanilla GraphQL.
+
+There are points in favor of the schema-first approach:
+- Non-programmers can contribute to new features by just touching the GraphQL schema.
+- The GraphQL schema itself serves like a blueprint for developers who will implement the API.
+- Frontend developers can start the work as long as the schema definition is complete, even
+before the backend team has finished implementing it.
+- For customer facing APIs, it makes sense to give more importance to the schema definition,
+as it's what the customers will directly interact with.
 
 GraphQXL is directed for people that want to keep using a schema-first approach but also
 want to benefit from the code re-usability, consistency and maintainability that a
