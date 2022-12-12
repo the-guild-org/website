@@ -51,10 +51,14 @@ async function readMeta(dir: string, file: string): Promise<MetaWithLink> {
     const vFile = await processor.process(raw);
     const parsed = vFile.data.frontmatter as Meta;
     if (parsed.title.length > 70) {
-      throw new Error(`SEO issue: The title "${parsed.title}" is too long, should be less than 70 characters`);
+      throw new Error(
+        `SEO issue: The title "${parsed.title}" is too long, should be less than 70 characters -link ${file}`
+      );
     }
     if (parsed.title.length < 20) {
-      throw new Error(`SEO issue: The title "${parsed.title}" is too short, should be more than 20 characters`);
+      throw new Error(
+        `SEO issue: The title "${parsed.title}" is too short, should be more than 20 characters - link ${file}`
+      );
     }
     return {
       ...parsed,
