@@ -146,4 +146,14 @@ export const AUTHORS: Record<string, Author> = {
     link: 'https://github.com/gabotechs',
     github: 'gabotechs',
   },
+  tshedor: {
+    name: 'Tim Shedor',
+    link: 'https://github.com/tshedor',
+    github: 'tshedor',
+  },
+  josiassejod1: {
+    name: 'Dalvin Sejour',
+    link: 'https://github.com/josiassejod1',
+    github: 'josiassejod1',
+  }
 };
