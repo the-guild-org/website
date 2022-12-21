@@ -1,7 +1,11 @@
 import { writeFile } from 'node:fs/promises';
 import { MetaWithLink, NewsletterMetaWithLink } from './meta';
 
-const createUrl = (pathname: string, priority = 0.5, changeFrequency: 'weekly' | 'daily' = 'weekly') =>
+const createUrl = (
+  pathname: string,
+  priority = 0.5,
+  changeFrequency: 'weekly' | 'daily' = 'weekly',
+) =>
   `
 <url>
   <loc>https://the-guild.dev${pathname}</loc>
@@ -9,7 +13,10 @@ const createUrl = (pathname: string, priority = 0.5, changeFrequency: 'weekly' |
   <priority>${priority}</priority>
 </url>`;
 
-export async function generateSitemap(articles: MetaWithLink[], newsletters: NewsletterMetaWithLink[]) {
+export async function generateSitemap(
+  articles: MetaWithLink[],
+  newsletters: NewsletterMetaWithLink[],
+) {
   const sitemap = `
 <urlset
   xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'
@@ -30,7 +37,11 @@ export async function generateSitemap(articles: MetaWithLink[], newsletters: New
   ${newsletters.map(art => createUrl(art.link)).join('\n')}
 </urlset>`;
 
-  await writeFile('./.next/static/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>${sitemap}`, 'utf8');
+  await writeFile(
+    './.next/static/sitemap.xml',
+    `<?xml version="1.0" encoding="UTF-8"?>${sitemap}`,
+    'utf8',
+  );
 
   // eslint-disable-next-line no-console
   console.info('✅  Sitemap generated');

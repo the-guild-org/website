@@ -3,19 +3,24 @@ title: Migrating from Schemaless REST API to GraphQL without writing any code
 tags: [graphql, rest, graphql-mesh]
 authors: arda
 date: 2020-05-31
-description: Migrating to GraphQL from a REST API has never been easier. With tools like GraphQL Mesh you can do it automatically, without writing code and even if you don't have any schema for your existing REST API sources.
+description:
+  Migrating to GraphQL from a REST API has never been easier. With tools like GraphQL Mesh you can
+  do it automatically, without writing code and even if you don't have any schema for your existing
+  REST API sources.
 image: /blog-assets/migrating-from-rest/cover.png
 ---
 
 GraphQL was originally created in order to easily provide a powerful API on top of existing code.
-The current approach people are using today while migrating from REST API to GraphQL is to create a new schema and use GraphQL as a proxy.
-That has a lot of benefits because it gives us an opportunity to rethink the API and improve it, without changing the underlining services.
+The current approach people are using today while migrating from REST API to GraphQL is to create a
+new schema and use GraphQL as a proxy. That has a lot of benefits because it gives us an opportunity
+to rethink the API and improve it, without changing the underlining services.
 
 Let's first start with looking at that approach:
 
 ## Implementing a Basic Proxy GraphQL Backend
 
-Let's say you have `/user` endpoint that does all CRUD operations for `User` entity with different HTTP methods, and you would need a GraphQL schema like below;
+Let's say you have `/user` endpoint that does all CRUD operations for `User` entity with different
+HTTP methods, and you would need a GraphQL schema like below;
 
 ```graphql
 type Query {
@@ -40,7 +45,8 @@ input UserInput {
 }
 ```
 
-And you would also need a thin business logic that proxies upcoming GraphQL requests to the REST API using GraphQL resolvers like below;
+And you would also need a thin business logic that proxies upcoming GraphQL requests to the REST API
+using GraphQL resolvers like below;
 
 ```js
 module.exports = {
@@ -66,15 +72,22 @@ module.exports = {
 }
 ```
 
-This example assumes that you have `/user/:id` endpoint that gets a `User` entity with `HTTP GET`, deletes user with `HTTP DELETE` and updates a `User` that has the given id with the given input. Also `/user` endpoint creates a new `User` with the given input.
+This example assumes that you have `/user/:id` endpoint that gets a `User` entity with `HTTP GET`,
+deletes user with `HTTP DELETE` and updates a `User` that has the given id with the given input.
+Also `/user` endpoint creates a new `User` with the given input.
 
 But this implementation will be hard to maintain when the REST API is updated and become bigger.
 
 ## Using GraphQL Mesh Instead without Any Code
 
-GraphQL Mesh is a tool that handles multiple non-GraphQL data sources and generates an executable GraphQL schema on top of them with a simple configuration file. [You can check the announcement blog post to learn more](https://the-guild.dev/blog/graphql-mesh)
+GraphQL Mesh is a tool that handles multiple non-GraphQL data sources and generates an executable
+GraphQL schema on top of them with a simple configuration file.
+[You can check the announcement blog post to learn more](/blog/graphql-mesh)
 
-On top of having handlers that automatically take care of sources with schema like - OpenAPI/Swagger, gRPC, SOAP, and others, it also has JSON Schema handler that generates a GraphQL Schema based on the given JSON schema files. This handler can also generate JSON Schema on runtime based on the given sample request and response data.
+On top of having handlers that automatically take care of sources with schema like -
+OpenAPI/Swagger, gRPC, SOAP, and others, it also has JSON Schema handler that generates a GraphQL
+Schema based on the given JSON schema files. This handler can also generate JSON Schema on runtime
+based on the given sample request and response data.
 
 First you need to create a project using `yarn` on an empty directory:
 
@@ -121,7 +134,9 @@ sources:
             responseSample: ./deleteUserResponse.json
 ```
 
-As you can see in the configuration, we defined our endpoints without a single line of code. After creating this configuration file. We need to get sample request and response files by calling those endpoints on our local.
+As you can see in the configuration, we defined our endpoints without a single line of code. After
+creating this configuration file. We need to get sample request and response files by calling those
+endpoints on our local.
 
 With a single command, our new GraphQL endpoint is ready to serve;
 
@@ -131,6 +146,9 @@ yarn mesh serve
 
 ## Not Only as a Gateway but Also a Completely Type-Safe SDK
 
-Mesh is able to generate a type-safe SDK from generated GraphQL API because the generated GraphQL schema is a local `GraphQLSchema` that can be executed without binding an HTTP server.
+Mesh is able to generate a type-safe SDK from generated GraphQL API because the generated GraphQL
+schema is a local `GraphQLSchema` that can be executed without binding an HTTP server.
 
-That means you can use GraphQL Mesh inside your existing services or clients, [as an SDK](https://graphql-mesh.com/docs/recipes/as-sdk), just as a simple dependency, without adding another box in your architecture.
+That means you can use GraphQL Mesh inside your existing services or clients,
+[as an SDK](https://graphql-mesh.com/docs/recipes/as-sdk), just as a simple dependency, without
+adding another box in your architecture.

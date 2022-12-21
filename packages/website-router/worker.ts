@@ -222,6 +222,6 @@ addEventListener('fetch', (event: FetchEvent) => {
         sentry.captureException(e);
 
         throw e;
-      })
+      }),
   );
 });

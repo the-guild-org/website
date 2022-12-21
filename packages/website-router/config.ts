@@ -81,11 +81,17 @@ export const jsonConfig = {
       crispSegments: ['hive-website'],
       sitemap: true,
     },
-    // Redirects
-    '/graphql/eslint': {
-      redirect: 'https://github.com/B2o5T/graphql-eslint',
-      status: 302,
+    '/graphql/gateway': {
+      rewrite: 'conductor.pages.dev',
+      crispSegments: ['conductor'],
+      sitemap: true,
     },
+    '/graphql/eslint': {
+      rewrite: 'graphql-eslint.pages.dev',
+      crispSegments: ['graphql-eslint'],
+      sitemap: true,
+    },
+    // Redirects
     '/bob': {
       redirect: 'https://github.com/kamilkisiela/bob',
       status: 302,

@@ -1,6 +1,8 @@
 ---
 title: 'Getting the Best of TypeScript and GraphQL: Union Types'
-description: 'The combination of TypeScript and GraphQL can be very powerful. Both TypeScript and GraphQL support the concept of discriminated unions.'
+description:
+  'The combination of TypeScript and GraphQL can be very powerful. Both TypeScript and GraphQL
+  support the concept of discriminated unions.'
 authors: tuvalSimha
 tags: [graphql, typescript, codegen]
 date: 2022-10-18
@@ -10,16 +12,20 @@ thumbnail: /blog-assets/typescript-unions-types/thumbnail.png
 
 ## Introduction
 
-The combination of TypeScript and GraphQL can be very powerful. Both TypeScript and GraphQL support the concept of discriminated unions.
-In this short blog post, I want to share my last project experience and share one of the most powerful methods to create stronger types using TypeScript and GraphQL.
+The combination of TypeScript and GraphQL can be very powerful. Both TypeScript and GraphQL support
+the concept of discriminated unions. In this short blog post, I want to share my last project
+experience and share one of the most powerful methods to create stronger types using TypeScript and
+GraphQL.
 
-One of my assumptions in this blog post is that you know some TypeScript. If you don't, you can check out ["Basic Types"](https://www.typescriptlang.org/docs/handbook/basic-types.html) handbook.
-So, let's talk a little bit about TypeScript union types, one of the most remarkable features of this language.
+One of my assumptions in this blog post is that you know some TypeScript. If you don't, you can
+check out ["Basic Types"](https://www.typescriptlang.org/docs/handbook/basic-types.html) handbook.
+So, let's talk a little bit about TypeScript union types, one of the most remarkable features of
+this language.
 
 ## What Is a Union Type in TypeScript?
 
-So TypeScript language is based on a type system.
-TypeScript union operator can be used to define a variable that can hold multiple data types: integer or number, character, string, float, etc.
+So TypeScript language is based on a type system. TypeScript union operator can be used to define a
+variable that can hold multiple data types: integer or number, character, string, float, etc.
 
 Here you can find a basic example:
 
@@ -34,8 +40,9 @@ pizzaLover = true // boolean type
 
 ## How to Use Union Types in TypeScript
 
-TypeScript can also be used to combine complex types such as interfaces.
-You can think about one type that contains some others types. Here is a simple example that combines 2 types: `Sushi` and `Pizza`, both of them can be united into one type by the name `Food`.
+TypeScript can also be used to combine complex types such as interfaces. You can think about one
+type that contains some others types. Here is a simple example that combines 2 types: `Sushi` and
+`Pizza`, both of them can be united into one type by the name `Food`.
 
 ```ts
 type Sushi = {
@@ -68,17 +75,22 @@ const myPreference: PizzaAddons = 'pineapple' // error
 
 ## GraphQL Union and TypeScript Union Type
 
-GraphQL is a query language that is used to define the API of a server. Like TypeScript or even Go language, GraphQL supports union and interface types. The type system is one of its core principles and we can use it to make type-safe API calls. The goal is to use it to propagate our backend types to the frontend.
-When I started to learn TypeScript, I found myself making lots of type errors and annoying misspellings. These errors became more frequent as the project grew.
-The best solution for that situation was to add type-safety based on a GraphQL schema.
+GraphQL is a query language that is used to define the API of a server. Like TypeScript or even Go
+language, GraphQL supports union and interface types. The type system is one of its core principles
+and we can use it to make type-safe API calls. The goal is to use it to propagate our backend types
+to the frontend. When I started to learn TypeScript, I found myself making lots of type errors and
+annoying misspellings. These errors became more frequent as the project grew. The best solution for
+that situation was to add type-safety based on a GraphQL schema.
 
-A GraphQL schema can return one of the multiple object types thanks to the Union or Interface keywords. Like TypeScript, we can declare which object types are included in the union:
+A GraphQL schema can return one of the multiple object types thanks to the Union or Interface
+keywords. Like TypeScript, we can declare which object types are included in the union:
 
 ```graphql
 union Menu = Pizza | Sushi
 ```
 
-Let's see a basic example schema that defines a `Menu` union type that can return either a `Pizza` or `Sushi`:
+Let's see a basic example schema that defines a `Menu` union type that can return either a `Pizza`
+or `Sushi`:
 
 ```graphql
 union Menu = Pizza | Sushi
@@ -98,12 +110,14 @@ type Query {
 }
 ```
 
-After we declare our types in GraphQL and create a union type to return some of the other types, we can generate TypeScript types from the GraphQL schema and use them in the frontend.
+After we declare our types in GraphQL and create a union type to return some of the other types, we
+can generate TypeScript types from the GraphQL schema and use them in the frontend.
 
 ## How to Use GraphQL Codegen to Generate Code and Deal with TypeScript Union Types
 
-First of all, you are more than welcome to explore all the plugins of GraphQL Codegen. [GraphQL Code Generator](https://graphql-code-generator.com/)
-Like we did in the previous example, let's talk about getting the data typed safely in the front.
+First of all, you are more than welcome to explore all the plugins of GraphQL Codegen.
+[GraphQL Code Generator](https://graphql-code-generator.com/) Like we did in the previous example,
+let's talk about getting the data typed safely in the front.
 
 First, let's create our `GetFullMenu` query as follows:
 
@@ -128,7 +142,8 @@ const menuQuery = gql`
 `
 ```
 
-Get the `Menu` type from the schema with the query, so we will be able to get the objects inside the `Menu`.
+Get the `Menu` type from the schema with the query, so we will be able to get the objects inside the
+`Menu`.
 
 ```ts
 const Menu = () => {
@@ -141,12 +156,16 @@ const Menu = () => {
 
 ## Conclusion
 
-- I hope this blog post helped you to better understand TypeScript unions and GraphQL unions and the way to use them in your project.
+- I hope this blog post helped you to better understand TypeScript unions and GraphQL unions and the
+  way to use them in your project.
 
-- We can create Union and Interface types in both TypeScript and GraphQL, which helps us to better define the API of a server and use it in our client.
+- We can create Union and Interface types in both TypeScript and GraphQL, which helps us to better
+  define the API of a server and use it in our client.
 
 - A static type check can help safeguard your application. Especially in large-scale applications.
 
-- When you use type-safe GraphQL, it helps you to eliminate existing errors like misspellings and errors.
+- When you use type-safe GraphQL, it helps you to eliminate existing errors like misspellings and
+  errors.
 
-- In this brief blog post, we looked at a few features of TypeScript that help you on code-time, most help you to understand the output of any function you create.
+- In this brief blog post, we looked at a few features of TypeScript that help you on code-time,
+  most help you to understand the output of any function you create.

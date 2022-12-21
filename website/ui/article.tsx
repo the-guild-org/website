@@ -45,7 +45,9 @@ const Authors = ({ meta }: { meta: Meta }): ReactElement => {
       <time
         dateTime={date.toISOString()}
         title={
-          updatedDate ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}` : `Posted ${format(date, 'EEEE, LLL do y')}`
+          updatedDate
+            ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
+            : `Posted ${format(date, 'EEEE, LLL do y')}`
         }
         className="mt-5 block text-center text-xs text-[#777]"
       >
@@ -56,9 +58,9 @@ const Authors = ({ meta }: { meta: Meta }): ReactElement => {
           const author = AUTHORS[authorId];
           return (
             <div key={authorId}>
-              <Anchor href={author.link} title={author.name}>
+              <Anchor href={author.link} title={author.name} className="text-[#1cc8ee]">
                 <Avatar author={author} />
-                <span className="ml-2.5 text-sm text-[#1cc8ee]">{author.name}</span>
+                <span className="ml-2.5 text-sm">{author.name}</span>
               </Anchor>
             </div>
           );
@@ -76,7 +78,7 @@ export const Article = (): ReactElement => {
       <h1>{frontMatter.title}</h1>
       <Authors meta={frontMatter as Meta} />
       <TagList tags={frontMatter.tags} asLink className="mt-4" />
-      <Image src={frontMatter.image} className="mx-auto mt-6" />
+      <Image src={frontMatter.image} className="mx-auto mt-6 aspect-video object-contain" />
       <LookingForExperts />
     </>
   );

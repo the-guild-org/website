@@ -12,7 +12,11 @@ export interface ITweetProps {
   align?: 'left' | 'center' | 'right';
 }
 
-export const Tweet = ({ tweetLink, theme = 'light', align = 'left' }: ITweetProps): ReactElement => (
+export const Tweet = ({
+  tweetLink,
+  theme = 'light',
+  align = 'left',
+}: ITweetProps): ReactElement => (
   <Observer onEnter={() => handleTwttrLoad()}>
     <div className="flex justify-center">
       <blockquote className="twitter-tweet" data-theme={theme} data-align={align}>

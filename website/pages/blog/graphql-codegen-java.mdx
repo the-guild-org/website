@@ -8,45 +8,63 @@ description: GraphQL Codegen adds a new Apollo-Android and a new Java Backend pl
 image: /blog-assets/graphql-codegen-java/cover.png
 ---
 
-As you probably already know, [GraphQL Code Generator](https://graphql-code-generator.com) has become the most popular GraphQL code generation tool in the community.
+As you probably already know, [GraphQL Code Generator](https://graphql-code-generator.com) has
+become the most popular GraphQL code generation tool in the community.
 
 We constantly improve the underlying tools and also create more generators and plugins.
 
-One thing that some people often miss about GraphQL Code Generator, is that its programming language agnostic.
+One thing that some people often miss about GraphQL Code Generator, is that its programming language
+agnostic.
 
-We have many plugins from the community to generate different language outputs like C#, ReasonML, Dart and others.
+We have many plugins from the community to generate different language outputs like C#, ReasonML,
+Dart and others.
 
 But today we want to announce something new — we now have 2 new official plugins for **Java**.
 
-A [Apollo-Android generator](https://github.com/dotansimha/graphql-code-generator/pull/1924) and a [Java backend](https://graphql-code-generator.com/docs/plugins/java-resolvers) resolvers signature generator.
+A [Apollo-Android generator](https://github.com/dotansimha/graphql-code-generator/pull/1924) and a
+[Java backend](https://graphql-code-generator.com/docs/plugins/java-resolvers) resolvers signature
+generator.
 
-We've created those plugins because we needed them for some of our clients' production applications and the current tools in the ecosystem that are currently out there weren't sufficient enough for us.
+We've created those plugins because we needed them for some of our clients' production applications
+and the current tools in the ecosystem that are currently out there weren't sufficient enough for
+us.
 
 ## Apollo-Android
 
 The new plugin allows you to generate Java code if your project is using Apollo-Android.
 
-It includes a query builder and a response builders (for converting the network response into a type-safe classes), and it integrates with Apollo-Android runtime.
+It includes a query builder and a response builders (for converting the network response into a
+type-safe classes), and it integrates with Apollo-Android runtime.
 
-The goal of the generated code is to let you use your GraphQL operations (`query`, `mutation`, `subscription` and `fragment`) without the need to convert JSONs or deal with HTTP requests — you just need to write your operations, run the codegen and you'll get ready-to-use Java classes.
+The goal of the generated code is to let you use your GraphQL operations (`query`, `mutation`,
+`subscription` and `fragment`) without the need to convert JSONs or deal with HTTP requests — you
+just need to write your operations, run the codegen and you'll get ready-to-use Java classes.
 
-The reason we decided to implement our own plugin was because now that we need to use it in large production apps, the current tools in the ecosystem weren't sufficient enough for us.
+The reason we decided to implement our own plugin was because now that we need to use it in large
+production apps, the current tools in the ecosystem weren't sufficient enough for us.
 
-We also think this is a good opportunity for the community to iterate faster because of all the awesome capabilities the generator already has.
+We also think this is a good opportunity for the community to iterate faster because of all the
+awesome capabilities the generator already has.
 
-Using the GraphQL Code Generator infrastructure, we make sure that customization of the generated code will be much easier, and fixing bugs and adding features will be simpler and faster.
+Using the GraphQL Code Generator infrastructure, we make sure that customization of the generated
+code will be much easier, and fixing bugs and adding features will be simpler and faster.
 
-It also makes it much easier to load your schema from everywhere (either from a url, local file, introspection, or directly from code files containing strings), customize your GraphQL Scalars and map them to Java types, customize the names of the generated classes, the output path and more.
+It also makes it much easier to load your schema from everywhere (either from a url, local file,
+introspection, or directly from code files containing strings), customize your GraphQL Scalars and
+map them to Java types, customize the names of the generated classes, the output path and more.
 
 The new plugin will be available today in beta using the following tag — `1.2.2-beta.01`.
 
 ### How to Try It Now?
 
-Next week we are also planning to make it easier to integrate the plugin by building a Gradle plugin that wraps the execution of the Codegen, and integrates it with the Java ecosystem.
+Next week we are also planning to make it easier to integrate the plugin by building a Gradle plugin
+that wraps the execution of the Codegen, and integrates it with the Java ecosystem.
 
-On the stable release this Gradle plugin will be available, but for now, if you wish to try it now, you'll need to configure it manually.
+On the stable release this Gradle plugin will be available, but for now, if you wish to try it now,
+you'll need to configure it manually.
 
-Because the current GraphQL Code Generator package is released on NPM, you'll need to create a simple `package.json` file with the following content:
+Because the current GraphQL Code Generator package is released on NPM, you'll need to create a
+simple `package.json` file with the following content:
 
 ```json
 {
@@ -78,7 +96,8 @@ generates:
 
 _You can use your GraphQL endpoint if your schema is not available locally._
 
-Next, you need to configure your Gradle build configuration by adding the following dependency to your `build.gradle`:
+Next, you need to configure your Gradle build configuration by adding the following dependency to
+your `build.gradle`:
 
 ```
 plugins {
@@ -92,15 +111,19 @@ Also, add a build step:
 build.dependsOn yarn
 ```
 
-Now, when you'll run your Gradle build, it will make sure to download the Codegen and it's plugins, and will generate the Java classes for you.
+Now, when you'll run your Gradle build, it will make sure to download the Codegen and it's plugins,
+and will generate the Java classes for you.
 
-The usage of the generated code is the same you had before, just follow [the instructions of Apollo-Android runtime](https://github.com/apollographql/apollo-android#consuming-code).
+The usage of the generated code is the same you had before, just follow
+[the instructions of Apollo-Android runtime](https://github.com/apollographql/apollo-android#consuming-code).
 
 ## Java Backend Resolver Plugin
 
-The other plugin generates resolvers signature, that allow you to integrate your Java models classes to the generated signature, so you'll get a type-safe implementation of your resolvers.
+The other plugin generates resolvers signature, that allow you to integrate your Java models classes
+to the generated signature, so you'll get a type-safe implementation of your resolvers.
 
-It's based on [`graphql-java`](https://graphql-java.com) and compatible with its implementation for [`DataFetcher`s](https://graphql-java.com/documentation/v13/data-fetching).
+It's based on [`graphql-java`](https://graphql-java.com) and compatible with its implementation for
+[`DataFetcher`s](https://graphql-java.com/documentation/v13/data-fetching).
 
 Follow the instructions above, but use this `package.json`:
 
@@ -200,12 +223,16 @@ public class Resolvers {
 }
 ```
 
-Now you can use it as base `interface` for your `DataFetcher` implementation, and get a type-safe resolvers!
+Now you can use it as base `interface` for your `DataFetcher` implementation, and get a type-safe
+resolvers!
 
 ### What's Next?
 
 We are getting close to a stable release for those plugins and want your opinions on them.
 
-As mentioned, the stable release will also include a Gradle plugin to make it easier to integrate the Codegen with the Java ecosystem.
+As mentioned, the stable release will also include a Gradle plugin to make it easier to integrate
+the Codegen with the Java ecosystem.
 
-Please try it out today, and send us a feedback. Our goal is to make this plugin easy to use, and easy to customize, and you would see how quickly we manage, respond and solve issues on our open source tools, which is something we are very proud of.
+Please try it out today, and send us a feedback. Our goal is to make this plugin easy to use, and
+easy to customize, and you would see how quickly we manage, respond and solve issues on our open
+source tools, which is something we are very proud of.

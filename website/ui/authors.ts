@@ -146,6 +146,16 @@ export const AUTHORS: Record<string, Author> = {
     link: 'https://github.com/gabotechs',
     github: 'gabotechs',
   },
+  shuding: {
+    name: 'Shu Ding',
+    link: 'https://shud.in',
+    github: 'shuding',
+  },
+  eddeee888: {
+    name: 'Eddy Nguyen',
+    link: 'https://twitter.com/eddeee888',
+    github: 'eddeee888',
+  },
   tshedor: {
     name: 'Tim Shedor',
     link: 'https://github.com/tshedor',

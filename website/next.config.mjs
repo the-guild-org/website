@@ -2,7 +2,7 @@ import { withGuildDocs } from '@theguild/components/next.config';
 
 export default withGuildDocs({
   env: {
-    // needs for canonoical <link />
+    // needs for canonical <link />
     SITE_URL: 'https://the-guild.dev',
   },
   redirects: () =>
@@ -18,4 +18,9 @@ export default withGuildDocs({
       destination: to,
       permanent: true,
     })),
+  transformPageOpts(pageOpts) {
+    return {
+      ...pageOpts,
+    };
+  },
 });

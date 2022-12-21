@@ -1,6 +1,14 @@
 import { ReactElement } from 'react';
 
-export const Image = ({ alt, src, className }: { alt?: string; src: string; className?: string }): ReactElement => {
+export const Image = ({
+  alt,
+  src,
+  className,
+}: {
+  alt?: string;
+  src: string;
+  className?: string;
+}): ReactElement => {
   if (!src) {
     return null;
   }

@@ -22,7 +22,7 @@ const remarkLintNoDotAtEndOfHeading = lintRule(
         file.message(`Heading should not ends with "."`, node);
       }
     });
-  }
+  },
 );
 
 // eslint-disable-next-line import/no-default-export

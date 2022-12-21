@@ -28,7 +28,7 @@ export class CrispHandler implements HTMLRewriterElementContentHandlers {
               : ''
           }
         </script>`,
-        { html: true }
+        { html: true },
       );
     }
   }

@@ -32,7 +32,10 @@ export const handleTwttrLoad = () => {
   twttrLoad();
 };
 
-export const createScriptTag = (providerEmbedUrl: string | null, providerEmbedScript: string | null) => {
+export const createScriptTag = (
+  providerEmbedUrl: string | null,
+  providerEmbedScript: string | null,
+) => {
   const script = document.createElement(`script`);
 
   script.type = `text/javascript`;
