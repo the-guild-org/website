@@ -69,13 +69,13 @@ Require `input` or `type` fields to be non-nullable with `@oneOf` directive
 ```
 
 <Comparison>
-```graphql filename="❌ Incorrect"
+```graphql filename="❌ Incorrect" copy=false
 input Input @oneOf {
   foo: String!
   bar: [Int!]!
 }
 ```
-```graphql filename="✅ Correct"
+```graphql filename="✅ Correct" copy=false
 input Input @oneOf {
   foo: String
   bar: [Int!]
@@ -101,13 +101,13 @@ Enforce types with `@oneOf` directive have `error` and `ok` fields.
 ```
 
 <Comparison>
-```graphql filename="❌ Incorrect"
+```graphql filename="❌ Incorrect" copy=false
 type DoSomethingMutationResult @oneOf {
   notok: DoSomethingSuccess
   noterror: Error
 }
 ```
-```graphql filename="✅ Correct"
+```graphql filename="✅ Correct" copy=false
 type DoSomethingMutationResult @oneOf {
   ok: DoSomethingSuccess
   error: Error
@@ -128,7 +128,7 @@ Require queries, mutations, subscriptions or fragments to be located in separate
 ```
 
 <Comparison>
-```graphql filename="❌ Incorrect"
+```graphql filename="❌ Incorrect" copy=false
 # users.graphql
 query Users {
   users {
@@ -139,7 +139,7 @@ fragment UserFields on User {
   id
 }
 ```
-```graphql filename="✅ Correct"
+```graphql filename="✅ Correct" copy=false
 # users.graphql
 query Users {
   users {
@@ -164,7 +164,7 @@ this rule is a part of GraphQL-ESLint.
 ```
 
 <Comparison>
-```graphql filename="❌ Incorrect"
+```graphql filename="❌ Incorrect" copy=false
 fragment UserFields on User {
   id
 }
@@ -175,7 +175,7 @@ fragment UserFields on User {
   }
 }
 ```
-```graphql filename="✅ Correct"
+```graphql filename="✅ Correct" copy=false
 {
   user {
     ...UserFields
@@ -216,7 +216,7 @@ Here is an example of configuration and cases:
 <Callout type="warning">`*` symbol is mandatory, which means everything else.</Callout>
 
 <Comparison>
-```graphql filename="❌ Incorrect"
+```graphql filename="❌ Incorrect" copy=false
 type User {
   createdAt: DateTime!
   email: Email!
@@ -226,7 +226,7 @@ type User {
   updatedAt: DateTime!
 }
 ```
-```graphql filename="✅ Correct"
+```graphql filename="✅ Correct" copy=false
 type User {
   id: ID!
   email: Email!
@@ -252,7 +252,7 @@ description.
 ```
 
 <Comparison>
-```graphql filename="❌ Incorrect"
+```graphql filename="❌ Incorrect" copy=false
 type Mutation {
   createUser: User
 }
@@ -261,7 +261,7 @@ type User {
   name: String
 }
 ```
-```graphql filename="✅ Correct"
+```graphql filename="✅ Correct" copy=false
 type Mutation {
   "Create a new user"
   createUser: User
@@ -298,14 +298,14 @@ Now, everybody can take benefit from this new option 🎉.
 ```
 
 <Comparison>
-```graphql filename="❌ Incorrect"
+```graphql filename="❌ Incorrect" copy=false
 # createUser.graphql
 
 mutation CreateUser {
   # ...
 }
 ```
-```graphql filename="✅ Correct"
+```graphql filename="✅ Correct" copy=false
 # mutation.create-user.graphql
 
 mutation CreateUser {
