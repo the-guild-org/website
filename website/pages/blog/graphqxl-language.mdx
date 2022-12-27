@@ -8,6 +8,8 @@ image: /blog-assets/graphqxl-language/cover.png
 thumbnail: /blog-assets/graphqxl-language/thumbnail.png
 ---
 
+import { Comparison } from '@/components'
+
 When building GraphQL APIs following a schema-first approach and the project goes big,
 people usually find themselves repeating almost identical structures across the schema and
 copy-pasting common fields across the different types and inputs.
@@ -45,7 +47,7 @@ type Product {
   name: String!
   createdAt: Date
   modifiedAt: Date
-  ...
+  # ...
 }
 
 type User {
@@ -53,7 +55,7 @@ type User {
   name: String!
   createdAt: Date
   modifiedAt: Date
-  ...
+  # ...
 }
 ```
 
@@ -62,59 +64,39 @@ duplication and potential inconsistencies.
 
 In GraphQXL this would look something like:
 
-<table style={{ width: '100%', marginTop: 10 }}>
-    <thead>
-        <tr>
-            <th>
-                Source GraphQXL
-            </th>
-            <th>
-                Compiled GraphQL
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-                ```graphql
-                type _CommonFields {
-                  id: ID!
-                  name: String!
-                  createdAt: Date
-                  modifiedAt: Date
-                }
+<Comparison>
+```graphql filename="Source GraphQXL"
+type _CommonFields {
+  id: ID!
+  name: String!
+  createdAt: Date
+  modifiedAt: Date
+}
 
-                type Product {
-                  ..._CommonFields
-                }
+type Product {
+  ..._CommonFields
+}
 
-                type User {
-                  ..._CommonFields
-                }
-                ```
-            </td>
-            <td>
-                ```graphql
-                type Product {
-                  id: ID!
-                  name: String!
-                  createdAt: Date
-                  modifiedAt: Date
-                }
+type User {
+  ..._CommonFields
+}
+```
+```graphql filename="Compiled GraphQL"
+type Product {
+  id: ID!
+  name: String!
+  createdAt: Date
+  modifiedAt: Date
+}
 
-                type User {
-                  id: ID!
-                  name: String!
-                  createdAt: Date
-                  modifiedAt: Date
-                }
-
-                ```
-            </td>
-        </tr>
-    </tbody>
-
-</table>
+type User {
+  id: ID!
+  name: String!
+  createdAt: Date
+  modifiedAt: Date
+}
+```
+</Comparison>
 
 The idea is not only to reuse code instead of copy-pasting, but also
 to enforce consistency across resources in the schema.

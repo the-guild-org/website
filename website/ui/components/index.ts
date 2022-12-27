@@ -1,6 +1,7 @@
 export { Avatar } from './avatar';
 export { BlogCardList } from './blog-card-list';
 export { Button } from './button';
+export { Comparison } from './comparison';
 export { CopyToClipboard } from './copy-to-clipboard';
 export { Description } from './description';
 export { Heading } from './heading';
