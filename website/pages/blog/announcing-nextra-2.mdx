@@ -15,8 +15,9 @@ import nextraContrastMode from 'public/blog-assets/nextra-2/nextra-2-contrast-mo
 ## What's Nextra
 
 [Nextra](https://nextra.site) – Next.js Static Site Generator framework that works on top of Next.js
-and React, uses Tailwind CSS and [other amazing open-source libraries](https://nextra.site/about#credits).
-It lets you create your powerful markdown content using a `theme` package.
+and React, uses Tailwind CSS and
+[other amazing open-source libraries](https://nextra.site/about#credits). It lets you create your
+powerful markdown content using a `theme` package.
 
 Currently, Nextra contains two official themes:
 
@@ -29,8 +30,8 @@ But you can provide your own theme to fully customize to your needs.
 
 ### MDX 2 Support
 
-Migration to [MDX 2](https://mdxjs.com/blog/v2) comes with improved performance,
-supporting any JSX runtime and JavaScript expression inside your markdown pages.
+Migration to [MDX 2](https://mdxjs.com/blog/v2) comes with improved performance, supporting any JSX
+runtime and JavaScript expression inside your markdown pages.
 
 ```mdx filename="Markdown"
 import Hero from '@/components/hero'
@@ -64,11 +65,12 @@ Nextra 2 comes with support for the latest **Next.js 13** version and also up to
 
 ### Images and Links Optimization
 
-Static images are always optimized with `<NextImage />` component, internal links are replaced
-with `<NextLink />` component, external links will have `target="_blank"` and `rel="noreferrer"`
-and will inform screen readers about opening a link in a new tab.
+Static images are always optimized with `<NextImage />` component, internal links are replaced with
+`<NextLink />` component, external links will have `target="_blank"` and `rel="noreferrer"` and will
+inform screen readers about opening a link in a new tab.
 
-`<NextImage />` will prevent to have layout shifts on your page. Instantiate (client-side) navigation would be done with `<NextLink />`.
+`<NextImage />` will prevent to have layout shifts on your page. Instantiate (client-side)
+navigation would be done with `<NextLink />`.
 
 ```text filename="Markdown"
 ![Hero](/hero.png)
@@ -88,7 +90,11 @@ function MDXContent() {
     <>
       <Image src={nextraImage} alt="Hero" />
       <Link href="/more">Learn more</Link>
-      <a href="https://github.com/shuding/nextra/tree/main/examples" target="_blank" rel="noreferrer">
+      <a
+        href="https://github.com/shuding/nextra/tree/main/examples"
+        target="_blank"
+        rel="noreferrer"
+      >
         See examples<span className="sr-only"> (opens in a new tab)</span>
       </a>
     </>
@@ -100,7 +106,8 @@ export default MDXContent
 
 ### Extensible with `rehype`/`remark` Plugins
 
-You can extend Nextra with any of `rehype`/`remark` plugins, just pass them to the `nextra` function.
+You can extend Nextra with any of `rehype`/`remark` plugins, just pass them to the `nextra`
+function.
 
 ```js filename="next.config.js" {7-8}
 import nextra from 'nextra'
@@ -109,7 +116,9 @@ import remarkMdxDisableExplicitJsx from 'remark-mdx-disable-explicit-jsx'
 const withNextra = nextra({
   theme: 'nextra-theme-docs',
   themeConfig: './theme.config.jsx',
-  remarkPlugins: [[remarkMdxDisableExplicitJsx, { whiteList: ['table', 'thead', 'tbody', 'tr', 'th', 'td'] }]],
+  remarkPlugins: [
+    [remarkMdxDisableExplicitJsx, { whiteList: ['table', 'thead', 'tbody', 'tr', 'th', 'td'] }]
+  ],
   rehypePlugins: []
 })
 
@@ -185,7 +194,8 @@ export const NextraReadme = () => {
 
 ### Nextra Theme Docs Features
 
-`nextra-theme-docs` was completely redesigned to be more flexible and configurable for all of your needs.
+`nextra-theme-docs` was completely redesigned to be more flexible and configurable for all of your
+needs.
 
 <NextImage
   src={nextraPage}
@@ -214,17 +224,21 @@ They could be configured in your `theme.config.jsx` file.
 
 #### Builtin Full-Text Search
 
-Full-text search is powered by [FlexSearch](https://github.com/nextapps-de/flexsearch) and Nextra will
-index all of your pages at build time ⚡.
+Full-text search is powered by [FlexSearch](https://github.com/nextapps-de/flexsearch) and Nextra
+will index all of your pages at build time ⚡.
 
-<Video src="/blog-assets/nextra-2/nextra-2-flexsearch.mov" className="rounded-3xl border border-gray-700" />
+<Video
+  src="/blog-assets/nextra-2/nextra-2-flexsearch.mov"
+  className="rounded-3xl border border-gray-700"
+/>
 
 #### New Syntax Highlighting
 
 [Prismjs](https://prismjs.com) was replaced by [Shiki](https://github.com/shikijs/shiki) and
 [rehype-pretty-code](https://rehype-pretty-code.netlify.app).
 
-Below is an example of a code block with a filename, line numbers, word highlighting and line highlighting:
+Below is an example of a code block with a filename, line numbers, word highlighting and line
+highlighting:
 
 ````md filename="Markdown"
 ```jsx filename="My File" showLineNumbers /App/ {2}
@@ -244,8 +258,9 @@ function App() {
 
 #### Next SEO Builtin
 
-Out of the box, `nextra-theme-docs` has Next SEO installed. By default, in the front matter you can set `title`,
-`description`, `canonical` and `openGraph` and they will be passed directly to the `<NextSeo />` component.
+Out of the box, `nextra-theme-docs` has Next SEO installed. By default, in the front matter you can
+set `title`, `description`, `canonical` and `openGraph` and they will be passed directly to the
+`<NextSeo />` component.
 
 ```md filename="Markdown"
 ---
@@ -325,8 +340,8 @@ your `theme.config.jsx` file.
 
 #### A11y
 
-Accessibility is all, Nextra respects system preferences, animation will be reduced with `reduce-motion` mode,
-colors will be adjusted in `contrast-more` mode.
+Accessibility is all, Nextra respects system preferences, animation will be reduced with
+`reduce-motion` mode, colors will be adjusted in `contrast-more` mode.
 
 <NextImage
   src={nextraContrastMode}
@@ -337,8 +352,8 @@ colors will be adjusted in `contrast-more` mode.
 
 ## Conclusion
 
-[The Guild](/) discovered Nextra 2 from the first betas and actively participated in the development and improvement of this library.
-In the end, we migrated all of our documentation websites, and received a bunch of positive feedback
-from our community ❤️.
+[The Guild](/) discovered Nextra 2 from the first betas and actively participated in the development
+and improvement of this library. In the end, we migrated all of our documentation websites, and
+received a bunch of positive feedback from our community ❤️.
 
 <Callout emoji="🍭">In fact, even this blog uses Nextra 2 and `nextra-theme-docs`.</Callout>
