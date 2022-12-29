@@ -61,6 +61,7 @@ module.exports = {
           'Vue.js',
           'DataLoader',
           'AoT',
+          'ESLint',
         ],
       ],
     ],
