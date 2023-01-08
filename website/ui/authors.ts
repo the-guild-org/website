@@ -151,4 +151,9 @@ export const AUTHORS: Record<string, Author> = {
     link: 'https://shud.in',
     github: 'shuding',
   },
+  eddeee888: {
+    name: 'Eddy Nguyen',
+    link: 'https://twitter.com/eddeee888',
+    github: 'eddeee888',
+  },
 };
