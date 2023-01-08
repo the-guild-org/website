@@ -1,0 +1,71 @@
+---
+title: Setting Up GraphQL Server to Scale With GraphQL Codegen Server Preset
+authors: eddeee888
+tags: [graphql, codegen, node, server, typescript]
+date: 2023-01-31
+description: Structuring GraphQL server the right way enables many teams to work in harmony while minimising runtime risks.
+# image: 
+# thumbnail: 
+---
+
+When using GraphQL with Microservices architecture, the GraphQL server is usually the central point where teams must develop their own features while avoiding blocking others. Every team has their own standards and practices. Therefore, if the GraphQL server is not set up in a structure to allow it to scale, development slows down dramatically as more time would be spent on admin tasks and not feature work.
+
+In this blog post we explore the common problems GraphQL servers encounter at scale and recommendations on how to solve them.
+
+## Easy Problem
+
+### How to Manage Ownership
+
+* Each team need to manage their own: resolvers, datasources, types
+* Need to minimise chance of one team breaking others' code
+
+### Solution: Split into Modules
+
+* Split into schema modules, ideally based on business domain. Each schema module containing its own resolvers, datasources, types, etc.,
+* Assign CODEOWNERS to each module.
+* One team to maintain the “core” of the server: config, schema management, etc.
+
+## Hard Problems
+
+### 1. How to Enforce Best Practices for All Teams
+
+* Thanks to GraphQL Codegen, we can generate types for resolvers
+* However, there's no stopping teams from *NOT* using the types
+
+### 2. How to Minimise Noise to the Core Maintainers
+
+* Core maintainer of the GraphQL server usually need to manage many things:
+  * `codegen.yml`
+  * Main server logic e.g. putting the resolvers together (show an example with GraphQL Yoga)
+
+* Resolver Problm: adding a new schema module requires wiring up to the main server file/s which requires core maintainer's attention at least once:
+  * If manually putting all resolvers in a file, every new resolver / type pings the core maintainer
+  * If using `mergeResolvers` from `@graphql-tools/merge`, still have to put it in one file. This pings core maintainer for every new module
+  * If using `mergeResolvers` from `@graphql-tools/merge` to automatically merge, can run into issue where a team's resolver overrides others. Give example(?)
+
+* Explain mappers. Mapper problem: a team needing to add mappers touch `codegen.yml` which requires the core maintainer, or in some cases, all teams to look at the change because this is config
+  * Add example:
+        ```yaml
+        mappers:
+          User: "./mappers#UserMapper"
+          Profile: "./mappers#ProfileMapper"
+        ```
+
+### Solution: Use Server Preset
+
+* Use `@eddeee888/gcg-typescript-resolver-files` preset
+* Explain Config to Convention
+* Show how to set up
+* Features:
+  * Resolvers
+    * Resolvers are created in opinionated filesystem structure that's easy to search for.
+    * Resolvers are put together in a generated file that can be ignored. Also no runtime.
+    * Resolvers are guaranteed to exist. Give example
+  * Mappers
+    * Show previous steps that would ping core maintainers (i.e. b/c editing `codegen.yml`)
+    * `.mappers.ts` and `Mapper` suffix are all needed. Does not ping core maintainers
+  * GraphQL Scalars
+    * Uses GraphQL Scalars by default for non-native scalars.
+    * Peer deps so only install if needed.
+
+## Summary
