@@ -81,6 +81,11 @@ export const jsonConfig = {
       crispSegments: ['hive-website'],
       sitemap: true,
     },
+    '/graphql/gateway': {
+      rewrite: 'conductor.pages.dev',
+      crispSegments: ['conductor'],
+      sitemap: true,
+    },
     // Redirects
     '/graphql/eslint': {
       redirect: 'https://github.com/B2o5T/graphql-eslint',
