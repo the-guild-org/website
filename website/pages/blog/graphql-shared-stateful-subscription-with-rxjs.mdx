@@ -173,6 +173,44 @@ share({
 ```
 </Callout>
 
+### Run server-side logic when a user's subscription is closed
+
+In GraphQL we implement subscriptions by writing two functions:
+- a `subscribe` function which is run one time only and must returns an AsyncIterable
+- a `resolve` function which is run every time a value is emitted by the AsyncIterable returned by the `subscribe` function and transforms this value into the Subscription output type.
+
+In order to execute logic, we have 2 places: in `subscribe` when the subscription starts and in `resolve` on each emitted value. What if we want to execute logic when the subscription ends (whether it completed or was stopped by the client)?
+
+The answer is: it is not contemplated in the spec. But it doesn't mean we can't do it.
+In fact it is even very simple! If we use the solution described above, we already have all the pieces in place. We only need to add one line: in the `subscribe` function where we set up the AsyncIterable (by transforming the Observable into an AsyncIterable), we only have to use RXJS's `finalize` operator.
+
+```ts
+{
+  resolvers: {
+    Subscription: {
+      giveMeInts: {
+        subscribe(root, args, context) {
+          return eachValueFrom(
+            getPublisher(args.entityId).pipe(
+              finalize(() => {
+                // run logic here when subscription ends
+                console.log(`Subscription giveMeInts has ended for user ${context.userId}`);
+              }),
+            )
+          );
+        },
+        resolve(root, args, context) {
+          return root;
+        }
+      }
+    }
+  }
+}
+```
+
+In the previous examples, we used the `finalize` operator on the shared observable pipeline in order to clean up after all subscriptions to a specific entity had ended. But we can also use it per-subscription by piping it onto the shared observable: this way it is only run for when this specific subscription ends.
+And of course, like we just did, you can combine both!
+
 ## Apply to a real-life example
 
 Let's consider a view such as a complex "playlist": this playlist is a list of items organized in blocks, the items themselves are a complex aggregate of several multimedia (video, audio, graphics) objects, those multimedia objects themselves might be aggregate (bundles) or have of some children objects (e.g. sub-clips, graphics on a video, subtitles). In effect this complex playlist is organized in the form of a tree of objects.
