@@ -8,7 +8,7 @@ description: Structuring GraphQL server the right way enables many teams to work
 # thumbnail: 
 ---
 
-When using GraphQL with Microservices architecture, the GraphQL server is usually the central point where teams must develop their own features while avoiding blocking others. Every team has their own standards and practices. Therefore, if the GraphQL server is not set up in a structure to allow it to scale, development slows down dramatically as more time would be spent on admin tasks and not feature work.
+A GraphQL server is usually the central point where teams must develop their own features while avoiding blocking others. Every team has their own standards and practices. Therefore, if the GraphQL server is not set up in a structure to allow it to scale, development slows down dramatically as more time would be spent on admin tasks and not feature work.
 
 In this blog post we explore the common problems GraphQL servers encounter at scale and recommendations on how to solve them.
 
@@ -20,7 +20,7 @@ Putting multiple teams in one codebase without clear structure and guidelines is
 
 Teams also want their team members to be notified when changes that need reviewed, not on every Pull Request (PR). If you have ever been notified for a change that's unrelated to your team, chances are, the codebase is not structured correctly.
 
-In the example below, TeamA is the first to set up the server. They manage `User` and `Auth` related files so they creates `datasources` and `resolvers` folder for these files:
+In the example below, Team A is the first to set up the server. They manage `User` and `Auth` related files so they creates `datasources` and `resolvers` folder for these files:
 
 ```markdown
 ├── src/
@@ -37,7 +37,7 @@ In the example below, TeamA is the first to set up the server. They manage `User
 │   ├── codegen.yml
 ```
 
-Then, TeamB comes into the codebase. They manage `Book` related files so they add their files following the same structure:
+Then, Team B comes into the codebase. They manage `Book` related files so they add their files following the same structure:
 
 ```markdown
 ├── src/
@@ -64,7 +64,7 @@ It is tempting to split this structure up into folders, each managed by a team:
 ```markdown
 ├── src/
 │   ├── schema/
-│   │   ├── TeamA/ # TeamA pinged (by CODEOWNERS) if anything changes in this folder
+│   │   ├── TeamA/                # TeamA pinged (by CODEOWNERS) if anything changes in this folder
 │   │   │   ├── datasources/
 │   │   │   │   ├── UserDatasource.ts
 │   │   │   │   ├── AuthDatasource.ts
@@ -73,7 +73,7 @@ It is tempting to split this structure up into folders, each managed by a team:
 │   │   │   │   ├── authResolvers.ts
 │   │   │   ├── userSchema.graphql
 │   │   │   ├── authSchema.graphql
-│   │   ├── TeamB/ # TeamB pinged (by CODEOWNERS) if anything changes in this folder
+│   │   ├── TeamB/                 # TeamB pinged (by CODEOWNERS) if anything changes in this folder
 │   │   │   ├── datasources/
 │   │   │   │   ├── BookDatasource.ts
 │   │   │   ├── resolvers/
@@ -83,7 +83,7 @@ It is tempting to split this structure up into folders, each managed by a team:
 │   ├── codegen.yml
 ```
 
-This is already a big improvement as ownership is clearer, but there's still organisational problems. For example, what happens when Team A changes what they own? Or split up into smaller teams? Or simply change their name? All of these scenarios require some level of admin work: at least renaming of the folder or at most moving files around, both having no values to end user.
+This is already a big improvement as ownership is clearer, but there's still organisational problems. For example, what happens when Team A changes what they own? Or split up into smaller teams? Or simply change their name? All of these scenarios require some level of admin work: at least renaming of the folder and at most moving files around, both having no values to end user.
 
 On top of that, all datasources and resolvers must be put together into the GraphQL server. In this case, it's the `server.ts` file. Who owns this file and other maintenance of the server such as `codegen.yml` (we all use GraphQL Codegen right? 😉), package updates, security patches, etc.?
 
@@ -91,76 +91,297 @@ On top of that, all datasources and resolvers must be put together into the Grap
 
 It is fairly common to see teams change name or mission. However, the thing that does not change very often (and in some cases, never!) is business domain. If we split our code based on business domain and assign teams accordingly, it becomes much more scalable.
 
-On the maintenance of the server, it is best to have a small group of dedicated maintainers. This could consist of one member from each team in the codebase and membership can rotate, or another team altogether. Having a dedicated group of maintainers help reduce noise and cognitive load to the rest of the teams.
+On the maintenance of the server, it is best to have a small group of dedicated maintainers. This could consist of one member from each team in the codebase and membership can rotate, or another team altogether. Having a dedicated group of maintainers help reduce noise and cognitive load from the rest of the teams.
 
 Using the same example before, we can identify 3 main domains: User, Auth and Book, each have CODEOWNERS set up to notify appropriate teams of changes. The Maintainers own `server.ts` and other configs.
 
 ```markdown
 ├── src/
 │   ├── schema/
-│   │   ├── user/   # TeamA pinged if changed
+│   │   ├── user/                      # TeamA pinged if changed
 │   │   │   ├── datasources/
 │   │   │   │   ├── UserDatasource.ts
 │   │   │   ├── resolvers/
 │   │   │   │   ├── userResolvers.ts
 │   │   │   ├── userSchema.graphql
-│   │   ├── auth/   # TeamA pinged if changed
+│   │   ├── auth/                      # TeamA pinged if changed
 │   │   │   ├── datasources/
 │   │   │   │   ├── AuthDatasource.ts
 │   │   │   ├── resolvers/
 │   │   │   │   ├── authResolvers.ts
 │   │   │   ├── authSchema.graphql
-│   │   ├── book/   # TeamB pinged if changed
+│   │   ├── book/                      # TeamB pinged if changed
 │   │   │   ├── datasources/
 │   │   │   │   ├── BookDatasource.ts
 │   │   │   ├── resolvers/
 │   │   │   │   ├── bookResolvers.ts
 │   │   │   ├── bookSchema.graphql
-│   ├── server.ts   # Maintainers pinged if changed
-│   ├── codegen.yml # Maintainers pinged if changed
+│   ├── server.ts                      # Maintainers pinged if changed
+│   ├── codegen.yml                    # Maintainers pinged if changed
 ```
 
 ## The Hard Problems
 
+Splitting schema into modules is usually easy to get teams to agree on. It is then we start to see the hard problems: enforcing best practices to the teams while reducing the time Maintainers need to spend on server maintenance.
+
 ### 1. How to Enforce Best Practices for All Teams
 
-*   Thanks to GraphQL Codegen, we can generate types for resolvers
-*   However, there's no stopping teams from *NOT* using the types
+Bad practices and conventions spread like fire, on a hot summer day, in the bush, in Australia. Trust me it is the worst! I used to be part of a Maintainers team. We had guidelines on things like resolver naming convention. Once in a blue moon, one person incorrectly used pascal case instead of camel case. The following day, I woke up with more than half the the resolvers in pascal case 💀. OK, I am exaggerating here but the experience was very traumatising.
 
-### 2. How to Minimise Noise to the Core Maintainers
+Guidelines alone is only good if people follow it. Without explicit and automatic enforcement, things start to slip and bad practices spread sooner or later. To enforce guidelines, we need tools. Luckily, these days we have an extensive range of tools for best practices a GraphQL server:
 
-*   Core maintainer of the GraphQL server usually need to manage many things:
-    *   `codegen.yml`
-    *   Main server logic e.g. putting the resolvers together (show an example with GraphQL Yoga)
+*   [GraphQL Codegen](https://the-guild.dev/graphql/codegen) with [typescript](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript) and [typescript-resolvers](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript-resolvers) plugins for type-safe GraphQL server development in TypeScript
+*   [GraphQL ESLint](https://github.com/B2o5T/graphql-eslint) for validation and conventions like naming and best practices.
 
-*   Resolver Problm: adding a new schema module requires wiring up to the main server file/s which requires core maintainer's attention at least once:
-    *   If manually putting all resolvers in a file, every new resolver / type pings the core maintainer
-    *   If using `mergeResolvers` from `@graphql-tools/merge`, still have to put it in one file. This pings core maintainer for every new module
-    *   If using `mergeResolvers` from `@graphql-tools/merge` to automatically merge, can run into issue where a team's resolver overrides others. Give example(?)
+(TODO: Does the below sentences sound too harsh? To both the existing tooling and teams I'm working with?)
 
-*   Explain mappers. Mapper problem: a team needing to add mappers touch `codegen.yml` which requires the core maintainer, or in some cases, all teams to look at the change because this is config
-    *   Add example:
-        ```yaml
-        mappers:
-          User: "./mappers#UserMapper"
-          Profile: "./mappers#ProfileMapper"
-        ```
+However, there are still areas to improve.
+
+For example, the guideline for one of the GraphQL servers I am working on is to use generated types from GraphQL Codegen. However, some people do not follow the guidelines, mostly because they are not aware of it. Luckily, these issues are caught by other team members or the Maintainers at PR review time, but it could have saved everyone time and effort if it was easier.
+
+### 2. How to Minimise Noise to the Maintainers
+
+Maintainers, apart from their their own team's work, usually need to manage many aspects of a GraphQL server:
+
+*   Core server logic
+*   `codegen.yml`
+
+Changing anything in these files notifies the Maintainers. Unfortunately, this happens fairly regularly in normal workflows.
+
+For example, if a new resolver is added, they must be manually added to the resolver list that is passed to the server. So Maintainers are notified on every new resolver.
+
+(TODO: not sure if we are ok with calling out the caveats of mergeResolvers from @graphql-tools/merge here)
+
+There is a way to mitigate this issue: each schema module exports an object of resolvers and they are merged with [mergeResolvers from @graphql-tools/merge](https://the-guild.dev/graphql/tools/docs/schema-merging#merging-resolvers). This means the Maintainers are only notified on every new module instead of every resolver. However, `mergeResolvers` has a runtime and since it's simply merging plain JavaScript objects, there is a risk of some one accidentally overriding others' resolvers.
+
+(TODO: Is the a The Guild blog post about GraphQL is more than just forwarding API responses to the client? Or a blog of how mappers work?)
+
+Another commonly used feature is [mappers](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript-resolvers#mappers). Resolvers can return mapper objects instead of GraphQL output types.
+
+The problem with mappers is that every time we need to create one, we need to update `codegen.yml` so it generates the types correctly:
+
+```yaml
+generates:
+  src/schema/types.generated.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers
+    mappers:
+      User: './mappers#UserMapper'
+      Profile: './mappers#ProfileMapper'
+      # one line for each mapper
+```
+
+This is a problem for the Maintainers because these changes are based on teams' requirements. Whether a team uses mappers or not is the team's choice and should not concern the Maintainers. Yet, the Maintainers and notified because they manage the `codegen.yml` file.
 
 ### Solution: Use Server Preset
 
-*   Use `@eddeee888/gcg-typescript-resolver-files` preset
-*   Explain Config to Convention
-*   Show how to set up
-*   Features:
-    *   Resolvers
-        *   Resolvers are created in opinionated filesystem structure that's easy to search for.
-        *   Resolvers are put together in a generated file that can be ignored. Also no runtime.
-        *   Resolvers are guaranteed to exist. Give example
-    *   Mappers
-        *   Show previous steps that would ping core maintainers (i.e. b/c editing `codegen.yml`)
-        *   `.mappers.ts` and `Mapper` suffix are all needed. Does not ping core maintainers
-    *   GraphQL Scalars
-        *   Uses GraphQL Scalars by default for non-native scalars.
-        *   Peer deps so only install if needed.
+To solve the above problems, I am working on a preset for GraphQL server: [@eddeee888/gcg-typescript-resolver-files](https://www.npmjs.com/package/@eddeee888/gcg-typescript-resolver-files). The aim is to move from guidelines and config to enforceable conventions. All changes happen inside teams' modules so feature work does not notify the Maintainer.
+
+This works for any GraphQL server implementation such as GraphQL Yoga, Apollo Server, etc.
+
+Here's how to get started:
+
+```bash
+yarn add -D @graphql-codegen/cli @eddeee888/gcg-typescript-resolver-files
+```
+
+Then, you can add the following config:
+
+```yaml
+schema: 'src/**/*.graphql'
+generates:
+  src/schema:
+    preset: '@eddeee888/gcg-typescript-resolver-files'
+```
+
+Note that this preset includes `@graphql-codegen/typescript` and `@graphql-codegen/typescript-resolvers` under the hood so you do not have to set that up manually!
+
+Now, all we have to do is to set up schema modules like this:
+
+```markdown
+├── src/
+│   ├── schema/
+│   │   ├── base/
+│   │   │   ├── schema.graphql
+│   │   ├── user/
+│   │   │   ├── schema.graphql
+│   │   ├── book/
+│   │   │   ├── schema.graphql
+```
+
+Given the following content of schema files:
+
+```graphql
+# base.graphql
+type Query
+type Mutation
+
+# user.graphql
+extend type Query {
+  user(id: ID!): User
+}
+type User {
+  id: ID!
+  fullName: String!
+}
+
+# book.graphql
+extend type Query {
+  book(id: ID!): Book
+}
+extend type Mutation {
+  markBookAsRead(id: ID!): Book!
+}
+type Book {
+  id: ID!
+  isbn: String!
+}
+```
+
+When we run codegen:
+
+```bash
+yarn codegen
+```
+
+We will see the following files:
+
+```markdown
+├── src/
+│   ├── schema/
+│   │   ├── base/
+│   │   │   ├── schema.graphql
+│   │   ├── user/
+│   │   │   ├── resolvers/
+│   │   │   │   ├── Query/
+│   │   │   │   │   ├── user.ts            # Generated
+│   │   │   │   ├── User.ts                # Generated
+│   │   │   ├── schema.graphql
+│   │   ├── book/
+│   │   │   ├── resolvers/
+│   │   │   │   ├── Query/
+│   │   │   │   │   ├── book.ts            # Generated
+│   │   │   │   ├── Mutation/
+│   │   │   │   │   ├── markBookAsRead.ts  # Generated
+│   │   │   │   ├── Book.ts                # Generated      
+│   │   │   ├── schema.graphql
+│   │   ├── types.generated.ts             # Generated
+│   │   ├── resolvers.generated.ts         # Generated
+```
+
+#### Generated Files
+
+*   Shared schema and resolver TypeScript types: `types.generated.ts`. This is generated by `@graphql-codegen/typescript` and `@graphql-codegen/typescript-resolvers` plugins. This can be ignored in Git or removed from CODEOWNERS because it is fully generated.
+
+*   Resolver list: `resolvers.generated.ts`. This puts all other resolvers together statically, ready to be passed into the GraphQL server. This can be ignored in Git or removed from CODEOWNERS because it is fully generated.
+
+```ts
+// src/schema/resolvers.generated.ts
+/* This file was automatically generated. DO NOT UPDATE MANUALLY. */
+import type { Resolvers } from './types.generated';
+import { book as Query_book } from './book/resolvers/Query/book';
+import { markBookAsRead as Mutation_markBookAsRead } from './book/resolvers/Mutation/markBookAsRead';
+import { Book } from './book/resolvers/Book';
+import { user as Query_user } from './user/resolvers/Query/user';
+import { User } from './user/resolvers/User';
+export const resolvers: Resolvers = {
+  Query: {
+    book: Query_book,
+    user: Query_user,
+  },
+  Mutation: { 
+    markBookAsRead: Mutation_markBookAsRead,
+  },
+
+  Book: Book,
+  User: User,
+};
+
+```
+
+*   Operation resolvers: `src/schema/user/resolvers/Query/user.ts`, `src/schema/book/resolvers/Query/book.ts`, `src/schema/book/resolvers/Mutation/book.ts`
+
+```ts
+// Example: src/schema/user/resolvers/Query/user.ts
+import type { QueryResolvers } from './../../../types.generated';
+export const user: NonNullable<QueryResolvers['user']> = async (_parent, _arg, _ctx) => {
+  /* Implement Query.user resolver logic here */
+};
+```
+
+*   Object type resolvers: `src/schema/user/resolvers/User.ts`, `src/schema/book/resolvers/Book.ts`
+
+```ts
+// Example: src/schema/user/resolvers/User.ts
+import type { UserResolvers } from './../../types.generated';
+export const User: UserResolvers = {
+  /* Implement User resolver logic here */
+};
+```
+
+Now, you can go straight into implementing your resolvers without worrying about types or updating the resolvers list!
+
+The resolver files will not get overwritten on future codegen. However, there are some smarts built-in to ensure resolvers are correctly exported. For example, if we rename `User` to `WrongUser` in `src/schema/user/resolvers/User.ts`, and run codegen, the file will be updated with a warning:
+
+```ts
+// Example: src/schema/user/resolvers/User.ts
+import type { UserResolvers } from './../../types.generated';
+export const WrongUser: UserResolvers = {
+  /* Implement User resolver logic here */
+};
+/* WARNING: The following resolver was missing from this file. Make sure it is properly implemented or there could be runtime errors. */
+export const User: UserResolvers = {
+  /* Implement User resolver logic here */
+};
+```
+
+#### Other GraphQL Types
+
+Currently the following types are supported by the preset:
+
+*   Union: A file will be generated for every Union
+*   Scalars:
+    *   If the Scalar name matches one in [graphql-scalars](https://the-guild.dev/graphql/scalars), it is automatically imported from `graphql-scalars` into resolver list.
+    *   If not, a file will be generated for every Scalar
+
+For other currently non-supported types, we can declare them using the `externalResolvers` preset config.
+
+#### Mappers
+
+Mappers can be added by exporting types or interfaces with `Mapper` suffixes from `.mappers.ts` files in each module. For example, `UserMapper` will be used as `User`'s mapper type.
+
+```ts
+// src/schema/user/schema.mappers.ts
+
+// This works! This will be used as mapper for `User` object type
+export { User as UserMapper } from 'external-module'
+
+// This works! For `User1` object type
+export interface User1Mapper { 
+  id: string;
+}
+
+// This works 2! For `User2` object type
+export type User2Mapper = { id: string } 
+
+// This works 3! For `User3` object type
+interface User3Mapper {
+  id: string;
+}
+export { User3Mapper }
+```
+
+#### Gradual Migration Supported
+
+Do you have existing code and cannot migrate all in one big bang? The preset has `whitelistedModules` and `blacklistedModules` settings to support gradual migration of modules.
+
+#### Customisable Conventions
+
+All of the above conventions are customisable! Check out the documentation for [more options](https://github.com/eddeee888/graphql-code-generator-plugins/tree/master/packages/typescript-resolver-files).
 
 ## Summary
+
+In this blog post, we have explored the problems that can happen to a GraphQL server if it is not set up to scale such as ownership, enforcing best practices and minimising noise to Maintainers. We can use the server preset `@eddeee888/gcg-typescript-resolver-files` to solve these problems for GraphQL servers.
+
+Why don't you give it a go and let me know if it works for you?
