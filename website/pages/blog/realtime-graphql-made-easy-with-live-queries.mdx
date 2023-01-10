@@ -1,0 +1,68 @@
+---
+title: Realtime GraphQL made easy with Live Queries
+description: Build collaborative, multiplayer applications faster and easier than ever with GraphQL Live Queries on Grafbase.
+authors: notrab
+tags: [graphql, real-time, live-query]
+date: 2023-01-13
+# image: /blog-assets/realtime-graphql-made-easy/cover.png
+# thumbnail: /blog-assets/realtime-graphql-made-easy/thumbnail.png
+---
+
+The Guild has made working with realtime [GraphQL Subscriptions and Live Queries](/blog/subscriptions-and-live-queries-real-time-with-graphql) easy over the last few years thanks to plugins that work out of the box with GraphQL Yoga.
+
+However, there are developers who don't want the hassle of building your own backend, managing deployments, continuous integration, juggling connection pooling, and more. Thankfully there are solutions which are designed to abstract all of that hard work &mdash; AWS Amplify, Grafbase, etc.
+
+Grafbase was designed to manage all of the above. You get the power of a fully distributed GraphQL API at the edge all by creating a single `grafbase/schema.graphql` file in your project.
+
+Your schema contains models with special directives to relate data, set default values, validation, and more.
+
+```graphql
+# grafbase/schema.graphql
+
+type Post @model {
+  title: String!
+  slug: String! @unique
+}
+```
+
+[Laurin Quast](https://twitter.com/n1rual) introduced in 2021 a collection of packages to support the use of GraphQL Live Queries in the server, and client.
+
+**Today, [Grafbase](https://grafbase.com) is happy to announce it now supports GraphQL Live Queries!**
+
+This means that all you need to do to start using GraphQL Live Queries is add `@live` to your query!
+
+```graphql
+query @live {
+  postCollection(first: 10) {
+    edges {
+      node {
+        id
+        title
+      }
+    }
+  }
+}
+```
+
+Together with The Guild, Grafbase is also releasing 2 new packages (with more on the way) to further abstract the effort needed to implement Live Queries on the frontend.
+
+Starting with support for [Apollo Client](https://www.apollographql.com/docs/react/) and [URQL](https://formidable.com/open-source/urql/), you can add Live Queries with the following packages:
+
+- [`@grafbase/apollo-link`](https://www.npmjs.com/package/@grafbase/apollo-link)
+- [`@grafbase/urql-exchange`](https://www.npmjs.com/package/@grafbase/urql-exchange)
+
+Both packages use the foundations set by The Guild to handle [Server-Sent Events](https://grafbase.com/docs/realtime/live-queries#server-sent-events), and [JSON Patch](https://grafbase.com/docs/realtime/live-queries#json-patch).
+
+## Try it now!
+
+You can try Live Queries by building your own backend in one simple command:
+
+```bash
+npx grafbase init
+```
+
+Once you've modelled your data using the [schema](https://grafbase.com/docs/schema/overview) you can run your backend locally to build:
+
+```bash
+npx grafbase dev
+```
