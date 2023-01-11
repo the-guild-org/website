@@ -8,7 +8,7 @@ description: Structuring GraphQL server the right way enables many teams to work
 # thumbnail: 
 ---
 
-A GraphQL server is usually the central point where teams must develop their own features while avoiding blocking others. Every team has their own standards and practices. Therefore, if the GraphQL server is not set up in a structure to allow it to scale, development slows down dramatically as more time would be spent on admin tasks and not feature work.
+A GraphQL server is usually the central point where teams must develop their own features while avoiding blocking others. Every team has their own standards and practices. So, if the GraphQL server is not set up in a structure to allow it to scale, development slows down as more time is spent on admin tasks and not feature work.
 
 In this blog post we explore the common problems GraphQL servers encounter at scale and recommendations on how to solve them.
 
@@ -16,9 +16,9 @@ In this blog post we explore the common problems GraphQL servers encounter at sc
 
 ### How to Manage Code Ownership
 
-Putting multiple teams in one codebase without clear structure and guidelines is a recipe for disaster. The first team in the codebase usually sets it up a structure that works for them. When a second team joins, they most likely just follows the structure that's already there. The same story happens for every team thereafter. After a few more rounds, development slows down, one reviews the structure and finds themselves staring down a codebase that was structured by one team, for one team.
+Putting many teams in one codebase without clear structure and guidelines is a recipe for disaster. The first team in the codebase usually sets it up a structure that works for them. When a second team joins, they most likely just follows the structure that's already there. The same story happens for every team thereafter. After a few more rounds, development slows down. One may review the structure and finds themselves staring down a codebase that was structured by one team, for one team.
 
-Teams also want their members to be notified when changes that need reviewed, not on every Pull Request (PR). If you have ever been notified for a change that is unrelated to your team, chances are the codebase is not structured correctly to support multiple teams.
+Teams want their members to be notified for changes that need reviewed, not on every Pull Request (PR). If you were ever been notified for a change that is unrelated to your team, chances are the codebase is not structured to support many teams working in it.
 
 In the example below, Team A is the first to set up the server. They manage `User` and `Auth` domains so they create `datasources` and `resolvers` folder for these files:
 
@@ -57,7 +57,7 @@ Then, Team B comes into the codebase. They manage `Book` domain so they add thei
 │   ├── codegen.yml
 ```
 
-While this works at a small scale where everyone knows each others, it cannot scale. When there are tens or hundreds of datasources and resolvers, it would be hard to know who owns what. A simple solution is to assign files to owners using GitHub's CODEOWNERS or similar features. However, it has to be done on every file because files are split in category folders e.g. `resolvers`, `datasources`, etc.
+While this works at a small scale where everyone knows each others, it cannot scale. When there are tens or hundreds of datasources and resolvers, it would be hard to know who owns what. A simple solution is to assign files to owners using GitHub's CODEOWNERS or similar features. But it has to be done on every file because files are split in category folders e.g. `resolvers`, `datasources`, etc.
 
 It is tempting to split this structure up into folders, each managed by a team:
 
@@ -83,13 +83,13 @@ It is tempting to split this structure up into folders, each managed by a team:
 │   ├── codegen.yml
 ```
 
-This is already a big improvement as ownership is clearer, but there's still organisational problems. For example, what happens when Team A changes what they own? Or split up into smaller teams? Or simply change their name? All of these scenarios require some level of admin work: renaming of the folder in the best case, and moving files around in the worst case. Admin work like this creates no values to the end users.
+This is already a big improvement as ownership is clearer, but there are still organisational problems. For example, what happens when Team A changes what they own? Or split up into smaller teams? Or simply change their name? All these scenarios need admin work: renaming of the folder in the best case, and moving files around in the worst case. Admin work like this creates no values to the end users.
 
-On top of that, all datasources and resolvers must be put together into the GraphQL server. In this case, it's the `server.ts` file. Who owns this file and other maintenance of the server such as `codegen.yml` (we all use GraphQL Codegen right? 😉), package updates, security patches, etc.?
+On top of that, all datasources and resolvers must be put together into the GraphQL server. In this case, it is the `server.ts` file. Who owns this file and other maintenance of the server such as package updates, security patches, `codegen.yml` (we all use GraphQL Codegen right? 😉) etc.?
 
 ### Solution: Split into Modules
 
-It is fairly common to see teams change name or mission. However, the thing that does not change very often (and in some cases, never) is business domain. If we split our code based on business domain and assign teams accordingly, it becomes much more scalable.
+It is common to see teams change name or mission. Yet, the thing that does not change very often (and in some cases, never) is business domain. If we split our code based on business domain and assign teams accordingly, it becomes much more scalable.
 
 For server maintenance, it is best to have a small group of dedicated maintainers. This could consist of one member from each team in the codebase and this group's membership can rotate. Alternatively, some companies have a dedicated team of maintainers. Having a dedicated group - let's call them the Maintainers - helps reduce noise and cognitive load for the rest of the teams, allowing them to focus on delivering feature.
 
@@ -131,20 +131,18 @@ To enforce guidelines, we need tools. Luckily, these days we have an extensive r
 *   [GraphQL Codegen](https://the-guild.dev/graphql/codegen) with [typescript](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript) and [typescript-resolvers](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript-resolvers) plugins for type-safe GraphQL server development in TypeScript
 *   [GraphQL ESLint](https://github.com/B2o5T/graphql-eslint) for validation and conventions like naming and best practices.
 
-(TODO: Does the below sentences sound too harsh? To both the existing tooling and teams I'm working with?)
-
 However, there are still areas to improve.
 
-For example, the guideline for one of the GraphQL servers I am working on is to use generated types from GraphQL Codegen. However, some people do not follow the guidelines, mostly because they are not aware of it. Luckily, these issues are caught by other team members or the Maintainers at PR review time, but it could have saved everyone time and effort if we had tools that could enforce this guideline.
+For example, the guideline for one of the GraphQL servers I am working on is to use generated types from GraphQL Codegen. Yet, some people do not follow the guidelines, mostly because they are not aware of it. Luckily, other team members or the Maintainers catch these issues at PR review time. But it could have saved everyone time and effort if we had tools that could enforce this guideline.
 
 ### 2. How to Minimise Noise to the Maintainers
 
-Maintainers, apart from their own team's work and general package and security updates, usually need to manage other aspects of a GraphQL server:
+Maintainers usually need to manage these aspects of a GraphQL server:
 
 *   Core server logic: resolver map, schemas, CI/CD, etc. 
 *   Config files: `.graphqlrc`, `codegen.yml`, etc.
 
-Changing anything in the Maintainers' domain should notify them. Unfortunately, this happens fairly regularly in normal workflows.
+Changing anything in the Maintainers' domain should notify them. Unfortunately, this happens regularly in normal workflows. Maintainers also have their team's work and general package and security updates to worry about. So, being notified on unrelated PRs quickly lead to burnout.
 
 For example, if a new resolver is added, they must be manually added to the resolver map. So, Maintainers are notified on every new resolver. It may look like this if you are using [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server):
 
@@ -176,9 +174,7 @@ server.listen(4000, () => {
 })
 ```
 
-(TODO: not sure if we are ok with calling out the caveats of mergeResolvers from @graphql-tools/merge here)
-
-There is a way to mitigate this issue: each schema module exports an object of resolvers and they are merged with [mergeResolvers from @graphql-tools/merge](https://the-guild.dev/graphql/tools/docs/schema-merging#merging-resolvers). This means the Maintainers are only notified on every new module instead of every resolver:
+There is a way to mitigate this issue: each schema module exports an object of resolvers and they are merged with [mergeResolvers from @graphql-tools/merge](https://the-guild.dev/graphql/tools/docs/schema-merging#merging-resolvers). This means the Maintainers are notified on every new module instead of every resolver:
 
 ```ts
 // server.ts
@@ -201,11 +197,9 @@ const schema = createSchema({
 // rest of server config
 ```
 
-However, `mergeResolvers` has a runtime and it is simply merging plain JavaScript objects, so there is a risk of someone accidentally overriding others' resolvers. The overriding issue is hard to find in large codebases with hundreds of resolvers.
+However, `mergeResolvers` has a runtime and it is simply merging plain JavaScript objects. Thus, there is a risk of someone accidentally overriding others' resolvers. The overriding issue is hard to find in large codebases with hundreds of resolvers.
 
 <img alt="mergeResolvers can cause conflicts and pain" src="/blog-assets/setting-up-graphql-server-to-scale-with-graphql-codegen-server-preset/merge-resolvers.gif" style={{width: "80%", margin: "0 auto"}}/>
-
-(TODO: Is the a The Guild blog post about GraphQL is more than just forwarding API responses to the client? Or a blog of how mappers work?)
 
 Another commonly used feature is [mappers](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript-resolvers#mappers). This feature allows resolvers to return mapper objects instead of GraphQL output types.
 
@@ -401,7 +395,7 @@ These other types are also supported by the preset:
 
 For other currently non-supported types, we can declare them using the `externalResolvers` preset config.
 
-#### Mappers
+#### Mappers Convention
 
 Mappers can be added by exporting types or interfaces with `Mapper` suffixes from `.mappers.ts` files in each module. For example, `UserMapper` will be used as `User`'s mapper type.
 
@@ -432,11 +426,10 @@ Do you have existing code and cannot migrate all in one big bang? The preset has
 
 #### Customisable Conventions
 
-All of the above conventions are customisable! Check out the documentation for [more options](https://github.com/eddeee888/graphql-code-generator-plugins/tree/master/packages/typescript-resolver-files).
+All mentioned conventions are customisable! Check out the documentation for [more options](https://github.com/eddeee888/graphql-code-generator-plugins/tree/master/packages/typescript-resolver-files).
 
 ## Summary
 
 In this blog post, we have explored the problems that can happen to a GraphQL server if it is not set up to scale such as ownership, enforcing best practices and minimising noise to Maintainers. We can use the server preset `@eddeee888/gcg-typescript-resolver-files` to solve these problems for GraphQL servers.
 
-(TODO: check if it's ok to shout out here: both from The Guild and SEEK)
-At [SEEK](https://www.seek.com.au/), we are experimenting with this preset and getting positive feedback. Let me know if it works for you too!
+At [SEEK](https://www.seek.com.au/), we are experimenting with this preset and getting positive feedback. [Let me know on Twitter](https://twitter.com/eddeee888) if it works for you too!
