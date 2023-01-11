@@ -44,7 +44,9 @@ query @live {
 }
 ```
 
-The `@live` directive will observe any changes to the data and send an event with the patch to update the current query state. The event is in the format of a JSON Patch:
+The `@live` directive will observe any changes to the data and send a message using [Server-Sent Events](https://grafbase.com/docs/realtime/live-queries#server-sent-events) with the patch to update the current query state.
+
+The event is in the format of [JSON Patch](https://grafbase.com/docs/realtime/live-queries#json-patch):
 
 ```json
 {
@@ -64,7 +66,7 @@ The `@live` directive will observe any changes to the data and send an event wit
 }
 ```
 
-Together with The Guild, Grafbase is also releasing 2 new packages (with more on the way) to further abstract the effort needed to implement Live Queries on the frontend. Both packages use the foundations set by The Guild to handle [Server-Sent Events](https://grafbase.com/docs/realtime/live-queries#server-sent-events), and [JSON Patch](https://grafbase.com/docs/realtime/live-queries#json-patch).
+Together with The Guild, Grafbase is also releasing 2 new packages (with more on the way) to further abstract the effort needed to implement Live Queries on the frontend.
 
 Starting with support for [Apollo Client](https://www.apollographql.com/docs/react/) and [URQL](https://formidable.com/open-source/urql/), you can add Live Queries with the following packages:
 
