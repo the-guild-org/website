@@ -1,5 +1,5 @@
 ---
-title: On-demand shared subscriptions using RXJS
+title: On-Demand Shared Subscriptions using RxJS
 authors: gthau
 tags: [graphql, subscriptions, typescript, rxjs]
 date: 2023-01-03
@@ -11,14 +11,14 @@ thumbnail:
 
 GraphQL has native support for subscriptions as schema operations. GraphQL subscriptions allow to receive continuous updates, usually implemented using a persistent WebSocket connection or Server-Sent Events.
 
-Ideally we want subscriptions to be stateless and independent for every subscriber: when a subscriber subscribes to an entity, this subscription is independent from any other subscription and can be handled by any instance of our GraphQL server. This is the case when the entity subscribed to is "simple" and processing updates is trivial: for example, we receive events from a pubsub provider / message queue (e.g. Redis, Nats.io, etc.) in the form ```{ type: update, entityId: xyz }```. In this case, our subscription handler can simply subscribe to these events, filter on the requested `entityId` and forward those events (maybe a bit processed) to the subscriber.
+Ideally, we want subscriptions to be stateless and independent for every subscriber: when a subscriber subscribes to an entity, this subscription is independent of any other subscription and can be handled by any instance of our GraphQL server. This is the case when the entity subscribed to is "simple" and processing updates is trivial: for example, we receive events from a pubsub provider/message queue (e.g. Redis, Nats.io, etc.) in the form ```{ type: update, entityId: xyz }```. In this case, our subscription handler can simply subscribe to these events, filter on the requested `entityId`, and forward those events (maybe a bit processed) to the subscriber.
 
-However this ideal scenario is not always possible. We might have "complex" entities we want to subscribe to, e.g. views that are aggregates of data over several data sources. The view might be expensive to fetch and subscribing to the view's content updates might involve subscribing to multiple events and perform expensive processing and/or additional fetching in order to compute the updates and send them to the subscriber.
+However, this ideal scenario is not always possible. We might have "complex" entities we want to subscribe to, e.g. views that are aggregates of data over several data sources. The view might be expensive to fetch and subscribing to the view's content updates might involve subscribing to multiple events and performing expensive processing and/or additional fetching in order to compute the updates and send them to the subscriber.
 
-In this case, if multiple subscribers subscribe to the same view, the events' processing, additional fetching and computing would have to be done for each subscriber, which will lead to performance issues as the number of subscribers increases.
+In this case, if multiple subscribers subscribe to the same view, the events' processing, additional fetching, and computing would have to be done for each subscriber, which will lead to performance issues as the number of subscribers increases.
 
 ## Mutualizing the subscription's work
-If the subscription is independent from the subscriber (e.g. the logged-in user) and only dependent upon the view, then we can mutualize the events' listening, buffering, processing, additional fetching and computing required to update the view. This work can be done once and the result delivered to each subscriber.
+If the subscription is independent of the subscriber (e.g. the logged-in user) and only dependent upon the view, then we can mutualize the events' listening, buffering, processing, additional fetching, and computing required to update the view. This work can be done once and the result delivered to each subscriber.
 
 ## A solution
 
@@ -27,8 +27,8 @@ In the following lines, we'll use a very simplified example in order to present 
 
 The solution to the simple example is implemented in this [repository](https://github.com/gthau/graphql-shared-subscriptions-with-rxjs).
 
-### Using RXJS multicasting capabilities
-By default observables are lazy and cold, meaning their side-effect are run only when a subscriber subscribes to the observable and for every subscriber the observable pipeline is executed.
+### Using RxJS multicasting capabilities
+By default observables are lazy and cold, meaning their side-effect are run only when a subscriber subscribes to the observable. Furthermore, for every subscriber, the observable pipeline is executed.
 
 In the following example, the http query will be executed twice: `query$` is a cold observable, no side-effect happens until a subscriber subscribes to it. When a second subscriber subscribes, the observable side-effect is re-executed.
 ```typescript
@@ -44,7 +44,7 @@ queryPromise.then(console.log);
 queryPromise.then(console.log);
 ```
 
-However RXJS has multicasting capabilities to turn cold observables into hot observables. Using RXJS's multicasting operators, we can create observable pipelines which are shared: their side-effect is triggered when the first subscriber subscribes to it and when more than one subscriber subscribe, the pipeline is executed only once and the emitted value is passed to all subscribers.
+However, RxJS has multicasting capabilities to turn cold observables into hot observables. Using RxJS's multicasting operators, we can create observable pipelines which are shared: their side-effect is triggered when the first subscriber subscribes to it and when more than one subscriber subscribes, the pipeline is executed only once and the emitted value is passed to all subscribers.
 
 Let's see an example:
 ```typescript
@@ -92,7 +92,7 @@ export const getPublisher = getOrCreatePublisher(publishersMap, makePublisher);
 
 ```
 
-Now from the our GraphQL's subscription resolver, we can use it:
+Now from our GraphQL's subscription resolver, we can use it like the following:
 ```graphql
 type Subscription {
   giveMeInts: Int!
@@ -124,7 +124,7 @@ With this code, when a subscriber subscribes, it will create the shared observab
   The graphql-js engine expects the `subscribe` handler to return an AsyncIterable, so we use the [`rxjs-for-await` package from Ben Lesh](https://github.com/benlesh/rxjs-for-await) which contains different functions from transforming an Observable into an AsyncIterable (there are different functions to deal with backpressure and lossiness/losslessness).
 </Callout>
 
-So far, so good. But we have a memory leak: after all subscribers have unsubscribed, we keep the publishers in the cache. We can clean those up using the [`finalize`](https://rxjs.dev/api/operators/finalize) operator: this operator allows to run a callback on observable termination (either the observable is complete or has no more subscribers).
+So far, so good. But we have a memory leak: after all subscribers have unsubscribed, we keep the publishers in the cache. We can clean those up using the [`finalize`](https://rxjs.dev/api/operators/finalize) operator: this operator allows running a callback on observable termination (either the observable is complete or has no more subscribers).
 
 Let's modify our publisher factory function:
 ```typescript
@@ -140,10 +140,10 @@ const makePublisher = (entityId: number): Observable<number> => {
 ### Delay the shared observable cleanup
 
 Because the view might be expensive to fetch and update, we only do so when users are subscribing to it. In the previous example, as soon as all users have unsubscribed, the shared observable is unsubscribed and deleted from the cache. This might not be the desired behavior, e.g.:
-- we can have one user subscribing to the view, this user refreshes his browser's page, effectively ending the subscription, triggering a cache cleanup, but then the view is resubscribed almost immediately, triggering a new fresh fetch
+- we can have one user subscribing to the view, this user refreshes his browser's page, effectively ending the subscription, and triggering a cache cleanup, but then the view is resubscribed almost immediately, triggering a new fresh fetch
 - we can have one user stopping the subscription (e.g. navigating away from this view to another part of our app), but another user subscribing soon (a few milliseconds, seconds or minutes) after
 
-To optimize for those use cases, we can delay the unsubscription of the shared observable when no more subscriber are subscribing to it, using the `resetOnRefCountZero` config of the `share` operator. This is available in RXJS v7.
+To optimize for those use cases, we can delay the unsubscription of the shared observable when no more subscribers are subscribing to it, using the `resetOnRefCountZero` config of the `share` operator. This is available in RxJS v7.
 
 ```typescript
 const makePublisher = (entityId: number): Observable<number> => {
@@ -161,7 +161,7 @@ const makePublisher = (entityId: number): Observable<number> => {
 In the example above, after all subscribers have unsubscribed (`refcount` is 0) the connector (the subject that subscribes to the source observable) now waits for 10 seconds (10000 ms) before it resets the shared observable. During this period of time, the observable pipeline continues to execute. If a new subscriber subscribes before the `timer` has emitted, the `refcount` is again greater than 0 and the connector will keep connecting to the source observable.
 
 <Callout type="warning">
-  We use `timer` in this example but we can use any observable (e.g. receiving a specific event from our message queue) that emits at some point. Be careful though to make sure that the observable you use will actually emit otherwise you'll have a memory leak. To remedy this issue, you might want to add a safety, e.g. using [`raceWith`](https://rxjs.dev/api/operators/raceWith) with `timer` to make sure you don't wait indefinitely:
+  We use `timer` in this example but we can use any observable (e.g. receiving a specific event from our message queue) that emits at some point. Be careful though to make sure that the observable you use will actually emit otherwise you'll have a memory leak. To remedy this issue, you might want to add safety, e.g. using [`raceWith`](https://rxjs.dev/api/operators/raceWith) with `timer` to make sure you don't wait indefinitely:
 
 ```typescript
 share({
@@ -176,13 +176,13 @@ share({
 ### Run server-side logic when a user's subscription is closed
 
 In GraphQL we implement subscriptions by writing two functions:
-- a `subscribe` function which is run one time only and must returns an AsyncIterable
+- a `subscribe` function which is run one time only and must return an AsyncIterable
 - a `resolve` function which is run every time a value is emitted by the AsyncIterable returned by the `subscribe` function and transforms this value into the Subscription output type.
 
-In order to execute logic, we have 2 places: in `subscribe` when the subscription starts and in `resolve` on each emitted value. What if we want to execute logic when the subscription ends (whether it completed or was stopped by the client)?
+In order to execute logic, we have 2 places: in `subscribe` when the subscription starts and in `resolve` on each emitted value. What if we want to execute logic when the subscription ends (whether it was completed or was stopped by the client)?
 
 The answer is: it is not contemplated in the spec. But it doesn't mean we can't do it.
-In fact it is even very simple! If we use the solution described above, we already have all the pieces in place. We only need to add one line: in the `subscribe` function where we set up the AsyncIterable (by transforming the Observable into an AsyncIterable), we only have to use RXJS's `finalize` operator.
+In fact, it is even very simple! If we use the solution described above, we already have all the pieces in place. We only need to add one line: in the `subscribe` function where we set up the AsyncIterable (by transforming the Observable into an AsyncIterable), we only have to use RxJS's `finalize` operator.
 
 ```ts
 {
@@ -208,25 +208,25 @@ In fact it is even very simple! If we use the solution described above, we alrea
 }
 ```
 
-In the previous examples, we used the `finalize` operator on the shared observable pipeline in order to clean up after all subscriptions to a specific entity had ended. But we can also use it per-subscription by piping it onto the shared observable: this way it is only run for when this specific subscription ends.
+In the previous examples, we used the `finalize` operator on the shared observable pipeline in order to clean up after all subscriptions to a specific entity had ended. But we can also use it per subscription by piping it onto the shared observable: this way it is only run for when this specific subscription ends.
 And of course, like we just did, you can combine both!
 
 ## Apply to a real-life example
 
-Let's consider a view such as a complex "playlist": this playlist is a list of items organized in blocks, the items themselves are a complex aggregate of several multimedia (video, audio, graphics) objects, those multimedia objects themselves might be aggregate (bundles) or have of some children objects (e.g. sub-clips, graphics on a video, subtitles). In effect this complex playlist is organized in the form of a tree of objects.
+Let's consider a view such as a complex "playlist": this playlist is a list of items organized in blocks, the items themselves are a complex aggregate of several multimedia (video, audio, graphics) objects, those multimedia objects themselves might be aggregate (bundles) or have of some children objects (e.g. sub-clips, graphics on a video, subtitles). In effect, this complex playlist is organized in the form of a tree of objects.
 
 The system emits different events:
-- some are related directly to the playlist itself (e.g. new item in playlist, item removed from playlist, item changed position inside playlist)
+- some are related directly to the playlist itself (e.g. new item in the playlist, item removed from the playlist, item changed position inside playlist)
 - others are related to the parent multimedia objects (object deleted, object's metadata changed, object has new children objects)
 - others are related to the children objects of the top level objects (object deleted, object's metadata changed)
 
-This playlist's data is expensive to fetch, can be large and is cached only when users subscribe to it: because it is expensive to compute updates, we want to ensure we don't process events for all playlists in the system, only the ones some user is currently interested in.
+This playlist's data is expensive to fetch, can be large, and is cached only when users subscribe to it: because it is expensive to compute updates, we want to ensure we don't process events for all playlists in the system, only the ones some user is currently interested in.
 
 Let's reuse the techniques explained above.
 
 ### Buffer events
 
-First we'll buffer the events, dedupe them and share the observable because those events will be checked against every playlist subscribed to, so we can share the buffering and deduplication:
+First, we'll buffer the events, dedupe them and share the observable because those events will be checked against every playlist subscribed to, so we can share the buffering and deduplication:
 
 ```typescript
 // utils
@@ -332,4 +332,4 @@ type Subscription {
 
 # Conclusion
 
-In this article, we have seen how to use RXJS (or the reactive programming library of your choice) in order to mutualize the generation of expensive-to-produce values for a GraphQL subscription but also to trigger this processing on-demand whenever a consumer is interested in subscribing to a specific entity updates and stop it (with or without delay) when there are no more subscribers. Note that this technique is not exclusive to GraphQL subscriptions and can be used for any kind of subscriptions.
+In this article, we have seen how to use RxJS (or the reactive programming library of your choice) in order to mutualize the generation of expensive-to-produce values for a GraphQL subscription but also to trigger this processing on-demand whenever a consumer is interested in subscribing to a specific entity updates and stop it (with or without delay) when there are no more subscribers. Note that this technique is not exclusive to GraphQL subscriptions and can be used for any kind of subscription.
