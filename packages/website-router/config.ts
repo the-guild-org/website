@@ -86,11 +86,12 @@ export const jsonConfig = {
       crispSegments: ['conductor'],
       sitemap: true,
     },
-    // Redirects
-    '/graphql/eslint': {
-      redirect: 'https://github.com/B2o5T/graphql-eslint',
-      status: 302,
+      '/graphql/eslint': {
+      rewrite: 'graphql-eslint.pages.dev',
+      crispSegments: ['graphql-eslint'],
+      sitemap: true,
     },
+    // Redirects
     '/bob': {
       redirect: 'https://github.com/kamilkisiela/bob',
       status: 302,
