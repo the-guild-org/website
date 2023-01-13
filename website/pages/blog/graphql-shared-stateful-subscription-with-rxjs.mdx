@@ -17,7 +17,11 @@ However, this ideal scenario is not always possible. We might have "complex" ent
 
 In this case, if multiple subscribers subscribe to the same view, the events' processing, additional fetching, and computing would have to be done for each subscriber, which will lead to performance issues as the number of subscribers increases.
 
-In this article, we'll show how we can, using [RxJS](https://rxjs.dev/), optimize this use case by sharing the subscriptions' sources and also perform their side-effect processing only when there are subscribers.
+In this article, we'll show how we can improve this use case by sharing the subscriptions' sources and also perform their side-effect processing only when there are subscribers.
+
+<Callout type="info">
+  The solution uses [RxJS](https://rxjs.dev/), a library for [Reactive Functional Programming](https://en.wikipedia.org/wiki/Functional_reactive_programming), it is based on the [Observer pattern](https://en.wikipedia.org/wiki/Observer_pattern) and provides [a wide range of functions](https://rxjs.dev/api?type=function) to deal with streams of events in a declarative way.
+</Callout>
 
 ## Mutualizing the subscription's work
 If the subscription is independent of the subscriber (e.g. the logged-in user) and only dependent upon the view, then we can mutualize the events' listening, buffering, processing, additional fetching, and computing required to update the view. This work can be done once and the result delivered to each subscriber.
