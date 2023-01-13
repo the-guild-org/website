@@ -50,6 +50,8 @@ However, RxJS has multicasting capabilities to turn cold observables into hot ob
 
 Let's see an example:
 ```typescript
+import { interval } from 'rxjs';
+
 const obs$ = interval(1000); // observable emitting 0, 1, 2, ... every second
 obs$.subscribe(console.log); // prints 0, 1, 2, ...
 
@@ -95,14 +97,17 @@ export const getPublisher = getOrCreatePublisher(publishersMap, makePublisher);
 ```
 
 Now from our GraphQL's subscription resolver, we can use it like the following:
-```graphql
-type Subscription {
-  giveMeInts: Int!
-}
-```
 
 ```typescript
-{
+import { createSchema } from 'graphql-yoga';
+import { eachValueFrom } from 'rxjs-for-await';
+
+export const schema = createSchema({
+  typeDefs: /* GraphQL */ `
+    type Subscription {
+      giveMeInts: Int!
+    }
+  `,
   resolvers: {
     Subscription: {
       giveMeInts: {
@@ -117,7 +122,7 @@ type Subscription {
       }
     }
   }
-}
+});
 ```
 
 With this code, when a subscriber subscribes, it will create the shared observable (publisher), store it in a cache so that it can be reused by subsequent subscribers, and subscribe to it. When a second subscriber subscribes, it will get the existing publisher from the cache and subscribe to it, and it will get the same value as the first subscriber gets. When all subscribers have unsubscribed, the source observable is unsubscribed. If later, a new subscriber subscribes, the source observable will be resubscribed and its pipeline reexecuted (in our case, it will start emitting from 0 again).
@@ -130,6 +135,9 @@ So far, so good. But we have a memory leak: after all subscribers have unsubscri
 
 Let's modify our publisher factory function:
 ```typescript
+import { interval } from 'rxjs';
+import { finalize, share } from 'rxjs/operators';
+
 const makePublisher = (entityId: number): Observable<number> => {
   return interval(1000).pipe(
     // clean up publisher cache when no more subscribers to this publisher
@@ -187,7 +195,16 @@ The answer is: it is not contemplated in the spec. But it doesn't mean we can't 
 In fact, it is even very simple! If we use the solution described above, we already have all the pieces in place. We only need to add one line: in the `subscribe` function where we set up the AsyncIterable (by transforming the Observable into an AsyncIterable), we only have to use RxJS's `finalize` operator.
 
 ```ts
-{
+import { createSchema } from 'graphql-yoga';
+import { finalize } from 'rxjs/operators';
+import { eachValueFrom } from 'rxjs-for-await';
+
+export const schema = createSchema({
+  typeDefs: /* GraphQL */ `
+    type Subscription {
+      giveMeInts: Int!
+    }
+  `,
   resolvers: {
     Subscription: {
       giveMeInts: {
@@ -207,7 +224,7 @@ In fact, it is even very simple! If we use the solution described above, we alre
       }
     }
   }
-}
+});
 ```
 
 In the previous examples, we used the `finalize` operator on the shared observable pipeline in order to clean up after all subscriptions to a specific entity had ended. But we can also use it per subscription by piping it onto the shared observable: this way it is only run for when this specific subscription ends.
@@ -236,6 +253,9 @@ export const isNotEmpty = <T>({ length }: ArrayLike<T>) => length > 0;
 ```
 
 ```typescript
+import { from } from 'rxjs';
+import { buffer, filter, share } from 'rxjs/operators';
+
 const playlistEventNames = ['playlist_event_1', 'playlist_event_2', 'playlist_event_n'] as const;
 const objectsEventNames = ['objects_event_1', 'objects_event_2', 'objects_event_n'] as const;
 
@@ -256,6 +276,9 @@ const allObjectsEvents$ = bufferEvents(objectsEventNames);
 In this example, we'll assume that the datasource is the source of truth, we'll listen to events to detect potential changes in the playlist and we'll force refetch (invalidate cache and fetch latest version) from the datasource (assuming calls are deduped using a Dataloader backed by a cache).
 
 ```typescript
+import { merge } from 'rxjs';
+import { bufferTime, filter, finalize, map, share, switchMap } from 'rxjs/operators';
+
 const playlistStructureMap = new Map<number, Observable<PlaylistStructure>>();
 
 export const getPlaylistStructurePublisher = getOrCreatePublisher(
@@ -307,14 +330,16 @@ function makePlaylistStructurePublisher(playlistId: number): Observable<boolean>
 
 Now that we have all the subscription's required logic encapsulated and data processing shared, let's use it from the subscription's resolver:
 
-```graphql
-type Subscription {
-  playlistStructureUpdates(playlistId: Int): PlaylistStructure!
-}
-```
-
 ```typescript
-{
+import { createSchema } from 'graphql-yoga';
+import { eachValueFrom } from 'rxjs-for-await';
+
+export const schema = createSchema({
+  typeDefs: /* GraphQL */ `
+    type Subscription {
+      playlistStructureUpdates(playlistId: Int): PlaylistStructure!
+    }
+  `,
   resolvers: {
     Subscription: {
       playlistStructureUpdates: {
@@ -329,7 +354,7 @@ type Subscription {
       },
     },
   },
-}
+});
 ```
 
 # Conclusion
