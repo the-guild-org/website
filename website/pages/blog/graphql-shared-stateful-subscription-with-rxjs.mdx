@@ -187,6 +187,62 @@ share({
 ```
 </Callout>
 
+### Reuse shared observable sources across multiple subscriptions
+
+With this solution, we can even go further: if a subscription depends on the processing of common events or on the source of another subscription, we can reuse the shared observable created for those.
+
+Let's make a new subscription that returns a sentence with the current number emitted by the `giveMeInts` subscription's source:
+```typescript
+export const schema = createSchema({
+  typeDefs: /* GraphQL */ `
+    type Subscription {
+      giveMeInts: Int!
+      giveMeStringfiedInts: String!
+    }
+  `,
+  resolvers: {
+    Subscription: {
+      /* giveMeInts subscription's resolver unchanged */
+      giveMeStringfiedInts: {
+        subscribe(root, args, context) {
+          return eachValueFrom(
+            getStringifiedPublisher(args.entityId)
+          );
+        },
+        resolve(root, args, context) {
+          return root;
+        }
+      }
+    }
+  }
+});
+```
+
+And the new publisher reusing the other subscription's publisher:
+```typescript
+import { map } from 'rxjs/operators';
+
+// create a new cache for those publishers
+const stringifiedPublishersMap = new Map<number, Observable<string>>();
+
+export const getStringifiedPublisher = getOrCreatePublisher(stringifiedPublishersMap, makeStringifiedPublisher);
+
+function makeStringifiedPublisher(entityId: number): Observable<string> {
+  // this new publisher gets or creates the source publisher from the other subscription
+  return getPublisher(id).pipe(
+    map((val) => `The current number is ${val}`),
+    // clean up publisher cache when no more subscribers to this publisher
+    finalize(() => stringifiedPublishersMap.delete(entityId)),
+    share({
+      // when no more subscribers, wait 10 seconds to unsubscribe from the source and reset the underlying subject
+      resetOnRefCountZero: () => timer(10_000),
+    }),
+  );
+};
+```
+
+Now, whether a subscription to `giveMeStringfiedInts` or `giveMeInts` starts first, both will be shared and in sync. This further mutualizes the processing of expensive computations. In the simple example showcased above, the advantage might be small, but in a real-world scenario, it could make a big difference: imagine one subscription sending the full structure of a expensive-to-compute view while a second subscription sends only a diff of the current structure with the previous one, the second subscription's source depends on the source of the first. Mutualizing the view's computations makes a difference regardless of which subscription has been triggered first.
+
 ### Run server-side logic when a user's subscription is closed
 
 In GraphQL we implement subscriptions by writing two functions:
@@ -284,13 +340,19 @@ import { merge } from 'rxjs';
 import { bufferTime, filter, finalize, map, share, switchMap } from 'rxjs/operators';
 
 const playlistStructureMap = new Map<number, Observable<PlaylistStructure>>();
+const playlistStructureDiffMap = new Map<number, Observable<PlaylistStructureDiff>>();
 
 export const getPlaylistStructurePublisher = getOrCreatePublisher(
   playlistStructureMap,
   makePlaylistStructurePublisher
 );
 
-function makePlaylistStructurePublisher(playlistId: number): Observable<boolean> {
+export const getPlaylistStructureDiffPublisher = getOrCreatePublisher(
+  playlistStructureDiffMap,
+  makePlaylistStructureDiffPublisher
+);
+
+function makePlaylistStructurePublisher(playlistId: number): Observable<PlaylistStructure> {
   const playlistEvents$ = allPlaylistEvents$.pipe(
     map((events) => events.filter((ev) => ev.playlistId === playlistId)),
     filter(isNotEmpty),
@@ -328,6 +390,25 @@ function makePlaylistStructurePublisher(playlistId: number): Observable<boolean>
     }),
   );
 }
+
+function makePlaylistStructureDiffPublisher(playlistId: number): Observable<PlaylistStructureDiff> {
+  // reuse the playlist shared observable
+  return getPlaylistStructurePublisher(playlistId).pipe(
+    startWith([]), // pairwise needs 2 values to compare, initialize observable with a default value
+    pairwise(), // groups emission into a tuple [previousValue, currentValue]
+    map(([previousPlaylist, currentPlaylist]) => makeDiff(previousPlaylist, currentPlaylist)),
+    filter(isNotEmpty),
+    // remove publisher from cache after it's been unsubscribed
+    finalize(() => {
+      console.debug(`Shared playlistStructureDiffPublisher[playlist=${playlistId}] has finalized, removing it from cache`);
+      playlistStructureDiffMap.delete(playlistId);
+    }),
+    share({
+      // keep subscribing for 1 minute after last subscriber unsubscribes
+      resetOnRefCountZero: () => timer(60_000),
+    }),
+  );
+}
 ```
 
 ### Writing the subscription's resolver
@@ -342,6 +423,7 @@ export const schema = createSchema({
   typeDefs: /* GraphQL */ `
     type Subscription {
       playlistStructureUpdates(playlistId: Int): PlaylistStructure!
+      playlistStructureDiffs(playlistId: Int): PlaylistStructureDiff!
     }
   `,
   resolvers: {
@@ -350,6 +432,16 @@ export const schema = createSchema({
         subscribe(root, args, context) {
           return eachValueFrom(
             getPlaylistStructurePublisher(args.playlistId)
+          );
+        },
+        resolve(root, args, context) {
+          return root;
+        }
+      },
+      playlistStructureDiffs: {
+        subscribe(root, args, context) {
+          return eachValueFrom(
+            getPlaylistStructureDiffPublisher(args.playlistId)
           );
         },
         resolve(root, args, context) {
