@@ -27,7 +27,7 @@ export default defineConfig({
   navbar: {
     component: <Header sameSite accentColor="var(--colors-accent)" themeSwitch searchBarProps={{ version: 'v2' }} />,
   },
-  getNextSeoProps() {
+  useNextSeoProps() {
     const { frontMatter, title } = useConfig();
     const { description, authors, tags, thumbnail, date, updateDate } = frontMatter;
     const image = thumbnail || `https://open-graph-image.theguild.workers.dev/?product=GUILD&title=${encodeURI(title)}`;
