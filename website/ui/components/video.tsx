@@ -15,8 +15,8 @@ export const Video = ({ src, title, className }: { src: string; title?: string; 
   }
 
   return (
-    <video className={clsx('mx-auto mt-6', className)} playsInline autoPlay loop muted>
-      <source src={src} type="video/webm" />
+    <video className={clsx('mx-auto mt-6', className)} playsInline autoPlay loop muted controls>
+      <source src={src} type={`video/${src.slice(src.lastIndexOf('.') + 1)}`} />
       Your browser does not support the video tag.
     </video>
   );
