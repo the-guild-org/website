@@ -86,7 +86,7 @@ export const jsonConfig = {
       crispSegments: ['conductor'],
       sitemap: true,
     },
-      '/graphql/eslint': {
+    '/graphql/eslint': {
       rewrite: 'graphql-eslint.pages.dev',
       crispSegments: ['graphql-eslint'],
       sitemap: true,

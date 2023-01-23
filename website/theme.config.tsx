@@ -1,5 +1,5 @@
-/* eslint-disable import/no-default-export, react-hooks/rules-of-hooks */
-import { ReactElement, useEffect, useState } from 'react';
+/* eslint-disable import/no-default-export */
+import { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import { Callout, defineConfig, Giscus, Header, useConfig, useTheme } from '@theguild/components';
 import { Article } from '@/article';
@@ -13,7 +13,6 @@ import { StackBlitz } from '@/shared/embed/stack-blitz';
 import { Tweet } from '@/shared/embed/tweet';
 import blogsMeta from './dist/blogs-meta.json';
 import { asArray } from './lib/as-array';
-import { MetaWithLink } from './lib/meta';
 
 const siteName = 'The Guild';
 
@@ -27,7 +26,7 @@ export default defineConfig({
   navbar: {
     component: <Header sameSite accentColor="var(--colors-accent)" themeSwitch searchBarProps={{ version: 'v2' }} />,
   },
-  getNextSeoProps() {
+  useNextSeoProps() {
     const { frontMatter, title } = useConfig();
     const { description, authors, tags, thumbnail, date, updateDate } = frontMatter;
     const image = thumbnail || `https://open-graph-image.theguild.workers.dev/?product=GUILD&title=${encodeURI(title)}`;
@@ -46,27 +45,22 @@ export default defineConfig({
       },
     };
   },
-  main({ children }) {
+  main: function Main({ children }) {
     const { route } = useRouter();
-    const [similarArticles, setSimilarArticles] = useState<MetaWithLink[]>([]);
     const config = useConfig();
     const { tags } = config.frontMatter;
     const { resolvedTheme } = useTheme();
 
-    useEffect(() => {
-      const newSimilarArticles = tags
-        ? blogsMeta
-            .filter(
-              article => article.link !== route && (tags.length === 0 || article.tags?.some(tag => tags.includes(tag)))
-            )
-            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-            .slice(0, 12)
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 4)
-        : [];
-
-      setSimilarArticles(newSimilarArticles);
-    }, [tags, route]);
+    const similarArticles = tags
+      ? blogsMeta
+          .filter(
+            article => article.link !== route && (tags.length === 0 || article.tags?.some(tag => tags.includes(tag)))
+          )
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .slice(0, 12)
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 4)
+      : [];
 
     if (!route.startsWith('/blog/') || route.startsWith('/blog/tag')) {
       return children as ReactElement;
