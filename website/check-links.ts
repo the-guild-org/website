@@ -9,7 +9,7 @@ const CWD = join(PAGES_DIR, 'blog');
 const files = globbySync('*.mdx', {
   absolute: false,
   cwd: CWD,
-}).filter(filename => filename !== 'announcing-nextra-2.mdx');
+}).filter(filename => filename !== 'nextra-2.mdx');
 
 const errors = [];
 
