@@ -180,18 +180,17 @@ There is a way to mitigate this issue: each schema module exports an object of r
 // server.ts
 import { createServer } from 'node:http'
 import { createSchema, createYoga } from 'graphql-yoga'
-import { mergeResolvers } from '@graphql-tools/merge';
 import * as authResolvers from "./schema/auth/resolvers";
 import * as bookResolvers from "./schema/book/resolvers";
 import * as userResolvers from "./schema/user/resolvers";
 
 const schema = createSchema({
   typeDefs: `...`,
-  resolvers: mergeResolvers([ // Resolver map is the result of merging module resolvers
+  resolvers: [
     authResolvers,
     bookResolvers,
     userResolvers,
-  ])
+  ]
 });
 
 // rest of server config
