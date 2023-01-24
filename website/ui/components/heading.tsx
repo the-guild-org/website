@@ -19,7 +19,7 @@ export const Heading = ({
           lg: 'text-3xl font-extrabold leading-snug dark:text-gray-50 md:text-[42px] md:leading-[55px]',
           md: 'text-lg font-bold leading-7 dark:text-gray-50',
         }[size],
-        className
+        className,
       )}
       {...props}
     >

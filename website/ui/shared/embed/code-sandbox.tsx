@@ -31,7 +31,12 @@ export interface ICodeSandboxProps {
   size?: string;
 }
 
-export const CodeSandbox = ({ codeSandboxId, embedOptions, readonly, size }: ICodeSandboxProps): ReactElement => {
+export const CodeSandbox = ({
+  codeSandboxId,
+  embedOptions,
+  readonly,
+  size,
+}: ICodeSandboxProps): ReactElement => {
   const allOptions = {
     fontsize: 11,
     autoresize: '1',

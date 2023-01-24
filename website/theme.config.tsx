@@ -24,12 +24,21 @@ export default defineConfig({
   siteName,
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
   navbar: {
-    component: <Header sameSite accentColor="var(--colors-accent)" themeSwitch searchBarProps={{ version: 'v2' }} />,
+    component: (
+      <Header
+        sameSite
+        accentColor="var(--colors-accent)"
+        themeSwitch
+        searchBarProps={{ version: 'v2' }}
+      />
+    ),
   },
   useNextSeoProps() {
     const { frontMatter, title } = useConfig();
     const { description, authors, tags, thumbnail, date, updateDate } = frontMatter;
-    const image = thumbnail || `https://open-graph-image.theguild.workers.dev/?product=GUILD&title=${encodeURI(title)}`;
+    const image =
+      thumbnail ||
+      `https://open-graph-image.theguild.workers.dev/?product=GUILD&title=${encodeURI(title)}`;
 
     return {
       description: description || `${siteName}: Modern API Platform and Ecosystem that scales`,
@@ -54,7 +63,9 @@ export default defineConfig({
     const similarArticles = tags
       ? blogsMeta
           .filter(
-            article => article.link !== route && (tags.length === 0 || article.tags?.some(tag => tags.includes(tag)))
+            article =>
+              article.link !== route &&
+              (tags.length === 0 || article.tags?.some(tag => tags.includes(tag))),
           )
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
           .slice(0, 12)
@@ -83,7 +94,9 @@ export default defineConfig({
         <Newsletter />
         {similarArticles.length > 0 && (
           <>
-            <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">Similar articles</h3>
+            <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">
+              Similar articles
+            </h3>
             <BlogCardList articles={similarArticles} />
           </>
         )}

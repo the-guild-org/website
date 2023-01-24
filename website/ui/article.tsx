@@ -45,7 +45,9 @@ const Authors = ({ meta }: { meta: Meta }): ReactElement => {
       <time
         dateTime={date.toISOString()}
         title={
-          updatedDate ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}` : `Posted ${format(date, 'EEEE, LLL do y')}`
+          updatedDate
+            ? `Updated ${format(updatedDate, 'EEEE, LLL do y')}`
+            : `Posted ${format(date, 'EEEE, LLL do y')}`
         }
         className="mt-5 block text-center text-xs text-[#777]"
       >
