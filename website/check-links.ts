@@ -95,10 +95,20 @@ function extractPreviews(doc: string): Link[] {
 }
 
 function onlyRelative(links: Link[]): Link[] {
-  const IGNORE_URL = new Set(['/static/shared-logos/products/envelop.svg', '/graphql/yoga-server']);
+  const IGNORE_URL = new Set([
+    '/static/shared-logos/products/envelop.svg',
+    '/blog/tag/graphql-tools',
+    '/contact',
+    '/discord',
+    '/open-source',
+  ]);
 
   return links.filter(link => {
     if (IGNORE_URL.has(link.href)) return;
+
+    if (link.href.startsWith('/graphql/hive')) return;
+    if (link.href.startsWith('/graphql/yoga-server')) return;
+    if (link.href.startsWith('/graphql/codegen')) return;
 
     return (
       link.href.startsWith('.') ||
