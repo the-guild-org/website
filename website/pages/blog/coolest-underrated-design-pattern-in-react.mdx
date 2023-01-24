@@ -7,7 +7,8 @@ description: The coolest, most underrated design pattern in React
 image: /medium/8da637649866c3f3ebcc4e5c90437d89.png
 ---
 
-There will be times when we would like to pass props and control the behavior of child elements. Let me explain. Let's take the following modal for example:
+There will be times when we would like to pass props and control the behavior of child elements. Let
+me explain. Let's take the following modal for example:
 
 ![](/medium/f8270eba98b7fce153579c2607ca2eb8.png)
 
@@ -20,7 +21,10 @@ As you can see, the modal contains the following elements:
 - A dismiss button (“Close”).
 - An action button (“Save changes”).
 
-These elements should be modifiable if we would like the modal to be properly re-usable. That means that the user would have control over things like the displayed content, dispatched events, style, etc, **of each and every element**. A naive solution would be accepting distinct props for each element like so:
+These elements should be modifiable if we would like the modal to be properly re-usable. That means
+that the user would have control over things like the displayed content, dispatched events, style,
+etc, **of each and every element**. A naive solution would be accepting distinct props for each
+element like so:
 
 ```jsx
 <Modal
@@ -36,7 +40,11 @@ These elements should be modifiable if we would like the modal to be properly re
 />
 ```
 
-The problem with that approach is that it spams the props mechanism; it makes the component look inflated and less readable. Moreover, it limits the amount of props that can be passed to child elements, and prevents the user from having a full control over them. You can solve this problem however, by providing a series or generic props objects, where each one represents a different element respectively:
+The problem with that approach is that it spams the props mechanism; it makes the component look
+inflated and less readable. Moreover, it limits the amount of props that can be passed to child
+elements, and prevents the user from having a full control over them. You can solve this problem
+however, by providing a series or generic props objects, where each one represents a different
+element respectively:
 
 ```jsx
 <Modal
@@ -54,11 +62,15 @@ The problem with that approach is that it spams the props mechanism; it makes th
 />
 ```
 
-This solution works, but then again, it doesn't solve the spamming issue, plus, we completely abuse the syntactic sugar that JSX provides us with. Instead of using HTML style attribute assignments (`attr="value"`), we're obligated to use JSONs.
+This solution works, but then again, it doesn't solve the spamming issue, plus, we completely abuse
+the syntactic sugar that JSX provides us with. Instead of using HTML style attribute assignments
+(`attr="value"`), we're obligated to use JSONs.
 
 ## Bootstrap for the Rescue
 
-In Bootstrap they took a very clever approach. Instead of defining props all over the place, they gave us the ability to directly manipulate the modal's children. Using dedicated components, we can achieve the intended functionality that Bootstrap was aiming for:
+In Bootstrap they took a very clever approach. Instead of defining props all over the place, they
+gave us the ability to directly manipulate the modal's children. Using dedicated components, we can
+achieve the intended functionality that Bootstrap was aiming for:
 
 ```jsx
 <Modal.Dialog>
@@ -85,11 +97,18 @@ Great! There's definitely a progress right there. But we can even take it a step
 
 > “A step further? What do you mean?” — A confused React developer
 
-Even though things are very declarative and clear with Bootstrap's approach, **we're still obligated to compose the entire modal**. This means that we cannot use the modal's children to fill-up the missing pieces, as if part of the logic was already implemented. It's not always that we would like to write the modal's contents entirely from scratch, right? Sometimes we would like to use it like some sort of a template. Another point to consider, is that there's no filter or restrictions on the children's input. Sometimes we would like the user to use only certain elements, and thus make sure that he doesn't mess things up. If so, what's the right approach that goes along with it?
+Even though things are very declarative and clear with Bootstrap's approach, **we're still obligated
+to compose the entire modal**. This means that we cannot use the modal's children to fill-up the
+missing pieces, as if part of the logic was already implemented. It's not always that we would like
+to write the modal's contents entirely from scratch, right? Sometimes we would like to use it like
+some sort of template. Another point to consider, is that there's no filter or restrictions on the
+children's input. Sometimes we would like the user to use only certain elements, and thus make sure
+that he doesn't mess things up. If so, what's the right approach that goes along with it?
 
 ## Introducing the Design Pattern That Has It All
 
-Let's recap. Based on what we gathered so far, the new design pattern should have the following characteristics:
+Let's recap. Based on what we gathered so far, the new design pattern should have the following
+characteristics:
 
 - No spamming of the props mechanism.
 - Has full control over child elements using `props.children`.
@@ -97,11 +116,17 @@ Let's recap. Based on what we gathered so far, the new design pattern should hav
 - Has a template already in place.
 - Has restrictions on the input.
 
-Now that sounds promising. Let's have a look at an example. We will use the Bootstrap `Modal` component as an anchor:
+Now that sounds promising. Let's have a look at an example. We will use the Bootstrap `Modal`
+component as an anchor:
 
 ```jsx
 const ModalFromTheFuture = ({ showCloseButton, children }) => {
-  const childProps = useChildProps(props.children, ['title', 'contents', 'dismissButton', 'actionButton'])
+  const childProps = useChildProps(props.children, [
+    'title',
+    'contents',
+    'dismissButton',
+    'actionButton'
+  ])
 
   return (
     <Modal.Dialog>
@@ -120,7 +145,10 @@ const ModalFromTheFuture = ({ showCloseButton, children }) => {
 }
 ```
 
-As you can see, the new modal component uses a hook called `useChildProps()`. This hook will go through \`props.children\` and will basically flatten nested props. In addition, it will validate them against a provided white list, to make sure that the right element names were addressed. This is how its implementation should look like:
+As you can see, the new modal component uses a hook called `useChildProps()`. This hook will go
+through \`props.children\` and will basically flatten nested props. In addition, it will validate
+them against a provided white list, to make sure that the right element names were addressed. This
+is how its implementation should look like:
 
 ```jsx
 const useChildProps = (children, whitelist) => {
@@ -150,6 +178,9 @@ const useChildProps = (children, whitelist) => {
 </ModalFromTheFuture>
 ```
 
-> “Wait a minute, can't it cause a confusion with native HTML tag names?” — The developer from before
+> “Wait a minute, can't it cause a confusion with native HTML tag names?” — The developer from
+> before
 
-True, but that can also be said about any other React component. Ever since the introduction of component based UI (e.g. Angular, React, Vue or even Web components), new tag names aren't so rare to come across by, therefore you shouldn't be afraid to use the new design pattern.
+True, but that can also be said about any other React component. Ever since the introduction of
+component based UI (e.g. Angular, React, Vue or even Web components), new tag names aren't so rare
+to come across by, therefore you shouldn't be afraid to use the new design pattern.
