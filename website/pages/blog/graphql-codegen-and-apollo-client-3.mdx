@@ -3,29 +3,39 @@ title: What's new with Apollo Client v3 and GraphQL Codegen
 authors: dotan
 tags: [graphql, codegen, typescript, react, angular, apollo-client]
 date: 2020-11-30
-description: All the new features GraphQL Codegen adds to your type-system with the new Apollo Client 3.
+description:
+  All the new features GraphQL Codegen adds to your type-system with the new Apollo Client 3.
 image: /blog-assets/graphql-code-generator/codegen-ac3.png
 ---
 
-In recent weeks and months, we've been migrating many of our clients codebases, many at very large scale (over thousand developers on a single codebase), from Apollo Client 2 to Apollo Client 3.
+In recent weeks and months, we've been migrating many of our clients codebases, many at very large
+scale (over thousand developers on a single codebase), from Apollo Client 2 to Apollo Client 3.
 
-While doing all that work, we've improved many of the toolings we are maintaining and created a bunch of [new ones](https://the-guild.dev/blog/introducing-graphql-eslint).
+While doing all that work, we've improved many of the toolings we are maintaining and created a
+bunch of [new ones](https://the-guild.dev/blog/introducing-graphql-eslint).
 
-A lot of those improvements were fed back into GraphQL Codegen, and we are happy to share all those new learnings and features with everyone in the community.
+A lot of those improvements were fed back into GraphQL Codegen, and we are happy to share all those
+new learnings and features with everyone in the community.
 
-> We've also found and fixed a lot of memory leaks in upstream Apollo Client, thanks [@benjamn](https://github.com/benjamn) for the great corporation!
+> We've also found and fixed a lot of memory leaks in upstream Apollo Client, thanks
+> [@benjamn](https://github.com/benjamn) for the great corporation!
 
-We hope you would use those new features and improvements to quickly improve your workflow, type-safety and make your migrations easier.
+We hope you would use those new features and improvements to quickly improve your workflow,
+type-safety and make your migrations easier.
 
-And as usual, we would love to hear your feedback and ideas on how we can further improve the experience of using GraphQL and Typescript in general!
+And as usual, we would love to hear your feedback and ideas on how we can further improve the
+experience of using GraphQL and Typescript in general!
 
 # `possibleTypes`
 
-If you are already familiar with GraphQL-Codegen and the plugins it offers, you probably know the `fragment-matcher` plugin.
+If you are already familiar with GraphQL-Codegen and the plugins it offers, you probably know the
+`fragment-matcher` plugin.
 
-In Apollo-Client v3, [the structure for fragment matcher has been changed, and now it's called `possibleTypes`](https://apollographql.com/docs/react/data/fragments/#using-fragments-with-unions-and-interfaces).
+In Apollo-Client v3,
+[the structure for fragment matcher has been changed, and now it's called `possibleTypes`](https://apollographql.com/docs/react/data/fragments/#using-fragments-with-unions-and-interfaces).
 
-The `@graphql-codegen/fragment-matcher@2.0.0` now supports Apollo-Client v3 by default, and it generates type signature and the `possibleTypes` object automatically based on your GraphQL schema.
+The `@graphql-codegen/fragment-matcher@2.0.0` now supports Apollo-Client v3 by default, and it
+generates type signature and the `possibleTypes` object automatically based on your GraphQL schema.
 
 Here's an example of using it with a codegen.yml file:
 
@@ -48,14 +58,19 @@ export default new ApolloClient({
 })
 ```
 
-Without this, you'll have to define and maintain the `possibleTypes` object manually, which might lead to an incorrect or invalid setup that might effect Apollo-Client runtime.
+Without this, you'll have to define and maintain the `possibleTypes` object manually, which might
+lead to an incorrect or invalid setup that might effect Apollo-Client runtime.
 
 ## Type Policies
 
-If you are using an [advanced configuration for your Apollo-Client cache](https://apollographql.com/docs/react/caching/cache-configuration/#data-normalization), you can customize the behaviour of your cache.
+If you are using an
+[advanced configuration for your Apollo-Client cache](https://apollographql.com/docs/react/caching/cache-configuration/#data-normalization),
+you can customize the behaviour of your cache.
 
-The configuration you pass to Apollo depends on your GraphQL types and their fields, and instead of having an arbitrary object, you can have a fully-typed signature generated based on your GraphQL schema.
-That would make it much easier to customize, and you will catch errors in advance! (during build-time, instead during runtime)
+The configuration you pass to Apollo depends on your GraphQL types and their fields, and instead of
+having an arbitrary object, you can have a fully-typed signature generated based on your GraphQL
+schema. That would make it much easier to customize, and you will catch errors in advance! (during
+build-time, instead during runtime)
 
 You can use `@graphql-codegen/typescript-apollo-client-helpers` plugin to generate that.
 
@@ -97,9 +112,11 @@ const cache = new InMemoryCache({
 
 ## `TypedDocumentNode`
 
-Apollo-Client also supports `TypedDocumentNode` now natively (since `v3.2`, [you can read more about it here](/blog/typed-document-node)).
+Apollo-Client also supports `TypedDocumentNode` now natively (since `v3.2`,
+[you can read more about it here](/blog/typed-document-node)).
 
-You can use it to generate a fully-typed `DocumentNode` you can use with Apollo-Client, and it will automatically type your variables and responses.
+You can use it to generate a fully-typed `DocumentNode` you can use with Apollo-Client, and it will
+automatically type your variables and responses.
 
 You can use `@graphql-codegen/typed-document-node` with the following setup to get that:
 
@@ -114,7 +131,8 @@ generates:
       - typed-document-node
 ```
 
-Later, in your code, you can just import the generated `TypedDocumentNode` objects from `typed-document-nodes` (based on your GraphQL operations), and it will be automatically typed:
+Later, in your code, you can just import the generated `TypedDocumentNode` objects from
+`typed-document-nodes` (based on your GraphQL operations), and it will be automatically typed:
 
 ```tsx
 import { RatesDocument } from './typed-document-nodes'
@@ -137,7 +155,8 @@ export const MyComponent: React.FC = () => {
 
 ## Ready-To-Use Hooks / HOC / Components
 
-One of the most powerful features of GraphQL-Codegen is the ability to generate flexible code based on your GraphQL schema and your GraphQL operations.
+One of the most powerful features of GraphQL-Codegen is the ability to generate flexible code based
+on your GraphQL schema and your GraphQL operations.
 
 We generate TypeScript types, but that's not all - we can also generate code for you.
 
@@ -178,6 +197,12 @@ export const MyComponent: React.FC = () => {
 
 ## More!
 
-You can also generate [Svelte-Apollo](https://github.com/ticruz38/graphql-codegen-svelte-apollo), [apollo-angular](https://apollo-angular.com) types, [Vue-Apollo](https://graphql-code-generator.com/docs/plugins/typescript-vue-apollo), [Stencil-Apollo](https://graphql-code-generator.com/docs/plugins/typescript-stencil-apollo) and other view layers working with Apollo Client 3...
+You can also generate [Svelte-Apollo](https://github.com/ticruz38/graphql-codegen-svelte-apollo),
+[apollo-angular](https://apollo-angular.com) types,
+[Vue-Apollo](https://graphql-code-generator.com/docs/plugins/typescript-vue-apollo),
+[Stencil-Apollo](https://graphql-code-generator.com/docs/plugins/typescript-stencil-apollo) and
+other view layers working with Apollo Client 3...
 
-[You can find a list of all available plugins here](https://graphql-code-generator.com/docs/plugins/index), and [here you can find a list of tips for integrating codegen with your frontend applications](/blog/graphql-codegen-best-practices).
+[You can find a list of all available plugins here](https://graphql-code-generator.com/docs/plugins/index),
+and
+[here you can find a list of tips for integrating codegen with your frontend applications](/blog/graphql-codegen-best-practices).
