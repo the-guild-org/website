@@ -2,8 +2,14 @@ import { WebsiteRecord } from '../config';
 import { SitemapTransformer } from './transformer';
 
 function composeSitemap(response, additionalUrls) {
-  if (response && response.headers && response.headers.get('content-type').startsWith('application/xml')) {
-    return new HTMLRewriter().on('sitemapindex', new SitemapTransformer(additionalUrls)).transform(response);
+  if (
+    response &&
+    response.headers &&
+    response.headers.get('content-type').startsWith('application/xml')
+  ) {
+    return new HTMLRewriter()
+      .on('sitemapindex', new SitemapTransformer(additionalUrls))
+      .transform(response);
   }
 
   return response;
@@ -13,7 +19,11 @@ export function shouldHandleSitemap(url: URL) {
   return url.pathname === '/sitemap.xml';
 }
 
-export async function handleSitemap(eventUrl: URL, rootSitemapUrl: string, mappings: Record<string, WebsiteRecord>) {
+export async function handleSitemap(
+  eventUrl: URL,
+  rootSitemapUrl: string,
+  mappings: Record<string, WebsiteRecord>,
+) {
   const response = await fetch(rootSitemapUrl, {
     cf: {
       cacheEverything: true,

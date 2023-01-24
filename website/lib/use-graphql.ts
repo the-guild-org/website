@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 const ENDPOINT_URL = 'https://guild-ms-slack-bot.vercel.app/api/graphql';
 
 export function useMutation<TVariables = Record<string, unknown>>(
-  query: string
+  query: string,
 ): (variables: TVariables) => Promise<{ data: unknown; errors: { message: string }[] }> {
   return useCallback(
     async (variables: TVariables) => {
@@ -16,6 +16,6 @@ export function useMutation<TVariables = Record<string, unknown>>(
 
       return response.json();
     },
-    [query]
+    [query],
   );
 }
