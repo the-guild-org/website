@@ -33,7 +33,9 @@ const processor = unified()
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function syncToDevTo(items) {
-  console.log(`=== Syncing ${items.length} articles to dev.to... (dry run: ${process.env.DRY_RUN}) ===`);
+  console.log(
+    `=== Syncing ${items.length} articles to dev.to... (dry run: ${process.env.DRY_RUN}) ===`,
+  );
   const client = new Client(process.env.DEV_TO_TOKEN);
   const { data: allArticles } = await client.selfAllArticles({
     per_page: 1000,
@@ -52,12 +54,17 @@ async function syncToDevTo(items) {
             ? item.meta.authors
             : item.meta.author
         ];
-      const markdown = `> This article was published on ${item.meta.date.toLocaleDateString(undefined, {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })} by [${author.name}](${author.link}) @ [The Guild Blog](https://the-guild.dev/)\n\n${item.markdown} `;
+      const markdown = `> This article was published on ${item.meta.date.toLocaleDateString(
+        undefined,
+        {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        },
+      )} by [${author.name}](${author.link}) @ [The Guild Blog](https://the-guild.dev/)\n\n${
+        item.markdown
+      } `;
       const image = item.meta.image
         ? item.meta.image.startsWith('/')
           ? `https://the-guild.dev${item.meta.image}`
@@ -116,7 +123,7 @@ async function syncToDevTo(items) {
         item,
         e.response?.status || e,
         e.response?.statusText,
-        e.response?.data
+        e.response?.data,
       );
       process.exit(1);
     }
@@ -176,7 +183,9 @@ function extractMeta() {
             enter(node) {
               if (node.type === 'Property') {
                 embedOptions[node.key.name] =
-                  node.value.type === 'ArrayExpression' ? node.value.elements.map(n => n.value) : node.value.value;
+                  node.value.type === 'ArrayExpression'
+                    ? node.value.elements.map(n => n.value)
+                    : node.value.value;
               }
             },
           });
@@ -187,7 +196,9 @@ function extractMeta() {
         if (node.name === 'Article') {
           parent.children.splice(index, 1);
         } else if (node.name === 'Gfycat') {
-          const gifId = node.attributes.find(a => a.name === 'gifId').value.value.replace(/['"]/g, '');
+          const gifId = node.attributes
+            .find(a => a.name === 'gifId')
+            .value.value.replace(/['"]/g, '');
 
           parent.children.splice(index, 1, {
             type: 'text',
@@ -216,7 +227,9 @@ function extractMeta() {
             position: node.position,
           });
         } else if (node.name === 'Tweet') {
-          const tweetLink = node.attributes.find(a => a.name === 'tweetLink').value.replace(/['"]/g, '');
+          const tweetLink = node.attributes
+            .find(a => a.name === 'tweetLink')
+            .value.replace(/['"]/g, '');
           const parts = tweetLink.split('/');
           const tweetId = parts[parts.length - 1];
 
@@ -228,7 +241,9 @@ function extractMeta() {
             });
           }
         } else if (node.name === 'YouTube') {
-          const youTubeId = node.attributes.find(a => a.name === 'youTubeId').value.replace(/['"]/g, '');
+          const youTubeId = node.attributes
+            .find(a => a.name === 'youTubeId')
+            .value.replace(/['"]/g, '');
 
           parent.children.splice(index, 1, {
             type: 'text',
@@ -236,7 +251,9 @@ function extractMeta() {
             position: node.position,
           });
         } else if (node.name === 'StackBlitz') {
-          const stackBlitzId = node.attributes.find(a => a.name === 'stackBlitzId').value.replace(/['"]/g, '');
+          const stackBlitzId = node.attributes
+            .find(a => a.name === 'stackBlitzId')
+            .value.replace(/['"]/g, '');
           const file = node.attributes.find(a => a.name === 'file').value?.replace(/['"]/g, '');
 
           parent.children.splice(index, 1, {
@@ -245,7 +262,9 @@ function extractMeta() {
             position: node.position,
           });
         } else if (node.name === 'CodeSandbox') {
-          const boxId = node.attributes.find(a => a.name === 'codeSandboxId').value.value.replace(/['"]/g, '');
+          const boxId = node.attributes
+            .find(a => a.name === 'codeSandboxId')
+            .value.value.replace(/['"]/g, '');
           const childEmbedOptions = {};
           const childEmbedOptionsNode = node.attributes.find(a => a.name === 'embedOptions');
 
@@ -254,7 +273,9 @@ function extractMeta() {
               enter(node) {
                 if (node.type === 'Property') {
                   childEmbedOptions[node.key.name] =
-                    node.value.type === 'ArrayExpression' ? node.value.elements.map(n => n.value) : node.value.value;
+                    node.value.type === 'ArrayExpression'
+                      ? node.value.elements.map(n => n.value)
+                      : node.value.value;
                 }
               },
             });

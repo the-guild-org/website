@@ -16,7 +16,7 @@ const errors = [];
 files.forEach(file =>
   checkFile(file.replace('.mdx', ''), error => {
     errors.push(error);
-  })
+  }),
 );
 
 if (errors.length > 0) {
@@ -35,7 +35,9 @@ function checkFile(name: string, onError: (err: string) => void) {
 
   links.forEach(link => {
     if (!exists(link.href)) {
-      onError(`❌  Error in \`${relative(process.cwd(), filepath)}\` link \`${link.href}\` doesn't exist`);
+      onError(
+        `❌  Error in \`${relative(process.cwd(), filepath)}\` link \`${link.href}\` doesn't exist`,
+      );
     }
   });
 }
@@ -99,6 +101,6 @@ function onlyRelative(links: Link[]): Link[] {
       (link.href !== '/' &&
         link.href.startsWith('/') &&
         !link.href.startsWith('/blog-assets/') &&
-        !link.href.startsWith('/medium/'))
+        !link.href.startsWith('/medium/')),
   );
 }
