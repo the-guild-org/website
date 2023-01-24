@@ -95,12 +95,17 @@ function extractPreviews(doc: string): Link[] {
 }
 
 function onlyRelative(links: Link[]): Link[] {
-  return links.filter(
-    link =>
+  const IGNORE_URL = new Set(['/static/shared-logos/products/envelop.svg', '/graphql/yoga-server']);
+
+  return links.filter(link => {
+    if (IGNORE_URL.has(link.href)) return;
+
+    return (
       link.href.startsWith('.') ||
       (link.href !== '/' &&
         link.href.startsWith('/') &&
         !link.href.startsWith('/blog-assets/') &&
-        !link.href.startsWith('/medium/')),
-  );
+        !link.href.startsWith('/medium/'))
+    );
+  });
 }
