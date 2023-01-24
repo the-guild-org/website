@@ -38,7 +38,7 @@ export default defineConfig({
     const { description, authors, tags, thumbnail, date, updateDate } = frontMatter;
     const image =
       thumbnail ||
-      `https://open-graph-image.theguild.workers.dev/?product=GUILD&title=${encodeURI(title)}`;
+      `https://og-image.the-guild.dev/?product=GUILD&title=${encodeURI(title)}`;
 
     return {
       description: description || `${siteName}: Modern API Platform and Ecosystem that scales`,
