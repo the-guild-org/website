@@ -20,7 +20,7 @@ export const Description = ({
           lg: 'mb-7 leading-6',
           md: 'mb-6 text-xs leading-4',
         }[size],
-        className
+        className,
       )}
     >
       {children}

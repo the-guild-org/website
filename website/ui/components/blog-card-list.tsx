@@ -53,7 +53,9 @@ export const BlogCardList = ({
               {article.description}
             </Description>
             <div className="mt-auto text-xs">
-              <span className="font-bold dark:text-[#C4C4C4]">{AUTHORS[article.authors[0]].name}</span>
+              <span className="font-bold dark:text-[#C4C4C4]">
+                {AUTHORS[article.authors[0]].name}
+              </span>
               <span className="dark:text-gray-500">
                 <span className="select-none"> • </span>
                 {format(new Date(article.date), 'LLL do y')}

@@ -1,4 +1,7 @@
-export function shouldSkipErrorReporting(requestedUrl: string, rawUserAgent: string | null): boolean {
+export function shouldSkipErrorReporting(
+  requestedUrl: string,
+  rawUserAgent: string | null,
+): boolean {
   const userAgent = (rawUserAgent || '').toLowerCase();
   const isBot =
     userAgent.includes('bot') ||

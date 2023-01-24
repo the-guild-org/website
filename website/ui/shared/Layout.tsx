@@ -22,7 +22,13 @@ const HeroHeader = styled('div', {
   },
 });
 
-export const Hero = ({ shrink, children }: { shrink?: boolean; children: ReactNode }): ReactElement => {
+export const Hero = ({
+  shrink,
+  children,
+}: {
+  shrink?: boolean;
+  children: ReactNode;
+}): ReactElement => {
   return (
     <div
       className={clsx(
@@ -45,7 +51,7 @@ export const Hero = ({ shrink, children }: { shrink?: boolean; children: ReactNo
       after:bg-no-repeat
       after:content-['']
       `,
-        shrink ? 'h-[50vh]' : 'h-[100vh]'
+        shrink ? 'h-[50vh]' : 'h-screen',
       )}
     >
       <Container className="h-full">

@@ -18,7 +18,10 @@ export const HeroSection = ({
         src={blueCircle}
         placeholder="empty"
         loading="eager"
-        className={clsx('absolute top-0 -left-40 z-[-1] lg:left-0', hideCirclesOnMobile && 'hidden xl:block')}
+        className={clsx(
+          'absolute top-0 -left-40 z-[-1] lg:left-0',
+          hideCirclesOnMobile && 'hidden xl:block',
+        )}
       />
       <Image
         alt=""
@@ -27,7 +30,7 @@ export const HeroSection = ({
         loading="eager"
         className={clsx(
           'drag-none absolute top-96 right-0 z-[-1] w-32 sm:top-80 sm:w-60 md:top-24 lg:w-96',
-          hideCirclesOnMobile && 'hidden xl:block'
+          hideCirclesOnMobile && 'hidden xl:block',
         )}
       />
       <div className="flex flex-col items-center justify-center text-center">

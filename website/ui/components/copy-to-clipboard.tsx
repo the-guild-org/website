@@ -76,7 +76,7 @@ export const CopyToClipboard = ({ value }: { value: string }): ReactElement => {
             'absolute right-2 top-2 hidden rounded-md border bg-gray-800 p-2 transition hover:bg-gray-700',
             isCopied
               ? 'border-green-500 text-green-500'
-              : 'border-gray-100/10 text-gray-500 hover:border-gray-100/30 hover:text-gray-400'
+              : 'border-gray-100/10 text-gray-500 hover:border-gray-100/30 hover:text-gray-400',
           )}
         >
           <IconToUse className="pointer-events-none h-4 w-4" />

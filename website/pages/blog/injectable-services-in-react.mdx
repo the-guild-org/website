@@ -9,9 +9,14 @@ image: /medium/59ec8df34fe4fd4bb20960e2270a12df.jpeg
 
 ## How They're Implemented and Their Similarities with Angular Services
 
-React provides a fantastic API for building components. It's light-weight and intuitive, and became a sensation in the dev community for a reason. With the introduction of the most recent API features: [hooks](https://reactjs.org/docs/hooks-overview.html) and [context/provider](https://reactjs.org/docs/context.html), components have became not only more functional, but also more testable. Let me explain.
+React provides a fantastic API for building components. It's light-weight and intuitive, and became
+a sensation in the dev community for a reason. With the introduction of the most recent API
+features: [hooks](https://reactjs.org/docs/hooks-overview.html) and
+[context/provider](https://reactjs.org/docs/context.html), components have became not only more
+functional, but also more testable. Let me explain.
 
-So far, when we wanted a component to use an external service, we would simply implement it in a separate module, import it, and use its exported methods, like so:
+So far, when we wanted a component to use an external service, we would simply implement it in a
+separate module, import it, and use its exported methods, like so:
 
 ```ts filename="auth-service.js"
 export const signUp = body => {
@@ -60,9 +65,16 @@ export const SignUpButton = ({ username, password, verifiedPass, onSignUp }) => 
 }
 ```
 
-> Keep in mind that this is NOT how I would actually write my code in production, there's no error handling, and both components are defined under a single module which I don't see as a good practice, but for demonstration purposes it's more than enough.
+> Keep in mind that this is NOT how I would actually write my code in production, there's no error
+> handling, and both components are defined under a single module which I don't see as a good
+> practice, but for demonstration purposes it's more than enough.
 
-The components above would work well within a React app, because essentially they can achieve what they were implemented for. However, if we would like to unit-test these components, we would encounter a problem, **because the only way to test these components would be via e2e tests, or by completely mocking the fetch API**. Either way, the solutions are not in our favor. Either we completely overkill it with testing, or we make use of a not-so-simple mocking solution for an ENTIRE native API. Below is an example:
+The components above would work well within a React app, because essentially they can achieve what
+they were implemented for. However, if we would like to unit-test these components, we would
+encounter a problem, **because the only way to test these components would be via e2e tests, or by
+completely mocking the fetch API**. Either way, the solutions are not in our favor. Either we
+completely overkill it with testing, or we make use of a not-so-simple mocking solution for an
+ENTIRE native API. Below is an example:
 
 ```tsx filename="auth-components.test.jsx"
 import React from 'react'
@@ -106,9 +118,18 @@ If so, how does one suppose to overcome this problem?
 
 ## Let's Learn from Our Angular Fellows
 
-I know what you're probably thinking right now… What is this guy thinking, promoting Angular design patterns which are completely no match for the great React. First of all, React is not perfect, and always has places for improvements. If it was already perfect, they wouldn't have kept working on it on Facebook. Second, I like React, and I believe in it very much, this is why I would like to make it better by ensuring best practices. So before you close your tab in anger please continue reading and listen to what I have to say :-)
+I know what you're probably thinking right now… What is this guy thinking, promoting Angular design
+patterns which are completely no match for the great React. First of all, React is not perfect, and
+always has places for improvements. If it was already perfect, they wouldn't have kept working on it
+on Facebook. Second, I like React, and I believe in it very much, this is why I would like to make
+it better by ensuring best practices. So before you close your tab in anger please continue reading
+and listen to what I have to say :-)
 
-In the Angular team, they came up with a clever approach. Instead of relying on hard-coded imports, what they did they provided a mechanism that would let us inject our services before we initialize the component. With that approach, we can easily mock-up our services, because with the injection system it's very easy to control what implementation of the services is it gonna use. So this is how it would practically look like:
+In the Angular team, they came up with a clever approach. Instead of relying on hard-coded imports,
+what they did they provided a mechanism that would let us inject our services before we initialize
+the component. With that approach, we can easily mock-up our services, because with the injection
+system it's very easy to control what implementation of the services is it gonna use. So this is how
+it would practically look like:
 
 ```ts filename="auth-module.ts"
 import { NgModule } from '@angular/core'
@@ -184,7 +205,8 @@ export class SignInButton {
 }
 ```
 
-And now if we would like to test it, all we have to do is to replace the injected service, like mentioned earlier:
+And now if we would like to test it, all we have to do is to replace the injected service, like
+mentioned earlier:
 
 ```ts filename="auth-components.test.ts"
 import { async, ComponentFixture, TestBed } from '@angular/core/testing'
@@ -237,7 +259,9 @@ To put things simple, I've created a diagram that describes the flow:
 
 ## Applying the Same Design Pattern in React
 
-Now that we're familiar with the design pattern, thanks to Angular, let's see how we can achieve the same thing in React using its API. Let's briefly revisit [React's context API](https://reactjs.org/docs/context.html):
+Now that we're familiar with the design pattern, thanks to Angular, let's see how we can achieve the
+same thing in React using its API. Let's briefly revisit
+[React's context API](https://reactjs.org/docs/context.html):
 
 ```tsx filename="auth-service.jsx"
 import React, { createContext, useContext } from 'react'
@@ -266,7 +290,10 @@ const signIn = body => {
 }
 ```
 
-The context can be seen as the container that holds our service, aka the `value` prop, as we can see in the example above. The provider defines what `value` the context will hold, so when we consume it, we will be provided with it. This API is the key for a mockable test unit in React, because the `value` can be replaced with whatever we want. Accordingly, we will wrap our `auth-service.tsx`:
+The context can be seen as the container that holds our service, aka the `value` prop, as we can see
+in the example above. The provider defines what `value` the context will hold, so when we consume
+it, we will be provided with it. This API is the key for a mockable test unit in React, because the
+`value` can be replaced with whatever we want. Accordingly, we will wrap our `auth-service.tsx`:
 
 ```tsx filename="auth-service.jsx"
 import React, { createContext, useContext } from 'react'
@@ -324,7 +351,10 @@ export const SignInButton = ({ username, password, verifiedPass, onSignUp }) => 
 }
 ```
 
-Because the `useAuth()` hook uses the context API under the hood, it can be easily replaced with a different value. All we have to do is to tell the provider to store a different value under its belonging context. Once we use the context, the received value should be the same one that was defined by the provider:
+Because the `useAuth()` hook uses the context API under the hood, it can be easily replaced with a
+different value. All we have to do is to tell the provider to store a different value under its
+belonging context. Once we use the context, the received value should be the same one that was
+defined by the provider:
 
 ```tsx filename="auth-components.test.jsx"
 import React from 'react'
@@ -360,14 +390,20 @@ describe('SignUpButton', () => {
 })
 ```
 
-One might ask: “Does this mean that I need to wrap each and every service with the context API?”, And my answer is: “If you're looking to deliver an enterprise quality React app, then yes”. Unlike Angular, React is more loose, and doesn't force this design pattern, so you can actually use what works best for you.
+One might ask: “Does this mean that I need to wrap each and every service with the context API?”,
+And my answer is: “If you're looking to deliver an enterprise quality React app, then yes”. Unlike
+Angular, React is more loose, and doesn't force this design pattern, so you can actually use what
+works best for you.
 
-Before I finish this article, here are some few things that I would like to see from the community, that I believe will make this work flow a lot easier:
+Before I finish this article, here are some few things that I would like to see from the community,
+that I believe will make this work flow a lot easier:
 
 - Have a 3rd party library that would wrap a service with the context API and would simplify it.
 - Have an ESLint rule that will force the usage of injectable React services.
 
-What do you think? Do you agree with the design pattern or not? Are you going to be one of the early adopters? Write your thoughts in the comments section below. Also feel free to follow me on [Medium](https://medium.com/@eytanmanor), or alternatively you can follow me on:
+What do you think? Do you agree with the design pattern or not? Are you going to be one of the early
+adopters? Write your thoughts in the comments section below. Also feel free to follow me on
+[Medium](https://medium.com/@eytanmanor), or alternatively you can follow me on:
 
 - [GitHub](https://github.com/DAB0mB)
 - [Twitter](https://twitter.com/eytan_manor)

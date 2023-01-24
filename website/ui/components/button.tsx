@@ -32,7 +32,8 @@ export const Button = ({
   disabled:cursor-not-allowed
   dark:bg-gray-800`,
         {
-          primary: 'px-10 text-white opacity-80 [background:linear-gradient(114.44deg,#7433ff_0%,#ffa3fd_100%)]',
+          primary:
+            'px-10 text-white opacity-80 [background:linear-gradient(114.44deg,#7433ff_0%,#ffa3fd_100%)]',
           secondary: 'px-5 text-gray-500',
         }[variant],
         !disabled &&
@@ -41,13 +42,17 @@ export const Button = ({
             secondary: 'hover:text-gray-600 dark:hover:text-gray-400',
           }[variant],
         !disabled && 'hover:bg-gray-300 dark:hover:bg-gray-700',
-        className
+        className,
       )}
       disabled={disabled}
       {...props}
     >
       {loading && (
-        <svg className="mr-2 -ml-5 inline h-5 w-5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+        <svg
+          className="mr-2 -ml-5 inline h-5 w-5 animate-spin text-white"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
           <circle className="stroke-current opacity-25" cx="12" cy="12" r="10" strokeWidth="3" />
           <path
             className="fill-current opacity-75"

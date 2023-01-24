@@ -39,7 +39,7 @@ export const Tooltip = ({
   text-xs
   text-gray-50
   [box-shadow:hsl(206_22%_7%/35%)_0_10px_38px_-10px,hsl(206_22%_7%/20%)_0_10px_20px_-15px]
-  `
+  `,
             )}
           >
             <Arrow className="fill-zinc-700" />

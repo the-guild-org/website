@@ -1,7 +1,15 @@
 import { ReactElement } from 'react';
 import { clsx } from 'clsx';
 
-export const Video = ({ src, title, className }: { src: string; title?: string; className?: string }): ReactElement => {
+export const Video = ({
+  src,
+  title,
+  className,
+}: {
+  src: string;
+  title?: string;
+  className?: string;
+}): ReactElement => {
   if (src.startsWith('https://')) {
     return (
       <iframe
