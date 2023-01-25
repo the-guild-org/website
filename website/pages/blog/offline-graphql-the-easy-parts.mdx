@@ -11,8 +11,8 @@ thumbnail: /blog-assets/offline-graphql-the-easy-parts/cover.png
 ## Offline GraphQL: The Easy Parts
 
 Your app is perfect. It is fast. It is pretty. It overwhelms the GraphQL server with requests. The
-UX is really very good. Your CI is perfect. When there's no internet it's unusable. It has 4.9
-stars on the App Store. Your app is almost perfect.
+UX is really very good. Your CI is perfect. When there's no internet it's unusable. It has 4.9 stars
+on the App Store. Your app is almost perfect.
 
 Make your app perfect and cache your data on the client. Tear-free.
 
@@ -157,7 +157,8 @@ await repository.get<User>(query: Query(
 
 ## Streams!
 
-GraphQL's subscriptions work, youbetcha. Why wait for your data when you could render it immediately?
+GraphQL's subscriptions work, youbetcha. Why wait for your data when you could render it
+immediately?
 
 ```dart
 final subscription = repository.subscribe<User>().listen((users) {});
@@ -173,7 +174,7 @@ Even if your GraphQL server doesn't utilize susbcriptions, you can still use `su
 will be triggered every time data is inserted into the local SQLite database.
 
 <Callout type="warning">
-Always dispose [your streams](https://dart.dev/articles/libraries/creating-streams)!
+  Always dispose [your streams](https://dart.dev/articles/libraries/creating-streams)!
 </Callout>
 
 ## Now Make It Offline
@@ -197,16 +198,16 @@ try. And try. We've seen queues retry for 30 days.
 ![image](https://user-images.githubusercontent.com/865897/72175823-f44a3580-3391-11ea-8961-bbeccd74fe7b.jpg)
 
 > Not your jam? Synchronous execution can be requested (circumventing the queue) by applying the
-`OfflineFirstUpsertPolicy.awaitRemote` policy.
+> `OfflineFirstUpsertPolicy.awaitRemote` policy.
 
 <Callout>
-You can still
-[use the retry queue](https://github.com/GetDutchie/brick/blob/main/packages/brick_offline_first_with_graphql/lib/src/graphql_offline_queue_link.dart)
-as an independent link in your `gql` client. You can also grab
-[requests about to be retried](https://pub.dev/documentation/brick_offline_first/latest/offline_queue/RequestSqliteCacheManager/unprocessedRequests.html)
-and
-[delete them](https://pub.dev/documentation/brick_offline_first/latest/offline_queue/RequestSqliteCacheManager/deleteUnprocessedRequest.html)
-if they're perpetually blocking the queue.
+  You can still [use the retry
+  queue](https://github.com/GetDutchie/brick/blob/main/packages/brick_offline_first_with_graphql/lib/src/graphql_offline_queue_link.dart)
+  as an independent link in your `gql` client. You can also grab [requests about to be
+  retried](https://pub.dev/documentation/brick_offline_first/latest/offline_queue/RequestSqliteCacheManager/unprocessedRequests.html)
+  and [delete
+  them](https://pub.dev/documentation/brick_offline_first/latest/offline_queue/RequestSqliteCacheManager/deleteUnprocessedRequest.html)
+  if they're perpetually blocking the queue.
 </Callout>
 
 ---
