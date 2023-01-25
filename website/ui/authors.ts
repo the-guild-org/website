@@ -165,5 +165,5 @@ export const AUTHORS: Record<string, Author> = {
     name: 'Dalvin Sejour',
     link: 'https://github.com/josiassejod1',
     github: 'josiassejod1',
-  }
+  },
 };
