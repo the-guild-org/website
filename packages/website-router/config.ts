@@ -91,6 +91,11 @@ export const jsonConfig = {
       crispSegments: ['graphql-eslint'],
       sitemap: true,
     },
+    '/graphql/stitching': {
+      rewrite: 'schema-stitching.pages.dev',
+      crispSegments: ['stitching'],
+      sitemap: true,
+    },
     // Redirects
     '/bob': {
       redirect: 'https://github.com/kamilkisiela/bob',
