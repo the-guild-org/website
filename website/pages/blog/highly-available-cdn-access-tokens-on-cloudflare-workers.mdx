@@ -1,5 +1,5 @@
 ---
-title: Highly available CDN Access Tokens on Cloudflare Workers
+title: Highly Available CDN Access Tokens on Cloudflare Workers
 tags: []
 authors: laurin
 date: 2023-01-30
@@ -66,7 +66,7 @@ sequenceDiagram;
   CDN Storage (R2)->>Client: Sends Artifact
 ```
 
-E.g. a request for fetching the access token would look like the following with `cUrl`.
+E.g. a request for fetching the access token would look like the following with `cURL`.
 
 ```bash
 curl -v -H 'X-Hive-CDN-Key: kAZlQN8U7q8pMsAMVpA0fBeRvvbaKt1h9JniZbi3+5k=' \
@@ -85,7 +85,7 @@ some conceptulizing we came up with the following phases:
 - Phase 3: Roll out the new CDN access token validation for legacy tokens
 - Phase 4: Roll out the new CDN access token format and managment UI in the web application
 
-## Phase I
+## Phase 1
 
 At a first glance Phase 1 and Phase 2 almost seem identical, however the distinguish between these
 two and the need to roll out these changes separately is crucial for ensuring integrity of the
@@ -173,7 +173,7 @@ that key we store the bcrypt hash of the static legacy CDN access token.
 After we successfully ran this database migration, we could check the PostgreSQL database and R2 in
 order to see an equal amount of entries.
 
-# Phase 3
+## Phase 3
 
 This was the most scariest phase. After we seeded the new access token storage, it was now time to
 switch the token validation method.
@@ -198,7 +198,7 @@ That means of a access token is invalidated (the R2 key is deleted), it might ta
 until the change is propagated. However, we felt like this is a great trade-off for by-passing
 reading from R2 and running bcryppt for verifying the access token against the hash.
 
-```ts filename="Using the Cache API for caching access token verification."
+```ts filename="Using the Cache API for caching access token verification"
 const validateLegacyCDNAccessToken = async (args: {
   targetId: string
   accessToken: string
@@ -380,6 +380,7 @@ The new token overview:
 ![All good](/blog-assets/highly-available-cdn-access-tokens-on-cloudflare-workers/phase-4-cdn-access-token-overview.png)
 
 Creating a new token:
+
 ![All good](/blog-assets/highly-available-cdn-access-tokens-on-cloudflare-workers/phase-4-token-create-form.png)
 
 We successfully deployed this to production and then informated all our clients that are waiting for
