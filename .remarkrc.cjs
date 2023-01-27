@@ -19,6 +19,7 @@ module.exports = {
         'error',
         [
           'KitQL',
+          'RxJS',
           'TL;DR',
           'MCB',
           'SaaS',
