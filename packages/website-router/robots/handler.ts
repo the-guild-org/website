@@ -1,5 +1,5 @@
 import Toucan from 'toucan-js';
-import { redirect } from '../routing';
+import { redirect } from '../routing.js';
 
 export function shouldHandleRobotsTxt(url: URL) {
   return url.pathname !== '/robots.txt' && url.pathname.endsWith('robots.txt');

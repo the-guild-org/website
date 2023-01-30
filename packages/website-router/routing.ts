@@ -1,6 +1,6 @@
 import Toucan from 'toucan-js';
 import type { RewriteRecord } from './config';
-import { shouldSkipErrorReporting } from './error-handling/error-reporting';
+import { shouldSkipErrorReporting } from './error-handling/error-reporting.js';
 
 async function handleErrorResponse(options: {
   sentry: Toucan;

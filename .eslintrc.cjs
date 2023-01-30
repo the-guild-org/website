@@ -2,7 +2,6 @@ module.exports = {
   extends: ['@theguild'],
   rules: {
     'unicorn/filename-case': 0,
-    'prefer-const': ['error', { destructuring: 'all' }],
   },
   overrides: [
     {

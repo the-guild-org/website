@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as cloudflare from '@pulumi/cloudflare';
 import { buildSync } from 'esbuild';
-import { jsonConfig } from './config';
+import { jsonConfig } from './config.js';
 
 const buildResult = buildSync({
   entryPoints: ['worker.ts'],

@@ -11,7 +11,7 @@ import { remove } from 'unist-util-remove';
 import { walk } from 'estree-walker';
 import { Client } from 'guild-devto-nodejs-sdk';
 import { globbySync } from 'globby';
-import { AUTHORS } from '../../../website/ui/authors';
+import { AUTHORS } from '../../../website/ui/authors.js';
 import yaml from 'js-yaml';
 
 const DEV_TO_ORG_ID = 4467;
