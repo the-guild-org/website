@@ -29,5 +29,11 @@ module.exports = {
         },
       },
     },
+    {
+      files: 'packages/website-router/**',
+      rules: {
+        'import/extensions': 'off',
+      },
+    },
   ],
 };

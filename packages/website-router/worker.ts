@@ -1,14 +1,14 @@
-import { jsonConfig } from './config.js';
+import { jsonConfig } from './config';
 import Toucan from 'toucan-js';
-import { createSentry } from './error-handling/sentry.js';
-import { handleSitemap, shouldHandleSitemap } from './sitemap/handler.js';
-import { handleRobotsTxt, shouldHandleRobotsTxt } from './robots/handler.js';
-import { handleRewrite, redirect, ManipulateResponseFn } from './routing.js';
-import { FaviconHandler } from './favicon/transformer.js';
-import { CrispHandler } from './html-handlers/crisp.js';
-import { GoogleAnalyticsHandler } from './html-handlers/ga.js';
-import { handleFavicon, shouldHandleFavicon } from './favicon/handler.js';
-import { handleFeed, shouldHandleFeed } from './feed/handler.js';
+import { createSentry } from './error-handling/sentry';
+import { handleSitemap, shouldHandleSitemap } from './sitemap/handler';
+import { handleRobotsTxt, shouldHandleRobotsTxt } from './robots/handler';
+import { handleRewrite, redirect, ManipulateResponseFn } from './routing';
+import { FaviconHandler } from './favicon/transformer';
+import { CrispHandler } from './html-handlers/crisp';
+import { GoogleAnalyticsHandler } from './html-handlers/ga';
+import { handleFavicon, shouldHandleFavicon } from './favicon/handler';
+import { handleFeed, shouldHandleFeed } from './feed/handler';
 
 declare const SENTRY_DSN: string;
 declare const RELEASE: string;
