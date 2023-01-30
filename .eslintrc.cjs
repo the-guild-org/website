@@ -1,8 +1,5 @@
 module.exports = {
   extends: ['@theguild'],
-  rules: {
-    'unicorn/filename-case': 0,
-  },
   overrides: [
     {
       files: '*.md{,x}',
@@ -20,6 +17,10 @@ module.exports = {
     {
       files: 'website/**',
       extends: '@theguild/eslint-config/react',
+      rules: {
+        // enable without breaking existing iframes
+        'react/iframe-missing-sandbox': 'off',
+      },
       settings: {
         'import/resolver': {
           typescript: {
