@@ -1,5 +1,5 @@
-import { WebsiteRecord } from '../config.js';
-import { SitemapTransformer } from './transformer.js';
+import { WebsiteRecord } from '../config';
+import { SitemapTransformer } from './transformer';
 
 function composeSitemap(response, additionalUrls) {
   if (response?.headers?.get('content-type').startsWith('application/xml')) {
