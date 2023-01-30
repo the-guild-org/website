@@ -1,0 +1,32 @@
+diff --git a/dist/index.js b/dist/index.js
+index 08c7de4681bb8e52e673c75823ea96bef31d3f9d..96fa852e7c1ce7a5d135fb3b9df2cf12836992f9 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -3264,12 +3264,21 @@ var InnerLayout = ({
+     flatDocsDirectories,
+     directories
+   } = useMemo6(
+-    () => normalizePages({
+-      list: pageMap,
+-      locale,
+-      defaultLocale,
+-      route: fsPath
+-    }),
++    () => {
++      const res = normalizePages({
++        list: pageMap,
++        locale,
++        defaultLocale,
++        route: fsPath
++      })
++      if (fsPath.startsWith('/blog/tag/')) {
++        res.activeThemeContext.layout = 'full'
++        res.activeThemeContext.sidebar = false
++        res.activeThemeContext.timestamp = false
++        res.activeThemeContext.pagination = false
++      }
++      return res
++    },
+     [pageMap, locale, defaultLocale, fsPath]
+   );
+   const themeContext = __spreadValues(__spreadValues({}, activeThemeContext), frontMatter);
