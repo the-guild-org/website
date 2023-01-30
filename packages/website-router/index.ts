@@ -17,7 +17,7 @@ if (buildResult.errors.length > 0) {
   // eslint-disable-next-line no-console
   console.error(buildResult.errors);
 
-  throw new Error(`Failed to build worker`);
+  throw new Error('Failed to build worker');
 }
 
 const workerCode = buildResult.outputFiles[0].text;

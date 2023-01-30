@@ -63,7 +63,7 @@ export function redirect(sentry: Toucan, from: string, url: string, code = 301) 
       from,
       to: url,
     },
-    message: `Redirecting`,
+    message: 'Redirecting',
   });
 
   return new Response(null, {
@@ -120,7 +120,7 @@ export async function handleRewrite(options: {
 
       options.sentry.addBreadcrumb({
         type: 'debug',
-        message: `Received redirect response from upstream website`,
+        message: 'Received redirect response from upstream website',
         data: {
           status: freshResponse.status,
           to: upstreamLocation,
@@ -144,7 +144,7 @@ export async function handleRewrite(options: {
     if (freshResponse.status >= 400) {
       options.sentry.addBreadcrumb({
         type: 'error',
-        message: `Upstream returned HTTP error`,
+        message: 'Upstream returned HTTP error',
         data: {
           status: freshResponse.status,
         },
@@ -157,7 +157,7 @@ export async function handleRewrite(options: {
 
         options.sentry.addBreadcrumb({
           type: 'info',
-          message: `Trying lower case now`,
+          message: 'Trying lower case now',
           data: {
             original: options.upstreamPath,
             lower: asLower,

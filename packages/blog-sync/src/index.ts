@@ -80,7 +80,7 @@ async function syncToDevTo(items) {
         console.log(`Article "${item.meta.title}" already exists, updating if needed...`);
 
         if (exists.bodyMarkdown !== markdown) {
-          console.log(`   -> Updating...`);
+          console.log('   -> Updating...');
 
           await client.updateArticle(exists.id, {
             article: {
@@ -92,11 +92,11 @@ async function syncToDevTo(items) {
               tags,
             },
           });
-          console.log(`   -> Done!`);
-          console.log(`... waiting before next request to avoid rate-limit ...`);
+          console.log('   -> Done!');
+          console.log('... waiting before next request to avoid rate-limit ...');
           await sleep(30 * 1000);
         } else {
-          console.log(`   -> Up to date!`);
+          console.log('   -> Up to date!');
         }
       } else {
         console.log(`Creating article "${item.meta.title}" on DevTo...`);
@@ -113,12 +113,12 @@ async function syncToDevTo(items) {
             tags,
           },
         });
-        console.log(`... waiting before next request to avoid rate-limit ...`);
+        console.log('... waiting before next request to avoid rate-limit ...');
         await sleep(30 * 1000);
       }
     } catch (e) {
       console.log(
-        `Failed to send article to dev.to, error: `,
+        'Failed to send article to dev.to, error: ',
         e,
         item,
         e.response?.status || e,

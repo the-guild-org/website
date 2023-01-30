@@ -108,7 +108,7 @@ export const SERVICES: {
   },
   {
     name: 'Engineering',
-    description: `Working side by side, us being an integral part of your team.`,
+    description: 'Working side by side, us being an integral part of your team.',
     icon: engineering,
     url: '/services#engineering',
     longDescription:
