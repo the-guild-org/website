@@ -69,7 +69,7 @@ export const Newsletter = (): ReactElement => {
               onChange={handleChange}
               onBlur={handleBlur}
               disabled={isSubmitting}
-              isInvalid={touched.email && Boolean(errors.email)}
+              isInvalid={touched.email && !!errors.email}
             />
             {touched.email && errors.email && (
               <p className="mt-2 text-sm text-red-600">{errors.email}</p>

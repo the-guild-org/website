@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['@theguild', '@theguild/eslint-config/react'],
+  extends: ['@theguild'],
   rules: {
     'unicorn/filename-case': 0,
     'prefer-const': ['error', { destructuring: 'all' }],
@@ -16,6 +16,17 @@ module.exports = {
       parserOptions: {
         ecmaVersion: 13,
         sourceType: 'module',
+      },
+    },
+    {
+      files: 'website/**',
+      extends: '@theguild/eslint-config/react',
+      settings: {
+        'import/resolver': {
+          typescript: {
+            project: 'website/tsconfig.json',
+          },
+        },
       },
     },
   ],

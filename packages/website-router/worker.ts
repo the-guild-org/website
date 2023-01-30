@@ -27,7 +27,7 @@ const {
 const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => {
   let result = rawResponse;
 
-  if (result && result.headers && result.headers.get('content-type')?.startsWith('text/html')) {
+  if (result?.headers?.get('content-type')?.startsWith('text/html')) {
     result = new HTMLRewriter()
       .on('head', new FaviconHandler())
       .on('head', new CrispHandler(crispWebsiteId, record))
