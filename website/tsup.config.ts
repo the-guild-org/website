@@ -4,7 +4,6 @@ import { defineConfig } from 'tsup';
 const [, , filePath] = process.argv;
 const outPath = './dist/' + basename(filePath).replace('.ts', '.js');
 
-// eslint-disable-next-line import/no-default-export
 export default defineConfig({
   entry: [filePath],
   outDir: 'dist',

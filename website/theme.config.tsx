@@ -1,4 +1,3 @@
-/* eslint-disable import/no-default-export */
 import { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import { Callout, defineConfig, Giscus, Header, useConfig, useTheme } from '@theguild/components';
