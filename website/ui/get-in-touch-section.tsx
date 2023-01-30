@@ -13,7 +13,7 @@ export const Newsletter = (): ReactElement => {
   const [error, setError] = useState(false);
   const [confetti, setConfetti] = useState(false);
   const mutate = useMutation(
-    `mutation sayHi($email: String!, $name: String) { sayHi(email: $email, name: $name, project: "WEBSITE") { ok } }`,
+    'mutation sayHi($email: String!, $name: String) { sayHi(email: $email, name: $name, project: "WEBSITE") { ok } }',
   );
 
   const { handleSubmit, values, handleChange, handleBlur, isSubmitting, errors, touched } =
@@ -69,7 +69,7 @@ export const Newsletter = (): ReactElement => {
               onChange={handleChange}
               onBlur={handleBlur}
               disabled={isSubmitting}
-              isInvalid={touched.email && Boolean(errors.email)}
+              isInvalid={touched.email && !!errors.email}
             />
             {touched.email && errors.email && (
               <p className="mt-2 text-sm text-red-600">{errors.email}</p>

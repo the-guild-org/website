@@ -208,7 +208,7 @@ export function shouldSkipErrorReporting(
       '/dev',
       '/main',
       '/test',
-      `'A=0`,
+      "'A=0",
       'Editor.gif',
       'toplogo.gif',
       'comm.js',

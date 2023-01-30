@@ -11,7 +11,7 @@ import { remove } from 'unist-util-remove';
 import { walk } from 'estree-walker';
 import { Client } from 'guild-devto-nodejs-sdk';
 import { globbySync } from 'globby';
-import { AUTHORS } from '../../../website/ui/authors';
+import { AUTHORS } from '../../../website/ui/authors.js';
 import yaml from 'js-yaml';
 
 const DEV_TO_ORG_ID = 4467;
@@ -79,8 +79,10 @@ async function syncToDevTo(items) {
       if (exists) {
         console.log(`Article "${item.meta.title}" already exists, updating if needed...`);
 
-        if (exists.bodyMarkdown !== markdown) {
-          console.log(`   -> Updating...`);
+        if (exists.bodyMarkdown === markdown) {
+          console.log('   -> Up to date!');
+        } else {
+          console.log('   -> Updating...');
 
           await client.updateArticle(exists.id, {
             article: {
@@ -92,11 +94,9 @@ async function syncToDevTo(items) {
               tags,
             },
           });
-          console.log(`   -> Done!`);
-          console.log(`... waiting before next request to avoid rate-limit ...`);
+          console.log('   -> Done!');
+          console.log('... waiting before next request to avoid rate-limit ...');
           await sleep(30 * 1000);
-        } else {
-          console.log(`   -> Up to date!`);
         }
       } else {
         console.log(`Creating article "${item.meta.title}" on DevTo...`);
@@ -113,12 +113,12 @@ async function syncToDevTo(items) {
             tags,
           },
         });
-        console.log(`... waiting before next request to avoid rate-limit ...`);
+        console.log('... waiting before next request to avoid rate-limit ...');
         await sleep(30 * 1000);
       }
     } catch (e) {
       console.log(
-        `Failed to send article to dev.to, error: `,
+        'Failed to send article to dev.to, error: ',
         e,
         item,
         e.response?.status || e,
@@ -208,7 +208,7 @@ function extractMeta() {
         } else if (node.name === 'iframe') {
           const src = node.attributes.find(a => a.name === 'src').value;
 
-          if (src && src.includes('youtube')) {
+          if (src?.includes('youtube')) {
             const parts = src.split('/');
             const videoId = parts[parts.length - 1];
 

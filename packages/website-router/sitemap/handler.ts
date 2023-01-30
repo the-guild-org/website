@@ -1,12 +1,8 @@
-import { WebsiteRecord } from '../config';
-import { SitemapTransformer } from './transformer';
+import { WebsiteRecord } from '../config.js';
+import { SitemapTransformer } from './transformer.js';
 
 function composeSitemap(response, additionalUrls) {
-  if (
-    response &&
-    response.headers &&
-    response.headers.get('content-type').startsWith('application/xml')
-  ) {
+  if (response?.headers?.get('content-type').startsWith('application/xml')) {
     return new HTMLRewriter()
       .on('sitemapindex', new SitemapTransformer(additionalUrls))
       .transform(response);

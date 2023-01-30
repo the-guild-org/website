@@ -1,11 +1,10 @@
 /* eslint-disable no-console */
-import { basename } from 'path';
+import { basename } from 'node:path';
 import { defineConfig } from 'tsup';
 
 const [, , filePath] = process.argv;
-const outPath = `./dist/` + basename(filePath).replace('.ts', '.mjs');
+const outPath = './dist/' + basename(filePath).replace('.ts', '.mjs');
 
-// eslint-disable-next-line import/no-default-export
 export default defineConfig({
   entry: [filePath],
   outDir: 'dist',

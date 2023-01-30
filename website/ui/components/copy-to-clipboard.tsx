@@ -40,12 +40,12 @@ const CopyIcon = ({ className }: { className?: string }): ReactElement => (
 );
 
 export const CopyToClipboard = ({ value }: { value: string }): ReactElement => {
-  const [isCopied, setCopied] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     if (!isCopied) return;
     const timerId = setTimeout(() => {
-      setCopied(false);
+      setIsCopied(false);
     }, 2000);
 
     return () => {
@@ -54,7 +54,7 @@ export const CopyToClipboard = ({ value }: { value: string }): ReactElement => {
   }, [isCopied]);
 
   const handleClick = useCallback<ComponentProps<'button'>['onClick']>(async () => {
-    setCopied(true);
+    setIsCopied(true);
     if (!navigator?.clipboard) {
       return;
     }

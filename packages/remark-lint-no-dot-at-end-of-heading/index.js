@@ -19,7 +19,7 @@ const remarkLintNoDotAtEndOfHeading = lintRule(
         return;
       }
       if (toString(node).endsWith('.')) {
-        file.message(`Heading should not ends with "."`, node);
+        file.message('Heading should not ends with "."', node);
       }
     });
   },

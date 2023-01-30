@@ -1,14 +1,14 @@
-import { jsonConfig } from './config';
+import { jsonConfig } from './config.js';
 import Toucan from 'toucan-js';
-import { createSentry } from './error-handling/sentry';
-import { handleSitemap, shouldHandleSitemap } from './sitemap/handler';
-import { handleRobotsTxt, shouldHandleRobotsTxt } from './robots/handler';
-import { handleRewrite, redirect, ManipulateResponseFn } from './routing';
-import { FaviconHandler } from './favicon/transformer';
-import { CrispHandler } from './html-handlers/crisp';
-import { GoogleAnalyticsHandler } from './html-handlers/ga';
-import { handleFavicon, shouldHandleFavicon } from './favicon/handler';
-import { handleFeed, shouldHandleFeed } from './feed/handler';
+import { createSentry } from './error-handling/sentry.js';
+import { handleSitemap, shouldHandleSitemap } from './sitemap/handler.js';
+import { handleRobotsTxt, shouldHandleRobotsTxt } from './robots/handler.js';
+import { handleRewrite, redirect, ManipulateResponseFn } from './routing.js';
+import { FaviconHandler } from './favicon/transformer.js';
+import { CrispHandler } from './html-handlers/crisp.js';
+import { GoogleAnalyticsHandler } from './html-handlers/ga.js';
+import { handleFavicon, shouldHandleFavicon } from './favicon/handler.js';
+import { handleFeed, shouldHandleFeed } from './feed/handler.js';
 
 declare const SENTRY_DSN: string;
 declare const RELEASE: string;
@@ -27,7 +27,7 @@ const {
 const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => {
   let result = rawResponse;
 
-  if (result && result.headers && result.headers.get('content-type')?.startsWith('text/html')) {
+  if (result?.headers?.get('content-type')?.startsWith('text/html')) {
     result = new HTMLRewriter()
       .on('head', new FaviconHandler())
       .on('head', new CrispHandler(crispWebsiteId, record))
@@ -148,7 +148,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
     if ('rewrite' in record) {
       sentry.addBreadcrumb({
         level: 'debug',
-        message: `Handling as rewrite route`,
+        message: 'Handling as rewrite route',
       });
 
       return await handleRewrite({
@@ -172,7 +172,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
 
   sentry.addBreadcrumb({
     level: 'debug',
-    message: `No matching upstream website, will try now the root domain...`,
+    message: 'No matching upstream website, will try now the root domain...',
   });
 
   // this will delegate the request to the fallback endpoint
@@ -198,7 +198,7 @@ addEventListener('fetch', (event: FetchEvent) => {
       .then(resultResponse => {
         sentry.addBreadcrumb({
           type: 'debug',
-          message: `Composed final response object`,
+          message: 'Composed final response object',
           data: {
             status: resultResponse.status,
             // headers: resultResponse.headers,

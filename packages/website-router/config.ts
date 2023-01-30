@@ -22,7 +22,7 @@ export const jsonConfig = {
       sitemap: true,
     },
     '/graphql/yoga-server': {
-      rewrite: `graphql-yoga.pages.dev`,
+      rewrite: 'graphql-yoga.pages.dev',
       crispSegments: ['yoga'],
       sitemap: true,
     },
