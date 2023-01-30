@@ -128,7 +128,7 @@ export async function handleRewrite(options: {
         },
       });
 
-      if (!hasMatchingWebsite) {
+      if (!hasMatchingWebsite || upstreamLocation?.startsWith('http')) {
         return freshResponse;
       }
 
