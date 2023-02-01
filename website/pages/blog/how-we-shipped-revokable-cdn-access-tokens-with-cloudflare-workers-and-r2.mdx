@@ -1,8 +1,8 @@
 ---
-title: How we shipped revokable CDN access tokens with Cloudflare Workers and R2
+title: How we shipped CDN access tokens with Cloudflare Workers and R2
 tags: []
 authors: laurin
-date: 2023-01-30
+date: 2023-02-02
 description:
   Learn how we are using Cloudflare Workers to provide highly available access tokens for the Hive
   schema artifacts CDN.
@@ -10,8 +10,8 @@ image: # /blog-assets/graphqxl-language/cover.png
 thumbnail: # /blog-assets/graphqxl-language/thumbnail.png
 ---
 
-As we are building GraphQL Hive we are constantly facing interesting problems and challenges that we
-need to solve.
+As we are building the GraphQL schema registry Hive we are constantly facing interesting problems
+and challenges that we need to solve.
 
 In this post we will talk about how we are using Cloudflare Workers to provide authenticated highly
 available access to GraphQL schema artifacts, e.g. SDL (Schema Definition Language), the service
@@ -19,37 +19,55 @@ lists or the Supergraph.
 
 ## The Problem
 
-The avilability of the GraphQL schema artifacts is crucial for the GraphQL Hive clients to work
-flawless even if there is an incident on the GraphQL Hive side.
+The availability of the GraphQL schema artifacts is mission-critical for the success of the Hive
+clients to work flawless, even if there is an incident on the GraphQL Hive side.
 
-The CDN is consumed by GraphQL Gateways and is critical for the success of our customers.
+The schema artifacts might be consumed by GraphQL Gateways, and any outage could prevent them from
+shipping to production.
 
-So far the GraphQL Hive CDN was using a simple token based authentication. The token was generated
-based on the target id (think of it as project id) and an applpication secret and thus static.
+That is why from the beginning we decided to use Cloudflare Workers as a CDN for the GraphQL schema
+artifacts.
 
-That means if this key would accidentially leak to the outside world it would be impossible to
-invalidate it.
+```mermaid
+sequenceDiagram;
+  participant Client
+  participant CDN (CF Worker)
+  participant CDN Storage (R2)
 
-Thus, we needed a new solution that allows generating and invalidating many different access keys in
-parrallel, without drastically impacting the performance of the CDN.
+  critical Validate Access Token
+    Client->>+CDN (CF Worker): Request GET /v1/artifact/c7ce447c-f5e6-4f13-87b8-d3051ba3fc45/sdl
+    CDN (CF Worker)-->>-Client: Responds with 302 presigned URL
+  end
+  Client->>CDN Storage (R2): GET: presigned URL
+  CDN Storage (R2)->>Client: Sends Artifact
+```
 
-On top of that we needed the old "legacy" CDN access tokens still to be usable (and also be able to
+However, in the first iteration of the token was generated based on the target id (think of it as
+project id) and an application secret and, thus, static.
+
+That means if this key would accidentally leak to the outside world, it would be impossible to
+invalidate it. Some of our customers were justifiably concerned about this.
+
+We needed a new solution that allows generating and deleting many different access keys in parallel,
+without drastically impacting the performance of the CDN.
+
+On top of that, we needed the old "legacy" CDN access tokens still to be usable (and also be able to
 invalidate those!) alongside the new ones, as we did not want to break consumers that already access
 the CDN.
 
 ## The Solution
 
-First of all we needed to decide upon a store in which we can store the hashes of the CDN access
+First we needed to decide upon a store in which we can store the hashes of the new CDN access
 tokens.
 
 We were already using the Cloudflare R2 (S3 Buckets) for storing the schema artifacts. As these
 artifacts are as close to the Cloudflare Workers as possible we decided that this might be the best
 solution, compared to e.g. a remote Redis or PostgreSQL instance with increased latency.
 
-Cloudflare Workers KV was not an option as GraphQL Hive supports both hosted (cloud) and self-hosted
-(community) deployments, where the latter should be able to run without the need for ANY external
-(paid) cloud services. We did not have a KV replacement available, on the other site there are many
-S3 compatible storage solutions such as MinIO available.
+Cloudflare Workers KV was not an option, as GraphQL Hive supports both hosted (cloud) and
+self-hosted (community) deployments, where the latter should be able to run without the need for ANY
+external (paid) cloud services. We did not have a KV replacement available, on the other site there
+are many S3 compatible storage solutions such as MinIO available.
 
 The whole flow for accessing the CDN artifacts looks like the following.
 
@@ -69,27 +87,31 @@ sequenceDiagram;
 
 E.g. a request for fetching the access token would look like the following with `cURL`.
 
-```bash
-curl -v -H 'X-Hive-CDN-Key: kAZlQN8U7q8pMsAMVpA0fBeRvvbaKt1h9JniZbi3+5k=' \
+```bash filename="cUrl command for fetching an CDN artifact"
+curl -v \
+  -H 'X-Hive-CDN-Key: kAZlQN8U7q8pMsAMVpA0fBeRvvbaKt1h9JniZbi3+5k=' \
   https://cdn.graphql-hive.com/v1/c7ce447c-f5e6-4f13-87b8-d3051ba3fc45/sdl
+```
+
+```bash filename="cUrl output"
 /artifacts/v1/c7ce447c-f5e6-4f13-87b8-d3051ba3fc45/sdl > GET
 302 < Found
 location < Header: https://6d5bc18cd8d13babe7ed321adba3d8ae.r2.cloudflarestorage.com/artifacts/c7ce447c-f5e6-4f13-87b8-d3051ba3fc45/sdl
 Found.
 ```
 
-In order to get this new feature shipped flawlessly we needed to roll it out incrementally. After
-some conceptulizing we came up with the following phases:
+In order to get this new feature shipped flawlessly, we needed to roll it out incrementally. After
+some conceptualizing we came up with the following phases:
 
 - Phase 1: Automatically write new "generated" legacy access tokens to the R2 buckets
-- Phase 2: Run a migration for import all "legacy" access tokens in the R2 buckets
+- Phase 2: Run a migration to import all "legacy" access tokens in the R2 buckets
 - Phase 3: Roll out the new CDN access token validation for legacy tokens
-- Phase 4: Roll out the new CDN access token format and managment UI in the web application
+- Phase 4: Roll out the new CDN access token format and management UI in the web application
 
 ## Phase 1
 
-At a first glance Phase 1 and Phase 2 almost seem identical, however the distinguish between these
-two and the need to roll out these changes separately is crucial for ensuring integrity of the
+At a first glance Phase 1 and Phase 2 almost seem identical, however to distinguish between these
+two, and the need to roll out these changes separately is crucial for ensuring integrity of the
 application.
 
 In our web application we have a button "Connect to CDN", that automatically generates the old
@@ -176,28 +198,28 @@ order to see an equal amount of entries.
 
 ## Phase 3
 
-This was the most scariest phase. After we seeded the new access token storage, it was now time to
-switch the token validation method.
+This was the scariest phase. After we seeded the new access token storage, it was now time to switch
+the token validation method.
 
-Instead of veryifing the CDN access token using an encryption secret environment variable we would
+Instead of verifying the CDN access token using an encryption secret environment variable, we would
 now instead load the R2 key based on the artifact target id being accessed.
 
 E.g. for the URL `/v1/artifact/c7ce447c-f5e6-4f13-87b8-d3051ba3fc45/sdl`, we would load the R2 key
 `<bucket-name>/cdn-legacy-keys/c7ce447c-f5e6-4f13-87b8-d3051ba3fc45/` and then check the hash stored
-in that key there against the provided access key (the `X-Hive-CDN-Key` header value).
+in that key, against the provided access key (the `X-Hive-CDN-Key` header value).
 
-In case the key does not exist or the hash would not match the access token that means that the
-token is no longer valid/invalid, which is later on our mechanism for allowing users to invalidate
-the legacy token.
+In case the key does not exist, or the hash would not match the access token, that means it is no
+longer valid/invalid, which is later on our mechanism for allowing users to invalidate the legacy
+token.
 
-On top of that to prevent reading from R2 for every request and speed up the token validation for
+On top of that, to prevent reading from R2 for every request and speed up the token validation for
 subsequent requests, we utilized the
 [Cache API](https://developers.cloudflare.com/workers/runtime-apis/cache/) for storing the token
 validation result for 5 minutes.
 
-That means of a access token is invalidated (the R2 key is deleted), it might take up to 5 minutes
+That means if an access token is invalidated (the R2 key is deleted), it might take up to 5 minutes
 until the change is propagated. However, we felt like this is a great trade-off for by-passing
-reading from R2 and running bcryppt for verifying the access token against the hash.
+reading from R2 and running bcrypt for verifying the access token against the hash.
 
 ```ts filename="Using the Cache API for caching access token verification"
 const validateLegacyCDNAccessToken = async (args: {
@@ -274,14 +296,14 @@ We quickly responded with rolling back the latest changes and then it was time f
 ## Phase 3.1
 
 Now we needed to figure out what exactly was going wrong that let the new validation method fail.
-This was especially cumbersome as debugging Cloudflare Worker code is fairly cumbersome.
+This was especially hard, as debugging Cloudflare Worker code is fairly cumbersome.
 
 We were already using [Cloudflare Analytics](https://www.cloudflare.com/analytics/) for exporting
-metrics in out Grafana Dashboard. So the first idea was to add the new validation method with
+metrics in our Grafana Dashboard. So the first idea was to add the new validation method with
 excessive logging and run it along-side the old validation method.
 
-After, this change was deployed we quickly saw that reading the access tokens from R2 went fine,
-however validating the access tokens failed.
+After, this change was deployed, we quickly saw that reading the access tokens from R2 went fine,
+however, validating the access tokens failed.
 
 After way much more time than we would like to have spent on debugging this, we finally realized
 that we had used the wrong secret for generating the legacy access tokens before they were hashed
@@ -290,10 +312,10 @@ and written to R3.
 That basically meant we would have to prune all `cdn_access_token` database records and re-run our
 migration with the correct secret.
 
-After a bit of careful and manual thinkering with the production database and a deployment later,
-the database migration from Phase 2 was now run with the correct secret.
+After a bit of careful and manual tinkering with the production database and a deployment later, the
+database migration from Phase 2 was now run with the correct secret.
 
-On the dashboard we could now finally see the new validation method to succeed.
+On the dashboard, we could now finally see the new validation method to succeed.
 
 ![Rollout](/blog-assets/highly-available-cdn-access-tokens-on-cloudflare-workers/phase-3-1-rollout.png)
 
@@ -323,7 +345,7 @@ accessToken = "hv2" + base64(accessKeyId + ":" + privateKey)
 
 The `privateAccessKeyId` is never stored anywhere on our side, only the hash.
 
-The `"hv2"` prefix is a convinience for us for quickly identifying whether an access key sent to us
+The `"hv2"` prefix is a convenience for us for quickly identifying whether an access key sent to us
 is a legacy or new access token.
 
 E.g. for the URL `/v1/artifact/c7ce447c-f5e6-4f13-87b8-d3051ba3fc45/sdl`, we would load the R2 key
@@ -371,9 +393,9 @@ Once we decoded the incoming access token we can then read the R2 key value e.g.
 `<bucket-name>/cdn-keys/c7ce447c-f5e6-4f13-87b8-d3051ba3fc45/c7de111c-f5g9-4f13-87b8-d1267ba3ge95`
 and then check the user-sent `privateKey` against the hash stored there.
 
-For subsequent requests the same cache logic as for the legacy tokens is reused.
+For subsequent requests, the same cache logic as for the legacy tokens is reused.
 
-The UI part was pretty straight-forward and less challanging to build, however it was still part of
+The UI part was pretty straight-forward and less challenging to build, however it was still part of
 this project.
 
 The new token overview:
@@ -384,8 +406,10 @@ Creating a new token:
 
 ![All good](/blog-assets/highly-available-cdn-access-tokens-on-cloudflare-workers/phase-4-token-create-form.png)
 
-We successfully deployed this to production and then informated all our clients that are waiting for
-this feature. 🎉 In addition this is of course now also available for the self-hosted Hive users.
+We successfully deployed this to production and then informed all our clients that are waiting for
+this feature. 🎉
+
+In addition, this is of course now also available for the self-hosted Hive users.
 
 ## Conclusion
 
@@ -395,7 +419,7 @@ solving these kinds of problems.
 On the other hand debugging Cloudflare tooling is often frustrating and cumbersome, documentation is
 also often scarce or non-existing for more advanced use-cases.
 
-Nevertheless, we are hapy to finish this project successfully and are looking forward to all the
+Nevertheless, we are happy to finish this project successfully and are looking forward to all the
 future challenges!
 
 In case you did not know, Hive is fully open-source and self-hostable! You can find all the code,
