@@ -162,7 +162,7 @@ export function Avatar(props: AvatarProps) {
 
 By utilizing the `useFragment` hook we ensure that the component can only access the properties of
 the data that are declared directly within the fragment selection set. The other data declared
-through the additional fragment spread(`Avatar_UserFragment`), cannot be accessed within the
+through the additional fragment spread(`Avatar_UserFragment`) cannot be accessed within the
 `UserListItem` .
 
 The following example would raise a TypeScript error, as the `avatarUrl` field is not selected
@@ -184,7 +184,7 @@ type UserListItemProps = {
 }
 
 export function UserListItem(props: UserListItemProps) {
-  const user = useFragment(Item_UserFragment, props.user)
+  const user = useFragment(UserListItem_UserFragment, props.user)
 
   // ERROR: Property 'avatarUrl' does not exist on type
   const icon = <img src={user.avatarUrl} />
@@ -213,7 +213,7 @@ type UserListItemProps = {
 }
 
 export function UserListItem(props: UserListItemProps) {
-  const user = useFragment(Item_UserFragment, props.user)
+  const user = useFragment(UserListItem_UserFragment, props.user)
   return <ListItem icon={<Avatar user={user} />}>{user.fullName}</ListItem>
 }
 ```
