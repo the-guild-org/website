@@ -20,10 +20,8 @@ export default {
     });
 
     sentry.configureScope(scope => {
-      scope.setExtra('HTTP Request', {
-        Url: request.url,
-        Method: request.method,
-      });
+      scope.setExtra('Url', request.url);
+      scope.setExtra('Method', request.method);
     });
 
     try {
@@ -45,9 +43,7 @@ export default {
       const maybeBody = request.body ? await request.text() : null;
 
       sentry.configureScope(scope => {
-        scope.setExtra('HTTP Body', {
-          Body: maybeBody,
-        });
+        scope.setExtra('Body', maybeBody);
       });
 
       if (request.method === 'POST' && url.pathname === '/api/conductor') {
