@@ -42,5 +42,5 @@ const myScript = new cloudflare.WorkerScript('routingWorker', {
 new cloudflare.WorkerRoute('capture-route', {
   scriptName: myScript.name,
   zoneId: process.env.CLOUDFLARE_ZONEID!,
-  pattern: `*.${jsonConfig.publicDomain}/*`,
+  pattern: `${jsonConfig.publicDomain}/*`,
 });

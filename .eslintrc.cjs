@@ -35,5 +35,11 @@ module.exports = {
         'import/extensions': 'off',
       },
     },
+    {
+      files: 'packages/website-helper-worker/**',
+      rules: {
+        'import/extensions': 'off',
+      },
+    },
   ],
 };

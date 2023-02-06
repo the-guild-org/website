@@ -1,0 +1,25 @@
+name: website-helper
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy-worker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: the-guild-org/shared-config/setup@main
+        name: setup env
+        with:
+          nodeVersion: 18
+          packageManager: pnpm
+
+      - name: publish
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: ./packages/website-helper-worker
