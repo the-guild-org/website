@@ -14,6 +14,16 @@ export default {
       dsn: env.SENTRY_DSN,
       context,
       request,
+      attachStacktrace: true,
+      autoSessionTracking: true,
+      sendDefaultPii: true,
+    });
+
+    sentry.configureScope(scope => {
+      scope.setExtra('HTTP Request', {
+        Url: request.url,
+        Method: request.method,
+      });
     });
 
     try {
@@ -32,9 +42,18 @@ export default {
         });
       }
 
+      const maybeBody = request.body ? await request.text() : null;
+
+      sentry.configureScope(scope => {
+        scope.setExtra('HTTP Body', {
+          Body: maybeBody,
+        });
+      });
+
       if (request.method === 'POST' && url.pathname === '/api/conductor') {
         return await handleConductorContact({
           request,
+          body: maybeBody ? JSON.parse(maybeBody) : null,
           notion,
           notionDatabaseId: env.NOTION_CONDUCTOR_DATABASE_ID,
         });
@@ -43,6 +62,7 @@ export default {
       if (request.method === 'POST' && url.pathname === '/api/contact-us') {
         return await handleContactUs({
           request,
+          body: maybeBody ? JSON.parse(maybeBody) : null,
           crisp,
           notion,
           notionDatabaseId: env.NOTION_CONTACT_US_DATABASE_ID,

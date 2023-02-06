@@ -5,11 +5,12 @@ import { CrispClient } from './crisp-client';
 
 export async function handleContactUs(options: {
   request: Request;
+  body: Record<string, unknown>;
   notion: Client;
   crisp: CrispClient;
   notionDatabaseId: string;
 }) {
-  const body = (await options.request.json()) as {
+  const body = options.body as {
     email: string;
     name: string;
     notes?: string;

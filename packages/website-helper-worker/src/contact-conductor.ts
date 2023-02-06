@@ -3,10 +3,11 @@ import { buildResponseCorsHeaders } from './cors';
 
 export async function handleConductorContact(options: {
   request: Request;
+  body: Record<string, unknown>;
   notion: Client;
   notionDatabaseId: string;
 }) {
-  const body = (await options.request.json()) as {
+  const body = options.body as {
     email: string;
     name: string;
     notes?: string;
