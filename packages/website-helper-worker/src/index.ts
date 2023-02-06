@@ -33,7 +33,7 @@ export default {
       }
 
       if (request.method === 'POST' && url.pathname === '/api/conductor') {
-        return handleConductorContact({
+        return await handleConductorContact({
           request,
           notion,
           notionDatabaseId: env.NOTION_CONDUCTOR_DATABASE_ID,
@@ -41,7 +41,7 @@ export default {
       }
 
       if (request.method === 'POST' && url.pathname === '/api/contact-us') {
-        return handleContactUs({
+        return await handleContactUs({
           request,
           crisp,
           notion,

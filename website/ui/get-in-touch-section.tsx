@@ -4,28 +4,38 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import Confetti from 'react-confetti';
 import * as Yup from 'yup';
-import { useMutation } from '../lib/use-graphql';
 import getInTouch from '../public/img/get-in-touch.png';
 import { Button, Description, Heading, Input, Link } from './components';
 
-export const Newsletter = (): ReactElement => {
+export const GetInTouchForm = (): ReactElement => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [confetti, setConfetti] = useState(false);
-  const mutate = useMutation(
-    'mutation sayHi($email: String!, $name: String) { sayHi(email: $email, name: $name, project: "WEBSITE") { ok } }',
-  );
 
-  const { handleSubmit, values, handleChange, handleBlur, isSubmitting, errors, touched } =
+  const { handleSubmit, values, handleChange, handleBlur, isSubmitting, isValid, errors, touched } =
     useFormik({
-      initialValues: { email: '' },
+      initialValues: { email: '', name: '', notes: '' },
       validationSchema: Yup.object().shape({
         email: Yup.string().email().required(),
+        name: Yup.string().required(),
+        notes: Yup.string().optional().default(''),
       }),
-      async onSubmit({ email }) {
-        const { errors } = await mutate({ email, name: email });
-        if (errors) {
+      async onSubmit({ name, email, notes }) {
+        const response = await fetch('https://utils.the-guild.dev/api/contact-us', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            notes,
+          }),
+        });
+
+        if (!response.ok) {
           setError(true);
+
           return;
         }
 
@@ -53,7 +63,8 @@ export const Newsletter = (): ReactElement => {
           ? "Thank you, we'll contact you soon!"
           : error && (
               <span className="text-red-500">
-                <b>Something went wrong</b>, please try again or contact us directly through email.
+                <b>Something went wrong</b>, please try again or contact us{' '}
+                <a href="mailto:contact@the-guild.dev">directly through email</a>.
               </span>
             )}
       </p>
@@ -62,9 +73,22 @@ export const Newsletter = (): ReactElement => {
         <form onSubmit={handleSubmit} className="flex items-start gap-2">
           <div className="grow">
             <Input
+              name="name"
+              placeholder="Your name"
+              className="peer mb-2"
+              value={values.name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isSubmitting}
+              isInvalid={touched.name && !!errors.name}
+            />
+            {touched.name && errors.name && (
+              <p className="mt-2 text-sm text-red-600">{errors.name}</p>
+            )}
+            <Input
               name="email"
               placeholder="Enter your email"
-              className="peer"
+              className="peer mb-2"
               value={values.email}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -74,8 +98,22 @@ export const Newsletter = (): ReactElement => {
             {touched.email && errors.email && (
               <p className="mt-2 text-sm text-red-600">{errors.email}</p>
             )}
+            <Input
+              name="notes"
+              placeholder="Notes?"
+              className="peer"
+              value={values.notes}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isSubmitting}
+            />
           </div>
-          <Button type="submit" disabled={isSubmitting} variant="primary" loading={isSubmitting}>
+          <Button
+            type="submit"
+            disabled={isSubmitting || !isValid}
+            variant="primary"
+            loading={isSubmitting}
+          >
             Submit
           </Button>
         </form>
@@ -106,7 +144,7 @@ export const GetInTouchSection = ({
             free! <Link href="mailto:contact@the-guild.dev">contact@the-guild.dev</Link>
           </Description>
 
-          <Newsletter />
+          <GetInTouchForm />
         </div>
         {!hideCover && (
           <Image
