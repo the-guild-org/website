@@ -1,11 +1,14 @@
 export function buildResponseCorsHeaders(headers: Headers) {
   const accessControlRequestHeaders = headers.get('Access-Control-Request-Headers');
   const origin = headers.get('Origin');
-  const parsedOrigin = new URL(origin || '');
+  const parsedOrigin = origin ? new URL(origin) : null;
   const headersResponse: Record<string, string> = {};
 
-  if (parsedOrigin.hostname === 'the-guild.dev' || parsedOrigin.hostname === 'www.the-guild.dev') {
-    headersResponse['Access-Control-Allow-Origin'] = origin || '*';
+  if (
+    origin &&
+    (parsedOrigin?.hostname === 'the-guild.dev' || parsedOrigin?.hostname === 'www.the-guild.dev')
+  ) {
+    headersResponse['Access-Control-Allow-Origin'] = origin;
   }
 
   headersResponse['Access-Control-Allow-Methods'] = 'GET,HEAD,POST,OPTIONS';

@@ -53,5 +53,5 @@ export async function handleConductorContact(options: {
     });
   }
 
-  throw new Error('Invalid form input');
+  throw new Error('Invalid conductor form input');
 }
