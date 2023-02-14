@@ -13,12 +13,12 @@ API. There are many resources out there that describe the behavior of the
 [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm), but few real
 world implementations using a real database.
 
-This guid will cover PostgreSQL concepts for building and optimizing paginated SQL queries.
+This guide will cover PostgreSQL concepts for building and optimizing paginated SQL queries.
 
 ## Why Cursors over Offset Pagination?
 
-A lot of people think offset based pagination is easier to grasp and easier to implement compared to
-cursor pagination. While this fact is true, using offset based pagination has some other
+A lot of people think offset-based pagination is easier to grasp and easier to implement compared to
+cursor pagination. While this fact is true, using offset-based pagination has some other
 shortcomings.
 
 ```sql filename="Offset-based Pagination"
@@ -29,8 +29,8 @@ OFFSET 10
 LIMIT 10
 ```
 
-Compared to offset-based pagination, we need pick a column and need to use a value of that column in
-order to fetch the next items.
+Compared to offset-based pagination, we need to pick a column and need to use the value of that
+column in order to fetch the next items.
 
 ```sql filename="Cursor-based Pagination"
 SELECT "id", "name"
@@ -40,16 +40,16 @@ ORDER BY "id" ASC
 LIMIT 10
 ```
 
-One of the main benefist of cursor based pagination is better query consistency (no skipped or
+One of the main benefits of cursor-based pagination is better query consistency (no skipped or
 duplicated data) as the database is updated and new rows are added. This is because the cursor is
 based on an actual value (e.g. the primary key `id`) of a row that stays consistent, compared to
 just a number that describes the offset at a given point in time.
 
-The other main benefit is better performance as the to be paginated table becomes large. Using
-offset based pagination requires a full dataset scan to determine the next items, where a cursor
+The other main benefit is better performance as the to-be-paginated table becomes large. Using
+offset-based pagination requires a full dataset scan to determine the next items, where a cursor
 based pagination can simply use an (hopefully existing) index to determine the next items.
 
-You can learn more details about the superiority of cursor based pagination in the article
+You can learn more details about the superiority of cursor-based pagination in the article
 ["Is offset pagination dead? Why cursor pagination is taking over"](https://uxdesign.cc/why-facebook-says-cursor-pagination-is-the-greatest-d6b98d86b6c0).
 
 ## Cursor Pagination with Serial Primary Keys
@@ -67,7 +67,7 @@ table that has consistent sorting, e.g. a serial primary key.
 | 5    | 'Saihaj' |
 ```
 
-In the first roundtrip we start without a `cursor` and fetch the first two items.
+In the first roundtrip, we start without a `cursor` and fetch the first two items.
 
 ```sql filename="Initial SQL query"
 SELECT "id", "name"
@@ -83,7 +83,7 @@ LIMIT 2
 | 2    | 'Uri'    |
 ```
 
-Afterwards we use the cursor (last `id` in the result set) to fetch the next two items.
+Afterward we use the cursor (last `id` in the result set) to fetch the next two items.
 
 ```sql filename="Follow-up SQL query" {3}
 SELECT "id", "name"
@@ -162,8 +162,8 @@ If we now execute the same query again, we suddenly get a different result than 
 This is not convenient if you want to implement a consistent pagination experience for your users.
 
 In such a scenario it is necessary to utilize another column that is more stable. A good pick for
-that is the `created_at` column that are often added to all tables within a database in order to
-keep track of when a row was created.
+that is the `created_at` column that is often added to all tables within a database in order to keep
+track of when a row was created.
 
 If we use such a column with a consistent order as the cursor, the pagination is more consistent.
 Before we perform such pagination, we should as always with our SQL queries, add an index to the
@@ -190,16 +190,16 @@ LIMIT 2
   By now you might have noticed that we are using `to_json("created_at") as "created_at"` instead of
   simply selecting `"created_at"`. The reason behind this is that this consistently returns the date
   as a string in the [`ISO8601` format](https://en.wikipedia.org/wiki/ISO_8601). When working with
-  pagination it is generally recommend to treat dates as string as parsing them to numbers and then
-  back can lead to subtle bugs, especially in languages like JavaScript where numbers are a bit
+  pagination it is generally recommended to treat dates as strings as parsing them to numbers and
+  then back can lead to subtle bugs, especially in languages like JavaScript where numbers are a bit
   complicated.
 </Callout>
 
 While this method so far has been working, it is not perfect. This only shows up as you have items
 in the database that share the same `created_at` value. This can often happen when batch inserts are
-used throught an application.
+used throughout an application.
 
-In this dataset, the users `Dotan`, `Saihaj` and `Uri` all share the same `created_at` value.
+In this dataset, the users `Dotan`, `Saihaj`, and `Uri` all share the same `created_at` value.
 
 ```diff filename="Dataset users with same created_at date"
 | "id"                                   | "name"   | "created_at"                       |
@@ -221,7 +221,7 @@ ORDER BY "created_at" ASC
 LIMIT 2
 ```
 
-However, this will yield us zero results this time.
+However, this will yield zero results this time.
 
 ```diff filename="SQL query result"
   | "id"                                   | "name"   | "created_at"                       |
@@ -345,21 +345,21 @@ CREATE INDEX "users_pagination" ON "users" (
 ```
 
 <Callout type="info">
-  When you introduce an filter to a SQL query it is always important to add it to the index in order
-  to gurantee fast responses. A SQL operation that took 1 second to execute could suddenly start
+  When you introduce a filter to a SQL query it is always important to add it to the index in order
+  to guarantee fast responses. A SQL operation that took 1 second to execute could suddenly start
   taking several minutes as the database query planner has decided to change its query strategy due
   to increasing row count within the table.
 
-**This is also why we do not recommend to allow arbitary filters to be applied to your pagination
-through user-input, as you might not be able to gurantee the performance of your application.**
+**This is also why we do not recommend allowing arbitrary filters to be applied to your pagination
+through user input, as you might not be able to guarantee the performance of your application.**
 
 </Callout>
 
 ## Conclusion
 
 While Cursor Pagination seems to be more complicated to implement than Offset Pagination, it is
-still the superior and more future proof solution.
+still the superior and more future-proof solution.
 
-By now, you should be aware of the pitfalls and things to consider when implementing cursor
-pagination in a PostgreSQL database. Namingly to use stable cursor values and keep setting indexes
-for your paginated queries.
+By now, you should know the pitfalls and things to consider when implementing cursor pagination in a
+PostgreSQL database. Namely, use stable cursor values and keep setting indexes for your paginated
+queries.
