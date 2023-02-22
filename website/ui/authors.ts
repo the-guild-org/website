@@ -166,4 +166,9 @@ export const AUTHORS: Record<string, Author> = {
     link: 'https://github.com/josiassejod1',
     github: 'josiassejod1',
   },
+  warrenjday: {
+    name: 'Warren Day',
+    link: 'https://twitter.com/warrenjday',
+    github: 'warrenjday',
+  },
 };
