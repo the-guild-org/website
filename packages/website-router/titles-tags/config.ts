@@ -1,4 +1,4 @@
-import { TitleConfig } from "./title-seo";
+import { TitleConfig } from './title-seo';
 
 export const MANAGE_TITLE: TitleConfig[] = [
   {

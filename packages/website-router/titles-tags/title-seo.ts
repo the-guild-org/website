@@ -1,10 +1,7 @@
-
-
 export interface TitleConfig {
   titleSEO: string;
   URL: string;
 }
-
 
 export class TitleHandler implements HTMLRewriterElementContentHandlers {
   constructor(private titleObjects: TitleConfig[]) {}
