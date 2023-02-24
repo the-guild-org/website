@@ -68,6 +68,7 @@ module.exports = {
           'SEO',
           'LTR',
           'RTL',
+          'SWC',
         ],
       ],
     ],
