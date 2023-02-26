@@ -1,10 +1,10 @@
-export interface TitleConfig {
-  titleSEO: string;
-  URL: string;
+export interface HTMLTitleConfig {
+  titleTagContent: string;
+  URL: URL;
 }
 
 export class TitleHandler implements HTMLRewriterElementContentHandlers {
-  constructor(private titleObjects: TitleConfig[]) {}
+  constructor(private titleObjects: HTMLTitleConfig[]) {}
 
   element(element: Element) {
     if (element.tagName === 'title') {
@@ -12,7 +12,7 @@ export class TitleHandler implements HTMLRewriterElementContentHandlers {
       const titleObject = this.titleObjects.find(obj => obj.URL === currentURL);
 
       if (titleObject) {
-        element.setInnerContent(titleObject.titleSEO);
+        element.setInnerContent(titleObject.titleTagContent);
       }
     }
   }

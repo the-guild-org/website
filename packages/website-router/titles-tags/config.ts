@@ -1,8 +1,8 @@
-import { TitleConfig } from './title-seo';
+import { HTMLTitleConfig } from './title-seo';
 
-export const MANAGE_TITLE: TitleConfig[] = [
+export const MANAGE_TITLE: HTMLTitleConfig[] = [
   {
-    titleSEO: 'GraphQL TypeScript',
-    URL: 'https://the-guild.dev/graphql/codegen/plugins/typescript/typescript-operations',
+    URL: new URL('/plugins/typescript/typescript-operations'),
+    titleTagContent: 'GraphQL TypeScript',
   },
 ];
