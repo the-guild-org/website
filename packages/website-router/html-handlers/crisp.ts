@@ -4,7 +4,7 @@ export class CrispHandler implements HTMLRewriterElementContentHandlers {
   constructor(private crispWebsiteId: string, private websiteRecord: RewriteRecord) {}
 
   element(element: Element) {
-    if (this.crispWebsiteId) {
+    if (this.crispWebsiteId && this.websiteRecord.crisp) {
       element.append(
         `<script>
           window.$crisp = [];
@@ -17,12 +17,12 @@ export class CrispHandler implements HTMLRewriterElementContentHandlers {
             d.getElementsByTagName('head')[0].appendChild(s);
           })();
           ${
-            this.websiteRecord.crispSegments && this.websiteRecord.crispSegments.length > 0
+            this.websiteRecord.crisp.segments.length > 0
               ? `
             window.$crisp.push([
               'set',
               'session:segments',
-              [${JSON.stringify(this.websiteRecord.crispSegments)}],
+              [${JSON.stringify(this.websiteRecord.crisp.segments)}],
             ]);
             `
               : ''

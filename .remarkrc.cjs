@@ -18,6 +18,7 @@ module.exports = {
       [
         'error',
         [
+          'non-serial',
           'KitQL',
           'RxJS',
           'TL;DR',

@@ -1,4 +1,4 @@
-export type RewriteRecord = { rewrite: string; crispSegments?: string[]; sitemap?: boolean };
+export type RewriteRecord = { rewrite: string; crisp?: { segments: string[] }; sitemap?: boolean };
 export type RedirectRecord = { redirect: string; status?: number };
 export type WebsiteRecord = RewriteRecord | RedirectRecord;
 
@@ -12,88 +12,97 @@ export const jsonConfig = {
   crispWebsiteId: 'af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
   fallbackRoute: <RewriteRecord>{
     rewrite: 'guild-dev-website.pages.dev',
-    crispSegments: ['guild-website'],
+    crisp: {
+      segments: ['guild-website'],
+    },
   },
   mappings: <Record<string, WebsiteRecord>>{
     // Rewrites
     '/graphql/codegen': {
       rewrite: 'graphql-code-generator.pages.dev',
-      crispSegments: ['codegen'],
+      crisp: {
+        segments: ['codegen'],
+      },
       sitemap: true,
     },
     '/graphql/yoga-server': {
       rewrite: 'graphql-yoga.pages.dev',
-      crispSegments: ['yoga'],
+      crisp: { segments: ['yoga'] },
       sitemap: true,
     },
     '/graphql/scalars': {
       rewrite: 'graphql-scalars.pages.dev',
-      crispSegments: ['scalars'],
+      crisp: { segments: ['scalars'] },
       sitemap: true,
     },
     '/graphql/inspector': {
       rewrite: 'graphql-inspector.pages.dev',
-      crispSegments: ['inspector'],
+      crisp: { segments: ['inspector'] },
       sitemap: true,
     },
     '/graphql/mesh': {
       rewrite: 'graphql-mesh.pages.dev',
-      crispSegments: ['mesh'],
+      crisp: { segments: ['mesh'] },
       sitemap: true,
     },
     '/graphql/config': {
       rewrite: 'graphql-config.pages.dev',
-      crispSegments: ['config'],
+      crisp: { segments: ['config'] },
       sitemap: true,
     },
     '/graphql/sofa-api': {
       rewrite: 'sofa.pages.dev',
-      crispSegments: ['sofa'],
+      crisp: { segments: ['sofa'] },
       sitemap: true,
     },
     '/graphql/modules': {
       rewrite: 'graphql-modules.pages.dev',
-      crispSegments: ['modules'],
+      crisp: { segments: ['modules'] },
       sitemap: true,
     },
     '/graphql/tools': {
       rewrite: 'graphql-tools.pages.dev',
-      crispSegments: ['tools'],
+      crisp: { segments: ['tools'] },
       sitemap: true,
     },
     '/graphql/envelop': {
       rewrite: 'envelop.pages.dev',
-      crispSegments: ['envelop'],
+      crisp: { segments: ['envelop'] },
       sitemap: true,
     },
     '/graphql/shield': {
       rewrite: 'graphql-shield.pages.dev',
-      crispSegments: ['shield'],
+      crisp: { segments: ['shield'] },
       sitemap: true,
     },
     '/graphql/apollo-angular': {
       rewrite: 'apollo-angular.pages.dev',
-      crispSegments: ['apollo-angular'],
       sitemap: true,
     },
     '/graphql/hive': {
       rewrite: 'hive-landing-page.pages.dev',
-      crispSegments: ['hive-website'],
+      crisp: { segments: ['hive-website'] },
       sitemap: true,
     },
     '/graphql/gateway': {
       rewrite: 'conductor.pages.dev',
-      crispSegments: ['conductor'],
+      crisp: {
+        segments: ['conductor'],
+      },
       sitemap: true,
     },
     '/graphql/eslint': {
       rewrite: 'graphql-eslint.pages.dev',
-      crispSegments: ['graphql-eslint'],
+      crisp: {
+        segments: ['graphql-eslint'],
+      },
       sitemap: true,
     },
     '/graphql/stitching': {
       rewrite: 'schema-stitching.pages.dev',
-      crispSegments: ['stitching'],
+      crisp: {
+        segments: ['stitching'],
+      },
       sitemap: true,
     },
     // Redirects
