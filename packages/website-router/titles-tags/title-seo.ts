@@ -5,14 +5,6 @@ export interface HTMLTitleConfig {
   URL: URL;
 }
 
-export function shouldHandleNewTitleChange(url: URL) {
-  if (MANAGE_TITLES.some(v => url.pathname === v.URL.pathname)) {
-    return true;
-  }
-
-  return false;
-}
-
 export class TitleHandler implements HTMLRewriterElementContentHandlers {
   constructor(private titleObjects: HTMLTitleConfig[]) {}
 
