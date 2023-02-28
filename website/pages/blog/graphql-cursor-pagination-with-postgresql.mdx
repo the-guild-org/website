@@ -131,10 +131,10 @@ LIMIT 2
 ```
 
 ```diff filename="SQL query result"
-  | "id"                                   | "name"   | "created_at"                       |
-  | -------------------------------------- | -------- | -----------------------------------|
-  | 'a0c3e7e5-700a-4c10-9afe-d36df294ddc3' | 'Saihaj' | '2023-01-12T10:32:07.853915+00:00' |
-  | '8771195f-7a8a-4685-8e4e-ae45d017c11b' | 'Uri'    | '2023-01-13T10:32:07.853915+00:00' |
+| "id"                                   | "name"   | "created_at"                       |
+| -------------------------------------- | -------- | -----------------------------------|
+| 'a0c3e7e5-700a-4c10-9afe-d36df294ddc3' | 'Saihaj' | '2023-01-12T10:32:07.853915+00:00' |
+| '8771195f-7a8a-4685-8e4e-ae45d017c11b' | 'Uri'    | '2023-01-13T10:32:07.853915+00:00' |
 ```
 
 Now let's imagine a new user is added to the dataset.
@@ -172,7 +172,7 @@ column to ensure good performance as the table grows in size.
 ```sql filename="Create index"
 CREATE INDEX "users_pagination" ON "users" (
   "created_at" ASC
-)
+);
 ```
 
 Instead of the `id`, we now use the `created_at` value from the row with the name `Dotan` as the
@@ -304,7 +304,7 @@ you want to only query for users with a certain role.
 | "id"                                   | "name"   | "role"   | "created_at"                       |
 | -------------------------------------- | -------- | -------- | -----------------------------------|
 | '7c2730cb-a973-4a0a-9e9a-f8aa0044d321' | 'Dima'   | 'admin'  | '2023-01-10T10:32:07.853915+00:00' |
-| '628995bf-2907-49d1-a36f-978566a053c4' | 'Dotan'  | 'admin'   | '2023-01-11T10:32:07.853915+00:00' |
+| '628995bf-2907-49d1-a36f-978566a053c4' | 'Dotan'  | 'admin'  | '2023-01-11T10:32:07.853915+00:00' |
 | 'a0c3e7e5-700a-4c10-9afe-d36df294ddc3' | 'Saihaj' | 'user'   | '2023-01-11T10:32:07.853915+00:00' |
 | '8771195f-7a8a-4685-8e4e-ae45d017c11b' | 'Uri'    | 'admin'  | '2023-01-11T10:32:07.853915+00:00' |
 ```
