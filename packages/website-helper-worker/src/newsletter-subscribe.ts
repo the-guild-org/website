@@ -1,13 +1,14 @@
 /* eslint-disable no-console */
 import { buildResponseCorsHeaders } from './cors';
+import FormData from 'form-data';
 
 interface Args {
-  req: Request;
+  request: Request;
   body: {
     email: string;
   };
 }
-export async function subscribeToNewsletter({ req, body }: Args) {
+export async function handleSubscribeToNewsletter({ request: req, body }: Args) {
   const { email } = body;
 
   const formData = new FormData();
