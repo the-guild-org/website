@@ -18,7 +18,7 @@ export const Newsletter = ({
     <div
       className={clsx(
         'my-12 flex max-w-3xl flex-col gap-2 rounded bg-gray-100 p-6 dark:bg-zinc-900 sm:mx-auto',
-        className
+        className,
       )}
     >
       <Heading size="md" className="!m-0">
@@ -40,7 +40,8 @@ export const Newsletter = ({
             method: 'POST',
           });
 
-          const responseData: { status: 'success' | 'error'; message: string } = await response.json();
+          const responseData: { status: 'success' | 'error'; message: string } =
+            await response.json();
 
           toast[responseData.status](responseData.message);
         }}
@@ -54,7 +55,8 @@ export const Newsletter = ({
         </Button>
       </form>
       <Description className="!mt-2">
-        By subscribing, you agree with Beehiiv’s <Link href="https://www.beehiiv.com/tou">Terms of Service</Link> and{' '}
+        By subscribing, you agree with Beehiiv’s{' '}
+        <Link href="https://www.beehiiv.com/tou">Terms of Service</Link> and{' '}
         <Link href="https://www.beehiiv.com/privacy">Privacy Policy</Link>.
       </Description>
       {!hideLinkToIssues && (
