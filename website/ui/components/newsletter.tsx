@@ -5,6 +5,7 @@ import { Description } from './description';
 import { Heading } from './heading';
 import { Input } from './input';
 import { Link } from './link';
+import { toast } from 'react-hot-toast';
 
 export const Newsletter = ({
   className,
@@ -27,23 +28,37 @@ export const Newsletter = ({
         Want to hear from us when there&apos;s something new? Sign up and stay up to date!
       </Description>
       <form
-        action="https://www.getrevue.co/profile/TheGuild/add_subscriber"
-        method="post"
-        name="revue-form"
+        onSubmit={async e => {
+          e.preventDefault();
+
+          const email = e.currentTarget.email.value;
+
+          const response = await fetch('/api/newsletter-subscribe', {
+            body: JSON.stringify({
+              email,
+            }),
+            method: 'POST',
+          });
+
+          const responseData: { status: 'success' | 'error'; message: string } = await response.json();
+
+          toast[responseData.status](responseData.message);
+        }}
+        name="beehiiv-form"
         target="_blank"
         className="flex items-start gap-2"
       >
-        <Input type="email" name="member[email]" id="member_email" placeholder="Enter your email" />
+        <Input type="email" name="email" id="member_email" placeholder="Enter your email" />
         <Button type="submit" variant="primary">
           Submit
         </Button>
       </form>
       <Description className="!mt-2">
-        By subscribing, you agree with Revue’s <Link href="https://www.getrevue.co/terms">Terms of Service</Link> and{' '}
-        <Link href="https://www.getrevue.co/privacy">Privacy Policy</Link>.
+        By subscribing, you agree with Beehiiv’s <Link href="https://www.beehiiv.com/tou">Terms of Service</Link> and{' '}
+        <Link href="https://www.beehiiv.com/privacy">Privacy Policy</Link>.
       </Description>
       {!hideLinkToIssues && (
-        <Link href="https://www.getrevue.co/profile/TheGuild" className="self-start">
+        <Link href="https://newsletter.the-guild.dev/" className="self-start">
           Recent issues of our newsletter
         </Link>
       )}

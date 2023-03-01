@@ -94,8 +94,7 @@ export const jsonConfig = {
       status: 302,
     },
     '/newsletter': {
-      redirect: 'https://www.getrevue.co/profile/TheGuild',
-      status: 302,
+      redirect: 'https://newsletter.the-guild.dev',
     },
     '/twitter': {
       redirect: 'https://twitter.com/TheGuildDev',

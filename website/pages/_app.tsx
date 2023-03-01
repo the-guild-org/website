@@ -2,6 +2,7 @@ import App from 'next/app';
 import Head from 'next/head';
 import { globalStyles } from '../styles/global';
 import '@theguild/components/style.css';
+import { Toaster } from 'react-hot-toast';
 
 export default class MyApp extends App {
   render() {
@@ -64,6 +65,7 @@ export default class MyApp extends App {
           }
         `}</style>
 
+        <Toaster />
         <Component {...pageProps} />
       </>
     );
