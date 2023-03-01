@@ -72,15 +72,6 @@ export default {
           body: maybeBody ? JSON.parse(maybeBody) : null,
         });
       }
-      if (request.method === 'POST' && url.pathname === '/api/contact-us') {
-        return await handleContactUs({
-          request,
-          body: maybeBody ? JSON.parse(maybeBody) : null,
-          crisp,
-          notion,
-          notionDatabaseId: env.NOTION_CONTACT_US_DATABASE_ID,
-        });
-      }
 
       return new Response(JSON.stringify({ error: 'not found' }), {
         status: 404,
