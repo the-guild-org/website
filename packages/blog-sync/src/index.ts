@@ -11,7 +11,7 @@ import { remove } from 'unist-util-remove';
 import { walk } from 'estree-walker';
 import { Client } from 'guild-devto-nodejs-sdk';
 import { globbySync } from 'globby';
-import { AUTHORS } from '../../../website/ui/authors';
+import { AUTHORS } from '../../../website/ui/authors.js';
 import yaml from 'js-yaml';
 
 const DEV_TO_ORG_ID = 4467;
@@ -33,7 +33,9 @@ const processor = unified()
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function syncToDevTo(items) {
-  console.log(`=== Syncing ${items.length} articles to dev.to... (dry run: ${process.env.DRY_RUN}) ===`);
+  console.log(
+    `=== Syncing ${items.length} articles to dev.to... (dry run: ${process.env.DRY_RUN}) ===`,
+  );
   const client = new Client(process.env.DEV_TO_TOKEN);
   const { data: allArticles } = await client.selfAllArticles({
     per_page: 1000,
@@ -52,12 +54,17 @@ async function syncToDevTo(items) {
             ? item.meta.authors
             : item.meta.author
         ];
-      const markdown = `> This article was published on ${item.meta.date.toLocaleDateString(undefined, {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })} by [${author.name}](${author.link}) @ [The Guild Blog](https://the-guild.dev/)\n\n${item.markdown} `;
+      const markdown = `> This article was published on ${item.meta.date.toLocaleDateString(
+        undefined,
+        {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        },
+      )} by [${author.name}](${author.link}) @ [The Guild Blog](https://the-guild.dev/)\n\n${
+        item.markdown
+      } `;
       const image = item.meta.image
         ? item.meta.image.startsWith('/')
           ? `https://the-guild.dev${item.meta.image}`
@@ -72,8 +79,10 @@ async function syncToDevTo(items) {
       if (exists) {
         console.log(`Article "${item.meta.title}" already exists, updating if needed...`);
 
-        if (exists.bodyMarkdown !== markdown) {
-          console.log(`   -> Updating...`);
+        if (exists.bodyMarkdown === markdown) {
+          console.log('   -> Up to date!');
+        } else {
+          console.log('   -> Updating...');
 
           await client.updateArticle(exists.id, {
             article: {
@@ -85,11 +94,9 @@ async function syncToDevTo(items) {
               tags,
             },
           });
-          console.log(`   -> Done!`);
-          console.log(`... waiting before next request to avoid rate-limit ...`);
+          console.log('   -> Done!');
+          console.log('... waiting before next request to avoid rate-limit ...');
           await sleep(30 * 1000);
-        } else {
-          console.log(`   -> Up to date!`);
         }
       } else {
         console.log(`Creating article "${item.meta.title}" on DevTo...`);
@@ -106,17 +113,17 @@ async function syncToDevTo(items) {
             tags,
           },
         });
-        console.log(`... waiting before next request to avoid rate-limit ...`);
+        console.log('... waiting before next request to avoid rate-limit ...');
         await sleep(30 * 1000);
       }
     } catch (e) {
       console.log(
-        `Failed to send article to dev.to, error: `,
+        'Failed to send article to dev.to, error: ',
         e,
         item,
         e.response?.status || e,
         e.response?.statusText,
-        e.response?.data
+        e.response?.data,
       );
       process.exit(1);
     }
@@ -176,7 +183,9 @@ function extractMeta() {
             enter(node) {
               if (node.type === 'Property') {
                 embedOptions[node.key.name] =
-                  node.value.type === 'ArrayExpression' ? node.value.elements.map(n => n.value) : node.value.value;
+                  node.value.type === 'ArrayExpression'
+                    ? node.value.elements.map(n => n.value)
+                    : node.value.value;
               }
             },
           });
@@ -187,7 +196,9 @@ function extractMeta() {
         if (node.name === 'Article') {
           parent.children.splice(index, 1);
         } else if (node.name === 'Gfycat') {
-          const gifId = node.attributes.find(a => a.name === 'gifId').value.value.replace(/['"]/g, '');
+          const gifId = node.attributes
+            .find(a => a.name === 'gifId')
+            .value.value.replace(/['"]/g, '');
 
           parent.children.splice(index, 1, {
             type: 'text',
@@ -197,7 +208,7 @@ function extractMeta() {
         } else if (node.name === 'iframe') {
           const src = node.attributes.find(a => a.name === 'src').value;
 
-          if (src && src.includes('youtube')) {
+          if (src?.includes('youtube')) {
             const parts = src.split('/');
             const videoId = parts[parts.length - 1];
 
@@ -216,7 +227,9 @@ function extractMeta() {
             position: node.position,
           });
         } else if (node.name === 'Tweet') {
-          const tweetLink = node.attributes.find(a => a.name === 'tweetLink').value.replace(/['"]/g, '');
+          const tweetLink = node.attributes
+            .find(a => a.name === 'tweetLink')
+            .value.replace(/['"]/g, '');
           const parts = tweetLink.split('/');
           const tweetId = parts[parts.length - 1];
 
@@ -228,7 +241,9 @@ function extractMeta() {
             });
           }
         } else if (node.name === 'YouTube') {
-          const youTubeId = node.attributes.find(a => a.name === 'youTubeId').value.replace(/['"]/g, '');
+          const youTubeId = node.attributes
+            .find(a => a.name === 'youTubeId')
+            .value.replace(/['"]/g, '');
 
           parent.children.splice(index, 1, {
             type: 'text',
@@ -236,7 +251,9 @@ function extractMeta() {
             position: node.position,
           });
         } else if (node.name === 'StackBlitz') {
-          const stackBlitzId = node.attributes.find(a => a.name === 'stackBlitzId').value.replace(/['"]/g, '');
+          const stackBlitzId = node.attributes
+            .find(a => a.name === 'stackBlitzId')
+            .value.replace(/['"]/g, '');
           const file = node.attributes.find(a => a.name === 'file').value?.replace(/['"]/g, '');
 
           parent.children.splice(index, 1, {
@@ -245,7 +262,9 @@ function extractMeta() {
             position: node.position,
           });
         } else if (node.name === 'CodeSandbox') {
-          const boxId = node.attributes.find(a => a.name === 'codeSandboxId').value.value.replace(/['"]/g, '');
+          const boxId = node.attributes
+            .find(a => a.name === 'codeSandboxId')
+            .value.value.replace(/['"]/g, '');
           const childEmbedOptions = {};
           const childEmbedOptionsNode = node.attributes.find(a => a.name === 'embedOptions');
 
@@ -254,7 +273,9 @@ function extractMeta() {
               enter(node) {
                 if (node.type === 'Property') {
                   childEmbedOptions[node.key.name] =
-                    node.value.type === 'ArrayExpression' ? node.value.elements.map(n => n.value) : node.value.value;
+                    node.value.type === 'ArrayExpression'
+                      ? node.value.elements.map(n => n.value)
+                      : node.value.value;
                 }
               },
             });

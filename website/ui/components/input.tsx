@@ -28,7 +28,7 @@ export const Input = ({
         isInvalid
           ? 'border-red-500 bg-red-500/20 focus:ring-red-500'
           : 'border-transparent bg-gray-200 focus:border-cyan-400 focus:ring-cyan-400 dark:bg-zinc-800',
-        className
+        className,
       )}
       {...props}
     />

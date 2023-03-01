@@ -13,8 +13,8 @@ export const ServicesSection = (): ReactElement => {
       <div className="flex flex-col items-center px-4 pt-28 text-center sm:px-6 md:px-8">
         <Heading>The Guild&apos;s Services</Heading>
         <Description className="max-w-[700px] px-2 md:px-0">
-          Work directly with the most powerful group of API developers that created the open source infrastructure you
-          use today
+          Work directly with the most powerful group of API developers that created the open source
+          infrastructure you use today
         </Description>
         <Link
           href="/services"
@@ -108,7 +108,7 @@ export const SERVICES: {
   },
   {
     name: 'Engineering',
-    description: `Working side by side, us being an integral part of your team.`,
+    description: 'Working side by side, us being an integral part of your team.',
     icon: engineering,
     url: '/services#engineering',
     longDescription:

@@ -27,7 +27,7 @@ const {
 const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => {
   let result = rawResponse;
 
-  if (result && result.headers && result.headers.get('content-type')?.startsWith('text/html')) {
+  if (result?.headers?.get('content-type')?.startsWith('text/html')) {
     result = new HTMLRewriter()
       .on('head', new FaviconHandler())
       .on('head', new CrispHandler(crispWebsiteId, record))
@@ -148,7 +148,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
     if ('rewrite' in record) {
       sentry.addBreadcrumb({
         level: 'debug',
-        message: `Handling as rewrite route`,
+        message: 'Handling as rewrite route',
       });
 
       return await handleRewrite({
@@ -172,7 +172,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
 
   sentry.addBreadcrumb({
     level: 'debug',
-    message: `No matching upstream website, will try now the root domain...`,
+    message: 'No matching upstream website, will try now the root domain...',
   });
 
   // this will delegate the request to the fallback endpoint
@@ -198,7 +198,7 @@ addEventListener('fetch', (event: FetchEvent) => {
       .then(resultResponse => {
         sentry.addBreadcrumb({
           type: 'debug',
-          message: `Composed final response object`,
+          message: 'Composed final response object',
           data: {
             status: resultResponse.status,
             // headers: resultResponse.headers,
@@ -222,6 +222,6 @@ addEventListener('fetch', (event: FetchEvent) => {
         sentry.captureException(e);
 
         throw e;
-      })
+      }),
   );
 });

@@ -34,7 +34,7 @@ export default class MyApp extends App {
           }
 
           ${router.route === '/'
-            ? `/* For smooth scrolling effect when click on '#' hash links */ html { scroll-behavior: smooth }`
+            ? "/* For smooth scrolling effect when click on '#' hash links */ html { scroll-behavior: smooth }"
             : ''}
 
           body {

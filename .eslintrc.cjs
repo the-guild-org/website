@@ -1,9 +1,5 @@
 module.exports = {
-  extends: ['@theguild', '@theguild/eslint-config/react'],
-  rules: {
-    'unicorn/filename-case': 0,
-    'prefer-const': ['error', { destructuring: 'all' }],
-  },
+  extends: ['@theguild'],
   overrides: [
     {
       files: '*.md{,x}',
@@ -16,6 +12,33 @@ module.exports = {
       parserOptions: {
         ecmaVersion: 13,
         sourceType: 'module',
+      },
+    },
+    {
+      files: 'website/**',
+      extends: '@theguild/eslint-config/react',
+      rules: {
+        // enable without breaking existing iframes
+        'react/iframe-missing-sandbox': 'off',
+      },
+      settings: {
+        'import/resolver': {
+          typescript: {
+            project: 'website/tsconfig.json',
+          },
+        },
+      },
+    },
+    {
+      files: 'packages/website-router/**',
+      rules: {
+        'import/extensions': 'off',
+      },
+    },
+    {
+      files: 'packages/website-helper-worker/**',
+      rules: {
+        'import/extensions': 'off',
       },
     },
   ],

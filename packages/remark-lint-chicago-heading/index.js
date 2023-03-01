@@ -21,7 +21,7 @@ const remarkLintChicagoHeading = lintRule(
         file.message(`Unexpected heading "${heading}", should be "${capitalizedHeading}"`, node);
       }
     });
-  }
+  },
 );
 
 // eslint-disable-next-line import/no-default-export

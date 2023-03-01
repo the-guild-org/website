@@ -212,7 +212,10 @@ function main() {
           <div class="productTable" align="center">
             <div class="flex-item-left">
               <div class="ossCells">
-                <img src="https://the-guild.dev/graphql/codegen/assets/img/gql-codegen-cover.png" width="100" />
+                <img
+                  src="https://the-guild.dev/graphql/codegen/assets/img/gql-codegen-cover.png"
+                  width="100"
+                />
               </div>
               <div class="ossContentCells">
                 <a href="https://the-guild.dev/graphql/codegen" target="_blank">
@@ -230,7 +233,10 @@ function main() {
                 <a href="https://the-guild.dev/graphql/tools" target="_blank">
                   <h4>GraphQL Tools</h4>
                 </a>
-                <p>A set of utilities to build your JavaScript GraphQL schema in a concise and powerful way.</p>
+                <p>
+                  A set of utilities to build your JavaScript GraphQL schema in a concise and
+                  powerful way.
+                </p>
               </div>
             </div>
 
@@ -242,8 +248,8 @@ function main() {
                 <a href="https://the-guild.dev/graphql/modules" target="_blank">
                   <h4>GraphQL Modules</h4>
                 </a>
-                GraphQL Modules lets you separate your backend implementation to small, reusable, easy-to-implement and
-                easy-to-test pieces.
+                GraphQL Modules lets you separate your backend implementation to small, reusable,
+                easy-to-implement and easy-to-test pieces.
               </div>
             </div>
 
@@ -261,14 +267,17 @@ function main() {
 
             <div class="flex-item-left">
               <div class="ossCells">
-                <img src="https://www.the-guild.dev/graphql/mesh/static/img/mesh-text-logo.svg" width="100" />
+                <img
+                  src="https://www.the-guild.dev/graphql/mesh/static/img/mesh-text-logo.svg"
+                  width="100"
+                />
               </div>
               <div class="ossContentCells">
                 <a href="https://www.the-guild.dev/graphql/mesh" target="_blank">
                   <h4>GraphQL Mesh</h4>
                 </a>
-                GraphQL Mesh allows you to use GraphQL query language to access data in remote APIs that don't run
-                GraphQL (and also ones that do run GraphQL).
+                GraphQL Mesh allows you to use GraphQL query language to access data in remote APIs
+                that don't run GraphQL (and also ones that do run GraphQL).
               </div>
             </div>
 
@@ -280,7 +289,8 @@ function main() {
                 <a href="https://www.the-guild.dev/graphql/apollo-angular" target="_blank">
                   <h4>Apollo Angular</h4>
                 </a>
-                A fully-featured, production ready caching GraphQL client for Angular and every GraphQL server.
+                A fully-featured, production ready caching GraphQL client for Angular and every
+                GraphQL server.
               </div>
             </div>
 
@@ -334,7 +344,10 @@ function main() {
 
             <div class="flex-item-left">
               <div class="ossCells">
-                <img src="https://raw.githubusercontent.com/B2o5T/graphql-eslint/master/logo.png" width="100" />
+                <img
+                  src="https://raw.githubusercontent.com/B2o5T/graphql-eslint/master/logo.png"
+                  width="100"
+                />
               </div>
               <div class="ossContentCells">
                 <a href="https://github.com/B2o5T/graphql-eslint" target="_blank">
@@ -346,14 +359,17 @@ function main() {
 
             <div class="flex-item-right">
               <div class="ossCells">
-                <img src="https://www.the-guild.dev/graphql/inspector/assets/img/logo.svg" width="100" />
+                <img
+                  src="https://www.the-guild.dev/graphql/inspector/assets/img/logo.svg"
+                  width="100"
+                />
               </div>
               <div class="ossContentCells">
                 <a href="https://www.the-guild.dev/graphql/inspector" target="_blank">
                   <h4>GraphQL Inspector</h4>
                 </a>
-                GraphQL Inspector is a set of tools to help you better maintain and improve GraphQL API as well as
-                GraphQL consumers.
+                GraphQL Inspector is a set of tools to help you better maintain and improve GraphQL
+                API as well as GraphQL consumers.
               </div>
             </div>
 

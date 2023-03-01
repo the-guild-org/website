@@ -17,7 +17,7 @@ if (buildResult.errors.length > 0) {
   // eslint-disable-next-line no-console
   console.error(buildResult.errors);
 
-  throw new Error(`Failed to build worker`);
+  throw new Error('Failed to build worker');
 }
 
 const workerCode = buildResult.outputFiles[0].text;
@@ -42,5 +42,5 @@ const myScript = new cloudflare.WorkerScript('routingWorker', {
 new cloudflare.WorkerRoute('capture-route', {
   scriptName: myScript.name,
   zoneId: process.env.CLOUDFLARE_ZONEID!,
-  pattern: `*.${jsonConfig.publicDomain}/*`,
+  pattern: `${jsonConfig.publicDomain}/*`,
 });

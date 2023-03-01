@@ -22,7 +22,7 @@ const remarkLintNoFullBoldHeading = lintRule(
         file.message(`Heading is Bold by default. Heading "${heading}" - shouldn't be bold`, node);
       }
     });
-  }
+  },
 );
 
 // eslint-disable-next-line import/no-default-export

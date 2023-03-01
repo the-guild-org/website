@@ -1,5 +1,4 @@
-/* eslint-disable import/no-default-export, react-hooks/rules-of-hooks */
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import { Callout, defineConfig, Giscus, Header, useConfig, useTheme } from '@theguild/components';
 import { Article } from '@/article';
@@ -13,7 +12,6 @@ import { StackBlitz } from '@/shared/embed/stack-blitz';
 import { Tweet } from '@/shared/embed/tweet';
 import blogsMeta from './dist/blogs-meta.json';
 import { asArray } from './lib/as-array';
-import { MetaWithLink } from './lib/meta';
 
 const siteName = 'The Guild';
 
@@ -24,11 +22,21 @@ function ensureAbsolute(url: string): string {
 export default defineConfig({
   siteName,
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
-  navbar: <Header sameSite accentColor="var(--colors-accent)" themeSwitch searchBarProps={{ version: 'v2' }} />,
-  getNextSeoProps() {
+  navbar: {
+    component: (
+      <Header
+        sameSite
+        accentColor="var(--colors-accent)"
+        themeSwitch
+        searchBarProps={{ version: 'v2' }}
+      />
+    ),
+  },
+  useNextSeoProps() {
     const { frontMatter, title } = useConfig();
     const { description, authors, tags, thumbnail, date, updateDate } = frontMatter;
-    const image = thumbnail || `https://open-graph-image.theguild.workers.dev/?product=GUILD&title=${encodeURI(title)}`;
+    const image =
+      thumbnail || `https://og-image.the-guild.dev/?product=GUILD&title=${encodeURI(title)}`;
 
     return {
       description: description || `${siteName}: Modern API Platform and Ecosystem that scales`,
@@ -42,29 +50,27 @@ export default defineConfig({
           tags: tags && asArray(tags),
         },
       },
+      additionalMetaTags: [{ name: 'twitter:image', content: image }],
     };
   },
-  main({ children }) {
+  main: function Main({ children }) {
     const { route } = useRouter();
-    const [similarArticles, setSimilarArticles] = useState<MetaWithLink[]>([]);
     const config = useConfig();
     const { tags } = config.frontMatter;
     const { resolvedTheme } = useTheme();
 
-    useEffect(() => {
-      const newSimilarArticles = tags
-        ? blogsMeta
-            .filter(
-              article => article.link !== route && (tags.length === 0 || article.tags?.some(tag => tags.includes(tag)))
-            )
-            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-            .slice(0, 12)
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 4)
-        : [];
-
-      setSimilarArticles(newSimilarArticles);
-    }, [tags, route]);
+    const similarArticles = tags
+      ? blogsMeta
+          .filter(
+            article =>
+              article.link !== route &&
+              (tags.length === 0 || article.tags?.some(tag => tags.includes(tag))),
+          )
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .slice(0, 12)
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 4)
+      : [];
 
     if (!route.startsWith('/blog/') || route.startsWith('/blog/tag')) {
       return children as ReactElement;
@@ -87,7 +93,9 @@ export default defineConfig({
         <Newsletter />
         {similarArticles.length > 0 && (
           <>
-            <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">Similar articles</h3>
+            <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">
+              Similar articles
+            </h3>
             <BlogCardList articles={similarArticles} />
           </>
         )}

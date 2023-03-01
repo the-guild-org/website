@@ -14,7 +14,12 @@ export default class MyDocument extends Document {
           />
           <style dangerouslySetInnerHTML={{ __html: getCssText() }} />
           <meta charSet="utf-8" />
-          <link rel="alternate" type="application/rss+xml" title="RSS Feed for the-guild.dev" href="/feed.xml" />
+          <link
+            rel="alternate"
+            type="application/rss+xml"
+            title="RSS Feed for the-guild.dev"
+            href="/feed.xml"
+          />
         </Head>
         <body>
           <Main />

@@ -1,5 +1,5 @@
 ---
-title: Use this magical Babel plugin and get a performance boost for your React components
+title: Babel plugin and get a performance boost for your React components
 tags: [babel, react]
 authors: eytan
 date: 2019-01-21
@@ -7,9 +7,11 @@ description: Use this magical Babel plugin and get a performance boost for your 
 image: /medium/5f2a07bb7a73727cca4707c0e85f75e8.jpeg
 ---
 
-With the introduction of React hooks (in React 16.8-alpha) arose an issue — calculations are being unnecessarily re-evaluated due to declarations being done within the rendering phase.
+With the introduction of React hooks (in React 16.8-alpha) arose an issue — calculations are being
+unnecessarily re-evaluated due to declarations being done within the rendering phase.
 
-To put things simple, if now we're using class components, and we store calculation results on the class instance to save ourselves some precious processing power:
+To put things simple, if now we're using class components, and we store calculation results on the
+class instance to save ourselves some precious processing power:
 
 ```jsx
 class MyComponent extends React.Component {
@@ -38,7 +40,8 @@ class MyComponent extends React.Component {
 }
 ```
 
-In the near future, we will have no choice but to do everything within the rendering method itself, dictated by hooks:
+In the near future, we will have no choice but to do everything within the rendering method itself,
+dictated by hooks:
 
 ```jsx
 const MyComponent = ({ data, history, filterPredicate, sortComparator }) => {
@@ -61,7 +64,12 @@ const MyComponent = ({ data, history, filterPredicate, sortComparator }) => {
 }
 ```
 
-To solve this problem, the React team invented a couple of methods: `useCallback()` and `useMemo()`. Each of them is used for different reasons but they're quiet similar, and essentially they're used as guard functions that will re-activate themselves only if certain parameters were changed. I recommend you to go through the [official React docs](https://reactjs.org/docs/hooks-reference.html#usecallback) to get a better perspective on these. If we were to implement it in the example above, it should look like so:
+To solve this problem, the React team invented a couple of methods: `useCallback()` and `useMemo()`.
+Each of them is used for different reasons but they're quiet similar, and essentially they're used
+as guard functions that will re-activate themselves only if certain parameters were changed. I
+recommend you to go through the
+[official React docs](https://reactjs.org/docs/hooks-reference.html#usecallback) to get a better
+perspective on these. If we were to implement it in the example above, it should look like so:
 
 ```jsx
 const MyComponent = ({ data, history, filterPredicate, sortComparator }) => {
@@ -87,7 +95,8 @@ const MyComponent = ({ data, history, filterPredicate, sortComparator }) => {
 }
 ```
 
-Wait a minute… So does it mean that I have to wrap all my declarations in these hooks just to get performance which is on a par with class components?!
+Wait a minute… So does it mean that I have to wrap all my declarations in these hooks just to get
+performance which is on a par with class components?!
 
 ![](/medium/893729d5d857bd8f7ebcdfc388a150e8.jpeg)
 
@@ -95,7 +104,11 @@ That's right Vladimir. Even the React team suggested that, and I quote from thei
 
 > “In the future, a sufficiently advanced compiler could create this array automatically” — React
 
-It's a good thing I love React and I think of the future. That's why I invented this Babel plug-in called `babel-plugin-react-persist`, and it addresses exactly that issue! All you have to do is edit your `.babelrc` file and the code will be automatically transformed! Not only that, the plug-in also takes care of optimizing inline anonymous functions in JSX attributes. This way each rendering phase will have a similar instance of the intended callback. So given the following code:
+It's a good thing I love React and I think of the future. That's why I invented this Babel plug-in
+called `babel-plugin-react-persist`, and it addresses exactly that issue! All you have to do is edit
+your `.babelrc` file and the code will be automatically transformed! Not only that, the plug-in also
+takes care of optimizing inline anonymous functions in JSX attributes. This way each rendering phase
+will have a similar instance of the intended callback. So given the following code:
 
 ```jsx
 export default ({ data, sortComparator, filterPredicate, history }) => {
@@ -142,7 +155,10 @@ export default ({ data, sortComparator, filterPredicate, history }) => {
                   (_anonymousFnComponent =
                     _anonymousFnComponent ||
                     (() => {
-                      const _onClick = React.useCallback(() => history.push(`data/${id}`), [history, history.push, id])
+                      const _onClick = React.useCallback(
+                        () => history.push(`data/${id}`),
+                        [history, history.push, id]
+                      )
 
                       return (
                         <li className="data-item" key={id} onClick={_onClick}>
@@ -162,4 +178,7 @@ export default ({ data, sortComparator, filterPredicate, history }) => {
 }
 ```
 
-So what are you waiting for? Go visit the official [GitHub repo](https://github.com/DAB0mB/babel-plugin-react-persist) and get yourself a copy of the plug-in! Have any suggestions or feature request? Feel free to open a ticket in the [repo's issues page](https://github.com/DAB0mB/babel-plugin-react-persist/issues) or comment below!
+So what are you waiting for? Go visit the official
+[GitHub repo](https://github.com/DAB0mB/babel-plugin-react-persist) and get yourself a copy of the
+plug-in! Have any suggestions or feature request? Feel free to open a ticket in the
+[repo's issues page](https://github.com/DAB0mB/babel-plugin-react-persist/issues) or comment below!

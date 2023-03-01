@@ -12,7 +12,7 @@ export class GoogleAnalyticsHandler implements HTMLRewriterElementContentHandler
           gtag('js', new Date());
           gtag('config', '${this.gaTrackingId}');
         </script>`,
-        { html: true }
+        { html: true },
       );
     }
   }

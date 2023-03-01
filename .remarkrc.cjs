@@ -18,7 +18,9 @@ module.exports = {
       [
         'error',
         [
+          'non-serial',
           'KitQL',
+          'RxJS',
           'TL;DR',
           'MCB',
           'SaaS',
@@ -61,6 +63,11 @@ module.exports = {
           'Vue.js',
           'DataLoader',
           'AoT',
+          'ESLint',
+          'MDX',
+          'SEO',
+          'LTR',
+          'RTL',
         ],
       ],
     ],

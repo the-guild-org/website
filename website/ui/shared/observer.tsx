@@ -21,7 +21,7 @@ export const Observer = ({ children, onEnter }: ObserverProps): ReactElement => 
         root: null,
         rootMargin: '0px',
         threshold: 1,
-      }
+      },
     );
     if (ref.current) {
       observer.observe(ref.current);

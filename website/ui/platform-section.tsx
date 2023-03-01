@@ -9,9 +9,9 @@ export const PlatformSection = ({ className }: { className?: string }): ReactEle
         <div className="container flex flex-col items-center px-4 pt-20 pb-28 text-center sm:px-6 md:px-8">
           <Heading>The Ecosystem</Heading>
           <Description className="max-w-[400px] md:max-w-[700px]">
-            Our advanced, modular solutions can be adopted gradually as individual open source libraries or as a
-            complete unified API platform. Explore our suite of sustainable, open source API tools that covers
-            everything you need to scale your API infrastructure:
+            Our advanced, modular solutions can be adopted gradually as individual open source
+            libraries or as a complete unified API platform. Explore our suite of sustainable, open
+            source API tools that covers everything you need to scale your API infrastructure:
           </Description>
 
           {/* TODO: Add this when we'll have `/products` route */}

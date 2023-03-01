@@ -16,7 +16,7 @@ const Container = styled('div', {
   marginBottom: 45,
   maxHeight: 280,
   boxSizing: 'border-box',
-  boxShadow: `0 2px 6px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(0, 0, 0, 0.09)`,
+  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(0, 0, 0, 0.09)',
   borderRadius: 5,
   '&:hover': {
     opacity: 'var(--hover-opacity)',
