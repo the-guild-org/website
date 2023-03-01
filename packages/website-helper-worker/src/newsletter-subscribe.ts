@@ -1,11 +1,14 @@
-import FormData from 'form-data';
+/* eslint-disable no-console */
+import { buildResponseCorsHeaders } from './cors';
 
-export default async function handler(req, res) {
-  const { email } = JSON.parse(req.body);
-
-  if (!email) {
-    return res.status(400).json({ status: 'error', message: 'Email is required' });
-  }
+interface Args {
+  req: Request;
+  body: {
+    email: string;
+  };
+}
+export async function subscribeToNewsletter({ req, body }: Args) {
+  const { email } = body;
 
   const formData = new FormData();
 
@@ -24,7 +27,12 @@ export default async function handler(req, res) {
     },
   );
 
-  const { data: responseData } = await response.json();
+  const { data: responseData } = await response.json<{
+    data: {
+      status: 'error' | 'success';
+      message: string;
+    };
+  }>();
 
   const getResponse = (status: string) => {
     switch (status) {
@@ -45,5 +53,11 @@ export default async function handler(req, res) {
     }
   };
 
-  return res.json(getResponse(responseData.status));
+  return new Response(JSON.stringify(getResponse(responseData.status)), {
+    status: 200,
+    headers: {
+      ...buildResponseCorsHeaders(req.headers),
+      contentType: 'application/json',
+    },
+  });
 }
