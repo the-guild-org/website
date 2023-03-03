@@ -1,16 +1,18 @@
 ---
-title: Optimize Bundle Size with SWC Plugin for GraphQL Code Generator
+title: Optimize your Bundle Size with SWC and GraphQL Codegen
 authors: jessevelden
 tags: [client-preset, codegen]
 date: 2023-02-24
 description:
   'Optimize your Bundle Size with the SWC plugin for client-preset for GraphQL Code Generator'
-# image: /blog-assets/optimize-bundle-size-with-swc-plugin-for-graphql-codegen/coverTODO.png
-# thumbnail: /blog-assets/optimize-bundle-size-with-swc-plugin-for-graphql-codegen/thumbnailTODO.png
+image: /blog-assets/optimize-bundle-size-with-swc-and-graphql-codegen/cover.png
+thumbnail: /blog-assets/optimize-bundle-size-with-swc-and-graphql-codegen/thumbnail.png
 ---
 
+import { Callout } from '@theguild/components'
+
 With the new
-[`client-preset` for GraphQL Code Generator](https://graphql-code-generator.com/plugins/presets/client-preset)
+[`client-preset` for GraphQL Code Generator](https://the-guild.dev/blog/unleash-the-power-of-fragments-with-graphql-codegen)
 it is possible to write your GraphQL queries inlined, next to your component in a type-safe way.
 This can greatly improve the Developer Experience (DX).
 
@@ -24,14 +26,16 @@ const { data } = useGetCartByIdQuery({ variables: { id: '1' } })
 
 // You can write your operations directly next to your component and get the correct types:
 import { graphql } from './graphql'
-const GetCartByIdDocument = graphql(/** GraphQL */ ` query GetCartById($id: ID!) {
-   id
-   items { 
+const GetCartByIdDocument = graphql(/** GraphQL */ `
+  query GetCartById($id: ID!) {
+    id
+    items {
       id
       ...CartItem
-   }
- }`)
- // Awesome! We have the correct types for this operation even when we specify it next to our component!
+    }
+  }
+`)
+// Awesome! We have the correct types for this operation even when we specify it next to our component!
 ```
 
 However, this approach can come at a cost - the bundle size of your pages can increase
@@ -39,7 +43,7 @@ significantly, especially as the number of queries and mutation grows. In this p
 you what the problem is and how to optimize your bundle size with the new
 [`@graphql-codegen/client-preset-swc-plugin`](https://www.npmjs.com/package/@graphql-codegen/client-preset-swc-plugin)
 plugin for your applications supported by the SWC compiler such as projects using
-[Next.js](https://nextjs.org).
+[Next.js](https://nextjs.org) or [Vite](https://vitejs.dev/).
 
 ## The Generated Code When Using the `client-preset`
 
@@ -48,45 +52,52 @@ become bloated with unnecessary imports on every page/ component where you use G
 because by default `client-preset`'s `graphql` function that enables a great TypeScript DX, has to
 have all the GraphQL operations available to it to parse the operation and have the correct types.
 
-The generated code output for the `graphql` function is a function that looks similar to
-the following code, where code-splitting and tree-shaking is not easily possible.
+The generated code output for the `graphql` function is a function that looks similar to the
+following code, where code-splitting and tree-shaking is not easily possible.
 
 ```ts
 const documents = {
-  "fragment CartItems on CartItem {\n name\n quantity \n  }\n  ": types.CartItemsFragmentDoc,
-   "query GetCartById($id: ID!) {\n cart(id: $id) {\n id \n items { \n id \n ...CartItem\n }\n totalItems\n}\n  }\n": types.GetCartByIdDocument,
-};
-export function graphql(source: "fragment CartItems on CartItem {\n name\n quantity\n }\n "): (typeof documents)["\n fragment CartItem on CartItem {\n name\n quantity\n }\n "];
-export function graphql(source: "query GetCartById($id: ID!) {\n cart(id: $id) {\nid\nitems {\nid\n...CartItem\n}\ntotalItems\n }\n }\n"): (typeof documents)["\n query GetCartById($id: ID!) {\n cart(id: $id) {\n id\n items {\n id \n ...CartItem \n } \n totalItems \n } \n }\ n"];
-export function graphql(source: string): unknown;
+  'fragment CartItems on CartItem {\n name\n quantity \n  }\n  ': types.CartItemsFragmentDoc,
+  'query GetCartById($id: ID!) {\n cart(id: $id) {\n id \n items { \n id \n ...CartItem\n }\n totalItems\n}\n  }\n':
+    types.GetCartByIdDocument
+}
+export function graphql(
+  source: 'fragment CartItems on CartItem {\n name\n quantity\n }\n '
+): (typeof documents)['\n fragment CartItem on CartItem {\n name\n quantity\n }\n ']
+export function graphql(
+  source: 'query GetCartById($id: ID!) {\n cart(id: $id) {\nid\nitems {\nid\n...CartItem\n}\ntotalItems\n }\n }\n'
+): (typeof documents)['\n query GetCartById($id: ID!) {\n cart(id: $id) {\n id\n items {\n id \n ...CartItem \n } \n totalItems \n } \n } n']
+export function graphql(source: string): unknown
 export function graphql(source: string) {
   // Here we access the documents object, so the bundler cannot make assumption over what is
   //  actually used at runtime
-  return (documents as any)[source] ?? {};
+  return (documents as any)[source] ?? {}
 }
-/**
 ```
 
 This means that every time you use the `graphql` function, you are importing basically all used
 operations in your project, even if those are not being used. This can be a problem if you have a
-lot of queries and mutations in your project.
+lot of documents (query, mutation, and fragments) in your project.
 
-For a more information/ history of this functionality, you can read more about it in the former 
-[`gql-tag-operations-preset`](https://the-guild.dev/graphql/codegen/plugins/presets/gql-tag-operations-preset) that 
-is now replaced by the `client-preset`. This idea was originally explored by [Maël Nison](https://github.com/arcanis) in 
-[this Github project](https://github.com/arcanis/graphql-typescript-integration).
+<Callout>
+  For more information/ a history of this functionality, you can read more about it in the former
+  [`gql-tag-operations-preset`](https://the-guild.dev/graphql/codegen/plugins/presets/gql-tag-operations-preset)
+  that is now replaced by the `client-preset`. This idea was originally explored by [Maël
+  Nison](https://github.com/arcanis) in [this Github
+  project](https://github.com/arcanis/graphql-typescript-integration).
+</Callout>
 
 ## The Solution: A Compiler Plugin
 
-In order to have type safety in This is where a compiler can make a big difference. Instead of using
-the map which contains all GraphQL operations in the project, we can use the generated document types for that 
-specific operation. So the example above would compile to:
+This is where a compiler can make a big difference. Instead of using the map which contains all
+GraphQL operations in the project, we can use the generated document types for that specific
+operation. So the example above would compile to:
 
 ```ts
-import { CartItemFragmentDoc } from './graphql';
-import { GetCartByIdDocument } from './graphql';
-const GetCartByIdDocument = GetCartByIdDocument;
-const CartItemFragment = CartItemFragmentDoc;
+import { CartItemFragmentDoc } from './graphql'
+import { GetCartByIdDocument } from './graphql'
+const GetCartByIdDocument = GetCartByIdDocument
+const CartItemFragment = CartItemFragmentDoc
 ```
 
 There was already a
@@ -102,6 +113,7 @@ comes in. This plugin uses the [SWC](https://swc.rs) compiler to optimize the ge
 reducing the bundle size for all your SWC projects!
 
 ## How to Use the SWC Plugin
+
 To use the SWC plugin, you need to install the plugin:
 
 ```bash
@@ -109,7 +121,7 @@ npm install -D @graphql-codegen/client-preset-swc-plugin
 yarn add -D @graphql-codegen/client-preset-swc-plugin
 ```
 
-To use the SWC plugin with Next.js, update your next.config.js to add the following:
+To use the SWC plugin with Next.js, update your `next.config.js` to add the following:
 
 ```js filename="next.config.js"
 const nextConfig = {
@@ -123,6 +135,27 @@ const nextConfig = {
     ]
   }
 }
+```
+
+or with Vite React, update your `vite.config.ts` to add the following:
+
+```ts filename="vite.config.ts"
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    react({
+      plugins: [
+        [
+          '@graphql-codegen/client-preset-swc-plugin',
+          { artifactDirectory: './src/gql', gqlTagName: 'graphql' }
+        ]
+      ]
+    })
+  ]
+})
 ```
 
 or for other SWC projects add this to your `.swcrc` file:
