@@ -1,23 +1,16 @@
-import { MANAGE_TITLES } from './config';
-
-export interface HTMLTitleConfig {
-  titleTagContent: string;
-  URL: URL;
-}
+import { HTMLTitleConfig } from './config';
 
 export class TitleHandler implements HTMLRewriterElementContentHandlers {
-  constructor(private titleObjects: HTMLTitleConfig[]) {}
+  constructor(private titles: HTMLTitleConfig[]) {}
 
   element(element: Element) {
-    const titleObject = this.titleObjects.find(v => v.URL.pathname === element.baseURI);
-
-    if (titleObject) {
-      element.append(
-        `<title>
-          ${titleObject.titleTagContent}
-        </title>`,
-        { html: true },
-      );
+    const currentURL = new URL(element.baseURI);
+    const shouldChangeTitle = this.titles.find(title => title.URL === currentURL);
+    if (shouldChangeTitle) {
+      const getWebsiteTitleTag = document.querySelector('title');
+      if (getWebsiteTitleTag) {
+        getWebsiteTitleTag.textContent = shouldChangeTitle.titleTagContent;
+      }
     }
   }
 }
