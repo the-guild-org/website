@@ -7,9 +7,10 @@ export class TitleHandler implements HTMLRewriterElementContentHandlers {
     const currentURL = new URL(element.baseURI);
     const shouldChangeTitle = this.titles.find(title => title.URL === currentURL);
     if (shouldChangeTitle) {
-      const getWebsiteTitleTag = document.querySelector('title');
+      const getWebsiteTitleTag =
+        element.tagName === 'title' ? element : element.querySelector('title');
       if (getWebsiteTitleTag) {
-        getWebsiteTitleTag.textContent = shouldChangeTitle.titleTagContent;
+        getWebsiteTitleTag.replace(shouldChangeTitle.titleTagContent);
       }
     }
   }
