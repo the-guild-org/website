@@ -10,8 +10,7 @@ import { GoogleAnalyticsHandler } from './html-handlers/ga';
 import { handleFavicon, shouldHandleFavicon } from './favicon/handler';
 import { handleFeed, shouldHandleFeed } from './feed/handler';
 import { Env } from './env';
-import { TitleHandler } from './titles-tags/title-seo';
-import { MANAGE_SEO_TITLES } from './titles-tags/config';
+import { HtmlTitleHandler } from './titles-tags/title-seo';
 
 declare const SENTRY_DSN: string;
 declare const RELEASE: string;
@@ -31,11 +30,12 @@ const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => 
   let result = rawResponse;
 
   if (result?.headers?.get('content-type')?.startsWith('text/html')) {
+    console.log('record.rewrite', record);
     result = new HTMLRewriter()
       .on('head', new FaviconHandler())
       .on('head', new CrispHandler(crispWebsiteId, record))
       .on('head', new GoogleAnalyticsHandler(gaTrackingId))
-      .on('head', new TitleHandler(MANAGE_SEO_TITLES))
+      .on('title', new HtmlTitleHandler(result.url))
       .transform(result);
   }
 

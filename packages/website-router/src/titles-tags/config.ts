@@ -1,11 +1,11 @@
 export interface HTMLTitleConfig {
   titleTagContent: string;
-  URL: URL;
+  URL: string;
 }
 
 export const MANAGE_SEO_TITLES: HTMLTitleConfig[] = [
   {
-    URL: new URL('/plugins/typescript/typescript-operations'),
+    URL: 'https://guild-dev-website.pages.dev/blog',
     titleTagContent: 'GraphQL TypeScript',
   },
 ];
