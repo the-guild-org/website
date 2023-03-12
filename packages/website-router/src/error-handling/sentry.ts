@@ -1,5 +1,5 @@
 import Toucan from 'toucan-js';
-import PackageJSON from '../package.json';
+import PackageJSON from '../../package.json';
 
 export function createSentry(event: FetchEvent, dsn: string, release: string) {
   return new Toucan({
