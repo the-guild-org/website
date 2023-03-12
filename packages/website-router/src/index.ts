@@ -11,7 +11,6 @@ import { handleFavicon, shouldHandleFavicon } from './favicon/handler';
 import { handleFeed, shouldHandleFeed } from './feed/handler';
 
 declare const SENTRY_DSN: string;
-declare const RELEASE: string;
 
 const {
   publicDomain,
@@ -191,7 +190,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
 }
 
 addEventListener('fetch', (event: FetchEvent) => {
-  const sentry = createSentry(event, SENTRY_DSN, RELEASE);
+  const sentry = createSentry(event, SENTRY_DSN, '');
 
   event.respondWith(
     handleEvent(event, sentry)
