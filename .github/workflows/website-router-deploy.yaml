@@ -1,11 +1,10 @@
-name: website-helper
-
+name: website-router
 on:
   push:
     branches:
       - master
 
-concurrency: deploy-website-helper
+concurrency: deploy-website-router
 
 jobs:
   deploy-worker:
@@ -24,4 +23,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: ./packages/website-helper-worker
+          workingDirectory: ./packages/website-router
