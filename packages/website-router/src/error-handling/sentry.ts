@@ -1,6 +1,8 @@
 import { Toucan } from 'toucan-js';
+import { Env } from '../env';
 
-export function createSentry(request: Request, context: any, dsn: string) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function createSentry(request: Request, context: EventContext<Env, any, any>, dsn: string) {
   return new Toucan({
     dsn,
     request,
