@@ -1,28 +1,29 @@
-import Toucan from 'toucan-js';
-import PackageJSON from '../../package.json';
+import { Toucan } from 'toucan-js';
 
-export function createSentry(event: FetchEvent, dsn: string, release: string) {
+export function createSentry(request: Request, context: any, dsn: string) {
   return new Toucan({
     dsn,
-    context: event,
+    request,
+    enabled: !!dsn,
+    context,
     environment: 'production',
-    release,
-    pkg: PackageJSON,
     attachStacktrace: true,
-    allowedHeaders: [
-      'content-type',
-      'content-length',
-      'accept',
-      'accept-language',
-      'accept-encoding',
-      'user-agent',
-      'referer',
-      'host',
-      'cf-connecting-ip',
-      'cf-ray',
-      'cf-device-type',
-      'x-forwarded-for',
-      'x-forwarded-proto',
-    ],
+    requestDataOptions: {
+      allowedHeaders: [
+        'content-type',
+        'content-length',
+        'accept',
+        'accept-language',
+        'accept-encoding',
+        'user-agent',
+        'referer',
+        'host',
+        'cf-connecting-ip',
+        'cf-ray',
+        'cf-device-type',
+        'x-forwarded-for',
+        'x-forwarded-proto',
+      ],
+    },
   });
 }
