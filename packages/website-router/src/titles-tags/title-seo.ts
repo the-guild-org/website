@@ -3,26 +3,17 @@ import { MANAGE_SEO_TITLES } from './config';
 export class HtmlTitleHandler implements HTMLRewriterElementContentHandlers {
   constructor(private url: string) {}
 
-  element(element: Element) {
-    console.log('url', this.url);
-
-    const title = MANAGE_SEO_TITLES.find(v => v.URL === this.url);
+  text(element: Text) {
+    // 1. Search if need to handle title change based on URL
+    const title = MANAGE_SEO_TITLES.find(config => config.URL === this.url);
+    console.log('title --->', title);
+    // 2. The text of the element (title tag)
+    const text = element.text;
+    console.log('text --->', text);
 
     if (title) {
-      console.log('title', title.URL);
-      const titleTag = element.tagName === 'title';
-      console.log('titleTag', titleTag);
-      // 1. chack if the title already exist
-      // 2. if not, add it
-      // 3. if yes, replace it
-      // 4. if yes, but it's the same, do nothing
-      if (titleTag) {
-        element.setAttribute('title', title.titleTagContent);
-      } else {
-        element.append(title.titleTagContent, { html: true });
-      }
+      // 3. Change the text of the element (title tag)
+      element.replace(title.titleTagContent);
     }
-
-    console.log('title', title);
   }
 }
