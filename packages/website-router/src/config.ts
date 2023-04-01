@@ -105,6 +105,13 @@ export const jsonConfig = {
       },
       sitemap: true,
     },
+    '/graphql/ws': {
+      rewrite: 'graphql-ws.pages.dev',
+      crisp: {
+        segments: ['ws'],
+      },
+      sitemap: true,
+    },
     '/graphql/sse': {
       rewrite: 'graphql-sse.pages.dev',
       crisp: {
