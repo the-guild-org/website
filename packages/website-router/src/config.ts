@@ -105,6 +105,13 @@ export const jsonConfig = {
       },
       sitemap: true,
     },
+    '/graphql/sse': {
+      rewrite: 'graphql-sse.pages.dev',
+      crisp: {
+        segments: ['sse'],
+      },
+      sitemap: true,
+    },
     // Redirects
     '/bob': {
       redirect: 'https://github.com/kamilkisiela/bob',
