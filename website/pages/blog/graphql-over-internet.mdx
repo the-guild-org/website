@@ -3,7 +3,7 @@ title: GraphQL over Internet
 tags: [graphql, http, ws, sse]
 authors: enisdenjo
 date: 2023-04-04
-description: HTTP, WebSockets, Server-Sent Events, undergoing standardisation and libraries.
+description: HTTP, WebSockets, Server-Sent Events, undergoing standardization and libraries.
 image: /blog-assets/graphql-over-internet/cover.png
 thumbnail: /blog-assets/graphql-over-internet/thumbnail.png
 ---
@@ -13,7 +13,7 @@ thumbnail: /blog-assets/graphql-over-internet/thumbnail.png
 Some of you have heard this question many times over... But for the beginners out there: GraphQL is
 a data language. And that's it, nothing more and nothing less. It a system of communication that
 defines the grammar and the vocabulary. It helps you request the exact data you want, and also helps
-the server fulfil that request. Llike in real world - those that know the language can communicate.
+the server fulfil that request. Like in real world - those that know the language can communicate.
 Please keep in mind, GraphQL is not a database nor is it a server - it is simply - **just a
 language**.
 
@@ -37,7 +37,7 @@ you communicated over the phone.
 
 **However, neither of you know, or care, about how a telephone works!**
 
-Synonymously, GraphQL itself deliberately does not care about the transport - it doesnt care about
+Synonymously, GraphQL itself deliberately does not care about the transport - it doesn't care about
 how you send the request, how you receive the response, what is the delivery path, all of this is
 out of the GraphQL's scope. It is quite literally just a data language.
 
@@ -45,14 +45,14 @@ out of the GraphQL's scope. It is quite literally just a data language.
 
 HTTP is the most common choice when transporting GraphQL because of its ubiquity. With this in mind,
 a group of superheroes formed in 2019 to solve exactly this problem. A work group of avid GraphQL
-lovers all with the same goal - standardise the process of transporting GraphQL over HTTP. The group
+lovers all with the same goal - standardize the process of transporting GraphQL over HTTP. The group
 mostly works asynchronously, but there are Zoom meetings, where progress is shared and important
 topics are discussed.
 
 This is a joint effort, so everyone's opinion matters and everyone is welcome to contribute!
 
 There is already a
-[specification being standardised named GraphQL over HTTP](https://graphql.github.io/graphql-over-http/).
+[specification being standardized named GraphQL over HTTP](https://graphql.github.io/graphql-over-http/).
 At the time of writing, it is in the proposal stage. It currently describes exclusively single
 response operations, this is the main focus; so, no file uploads, no incremental deliveries, yet...
 
@@ -93,7 +93,7 @@ built and maintained by [Apollo](https://www.apollographql.com/). It also had an
 [accompanying protocol](https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md).
 But as time passed, they've been able to spend less time on it, probably due to increase demand in
 other areas. The repo grew in issues, PRs were never reviewed - it eventually became unmaintained
-and therefore deprecated. But this library actually kickstarted and pushed the evolution, it was a
+and therefore deprecated. But this library actually kick-started and pushed the evolution, it was a
 big inspiration and a great influence for the upcoming refresh!
 
 [The WebSocket Protocol](https://www.rfc-editor.org/rfc/rfc6455) provides a persistent, full-duplex
@@ -116,9 +116,9 @@ leverages all pros of the WebSocket and gives shine to real-time GraphQL. Please
 
 A specification goes best with a reference implementation. Say hello to
 [`graphql-ws`](https://github.com/enisdenjo/graphql-ws). It is a zero-dependency server and client,
-very simple and barebone. But don't be mistaken, it's very versatile and extendable!
+very simple and bare-bone. But don't be mistaken, it's very versatile and extendable!
 
-One key element people often struggle with WebSockets are reconnections and `graphql-ws` is all
+One key element people often struggle with WebSockets are re-connections and `graphql-ws` is all
 about stable connections. Silent retries with custom strategies are easy to use and extend.
 
 Oh and, it is completely server agnostic - run it on any JavaScript environment!
@@ -141,7 +141,7 @@ even need a whole specification? Are we overthinking it?
 
 That's an excellent question actually! Here's a few gotchas' about the browser native `EventSource`:
 
-- Headers cannot be customised
+- Headers cannot be customized
 - If the HTTP response is erroneous and not a 200 OK, `EventSource` raises an ultra vague error
 - The requests cannot have an accompanying body
 - The retry mechanism is too simple, it will simply retry following a fixed interval
@@ -163,7 +163,7 @@ It supports two working modes:
   basically the regular way you'd use SSEs, each request is a connection on its own
 - ["single connection mode"](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverSSE.md#single-connection-mode) -
   a single SSE connection is maintained for streaming, but other accompanying requests dictate the
-  behaviour
+  behavior
 
 ⚠️ Beware that the specification is currently an RFC and is open to changes!
 
@@ -229,7 +229,7 @@ can run it in any JavaScript environment!
 ## WebSockets vs. SSEs
 
 There's an abundance of articles, tables and benchmarks on the internet comparing WebSockets to
-SSEs, so I'll just breifly touch the obvious.
+SSEs, so I'll just briefly touch the obvious.
 
 |               | WebSockets                                                                                                                                  | SSEs                                                                                                                                                                                                        |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
