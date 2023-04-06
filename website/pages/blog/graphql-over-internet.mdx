@@ -2,7 +2,7 @@
 title: GraphQL over Internet
 tags: [graphql, http, ws, sse]
 authors: enisdenjo
-date: 2023-04-05
+date: 2023-04-06
 description: HTTP, WebSockets, Server-Sent Events, undergoing standardization and libraries.
 image: /blog-assets/graphql-over-internet/cover.png
 thumbnail: /blog-assets/graphql-over-internet/thumbnail.png
@@ -88,20 +88,20 @@ computer and have a portable offline checker.
 
 Before we talk about the current state of GraphQL WebSocket support, let's start with a brief
 overview of the history. Initially, there was a
-[`subscriptions-transport-ws`](https://github.com/apollographql/subscriptions-transport-ws) library that was
-built and maintained by [Apollo](https://www.apollographql.com/). It also had an
+[`subscriptions-transport-ws`](https://github.com/apollographql/subscriptions-transport-ws) library
+that was built and maintained by [Apollo](https://www.apollographql.com/). It also had an
 [accompanying protocol](https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md).
-But as time passed, they haven't been able to spend as much time on it — probably due to increased demand in
-other areas. The repo grew in issues, and PRs were never reviewed. Eventually, it became deprecated. However, this library actually kick-started and pushed the evolution. It was a
-big inspiration and a great influence for an upcoming refresh!
+But as time passed, they haven't been able to spend as much time on it — probably due to increased
+demand in other areas. The repo grew in issues, and PRs were never reviewed. Eventually, it became
+deprecated. However, this library actually kick-started and pushed the evolution. It was a big
+inspiration and a great influence for an upcoming refresh!
 
 [The WebSocket Protocol](https://www.rfc-editor.org/rfc/rfc6455) provides a persistent, full-duplex
 communication channel between the client and server, allowing data to be transmitted in real-time.
 Full-duplex is just a fancy word for bidirectional communication which means that the server and the
 client can exchange messages through the connection channel whenever they want. When used in
-conjunction with GraphQL, it allows clients to subscribe and receive events from the server in
-real time. This makes it ideal for applications that require real-time updates and push
-notifications.
+conjunction with GraphQL, it allows clients to subscribe and receive events from the server in real
+time. This makes it ideal for applications that require real-time updates and push notifications.
 
 The
 [GraphQL over WebSocket protocol](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverWebSocket.md)
@@ -138,7 +138,8 @@ Before we proceed, you might ask why not just use the
 [browser native EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)? Do we
 even need a whole specification? Are we overthinking it?
 
-That's an excellent question, actually! Here are a few gotchas' about the browser native `EventSource`:
+That's an excellent question, actually! Here are a few gotchas' about the browser native
+`EventSource`:
 
 - Headers cannot be customized
 - If the HTTP response is erroneous and not a 200 OK, `EventSource` raises an ultra vague error
@@ -240,9 +241,8 @@ SSEs, so I'll just briefly touch the obvious.
 
 ## Presentation
 
-Check out my presentation from
-[GraphQL Zurich Meetup](https://www.meetup.com/graphql-zurich/) sponsored by
-[SwissLife](https://www.swisslife.ch/).
+Check out my presentation from [GraphQL Zurich Meetup](https://www.meetup.com/graphql-zurich/)
+sponsored by [SwissLife](https://www.swisslife.ch/).
 
 <Video
   src="https://www.youtube.com/embed/zgkx-ONm3Uc"
