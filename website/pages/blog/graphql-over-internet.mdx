@@ -84,17 +84,16 @@ Of course, security is very important - the website audits run exclusively in th
 is no tracking, data sharing, or external dependencies! Meaning you can download the website on your
 computer and have a portable offline checker.
 
-## [GraphQL over WebSocket](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverWebSocket.md)
+## [GraphQL over WebSocket](https://t.ly/IiwW)
 
 Before we talk about the current state of GraphQL WebSocket support, let's start with a brief
 overview of the history. Initially, there was a
 [`subscriptions-transport-ws`](https://github.com/apollographql/subscriptions-transport-ws) library
 that was built and maintained by [Apollo](https://www.apollographql.com/). It also had an
-[accompanying protocol](https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md).
-But as time passed, they haven't been able to spend as much time on it — probably due to increased
-demand in other areas. The repo grew in issues, and PRs were never reviewed. Eventually, it became
-deprecated. However, this library actually kick-started and pushed the evolution. It was a big
-inspiration and a great influence for an upcoming refresh!
+[accompanying protocol](https://t.ly/9CN_). But as time passed, they haven't been able to spend as
+much time on it — probably due to increased demand in other areas. The repo grew in issues, and PRs
+were never reviewed. Eventually, it became deprecated. However, this library actually kick-started
+and pushed the evolution. It was a big inspiration and a great influence for an upcoming refresh!
 
 [The WebSocket Protocol](https://www.rfc-editor.org/rfc/rfc6455) provides a persistent, full-duplex
 communication channel between the client and server, allowing data to be transmitted in real-time.
@@ -103,11 +102,9 @@ client can exchange messages through the connection channel whenever they want. 
 conjunction with GraphQL, it allows clients to subscribe and receive events from the server in real
 time. This makes it ideal for applications that require real-time updates and push notifications.
 
-The
-[GraphQL over WebSocket protocol](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverWebSocket.md)
-leverages all pros of the WebSocket and gives shine to real-time GraphQL. Please note that it is
-**not** backwards compatible with
-[Apollo's protocol behind `subscriptions-transport-ws`](https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md).
+The [GraphQL over WebSocket protocol](https://t.ly/b5N_) leverages all pros of the WebSocket and
+gives shine to real-time GraphQL. Please note that it is **not** backwards compatible with
+[Apollo's protocol behind `subscriptions-transport-ws`](https://t.ly/L-GA).
 
 ⚠️ Beware that the specification is currently an RFC and is open to changes!
 
@@ -122,7 +119,7 @@ connections. Silent retries with custom strategies are easy to use and extend.
 
 Oh and, it is completely server agnostic - run it on any JavaScript environment!
 
-## [GraphQL over SSE](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverSSE.md)
+## [GraphQL over SSE](https://t.ly/DnRO)
 
 > Traditionally, a web page has to send a request to the server to receive new data; that is, the
 > page requests data from the server. With server-sent events, it's possible for a server to send
@@ -152,18 +149,16 @@ That's an excellent question, actually! Here are a few gotchas' about the browse
 
 ### The Specification
 
-Keeping everything from the previous section in mind, the
-[GraphQL over SSE spec](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverSSE.md)
+Keeping everything from the previous section in mind, the [GraphQL over SSE spec](https://t.ly/DnRO)
 is created. It basically lifts all usual limitations of SSE while keeping the browser native
 `EventSource` in mind - so you're not locked to a library, you're still free to use it!
 
 It supports two working modes:
 
-- ["distinct connections mode"](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverSSE.md#distinct-connections-mode) -
-  basically the regular way you'd use SSEs, each request is a connection on its own
-- ["single connection mode"](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverSSE.md#single-connection-mode) -
-  a single SSE connection is maintained for streaming, but other accompanying requests dictate the
-  behavior
+- ["distinct connections mode"](https://t.ly/DnRO#distinct-connections-mode) - basically the regular
+  way you'd use SSEs, each request is a connection on its own
+- ["single connection mode"](https://t.ly/DnRO#single-connection-mode) - a single SSE connection is
+  maintained for streaming, but other accompanying requests dictate the behavior
 
 ⚠️ Beware that the specification is currently an RFC and is open to changes!
 
