@@ -175,5 +175,5 @@ export const AUTHORS: Record<string, Author> = {
     name: 'Aleksandra Sikora',
     link: 'https://twitter.com/aleksandrasays',
     github: 'beerose',
-  }
+  },
 };
