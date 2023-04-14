@@ -1,4 +1,4 @@
-import Toucan from 'toucan-js';
+import { Toucan } from 'toucan-js';
 import { redirect } from '../routing';
 
 export function shouldHandleRobotsTxt(url: URL) {

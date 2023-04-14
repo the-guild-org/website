@@ -1,5 +1,5 @@
 import { jsonConfig } from './config';
-import Toucan from 'toucan-js';
+import { Toucan } from 'toucan-js';
 import { createSentry } from './error-handling/sentry';
 import { handleSitemap, shouldHandleSitemap } from './sitemap/handler';
 import { handleRobotsTxt, shouldHandleRobotsTxt } from './robots/handler';
@@ -9,9 +9,7 @@ import { CrispHandler } from './html-handlers/crisp';
 import { GoogleAnalyticsHandler } from './html-handlers/ga';
 import { handleFavicon, shouldHandleFavicon } from './favicon/handler';
 import { handleFeed, shouldHandleFeed } from './feed/handler';
-
-declare const SENTRY_DSN: string;
-declare const RELEASE: string;
+import { Env } from './env';
 
 const {
   publicDomain,
@@ -42,49 +40,49 @@ const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => 
   return result;
 };
 
-async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response> {
-  const parsedUrl = new URL(event.request.url);
+async function handleEvent(request: Request, sentry: Toucan): Promise<Response> {
+  const parsedUrl = new URL(request.url);
   sentry.addBreadcrumb({
     type: 'debug',
     data: {
-      clientUrl: event.request.url,
+      clientUrl: request.url,
     },
     level: 'info',
     message: 'Parsed incoming request URL',
   });
 
   // Remove all trailing slashes
-  if (event.request.url.endsWith('/') && parsedUrl.pathname !== '/' && parsedUrl.pathname !== '') {
-    const to = event.request.url.slice(0, -1);
+  if (request.url.endsWith('/') && parsedUrl.pathname !== '/' && parsedUrl.pathname !== '') {
+    const to = request.url.slice(0, -1);
 
     sentry.addBreadcrumb({
       type: 'navigation',
       data: {
-        from: event.request.url,
+        from: request.url,
         to,
       },
       level: 'info',
       message: 'Redirecting to non-trailing slash URL',
     });
 
-    return redirect(sentry, event.request.url, to);
+    return redirect(sentry, request.url, to);
   }
 
   // Remove all www && https && http from the URL
   if (parsedUrl.hostname.startsWith('www.')) {
-    const to = event.request.url.replace('//www.', '//');
+    const to = request.url.replace('//www.', '//');
 
     sentry.addBreadcrumb({
       type: 'navigation',
       data: {
-        from: event.request.url,
+        from: request.url,
         to,
       },
       level: 'info',
       message: 'Redirecting to non-trailing www URL',
     });
 
-    return redirect(sentry, event.request.url, to);
+    return redirect(sentry, request.url, to);
   }
 
   // Handle sitemap
@@ -117,7 +115,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
       message: 'Handling robots.txt flow',
     });
 
-    return handleRobotsTxt(sentry, event.request.url, publicDomain);
+    return handleRobotsTxt(sentry, request.url, publicDomain);
   }
 
   // Handle all feed/rss in one place
@@ -128,7 +126,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
       message: 'Handling feed/RSS flow',
     });
 
-    return handleFeed(sentry, event.request.url, publicDomain);
+    return handleFeed(sentry, request.url, publicDomain);
   }
 
   const match = Object.keys(mappings).find(key => parsedUrl.pathname.startsWith(key));
@@ -154,7 +152,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
       return await handleRewrite({
         cacheStorageId,
         cfFetchCacheTtl,
-        event,
+        request,
         fallbackRoute,
         sentry,
         manipulateResponse,
@@ -166,7 +164,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
     }
 
     if ('redirect' in record) {
-      return redirect(sentry, event.request.url, record.redirect, record.status || 301);
+      return redirect(sentry, request.url, record.redirect, record.status || 301);
     }
   }
 
@@ -179,7 +177,7 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
   return await handleRewrite({
     cacheStorageId,
     cfFetchCacheTtl,
-    event,
+    request,
     fallbackRoute,
     sentry,
     upstreamPath: parsedUrl.pathname,
@@ -190,11 +188,13 @@ async function handleEvent(event: FetchEvent, sentry: Toucan): Promise<Response>
   });
 }
 
-addEventListener('fetch', (event: FetchEvent) => {
-  const sentry = createSentry(event, SENTRY_DSN, RELEASE);
+// eslint-disable-next-line import/no-default-export
+export default {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async fetch(request: Request, env: Env, context: EventContext<Env, any, any>): Promise<Response> {
+    const sentry = createSentry(request, context, env.SENTRY_DSN);
 
-  event.respondWith(
-    handleEvent(event, sentry)
+    return handleEvent(request, sentry)
       .then(resultResponse => {
         sentry.addBreadcrumb({
           type: 'debug',
@@ -209,19 +209,19 @@ addEventListener('fetch', (event: FetchEvent) => {
       })
       .catch(e => {
         sentry.setExtras({
-          'Client Endpoint': event.request.url,
+          'Client Endpoint': request.url,
         });
 
-        if (event.request.headers.has('cf-connecting-ip')) {
+        if (request.headers.has('cf-connecting-ip')) {
           sentry.setUser({
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            ip_address: event.request.headers.get('cf-connecting-ip')!,
+            ip_address: request.headers.get('cf-connecting-ip')!,
           });
         }
 
         sentry.captureException(e);
 
         throw e;
-      }),
-  );
-});
+      });
+  },
+};

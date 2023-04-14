@@ -1,4 +1,4 @@
-import Toucan from 'toucan-js';
+import { Toucan } from 'toucan-js';
 import type { RewriteRecord } from './config';
 import { shouldSkipErrorReporting } from './error-handling/error-reporting';
 
@@ -17,10 +17,13 @@ async function handleErrorResponse(options: {
     !shouldSkipErrorReporting(requestedEndpoint, options.request.headers.get('user-agent'));
 
   if (shouldReport) {
-    options.sentry.setFingerprint([
-      requestedEndpoint.replace('https://www.', 'https://'),
-      String(options.response.status),
-    ]);
+    options.sentry.configureScope(scope => {
+      scope.setFingerprint([
+        requestedEndpoint.replace('https://www.', 'https://'),
+        String(options.response.status),
+      ]);
+    });
+
     options.sentry.setExtras({
       'User Endpoint': requestedEndpoint,
       'Upstream Endpoint': options.endpoint,
@@ -78,7 +81,7 @@ export function redirect(sentry: Toucan, from: string, url: string, code = 301) 
 export type ManipulateResponseFn = (record: RewriteRecord, response: Response) => Promise<Response>;
 
 export async function handleRewrite(options: {
-  event: FetchEvent;
+  request: Request;
   cacheStorageId: number;
   sentry: Toucan;
   record: RewriteRecord;
@@ -88,9 +91,9 @@ export async function handleRewrite(options: {
   manipulateResponse: ManipulateResponseFn;
   match: string | null;
   publicDomain: string;
-}) {
+}): Promise<Response> {
   const url = `https://${options.record.rewrite}${options.upstreamPath || ''}`;
-  const cacheKey = new Request(url, options.event.request);
+  const cacheKey = new Request(url, options.request);
   const cache = await caches.open(String(options.cacheStorageId));
   let response = await cache.match(cacheKey);
 
@@ -134,7 +137,7 @@ export async function handleRewrite(options: {
 
       return redirect(
         options.sentry,
-        options.event.request.url,
+        options.request.url,
         `https://${options.publicDomain}${options.match}${upstreamLocation}`,
         301,
       );
@@ -173,7 +176,7 @@ export async function handleRewrite(options: {
       // This error handler captures an error from the origin.
       return await handleErrorResponse({
         sentry: options.sentry,
-        request: options.event.request,
+        request: options.request,
         endpoint: url,
         response: freshResponse,
         cfFetchCacheTtl: options.cfFetchCacheTtl,
@@ -184,7 +187,7 @@ export async function handleRewrite(options: {
     response = await options.manipulateResponse(options.record, freshResponse);
 
     // Make sure the worker wait behind the scenes, for the Response content.
-    options.event.waitUntil(cache.put(cacheKey, response.clone()));
+    await cache.put(cacheKey, response.clone());
   }
 
   return response;

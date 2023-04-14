@@ -45,6 +45,7 @@ module.exports = {
           'SvelteKit',
           'RabbitMQ',
           'PWA',
+          'WebSocket',
           'WebSockets',
           'SSE',
           'SSEs',

@@ -63,6 +63,16 @@ async function readMeta(dir: string, file: string): Promise<MetaWithLink> {
         `SEO issue: The title "${parsed.title}" is too short, should be more than 20 characters - link ${file}`,
       );
     }
+    if (parsed.description.length > 160) {
+      throw new Error(
+        `SEO issue: The description (${parsed.description.length}) "${parsed.description}" is too long, should be less than 160 characters - link ${file}`,
+      );
+    }
+    if (parsed.description.length < 50) {
+      throw new Error(
+        `SEO issue: The description (${parsed.description.length}) "${parsed.description}" is too short, should be more than 50 characters - link ${file}`,
+      );
+    }
     return {
       ...parsed,
       tags: asArray(parsed.tags),
