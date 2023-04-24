@@ -7,7 +7,7 @@ interface Args {
     email: string;
   };
 }
-export async function handleSubscribeToNewsletter({ request: req, body }: Args) {
+export async function handleSubscribeToNewsletter({ request: req, body }: Args, token: string) {
   const { email } = body;
 
   const formData = new FormData();
@@ -21,7 +21,7 @@ export async function handleSubscribeToNewsletter({ request: req, body }: Args) 
     {
       body: formData as unknown as BodyInit,
       headers: {
-        Authorization: `Bearer ${process.env.BEEHIIV_API_KEY}`,
+        Authorization: `Bearer ${token}`,
       },
       method: 'POST',
     },

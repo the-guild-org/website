@@ -70,7 +70,7 @@ export default {
         return await handleSubscribeToNewsletter({
           request,
           body: maybeBody ? JSON.parse(maybeBody) : null,
-        });
+        }, env.BEEHIIV_API_KEY);
       }
 
       return new Response(JSON.stringify({ error: 'not found' }), {
