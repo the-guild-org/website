@@ -13,16 +13,15 @@ const files = globbySync('*.mdx', {
 
 const errors = [];
 
-files.forEach(file =>
+for (const file of files)
   checkFile(file.replace('.mdx', ''), error => {
     errors.push(error);
-  }),
-);
+  });
 
 if (errors.length > 0) {
-  errors.forEach(error => {
+  for (const error of errors) {
     console.error(error);
-  });
+  }
   process.exit(1);
 }
 
@@ -33,13 +32,13 @@ function checkFile(name: string, onError: (err: string) => void) {
   const doc = readFileSync(filepath, 'utf-8');
   const links = onlyRelative(extractLinks(doc));
 
-  links.forEach(link => {
+  for (const link of links) {
     if (!exists(link.href)) {
       onError(
         `❌  Error in \`${relative(process.cwd(), filepath)}\` link \`${link.href}\` doesn't exist`,
       );
     }
-  });
+  }
 }
 
 function exists(link: string): boolean {
