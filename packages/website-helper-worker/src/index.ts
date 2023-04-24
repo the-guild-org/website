@@ -5,6 +5,7 @@ import { buildResponseCorsHeaders } from './cors';
 import { createCrispClient } from './crisp-client';
 import { Env } from './env';
 import { Toucan } from 'toucan-js';
+import { handleSubscribeToNewsletter } from './newsletter-subscribe';
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -63,6 +64,16 @@ export default {
           notion,
           notionDatabaseId: env.NOTION_CONTACT_US_DATABASE_ID,
         });
+      }
+
+      if (request.method === 'POST' && url.pathname === '/api/newsletter-subscribe') {
+        return await handleSubscribeToNewsletter(
+          {
+            request,
+            body: maybeBody ? JSON.parse(maybeBody) : null,
+          },
+          env.BEEHIIV_API_KEY,
+        );
       }
 
       return new Response(JSON.stringify({ error: 'not found' }), {
