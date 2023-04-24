@@ -33,7 +33,7 @@ export const Newsletter = ({
 
           const email = e.currentTarget.email.value;
 
-          const response = await fetch('/api/newsletter-subscribe', {
+          const response = await fetch('https://utils.the-guild.dev/api/newsletter-subscribe', {
             body: JSON.stringify({
               email,
             }),
