@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { buildResponseCorsHeaders } from './cors';
 import FormData from 'form-data';
 
