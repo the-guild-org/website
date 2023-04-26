@@ -28,7 +28,7 @@ as Java, Spring Boot, or .NET.
 One common standard embraced by these teams is OpenAPI. Formerly known as Swagger, it become a
 standard within the REST community for describing APIs. It provides a comprehensive description of
 an API's capabilities, allowing consumers to understand its functionality without needing to know
-the details of its implementation. 
+the details of its implementation.
 
 ## 🔥 Introducing FETS Client 🔥
 
@@ -170,13 +170,22 @@ export const openApiDocument = generateOpenApiDocument(appRouter, {
   baseUrl: 'http://localhost:3000',
 });
 
+// save openApiDocument to a file, e.g. openapi.ts. Add `as const`:
+
+export const oas = {...} as const;
+
 // And finally – creating a FEST client
 
-const client = createClient<typeof openApiDocument>({
+import { createClient, Mutable } from 'fets';
+import { oas } from "./openapi";
+
+const client = createClient<Mutable<typeof oas>>({
   url: 'http://my-api.com/api',
-  plugins: [useAuth()]
 });
 ```
+
+You can check out the full example in the
+[examples](https://github.com/ardatan/fets/tree/master/examples) folder.
 
 ## Alternatives and Comparison
 
