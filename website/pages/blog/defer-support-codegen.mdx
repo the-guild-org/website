@@ -170,6 +170,15 @@ export default App;
 
 With the above code, the `orders` field is rendered only if it's available in the data object.
 
+### How Does It Compare with Relay?
+
+Relay allows for incremental delivery of data from the server to the client without an extra logic
+on the client because it uses Suspense. It enables the client to render parts of the UI as soon as
+the corresponding data is available.
+
+The same can be achieved in other GraphQL clients with the `@defer` directive and the
+`isFragmentReady` utility function.
+
 ## Example Usage in GraphQL Hive
 
 To evaluate the codegen support for the `@defer` directive, we integrated it into the GraphQL Hive
