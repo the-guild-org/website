@@ -10,12 +10,14 @@ export const jsonConfig = {
   cfFetchCacheTtl: 60,
   gaTrackingId: 'G-VN2KZS6FK4',
   crispWebsiteId: 'af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   fallbackRoute: <RewriteRecord>{
     rewrite: 'guild-dev-website.pages.dev',
     crisp: {
       segments: ['guild-website'],
     },
   },
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   mappings: <Record<string, WebsiteRecord>>{
     // Rewrites
     '/graphql/codegen': {
@@ -129,8 +131,7 @@ export const jsonConfig = {
       status: 302,
     },
     '/newsletter': {
-      redirect: 'https://www.getrevue.co/profile/TheGuild',
-      status: 302,
+      redirect: 'https://newsletter.the-guild.dev',
     },
     '/twitter': {
       redirect: 'https://twitter.com/TheGuildDev',

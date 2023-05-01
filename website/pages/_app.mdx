@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { globalStyles } from '../styles/global'
 import '@theguild/components/style.css'
+import { Toaster } from 'react-hot-toast'
 
 export default function App({ Component, pageProps, router }) {
   globalStyles()
@@ -9,7 +10,7 @@ export default function App({ Component, pageProps, router }) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      {/* eslint-disable-next-line react/no-unknown-property */}
+      {}
       <style global jsx>{`
         :root {
           --colors-text: white;
@@ -52,6 +53,7 @@ export default function App({ Component, pageProps, router }) {
           -webkit-transition-delay: 9999s;
         }
       `}</style>
+      <Toaster />
       <Component {...pageProps} />
     </>
   )
