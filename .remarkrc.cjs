@@ -71,6 +71,7 @@ module.exports = {
           'RTL',
           'SWC',
           'FETS',
+          'TRPC',
         ],
       ],
     ],

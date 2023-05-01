@@ -129,8 +129,11 @@ could work seamlessly across various platforms and environments. The goal was to
 server, enabling developers to maintain type safety and efficient communication between components
 without being constrained by specific technologies or frameworks.
 
-That means you can use anything on the server side as long as it gives you an OpenAPI spec. You
-could even use [tRPC](https://trpc.io/docs) with an
+That means you can use anything on the server side as long as it gives you an OpenAPI spec.
+
+### Usage with tRPC
+
+You can use [tRPC](https://trpc.io/docs) with an
 [OpenAPI plugin](https://github.com/jlalmes/trpc-openapi) as the provider and then create a client
 for it using FETS.
 
@@ -187,6 +190,13 @@ const client = createClient<Mutable<typeof oas>>({
 You can check out the full example in the
 [examples](https://github.com/ardatan/fets/tree/master/examples) folder.
 
+### Other Server Examples
+
+There's also a server part of the feTS project that you can use to create the provider part of your
+API — it allows you to create a fully type-safe REST API. You can check out this file to see how
+it's being used and how to generate the OpenAPI spec:
+[feTS server example](https://github.com/ardatan/feTS/blob/master/examples/todolist/src/index.ts).
+
 ## Alternatives and Comparison
 
 | Feature                        | fets                                              | [got](https://github.com/sindresorhus/got/) | [node-fetch](https://github.com/node-fetch/node-fetch/) | [ky](https://github.com/sindresorhus/ky/) | [axios](https://github.com/axios/axios/) | [superagent](https://github.com/visionmedia/superagent/) | [undici](https://github.com/nodejs/undici/) | [swagger-js](https://github.com/swagger-api/swagger-js/) |
@@ -194,7 +204,7 @@ You can check out the full example in the
 | Type-safety out of the box     | ✅                                                | ❌                                          | ❌                                                      | ❌                                        | ❌                                       | ❌                                                       | ❌                                          | ❌                                                       |
 | Custom plugins support         | ✅                                                | ✅                                          | ❌                                                      | ❌                                        | ✅                                       | ✅                                                       | ❌                                          | ❌                                                       |
 | JavaScript environment support | Node.js, Deno, Bun, Cloudfare Workers, AWS Lambda | Node.js                                     | Node.js, Browser                                        | Node.js, Browser, Deno                    | Node.js, Browser                         | Node.js, Browser                                         | Node.js                                     | Node.js, Browser                                         |
-| HTTP/2 support                 | ✅                                                | ✅gi                                          | ❌                                                      | ❌                                        | ❌                                       | ✅                                                       | ✅                                          | ❌                                                       |
+| HTTP/2 support                 | ✅                                                | ✅gi                                        | ❌                                                      | ❌                                        | ❌                                       | ✅                                                       | ✅                                          | ❌                                                       |
 | Promise API                    | ✅                                                | ✅                                          | ✅                                                      | ✅                                        | ✅                                       | ✅                                                       | ✅                                          | ✅                                                       |
 | Stream API                     | ✅                                                | ✅                                          | Node.js only                                            | ❌                                        | ❌                                       | ✅                                                       | ✅                                          | ❌                                                       |
 | Pagination API                 | ❌                                                | ✅                                          | ❌                                                      | ❌                                        | ❌                                       | ❌                                                       | ❌                                          | ❌                                                       |
