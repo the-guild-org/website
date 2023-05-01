@@ -102,12 +102,12 @@ const OrdersFragment = graphql(`
 
 const GetUserQuery = graphql(`
   query GetUser($id: ID!) {
-	  user(id: $id) {
-	    id
-	    name
-	    ...OrdersFragment @defer
-	  }
-	}
+    user(id: $id) {
+      id
+      name
+      ...OrdersFragment @defer
+    }
+  }
 `)
 ```
 
@@ -117,10 +117,11 @@ meaning it may not be available right away.
 ```tsx
 // gql/graphql.ts
 
-export type GetUserQuery = { __typename?: 'Query'; id: string, name: string } &
-	({ __typename?: 'Query' } & {
-    ' $fragmentRefs'?: { OrdersFragment: Incremental<OrdersFragment> };
-  });
+export type GetUserQuery = { __typename?: 'Query'; id: string; name: string } & ({
+  __typename?: 'Query'
+} & {
+  ' $fragmentRefs'?: { OrdersFragment: Incremental<OrdersFragment> }
+})
 ```
 
 Apart from generating code that includes support for the `@defer` directive, the Codegen also
