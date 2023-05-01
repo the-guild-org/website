@@ -105,7 +105,7 @@ const GetUserQuery = graphql(`
 	  user(id: $id) {
 	    id
 	    name
-	    ...OrdersFragment **@defer**
+	    ...OrdersFragment @defer
 	  }
 	}
 `)
@@ -119,7 +119,7 @@ meaning it may not be available right away.
 
 export type GetUserQuery = { __typename?: 'Query'; id: string, name: string } &
 	({ __typename?: 'Query' } & {
-    ' $fragmentRefs'?: { OrdersFragment: **Incremental**<OrdersFragment> };
+    ' $fragmentRefs'?: { OrdersFragment: Incremental<OrdersFragment> };
   });
 ```
 
