@@ -134,7 +134,7 @@ export const jsonConfig = {
       status: 302,
     },
     '/fets': {
-      redirect: 'the-guild.dev/openapi/fets',
+      redirect: 'https://the-guild.dev/openapi/fets',
       status: 302,
     },
     '/chat': {
