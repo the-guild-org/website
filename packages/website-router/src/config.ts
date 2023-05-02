@@ -121,7 +121,7 @@ export const jsonConfig = {
       },
       sitemap: true,
     },
-    '/fets': {
+    '/openapi/fets': {
       rewrite: 'fets.pages.dev',
       crisp: {
         segments: ['fets'],
