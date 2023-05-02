@@ -121,6 +121,13 @@ export const jsonConfig = {
       },
       sitemap: true,
     },
+    '/fets': {
+      rewrite: 'fets.pages.dev',
+      crisp: {
+        segments: ['fets'],
+      },
+      sitemap: true,
+    },
     // Redirects
     '/bob': {
       redirect: 'https://github.com/kamilkisiela/bob',
