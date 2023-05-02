@@ -133,6 +133,10 @@ export const jsonConfig = {
       redirect: 'https://github.com/kamilkisiela/bob',
       status: 302,
     },
+    '/fets': {
+      redirect: 'the-guild.dev/openapi/fets',
+      status: 302,
+    },
     '/chat': {
       redirect: 'https://go.crisp.chat/chat/embed/?website_id=af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
       status: 302,
