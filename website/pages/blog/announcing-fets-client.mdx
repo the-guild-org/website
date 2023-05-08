@@ -4,7 +4,7 @@ authors: [aleksandra, arda]
 tags: [OpenAPI, TypeScript]
 date: 2023-04-24
 description:
-  FETS Client allows you to create an SDK-like client that infers types from an OpenAPI
+  feTS Client allows you to create an SDK-like client that infers types from an OpenAPI
   specification document.
 image: /blog-assets/announcing-fets-client/cover.png
 thumbnail: /blog-assets/announcing-fets-client/thumbnail.png
@@ -30,25 +30,26 @@ standard within the REST community for describing APIs. It provides a comprehens
 an API's capabilities, allowing consumers to understand its functionality without needing to know
 the details of its implementation.
 
-## 🔥 Introducing FETS Client 🔥
+## 🔥 Introducing feTS Client 🔥
 
-We’re thrilled to show you what we’ve been building recently — a FETS Client that allows you to
+We’re thrilled to show you what we’ve been building recently — a feTS Client that allows you to
 create an SDK-like client that infers types from an OpenAPI specification document.
 
-FETS Client is not just another code generator that requires an additional build step. Instead, it's
+feTS Client is not just another code generator that requires an additional build step. Instead, it's
 a tool designed to work exclusively during build time, specifically during TypeScript transpilation.
 This means that it doesn't add the entire schema to your final code bundle, as it doesn't perform
-any runtime operations. As a result, FETS Client offers a lightweight and efficient solution for
+any runtime operations. As a result, feTS Client offers a lightweight and efficient solution for
 maintaining type safety in your code without impacting the size of your compiled assets.
 
-In summary, FETS Client means:
+In summary, feTS Client means:
 
 😌 Type-safety out of the box — no CLI, no build step
 
 🚀 No runtime overhead — it’s super lightweight and performant
 
 💪 Support across different JavaScript environments, including Node.js, Deno, BUN, Cloudflare
-Workers, and AWS Lambda (it utilizes the web standard [Fetch API](https://the-guild.dev/blog/fetch-for-servers))
+Workers, and AWS Lambda (it utilizes the web standard
+[Fetch API](https://the-guild.dev/blog/fetch-for-servers))
 
 🔎 IDE features like `Go To Definition` to explore the API from TypeScript
 
@@ -56,7 +57,7 @@ Now, let’s see the code!
 
 ## Quick Start
 
-You can install FETS client with the following command:
+You can install feTS client with the following command:
 
 ```jsx
 pnpm add fets
@@ -64,7 +65,7 @@ pnpm add fets
 # or npm i fets
 ```
 
-Using FETS Client is as simple as importing the **`createClient`** function and providing the URL to
+Using feTS Client is as simple as importing the **`createClient`** function and providing the URL to
 your API.
 
 ```tsx
@@ -99,9 +100,9 @@ console.log('Todo 1', post)
 
 ## What about Middlewares, Plugins, or Auth?
 
-Similar to other HTTP clients, FETS Client offers a plugin system that allows you to hook into
+Similar to other HTTP clients, feTS Client offers a plugin system that allows you to hook into
 various stages of the HTTP connection. This flexibility enables you to customize and extend the
-functionality of the FETS Client, tailoring it to your specific needs and optimizing your
+functionality of the feTS Client, tailoring it to your specific needs and optimizing your
 application's network interactions. Here’s an example:
 
 ```tsx
@@ -124,7 +125,7 @@ const client = createClient<typeof openAPIDoc>({
 
 ## What about the Server?
 
-The motivation behind creating FETS Client stemmed from the desire to have an agnostic solution that
+The motivation behind creating feTS Client stemmed from the desire to have an agnostic solution that
 could work seamlessly across various platforms and environments. The goal was to decouple client and
 server, enabling developers to maintain type safety and efficient communication between components
 without being constrained by specific technologies or frameworks.
@@ -135,7 +136,7 @@ That means you can use anything on the server side as long as it gives you an Op
 
 You can use [tRPC](https://trpc.io/docs) with an
 [OpenAPI plugin](https://github.com/jlalmes/trpc-openapi) as the provider and then create a client
-for it using FETS.
+for it using feTS.
 
 Here’s an example:
 
@@ -221,10 +222,10 @@ it's being used and how to generate the OpenAPI spec:
 
 ## Summary
 
-Key features of FETS Client include type safety out of the box, no runtime overhead, support for
+Key features of feTS Client include type safety out of the box, no runtime overhead, support for
 different JavaScript environments, and IDE TypeScript support. With a simple setup, you can call
 endpoints as defined in your OpenAPI schema with full confidence given by the type-safe client. And
 if you need more features, you can also extend and customize it with the plugin system.
 
-We’re super excited for you to try the FETS Client. As always, let us know your thoughts, so we can
+We’re super excited for you to try the feTS Client. As always, let us know your thoughts, so we can
 make it even better!
