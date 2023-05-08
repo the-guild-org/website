@@ -70,6 +70,8 @@ module.exports = {
           'LTR',
           'RTL',
           'SWC',
+          'feTS',
+          'tRPC',
         ],
       ],
     ],
