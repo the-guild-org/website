@@ -1,0 +1,252 @@
+---
+title: Judging Open Source by Github Stars
+tags: [open-source]
+authors: yassin
+date: 2023-05-09
+description: Exposing the dark side of open source projects
+image: /blog-assets/announcing-free-single-sign-on-for-graphql-hive/cover.png
+thumbnail: /blog-assets/announcing-free-single-sign-on-for-graphql-hive/thumbnail.png
+---
+
+The most obvious and the best way to judge an open source project is to just look at the code but
+this can be kind of tedious and sometimes you don't like what you see there, so an alternative that
+we have all naturally developed on our own or have been advised to, is to see how many people have
+starred a project, and then pick the one with the most stars.
+
+"For example, React.js has 207K stars compared to Angular's measly 63K stars, so we can conclude
+that react.js is a better framework" — [Ben Awad](https://youtu.be/MT6M_sqAuZo?t=243)
+
+While the above is a joke (not that React isn't a better frontend framework), It is not a good idea
+to judge the quality of an open source project by how many stars does it have.
+
+How many times have you gazed upon an open source project, and wondered fabulously about the
+correlation between the number of stars garnered and the actual value of the project?
+
+If it's zero, then ok, you're a better person than me.
+
+But if not, then allow me to introduce you to my recent experiments and research. It's likely that
+this will be your first encounter with this bizarre market.
+
+## Buying GitHub Stars
+
+Yep! That's a thing. Just as purchasing Instagram likes is a genuine phenomenon, buying GitHub stars
+is equally tangible.
+
+![Buy instagram likes poster](/blog-assets/judging-open-source-by-github-stars/buy-instagram-likes.png)
+
+---
+
+But, I won't just tell you that buying GitHub stars is real, and move on, that would be so
+disappointing, right?
+
+So I did it! I have tried 2 platforms, I won't say any names or links, as I would never advocate for
+such a thing.
+
+I thought it's gonna be a really interesting experiment (definitely not for my wallet), and a very
+educational one, So let's dive into it!
+
+#### Premium Stars
+
+Bear with me, I know what you're thinking: "what the hell?! There are types??!" Yes, there are!
+
+Premium Stars are the kind of stars that are much more expensive, the most legit looking fakes, and
+most importantly the ones who have a higher chance of staying over the long-term.
+
+So I put on Incognito mode and started hunting using my second identity "Boogeyman".
+
+![Premium Stars Reciept](/blog-assets/judging-open-source-by-github-stars/premium-stars-reciept.png)
+
+And so it costed me 20 Euros for 25 stars which is €0.8/star, it's expensive, but I'm gonna show you
+how they look like in a minute.
+
+It took 6 hours for my order to complete, and the accounts look really legit, each has profile
+picture, a company that he/she works for, a couple of repositories, and a contribution to one or
+more open source project, next to being a GitHub member for over a year.
+
+![Premium Stargazers On Github](/blog-assets/judging-open-source-by-github-stars/premium-stargazers-on-github.png)
+
+#### Cheap Stars
+
+"Whenever you see premium goods, remember, the bargain bin isn't far behind!" — Probably me
+
+While the above works, there are definitely much cheaper ones like this:
+
+![Cheap Stars Reciept](/blog-assets/judging-open-source-by-github-stars/cheap-stars-reciept.png)
+
+Where it costed me 8.19 Euros for 100 stars which is €0.08/star.
+
+Now what is the difference?
+
+Well, the biggest one is that the accounts were just made at the time of your order, they don't have
+any fake personal information nor repositories or contributions.
+
+And after a month, they were all gone. GitHub detected them and banned them.
+
+![Cheap Stars on March](/blog-assets/judging-open-source-by-github-stars/cheap-github-stars-march.png)
+
+![Cheap Stars on May](/blog-assets/judging-open-source-by-github-stars/cheap-github-stars-march.png)
+
+What's crazy is, you can reach out and they are gonna redo your order for free 🙂
+
+### Detecting Fake Stars
+
+Then I wondered if there's any tools that can expose those repositories 🤔
+
+And I discovered [Astronomer](https://github.com/Ullaakut/astronomer), a tool to detect illegitimate
+stars from bot accounts on GitHub projects.
+
+It works by fetching data from every GitHub user who starred a common repository and computes how
+likely it is that those users are real humans, it works using what they call "Trust algorithm".
+
+Trust is computed based on many different factors:
+
+- The average amount of lifetime contributions among stargazers
+- The average amount of private contributions
+- The average amount of public created issues
+- The average amount of public authored commits
+- The average amount of public opened pull requests
+- The average amount of public code reviews
+- The average weighted contribution score (weighted by making older contributions more trustworthy)
+- Every 5th percentile, from 5 to 95, of the weighted contribution score
+- The average account age, older is more trustworthy
+
+So, I've tried on 3 different repositories to see the results.
+
+**Premium Stars:**
+
+```
+Fetching contributions for 69 users up to year 2013
+Building trust report...ok
+
+Averages                             Score           Trust
+--------                             -----           -----
+Weighted contributions:              18268             B
+Private contributions:               370               A
+Created issues:                      91                A
+Commits authored:                    259               C
+Repositories:                        41                A
+Pull requests:                       36                A
+Code reviews:                        6                 C
+Account age (days):                  1619              B
+5th percentile:                      12                A
+10th percentile:                     16                C
+15th percentile:                     20                D
+20th percentile:                     20                E
+25th percentile:                     24                E
+30th percentile:                     24                E
+35th percentile:                     24                E
+40th percentile:                     28                E
+45th percentile:                     332               D
+50th percentile:                     1106              B
+55th percentile:                     1692              B
+60th percentile:                     2770              A
+65th percentile:                     6422              A
+70th percentile:                     10958             A
+75th percentile:                     15598             A
+80th percentile:                     26596             A
+85th percentile:                     34116             A
+90th percentile:                     69967             A
+95th percentile:                     85147             A
+----------------------------------------------------------
+Overall trust:                                         B
+```
+
+**Cheap Stars:**
+
+```
+Fetching contributions for 24 users up to year 2013
+Building trust report...ok
+
+Averages                             Score           Trust
+--------                             -----           -----
+Weighted contributions:              856             E
+Private contributions:               21              E
+Created issues:                      3               E
+Commits authored:                    87              E
+Repositories:                        4               E
+Pull requests:                       3               E
+Code reviews:                        1               E
+Account age (days):                  36              E
+5th percentile:                      3               D
+10th percentile:                     3               E
+15th percentile:                     3               E
+20th percentile:                     3               E
+25th percentile:                     3               E
+30th percentile:                     3               E
+35th percentile:                     3               E
+40th percentile:                     3               E
+45th percentile:                     3               E
+50th percentile:                     3               E
+55th percentile:                     3               E
+60th percentile:                     3               E
+65th percentile:                     3               E
+70th percentile:                     3               E
+75th percentile:                     3               E
+80th percentile:                     4               E
+85th percentile:                     4               E
+90th percentile:                     4               E
+95th percentile:                     4               E
+----------------------------------------------------------
+Overall trust:                                       E
+```
+
+**Legit Stars (as a control):**
+
+```
+Fetching contributions for 139 users up to year 2013
+Building trust report...ok
+
+Averages                             Score           Trust
+--------                             -----           -----
+Weighted contributions:              118821            A
+Private contributions:               2407              A
+Created issues:                      72                A
+Commits authored:                    1300              A
+Repositories:                        74                A
+Pull requests:                       101               A
+Code reviews:                        69                A
+Account age (days):                  2538              A
+5th percentile:                      145               A
+10th percentile:                     711               A
+15th percentile:                     2726              A
+20th percentile:                     4144              A
+25th percentile:                     8535              A
+30th percentile:                     13650             A
+35th percentile:                     20728             A
+40th percentile:                     23322             A
+45th percentile:                     28244             A
+50th percentile:                     37636             A
+55th percentile:                     42536             A
+60th percentile:                     55776             A
+65th percentile:                     78956             A
+70th percentile:                     93676             A
+75th percentile:                     129164            A
+80th percentile:                     194463            A
+85th percentile:                     231380            A
+90th percentile:                     286798            A
+95th percentile:                     559934            A
+----------------------------------------------------------
+Overall trust:                                         A
+```
+
+So, that's scary. The premium stars scored pretty decently as a `B`, but the cheap ones scored an
+`E` which is the worst, but who knows, maybe there's an ultra premium stars service that's scoring
+an `A`.
+
+## Learned Lessons
+
+Don't judge open source by the number of stargazers, because they can easily and quite affordably be
+fake. It's like any other social media platform, where fake accounts exist.
+
+Instead, ask coworkers, Twitter, or even open a github issue asking why should you use this project
+and not the other ones, I'm sure you can gather pretty good answers from multiple projects proving
+what they excel at. Or the best of course is reviewing the code concisely, though I know that
+normally on a daily basis, we don't often have the time and energy to do that.
+
+Star legit good open source projects like
+[GraphQL Hive](https://github.com/kamilkisiela/graphql-hive), it has 200-ish stars, but you're
+missing out on an already incredibly successful project, we and you don't need 10K stars to have a
+successful open source project.
+
+Well, there you have it. Got some seed money for your next startup? Throw it into building truly
+valuable projects. Now that's an investment you won't regret. 😉
