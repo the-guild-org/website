@@ -50,7 +50,7 @@ export default defineConfig({
           tags: tags && asArray(tags),
         },
       },
-      additionalMetaTags: [{ name: 'twitter:image', content: image }],
+      additionalMetaTags: [{ name: 'twitter:image', content: ensureAbsolute(image) }],
     };
   },
   main: function Main({ children }) {
