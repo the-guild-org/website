@@ -73,8 +73,7 @@ https://the-guild.dev/graphql/yoga-server
 
 Web Servers that work with Cloudflare Workers are pretty limited. This is because Node.js does not
 work. The typical one is [Hono](https://hono.dev/), but in this case we will choose
-[GraphQL Yoga](https://the-guild.dev/graphql/yoga-server) since it is a GraphQL server. Finally,
-as an added bonus, I have written the code to use Hono as well.
+[GraphQL Yoga](https://the-guild.dev/graphql/yoga-server) since it is a GraphQL server.
 
 ### GraphQL schema builder
 
@@ -410,25 +409,3 @@ Although it took some time to identify the connection error by connection pool, 
 API on Cloudflare Workers is now within feasible limits. Thanks to the help of various libraries,
 including GraphQL Yoga, I was able to build this API. I think Cloudflare Workers can be used to
 build a practical GraphQL server.
-Finally, I'll just include a sample code that looks like the following when handling routing in
-`Hono`.
-
-```ts
-// src/worker.ts
-import { createYoga } from 'graphql-yoga'
-import { schema } from './schema'
-import { Hono } from 'hono'
-
-const app = new Hono()
-
-// Create a Yoga instance with a GraphQL schema.
-const yoga = createYoga({ schema })
-
-if (process.env.NODE_ENV === 'development') {
-  app.get('/graphql', (c) => yoga(c.req.raw, {}))
-}
-app.post('/graphql', (c) => yoga(c.req.raw, {}))
-
-export default app
-```
-
