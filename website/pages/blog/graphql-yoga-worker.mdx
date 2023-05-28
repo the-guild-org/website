@@ -4,61 +4,59 @@ authors: chimame
 tags: [graphql, nodejs, typescript, yoga]
 date: 2023-06-01
 description:
-  This course aims to build a practical GraphQL server on Cloudflare Workers using GraphQL Yoga, Pothos, Kysely, etc.
+  This course aims to build a practical GraphQL server on Cloudflare Workers using GraphQL Yoga,
+  Pothos, Kysely, etc.
 image: /blog-assets/graphql-yoga-worker/cover.jpg
 thumbnail: /blog-assets/graphql-yoga-worker/thumbnail.jpg
 ---
 
-
 ## Summary
+
 - Building a GraphQL server with Cloudflare Workers is now at a practical stage.
 - Database connection over TCP is also fine (although it's beta, so there might be something wrong
-with it if you use it)
+  with it if you use it)
 - Node.js compatibility is not perfect, so it is better to have an origin server for processes that
-require Node.js
-
+  require Node.js
 
 ## Motivation
 
 Cloudflare Workers is often used as a proxy on a CDN or as a backend for rendering Remix or Next.js.
 When it comes to APIs for retrieving and updating data from the front end, most of the time I think
-it is necessary to set up and build a separate backend server. I myself often set up a backend server
-in Node.js in this pattern, and when I do so, I choose Cloud Run as my first choice because it is
-easy to set up. Cloud Run itself is a great service, but it is human beings who become even more
-greedy.
+it is necessary to set up and build a separate backend server. I myself often set up a backend
+server in Node.js in this pattern, and when I do so, I choose Cloud Run as my first choice because
+it is easy to set up. Cloud Run itself is a great service, but it is human beings who become even
+more greedy.
 
 - Deployment speed needs to be faster.
 - I want to keep the price a little lower.
 
-The former is a container service, so it requires "container build" and then "container replacement",
-but "container replacement" as well as "container build" takes a lot of time there. No matter how
-fast you do these two, it will take 5 to 10 minutes.
-The latter means minimizing cold standby (startup speed) and asynchronous means using the minimum
-number of containers, Always CPU, etc. That will cost a certain amount of money. I still think
-Cloud Run is cheaper, though.
+The former is a container service, so it requires "container build" and then "container
+replacement", but "container replacement" as well as "container build" takes a lot of time there. No
+matter how fast you do these two, it will take 5 to 10 minutes. The latter means minimizing cold
+standby (startup speed) and asynchronous means using the minimum number of containers, Always CPU,
+etc. That will cost a certain amount of money. I still think Cloud Run is cheaper, though.
 
-I believe that Cloudflare Workers can fulfill these requests, but if it is actually necessary to
-set up an API server, a database connection is required. if it is something that can communicate
-via PostgREST API such as [Supabase](https://supabase.com/), Cloudflare Workers can connect to
-the database via the PostgREST API such as Supabase, but making a direct connection to the
-database has not been possible until now. However, this situation has changed with the recent
-announcement of support for connections over TCP.
+I believe that Cloudflare Workers can fulfill these requests, but if it is actually necessary to set
+up an API server, a database connection is required. if it is something that can communicate via
+PostgREST API such as [Supabase](https://supabase.com/), Cloudflare Workers can connect to the
+database via the PostgREST API such as Supabase, but making a direct connection to the database has
+not been possible until now. However, this situation has changed with the recent announcement of
+support for connections over TCP.
 
 https://blog.cloudflare.com/workers-tcp-socket-api-connect-databases/
 
-I think that just because it is possible to connect via TCP, the advantage of the edge location
-is lost a bit, because if an application running on the edge connects to a database in another
-location to retrieve data, there is an overhead for that connection. So I'm waiting with
-anticipation for the [Cloudflare D1](https://developers.cloudflare.com/d1/) to come out in the
-future, as it will maximize the advantages of that location. Cloudflare Workers is as great a
-service as Cloud Run, so the purpose of this article is to actually run it as a backend API
-server on top of Cloudflare Workers.
-
+I think that just because it is possible to connect via TCP, the advantage of the edge location is
+lost a bit, because if an application running on the edge connects to a database in another location
+to retrieve data, there is an overhead for that connection. So I'm waiting with anticipation for the
+[Cloudflare D1](https://developers.cloudflare.com/d1/) to come out in the future, as it will
+maximize the advantages of that location. Cloudflare Workers is as great a service as Cloud Run, so
+the purpose of this article is to actually run it as a backend API server on top of Cloudflare
+Workers.
 
 ## Architectures
 
-Let's proceed under the assumption that the backend API will be prepared as a GraphQL server,
-and I will write down what to use to build it.
+Let's proceed under the assumption that the backend API will be prepared as a GraphQL server, and I
+will write down what to use to build it.
 
 ### Cloudfalre Workers
 
@@ -79,8 +77,8 @@ work. The typical one is [Hono](https://hono.dev/), but in this case we will cho
 
 https://pothos-graphql.dev/
 
-This is a preference. There are two patterns: "schema-first" and "code-first." I prefer
-"code first" and have the schema automatically generated from the code, and I have chosen
+This is a preference. There are two patterns: "schema-first" and "code-first." I prefer "code first"
+and have the schema automatically generated from the code, and I have chosen
 [Pothos](https://pothos-graphql.dev/), which I have used and like when using
 [Prisma](https://www.prisma.io/).
 
@@ -88,11 +86,10 @@ This is a preference. There are two patterns: "schema-first" and "code-first." I
 
 https://github.com/kysely-org/kysely
 
-Unfortunately, even Cloudflare Workers, which can now connect directly over TCP, does not work
-with Prisma. I won't go into details here, but Prisma has two major processes, client and engine,
-but there is no mode provided to run the engine part on Cloudflare Workers. This is why it does
-not work.
-The options are [Kysely](https://github.com/kysely-org/kysely) or
+Unfortunately, even Cloudflare Workers, which can now connect directly over TCP, does not work with
+Prisma. I won't go into details here, but Prisma has two major processes, client and engine, but
+there is no mode provided to run the engine part on Cloudflare Workers. This is why it does not
+work. The options are [Kysely](https://github.com/kysely-org/kysely) or
 [Drizzle](https://github.com/drizzle-team/drizzle-orm), both of which can be run in Cloudflare D1,
 so if you want to change them in the future, you can do so in either case. However, the TCP
 connection that was announced this time is available using a library called pg, so we will choose
@@ -103,8 +100,8 @@ builder.)
 
 https://www.prisma.io/
 
-Database is a very sensitive subject, so we want to use a stable database. So for migration, it
-uses Prisma. There is another reason to use Prisma. If using Prisma, you can use
+Database is a very sensitive subject, so we want to use a stable database. So for migration, it uses
+Prisma. There is another reason to use Prisma. If using Prisma, you can use
 [prisma-kysely](https://github.com/valtyr/prisma-kysely) to automatically generate types for Kysely.
 
 ## Build a GraphQL server
@@ -115,15 +112,15 @@ the finished product, please refer to the repository.
 
 ### Create Cloudflare Workers
 
-Create them using [c3](https://developers.cloudflare.com/pages/get-started/c3/), which was
-recently announced.
+Create them using [c3](https://developers.cloudflare.com/pages/get-started/c3/), which was recently
+announced.
 
 ```bash
 npm create cloudflare
 ```
 
-You can choose a template, but currently, no matter what you choose to create GraphQL, there will
-be something in the way, so choose something as close to a blank state as possible to build it.
+You can choose a template, but currently, no matter what you choose to create GraphQL, there will be
+something in the way, so choose something as close to a blank state as possible to build it.
 
 ![](/blog-assets/graphql-yoga-worker/select-application-template.png)
 
@@ -151,11 +148,11 @@ export const builder = new SchemaBuilder({})
 import { builder } from './builder'
 
 builder.queryType({
-  fields: (t) => ({
+  fields: t => ({
     hello: t.string({
-      resolve: () => 'world',
-    }),
-  }),
+      resolve: () => 'world'
+    })
+  })
 })
 
 export const schema = builder.toSchema()
@@ -174,7 +171,7 @@ const yoga = createYoga({ schema })
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     return yoga(request, ctx)
-  },
+  }
 }
 ```
 
@@ -229,10 +226,10 @@ model User {
 }
 ```
 
-The `User` model is important, but what is important this time is the `generator kysely` part.
-This is where prisma-kysely outputs the database type file for kysely when database migration
-is performed. In this case, the definition is written in the file path `src/types.ts`.
-Execute the following command to output the database type file for database migration and Kysely.
+The `User` model is important, but what is important this time is the `generator kysely` part. This
+is where prisma-kysely outputs the database type file for kysely when database migration is
+performed. In this case, the definition is written in the file path `src/types.ts`. Execute the
+following command to output the database type file for database migration and Kysely.
 
 ```bash
 npx prisma migrate dev
@@ -240,8 +237,8 @@ npx prisma migrate dev
 
 ### Create connections to the database
 
-Next, writing the code to connect to the database created. The database is assumed to be
-PostgreSQL, and further libraries are required to connect to it, so we will install them.
+Next, writing the code to connect to the database created. The database is assumed to be PostgreSQL,
+and further libraries are required to connect to it, so we will install them.
 
 ```bash
 npm install -D @types/pg
@@ -256,16 +253,17 @@ import type { DB } from './types'
 import { Pool } from 'pg'
 import { Kysely, PostgresDialect } from 'kysely'
 
-export const connection = () => new Kysely<DB>({
-  dialect: new PostgresDialect({
-    pool: new Pool({
-      host: 'localhost',
-      database: 'postgres',
-      user: 'postgres',
-      password: 'password',
-    }),
-  }),
-})
+export const connection = () =>
+  new Kysely<DB>({
+    dialect: new PostgresDialect({
+      pool: new Pool({
+        host: 'localhost',
+        database: 'postgres',
+        user: 'postgres',
+        password: 'password'
+      })
+    })
+  })
 ```
 
 There is one important piece of code here. It is slightly different from what is written in the
@@ -276,18 +274,18 @@ Kysely [README](https://github.com/kysely-org/kysely#minimal-example).
 + export const connection = () => new Kysely<DB>({
 ```
 
-My code is defined in a function and each call is an instantiation of Kysely. This is the
-intention. The reason is that when connecting over TCP from Cloudflare Workers, TCP disconnects
-on a per-request basis, so I need to make a connection to the database on a per-request basis.
-Kysely uses something called `Pool` in the `pg` it uses for connections, which does connection
-pooling. Kysely also only accepts `PostgresPool` connections, so this is what it does.
-connection pooling is simply explained as defining multiple connections from one application to
-a database, and using those connections within an application. However, this connection pooling
-is incompatible with the Cloudflare Workers specification that TCP connections are broken after
-each request. In other words, when a second request is received, the connection object is already
-connected, but because Cloudflare Workers' TCP connection is broken, it cannot connect to the
-database and an error occurs. So the code dares to instantiate Kysely in order to reconnect.
-The following configuration is required for `pg` to work on Cloudflare Workers.
+My code is defined in a function and each call is an instantiation of Kysely. This is the intention.
+The reason is that when connecting over TCP from Cloudflare Workers, TCP disconnects on a
+per-request basis, so I need to make a connection to the database on a per-request basis. Kysely
+uses something called `Pool` in the `pg` it uses for connections, which does connection pooling.
+Kysely also only accepts `PostgresPool` connections, so this is what it does. connection pooling is
+simply explained as defining multiple connections from one application to a database, and using
+those connections within an application. However, this connection pooling is incompatible with the
+Cloudflare Workers specification that TCP connections are broken after each request. In other words,
+when a second request is received, the connection object is already connected, but because
+Cloudflare Workers' TCP connection is broken, it cannot connect to the database and an error occurs.
+So the code dares to instantiate Kysely in order to reconnect. The following configuration is
+required for `pg` to work on Cloudflare Workers.
 
 ```toml
 # wrangler.toml
@@ -300,8 +298,8 @@ https://developers.cloudflare.com/workers/wrangler/configuration/#node-compatibi
 
 ### Create GraphQL schema
 
-Finally, write the GraphQL code to fetch data from the database and return it to the client. Some
-of the code was [suggested](https://github.com/chimame/graphql-yoga-worker-with-pothos/pull/1) by
+Finally, write the GraphQL code to fetch data from the database and return it to the client. Some of
+the code was [suggested](https://github.com/chimame/graphql-yoga-worker-with-pothos/pull/1) by
 [hayes](https://github.com/hayes), the author of `Pothos`, while I was working on this article.
 
 ```ts
@@ -318,15 +316,15 @@ import { DB } from '../types'
 export const UserType = builder.objectRef<AllSelection<DB, 'User'>>('User')
 
 UserType.implement({
-  fields: (t) => ({
+  fields: t => ({
     id: t.exposeID('id'),
     name: t.exposeString('name', { nullable: true }),
     email: t.exposeString('email'),
     initial: t.string({
       nullable: true,
-      resolve: (user) => user.name?.slice(0, 1),
-    }),
-  }),
+      resolve: user => user.name?.slice(0, 1)
+    })
+  })
 })
 ```
 
@@ -346,15 +344,15 @@ import { builder } from '../../builder'
 import { UserType } from '../../models/User'
 import { connection } from '../../context'
 
-builder.queryFields((t) => ({
+builder.queryFields(t => ({
   User: t.field({
     type: UserType,
     nullable: true,
     resolve: async () => {
       const db = connection()
       await db.selectFrom('User').selectAll().executeTakeFirst()
-    },
-  }),
+    }
+  })
 }))
 ```
 
@@ -376,10 +374,10 @@ builder.queryType({
 export const schema = builder.toSchema()
 ```
 
-As you can see from the `connection()` of the resolver, this is where the connection to the
-database is established. In a real application, it is better to establish a connection in the
-GraphQL Yoga `Context` and use it for each resolver, instead of establishing a connection for
-each resolver. (Creating countless connections puts a load on the database.)
+As you can see from the `connection()` of the resolver, this is where the connection to the database
+is established. In a real application, it is better to establish a connection in the GraphQL Yoga
+`Context` and use it for each resolver, instead of establishing a connection for each resolver.
+(Creating countless connections puts a load on the database.)
 
 However, it is better to be creative in terms of database connections. Even if you establish one
 connection per request, the number of connections may grow if you use serverless autoscaling like
@@ -389,8 +387,8 @@ PgBouncer for PostgreSQL.
 
 ### Verify that it works
 
-Finally, run the application, execute the next Query, and if it returns the value successfully,
-you are done.
+Finally, run the application, execute the next Query, and if it returns the value successfully, you
+are done.
 
 ```graphql
 query getUser {
@@ -401,7 +399,6 @@ query getUser {
 ```
 
 ![](/blog-assets/graphql-yoga-worker/execute-user-query.png)
-
 
 ## Conclusion
 
