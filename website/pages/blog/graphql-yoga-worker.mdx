@@ -43,12 +43,12 @@ database via the PostgREST API such as Supabase, but making a direct connection 
 not been possible until now. However, this situation has changed with the recent announcement of
 support for connections over TCP.
 
-https://blog.cloudflare.com/workers-tcp-socket-api-connect-databases/
+https://blog.cloudflare.com/workers-tcp-socket-api-connect-databases
 
 I think that just because it is possible to connect via TCP, the advantage of the edge location is
 lost a bit, because if an application running on the edge connects to a database in another location
 to retrieve data, there is an overhead for that connection. So I'm waiting with anticipation for the
-[Cloudflare D1](https://developers.cloudflare.com/d1/) to come out in the future, as it will
+[Cloudflare D1](https://developers.cloudflare.com/d1) to come out in the future, as it will
 maximize the advantages of that location. Cloudflare Workers is as great a service as Cloud Run, so
 the purpose of this article is to actually run it as a backend API server on top of Cloudflare
 Workers.
@@ -60,7 +60,7 @@ will write down what to use to build it.
 
 ### Cloudfalre Workers
 
-https://workers.cloudflare.com/
+https://workers.cloudflare.com
 
 The first assumption is this. The choice of Cloudflare Workers as a service or runtime narrows the
 technologies that can be used in an application. Therefore, it is written as an assumption.
@@ -73,7 +73,7 @@ Many existing/older Web Servers have limited support for Cloudflare Workers. Tha
 were built at a time to only support Node.js.
 
 Newer Web Server frameworks like [feTS](https://the-guild.dev/openapi/fets/server/quick-start) or
-[Hono](https://hono.dev/) are modern and have better support for Cloudflare Workers.
+[Hono](https://hono.dev) are modern and have better support for Cloudflare Workers.
 
 In our case, we will use [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server) because it
 support GraphQL and also uses the same powerful
@@ -84,12 +84,12 @@ Workers.
 
 ### GraphQL schema builder
 
-https://pothos-graphql.dev/
+https://pothos-graphql.dev
 
 This is a preference. There are two patterns: "schema-first" and "code-first." I prefer "code first"
 and have the schema automatically generated from the code, and I have chosen
-[Pothos](https://pothos-graphql.dev/), which I have used and like when using
-[Prisma](https://www.prisma.io/).
+[Pothos](https://pothos-graphql.dev), which I have used and like when using
+[Prisma](https://www.prisma.io).
 
 ### ORM(Query builder)
 
@@ -107,7 +107,7 @@ builder.)
 
 ### DB migration
 
-https://www.prisma.io/
+https://www.prisma.io
 
 Database is a very sensitive subject, so we want to use a stable database. So for migration, it uses
 Prisma. There is another reason to use Prisma. If using Prisma, you can use
@@ -121,7 +121,7 @@ the finished product, please refer to the repository.
 
 ### Create Cloudflare Workers
 
-Create them using [c3](https://developers.cloudflare.com/pages/get-started/c3/), which was recently
+Create them using [c3](https://developers.cloudflare.com/pages/get-started/c3), which was recently
 announced.
 
 ```bash
@@ -145,15 +145,13 @@ npm install graphql graphql-yoga @pothos/core
 
 Create a schema with a Query that will be used as a sample.
 
-```ts
-// src/builder.ts
+```ts filename="src/builder.ts"
 import SchemaBuilder from '@pothos/core'
 
 export const builder = new SchemaBuilder({})
 ```
 
-```ts
-// src/schema.ts
+```ts filename="src/schema.ts"
 import { builder } from './builder'
 
 builder.queryType({
@@ -169,8 +167,7 @@ export const schema = builder.toSchema()
 
 Load the created schema and create a GraphQL endpoint with GraphQL Yoga.
 
-```ts
-// rc/workers.ts
+```ts filename="src/workers.ts"
 import { createYoga } from 'graphql-yoga'
 import { schema } from './schema'
 
@@ -213,8 +210,7 @@ npm install kysely
 
 Create a schema for the database with a `User` model by using Prisma.
 
-```prisma
-// prisma/schema.prisma
+```prisma filename="prisma/schema.prisma"
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -256,8 +252,7 @@ npm install pg
 
 Writing the code for the connection using the installed `pg`.
 
-```ts
-// src/context.ts
+```ts filename="src/context.ts"
 import type { DB } from './types'
 import { Pool } from 'pg'
 import { Kysely, PostgresDialect } from 'kysely'
@@ -334,8 +329,7 @@ UserType.implement({
 })
 ```
 
-```ts
-// src/resolvers/index.ts
+```ts filename="src/resolvers/index.ts"
 export * from './User'
 ```
 
@@ -352,7 +346,7 @@ builder.queryFields(t => ({
   User: t.field({
     type: UserType,
     nullable: true,
-    resolve: async () => {
+    async resolve() {
       const db = connection()
       await db.selectFrom('User').selectAll().executeTakeFirst()
     }
