@@ -1,5 +1,5 @@
-import { buildResponseCorsHeaders } from './cors';
 import FormData from 'form-data';
+import { buildResponseCorsHeaders } from './cors';
 
 interface Args {
   request: Request;

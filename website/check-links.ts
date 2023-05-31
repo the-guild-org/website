@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { readFileSync, existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { globbySync } from 'globby';
 

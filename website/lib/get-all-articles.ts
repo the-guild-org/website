@@ -1,15 +1,15 @@
-import { join } from 'node:path';
 import { readFile } from 'node:fs/promises';
-import { globby } from 'globby';
+import { join } from 'node:path';
 import { format } from 'date-fns';
-import { unified } from 'unified';
-import parse from 'remark-parse';
+import { globby } from 'globby';
 import frontmatter from 'remark-frontmatter';
+import remarkMdx from 'remark-mdx';
+import parse from 'remark-parse';
 import parseFrontmatter from 'remark-parse-frontmatter';
 import stringify from 'remark-stringify';
-import remarkMdx from 'remark-mdx';
-import { MetaWithLink, Meta } from './meta';
+import { unified } from 'unified';
 import { asArray } from './as-array';
+import { Meta, MetaWithLink } from './meta';
 
 /**
  * Based on the files found in `pages/blog/*.mdx`

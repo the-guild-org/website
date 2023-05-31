@@ -1,8 +1,8 @@
-import { lintRule } from 'unified-lint-rule';
-import { visit } from 'unist-util-visit';
-import { generated } from 'unist-util-generated';
-import title from 'title';
 import { toString } from 'hast-util-to-string';
+import title from 'title';
+import { lintRule } from 'unified-lint-rule';
+import { generated } from 'unist-util-generated';
+import { visit } from 'unist-util-visit';
 
 const remarkLintChicagoHeading = lintRule(
   {

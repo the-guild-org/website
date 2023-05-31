@@ -1,15 +1,15 @@
-import { jsonConfig } from './config';
 import { Toucan } from 'toucan-js';
+import { jsonConfig } from './config';
+import { Env } from './env';
 import { createSentry } from './error-handling/sentry';
-import { handleSitemap, shouldHandleSitemap } from './sitemap/handler';
-import { handleRobotsTxt, shouldHandleRobotsTxt } from './robots/handler';
-import { handleRewrite, redirect, ManipulateResponseFn } from './routing';
+import { handleFavicon, shouldHandleFavicon } from './favicon/handler';
 import { FaviconHandler } from './favicon/transformer';
+import { handleFeed, shouldHandleFeed } from './feed/handler';
 import { CrispHandler } from './html-handlers/crisp';
 import { GoogleAnalyticsHandler } from './html-handlers/ga';
-import { handleFavicon, shouldHandleFavicon } from './favicon/handler';
-import { handleFeed, shouldHandleFeed } from './feed/handler';
-import { Env } from './env';
+import { handleRobotsTxt, shouldHandleRobotsTxt } from './robots/handler';
+import { handleRewrite, ManipulateResponseFn, redirect } from './routing';
+import { handleSitemap, shouldHandleSitemap } from './sitemap/handler';
 
 const {
   publicDomain,

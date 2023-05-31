@@ -1,10 +1,10 @@
+import { Toucan } from 'toucan-js';
 import { Client } from '@notionhq/client';
 import { handleConductorContact } from './contact-conductor';
 import { handleContactUs } from './contact-guild';
 import { buildResponseCorsHeaders } from './cors';
 import { createCrispClient } from './crisp-client';
 import { Env } from './env';
-import { Toucan } from 'toucan-js';
 import { handleSubscribeToNewsletter } from './newsletter-subscribe';
 
 // eslint-disable-next-line import/no-default-export

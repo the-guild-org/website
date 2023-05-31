@@ -1,11 +1,11 @@
 import { ReactElement, useState } from 'react';
-import { Image } from '@theguild/components';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import Confetti from 'react-confetti';
 import * as Yup from 'yup';
-import getInTouch from '../public/img/get-in-touch.png';
+import { Image } from '@theguild/components';
 import { Button, Description, Heading, Input, Link } from './components';
+import getInTouch from '../public/img/get-in-touch.png';
 
 export const GetInTouchForm = (): ReactElement => {
   const [success, setSuccess] = useState(false);

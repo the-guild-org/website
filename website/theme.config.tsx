@@ -1,6 +1,5 @@
 import { ReactElement } from 'react';
 import { useRouter } from 'next/router';
-import { Callout, defineConfig, Giscus, Header, useConfig, useTheme } from '@theguild/components';
 import { Article } from '@/article';
 import { AUTHORS } from '@/authors';
 import { BlogCardList, Newsletter, Video } from '@/components';
@@ -10,6 +9,7 @@ import { LinkPreview } from '@/shared/embed/link-preview';
 import { OgCard } from '@/shared/embed/og-card';
 import { StackBlitz } from '@/shared/embed/stack-blitz';
 import { Tweet } from '@/shared/embed/tweet';
+import { Callout, defineConfig, Giscus, Header, useConfig, useTheme } from '@theguild/components';
 import blogsMeta from './dist/blogs-meta.json';
 import { asArray } from './lib/as-array';
 

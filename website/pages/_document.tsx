@@ -1,4 +1,4 @@
-import Document, { Head, Main, NextScript, Html } from 'next/document';
+import Document, { Head, Html, Main, NextScript } from 'next/document';
 import { OrganizationJsonLd } from 'next-seo';
 import { getCssText } from '../stitches.config';
 

@@ -1,7 +1,7 @@
-import { lintRule } from 'unified-lint-rule';
-import { visit } from 'unist-util-visit';
-import { generated } from 'unist-util-generated';
 import { toString } from 'hast-util-to-string';
+import { lintRule } from 'unified-lint-rule';
+import { generated } from 'unist-util-generated';
+import { visit } from 'unist-util-visit';
 
 const remarkLintNoDotAtEndOfHeading = lintRule(
   {

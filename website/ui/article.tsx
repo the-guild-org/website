@@ -1,9 +1,9 @@
 import { ReactElement } from 'react';
-import { Anchor, useConfig } from '@theguild/components';
 import { format } from 'date-fns';
 import { AUTHORS } from '@/authors';
 import { Avatar, Image, TagList } from '@/components';
 import { LookingForExperts } from '@/looking-for-experts';
+import { Anchor, useConfig } from '@theguild/components';
 import { asArray } from '../lib/as-array';
 import { Meta } from '../lib/meta';
 

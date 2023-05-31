@@ -1,4 +1,5 @@
 import { ReactElement, ReactNode } from 'react';
+import clsx from 'clsx';
 import {
   Arrow,
   Content,
@@ -9,7 +10,6 @@ import {
   TooltipProps,
   Trigger,
 } from '@radix-ui/react-tooltip';
-import clsx from 'clsx';
 
 export const Tooltip = ({
   children,

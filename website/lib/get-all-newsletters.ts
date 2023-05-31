@@ -1,13 +1,13 @@
-import { join } from 'node:path';
 import { readFile } from 'node:fs/promises';
-import { globby } from 'globby';
+import { join } from 'node:path';
 import { format } from 'date-fns';
-import { unified } from 'unified';
-import parse from 'remark-parse';
-import remarkMdx from 'remark-mdx';
+import { globby } from 'globby';
 import frontmatter from 'remark-frontmatter';
+import remarkMdx from 'remark-mdx';
+import parse from 'remark-parse';
 import parseFrontmatter from 'remark-parse-frontmatter';
 import stringify from 'remark-stringify';
+import { unified } from 'unified';
 import { Meta, NewsletterMetaWithLink } from './meta';
 
 /**

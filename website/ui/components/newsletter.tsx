@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
 import clsx from 'clsx';
+import { toast } from 'react-hot-toast';
 import { Button } from './button';
 import { Description } from './description';
 import { Heading } from './heading';
 import { Input } from './input';
 import { Link } from './link';
-import { toast } from 'react-hot-toast';
 
 export const Newsletter = ({
   className,

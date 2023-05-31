@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
-import { PRODUCTS, Anchor } from '@theguild/components';
-import { Description, Heading, Tooltip, Link } from './components';
+import { Anchor, PRODUCTS } from '@theguild/components';
+import { Description, Heading, Link, Tooltip } from './components';
 
 export const PlatformSection = ({ className }: { className?: string }): ReactElement => {
   return (

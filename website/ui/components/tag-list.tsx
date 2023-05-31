@@ -1,7 +1,7 @@
 import { ComponentProps, ReactElement } from 'react';
 import { useRouter } from 'next/router';
-import { Anchor } from '@theguild/components';
 import clsx from 'clsx';
+import { Anchor } from '@theguild/components';
 
 const Tag = ({
   children,
