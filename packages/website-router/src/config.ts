@@ -10,15 +10,13 @@ export const jsonConfig = {
   cfFetchCacheTtl: 60,
   gaTrackingId: 'G-VN2KZS6FK4',
   crispWebsiteId: 'af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  fallbackRoute: <RewriteRecord>{
+  fallbackRoute: {
     rewrite: 'guild-dev-website.pages.dev',
     crisp: {
       segments: ['guild-website'],
     },
-  },
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  mappings: <Record<string, WebsiteRecord>>{
+  } satisfies RewriteRecord,
+  mappings: {
     // Rewrites
     '/graphql/codegen': {
       rewrite: 'graphql-code-generator.pages.dev',
@@ -160,7 +158,7 @@ export const jsonConfig = {
       redirect: 'https://linkedin.com/company/the-guild-software',
       status: 302,
     },
-  },
+  } satisfies Record<string, WebsiteRecord>,
 };
 
 export type InjectedJsonConfig = typeof jsonConfig;
