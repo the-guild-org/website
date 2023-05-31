@@ -92,7 +92,6 @@ export async function handleRewrite(options: {
   match: string | null;
   publicDomain: string;
 }): Promise<Response> {
-  console.log("running rewrite", options.request.url)
   const url = `https://${options.record.rewrite}${options.upstreamPath || ''}`;
   const cacheKey = new Request(url, options.request);
   const cache = await caches.open(String(options.cacheStorageId));
@@ -115,7 +114,7 @@ export async function handleRewrite(options: {
         cacheTtl: options.cfFetchCacheTtl,
         cacheEverything: true,
       },
-      // redirect: 'manual',
+      redirect: 'manual',
     });
 
     if (freshResponse.status >= 301 && freshResponse.status <= 308) {
