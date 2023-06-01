@@ -1,5 +1,5 @@
 import { Toucan } from 'toucan-js';
-import { RedirectRecord, RewriteRecord, WebsiteRecord, jsonConfig } from './config';
+import { jsonConfig, RedirectRecord, RewriteRecord, WebsiteRecord } from './config';
 import { Env } from './env';
 import { createSentry } from './error-handling/sentry';
 import { handleFavicon, shouldHandleFavicon } from './favicon/handler';
@@ -137,7 +137,9 @@ async function handleEvent(request: Request, sentry: Toucan): Promise<Response> 
     return handleFeed(sentry, request.url, publicDomain);
   }
 
-  const match = Object.keys(mappings).find(key => parsedUrl.pathname.startsWith(key)) as keyof typeof mappings | undefined;
+  const match = Object.keys(mappings).find(key => parsedUrl.pathname.startsWith(key)) as
+    | keyof typeof mappings
+    | undefined;
 
   if (match) {
     sentry.setTag('website.match', match);
