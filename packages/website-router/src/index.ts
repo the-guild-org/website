@@ -1,5 +1,5 @@
 import { Toucan } from 'toucan-js';
-import { jsonConfig } from './config';
+import { RedirectRecord, RewriteRecord, WebsiteRecord, jsonConfig } from './config';
 import { Env } from './env';
 import { createSentry } from './error-handling/sentry';
 import { handleFavicon, shouldHandleFavicon } from './favicon/handler';
@@ -21,6 +21,14 @@ const {
   cacheStorageId,
   fallbackRoute,
 } = jsonConfig;
+
+function isRewriteRecord(record: WebsiteRecord): record is RewriteRecord {
+  return 'rewrite' in record;
+}
+
+function isRedirectRecord(record: WebsiteRecord): record is RedirectRecord {
+  return 'redirect' in record;
+}
 
 const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => {
   let result = rawResponse;
@@ -129,7 +137,7 @@ async function handleEvent(request: Request, sentry: Toucan): Promise<Response> 
     return handleFeed(sentry, request.url, publicDomain);
   }
 
-  const match = Object.keys(mappings).find(key => parsedUrl.pathname.startsWith(key));
+  const match = Object.keys(mappings).find(key => parsedUrl.pathname.startsWith(key)) as keyof typeof mappings | undefined;
 
   if (match) {
     sentry.setTag('website.match', match);
@@ -143,7 +151,7 @@ async function handleEvent(request: Request, sentry: Toucan): Promise<Response> 
 
     const record = mappings[match];
 
-    if ('rewrite' in record) {
+    if (isRewriteRecord(record)) {
       sentry.addBreadcrumb({
         level: 'debug',
         message: 'Handling as rewrite route',
@@ -163,7 +171,7 @@ async function handleEvent(request: Request, sentry: Toucan): Promise<Response> 
       });
     }
 
-    if ('redirect' in record) {
+    if (isRedirectRecord(record)) {
       return redirect(sentry, request.url, record.redirect, record.status || 301);
     }
   }
