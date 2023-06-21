@@ -382,6 +382,15 @@ const config: CodegenConfig = {
 export default config;
 ```
 
+<Callout type="info">
+  What about recommended client types for `graphql-scalars`'s custom scalars?
+
+  Currently, there's no official package for this. Here's the general tips:
+
+  1.  Check the `serialize` function's return type, then set the scalar output type in the codegen config.
+  2.  If your client converts returned scalar value to another type, you can set the final output type in the codegen config.
+</Callout>
+
 ### 3. GraphQL Codegen Server Preset
 
 GraphQL Code Generator and `graphql-scalars` libraries should be enough to manage our scalar implementation and type requirements. However, Server Preset ([@eddeee888/gcg-typescript-resolver-files](https://www.npmjs.com/package/@eddeee888/gcg-typescript-resolver-files)) can simplify the scalar setup further:
