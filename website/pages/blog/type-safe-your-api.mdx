@@ -15,15 +15,15 @@ Developers who have experience working with REST API often encounter challenges 
 In this blog post, we will explore a powerful tool called feTS that addresses these problems and provides solutions for more effective REST API development.
 
 ## What Is feTS?
-feTS, which stands for "Framework-Embedded TypeScript," is a robust tool designed specifically for TypeScript projects. It simplifies the development and consumption of REST API while ensuring type safety. By leveraging OpenAPI specifications and TypeScript decorators, feTS allows developers to build and interact with REST API more efficiently, reducing the likelihood of runtime errors and improving overall code quality. Importantly, feTS is fully compatible with any existing REST API.
+feTS, which stands for "Framework-Embedded TypeScript," is a robust tool designed specifically for TypeScript projects. It simplifies the development and consumption of REST API while ensuring type safety. By leveraging OpenAPI specifications and TypeScript decorators, feTS allows developers to build and interact with REST API more efficiently, reducing the likelihood of runtime errors and improving code quality. Importantly, feTS is fully compatible with any existing REST API.
 
 ## How I Used Web API before feTS?
 
 In this blog post, we will use the Spotify API as an example, but you can apply these principles to any REST API of your choice. You can find the complete code example [here](https://github.com/TuvalSimha/feTS-example).
 
-Spotify provides a developer-friendly API that is relatively easy to use. Here's a example of how to retrieve your top 5 tracks from the last 30 days using the Spotify API:
+Spotify provides a developer-friendly API that is easy to use. Here's a example of how to retrieve your top 5 tracks from the last 30 days using the Spotify API:
 
-1. Create a Spotify account and obtain your access token from [here](https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks?type=artists&time_range=short_term&limit=5&offset=0).
+1. Create a Spotify account and retrieve your access token from [here](https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks?type=artists&time_range=short_term&limit=5&offset=0).
 2. Create a fetchWebApi function that fetches data from the API and returns it as JSON:
     
 ```typescript
@@ -53,7 +53,7 @@ async function getTopTracks() {
   )).items;
 }
 ```
-4. Finally, you can utilize the data obtained from the API:
+4. Lastly, you can use the data from the API:
 ```typescript
 async function main() {
   const topTracks = await getTopTracks();
@@ -65,7 +65,7 @@ main();
 
 While this approach works, it has some drawbacks:
 
-- The fetchWebApi function lacks type safety, making it uncertain what data will be returned from the API.
+- The fetchWebApi function lacks type safety, making it uncertain what data will return from the API.
 - You need to manually specify the parameters of the fetchWebApi function.
 - The fetchWebApi function allows calling any endpoint, even if it's not supported by the API.
 - The topTracks variable lacks type safety according to the API documentation.
@@ -79,7 +79,7 @@ To use the Spotify API with feTS, follow these steps:
 ```typescript filename="openapi.ts"
 export default { openapi: '3.0.0' /* ... */ } as const;
 ```
-In our case, we will use the Spotify API, so we can obtain the OpenAPI document from [here](https://developer.spotify.com/reference/web-api/open-api-schema.yaml). Since this OpenAPI document is in YAML format, we need to convert it to JSON format before using it in our project. You can find an example of how to perform the conversion [here](https://github.com/TuvalSimha/feTS-example/blob/main/convert-yaml-to-json.ts).
+In our case, we will use the Spotify API, so we can retrieve the OpenAPI document from [here](https://developer.spotify.com/reference/web-api/open-api-schema.yaml). Since this OpenAPI document is in YAML format, we need to convert it to JSON format before using it in our project. You can find an example of how to perform the conversion [here](https://github.com/TuvalSimha/feTS-example/blob/main/convert-yaml-to-json.ts).
 
 3. Now, we are ready to use feTS decorators to create a type-safe API client:
 ```typescript filename="spotify.ts"
@@ -91,7 +91,7 @@ const client = createClient<Mutable<typeof spotifyOpenapi>>({
 });
 ```
 
-We import the `createClient` and `Mutable` functions from the feTS package and use the `createClient` function to instantiate a new client. Additionally, we import the `spotifyOpenapi` file we created in the previous step and utilize it as a generic type for the `createClient` function.
+We import the `createClient` and `Mutable` functions from the feTS package and use the `createClient` function to instantiate a new client. Furthermore, we import the `spotifyOpenapi` file we created in the previous step and use it as a generic type for the `createClient` function.
 
 4. Now, to retrieve our top 5 tracks from the last 30 days using the Spotify API, we can do the following:
 ```typescript filename="spotify.ts"
@@ -110,23 +110,23 @@ By using the client in this manner, we gain type safety for the endpoint, parame
 ![endpoint](/blog-assets/type-safe-your-api/endpoint.png)
 
 
-5. Finally, we can utilize the topTracks variable with type safety:
+5. In conclusion, we can use the topTracks variable with type safety:
 ```typescript filename="spotify.ts"
 const topTracksResponse = await topTracks.json();
 console.log(topTracksResponse);
 ```
 
-## Pros and Cons of Using feTS for Spotify API Integration
+## Advantages and Disadvantages of Using feTS for Spotify API Integration
 
-### Pros of feTS
+### Advantages of feTS
 - Robust Type Safety: feTS eliminates the need for manual type definitions or code generation by inferring types from the OpenAPI specification and JSON Schema. This ensures reliable and type-safe API interactions.
 - OpenAPI Compatibility: By leveraging the OpenAPI specification, feTS seamlessly integrates with various tools and frameworks, providing flexibility and convenience.
 - Developer-Friendly Experience: feTS simplifies the API consumption process, allowing developers to focus on writing clean and concise code.
 - Stop be depend on SDK maintainers: feTS allows you to use the API without the need to wait for the SDK maintainers to update the SDK.
 
-### Cons of feTS
+### Disadvantages of feTS
 - Learning Curve: As with any new tool, there may be a slight learning curve involved in understanding feTS and its integration within your development workflow.
-- Limited Language Support: feTS is built specifically for TypeScript, which may not be suitable for projects utilizing other programming languages.
+- Limited Language Support: feTS built specifically for TypeScript, which may not be suitable for projects utilizing other programming languages.
 
 ## Conclusion
 feTS offers a streamlined solution for integrating the Spotify API, enhancing the efficiency and type safety of REST API development. By leveraging the power of OpenAPI and feTS's robust type inference capabilities, developers can build reliable and maintainable applications without compromising on type safety. Although there may be a slight learning curve, the benefits of using feTS for API integration far outweigh the challenges. Give feTS a try and experience a new level of developer productivity and confidence in your API projects.
