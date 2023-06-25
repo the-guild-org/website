@@ -10,14 +10,14 @@ image: /blog-assets/type-safe-your-api/endpoint.png
 
 ## Introduction
 
-Developers who have experience working with REST APIs often encounter challenges such as lack of type safety, manual response parsing, and the absence of a unified interface for endpoints. These issues can hinder the efficiency and reliability of REST API development.
+Developers who have experience working with REST API often encounter challenges such as lack of type safety, manual response parsing, and the absence of a unified interface for endpoints. These issues can hinder the efficiency and reliability of REST API development.
 
 In this blog post, we will explore a powerful tool called feTS that addresses these problems and provides solutions for more effective REST API development.
 
 ## What Is feTS?
-feTS, which stands for "Framework-Embedded TypeScript," is a robust tool designed specifically for TypeScript projects. It simplifies the development and consumption of REST APIs while ensuring type safety. By leveraging OpenAPI specifications and TypeScript decorators, feTS allows developers to build and interact with REST APIs more efficiently, reducing the likelihood of runtime errors and improving overall code quality. Importantly, feTS is fully compatible with any existing REST API.
+feTS, which stands for "Framework-Embedded TypeScript," is a robust tool designed specifically for TypeScript projects. It simplifies the development and consumption of REST API while ensuring type safety. By leveraging OpenAPI specifications and TypeScript decorators, feTS allows developers to build and interact with REST API more efficiently, reducing the likelihood of runtime errors and improving overall code quality. Importantly, feTS is fully compatible with any existing REST API.
 
-## How I Used Web APIs before feTS?
+## How I Used Web API before feTS?
 
 In this blog post, we will use the Spotify API as an example, but you can apply these principles to any REST API of your choice. You can find the complete code example [here](https://github.com/TuvalSimha/feTS-example).
 
@@ -70,7 +70,7 @@ While this approach works, it has some drawbacks:
 - The fetchWebApi function allows calling any endpoint, even if it's not supported by the API.
 - The topTracks variable lacks type safety according to the API documentation.
 
-## How I Use Web APIs with feTS?
+## How I Use Web API with feTS?
 To use the Spotify API with feTS, follow these steps:
 
 1. Create a new TypeScript project and install feTS from [here](https://the-guild.dev/openapi/fets/client/quick-start).
@@ -91,7 +91,7 @@ const client = createClient<Mutable<typeof spotifyOpenapi>>({
 });
 ```
 
-We import the `createClient` and `Mutable` functions from the fets package and use the `createClient` function to instantiate a new client. Additionally, we import the `spotifyOpenapi` file we created in the previous step and utilize it as a generic type for the `createClient` function.
+We import the `createClient` and `Mutable` functions from the feTS package and use the `createClient` function to instantiate a new client. Additionally, we import the `spotifyOpenapi` file we created in the previous step and utilize it as a generic type for the `createClient` function.
 
 4. Now, to retrieve our top 5 tracks from the last 30 days using the Spotify API, we can do the following:
 ```typescript filename="spotify.ts"
