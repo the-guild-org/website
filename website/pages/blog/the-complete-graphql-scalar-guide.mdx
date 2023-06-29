@@ -246,6 +246,7 @@ export default config
 
 Running `yarn graphql-codegen` generates the following Scalar type:
 
+{/* prettier-ignore */}
 ```tsx filename="src/schema/types.generated.ts"
 export type Scalars = {
   ID: { input: string | number; output: string };
@@ -336,9 +337,10 @@ export default config
 
 Running `yarn graphql-codegen` generates the following Scalar type:
 
+{/* prettier-ignore */}
 ```tsx
 export type Scalars = {
-  ID: { input: string ; output: string | number };
+  ID: { input: string; output: string | number };
   String: { input: string; output: string };
   Boolean: { input: boolean; output: boolean };
   Int: { input: number; output: number };
@@ -415,7 +417,6 @@ Codegen config. We can import a resolver and use said type very easily:
 import { DateTimeResolver } from 'graphql-scalars'
 // 1. Import scalar resolver
 import type { CodegenConfig } from '@graphql-codegen/cli'
-
 
 const config: CodegenConfig = {
   schema: '**/schema.graphql',
