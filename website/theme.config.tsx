@@ -9,15 +9,7 @@ import { LinkPreview } from '@/shared/embed/link-preview';
 import { OgCard } from '@/shared/embed/og-card';
 import { StackBlitz } from '@/shared/embed/stack-blitz';
 import { Tweet } from '@/shared/embed/tweet';
-import {
-  Callout,
-  defineConfig,
-  Giscus,
-  Header,
-  useConfig,
-  useMounted,
-  useTheme,
-} from '@theguild/components';
+import { Callout, defineConfig, Giscus, Header, useConfig, useTheme } from '@theguild/components';
 import blogs from './blogs.json';
 import { asArray } from './lib/as-array';
 
@@ -66,9 +58,8 @@ export default defineConfig({
     const config = useConfig();
     const { tags } = config.frontMatter;
     const { resolvedTheme } = useTheme();
-    const mounted = useMounted();
+
     const similarArticles =
-      mounted &&
       tags &&
       blogs
         .filter(
@@ -78,7 +69,7 @@ export default defineConfig({
         )
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(0, 12)
-        .sort(() => 0.5 - Math.random())
+        // .sort(() => 0.5 - Math.random())
         .slice(0, 4);
 
     if (!route.startsWith('/blog/') || route.startsWith('/blog/tag')) {
