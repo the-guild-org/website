@@ -72,6 +72,7 @@ module.exports = {
           'SWC',
           'feTS',
           'tRPC',
+          'ORM'
         ],
       ],
     ],
