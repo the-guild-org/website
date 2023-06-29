@@ -9,8 +9,16 @@ import { LinkPreview } from '@/shared/embed/link-preview';
 import { OgCard } from '@/shared/embed/og-card';
 import { StackBlitz } from '@/shared/embed/stack-blitz';
 import { Tweet } from '@/shared/embed/tweet';
-import { Callout, defineConfig, Giscus, Header, useConfig, useTheme } from '@theguild/components';
-import blogsMeta from './dist/blogs-meta.json';
+import {
+  Callout,
+  defineConfig,
+  Giscus,
+  Header,
+  useConfig,
+  useMounted,
+  useTheme,
+} from '@theguild/components';
+import blogsMeta from './.next/__blogs.json';
 import { asArray } from './lib/as-array';
 
 const siteName = 'The Guild';
@@ -58,7 +66,7 @@ export default defineConfig({
     const config = useConfig();
     const { tags } = config.frontMatter;
     const { resolvedTheme } = useTheme();
-
+    const mounted = useMounted();
     const similarArticles = tags
       ? blogsMeta
           .filter(
@@ -91,7 +99,7 @@ export default defineConfig({
           theme={resolvedTheme}
         />
         <Newsletter />
-        {similarArticles.length > 0 && (
+        {mounted && similarArticles.length > 0 && (
           <>
             <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">
               Similar articles

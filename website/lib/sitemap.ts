@@ -1,5 +1,5 @@
 import { writeFile } from 'node:fs/promises';
-import { MetaWithLink, NewsletterMetaWithLink } from './meta';
+import { MetaWithLink } from './meta';
 
 const createUrl = (
   pathname: string,
@@ -15,7 +15,6 @@ const createUrl = (
 
 export async function generateSitemap(
   articles: MetaWithLink[],
-  newsletters: NewsletterMetaWithLink[],
 ) {
   const sitemap = `
 <urlset
@@ -34,7 +33,6 @@ export async function generateSitemap(
   ${createUrl('/blog', 0.8, 'daily')}
   ${createUrl('/newsletter', 0.5, 'weekly')}
   ${articles.map(art => createUrl(art.link)).join('\n')}
-  ${newsletters.map(art => createUrl(art.link)).join('\n')}
 </urlset>`;
 
   await writeFile(

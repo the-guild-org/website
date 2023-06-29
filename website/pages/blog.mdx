@@ -4,17 +4,16 @@ description: Announcements about our Open-Source projects
 skipSync: true
 ---
 
+import { writeFile } from 'node:fs/promises'
+import path from 'node:path'
+import { format } from 'date-fns'
 import { getPagesUnderRoute } from 'nextra/context'
 import { useSSG } from 'nextra/ssg'
 import { BlogCardList, Heading, Newsletter, TagList } from '@/components'
-import { format } from 'date-fns';
 import { HeroSection } from '@/hero-section'
-import { asArray } from '../lib/as-array';
+import { asArray } from '../lib/as-array'
 
 export function extractRelevantTags(articles) {
-  //import { writeFile } from 'fs/promises'
-  //import path from 'path'
-  //import { getAllArticles, sortByDateDesc } from '../lib/get-all-articles'
   const allTags = articles.flatMap(article => article.tags || [])
   const map = Object.create(null)
   for (const tag of allTags) {
@@ -33,55 +32,63 @@ export function extractRelevantTags(articles) {
   return sorted.slice(0, 10)
 }
 
-export const getStaticProps = async () => {
-  let blogs = await getPagesUnderRoute('/blog')
-  blogs = blogs.filter(item => item.route !== '/blog/tag').map(blog => {
-    if (blog.kind === 'Folder') {
-      blog = blog.children.find(item => item.name === 'index')
-    }
-    const { title, description, tags, authors, image, date, updateDate, thumbnail, canonical } = blog.frontMatter
-    if (title.length > 70) {
-      throw new Error(
-        `SEO issue: The title "${parsed.title}" is too long, should be less than 70 characters -link ${file}`
-      )
-    }
-    if (title.length < 20) {
-      throw new Error(
-        `SEO issue: The title "${parsed.title}" is too short, should be more than 20 characters - link ${file}`
-      )
-    }
-    if (description.length > 160) {
-      throw new Error(
-        `SEO issue: The description (${parsed.description.length}) "${parsed.description}" is too long, should be less than 160 characters - link ${file}`
-      )
-    }
-    if (description.length < 50) {
-      throw new Error(
-        `SEO issue: The description (${parsed.description.length}) "${parsed.description}" is too short, should be more than 50 characters - link ${file}`
-      )
-    }
-    return {
-      title,
-      description,
-      tags,
-      authors: asArray(authors),
-      link: blog.route,
-      image,
-      date: format(new Date(date), 'y-MM-dd'),
-      ...(thumbnail && { thumbnail}),
-      ...(canonical && { canonical}),
-      ...(updateDate && { updateDate:  format(new Date(updateDate), 'y-MM-dd') })
-    }
-  })
-  //await writeFile(path.join(process.cwd(), 'dist/res.json'), JSON.stringify({ articles, blogs }))
+export function sortByDateDesc(left, right) {
+  const date1 = new Date(left.date)
+  const date2 = new Date(right.date)
+  if (date1 > date2) return -1
+  if (date1 < date2) return 1
+  return 0
+}
 
-  return {
-    props: {
-      ssg: {
-        articles: blogs
+export const getStaticProps = async () => {
+  const articles = (await getPagesUnderRoute('/blog'))
+    .filter(item => item.route !== '/blog/tag')
+    .map(blog => {
+      if (blog.kind === 'Folder') {
+        blog = blog.children.find(item => item.name === 'index')
       }
-    }
-  }
+      const { title, description, tags, authors, image, date, updateDate, thumbnail, canonical } =
+        blog.frontMatter
+      const { route } = blog
+      if (title.length > 70) {
+        throw new Error(
+          `SEO issue: The title "${title}" is too long, should be less than 70 characters -link ${route}`
+        )
+      }
+      if (title.length < 20) {
+        throw new Error(
+          `SEO issue: The title "${title}" is too short, should be more than 20 characters - link ${route}`
+        )
+      }
+      if (description.length > 160) {
+        throw new Error(
+          `SEO issue: The description (${description.length}) "${description}" is too long, should be less than 160 characters - link ${route}`
+        )
+      }
+      if (description.length < 50) {
+        throw new Error(
+          `SEO issue: The description (${description.length}) "${description}" is too short, should be more than 50 characters - link ${route}`
+        )
+      }
+      return {
+        title,
+        description,
+        tags,
+        authors: asArray(authors),
+        link: blog.route,
+        image,
+        date: format(new Date(date), 'y-MM-dd'),
+        ...(thumbnail && { thumbnail }),
+        ...(canonical && { canonical }),
+        ...(updateDate && { updateDate: format(new Date(updateDate), 'y-MM-dd') })
+      }
+    })
+    .sort(sortByDateDesc)
+  await writeFile(
+    path.join(process.cwd(), '.next', '__blogs.json'),
+    JSON.stringify(articles, null, 2)
+  )
+  return { props: { ssg: { articles } } }
 }
 
 export default function Blog() {
@@ -94,7 +101,7 @@ export default function Blog() {
         <Heading>The Guild's blog</Heading>
       </HeroSection>
       <div className="container max-w-[1200px]">
-        <TagList tags={allTags} withCount asLink className="mt-10 mb-20" />
+        <TagList tags={allTags} withCount asLink className="mb-20 mt-10" />
         {!tagFilters && <Newsletter />}
         <BlogCardList articles={articles} />
       </div>
