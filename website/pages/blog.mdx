@@ -36,6 +36,9 @@ export function extractRelevantTags(articles) {
 export const getStaticProps = async () => {
   let blogs = await getPagesUnderRoute('/blog')
   blogs = blogs.filter(item => item.route !== '/blog/tag').map(blog => {
+    if (blog.kind === 'Folder') {
+      blog = blog.children.find(item => item.name === 'index')
+    }
     const { title, description, tags, authors, image, date, updateDate, thumbnail, canonical } = blog.frontMatter
     if (title.length > 70) {
       throw new Error(
