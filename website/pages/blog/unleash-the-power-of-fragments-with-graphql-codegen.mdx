@@ -141,7 +141,7 @@ that some would colocate the TypeScript definitions or CSS if you are using the 
 pattern.
 
 ```tsx
-import { graphql, useFragment, FragmentType } from './gql'
+import { FragmentType, graphql, useFragment } from './gql'
 
 const Avatar_UserFragment = graphql(/* GraphQL */ `
   fragment Avatar_UserFragment on User {
@@ -170,8 +170,8 @@ The following example would raise a TypeScript error, as the `avatarUrl` field i
 within the `UserListItem_UserFragment` fragment.
 
 ```tsx
-import { graphql, useFragment, FragmentType } from './gql'
 import { Avatar } from './avatar'
+import { FragmentType, graphql, useFragment } from './gql'
 
 const UserListItem_UserFragment = graphql(/* GraphQL */ `
   fragment UserListItem_UserFragment on User {
@@ -199,8 +199,8 @@ As we compose simple visual UI components into bigger functional UI components w
 the fragments of the consumed UI component.
 
 ```tsx
-import { graphql, useFragment, FragmentType } from './gql'
 import { Avatar } from './avatar'
+import { FragmentType, graphql, useFragment } from './gql'
 
 const UserListItem_UserFragment = graphql(/* GraphQL */ `
   fragment UserListItem_UserFragment on User {
@@ -225,7 +225,7 @@ We can now further compose our components till we reach those components that se
 object type.
 
 ```tsx
-import { graphql, useFragment, FragmentType } from './gql'
+import { FragmentType, graphql, useFragment } from './gql'
 import { UserListItem } from './user-list-item'
 
 const FriendList_QueryFragment = graphql(/* GraphQL */ `
@@ -258,7 +258,7 @@ re-use this Avatar in a different context by again spreading the fragment and th
 relevant data to the `Avatar` component `user` property.
 
 ```tsx
-import { graphql, useFragment, FragmentType } from './gql'
+import { FragmentType, graphql, useFragment } from './gql'
 
 const UserProfileHeader_QueryFragment = graphql(/* GraphQL */ `
   fragment UserProfileHeader_QueryFragment on Query {

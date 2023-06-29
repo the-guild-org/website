@@ -31,7 +31,6 @@ and compare the differences between the two solutions for real-time.
   title="Subscriptions and Live Queries - Real Time with GraphQL"
 />
 
-
 ## Subscription Recap
 
 The
@@ -248,8 +247,8 @@ client library and transport have slightly different interfaces. I will use `gra
 The example is taken straight from the `graphql-ws` section.
 
 ```ts
-import { Network, Observable, RequestParameters, Variables } from 'relay-runtime'
 import { createClient } from 'graphql-ws'
+import { Network, Observable, RequestParameters, Variables } from 'relay-runtime'
 
 const subscriptionsClient = createClient({
   url: 'wss://i.love/graphql',
@@ -994,7 +993,7 @@ This module provides two things.
 ```ts
 import { GraphQLSchema, specifiedDirectives } from 'graphql'
 import { GraphQLLiveDirective } from '@n1ru4l/graphql-live-query'
-import { query, mutation, subscription } from './schema'
+import { mutation, query, subscription } from './schema'
 
 const schema = new GraphQLSchema({
   query,
@@ -1034,8 +1033,8 @@ select the id field on our object types. The store will only keep track of field
 and the type `ID!` (`GraphQLNonNull(GraphQLID)`).
 
 ```ts
-import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store'
 import { parse } from 'graphql'
+import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store'
 import { schema } from './schema'
 
 const inMemoryLiveQueryStore = new InMemoryLiveQueryStore()
@@ -1138,11 +1137,11 @@ server factory!
 
 ```tsx
 import http from 'http'
-import ws from 'ws' // yarn add ws
+import { parse, subscribe } from 'graphql'
 import { useServer } from 'graphql-ws/lib/use/ws'
-import { subscribe } from 'graphql'
+// yarn add ws
+import ws from 'ws'
 import { InMemoryLiveQueryStore } from '@n1ru4l/in-memory-live-query-store'
-import { parse } from 'graphql'
 import { schema } from './schema'
 
 const inMemoryLiveQueryStore = new InMemoryLiveQueryStore()
@@ -1264,9 +1263,9 @@ favorite network interface (that uses observable style sinks) in an AsyncIterabl
 
 ```ts
 import { pipe } from 'fp-ts/function'
-import { makeAsyncIterableIteratorFromSink } from '@n1ru4l/push-pull-async-iterable-iterator'
-import { createApplyLiveQueryPatch } from '@n1ru4l/graphql-live-query-patch'
 import { createClient } from 'graphql-ws/lib/use/ws'
+import { createApplyLiveQueryPatch } from '@n1ru4l/graphql-live-query-patch'
+import { makeAsyncIterableIteratorFromSink } from '@n1ru4l/push-pull-async-iterable-iterator'
 
 const client = createClient({
   url: 'ws://localhost:3000/graphql'

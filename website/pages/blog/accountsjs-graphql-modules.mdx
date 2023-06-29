@@ -54,13 +54,13 @@ ApolloServer:
 import 'graphql-import-node'
 import { ApolloServer } from 'apollo-server'
 import { MongoClient } from 'mongodb'
-import { AccountsServer } from '@accounts/server'
-import { AccountsPassword } from '@accounts/password'
 import { DatabaseManager } from '@accounts/database-manager'
-import MongoDBInterface from '@accounts/mongo'
 import { AccountsModule } from '@accounts/graphql-api'
-import * as typeDefs from './typeDefs.graphql'
+import MongoDBInterface from '@accounts/mongo'
+import { AccountsPassword } from '@accounts/password'
+import { AccountsServer } from '@accounts/server'
 import { resolvers } from './resolvers'
+import * as typeDefs from './typeDefs.graphql'
 
 const PORT = process.env.MONGO_URI || 4000
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/myDb'
@@ -284,12 +284,12 @@ backend app. The example below shows some example code that works on these two.
 ```tsx
 import React, { Component } from 'react'
 import { render } from 'react-dom'
+import ApolloClient from 'apollo-boost'
+import gql from 'graphql-tag'
+import { ApolloProvider, Mutation, Query } from 'react-apollo'
 import { AccountsClient } from '@accounts/client'
 import { AccountsClientPassword } from '@accounts/client-password'
 import GraphQLClient from '@accounts/graphql-client'
-import ApolloClient from 'apollo-boost'
-import { Query, Mutation, ApolloProvider } from 'react-apollo'
-import gql from 'graphql-tag'
 
 const apolloClient = new ApolloClient({
   async request(operation) {
