@@ -1,6 +1,7 @@
 import { writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { format } from 'date-fns';
+import prettier from 'prettier';
 import { withGuildDocs } from '@theguild/components/next.config';
 
 const asArray = value => (Array.isArray(value) ? value : [value]);
@@ -102,7 +103,10 @@ export default withGuildDocs({
           })
           .sort(sortByDateDesc);
 
-        writeFileSync(path.join(process.cwd(), 'blogs.json'), JSON.stringify(articles, null, 2));
+        writeFileSync(
+          path.join(process.cwd(), 'blogs.json'),
+          prettier.format(JSON.stringify(articles), { parser: 'json' }),
+        );
         // eslint-disable-next-line no-console
         console.log('✅ blogs meta saved!');
         blogsMetaSaved = true;
