@@ -6,7 +6,6 @@ description:
 thumbnail: https://open-graph-image.theguild.workers.dev/?product=GUILD&title=GraphQL%20Tools
 ---
 
-import { useSSG } from 'nextra/ssg'
 import { ClientLogosSection } from '@/client-logos-section'
 import { Button, Description, Heading, Newsletter } from '@/components'
 import { GetInTouchSection } from '@/get-in-touch-section'
@@ -14,15 +13,9 @@ import { HeroSection } from '@/hero-section'
 import { PlatformSection } from '@/platform-section'
 import { RecommendedReadingSection } from '@/recommended-reading-section'
 import { ServicesSection } from '@/services-section'
-import { getAllArticles } from '../lib/get-all-articles'
+import blogs from '../blogs.json'
 
-export const getStaticProps = async () => ({
-  props: {
-    ssg: await getAllArticles()
-  }
-})
 export default function IndexPage() {
-  const articles = useSSG()
   return (
     <>
       <HeroSection>
@@ -44,7 +37,7 @@ export default function IndexPage() {
       />
       <ServicesSection />
       <GetInTouchSection />
-      <RecommendedReadingSection articles={articles.slice(0, 4)} />
+      <RecommendedReadingSection articles={blogs.slice(0, 4)} />
       <Newsletter />
     </>
   )
