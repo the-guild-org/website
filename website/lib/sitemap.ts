@@ -13,9 +13,7 @@ const createUrl = (
   <priority>${priority}</priority>
 </url>`;
 
-export async function generateSitemap(
-  articles: MetaWithLink[],
-) {
+export async function generateSitemap(articles: MetaWithLink[]) {
   const sitemap = `
 <urlset
   xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'
