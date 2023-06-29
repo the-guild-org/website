@@ -228,15 +228,15 @@ the resource identifiers to a Set.
 
 ```ts
 import {
-  GraphQLSchema,
-  isScalarType,
-  isNonNullType,
+  defaultFieldResolver,
+  execute,
   GraphQLOutputType,
   GraphQLScalarType,
-  execute,
-  defaultFieldResolver
+  GraphQLSchema,
+  isNonNullType,
+  isScalarType
 } from 'graphql'
-import { mapSchema, MapperKind } from '@graphql-tools/utils'
+import { MapperKind, mapSchema } from '@graphql-tools/utils'
 
 const ORIGINAL_CONTEXT_SYMBOL = Symbol('ORIGINAL_CONTEXT_SYMBOL')
 

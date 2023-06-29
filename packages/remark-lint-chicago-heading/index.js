@@ -18,7 +18,12 @@ const remarkLintChicagoHeading = lintRule(
       const heading = toString(node);
       const capitalizedHeading = title(heading, { special: settings });
       if (heading !== capitalizedHeading) {
-        file.message(`Unexpected heading "${heading}", should be "${capitalizedHeading}"`, node);
+        file.message(
+          `Unexpected heading "${heading}", should be "${capitalizedHeading}".
+
+Note: If you want to add an exception - add your word inside \`.remarkrc.cjs\` in the root of monorepo`,
+          node,
+        );
       }
     });
   },

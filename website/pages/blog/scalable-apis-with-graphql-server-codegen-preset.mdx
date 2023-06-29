@@ -396,9 +396,8 @@ We will see the following files:
   ready to be used by the GraphQL server. This can be ignored in Git or removed from CODEOWNERS
   because it is entirely generated.
 
-```ts
-// src/schema/resolvers.generated.ts
-
+{/* prettier-ignore */}
+```ts filename="src/schema/resolvers.generated.ts"
 /* This file was automatically generated. DO NOT UPDATE MANUALLY. */
 import type { Resolvers } from './types.generated'
 import { book as Query_book } from './book/resolvers/Query/book'
@@ -428,6 +427,7 @@ export const resolvers: Resolvers = {
 ```ts
 // Example: src/schema/user/resolvers/Query/user.ts
 import type { QueryResolvers } from './../../../types.generated'
+
 export const user: NonNullable<QueryResolvers['user']> = async (_parent, _arg, _ctx) => {
   /* Implement Query.user resolver logic here */
 }
@@ -440,6 +440,7 @@ export const user: NonNullable<QueryResolvers['user']> = async (_parent, _arg, _
 ```ts
 // Example: src/schema/user/resolvers/User.ts
 import type { UserResolvers } from './../../types.generated'
+
 export const User: UserResolvers = {
   /* Implement User resolver logic here */
 }
@@ -464,6 +465,7 @@ with a warning:
 ```ts
 // Example: src/schema/user/resolvers/User.ts
 import type { UserResolvers } from './../../types.generated'
+
 export const WrongUser: UserResolvers = {
   /* Implement User resolver logic here */
 }

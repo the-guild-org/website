@@ -130,9 +130,9 @@ const schema = await loadSchema(`https://my-graphql-api.com`, {
 You can easily create executors for subschemas like below:
 
 ```ts
+import { stitchSchemas } from '@graphql-tools/stitch'
 import { UrlLoader } from '@graphql-tools/url-loader'
 import { introspectSchema } from '@graphql-tools/wrap'
-import { stitchSchemas } from '@graphql-tools/stitch'
 
 const urlLoader = new UrlLoader()
 const executor = urlLoader.getExecutorAsync(`https://my-graphql-api.com`, {})

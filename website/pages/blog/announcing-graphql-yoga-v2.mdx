@@ -101,9 +101,8 @@ more).
 Here, a GraphQL API built with GraphQL Modules, deployed on Cloudflare Workers:
 
 ```tsx
-import { createServer } from '@graphql-yoga/common'
-
 import { createApplication } from 'graphql-modules'
+import { createServer } from '@graphql-yoga/common'
 import { helloWorldModule } from './helloWorld'
 
 const application = createApplication({
@@ -195,11 +194,10 @@ Here, we are building a full-featured GraphQL API with security rules, a respons
 error reporting with only a few lines of code:
 
 ```ts
-import { createServer } from '@graphql-yoga/node'
-
 import { useDepthLimit } from '@envelop/depth-limit'
 import { useResponseCache } from '@envelop/response-cache'
 import { useSentry } from '@envelop/sentry'
+import { createServer } from '@graphql-yoga/node'
 
 const server = createServer({
   schema: {

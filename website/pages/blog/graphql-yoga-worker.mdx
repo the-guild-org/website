@@ -12,11 +12,11 @@ thumbnail: /blog-assets/graphql-yoga-worker/thumbnail.jpg
 
 ## Summary
 
-*   Building a GraphQL servers with Cloudflare Workers is now at a "production ready" stage
-*   Database connection over TCP is also works well (although it's beta, so there might be some eage
-    cases)
-*   Node.js compatibility with Cloudflare Workers is not perfect, so it is better to use a Web Server
-    Framework that was built to support CF Workers
+- Building a GraphQL servers with Cloudflare Workers is now at a "production ready" stage
+- Database connection over TCP is also works well (although it's beta, so there might be some eage
+  cases)
+- Node.js compatibility with Cloudflare Workers is not perfect, so it is better to use a Web Server
+  Framework that was built to support CF Workers
 
 ## Motivation
 
@@ -28,8 +28,8 @@ server in Node.js in this pattern, and when I do so, I choose Cloud Run as my fi
 it is easy to set up. Cloud Run itself is a great service, but it is human beings who become even
 more greedy.
 
-*   Deployment speed needs to be faster.
-*   I want to keep the price a little lower.
+- Deployment speed needs to be faster.
+- I want to keep the price a little lower.
 
 The former is a container service, so it requires "container build" and then "container
 replacement", but "container replacement" as well as "container build" takes a lot of time there. No
@@ -260,9 +260,9 @@ npm install pg
 Writing the code for the connection using the installed `pg`.
 
 ```ts filename="src/context.ts"
-import type { DB } from './types'
-import { Pool } from 'pg'
 import { Kysely, PostgresDialect } from 'kysely'
+import { Pool } from 'pg'
+import type { DB } from './types'
 
 export const connection = () =>
   new Kysely<DB>({
@@ -346,8 +346,8 @@ export * from './query'
 
 ```ts filename="src/resolvers/User/query.ts"
 import { builder } from '../../builder'
-import { UserType } from '../../models/User'
 import { connection } from '../../context'
+import { UserType } from '../../models/User'
 
 builder.queryFields(t => ({
   User: t.field({

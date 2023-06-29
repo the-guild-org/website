@@ -90,8 +90,8 @@ So when `User` module is loaded, the `type User` is created, and when `Chat` mod
 
 ```typescript
 import { GraphQLModule } from '@graphql-modules/core'
-import { UserModule } from './user-module'
 import { ChatModule } from './chat-module'
+import { UserModule } from './user-module'
 
 export const appModule = new GraphQLModule({
   imports: [UserModule, ChatModule]
@@ -139,8 +139,8 @@ export const ChatModule = new GraphQLModule({
 ```
 
 ```typescript
-import { appModule } from './modules/app'
 import { ApolloServer } from 'apollo-server'
+import { appModule } from './modules/app'
 
 const { schema, context } = appModule
 
@@ -376,8 +376,8 @@ So let's say that we have the schema — how can we make this module generic and
 This is how you declare this module:
 
 ```typescript
-import { GraphQLModule } from '@graphql-modules/core'
 import gql from 'graphql-tag'
+import { GraphQLModule } from '@graphql-modules/core'
 import { UserModule } from '../user'
 import { Users } from '../user/users.provider'
 
