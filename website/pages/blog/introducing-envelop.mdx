@@ -170,9 +170,9 @@ incoming request with `graphql-helix`, creates the GraphQL functions with Envelo
 operation:
 
 ```ts
-import { envelop, useSchema, useLogger } from '@envelop/core'
 import fastify from 'fastify'
-import { processRequest, getGraphQLParameters } from 'graphql-helix'
+import { getGraphQLParameters, processRequest } from 'graphql-helix'
+import { envelop, useLogger, useSchema } from '@envelop/core'
 
 // This creates the `getEnveloped` function for us. Behind the scene the wrapped functions are created once, here.
 const getEnveloped = envelop({

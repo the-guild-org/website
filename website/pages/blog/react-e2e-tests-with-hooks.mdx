@@ -55,8 +55,7 @@ testing frameworks like [Mocha](https://mochajs.org) and [Jest](https://jestjs.i
 
 ```javascript
 import { useState } from 'react'
-import { useDelayedEffect, useBobcat } from 'react-bobcat'
-
+import { useBobcat, useDelayedEffect } from 'react-bobcat'
 import MyButton from './components/MyButton'
 import { useSignOut } from './services/auth'
 
@@ -162,7 +161,6 @@ app, it should be defined AS HIGH AS POSSIBLE, like so:
 
 ```javascript
 import React from 'react'
-
 import BobcatRunner from './BobcatRunner'
 import Navigator from './Navigator'
 
@@ -182,9 +180,8 @@ for resetting the app whenever a flow is finished, so it can begin a session, wi
 defined underneath it. This is how it should look like:
 
 ```javascript
-import React, { useState, useMemo, useEffect } from 'react'
-import { useAsyncEffect, useBobcat, BobcatProvider } from 'react-bobcat'
-
+import React, { useEffect, useMemo, useState } from 'react'
+import { BobcatProvider, useAsyncEffect, useBobcat } from 'react-bobcat'
 import useScopes from './scopes'
 
 const DONE_ROUTE = '__DONE__'
