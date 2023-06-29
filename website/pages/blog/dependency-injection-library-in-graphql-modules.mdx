@@ -167,8 +167,8 @@ different encapsulated injectors belonging to each module in different scope.
 
 ```typescript
 import { NgModule } from '@angular/core'
-import { FooModule, FooProvider } from '@foo'
 import { BarModule } from '@bar'
+import { FooModule, FooProvider } from '@foo'
 
 @NgModule({
   imports: [FooModule, BarModule],
@@ -190,9 +190,9 @@ to `BarModule` `FooModule` 's `FooProvider` implementation instead of the one de
 `BarModule` ; because it shouldn't know what is defined in the higher level.
 
 ```typescript
-import { GraphQLModule } from '@graphql-modules/core'
-import { FooModule, FooProvider } from '@foo'
 import { BarModule } from '@bar'
+import { FooModule, FooProvider } from '@foo'
+import { GraphQLModule } from '@graphql-modules/core'
 
 export const AppModule = new GraphQLModule({
   imports: [FooModule, BarModule],

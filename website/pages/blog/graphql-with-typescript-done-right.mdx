@@ -207,6 +207,7 @@ Here an example of GraphQL Code Generator output given our previous `currentUser
 ```ts
 import { gql } from '@apollo/client'
 import * as Apollo from '@apollo/client'
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>
 export type CurrentUserQuery = { __typename?: 'Query' } & {
   me: { __typename?: 'User' } & Pick<User, 'id'>
@@ -267,6 +268,7 @@ Example given our previous `currentUser` Query:
 ```ts
 import { gql } from '@apollo/client'
 import * as Apollo from '@apollo/client'
+
 const defaultOptions = {}
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>
 export type CurrentUserQuery = { __typename?: 'Query' } & {
@@ -336,6 +338,7 @@ GraphQL Code Generator will generate the following file:
 
 ```ts
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core'
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>
 export type CurrentUserQuery = { __typename?: 'Query' } & {
   me: { __typename?: 'User' } & Pick<User, 'id'>
@@ -446,6 +449,7 @@ Here is our updated helper code:
 
 ```ts
 import { UserFragment } from 'src/graphql/generated'
+
 const isUserEmailValid = (user: UserFragment) => !!user.email
 ```
 
