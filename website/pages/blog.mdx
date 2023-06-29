@@ -4,12 +4,17 @@ description: Announcements about our Open-Source projects
 skipSync: true
 ---
 
+import { getPagesUnderRoute } from 'nextra/context'
 import { useSSG } from 'nextra/ssg'
 import { BlogCardList, Heading, Newsletter, TagList } from '@/components'
+import { format } from 'date-fns';
 import { HeroSection } from '@/hero-section'
-import { getAllArticles } from '../lib/get-all-articles'
+import { asArray } from '../lib/as-array';
 
 export function extractRelevantTags(articles) {
+  //import { writeFile } from 'fs/promises'
+  //import path from 'path'
+  //import { getAllArticles, sortByDateDesc } from '../lib/get-all-articles'
   const allTags = articles.flatMap(article => article.tags || [])
   const map = Object.create(null)
   for (const tag of allTags) {
@@ -29,10 +34,48 @@ export function extractRelevantTags(articles) {
 }
 
 export const getStaticProps = async () => {
+  let blogs = await getPagesUnderRoute('/blog')
+  blogs = blogs.filter(item => item.route !== '/blog/tag').map(blog => {
+    const { title, description, tags, authors, image, date, updateDate, thumbnail, canonical } = blog.frontMatter
+    if (title.length > 70) {
+      throw new Error(
+        `SEO issue: The title "${parsed.title}" is too long, should be less than 70 characters -link ${file}`
+      )
+    }
+    if (title.length < 20) {
+      throw new Error(
+        `SEO issue: The title "${parsed.title}" is too short, should be more than 20 characters - link ${file}`
+      )
+    }
+    if (description.length > 160) {
+      throw new Error(
+        `SEO issue: The description (${parsed.description.length}) "${parsed.description}" is too long, should be less than 160 characters - link ${file}`
+      )
+    }
+    if (description.length < 50) {
+      throw new Error(
+        `SEO issue: The description (${parsed.description.length}) "${parsed.description}" is too short, should be more than 50 characters - link ${file}`
+      )
+    }
+    return {
+      title,
+      description,
+      tags,
+      authors: asArray(authors),
+      link: blog.route,
+      image,
+      date: format(new Date(date), 'y-MM-dd'),
+      ...(thumbnail && { thumbnail}),
+      ...(canonical && { canonical}),
+      ...(updateDate && { updateDate:  format(new Date(updateDate), 'y-MM-dd') })
+    }
+  })
+  //await writeFile(path.join(process.cwd(), 'dist/res.json'), JSON.stringify({ articles, blogs }))
+
   return {
     props: {
       ssg: {
-        articles: await getAllArticles()
+        articles: blogs
       }
     }
   }
