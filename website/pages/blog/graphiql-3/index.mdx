@@ -1,0 +1,205 @@
+---
+title: GraphiQL 3 Is Here and GraphiQL 4 Is Coming
+tags: [graphql, react, graphiql]
+authors: dimitri
+date: 2023-07-09
+description: GraphiQL 3 was released, here is what was changed and what's will be in GraphiQL 4.
+image: /blog-assets/graphiql-3/cover.png
+thumbnail: /blog-assets/graphiql-3/thumbnail.png
+---
+
+import { Anchor } from '@theguild/components'
+
+## Intro
+
+10 month ago
+[GraphiQL 2 was released](https://github.com/graphql/graphiql/releases/tag/graphiql%402.0.0) with
+completely new design and new components library named
+[`@graphiql/react`](https://github.com/graphql/graphiql/tree/main/packages/graphiql-react).
+
+Unfortunately previously planned in [roadmap](https://github.com/graphql/graphiql/issues/2328) most
+waited features as integration [monaco-editor](https://github.com/microsoft/monaco-editor) and new
+docs explorer (aka Query Builder) were not introduced.
+
+After months and months no progress were made, and I was called to join forces and help community.
+
+<Callout type="info">
+  **About me:** I am Dimitri POSTOLOV, software engineer from The Guild. You may know me as
+  maintainer of [GraphQL-ESLint](https://the-guild.dev/graphql/eslint/docs) and
+  [Nextra](https://nextra.site).
+</Callout>
+
+## How I Started Maintain Library
+
+### Put Out the Lights on the Christmas Tree 🎄
+
+When I started to maintain GraphiQL the first thing first was ESLint improvements, because ESLint
+output contained a lot of warnings. The below comment from some issue is a perfect allegory that
+names it `flashing like a Christmas tree` 😅.
+
+{/* prettier-ignore */}
+<Anchor
+  href="https://github.com/graphql/graphiql/issues/2169#issue-1139208125" className="mt-6 block"
+>![Comment of weird developer experience with a lot of warnings in ESLint
+  output](./img_1.png)</Anchor>
+
+So I proposed to extend various ESLint plugins `recommended` configs.
+
+{/* prettier-ignore */}
+<Anchor
+  href="https://github.com/graphql/graphiql/issues/2894#issue-1445996198" className="mt-6 block"
+>![Comment of my proposal of improving ESLint config](./img.png)</Anchor>
+
+export const Warning = () => (
+  <span style={{ fontFamily: '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"' }}>⚠️</span>
+)
+
+### Replacing Deprecated Reach UI ⚠️
+
+GraphiQL 2 was released with [Reach UI](https://reach.tech) unstyled a11y-first components library.
+Unfortunately after some months of releasing GraphiQL 2, Reach UI was marked as deprecated, no
+longer maintained and still doesn't have official support of React 18. So community started to
+receive warnings while installing GraphiQL 2.
+
+```ansi filename="Terminal" copy=false
+├─┬ graphiql [0;30m2.4.7[0m
+│ └─┬ @graphiql/react [0;30m0.17.6[0m
+│   ├─┬ @reach/combobox [0;30m0.17.0[0m
+│   │ ├── [0;31m✕ unmet peer[0m react@"^16.8.0 || 17.x": found 18.2.0
+│   │ ├── [0;31m✕ unmet peer[0m react-dom@"^16.8.0 || 17.x": found 18.2.0
+│   │ ├─┬ @reach/auto-id [0;98m0.17.0[0m
+│   │ │ ├── [0;31m✕ unmet peer[0m react@"^16.8.0 || 17.x": found 18.2.0
+│   │ │ ├── [0;31m✕ unmet peer[0m react-dom@"^16.8.0 || 17.x": found 18.2.0
+│   │ │ └─┬ @reach/utils [0;98m0.17.0[0m
+│   │ │   ├── [0;31m✕ unmet peer[0m react@"^16.8.0 || 17.x": found 18.2.0
+│   │ │   └── [0;31m✕ unmet peer[0m react-dom@"^16.8.0 || 17.x": found 18.2.0
+│   │ ├─┬ @reach/descendants [0;98m0.17.0[0m
+│   │ │ ├── [0;31m✕ unmet peer[0m react@"^16.8.0 || 17.x": found 18.2.0
+│   │ │ └── [0;31m✕ unmet peer[0m react-dom@"^16.8.0 || 17.x": found 18.2.0
+
+...long list of warnings
+```
+
+### Deep Dive into GraphiQL 🌊
+
+When I come to a new project I always start by reading the codebase, try to reproduce active issues
+and fixes them, note some things that I can improve in project in general. Below are list of various
+improvements that were made by me:
+
+1. Update Cypress to v12 from v4 [#2893](https://github.com/graphql/graphiql/pull/2893).
+
+1. Avoid unnecessary renders component's tree with
+   [`eslint-plugin-react-usememo`](https://github.com/arthurgeron/eslint-plugin-react-usememo)
+   [#3124](https://github.com/graphql/graphiql/pull/3124).
+
+1. Update all examples to use React 18 [#3185](https://github.com/graphql/graphiql/pull/3185).
+
+1. Exclude `"dependencies"` from bundle for `@graphiql/react`, `@graphiql/plugin-explorer` and
+   `@graphiql/plugin-code-exporter` [#3229](https://github.com/graphql/graphiql/pull/3228) and
+   [PR](https://github.com/graphql/graphiql/pull/3229).
+
+1. Remove unnecessary `<div />` wrappers [#3235](https://github.com/graphql/graphiql/pull/3235).
+
+1. Simplify Next.js and Vite examples with `monaco-graphql`
+   [#3140](https://github.com/graphql/graphiql/pull/3140) and
+   [#3281](https://github.com/graphql/graphiql/pull/3281).
+
+1. And
+   [more...](https://github.com/graphql/graphiql/pulls?q=is%3Apr+sort%3Aupdated-desc+author%3AB2o5T+is%3Aclosed)
+
+## GraphiQL 3
+
+Integration of `monaco-editor` and `monaco-graphql` always was a top priority, since I started
+maintain this monorepo, but to achieve it, stable release should be released first ☝️.
+
+So I decided to propose release GraphiQL 3 without Reach UI and replace him by maintained libraries
+Radix and Headless UI and to make another major release with `monaco-editor` bumped as GraphiQL 4.
+
+|    Version    |           What is inside            |
+| :-----------: | :---------------------------------: |
+|  GraphiQL 2   |        Codemirror / Reach UI        |
+|  GraphiQL 3   |  Codemirror / Radix / Headless UI   |
+| GraphiQL 4 🔜 | Monaco-Editor / Radix / Headless UI |
+
+<p className="mt-3 text-center italic">Table of comparison versions of GraphiQL</p>
+
+With all above changes I also included tab reorder feature:
+
+![Reorder tabs feature](./reorder-tabs.gif)
+
+{/* prettier-ignore */}
+<p className="mt-3 text-center italic">Tab reorder made by
+  [@mylesmmurphy](https://github.com/mylesmmurphy)
+  [#3111](https://github.com/graphql/graphiql/pull/3111)</p>
+
+Try GraphiQL 3 by installing with your favorite package manager:
+
+```sh npm2yarn
+npm i graphql@3
+```
+
+## GraphiQL 4 🔜
+
+14 month ago initial issue was created on integration `monaco-editor` in GraphiQL.
+
+{/* prettier-ignore */}
+<Anchor
+  href="https://github.com/graphql/graphiql/issues/2326#issue-1208525253" className="mt-6 block"
+>![Initial comment on integration of monaco-editor in GraphiQL](./img_4.png)</Anchor>
+
+but no one real progress in GraphiQL was made:
+
+<Anchor
+  href="https://github.com/graphql/graphiql/issues/2326#issuecomment-1385847481"
+  className="mt-6 block"
+>
+  ![Comment of no progress on integrating monaco in GraphiQL by @jonathanawesome](./img_2.png)
+</Anchor>
+
+I already started on such as difficult integration, my initial PR
+[#3234](https://github.com/graphql/graphiql/pull/3234) or you can try it in following
+[preview url](https://deploy-preview-3234--graphiql-test.netlify.app) (alpha version will be
+available soon too).
+
+{/* prettier-ignore */}
+<Anchor href="https://deploy-preview-3234--graphiql-test.netlify.app" className="mt-6 block">![GraphiQL
+  4 Preview](./img_3.png)</Anchor>
+
+### Roadmap
+
+- [x] Avoid loading unused languages in `monaco-editor`
+      [#3285](https://github.com/graphql/graphiql/pull/3285)
+
+- [x] **(WIP)** Integrate `monaco-editor`/`monaco-graphql`
+      [#3234](https://github.com/graphql/graphiql/pull/3234)
+
+- [ ] JSONC comments in variables / headers editors
+      [#780](https://github.com/graphql/graphiql/issues/780)
+
+- [ ] Migrate to pnpm & turbo [#3058](https://github.com/graphql/graphiql/issues/3058)
+
+- [ ] New docs explorer aka Query builder [#2327](https://github.com/graphql/graphiql/issues/2327)
+
+- [ ] GraphiQL website [#3059](https://github.com/graphql/graphiql/issues/3059)
+
+- [ ] GraphQL-ESLint plugin [#3057](https://github.com/graphql/graphiql/issues/3057)
+
+## Conclusion
+
+I hope you learned of current state of GraphiQL and what is coming. Follow me on
+[GitHub](https://github.com/B2o5T) and [Twitter](https://twitter.com/B2o5T), see you soon 👋!
+
+<style jsx global>{`
+  .nextra-content h3,
+  .nextra-toc li a {
+    font-family: 'Text Font', 'Custom Glyphs Font', sans-serif;
+  }
+  .nextra-content table {
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .contains-task-list {
+    margin-top: 1.5rem;
+  }
+`}</style>
