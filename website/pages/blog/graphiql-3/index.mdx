@@ -12,24 +12,25 @@ import { Anchor } from '@theguild/components'
 
 ## Intro
 
-10 month ago
-[GraphiQL 2 was released](https://github.com/graphql/graphiql/releases/tag/graphiql%402.0.0) with
+10 months ago
+[GraphiQL 2 was released](https://github.com/graphql/graphiql/releases/tag/graphiql%402.0.0) with a
 completely new design and new components library named
 [`@graphiql/react`](https://github.com/graphql/graphiql/tree/main/packages/graphiql-react).
 
-Unfortunately previously planned in [roadmap](https://github.com/graphql/graphiql/issues/2328) most
-waited features as integration [monaco-editor](https://github.com/microsoft/monaco-editor) and new
-docs explorer (aka Query Builder) were not introduced.
+Unfortunately previously planned in the [roadmap](https://github.com/graphql/graphiql/issues/2328)
+most-waited features as integration [monaco-editor](https://github.com/microsoft/monaco-editor) and
+new docs explorer (aka Query Builder) were not introduced.
 
-After months and months no progress were made, and I was called to join forces and help community.
+After months and months, no progress was made, and I was called to join forces and help the
+community.
 
 <Callout type="info">
-  **About me:** I am Dimitri POSTOLOV, software engineer from The Guild. You may know me as
+  **About me:** I am Dimitri POSTOLOV, software engineer from The Guild. You may know me as a
   maintainer of [GraphQL-ESLint](https://the-guild.dev/graphql/eslint/docs) and
   [Nextra](https://nextra.site).
 </Callout>
 
-## How I Started Maintain Library
+## How I Started Maintaining Library
 
 ### Put Out the Lights on the Christmas Tree 🎄
 
@@ -43,22 +44,18 @@ names it `flashing like a Christmas tree` 😅.
 >![Comment of weird developer experience with a lot of warnings in ESLint
   output](./img_1.png)</Anchor>
 
-So I proposed to extend various ESLint plugins `recommended` configs.
+So I proposed to extend various ESLint plugins' `recommended` configs.
 
 {/* prettier-ignore */}
 <Anchor
   href="https://github.com/graphql/graphiql/issues/2894#issue-1445996198" className="mt-6 block"
->![Comment of my proposal of improving ESLint config](./img.png)</Anchor>
-
-export const Warning = () => (
-  <span style={{ fontFamily: '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"' }}>⚠️</span>
-)
+>![Comment on my proposal of improving ESLint config](./img.png)</Anchor>
 
 ### Replacing Deprecated Reach UI ⚠️
 
 GraphiQL 2 was released with [Reach UI](https://reach.tech) unstyled a11y-first components library.
-Unfortunately after some months of releasing GraphiQL 2, Reach UI was marked as deprecated, no
-longer maintained and still doesn't have official support of React 18. So community started to
+Unfortunately, after some months of releasing GraphiQL 2, Reach UI was marked as deprecated, no
+longer maintained and still doesn't have the official support of React 18. So community started to
 receive warnings while installing GraphiQL 2.
 
 ```ansi filename="Terminal" copy=false
@@ -77,30 +74,30 @@ receive warnings while installing GraphiQL 2.
 │   │ │ ├── [0;31m✕ unmet peer[0m react@"^16.8.0 || 17.x": found 18.2.0
 │   │ │ └── [0;31m✕ unmet peer[0m react-dom@"^16.8.0 || 17.x": found 18.2.0
 
-...long list of warnings
+...a long list of warnings
 ```
 
 ### Deep Dive into GraphiQL 🌊
 
-When I come to a new project I always start by reading the codebase, try to reproduce active issues
-and fixes them, note some things that I can improve in project in general. Below are list of various
-improvements that were made by me:
+When I come to a new project I always start by reading the codebase, trying to reproduce active
+issues and fix them, and note some things that I can improve in the project in general. Below is a
+list of various improvements that were made by me:
 
-1. Update Cypress to v12 from v4 [#2893](https://github.com/graphql/graphiql/pull/2893).
+1. Updated Cypress to v12 from v4 [#2893](https://github.com/graphql/graphiql/pull/2893).
 
 1. Avoid unnecessary renders component's tree with
    [`eslint-plugin-react-usememo`](https://github.com/arthurgeron/eslint-plugin-react-usememo)
    [#3124](https://github.com/graphql/graphiql/pull/3124).
 
-1. Update all examples to use React 18 [#3185](https://github.com/graphql/graphiql/pull/3185).
+1. Updated all examples to use React 18 [#3185](https://github.com/graphql/graphiql/pull/3185).
 
-1. Exclude `"dependencies"` from bundle for `@graphiql/react`, `@graphiql/plugin-explorer` and
+1. Excluded `"dependencies"` from bundle for `@graphiql/react`, `@graphiql/plugin-explorer` and
    `@graphiql/plugin-code-exporter` [#3229](https://github.com/graphql/graphiql/pull/3228) and
    [PR](https://github.com/graphql/graphiql/pull/3229).
 
-1. Remove unnecessary `<div />` wrappers [#3235](https://github.com/graphql/graphiql/pull/3235).
+1. Removed unnecessary `<div />` wrappers [#3235](https://github.com/graphql/graphiql/pull/3235).
 
-1. Simplify Next.js and Vite examples with `monaco-graphql`
+1. Simplified Next.js and Vite examples with `monaco-graphql`
    [#3140](https://github.com/graphql/graphiql/pull/3140) and
    [#3281](https://github.com/graphql/graphiql/pull/3281).
 
@@ -110,10 +107,11 @@ improvements that were made by me:
 ## GraphiQL 3
 
 Integration of `monaco-editor` and `monaco-graphql` always was a top priority, since I started
-maintain this monorepo, but to achieve it, stable release should be released first ☝️.
+maintaining this monorepo, but to achieve it, a stable release should be released first ☝️.
 
-So I decided to propose release GraphiQL 3 without Reach UI and replace him by maintained libraries
-Radix and Headless UI and to make another major release with `monaco-editor` bumped as GraphiQL 4.
+So I decided to propose to release GraphiQL 3 without Reach UI and replace him with maintained
+libraries Radix and Headless UI and to make another major release with `monaco-editor` bumped as
+GraphiQL 4.
 
 |    Version    |           What is inside            |
 | :-----------: | :---------------------------------: |
@@ -123,16 +121,16 @@ Radix and Headless UI and to make another major release with `monaco-editor` bum
 
 <p className="mt-3 text-center italic">Table of comparison versions of GraphiQL</p>
 
-With all above changes I also included tab reorder feature:
+With all the above changes I also included a tab reorders feature:
 
 ![Reorder tabs feature](./reorder-tabs.gif)
 
 {/* prettier-ignore */}
-<p className="mt-3 text-center italic">Tab reorder made by
+<p className="mt-3 text-center italic">Tab reorders made by
   [@mylesmmurphy](https://github.com/mylesmmurphy)
   [#3111](https://github.com/graphql/graphiql/pull/3111)</p>
 
-Try GraphiQL 3 by installing with your favorite package manager:
+Try GraphiQL 3 by installing it with your favourite package manager:
 
 ```sh npm2yarn
 npm i graphql@3
@@ -140,14 +138,21 @@ npm i graphql@3
 
 ## GraphiQL 4 🔜
 
-14 month ago initial issue was created on integration `monaco-editor` in GraphiQL.
+14 months ago the initial issue was created on the integration `monaco-editor` in GraphiQL.
 
 {/* prettier-ignore */}
 <Anchor
   href="https://github.com/graphql/graphiql/issues/2326#issue-1208525253" className="mt-6 block"
 >![Initial comment on integration of monaco-editor in GraphiQL](./img_4.png)</Anchor>
 
-but no one real progress in GraphiQL was made:
+but no real progress in GraphiQL was made (except
+[`graphiql-prototype`](https://github.com/jonathanawesome/graphiql-prototype) by
+[@jonathanawesome](https://github.com/jonathanawesome)):
+
+<Callout type="info">
+  **Note:** I call it `no real progress` because `graphql-prototype` was prototype written from
+  scratch that doesn't integrate into current GraphiQL monorepo
+</Callout>
 
 <Anchor
   href="https://github.com/graphql/graphiql/issues/2326#issuecomment-1385847481"
@@ -156,9 +161,9 @@ but no one real progress in GraphiQL was made:
   ![Comment of no progress on integrating monaco in GraphiQL by @jonathanawesome](./img_2.png)
 </Anchor>
 
-I already started on such as difficult integration, my initial PR
-[#3234](https://github.com/graphql/graphiql/pull/3234) or you can try it in following
-[preview url](https://deploy-preview-3234--graphiql-test.netlify.app) (alpha version will be
+I already started on such difficult integration, here my initial PR
+[#3234](https://github.com/graphql/graphiql/pull/3234), or you can try it in the following
+[preview URL](https://deploy-preview-3234--graphiql-test.netlify.app) (the alpha version will be
 available soon too).
 
 {/* prettier-ignore */}
@@ -186,7 +191,7 @@ available soon too).
 
 ## Conclusion
 
-I hope you learned of current state of GraphiQL and what is coming. Follow me on
+I hope you learned of the current state of GraphiQL and what is coming. Follow me on
 [GitHub](https://github.com/B2o5T) and [Twitter](https://twitter.com/B2o5T), see you soon 👋!
 
 <style jsx global>{`
