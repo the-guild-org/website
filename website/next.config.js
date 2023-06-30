@@ -96,16 +96,19 @@ export default withGuildDocs({
               link: route,
               image,
               date: format(new Date(date), 'y-MM-dd'),
-              ...(thumbnail && { thumbnail }),
-              ...(canonical && { canonical }),
-              ...(updateDate && { updateDate: format(new Date(updateDate), 'y-MM-dd') }),
+              thumbnail,
+              canonical,
+              updateDate: updateDate ? format(new Date(updateDate), 'y-MM-dd') : undefined,
             };
           })
           .sort(sortByDateDesc);
 
         writeFileSync(
           path.join(process.cwd(), 'blogs.json'),
-          prettier.format(JSON.stringify(articles), { parser: 'json' }),
+          prettier.format(JSON.stringify(articles), {
+            parser: 'json',
+            ...prettier.resolveConfig.sync('./blogs.json'),
+          }),
         );
         // eslint-disable-next-line no-console
         console.log('✅ blogs meta saved!');
