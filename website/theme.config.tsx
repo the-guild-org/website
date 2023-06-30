@@ -10,7 +10,7 @@ import { OgCard } from '@/shared/embed/og-card';
 import { StackBlitz } from '@/shared/embed/stack-blitz';
 import { Tweet } from '@/shared/embed/tweet';
 import { Callout, defineConfig, Giscus, Header, useConfig, useTheme } from '@theguild/components';
-import blogsMeta from './dist/blogs-meta.json';
+import blogs from './blogs.json';
 import { asArray } from './lib/as-array';
 
 const siteName = 'The Guild';
@@ -59,18 +59,18 @@ export default defineConfig({
     const { tags } = config.frontMatter;
     const { resolvedTheme } = useTheme();
 
-    const similarArticles = tags
-      ? blogsMeta
-          .filter(
-            article =>
-              article.link !== route &&
-              (tags.length === 0 || article.tags?.some(tag => tags.includes(tag))),
-          )
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-          .slice(0, 12)
-          .sort(() => 0.5 - Math.random())
-          .slice(0, 4)
-      : [];
+    const similarArticles =
+      tags &&
+      blogs
+        .filter(
+          article =>
+            article.link !== route &&
+            (tags.length === 0 || article.tags?.some(tag => tags.includes(tag))),
+        )
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 12)
+        // .sort(() => 0.5 - Math.random())
+        .slice(0, 4);
 
     if (!route.startsWith('/blog/') || route.startsWith('/blog/tag')) {
       return children as ReactElement;
@@ -91,7 +91,7 @@ export default defineConfig({
           theme={resolvedTheme}
         />
         <Newsletter />
-        {similarArticles.length > 0 && (
+        {similarArticles?.length && (
           <>
             <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">
               Similar articles

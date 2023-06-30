@@ -4,10 +4,11 @@ description: Announcements about our Open-Source projects
 skipSync: true
 ---
 
-import { useSSG } from 'nextra/ssg'
+import { useRouter } from 'next/router'
 import { BlogCardList, Heading, Newsletter, TagList } from '@/components'
 import { HeroSection } from '@/hero-section'
-import { getAllArticles } from '../lib/get-all-articles'
+import blogs from '../blogs.json'
+import { asArray } from '../lib/as-array'
 
 export function extractRelevantTags(articles) {
   const allTags = articles.flatMap(article => article.tags || [])
@@ -28,29 +29,26 @@ export function extractRelevantTags(articles) {
   return sorted.slice(0, 10)
 }
 
-export const getStaticProps = async () => {
-  return {
-    props: {
-      ssg: {
-        articles: await getAllArticles()
-      }
-    }
-  }
-}
-
 export default function Blog() {
-  const { articles, tagFilter } = useSSG()
-  const tagFilters = tagFilter?.join(', ')
-  const allTags = extractRelevantTags(articles)
+  const { query } = useRouter()
+  const tagsFilter = !query.tag ? [] : asArray(query.tag)
+  const allTags = extractRelevantTags(blogs)
+  let articles = blogs
+  if (tagsFilter.length > 0) {
+    articles = articles.filter(
+      article =>
+        tagsFilter.length === 0 || asArray(article.tags).some(tag => tagsFilter.includes(tag))
+    )
+  }
   return (
     <>
       <HeroSection>
         <Heading>The Guild's blog</Heading>
       </HeroSection>
       <div className="container max-w-[1200px]">
-        <TagList tags={allTags} withCount asLink className="mt-10 mb-20" />
-        {!tagFilters && <Newsletter />}
-        <BlogCardList articles={articles} />
+        <TagList tags={allTags} withCount asLink className="mb-20 mt-10" />
+        {!tagsFilter.length && <Newsletter />}
+        {<BlogCardList articles={articles} />}
       </div>
     </>
   )

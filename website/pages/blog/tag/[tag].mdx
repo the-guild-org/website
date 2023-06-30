@@ -3,24 +3,15 @@ title: Blog
 description: List of related articles
 ---
 
-import { getAllArticles } from '../../../lib/get-all-articles'
+import blogs from '../../../blogs.json'
 import Blog from '../../blog.mdx'
 
-export const getStaticProps = async ({ params }) => {
-  const tagFilter = !params.tag ? [] : Array.isArray(params.tag) ? params.tag : [params.tag]
-  return {
-    props: {
-      ssg: {
-        articles: await getAllArticles(tagFilter),
-        tagFilter
-      }
-    }
-  }
+export const getStaticProps = () => {
+  return { props: {} }
 }
 
 export const getStaticPaths = async () => {
-  const allArticles = await getAllArticles()
-  const allTags = new Set(allArticles.flatMap(art => art.tags))
+  const allTags = new Set(blogs.flatMap(art => art.tags))
   return {
     paths: Array.from(allTags).map(tag => ({ params: { tag } })),
     fallback: false
