@@ -91,7 +91,7 @@ export default defineConfig({
           theme={resolvedTheme}
         />
         <Newsletter />
-        {similarArticles?.length && (
+        {!!similarArticles?.length && (
           <>
             <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">
               Similar articles
