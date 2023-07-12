@@ -69,13 +69,16 @@ Using feTS Client is as simple as importing the **`createClient`** function and 
 your API.
 
 ```tsx
-import { createClient } from 'fets'
+import { createClient, type NormalizeOAS } from 'fets'
 import openAPIDoc from './openapi-doc'
 
-const client = createClient<typeof openAPIDoc>({
-  url: 'http://my-api.com/api'
+const client = createClient<NormalizeOAS<typeof openAPIDoc>>({
+  endpoint: 'http://my-api.com/api'
 })
 ```
+
+Note: we have to use an `NormalizeOAS` type here — it resolves all `$refs` in the OpenAPI document
+and normalizes the types for the`createClient`'s generic parameter.
 
 Once you've done that, you can call the endpoints as defined in your OpenAPI Schema. The intuitive
 design allows you to take full advantage of the auto-completion features provided by your IDE,
@@ -106,7 +109,7 @@ functionality of the feTS Client, tailoring it to your specific needs and optimi
 application's network interactions. Here’s an example:
 
 ```tsx
-import { createClient, Plugin } from 'fets'
+import { createClient, Plugin, type NormalizeOAS } from 'fets'
 
 function useAuth(): Plugin {
   return {
@@ -117,8 +120,8 @@ function useAuth(): Plugin {
   }
 }
 
-const client = createClient<typeof openAPIDoc>({
-  url: 'http://my-api.com/api',
+const client = createClient<NormalizeOAS<typeof openAPIDoc>>({
+  endpoint: 'http://my-api.com/api',
   plugins: [useAuth()]
 })
 ```
@@ -180,11 +183,11 @@ export const oas = {...} as const;
 
 // And finally – creating a FEST client
 
-import { createClient, Mutable } from 'fets';
+import { createClient, NormalizeOAS } from 'fets';
 import { oas } from "./openapi";
 
-const client = createClient<Mutable<typeof oas>>({
-  url: 'http://my-api.com/api',
+const client = createClient<NormalizeOAS<typeof oas>>({
+  endpoint: 'http://my-api.com/api',
 });
 ```
 
