@@ -1,74 +1,96 @@
 ---
-title: Enhancing REST API Development with feTS - Type Safety, Efficiency, and Seamless Integration
+title: Empowering REST API Dev with feTS
 authors: tuvalSimha
 date: 2023-08-14
 tags: [typescript, openapi, rest, api, feTS]
-description: Explore the power of feTS - a revolutionary tool that empowers REST API development with type safety, efficiency, and seamless integration using TypeScript and OpenAPI. Includes a practical example with the Spotify API.
+description: feTS - type safety, efficiency & seamless TypeScript/OpenAPI
 thumbnail: /blog-assets/type-safe-your-api/banner.png
 image: /blog-assets/type-safe-your-api/banner.png
 ---
 
 ## Introduction
 
-Developers working with REST APIs often grapple with challenges like lack of type safety, manual response parsing, and disjointed endpoint interfaces. These hurdles can hinder the effectiveness and reliability of REST API development. This blog post introduces `feTS`, an innovative solution that addresses these issues and offers a more streamlined and powerful approach to REST API development.
+Developers working with REST APIs often grapple with challenges like lack of type safety, manual
+response parsing, and disjointed endpoint interfaces. These hurdles can hinder the effectiveness and
+reliability of REST API development. This blog post introduces `feTS`, an innovative solution that
+addresses these issues and offers a more streamlined and powerful approach to REST API development.
 
 ## Code with REST API Today
 
-REST API, a lightweight protocol for web services, is popular among developers due to its simplicity and versatility. However, its advantages come with certain drawbacks that can impact development efficiency and reliability:
+REST API, a lightweight protocol for web services, is popular among developers due to its simplicity
+and versatility. However, its advantages come with certain drawbacks that can impact development
+efficiency and reliability:
 
-* Lack of Type Safety: REST APIs lack inherent type safety, leading to potential runtime errors and bugs.
-* Manual Response Parsing: Developers must manually parse response data, which is time-consuming and error-prone.
-* Ununified Endpoint Interface: REST APIs lack a unified interface for endpoints, making them less intuitive and user-friendly.
+- Lack of Type Safety: REST APIs lack inherent type safety, leading to potential runtime errors and
+  bugs.
+- Manual Response Parsing: Developers must manually parse response data, which is time-consuming and
+  error-prone.
+- Ununified Endpoint Interface: REST APIs lack a unified interface for endpoints, making them less
+  intuitive and user-friendly.
 
 ## Introducing `feTS`: Type-Safe REST API Development
 
-`feTS`, short for "Fetch" + "TypeScript," is a cutting-edge technology designed to elevate REST API development to new heights. By harnessing the capabilities of `TypeScript` and the OpenAPI specification, `feTS` ensures that data exchanged between client and server is not only well-defined but also strongly typed. This proactive approach catches errors during compilation, resulting in more robust and reliable applications.
+`feTS`, short for "Fetch" + "TypeScript," is a cutting-edge technology designed to elevate REST API
+development to new heights. By harnessing the capabilities of `TypeScript` and the OpenAPI
+specification, `feTS` ensures that data exchanged between client and server is not only well-defined
+but also strongly typed. This proactive approach catches errors during compilation, resulting in
+more robust and reliable applications.
 
 ## A Practical Example: Leveraging `feTS` for Soccer Team Information
 
-To illustrate the power of `feTS`, let's dive into a real-world example. We'll build a demo app that interacts with the SportStats V4 API using `feTS`. Our goal is to fetch soccer team information and display it in an intuitive user interface.
+To illustrate the power of `feTS`, let's dive into a real-world example. We'll build a demo app that
+interacts with the SportStats V4 API using `feTS`. Our goal is to fetch soccer team information and
+display it in an intuitive user interface.
 
 ### Step 1: Obtain a Free Trial Token for Sportstats
 
-To begin, create a free trial Token for SportStats API access. The registration process is quick and easy. You can find the registration form [here](https://sportsdata.io/cart/free-trial).
+To begin, create a free trial Token for SportStats API access. The registration process is quick and
+easy. You can find the registration form [here](https://sportsdata.io/cart/free-trial).
 
-BTW, you can choose any other API you want, but for this example, we will use the SportStats API. You can find openApi at `APIS.GURU` [website](https://apis.guru/about/)
+BTW, you can choose any other API you want, but for this example, we will use the SportStats API.
+You can find openApi at `APIS.GURU` [website](https://apis.guru/about/)
 
 ### Step 2: Incorporate OpenAPI Definitions into TypeScript
 
-Incorporate the OpenAPI definitions into a TypeScript file and export them using the `as const` modifier. This process ensures strong typing and easy integration with `feTS`. A sample code snippet is provided below:
+Incorporate the OpenAPI definitions into a TypeScript file and export them using the `as const`
+modifier. This process ensures strong typing and easy integration with `feTS`. A sample code snippet
+is provided below:
+
 ```typescript filename="openapi.ts"
-
 export default { openapi: '3.0.0' /* ... */ } as const
-
 ```
 
-`openapi.ts` GitHub file [here](https://github.com/TuvalSimha/`feTS`-example/blob/main/src/`feTS`/openapi.ts).
-You can choose any OpenAPI file you want, but for this example, we will use the SportStats OpenAPI file. You can find the OpenAPI file [here](https://sportsdata.io/developers/sports-data-open-api-swagger-files).
+`openapi.ts` GitHub file
+[here](https://github.com/TuvalSimha/`feTS`-example/blob/main/src/`feTS`/openapi.ts). You can choose
+any OpenAPI file you want, but for this example, we will use the SportStats OpenAPI file. You can
+find the OpenAPI file [here](https://sportsdata.io/developers/sports-data-open-api-swagger-files).
 
 ### Step 3: Install `feTS` and Create a Client
 
-Now, we are ready to install `feTS` and create a new client. To do this, you can visit the docs [here](https://the-guild.dev/openapi/`feTS`/client/quick-start#installation).
+Now, we are ready to install `feTS` and create a new client. To do this, you can visit the docs
+[here](https://the-guild.dev/openapi/`feTS`/client/quick-start#installation).
 
-Next, create a new `TypeScript` file and import the `createClient` function from the `feTS` package. Then, use the `createClient` function to instantiate a new client.
+Next, create a new `TypeScript` file and import the `createClient` function from the `feTS` package.
+Then, use the `createClient` function to instantiate a new client.
 
 ```typescript filename="client.ts"
-import { type NormalizeOAS, createClient } from "feTS";
-import type openapi from "./openapi";
+import { createClient, type NormalizeOAS } from 'feTS'
+import type openapi from './openapi'
 
 export const client = createClient<NormalizeOAS<typeof openapi>>({
-  endpoint: "https://api.sportsdata.io/v4/soccer/stats",
-});
+  endpoint: 'https://api.sportsdata.io/v4/soccer/stats'
+})
 ```
 
-`client.ts` GitHub file [here](https://github.com/TuvalSimha/`feTS`-example/blob/main/src/`feTS`/client.ts).
+`client.ts` GitHub file
+[here](https://github.com/TuvalSimha/`feTS`-example/blob/main/src/`feTS`/client.ts).
 
 The following code demonstrates how to set up the client with a custom error handling plugin:
 
 ```typescript filename="client.ts"
 /* eslint-disable react-hooks/rules-of-hooks */
-import { type NormalizeOAS, createClient, ClientPlugin } from "feTS";
-import type openapi from "./openapi";
+import { ClientPlugin, createClient, type NormalizeOAS } from 'feTS'
+import type openapi from './openapi'
 
 function useErrorHandler(): ClientPlugin {
   return {
@@ -76,158 +98,195 @@ function useErrorHandler(): ClientPlugin {
       if (!response.ok) {
         throw new Error(
           `Request failed with status ${response.status}, ${response.statusText}, ${response.url}`
-        );
+        )
       }
-    },
-  };
+    }
+  }
 }
 
 export const client = createClient<NormalizeOAS<typeof openapi>>({
   plugins: [useErrorHandler()],
-  endpoint: "https://api.sportsdata.io/v4/soccer/stats",
-});
+  endpoint: 'https://api.sportsdata.io/v4/soccer/stats'
+})
 ```
 
-By using the custom plugins, you can add your own logic to the client. You can find more information about plugins [here](https://the-guild.dev/openapi/`feTS`/client/plugins).
+By using the custom plugins, you can add your own logic to the client. You can find more information
+about plugins [here](https://the-guild.dev/openapi/`feTS`/client/plugins).
 
 ### Step 4: Use the Client to Fetch Data from the API
 
-Now, we are ready to use the client to fetch data from the API.
-In this step, we'll leverage the power of the `feTS` client we created earlier to fetch data from the SportStats API.
-The `fetchAllClubs` function will demonstrate how `feTS` simplifies the process of making API requests and handling responses.
+Now, we are ready to use the client to fetch data from the API. In this step, we'll leverage the
+power of the `feTS` client we created earlier to fetch data from the SportStats API. The
+`fetchAllClubs` function will demonstrate how `feTS` simplifies the process of making API requests
+and handling responses.
 
 ```typescript filename="endpoint.ts"
 export async function fetchAllClubs() {
-  const response = await client["/{format}/Teams/{competition}"].get({
+  const response = await client['/{format}/Teams/{competition}'].get({
     params: {
-      competition: "EPL",
-      format: "json",
+      competition: 'EPL',
+      format: 'json'
     },
     headers: {
-      "Ocp-Apim-Subscription-Key": YOUR_TOKEN_HERE
+      'Ocp-Apim-Subscription-Key': YOUR_TOKEN_HERE
     },
     query: {
       key: YOUR_TOKEN_HERE
-    },
-  });
+    }
+  })
 
-  const data = await response.json();
+  const data = await response.json()
 
-  return data;
+  return data
 }
 ```
 
-In this code snippet, we import the client object that we created using `feTS`.
-The `fetchAllClubs` function demonstrates how to use the `feTS` client to make a `GET` request to the `/Teams/{competition}` endpoint of the SportStats API.
-We provide the required parameters, such as the `competition` and `format`, and include necessary headers for authentication. All og those parameters are auto completed by the IDE.
+In this code snippet, we import the client object that we created using `feTS`. The `fetchAllClubs`
+function demonstrates how to use the `feTS` client to make a `GET` request to the
+`/Teams/{competition}` endpoint of the SportStats API. We provide the required parameters, such as
+the `competition` and `format`, and include necessary headers for authentication. All og those
+parameters are auto completed by the IDE.
 
-Endpoint auto complete:
-![Endpoint auto complete](/blog-assets/type-safe-your-api/endpoint.png)
+Endpoint auto complete: ![Endpoint auto complete](/blog-assets/type-safe-your-api/endpoint.png)
 
 ![Headers auto complete](/blog-assets/type-safe-your-api/autocomplate.png)
 
-`endpoint.ts` GitHub file [here](https://github.com/TuvalSimha/`feTS`-example/blob/main/src/`feTS`/endpoint.ts).
+`endpoint.ts` GitHub file
+[here](https://github.com/TuvalSimha/`feTS`-example/blob/main/src/`feTS`/endpoint.ts).
 
 ### Step 5: Use the Data from the API
 
-In this step, we'll demonstrate how to use the data fetched from the SportStats API using the `fetchAllClubs` function. We'll utilize the `useQuery` hook from the `react-query` library to efficiently manage data fetching and rendering in our React application.
+In this step, we'll demonstrate how to use the data fetched from the SportStats API using the
+`fetchAllClubs` function. We'll utilize the `useQuery` hook from the `react-query` library to
+efficiently manage data fetching and rendering in our React application.
 
-The `useQuery` hook from the react-query library provides a convenient way to fetch and manage asynchronous data in a React component. It abstracts away the complex logic of data fetching, caching, and error handling.
+The `useQuery` hook from the react-query library provides a convenient way to fetch and manage
+asynchronous data in a React component. It abstracts away the complex logic of data fetching,
+caching, and error handling.
 
-Here's an example of how you can use `useQuery` to fetch and display data from the SportStats API in your `App.tsx` component:
+Here's an example of how you can use `useQuery` to fetch and display data from the SportStats API in
+your `App.tsx` component:
 
 ```typescript filename="App.tsx"
-import { useQuery } from "react-query";
-import { fetchAllClubs } from "./feTS/endpoint";
+import { useQuery } from 'react-query'
+import { fetchAllClubs } from './feTS/endpoint'
 
 function App() {
-  const { data, isLoading, error } = useQuery("clubs", fetchAllClubs);
+  const { data, isLoading, error } = useQuery('clubs', fetchAllClubs)
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error.message}</div>
   }
 
   return (
     <div>
-      {data?.map((club) => (
+      {data?.map(club => (
         <div key={club.TeamId}>{club.Name}</div>
       ))}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
 ```
 
-For more advaned and design example, you can check out the [example](https://github.com/TuvalSimha/`feTS`-example/blob/main/src/App.tsx) in the GitHub repository.
+For more advaned and design example, you can check out the
+[example](https://github.com/TuvalSimha/`feTS`-example/blob/main/src/App.tsx) in the GitHub
+repository.
 
 Lets create a design exmaple for our soccer teams data:
 
 ```typescript filename="App.tsx"
-import { useState } from "react";
-import { useQuery } from "react-query";
-import { fetchAllClubs } from "./feTS/endpoint";
-import { TeamsCards } from "./components/teams-crads";
-import { Club } from "./feTS/type-helpers";
+import { useState } from 'react'
+import { useQuery } from 'react-query'
+import { TeamsCards } from './components/teams-crads'
+import { fetchAllClubs } from './feTS/endpoint'
+import { Club } from './feTS/type-helpers'
 
 export function App() {
-  const [selectedClub, setSelectedClub] = useState<Club | undefined>(undefined);
+  const [selectedClub, setSelectedClub] = useState<Club | undefined>(undefined)
 
-  const { data, isLoading, error } = useQuery("clubs", fetchAllClubs);
+  const { data, isLoading, error } = useQuery('clubs', fetchAllClubs)
 
-    if (isLoading) {
-    return <div>Loading...</div>;
+  if (isLoading) {
+    return <div>Loading...</div>
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error.message}</div>
   }
 
   return (
     <div>
-        <TeamsCards clubData={data} setSelectedClub={setSelectedClub} />
+      <TeamsCards clubData={data} setSelectedClub={setSelectedClub} />
     </div>
-  );
+  )
 }
 ```
 
-In this code snippet, i created a custom component called `TeamsCards` (GitHub file link)\[https://github.com/TuvalSimha/`feTS`-example/blob/main/src/components/teams-crads.tsx] that renders a list of cards with the club's name and logo. When the user clicks on a card, the `setSelectedClub` function is called with the selected club as an argument.
-This allows us to display the selected club's information in a separate component.
+In this code snippet, i created a custom component called `TeamsCards` (GitHub file
+link)\[https://github.com/TuvalSimha/`feTS`-example/blob/main/src/components/teams-crads.tsx] that
+renders a list of cards with the club's name and logo. When the user clicks on a card, the
+`setSelectedClub` function is called with the selected club as an argument. This allows us to
+display the selected club's information in a separate component.
 
-In your code snippet, you've leveraged the power of `feTS` to define the Club type, which represents a structured and strongly-typed representation of the data schema for a soccer club. This type is essential for maintaining type safety and ensuring that the data exchanged between your application and the API is well-defined and consistent.
+In your code snippet, you've leveraged the power of `feTS` to define the Club type, which represents
+a structured and strongly-typed representation of the data schema for a soccer club. This type is
+essential for maintaining type safety and ensuring that the data exchanged between your application
+and the API is well-defined and consistent.
 
-The `Club` type is inferred using `feTS` `OASModel` type.This type inference mechanism allows you to generate TypeScript types directly from the OpenAPI schema defined in your `openapi` file. Here's how you've done it:
+The `Club` type is inferred using `feTS` `OASModel` type.This type inference mechanism allows you to
+generate TypeScript types directly from the OpenAPI schema defined in your `openapi` file. Here's
+how you've done it:
 
 ```typescript filename="type-helpers.ts"
-import { OASModel, NormalizeOAS } from "feTS";
-import openapi from "./openapi";
+import { NormalizeOAS, OASModel } from 'feTS'
+import openapi from './openapi'
 
-export type Club = OASModel<NormalizeOAS<typeof openapi>, "Team">;
+export type Club = OASModel<NormalizeOAS<typeof openapi>, 'Team'>
 ```
 
-GitHub file [here](https://github.com/TuvalSimha/`feTS`-example/blob/main/src/`feTS`/type-helpers.ts).
+GitHub file
+[here](https://github.com/TuvalSimha/`feTS`-example/blob/main/src/`feTS`/type-helpers.ts).
 
 ![Club type](/blog-assets/type-safe-your-api/type.png)
 
-And its done! You've successfully created a React application that fetches data from the SportStats API using `feTS`.
+And its done! You've successfully created a React application that fetches data from the SportStats
+API using `feTS`.
 
 ![Result](/blog-assets/type-safe-your-api/result.gif)
 
 ## Leveraging `feTS` for Enhanced API Development
-In this blog post, we've explored the transformative capabilities of `feTS` for REST API development. By combining TypeScript's type safety and OpenAPI's structured definitions, `feTS` empowers developers to build efficient, reliable, and well-structured applications. To recap, `feTS` offers the following benefits:
 
-* Enhanced Type Safety: `feTS` provides robust type safety, catching potential issues at compile time and reducing runtime errors.
-* Improved Efficiency: With auto-generated API clients and TypeScript types, `feTS` eliminates manual response parsing and improves overall development efficiency.
-* Unified Interface: `feTS`'s unified and structured endpoint interface simplifies API navigation and promotes collaboration among developers.
-* Seamless Development: The `feTS` workflow seamlessly integrates with development processes, from API interactions to UI rendering.
+In this blog post, we've explored the transformative capabilities of `feTS` for REST API
+development. By combining TypeScript's type safety and OpenAPI's structured definitions, `feTS`
+empowers developers to build efficient, reliable, and well-structured applications. To recap, `feTS`
+offers the following benefits:
+
+- Enhanced Type Safety: `feTS` provides robust type safety, catching potential issues at compile
+  time and reducing runtime errors.
+- Improved Efficiency: With auto-generated API clients and TypeScript types, `feTS` eliminates
+  manual response parsing and improves overall development efficiency.
+- Unified Interface: `feTS`'s unified and structured endpoint interface simplifies API navigation
+  and promotes collaboration among developers.
+- Seamless Development: The `feTS` workflow seamlessly integrates with development processes, from
+  API interactions to UI rendering.
 
 ## Embracing a Future of Seamless REST API Development
-As you integrate `feTS` into your projects, consider exploring its full potential. Experiment with custom plugins, delve into advanced use cases, and stay engaged with the `feTS` community to contribute to its evolution.
 
-In closing, `feTS` represents a beacon of innovation in the dynamic world of software development. By adopting `feTS`, you're not only enhancing your REST API development process; you're embracing a culture of continuous improvement and excellence. Whether you're building a personal project or a large-scale application, `feTS` equips you with the tools to create exceptional, type-safe, and efficient software.
+As you integrate `feTS` into your projects, consider exploring its full potential. Experiment with
+custom plugins, delve into advanced use cases, and stay engaged with the `feTS` community to
+contribute to its evolution.
 
-Thank you for joining us on this journey through `feTS`. Here's to a future filled with seamless and elevated REST API development!
+In closing, `feTS` represents a beacon of innovation in the dynamic world of software development.
+By adopting `feTS`, you're not only enhancing your REST API development process; you're embracing a
+culture of continuous improvement and excellence. Whether you're building a personal project or a
+large-scale application, `feTS` equips you with the tools to create exceptional, type-safe, and
+efficient software.
+
+Thank you for joining us on this journey through `feTS`. Here's to a future filled with seamless and
+elevated REST API development!
