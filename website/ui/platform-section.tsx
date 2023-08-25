@@ -6,7 +6,7 @@ export const PlatformSection = ({ className }: { className?: string }): ReactEle
   return (
     <Tooltip.Provider>
       <div id="platform" className={className}>
-        <div className="container flex flex-col items-center px-4 pt-20 pb-28 text-center sm:px-6 md:px-8">
+        <div className="container flex flex-col items-center px-4 pb-28 pt-20 text-center sm:px-6 md:px-8">
           <Heading>The Ecosystem</Heading>
           <Description className="max-w-[400px] md:max-w-[700px]">
             Our advanced, modular solutions can be adopted gradually as individual open source
@@ -27,9 +27,10 @@ export const PlatformSection = ({ className }: { className?: string }): ReactEle
             {Object.values(PRODUCTS).map(product => (
               <Tooltip key={product.name} content={product.title}>
                 <Anchor
+                  style={{ width: 135 }}
                   className="
-                  m-2
                   flex
+                  flex-shrink-0
                   flex-col
                   gap-2
                   rounded
@@ -37,7 +38,6 @@ export const PlatformSection = ({ className }: { className?: string }): ReactEle
                   border-solid
                   border-transparent
                   py-3
-                  px-5
                   contrast-0
                   grayscale
                   transition-all
@@ -47,7 +47,6 @@ export const PlatformSection = ({ className }: { className?: string }): ReactEle
                   hover:filter-none
                   dark:hover:border-gray-800
                   dark:hover:text-white
-                  lg:first:ml-6
                 "
                   href={product.href}
                 >
