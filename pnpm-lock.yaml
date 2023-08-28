@@ -203,8 +203,8 @@ importers:
         specifier: 4.0.0
         version: 4.0.0
       toucan-js:
-        specifier: 3.1.0
-        version: 3.1.0
+        specifier: 3.2.3
+        version: 3.2.3
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 4.20230717.0
@@ -219,8 +219,8 @@ importers:
   packages/website-router:
     dependencies:
       toucan-js:
-        specifier: 3.1.0
-        version: 3.1.0
+        specifier: 3.2.3
+        version: 3.2.3
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 4.20230717.0
@@ -2411,26 +2411,36 @@ packages:
     resolution: {integrity: sha512-sXo/qW2/pAcmT43VoRKOJbDOfV3cYpq3szSVfIThQXNt+E4DfKj361vaAt3c88U5tPUxzEswam7GW48PJqtKAg==}
     dev: true
 
-  /@sentry/core@7.28.1:
-    resolution: {integrity: sha512-7wvnuvn/mrAfcugWoCG/3pqDIrUgH5t+HisMJMGw0h9Tc33KqrmqMDCQVvjlrr2pWrw/vuUCFdm8CbUHJ832oQ==}
+  /@sentry/core@7.65.0:
+    resolution: {integrity: sha512-EwZABW8CtAbRGXV69FqeCqcNApA+Jbq308dko0W+MFdFe+9t2RGubUkpPxpJcbWy/dN2j4LiuENu1T7nWn0ZAQ==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.28.1
-      '@sentry/utils': 7.28.1
-      tslib: 1.14.1
+      '@sentry/types': 7.65.0
+      '@sentry/utils': 7.65.0
+      tslib: 2.5.0
     dev: false
 
-  /@sentry/types@7.28.1:
-    resolution: {integrity: sha512-DvSplMVrVEmOzR2M161V5+B8Up3vR71xMqJOpWTzE9TqtFJRGPtqT/5OBsNJJw1+/j2ssMcnKwbEo9Q2EGeS6g==}
-    engines: {node: '>=8'}
-    dev: false
-
-  /@sentry/utils@7.28.1:
-    resolution: {integrity: sha512-75/jzLUO9HH09iC9TslNimGbxOP3jgn89P+q7uR+rp2fJfRExHVeKJZQdK0Ij4/SmE7TJ3Uh2r154N0INZEx1g==}
+  /@sentry/integrations@7.65.0:
+    resolution: {integrity: sha512-9b54p0UrkWe9+RAWWTObJQ2k/uStqaUj7BkNFyuaxfKQ4IZViqc4Sa7d7zX2X1oynGNL3ic7iqcgVTh7NvNsAQ==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.28.1
-      tslib: 1.14.1
+      '@sentry/types': 7.65.0
+      '@sentry/utils': 7.65.0
+      localforage: 1.10.0
+      tslib: 2.5.0
+    dev: false
+
+  /@sentry/types@7.65.0:
+    resolution: {integrity: sha512-YYq7IDLLhpSBTmHoyWFtq/5ZDaEJ01r7xGuhB0aSIq33cm2I7im/B3ipzoOP/ukGZSIhuYVW9t531xZEO0+6og==}
+    engines: {node: '>=8'}
+    dev: false
+
+  /@sentry/utils@7.65.0:
+    resolution: {integrity: sha512-2JEBf4jzRSClhp+LJpX/E3QgHEeKvXqFMeNhmwQ07qqd6szhfH2ckYFj4gXk6YiGGY4Act3C6oxLfdZovG71bw==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry/types': 7.65.0
+      tslib: 2.5.0
     dev: false
 
   /@stitches/react@1.2.8(react@18.2.0):
@@ -5800,6 +5810,10 @@ packages:
     engines: {node: '>= 4'}
     dev: true
 
+  /immediate@3.0.6:
+    resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
+    dev: false
+
   /immer@10.0.2:
     resolution: {integrity: sha512-Rx3CqeqQ19sxUtYV9CU911Vhy8/721wRFnJv3REVGWUmoAcIwzifTsdmJte/MV+0/XpM35LZdQMBGkRIoLPwQA==}
     dev: false
@@ -6303,6 +6317,12 @@ packages:
       type-check: 0.4.0
     dev: true
 
+  /lie@3.1.1:
+    resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
+    dependencies:
+      immediate: 3.0.6
+    dev: false
+
   /lilconfig@2.1.0:
     resolution: {integrity: sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==}
     engines: {node: '>=10'}
@@ -6371,6 +6391,12 @@ packages:
       big.js: 5.2.2
       emojis-list: 3.0.0
       json5: 1.0.2
+    dev: false
+
+  /localforage@1.10.0:
+    resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
+    dependencies:
+      lie: 3.1.1
     dev: false
 
   /locate-path@5.0.0:
@@ -10216,12 +10242,13 @@ packages:
     resolution: {integrity: sha512-gduQwd1rOdDMGxFG1gEvhV88Oirdo2p+KjoYFU7k2g+i7n6AFFbDQ5kMPUsW0pNbfQsB/cwXvT1i4Bue0s9g5g==}
     engines: {node: '>=6'}
 
-  /toucan-js@3.1.0:
-    resolution: {integrity: sha512-bRbq/HB+aSfwbsSoCNI6qyPXx2bhsscxSYxnAY63xXv9lIeOLUYfvYdOIBWfAVj9QHNST+X83GQ0lj/llvHpVg==}
+  /toucan-js@3.2.3:
+    resolution: {integrity: sha512-5sdXtcJfgFXfvn6R4GwsNriUQp6RVdIeKc/+xkyXZqGw56fY2oP4+TTPY8LtojgRMiDZhvD4nFxIIl/Ctple+Q==}
     dependencies:
-      '@sentry/core': 7.28.1
-      '@sentry/types': 7.28.1
-      '@sentry/utils': 7.28.1
+      '@sentry/core': 7.65.0
+      '@sentry/integrations': 7.65.0
+      '@sentry/types': 7.65.0
+      '@sentry/utils': 7.65.0
     dev: false
 
   /tr46@0.0.3:
@@ -10266,6 +10293,7 @@ packages:
 
   /tslib@1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
+    dev: true
 
   /tslib@2.5.0:
     resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}
