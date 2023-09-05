@@ -10,49 +10,46 @@ image: /blog-assets/type-safe-your-api/banner.png
 
 ## Introduction
 
-Developers working with REST APIs often grapple with challenges like lack of type safety, manual
-response parsing, and disjointed endpoint interfaces. These hurdles can hinder the effectiveness and
-reliability of REST API development. This blog post introduces `feTS`, an innovative solution that
-addresses these issues and offers a more streamlined and powerful approach to REST API development.
+About two years ago, I began my journey to become a developer, driven by a strong passion for
+learning and creating. As a junior developer, I was eager to find a project that would help me grow
+my skills while being fun and interesting.
 
-## Code with REST API Today
+For my project, I needed to use an REST API, to be specific. This API allows me to fetch data from a
+server and use it in my application. It supports operations like reading (GET), updating (PUT),
+creating (POST), and deleting (DELETE) various types of data.
 
-REST API, a lightweight protocol for web services, is popular among developers due to its simplicity
-and versatility. However, its advantages come with certain drawbacks that can impact development
-efficiency and reliability:
-
-- Lack of Type Safety: REST APIs lack inherent type safety, leading to potential runtime errors and
-  bugs.
-- Manual Response Parsing: Developers must manually parse response data, which is time-consuming and
-  error-prone.
-- Endpoint Interface: REST APIs lack a unified interface for endpoints, making them less intuitive
-  and user-friendly.
+Working with REST APIs can be tricky due to issues like the lack of type safety, which can lead to
+errors and bugs during development. In this blog post, I'll introduce you to `feTS`, a solution that
+simplifies REST API development. `feTS` help with these challenges, making API development more
+reliable and straight forward.
 
 ## Introducing `feTS`: Type-Safe REST API Development
 
-`feTS`, short for "Fetch" + "TypeScript," is a cutting-edge technology designed to elevate REST API
-development to new heights. By harnessing the capabilities of `TypeScript` and the OpenAPI
-specification, `feTS` ensures that data exchanged between client and server is not only well-defined
-but also strongly typed. This proactive approach catches errors during compilation, resulting in
-more robust and reliable applications.
+`feTS`, which stands for 'Fetch' and 'TypeScript,' is a modern technology that enhances REST APIs.
+By using TypeScript and the OpenAPI specification, feTS ensures that data exchanged between the
+client and server is clearly defined and error-free. This proactive approach identifies and prevents
+errors during development, making your applications more dependable and robust.
 
 ## A Practical Example: Leveraging `feTS` for Soccer Team Information
 
 To illustrate the power of `feTS`, let's dive into a real-world example. We'll build a demo app that
-interacts with the SportStats V4 API using `feTS`. Our goal is to fetch soccer team information and
-display it in an intuitive user interface.
+interacts with the
+[SportStats](https://sportsdata.io/developers/api-documentation/soccer#/sports-data-feeds) V4 API
+using `feTS`. Our goal is to fetch soccer team information and display it in an intuitive user
+interface.
 
 ### Step 1: Obtain a Free Trial Token for Sportstats
 
-To begin, create a free trial Token for SportStats API access. The registration process is quick and
-easy. You can find the registration form [here](https://sportsdata.io/cart/free-trial).
+To get started, create a free trial Token for SportStats API access. The registration process is
+straight forward and won't take much time. You can find the registration form
+[here](https://sportsdata.io/cart/free-trial).
 
-BTW, you can choose any other API you want, but for this example, we will use the SportStats API.
-You can find openApi at `APIS.GURU` [website](https://apis.guru/about/)
+By the way, you can choose any other API you want, but for this example, we will use the SportStats
+API. You can find openApi at `APIS.GURU` [website](https://apis.guru/about/)
 
 ### Step 2: Incorporate OpenAPI Definitions into TypeScript
 
-Incorporate the OpenAPI definitions into a TypeScript file and export them using the `as const`
+To integrate OpenAPI definitions into a TypeScript file and export them using the `as const`
 modifier. This process ensures strong typing and easy integration with `feTS`. A sample code snippet
 is provided below:
 
@@ -61,14 +58,14 @@ export default { openapi: '3.0.0' /* ... */ } as const
 ```
 
 `openapi.ts` GitHub file
-[here](https://github.com/TuvalSimha/feTS-example/blob/main/src/feTS/openapi.ts). You can choose any
+[here](https://github.com/TuvalSimha/feTS-example/blob/main/src/fets/openapi.ts). You can choose any
 OpenAPI file you want, but for this example, we will use the SportStats OpenAPI file. You can find
 the OpenAPI file [here](https://sportsdata.io/developers/sports-data-open-api-swagger-files).
 
 ### Step 3: Install `feTS` and Create a Client
 
 Now, we are ready to install `feTS` and create a new client. To do this, you can visit the docs
-[here](https://the-guild.dev/openapi/`feTS`/client/quick-start#installation).
+[here](https://the-guild.dev/openapi/fets/client/quick-start#installation).
 
 Next, create a new `TypeScript` file and import the `createClient` function from the `feTS` package.
 Then, use the `createClient` function to instantiate a new client.
@@ -83,9 +80,14 @@ export const client = createClient<NormalizeOAS<typeof openapi>>({
 ```
 
 `client.ts` GitHub file
-[here](https://github.com/TuvalSimha/feTS-example/blob/main/src/feTS/client.ts).
+[here](https://github.com/TuvalSimha/feTS-example/blob/main/src/fets/client.ts).
 
-The following code demonstrates how to set up the client with a custom error handling plugin:
+In the code below, we demonstrate how to set up the `feTS` client with a custom error handling
+plugin. This plugin is added to enhance the error handling capabilities of the client. This
+error-handling plugin is to provide a robust mechanism for handling HTTP errors that may occur
+during API requests. When the server responds with an error status code, this plugin ensures that an
+informative error message is thrown, including the status code, status text, and the URL that
+triggered the error.
 
 ```typescript filename="client.ts"
 /* eslint-disable react-hooks/rules-of-hooks */
@@ -111,14 +113,13 @@ export const client = createClient<NormalizeOAS<typeof openapi>>({
 ```
 
 By using the custom plugins, you can add your own logic to the client. You can find more information
-about plugins [here](https://the-guild.dev/openapi/`feTS`/client/plugins).
+about plugins [here](https://the-guild.dev/openapi/fets/client/plugins).
 
 ### Step 4: Use the Client to Fetch Data from the API
 
-Now, we are ready to use the client to fetch data from the API. In this step, we'll leverage the
-power of the `feTS` client we created earlier to fetch data from the SportStats API. The
-`fetchAllClubs` function will demonstrate how `feTS` simplifies the process of making API requests
-and handling responses.
+Now, let's use our client to get data from the API. We'll use the `feTS` client we made earlier to
+fetch information from the SportStats API. The fetchAllClubs function will show how `feTS` makes it
+easy to request data from the API and deal with the results.
 
 ```typescript filename="endpoint.ts"
 export async function fetchAllClubs() {
@@ -141,18 +142,15 @@ export async function fetchAllClubs() {
 }
 ```
 
-In this code snippet, we import the client object that we created using `feTS`. The `fetchAllClubs`
-function demonstrates how to use the `feTS` client to make a `GET` request to the
-`/Teams/{competition}` endpoint of the SportStats API. We provide the required parameters, such as
-the `competition` and `format`, and include necessary headers for authentication. All of those
-parameters are auto completed by the IDE.
+In this code snippet, we bring in the client object we made using `feTS`. The `fetchAllClubs`
+function shows how to use this client to send a `GET` request to the SportStats API's
+`/Teams/{competition}` endpoint. We provide the needed details like the competition and format as
+well as the required authentication headers. Your IDE should automatically fill in these parameters
+for you.
 
-Endpoint auto complete: ![Endpoint auto complete](/blog-assets/type-safe-your-api/endpoint.png)
+![Endpoint auto complete](/blog-assets/type-safe-your-api/endpoint.png)
 
 ![Headers auto complete](/blog-assets/type-safe-your-api/autocomplate.png)
-
-`endpoint.ts` GitHub file
-[here](https://github.com/TuvalSimha/feTS-example/blob/main/src/feTS/endpoint.ts).
 
 ### Step 5: Use the Data from the API
 
@@ -229,7 +227,7 @@ export function App() {
 ```
 
 In this code snippet, i created a custom component called `TeamsCards` (GitHub file
-link)\[https://github.com/TuvalSimha/feTS-example/blob/main/src/components/teams-crads.tsx] that
+link)[https://github.com/TuvalSimha/feTS-example/blob/main/src/components/teams-crads.tsx] that
 renders a list of cards with the club's name and logo. When the user clicks on a card, the
 `setSelectedClub` function is called with the selected club as an argument. This allows us to
 display the selected club's information in a separate component.
@@ -250,14 +248,15 @@ import openapi from './openapi'
 export type Club = OASModel<NormalizeOAS<typeof openapi>, 'Team'>
 ```
 
-GitHub file [here](https://github.com/TuvalSimha/feTS-example/blob/main/src/feTS/type-helpers.ts).
+GitHub file [here](https://github.com/TuvalSimha/feTS-example/blob/main/src/fets/type-helpers.ts).
 
 ![Club type](/blog-assets/type-safe-your-api/type.png)
 
 And its done! You've successfully created a React application that fetches data from the SportStats
 API using `feTS`.
 
-![Result](/blog-assets/type-safe-your-api/result.gif)
+![Result](/blog-assets/type-safe-your-api/result.gif) The full code for this example is available on
+[GitHub](https://github.com/TuvalSimha/feTS-example)
 
 ## Leveraging `feTS` for Enhanced API Development
 
@@ -287,5 +286,5 @@ culture of continuous improvement and excellence. Whether you're building a pers
 large-scale application, `feTS` equips you with the tools to create exceptional, type-safe, and
 efficient software.
 
-Thank you for joining us on this journey through `feTS`. Here's to a future filled with seamless and
-elevated REST API development!
+Thank you for joining us on this journey through [feTS](https://the-guild.dev/openapi/fets). Here's
+to a future filled with seamless and elevated REST API development!
