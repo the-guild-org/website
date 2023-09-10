@@ -1,0 +1,322 @@
+---
+title: State of GraphQL Gateways in 2023
+tags: [graphql, gateway, benchmark, performance, report]
+authors: dotan
+image: /blog-assets/state-of-graphql-gateways-in-2023/cover.png
+thumbnail: /blog-assets/state-of-graphql-gateways-in-2023/thumbnail.png
+date: 2023-09-10
+description:
+  A six-month journey of researching, benchmarking, exploring and comparing GraphQL gateways and the
+  Federation spec in 2023.
+---
+
+import NextImage from 'next/image'
+import { Callout } from '@theguild/components'
+import fedV1ConstantVusOverTime from './fed-v1-constant-vus-over-time.svg'
+import fedV1ConstantVusOverTimeDelay from './fed-v1-constants-vus-subgraphs-delay.svg'
+import fedV1rampingVus from './fed-v1-ramping-vus.svg'
+import gatewayImage from './gw.png'
+
+The GraphQL ecosystem is growing rapidly, and solutions to complex problems are more accessible than
+ever before.
+
+One of the most common questions about GraphQL is how to extend or enrich it: this can be achieved
+by adding custom flows, securing your `/graphql` endpoint, improving performance through caching,
+orchestrating upstream calls for distributed GraphQL, or monitoring and tracing it.
+
+Either a specific ad-hoc solution or a gateway designed specifically for GraphQL can solve all of
+the following problems.
+
+**In this blog post, we'll cover The Guild's (and other companies) six-month journey of researching,
+exploring, and creating a report on the state of GraphQL gateways in 2023. We compared, tested, and
+benchmark various open-source solutions, and we'd like to share our process thus far.**
+
+<Callout type="info" emoji="❣️">
+  We would like to say thank you for our partners and customers who took part in that journey: thank
+  you for your feedback, patience and support.
+</Callout>
+
+## But First, What's a GraphQL Gateway?
+
+A GraphQL gateway follows a workflow that adds functionality and acts as a proxy between the
+consumer and the actual GraphQL server(s) running the GraphQL schema(s). An architecture diagram of
+this setup will look like the following:
+
+<NextImage src={gatewayImage} alt="" className="mt-6" />
+
+In the architecture chart above, the GraphQL gateway responsible for exposing your GraphQL server
+externally and adding capabilities to it. The GraphQL server, on the other hand, implements the
+actual GraphQL schema and runs resolvers, dataloaders, and any other custom code required for
+fetching and connecting your data or entities.
+
+Incorporating a GraphQL gateway into your architecture can help to offload some of the common
+features and capabilities from your GraphQL server. Here's a (partial) list of things that a GraphQL
+gateway can do:
+
+1. **Caching** in GraphQL can be implemented in various ways, but it doesn't need to be tightly
+   coupled to your schema implementation. A GraphQL gateway can handle caching for the GraphQL
+   server(s) to reduce network traffic to the actual server. This approach also results in a more
+   lightweight and easier-to-maintain GraphQL server implementation.
+2. **Authentication** and **authorization** can be managed by the GraphQL gateway. If you are using
+   JWT or any other standard, you can verify the token, permissions, and scopes at the gateway
+   level. Then, you can pass the authentication metadata (such as user ID) to the GraphQL server.
+   This way, your GraphQL server does not need to handle authentication and can focus solely on
+   implementing your application's business logic.
+3. When it comes to GraphQL servers, **security** is also a concern. By placing a GraphQL gateway in
+   front of your GraphQL server, you can easily protect your GraphQL API from malicious queries and
+   guard against [common attack vectors](https://escape.tech/blog/tag/graphql-vulnerability/).
+4. A GraphQL gateway can also help **harden** your API and prevent the leakage of sensitive
+   information, error details, or even PII.
+5. **Policy** validations are also a popular feature in GraphQL. Things like rate-limiting,
+   depth-limit, or complexity limit can all be implemented in your gateway instead of the server.
+6. A GraphQL gateway can also address the lack in **modern features like real-time or
+   subscriptions** in your GraphQL server. The gateway can expose a real-time network transport,
+   such as WebSocket or SSE, to the consumers while sending a regular HTTP request to the upstream
+   GraphQL server.
+7. **Schema filtering** can also be implemented at the gateway level, allowing for different sets of
+   features, fields, and types to be exposed on each endpoint.
+8. And it can also do easy things, like rendering the latest version of **GraphiQL** for you.
+
+## Benchmarking and Comparing GraphQL Gateways
+
+To understand and compare the GraphQL gateway landscape, we began by collecting information about
+existing solutions. This included:
+
+1. Which distributed GraphQL specifications are supported.
+2. How the product/library is used (as code or as a product).
+3. What features are supported.
+
+For our current benchmarks setup, we made the following decisions to ensure a fair comparison
+between GraphQL gateways:
+
+1. We used a distributed GraphQL specification to check the performance of a complex setup that
+   requires the gateway to take a significant part of the execution flow. We chose the Federation
+   (v1) specification since it is widely used and supported by many gateways.
+2. We disabled response caching to ensure a complete request flow is executed.
+3. We compared responses to ensure that all gateways respond in the same way.
+4. We tracked all available vitals and metrics, such as network traffic, CPU, and RAM.
+5. We tested different use cases to simulate real-life scenarios with different flows, such as peak
+   times or upstream server delays.
+6. We are running all scenarios for every change, and have a complete overview of the results and
+   the stats of every gateway.
+7. We are running Rust-based servers for the subgraphs implementation, to ensure it’s never becoming
+   a bottleneck.
+
+For the benchmark, we picked the following gateways:
+
+1. [**Apollo-Server**](https://www.apollographql.com/docs/apollo-server/): a JS/TS library for
+   implementing GraphQL servers or gateways.
+2. [**GraphQL-Yoga**](https://the-guild.dev/graphql/yoga-server): a JS/TS library for implementing
+   GraphQL servers or gateways.
+3. [**Apollo-Router**](https://www.apollographql.com/docs/router/): the Rust-based product for
+   running Apollo Federation.
+4. [**Wundergraph**](https://wundergraph.com/): a Go-based GraphQL gateway and platform.
+5. [**GraphQL-Mesh**](https://the-guild.dev/graphql/mesh): a JS/TS GraphQL gateway, that also
+   supports anything-to-GraphQL, also supports any other API protocol (REST, OpenAPI, gRPC, SOAP,
+   etc) as subgraphs
+
+In addition to that, we used various runtimes for the JavaScript/TypeScript solutions:
+[NodeJS](https://nodejs.org/en) (16, 18 and 20), [Deno](https://deno.com/), and
+[Bun](https://bun.sh/).
+
+Also, all scenarios are running within Docker container environment, on a stable runner (a dedicated
+GitHub Actions runner, that runs 1 concurrent job, to avoid race conditions or missing resources),
+and limitations for memory and CPU.
+
+**This decisions above are subject to change, mainly because we want to introduce more options and
+more scenarios.**
+
+The [entire source code is open-source](https://github.com/the-guild-org/gateways-benchmark), and we
+encourage developers to help us the following:
+
+- Share more use-cases and realistic scenarios; either by changing the specification used, gateways
+  tested, plugins, execution flow or parameters.
+- Improve the code of the actual gateways and help to improve the GraphQL ecosystem.
+
+## The Numbers
+
+We created the following scenarios to try to simulate real-life use-cases within the tests suite:
+
+### `fed-v1-constant-vus-over-time`
+
+This is the naive, simplest setup with no additional adjustments; the gateway is running the
+Federation v1 specification, with a fairly large query (2 top level fields, and 4~7 nested levels,
+different entities across multiple subgraphs, and some fragments that asks for `String` fields).
+
+**We used 350 VUs over 400s, 1 CPU and 1GB RAM to run the scenario.**
+
+<NextImage src={fedV1ConstantVusOverTime} alt="" className="mt-6 w-full" />
+
+| Gateway                             | RPS ⬇️ |        Requests         |          Duration          |
+| :---------------------------------- | :----: | :---------------------: | :------------------------: |
+| wundergraph                         |  998   | 399641 total, 0 failed  |   avg: 288ms, p95: 561ms   |
+| mesh-bun                            |  505   | 202591 total, 0 failed  |   avg: 689ms, p95: 973ms   |
+| mesh                                |  205   |  82240 total, 0 failed  |  avg: 1701ms, p95: 2170ms  |
+| apollo-gateway-with-yoga-bun        |   42   |  17182 total, 0 failed  | avg: 7919ms, p95: 11646ms  |
+| stitching-federation-with-yoga-bun  |   39   |  16105 total, 0 failed  | avg: 8589ms, p95: 15264ms  |
+| mesh-supergraph                     |   38   |  15660 total, 0 failed  | avg: 9010ms, p95: 10015ms  |
+| apollo-server                       |   34   |  14141 total, 0 failed  | avg: 9939ms, p95: 16105ms  |
+| stitching-federation-with-yoga-uws  |   34   |  14248 total, 0 failed  | avg: 9913ms, p95: 11907ms  |
+| apollo-gateway-with-yoga-uws        |   33   |  13553 total, 0 failed  | avg: 10374ms, p95: 15441ms |
+| apollo-server-node16                |   32   |  13227 total, 0 failed  | avg: 10623ms, p95: 16880ms |
+| apollo-gateway-with-yoga            |   31   |  12782 total, 0 failed  | avg: 11057ms, p95: 17851ms |
+| apollo-router                       |   29   |  12072 total, 0 failed  | avg: 11713ms, p95: 16413ms |
+| stitching-federation-with-yoga      |   22   |  9281 total, 42 failed  | avg: 15217ms, p95: 18985ms |
+| stitching-federation-with-yoga-deno |   22   |  9133 total, 0 failed   | avg: 15524ms, p95: 19650ms |
+| mercurius                           |   7    | 3344 total, 1380 failed | avg: 41982ms, p95: 60001ms |
+
+> [You can find here the updated results, report and statistics.](https://github.com/the-guild-org/gateways-benchmark/blob/main/scenarios/fed-v1-constant-vus-over-time/README.md)
+
+- From the results above, we learn that `wundergraph` is able to handle more requests (~1000) than
+  any other GraphQL gateway. Only GraphQL-Mesh on NodeJS runtime and on a Bun runtime competes with
+  these results (~500 and ~200).
+- Worth mentioning some additional insights:
+  - `wundergraph` (Go) peak RAM usage was ~240MB and it used ~90% of the available CPU.
+  - `mesh` (JS) on NodeJS peak RAM usage was ~440MB and used ~80% of the available CPU. On Bun
+    runtime, it resulted ~260MB/~75%.
+  - `apollo-router` (Rust) peak RAM usage was 800MB, while it used ~80% of the available memory.
+  - Other variations includes different JS servers with various runtimes (Deno, Bun, NodeJS) and
+    various GraphQL servers (GraphQL-Yoga, Apollo-Server).
+  - `mecurius` (JS, based on Fastify) is the only server failed to handle ~50% of the incoming
+    requests while under pressure.
+
+### `fed-v1-constants-vus-subgraphs-delay`
+
+Same as **`fed-v1-constant-vus-over-time`** but with a random delay (20~150ms) for all upstream HTTP
+calls. This scenario forces the gateway to keep more in-flights requests in-memory, and creates a
+more realistic scenario.
+
+**We used 350 VUs over 400s, 1 CPU and 1GB RAM**, with the following ranged delay added to each
+subgraph:
+
+- `reviews` → 20-150ms
+- `products` → 100-120ms
+- `inventory` → 50-100ms
+- `accounts` → 40-130ms
+
+<NextImage src={fedV1ConstantVusOverTimeDelay} alt="" className="mt-6 w-full" />
+
+| Gateway              | RPS ⬇️ |        Requests        |          Duration          |
+| :------------------- | :----: | :--------------------: | :------------------------: |
+| wundergraph          |  1041  | 416672 total, 0 failed |   avg: 272ms, p95: 527ms   |
+| mesh-bun             |  437   | 175202 total, 0 failed |  avg: 796ms, p95: 1111ms   |
+| mesh                 |  278   | 111488 total, 0 failed |  avg: 1254ms, p95: 1532ms  |
+| apollo-router        |   43   | 17656 total, 0 failed  | avg: 7971ms, p95: 10743ms  |
+| apollo-server        |   40   | 16362 total, 0 failed  | avg: 8587ms, p95: 12595ms  |
+| mesh-supergraph      |   36   | 15015 total, 0 failed  | avg: 9447ms, p95: 10415ms  |
+| apollo-server-node16 |   27   | 11027 total, 0 failed  | avg: 12754ms, p95: 20010ms |
+| mercurius            |   7    | 3140 total, 687 failed | avg: 44878ms, p95: 60001ms |
+
+> [You can find here the updated results, report and statistics.](https://github.com/the-guild-org/gateways-benchmark/blob/main/scenarios/fed-v1-constants-vus-subgraphs-delay/README.md)
+
+- From the results above, we learn that `wundergraph` is able to handle more requests (~800) than
+  any other GraphQL gateway. Only GraphQL-Mesh on NodeJS runtime and on a Bun runtime competes with
+  these results (~400 and ~200). The delay added to the upstream calls effected `wundergraph`
+  ability to handle multiple requests (RPS dropped by 50%), while other gateways didn’t have a
+  similar effect (`apollo-router` and `graphql-mesh`).
+- When we tested this scenario with a larger delays on the upstream calls, we noticed a significant
+  increase in memory for `wundergraph`.
+
+### `fed-v1-ramping-vus`
+
+Same as the previous setup, but this scenario aims to push the gateway to the limit by **running a
+gradual increase of VUs, up to 1500VUs, over 300s**. Some gateways are lagging behind or breaks at
+such scale (with the limitation of resources), and it’s easier to spot the maximum capacity of
+requests it can handle while under pressure.
+
+The chart below measures the **p95** of the request duration.
+
+<NextImage src={fedV1rampingVus} alt="" className="mt-6 w-full" />
+
+| Gateway                             | duration(p95)⬇️ | RPS |         Requests         |                       Durations                        |
+| :---------------------------------- | :-------------: | :-: | :----------------------: | :----------------------------------------------------: |
+| wundergraph                         |     1699ms      | 924 |  286546 total, 0 failed  |    avg: 739ms, p95: 1700ms, max: 3110ms, med: 674ms    |
+| mesh-bun                            |     3116ms      | 495 |  153587 total, 0 failed  |   avg: 1534ms, p95: 3116ms, max: 5212ms, med: 1407ms   |
+| mesh                                |     5643ms      | 264 |  81918 total, 0 failed   |   avg: 2914ms, p95: 5644ms, max: 9909ms, med: 2810ms   |
+| stitching-federation-with-yoga      |     45789ms     | 31  |  10637 total, 0 failed   | avg: 23021ms, p95: 45790ms, max: 56322ms, med: 22459ms |
+| apollo-router                       |     46496ms     | 36  | 12110 total, 3509 failed | avg: 21222ms, p95: 46497ms, max: 60018ms, med: 16782ms |
+| stitching-federation-with-yoga-uws  |     49316ms     | 28  |   9839 total, 0 failed   | avg: 25052ms, p95: 49316ms, max: 57616ms, med: 23972ms |
+| stitching-federation-with-yoga-deno |     49675ms     | 30  |  10200 total, 57 failed  | avg: 24510ms, p95: 49675ms, max: 60204ms, med: 24140ms |
+| mesh-supergraph                     |     51428ms     | 31  |  10535 total, 12 failed  | avg: 23588ms, p95: 51428ms, max: 60001ms, med: 20557ms |
+| stitching-federation-with-yoga-bun  |     59102ms     | 34  | 11573 total, 577 failed  | avg: 21393ms, p95: 59103ms, max: 60772ms, med: 20214ms |
+| apollo-gateway-with-yoga-bun        |     59879ms     | 30  | 10380 total, 577 failed  | avg: 21994ms, p95: 59880ms, max: 60246ms, med: 17703ms |
+| apollo-gateway-with-yoga-uws        |     60000ms     | 33  | 11224 total, 1655 failed | avg: 21537ms, p95: 60001ms, max: 61194ms, med: 9610ms  |
+| apollo-server-node16                |     60001ms     | 29  | 10193 total, 2103 failed | avg: 23630ms, p95: 60001ms, max: 60239ms, med: 10019ms |
+| mercurius                           |     60001ms     | 15  | 5256 total, 3526 failed  | avg: 45224ms, p95: 60001ms, max: 60020ms, med: 60000ms |
+| apollo-gateway-with-yoga            |     60002ms     | 26  | 9015 total, 2188 failed  | avg: 26160ms, p95: 60002ms, max: 60370ms, med: 11667ms |
+| apollo-server                       |     60002ms     | 29  | 9890 total, 1952 failed  | avg: 23897ms, p95: 60003ms, max: 60799ms, med: 10181ms |
+
+> [You can find here the updated results, report and statistics.](https://github.com/the-guild-org/gateways-benchmark/blob/main/scenarios/fed-v1-ramping-vus/README.md)
+
+- Based on the results above, we can conclude that `wundergraph` performs well even under heavy
+  request loads.
+
+- Most of the JS/TS servers, including `apollo-router` (Rust), failed to serve a percentage of
+  requests. The only JS/TS server capable of handling a high volume of requests is GraphQL-Yoga (and
+  GraphQL-Mesh).
+
+## The Fine Print
+
+Here are some important points to consider regarding the gateways tested in this benchmark:
+
+- **Federation specification compatibility:**
+  - Among the list of gateways tested, only `apollo-server`, `apollo-router`, and `graphql-mesh`
+    fully support the Federation v1 specification without any adjustments. Other servers, such as
+    `wundergraph`, do not have full support (Federation v2 specification is fully supported at the
+    moment only by `apollo-router`, `apollo-server` and `graphql-mesh`).
+  - We used the Federation Supergraph specification during the server runs, which is an artifact
+    produced from a successful composition of subgraphs. Some gateways, like `wundergraph` and
+    `mercurius`, do not support this specification, and a list of services was provided with a
+    real-time composition based on GraphQL introspection.
+  - We chose to use Federation v1 and not Federation v2 for this test because it is widely adopted
+    and more supported by available gateways.
+- **NodeJS runtimes:**
+  - For NodeJS, we used version 18 (LTS) of the engine.
+  - In some of the scenarios mentioned above, we used Bun (recently released v1).
+- **Fair comparison:**
+  - All gateways were running the same GraphQL schema, and the same GraphQL query was executed.
+  - All gateways were running as Docker containers, using the latest available version (and were
+    kept updated using Renovate).
+  - Resources were limited to 1 CPU and 1GB RAM for all gateways in all scenarios.
+- **Subgraphs metrics:**
+  - In all the scenarios mentioned, all subgraphs consumed approximately 3% of the CPU and 10MB of
+    memory. We measured this to ensure that the subgraphs were not becoming the bottleneck and
+    affecting the results.
+
+### Keeping This Report Updated
+
+We welcome contributions from the community. If you notice any incorrect configuration, setup, or
+any other issue that affects the results or the comparison, please
+[reach out to us and report a GitHub issue](https://github.com/the-guild-org/gateways-benchmark/issues/new).
+This will help us keep this benchmark up to date and ensure a fair comparison.
+
+We also encourage companies and developers to improve their stack. We would love to update this blog
+post when significant changes in results occur (the results in the repository are always up to
+date!).
+
+### A Note on Conductor
+
+The Guild is building [Conductor](https://the-guild.dev/graphql/gateway), a powerful GraphQL gateway
+aiming to solve the following:
+
+- **GraphQL-first**: Conductor is built from the ground up to be a GraphQL gateway. It is not a
+  generic proxy or a reverse proxy, but a gateway that understands GraphQL and can handle it in a
+  more efficient way.
+- **Multiple specifications**: Conductor will support popular specifications like Apollo Federation,
+  but also other specifications like Fusion.
+- **Performance**: Conductor is built with performance in mind. It is written in Rust, and it is
+  designed to be fast and efficient.
+- **Extensibility**: Conductor is built to be extensible. It will support plugins and custom
+  extensions to add functionality and features.
+- **Security**: Conductor will support various security features out of the box, such as
+  rate-limiting, depth-limit, complexity-limit, and more.
+- **Monitoring**: Conductor will support monitoring and tracing out of the box. It will also support
+  various metrics and vitals to help you understand your GraphQL gateway better.
+- **Open-Source**: All tools built by The Guild are MIT open-source, you can use it for free and
+  contribute to it.
+- **Support**: The Guild is a company that provides support and consulting for GraphQL, we work with
+  many companies and learn from their use-cases. We are here to help you with your GraphQL journey.
+
+We are currently working on Conductor, and we are planning to release it in the coming months. If
+you are interested in learning more about Conductor, please
+[reach out to us](https://the-guild.dev/graphql/gateway) and let us know.
