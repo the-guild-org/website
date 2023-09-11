@@ -24,10 +24,19 @@ async function handleErrorResponse(options: {
       ]);
     });
 
+    // clone to allow the original response to be reused
+    const clonedBody = await options.response.clone().text();
+    const headers: Record<string, string> = {};
+    for (const [key, val] of options.response.headers.entries()) {
+      headers[key] = val;
+    }
     options.sentry.setExtras({
       'User Endpoint': requestedEndpoint,
       'Upstream Endpoint': options.endpoint,
       'Error Code': options.response.status,
+      'Status Text': options.response.statusText,
+      Headers: JSON.stringify(headers),
+      Body: clonedBody,
     });
 
     if (options.request.headers.has('cf-connecting-ip')) {
