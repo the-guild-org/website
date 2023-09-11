@@ -137,9 +137,13 @@ async function handleEvent(request: Request, sentry: Toucan): Promise<Response> 
     return handleFeed(sentry, request.url, publicDomain);
   }
 
-  const match = Object.keys(mappings).find(key => parsedUrl.pathname.startsWith(key)) as
-    | keyof typeof mappings
-    | undefined;
+  const match = Object.keys(mappings).find(path => {
+    // make sure that all match path parts are present in the request path's
+    // parts (in order). this way we avoid false positives with .startsWith like:
+    // "/graphql/codegenASDF" matching "/graphql/codegen"
+    const requestPathParts = parsedUrl.pathname.split('/');
+    return path.split('/').every((part, index) => requestPathParts[index] === part);
+  }) as keyof typeof mappings | undefined;
 
   if (match) {
     sentry.setTag('website.match', match);
