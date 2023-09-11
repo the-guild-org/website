@@ -41,6 +41,12 @@ async function handleErrorResponse(options: {
       new Error(` ${options.response.status}: ${requestedEndpoint} `),
     );
 
+    // return original response if it isnt a 404, will help with
+    // debugging especially if Cloudflare is blocking the request
+    if (options.response.status !== 404) {
+      return options.response;
+    }
+
     const errorResponseContent = await fetch(`https://${options.fallbackRoute.rewrite}/404`, {
       cf: {
         cacheTtl: options.cfFetchCacheTtl,
