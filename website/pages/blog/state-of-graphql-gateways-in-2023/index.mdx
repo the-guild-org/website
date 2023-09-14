@@ -164,7 +164,18 @@ different entities across multiple subgraphs, and some fragments spreads).
   <NextImage src={fedV1ConstantVusOverTime} alt="" className="mt-6 w-full" />
 </Callout>
 
-- TODO insights
+Here are some insights worth mentioning:
+
+✅ All gateways tested were able to process all requests without any failures (side note: when CPU limit is lower, some JS gateways are failing to respond to requests, and the requests are failing with a timeout or connecting drop).
+
+🏆 **Apollo-Router** and **Wundergraph** are the fastest gateways, with an average response time of
+  900ms and a p95 of 2500ms, while under pressure of incoming requests. 
+
+🚅 The fastest JS-based gateway is GraphQL-Mesh (almost x2 than other JS-based), and when running on Bun runtime, it's even faster (x1.5). 
+
+📈 The peak memory usage of **Apollo-Router** was around 400MB, while **Wundergraph** needed more resources (x3, 1.3GB) to handle the same amount of requests. Memory consumption of **GraphQL-Mesh** in the test above was 550MB on Bun, and 1.4GB on NodeJS 18. 
+
+📊 `mercurius` (Fastify-based) was able to handle ~50 requests.
 
 ### `constant-vus-subgraphs-delay`
 
@@ -193,7 +204,15 @@ more realistic scenario.
   <NextImage src={fedV1ConstantVusOverTimeDelay} alt="" className="mt-6 w-full" />
 </Callout>
 
-TODO insights
+Here are some insights worth mentioning:
+
+🏆 Similar to the previous test, **Apollo-Router** and **Wundergraph** are the fastest gateways, with an average response time of 1100ms and a p95 of 2300ms, while under pressure of incoming requests.
+
+🚅 The fastest JS-based gateway is **GraphQL-Mesh** (almost x2 than other JS-based), and when running on Bun runtime, it's even faster (x1.5).
+
+📈 The increased time of in-flight requests and the combination of Go runtime, led **Wundergraph** use 2.6GB of RAM, while **Apollo-Router** was able to handle the same amount of requests with 600MB of RAM.
+
+📈 **GraphQL-Mesh** running on Bun was also able to handle a significant amount of requests with just 600MB of RAM. 
 
 ### `constant-vus-subgraphs-delay-resources`
 
@@ -204,7 +223,7 @@ Same as **`constant-vus-subgraphs-delay-resources`** but with additional resourc
 - **VUs:** 500
 - **Time:**: 10 minutes
 - **CPU limit:** 4
-- **Memory limit:** GB
+- **Memory limit:** 8GB
 
 | Gateway         | RPS ⬇️ |        Requests        |          Duration          | Notes |
 | :-------------- | :----: | :--------------------: | :------------------------: | :---- |
@@ -220,7 +239,11 @@ Same as **`constant-vus-subgraphs-delay-resources`** but with additional resourc
   <NextImage src={fedV1ConstantVusOverTimeDelayResources} alt="" className="mt-6 w-full" />
 </Callout>
 
-TODO insights
+Here are some insights worth mentioning:
+
+📊 More CPU and more RAM were able to push the gateways tested to better results. **Apollo-Router** didn't seem to use most of the provided RAM (only needed 700MB) while **Wundergraph** has high memory consumption (almost 3GB).
+
+📈 The ability of **GraphQL-Mesh** to use NodeJS's `cluster` feature pays off when more CPUs are available to use. 
 
 ### `ramping-vus`
 
@@ -250,7 +273,11 @@ The chart below measures the **p95** of the request duration (lower is better).
   <NextImage src={fedV1rampingVus} alt="" className="mt-6 w-full" />
 </Callout>
 
-TODO insights
+Here are some insights worth mentioning:
+
+🏆 **Apollo-Router** and **Wundergraph** are the fastest gateways and are able to process all requests, with an average duration of 6500ms.
+
+❌ **Apollo-Server** and mercurius (JS-based) fails to handle the load, and both are failing to respond to requests (with a timeout or connection drop). From the JS-based solution, **GraphQL-Mesh** is the only one able to handle all requests.
 
 ### The Fine Print
 
@@ -279,8 +306,17 @@ Here are some important points to consider regarding the gateways tested in this
   - In all the scenarios mentioned, all subgraphs consumed approximately 3% of the CPU and 10MB of
     memory. We measured this to ensure that the subgraphs were not becoming the bottleneck and
     affecting the results.
+- **Not only Federation**:
+  - The expectation from a GraphQL gateway is to do more than query planner - while GraphQL-Mesh and Wundergraph has broader scope and supports more use-cases, the Apollo tools are tailored to the Apollo ecosystem, and built for a specific purpose. 
 
-### 
+### What Did We Learn?
+
+- **Compatibility** is a big issue in the GraphQL ecosystem. The lack of a standard specification
+  for GraphQL gateways makes it hard to compare and benchmark different solutions. We hope that
+  future specifications will be more widely adopted and supported by the community.
+- **Performance** is a big concern for GraphQL gateways. The ability to handle a large number of requests and to scale easily is a must-have for any GraphQL gateway. Resource consumption is also a big concern, and it's important to aim to keep the memory and CPU usage low, to avoid bottlenecks and to keep the cost low.
+- **Runtime environment matters:** NodeJS is great, but we are keeping an eye on other runtimes, such as Deno and Bun. We
+  are also looking forward to seeing more solutions built with these runtimes. Rust keeps RAM lower when written correctly, and Go is also a great option for building GraphQL gateways, but memory consumption could be higher.
 
 ### Keeping This Report Updated
 
