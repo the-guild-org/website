@@ -4,7 +4,7 @@ tags: [graphql, gateway, benchmark, performance, report]
 authors: dotan
 image: /blog-assets/state-of-graphql-gateways-in-2023/cover.png
 thumbnail: /blog-assets/state-of-graphql-gateways-in-2023/thumbnail.png
-date: 2023-09-10
+date: 2023-09-14
 description:
   A six-month journey of researching, benchmarking, exploring and comparing GraphQL gateways and the
   Federation spec in 2023.
@@ -14,6 +14,7 @@ import NextImage from 'next/image'
 import { Callout } from '@theguild/components'
 import fedV1ConstantVusOverTime from './fed-v1-constant-vus-over-time.svg'
 import fedV1ConstantVusOverTimeDelay from './fed-v1-constants-vus-subgraphs-delay.svg'
+import fedV1ConstantVusOverTimeDelayResources from './fed-v1-constants-vus-subgraphs-delay-resources.svg'
 import fedV1rampingVus from './fed-v1-ramping-vus.svg'
 import gatewayImage from './gw.png'
 
@@ -32,8 +33,7 @@ exploring, and creating a report on the state of GraphQL gateways in 2023. We co
 benchmark various open-source solutions, and we'd like to share our process thus far.**
 
 <Callout type="info" emoji="❣️">
-  We would like to say thank you for our partners and customers who took part in that journey: thank
-  you for your feedback, patience and support.
+  We would like to thank our partners and customers who took part in that journey!
 </Callout>
 
 ## But First, What's a GraphQL Gateway?
@@ -42,8 +42,9 @@ A GraphQL gateway follows a workflow that adds functionality and acts as a proxy
 consumer and the actual GraphQL server(s) running the GraphQL schema(s). An architecture diagram of
 this setup will look like the following:
 
-<NextImage src={gatewayImage} alt="" className="mt-6" />
-
+<Callout type="info" emoji="">
+  <NextImage src={gatewayImage} alt="" className="mt-6" />
+</Callout>
 In the architecture chart above, the GraphQL gateway responsible for exposing your GraphQL server
 externally and adding capabilities to it. The GraphQL server, on the other hand, implements the
 actual GraphQL schema and runs resolvers, dataloaders, and any other custom code required for
@@ -75,7 +76,7 @@ gateway can do:
    GraphQL server.
 7. **Schema filtering** can also be implemented at the gateway level, allowing for different sets of
    features, fields, and types to be exposed on each endpoint.
-8. And it can also do easy things, like rendering the latest version of **GraphiQL** for you.
+8. And it can also do easy things, like rendering the latest version of **GraphiQL** for you, with the all the enabled transports configured (WebSocket/SSE/HTTP).
 
 ## Benchmarking and Comparing GraphQL Gateways
 
@@ -127,7 +128,7 @@ and limitations for memory and CPU.
 more scenarios.**
 
 The [entire source code is open-source](https://github.com/the-guild-org/gateways-benchmark), and we
-encourage developers to help us the following:
+encourage developers to help us with the following:
 
 - Share more use-cases and realistic scenarios; either by changing the specification used, gateways
   tested, plugins, execution flow or parameters.
@@ -135,127 +136,123 @@ encourage developers to help us the following:
 
 ## The Numbers
 
-We created the following scenarios to try to simulate real-life use-cases within the tests suite:
+### `constant-vus-over-time`
 
-### `fed-v1-constant-vus-over-time`
+> [You can find here the latest results, report and statistics](https://github.com/the-guild-org/gateways-benchmark/blob/main/federation-v1/scenarios/constant-vus-over-time/README.md#overview-for-constant-vus-over-time)
 
 This is the naive, simplest setup with no additional adjustments; the gateway is running the
-Federation v1 specification, with a fairly large query (2 top level fields, and 4~7 nested levels,
-different entities across multiple subgraphs, and some fragments that asks for `String` fields).
+Federation v1 specification, with a large query (2 top level fields, and 4~7 nested levels,
+different entities across multiple subgraphs, and some fragments spreads).
 
-**We used 350 VUs over 400s, 1 CPU and 1GB RAM to run the scenario.**
+- **VUs:** 300
+- **Time:**: 10 minutes
+- **CPU limit:** 2
+- **Memory limit:** 4GB
 
-<NextImage src={fedV1ConstantVusOverTime} alt="" className="mt-6 w-full" />
+| Gateway              | RPS ⬇️ |        Requests        |         Duration         | Notes |
+| :------------------- | :----: | :--------------------: | :----------------------: | :---- |
+| apollo-router        |  172   | 103759 total, 0 failed | avg: 929ms, p95: 2496ms  | ✅     |
+| wundergraph          |  169   | 101815 total, 0 failed | avg: 894ms, p95: 2486ms  | ✅     |
+| mesh-bun             |   97   | 58841 total, 0 failed  | avg: 3036ms, p95: 3201ms | ✅     |
+| mesh-supergraph      |   83   | 50399 total, 0 failed  | avg: 3541ms, p95: 4417ms | ✅     |
+| mesh                 |   72   | 43957 total, 0 failed  | avg: 4076ms, p95: 5613ms | ✅     |
+| apollo-server        |   67   | 40913 total, 0 failed  | avg: 4396ms, p95: 6238ms | ✅     |
+| apollo-server-node16 |   67   | 40426 total, 0 failed  | avg: 4450ms, p95: 6277ms | ✅     |
+| mercurius            |   46   | 28051 total, 0 failed  | avg: 6419ms, p95: 7076ms | ✅     |
 
-| Gateway                             | RPS ⬇️ |        Requests         |          Duration          |
-| :---------------------------------- | :----: | :---------------------: | :------------------------: |
-| wundergraph                         |  998   | 399641 total, 0 failed  |   avg: 288ms, p95: 561ms   |
-| mesh-bun                            |  505   | 202591 total, 0 failed  |   avg: 689ms, p95: 973ms   |
-| mesh                                |  205   |  82240 total, 0 failed  |  avg: 1701ms, p95: 2170ms  |
-| apollo-gateway-with-yoga-bun        |   42   |  17182 total, 0 failed  | avg: 7919ms, p95: 11646ms  |
-| stitching-federation-with-yoga-bun  |   39   |  16105 total, 0 failed  | avg: 8589ms, p95: 15264ms  |
-| mesh-supergraph                     |   38   |  15660 total, 0 failed  | avg: 9010ms, p95: 10015ms  |
-| apollo-server                       |   34   |  14141 total, 0 failed  | avg: 9939ms, p95: 16105ms  |
-| stitching-federation-with-yoga-uws  |   34   |  14248 total, 0 failed  | avg: 9913ms, p95: 11907ms  |
-| apollo-gateway-with-yoga-uws        |   33   |  13553 total, 0 failed  | avg: 10374ms, p95: 15441ms |
-| apollo-server-node16                |   32   |  13227 total, 0 failed  | avg: 10623ms, p95: 16880ms |
-| apollo-gateway-with-yoga            |   31   |  12782 total, 0 failed  | avg: 11057ms, p95: 17851ms |
-| apollo-router                       |   29   |  12072 total, 0 failed  | avg: 11713ms, p95: 16413ms |
-| stitching-federation-with-yoga      |   22   |  9281 total, 42 failed  | avg: 15217ms, p95: 18985ms |
-| stitching-federation-with-yoga-deno |   22   |  9133 total, 0 failed   | avg: 15524ms, p95: 19650ms |
-| mercurius                           |   7    | 3344 total, 1380 failed | avg: 41982ms, p95: 60001ms |
+<Callout type="info" emoji="">
+  <NextImage src={fedV1ConstantVusOverTime} alt="" className="mt-6 w-full" />
+</Callout>
 
-> [You can find here the updated results, report and statistics.](https://github.com/the-guild-org/gateways-benchmark/blob/main/scenarios/fed-v1-constant-vus-over-time/README.md)
+- TODO insights
 
-- From the results above, we learn that `wundergraph` is able to handle more requests (~1000) than
-  any other GraphQL gateway. Only GraphQL-Mesh on NodeJS runtime and on a Bun runtime competes with
-  these results (~500 and ~200).
-- Worth mentioning some additional insights:
-  - `wundergraph` (Go) peak RAM usage was ~240MB and it used ~90% of the available CPU.
-  - `mesh` (JS) on NodeJS peak RAM usage was ~440MB and used ~80% of the available CPU. On Bun
-    runtime, it resulted ~260MB/~75%.
-  - `apollo-router` (Rust) peak RAM usage was 800MB, while it used ~80% of the available memory.
-  - Other variations includes different JS servers with various runtimes (Deno, Bun, NodeJS) and
-    various GraphQL servers (GraphQL-Yoga, Apollo-Server).
-  - `mecurius` (JS, based on Fastify) is the only server failed to handle ~50% of the incoming
-    requests while under pressure.
+### `constant-vus-subgraphs-delay`
 
-### `fed-v1-constants-vus-subgraphs-delay`
+> [You can find here the latest results, report and statistics](https://github.com/the-guild-org/gateways-benchmark/tree/main/federation-v1/scenarios/constant-vus-subgraphs-delay#overview-for-constant-vus-subgraphs-delay)
 
-Same as **`fed-v1-constant-vus-over-time`** but with a random delay (20~150ms) for all upstream HTTP
+Same as **`constant-vus-over-time`** but with a random delay (20~150ms) for all upstream HTTP
 calls. This scenario forces the gateway to keep more in-flights requests in-memory, and creates a
 more realistic scenario.
 
-**We used 350 VUs over 400s, 1 CPU and 1GB RAM**, with the following ranged delay added to each
-subgraph:
+- **VUs:** 300
+- **Time:**: 10 minutes
+- **CPU limit:** 2
+- **Memory limit:** 4GB
 
-- `reviews` → 20-150ms
-- `products` → 100-120ms
-- `inventory` → 50-100ms
-- `accounts` → 40-130ms
+| Gateway         | RPS ⬇️ |        Requests        |          Duration          | Notes |
+| :-------------- | :----: | :--------------------: | :------------------------: | :---- |
+| wundergraph     |  194   | 117131 total, 0 failed |  avg: 1301ms, p95: 1998ms  | ✅     |
+| apollo-router   |  185   | 111345 total, 0 failed |  avg: 1124ms, p95: 2329ms  | ✅     |
+| mesh-bun        |   90   | 54599 total, 0 failed  |  avg: 3280ms, p95: 3785ms  | ✅     |
+| mesh-supergraph |   82   | 49553 total, 0 failed  |  avg: 3598ms, p95: 4470ms  | ✅     |
+| mesh            |   70   | 42526 total, 0 failed  |  avg: 4205ms, p95: 5366ms  | ✅     |
+| apollo-server   |   64   | 38969 total, 0 failed  |  avg: 4619ms, p95: 6051ms  | ✅     |
+| mercurius       |   12   |  7811 total, 0 failed  | avg: 23482ms, p95: 24625ms | ✅     |
 
-<NextImage src={fedV1ConstantVusOverTimeDelay} alt="" className="mt-6 w-full" />
+<Callout type="info" emoji="">
+  <NextImage src={fedV1ConstantVusOverTimeDelay} alt="" className="mt-6 w-full" />
+</Callout>
 
-| Gateway              | RPS ⬇️ |        Requests        |          Duration          |
-| :------------------- | :----: | :--------------------: | :------------------------: |
-| wundergraph          |  1041  | 416672 total, 0 failed |   avg: 272ms, p95: 527ms   |
-| mesh-bun             |  437   | 175202 total, 0 failed |  avg: 796ms, p95: 1111ms   |
-| mesh                 |  278   | 111488 total, 0 failed |  avg: 1254ms, p95: 1532ms  |
-| apollo-router        |   43   | 17656 total, 0 failed  | avg: 7971ms, p95: 10743ms  |
-| apollo-server        |   40   | 16362 total, 0 failed  | avg: 8587ms, p95: 12595ms  |
-| mesh-supergraph      |   36   | 15015 total, 0 failed  | avg: 9447ms, p95: 10415ms  |
-| apollo-server-node16 |   27   | 11027 total, 0 failed  | avg: 12754ms, p95: 20010ms |
-| mercurius            |   7    | 3140 total, 687 failed | avg: 44878ms, p95: 60001ms |
+TODO insights
 
-> [You can find here the updated results, report and statistics.](https://github.com/the-guild-org/gateways-benchmark/blob/main/scenarios/fed-v1-constants-vus-subgraphs-delay/README.md)
+### `constant-vus-subgraphs-delay-resources`
 
-- From the results above, we learn that `wundergraph` is able to handle more requests (~800) than
-  any other GraphQL gateway. Only GraphQL-Mesh on NodeJS runtime and on a Bun runtime competes with
-  these results (~400 and ~200). The delay added to the upstream calls effected `wundergraph`
-  ability to handle multiple requests (RPS dropped by 50%), while other gateways didn’t have a
-  similar effect (`apollo-router` and `graphql-mesh`).
-- When we tested this scenario with a larger delays on the upstream calls, we noticed a significant
-  increase in memory for `wundergraph`.
+> [You can find here the latest results, report and statistics](https://github.com/the-guild-org/gateways-benchmark/blob/main/federation-v1/scenarios/constant-vus-subgraphs-delay-resources/README.md#overview-for-constant-vus-subgraphs-delay-resources)
 
-### `fed-v1-ramping-vus`
+Same as **`constant-vus-subgraphs-delay-resources`** but with additional resources (CPU and RAM) and more concurrent VUs.  
+
+- **VUs:** 500
+- **Time:**: 10 minutes
+- **CPU limit:** 4
+- **Memory limit:** GB
+
+| Gateway         | RPS ⬇️ |        Requests        |          Duration          | Notes |
+| :-------------- | :----: | :--------------------: | :------------------------: | :---- |
+| wundergraph     |  189   | 114259 total, 0 failed |  avg: 1820ms, p95: 3360ms  | ✅     |
+| apollo-router   |  184   | 111024 total, 0 failed |  avg: 1646ms, p95: 3495ms  | ✅     |
+| mesh-supergraph |   89   | 54218 total, 0 failed  |  avg: 5464ms, p95: 6281ms  | ✅     |
+| mesh-bun        |   87   | 53282 total, 0 failed  |  avg: 5635ms, p95: 6124ms  | ✅     |
+| mesh            |   82   | 49600 total, 0 failed  |  avg: 6005ms, p95: 7299ms  | ✅     |
+| apollo-server   |   63   | 38179 total, 0 failed  | avg: 7885ms, p95: 18007ms  | ✅     |
+| mercurius       |   12   |  7895 total, 0 failed  | avg: 38666ms, p95: 42028ms | ✅     |
+
+<Callout type="info" emoji="">
+  <NextImage src={fedV1ConstantVusOverTimeDelayResources} alt="" className="mt-6 w-full" />
+</Callout>
+
+TODO insights
+
+### `ramping-vus`
+
+> [You can find here the latest results, report and statistics](https://github.com/the-guild-org/gateways-benchmark/tree/main/federation-v1/scenarios/ramping-vus#overview-for-fed-v1-ramping-vus)
 
 Same as the previous setup, but this scenario aims to push the gateway to the limit by **running a
-gradual increase of VUs, up to 1500VUs, over 300s**. Some gateways are lagging behind or breaks at
-such scale (with the limitation of resources), and it’s easier to spot the maximum capacity of
-requests it can handle while under pressure.
+gradual increase of VUs**. Some gateways are lagging behind or breaks at such scale (with the limitation of resources), and it's easier to spot the top capacity of requests it can handle while under pressure.
 
-The chart below measures the **p95** of the request duration.
+- **VUs:** 50 -> 2000 (ramping)
+- **Time:**: 10 minutes
+- **CPU limit:** 4
+- **Memory limit:** 8GB
 
-<NextImage src={fedV1rampingVus} alt="" className="mt-6 w-full" />
+The chart below measures the **p95** of the request duration (lower is better).
 
-| Gateway                             | duration(p95)⬇️ | RPS |         Requests         |                       Durations                        |
-| :---------------------------------- | :-------------: | :-: | :----------------------: | :----------------------------------------------------: |
-| wundergraph                         |     1699ms      | 924 |  286546 total, 0 failed  |    avg: 739ms, p95: 1700ms, max: 3110ms, med: 674ms    |
-| mesh-bun                            |     3116ms      | 495 |  153587 total, 0 failed  |   avg: 1534ms, p95: 3116ms, max: 5212ms, med: 1407ms   |
-| mesh                                |     5643ms      | 264 |  81918 total, 0 failed   |   avg: 2914ms, p95: 5644ms, max: 9909ms, med: 2810ms   |
-| stitching-federation-with-yoga      |     45789ms     | 31  |  10637 total, 0 failed   | avg: 23021ms, p95: 45790ms, max: 56322ms, med: 22459ms |
-| apollo-router                       |     46496ms     | 36  | 12110 total, 3509 failed | avg: 21222ms, p95: 46497ms, max: 60018ms, med: 16782ms |
-| stitching-federation-with-yoga-uws  |     49316ms     | 28  |   9839 total, 0 failed   | avg: 25052ms, p95: 49316ms, max: 57616ms, med: 23972ms |
-| stitching-federation-with-yoga-deno |     49675ms     | 30  |  10200 total, 57 failed  | avg: 24510ms, p95: 49675ms, max: 60204ms, med: 24140ms |
-| mesh-supergraph                     |     51428ms     | 31  |  10535 total, 12 failed  | avg: 23588ms, p95: 51428ms, max: 60001ms, med: 20557ms |
-| stitching-federation-with-yoga-bun  |     59102ms     | 34  | 11573 total, 577 failed  | avg: 21393ms, p95: 59103ms, max: 60772ms, med: 20214ms |
-| apollo-gateway-with-yoga-bun        |     59879ms     | 30  | 10380 total, 577 failed  | avg: 21994ms, p95: 59880ms, max: 60246ms, med: 17703ms |
-| apollo-gateway-with-yoga-uws        |     60000ms     | 33  | 11224 total, 1655 failed | avg: 21537ms, p95: 60001ms, max: 61194ms, med: 9610ms  |
-| apollo-server-node16                |     60001ms     | 29  | 10193 total, 2103 failed | avg: 23630ms, p95: 60001ms, max: 60239ms, med: 10019ms |
-| mercurius                           |     60001ms     | 15  | 5256 total, 3526 failed  | avg: 45224ms, p95: 60001ms, max: 60020ms, med: 60000ms |
-| apollo-gateway-with-yoga            |     60002ms     | 26  | 9015 total, 2188 failed  | avg: 26160ms, p95: 60002ms, max: 60370ms, med: 11667ms |
-| apollo-server                       |     60002ms     | 29  | 9890 total, 1952 failed  | avg: 23897ms, p95: 60003ms, max: 60799ms, med: 10181ms |
+| Gateway         | duration(p95)⬇️ |  RPS  |         Requests         |                       Durations                        | Notes                                                                          |
+| :-------------- | :-------------: | :---: | :----------------------: | :----------------------------------------------------: | :----------------------------------------------------------------------------- |
+| wundergraph     |     6259ms      |  166  |  101678 total, 0 failed  |  avg: 2675ms, p95: 6259ms, max: 23124ms, med: 2295ms   | ✅                                                                              |
+| apollo-router   |     7120ms      |  173  |  105971 total, 0 failed  |  avg: 2608ms, p95: 7121ms, max: 23465ms, med: 2048ms   | ✅                                                                              |
+| mesh-bun        |     21115ms     |  92   |  57577 total, 0 failed   | avg: 11138ms, p95: 21116ms, max: 52679ms, med: 10291ms | ✅                                                                              |
+| mesh-supergraph |     21399ms     |  90   |  56299 total, 0 failed   | avg: 11237ms, p95: 21399ms, max: 29131ms, med: 11075ms | ✅                                                                              |
+| mesh            |     23605ms     |  82   |  51181 total, 0 failed   | avg: 12432ms, p95: 23606ms, max: 31905ms, med: 12327ms | ✅                                                                              |
+| apollo-server   |     58994ms     |  63   | 39650 total, 1806 failed | avg: 16289ms, p95: 58994ms, max: 60494ms, med: 4984ms  | ❌ 1806 failed requests, 1806 non-200 responses, 1806 unexpected GraphQL errors |
+| mercurius       |     60000ms     |  37   | 24106 total, 2878 failed | avg: 25803ms, p95: 60001ms, max: 60014ms, med: 21404ms | ❌ 2878 failed requests, 2878 non-200 responses, 2878 unexpected GraphQL errors |
 
-> [You can find here the updated results, report and statistics.](https://github.com/the-guild-org/gateways-benchmark/blob/main/scenarios/fed-v1-ramping-vus/README.md)
+<Callout type="info" emoji="">
+  <NextImage src={fedV1rampingVus} alt="" className="mt-6 w-full" />
+</Callout>
 
-- Based on the results above, we can conclude that `wundergraph` performs well even under heavy
-  request loads.
+TODO insights
 
-- Most of the JS/TS servers, including `apollo-router` (Rust), failed to serve a percentage of
-  requests. The only JS/TS server capable of handling a high volume of requests is GraphQL-Yoga (and
-  GraphQL-Mesh).
-
-## The Fine Print
+### The Fine Print
 
 Here are some important points to consider regarding the gateways tested in this benchmark:
 
@@ -282,6 +279,8 @@ Here are some important points to consider regarding the gateways tested in this
   - In all the scenarios mentioned, all subgraphs consumed approximately 3% of the CPU and 10MB of
     memory. We measured this to ensure that the subgraphs were not becoming the bottleneck and
     affecting the results.
+
+### 
 
 ### Keeping This Report Updated
 
