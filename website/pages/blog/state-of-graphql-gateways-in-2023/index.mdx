@@ -46,10 +46,10 @@ this setup will look like the following:
   <NextImage src={gatewayImage} alt="" className="mt-6" />
 </Callout>
 
-In the architecture chart above, the GraphQL gateway responsible for exposing your GraphQL server externally
-and adding capabilities to it. The GraphQL server, on the other hand, implements the actual GraphQL schema
-and runs resolvers, dataloaders, and any other custom code required for fetching and connecting your
-data or entities.
+In the architecture chart above, the GraphQL gateway responsible for exposing your GraphQL server
+externally and adding capabilities to it. The GraphQL server, on the other hand, implements the
+actual GraphQL schema and runs resolvers, dataloaders, and any other custom code required for
+fetching and connecting your data or entities.
 
 Incorporating a GraphQL gateway into your architecture can help to offload some of the common
 features and capabilities from your GraphQL server. Here's a (partial) list of things that a GraphQL
@@ -151,8 +151,8 @@ different entities across multiple subgraphs, and some fragments spreads).
 - **CPU limit:** 2
 - **Memory limit:** 4GB
 
-| Gateway              | RPS ⬇️ |         Requests         |         Duration         | Notes                                                                          |
-| :------------------- | :----: | :----------------------: | :----------------------: | :----------------------------------------------------------------------------- |
+| Gateway              | RPS ⬇️ |         Requests         |         Duration         | Notes                                                                           |
+| :------------------- | :----: | :----------------------: | :----------------------: | :------------------------------------------------------------------------------ |
 | apollo-router        |  170   |  102461 total, 0 failed  | avg: 957ms, p95: 2581ms  | ✅                                                                              |
 | wundergraph          |  167   |  100767 total, 0 failed  | avg: 910ms, p95: 2485ms  | ✅                                                                              |
 | mesh-supergraph-bun  |  118   |  71332 total, 0 failed   | avg: 2457ms, p95: 4254ms | ✅                                                                              |
@@ -169,9 +169,9 @@ different entities across multiple subgraphs, and some fragments spreads).
 
 Here are some insights worth mentioning:
 
-✅ Almost gateways tested were able to process all requests without any failures (side note: when CPU
-limit is lower, some JS gateways are failing to respond to requests, and the requests are failing
-with a timeout or connecting drop, as you can see with `apollo-server` on NodeJS 18).
+✅ Almost gateways tested were able to process all requests without any failures (side note: when
+CPU limit is lower, some JS gateways are failing to respond to requests, and the requests are
+failing with a timeout or connecting drop, as you can see with `apollo-server` on NodeJS 18).
 
 🏆 **Apollo-Router** and **Wundergraph** are the fastest gateways, with an average response time of
 900ms and a p95 of 2500ms, while under pressure of incoming requests.
@@ -198,8 +198,8 @@ realistic scenario.
 - **CPU limit:** 2
 - **Memory limit:** 4GB
 
-| Gateway             | RPS ⬇️ |        Requests        |          Duration          | Notes                                                                    |
-| :------------------ | :----: | :--------------------: | :------------------------: | :----------------------------------------------------------------------- |
+| Gateway             | RPS ⬇️ |        Requests        |          Duration          | Notes                                                                     |
+| :------------------ | :----: | :--------------------: | :------------------------: | :------------------------------------------------------------------------ |
 | wundergraph         |  192   | 115747 total, 0 failed |  avg: 1310ms, p95: 2009ms  | ✅                                                                        |
 | apollo-router       |  185   | 111723 total, 0 failed |  avg: 1135ms, p95: 2333ms  | ✅                                                                        |
 | mesh-supergraph-bun |  110   | 66375 total, 0 failed  |  avg: 2647ms, p95: 4503ms  | ✅                                                                        |
@@ -241,8 +241,8 @@ more concurrent VUs.
 - **CPU limit:** 4
 - **Memory limit:** 8GB
 
-| Gateway             | RPS ⬇️ |         Requests         |          Duration          | Notes                                                                          |
-| :------------------ | :----: | :----------------------: | :------------------------: | :----------------------------------------------------------------------------- |
+| Gateway             | RPS ⬇️ |         Requests         |          Duration          | Notes                                                                           |
+| :------------------ | :----: | :----------------------: | :------------------------: | :------------------------------------------------------------------------------ |
 | wundergraph         |  193   |  116207 total, 0 failed  |  avg: 1843ms, p95: 3334ms  | ✅                                                                              |
 | apollo-router       |  182   |  109551 total, 0 failed  |  avg: 1656ms, p95: 3585ms  | ✅                                                                              |
 | mesh-supergraph-bun |  109   |  65836 total, 0 failed   |  avg: 4455ms, p95: 7551ms  | ✅                                                                              |
@@ -281,16 +281,16 @@ under pressure.
 
 The chart below measures the **p95** of the request duration (lower is better).
 
-| Gateway             | duration(p95)⬇️ |  RPS  |           Requests           |                       Durations                       | Notes                                                                                |
-| :------------------ | :-------------: | :---: | :--------------------------: | :---------------------------------------------------: | :----------------------------------------------------------------------------------- |
-| apollo-router       |     6242ms      |  173  |    106281 total, 0 failed    |  avg: 2583ms, p95: 6242ms, max: 23131ms, med: 2148ms  | ✅                                                                                    |
-| wundergraph         |     6814ms      |  165  |    100885 total, 0 failed    |  avg: 2651ms, p95: 6815ms, max: 27757ms, med: 2140ms  | ✅                                                                                    |
-| mesh-supergraph-bun |     16884ms     |  114  |    70264 total, 0 failed     | avg: 8854ms, p95: 16885ms, max: 42783ms, med: 8286ms  | ✅                                                                                    |
-| mesh-supergraph     |     17757ms     |  105  |    65177 total, 0 failed     | avg: 9541ms, p95: 17758ms, max: 25547ms, med: 9563ms  | ✅                                                                                    |
-| mesh-bun            |     18478ms     |  108  |    67032 total, 0 failed     | avg: 9342ms, p95: 18479ms, max: 45471ms, med: 8590ms  | ✅                                                                                    |
-| mesh                |     18740ms     |  101  |    62707 total, 0 failed     | avg: 9956ms, p95: 18740ms, max: 24969ms, med: 9904ms  | ✅                                                                                    |
-| apollo-server       |     60000ms     |  76   |   48202 total, 7443 failed   | avg: 13301ms, p95: 60001ms, max: 61167ms, med: 4285ms | ❌ 7443 failed requests, 7443 non-200 responses, 7443 unexpected GraphQL errors       |
-| mercurius           |     60000ms     | 37    |   24106 total, 2878 failed   | avg: 25803ms, p95: 60001ms, max: 60014ms, med: 21404ms | ❌ 2878 failed requests, 2878 non-200 responses, 2878 unexpected GraphQL errors      |
+| Gateway             | duration(p95)⬇️ | RPS |         Requests         |                       Durations                        | Notes                                                                           |
+| :------------------ | :-------------: | :-: | :----------------------: | :----------------------------------------------------: | :------------------------------------------------------------------------------ |
+| apollo-router       |     6242ms      | 173 |  106281 total, 0 failed  |  avg: 2583ms, p95: 6242ms, max: 23131ms, med: 2148ms   | ✅                                                                              |
+| wundergraph         |     6814ms      | 165 |  100885 total, 0 failed  |  avg: 2651ms, p95: 6815ms, max: 27757ms, med: 2140ms   | ✅                                                                              |
+| mesh-supergraph-bun |     16884ms     | 114 |  70264 total, 0 failed   |  avg: 8854ms, p95: 16885ms, max: 42783ms, med: 8286ms  | ✅                                                                              |
+| mesh-supergraph     |     17757ms     | 105 |  65177 total, 0 failed   |  avg: 9541ms, p95: 17758ms, max: 25547ms, med: 9563ms  | ✅                                                                              |
+| mesh-bun            |     18478ms     | 108 |  67032 total, 0 failed   |  avg: 9342ms, p95: 18479ms, max: 45471ms, med: 8590ms  | ✅                                                                              |
+| mesh                |     18740ms     | 101 |  62707 total, 0 failed   |  avg: 9956ms, p95: 18740ms, max: 24969ms, med: 9904ms  | ✅                                                                              |
+| apollo-server       |     60000ms     | 76  | 48202 total, 7443 failed | avg: 13301ms, p95: 60001ms, max: 61167ms, med: 4285ms  | ❌ 7443 failed requests, 7443 non-200 responses, 7443 unexpected GraphQL errors |
+| mercurius           |     60000ms     | 37  | 24106 total, 2878 failed | avg: 25803ms, p95: 60001ms, max: 60014ms, med: 21404ms | ❌ 2878 failed requests, 2878 non-200 responses, 2878 unexpected GraphQL errors |
 
 <Callout type="info" emoji="">
   <NextImage src={fedV1rampingVus} alt="" className="mt-6 w-full" />
