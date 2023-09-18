@@ -151,17 +151,17 @@ different entities across multiple subgraphs, and some fragments spreads).
 - **CPU limit:** 2
 - **Memory limit:** 4GB
 
-| Gateway              | RPS ⬇️ |         Requests         |         Duration         | Notes                                                                           |
-| :------------------- | :----: | :----------------------: | :----------------------: | :------------------------------------------------------------------------------ |
-| apollo-router        |  170   |  102461 total, 0 failed  | avg: 957ms, p95: 2581ms  | ✅                                                                              |
-| wundergraph          |  167   |  100767 total, 0 failed  | avg: 910ms, p95: 2485ms  | ✅                                                                              |
-| mesh-supergraph-bun  |  118   |  71332 total, 0 failed   | avg: 2457ms, p95: 4254ms | ✅                                                                              |
-| mesh-bun             |  114   |  68703 total, 0 failed   | avg: 2543ms, p95: 4283ms | ✅                                                                              |
-| mesh-supergraph      |   98   |  59402 total, 0 failed   | avg: 2969ms, p95: 3599ms | ✅                                                                              |
-| mesh                 |   96   |  58302 total, 0 failed   | avg: 3027ms, p95: 3837ms | ✅                                                                              |
-| apollo-server        |   67   | 40757 total, 1020 failed | avg: 4410ms, p95: 3455ms | ❌ 1020 failed requests, 1020 non-200 responses, 1020 unexpected GraphQL errors |
-| apollo-server-node16 |   65   |  39813 total, 0 failed   | avg: 4517ms, p95: 6386ms | ✅                                                                              |
-| mercurius            |   51   |  30822 total, 50 failed  | avg: 5837ms, p95: 6103ms | ❌ 50 failed requests                                                           |
+| Gateway              | RPS ⬇️ |        Requests         |         Duration         | Notes                                                                        |
+| :------------------- | :----: | :---------------------: | :----------------------: | :--------------------------------------------------------------------------- |
+| apollo-router        |  175   | 105605 total, 0 failed  | avg: 923ms, p95: 2598ms  | ✅                                                                           |
+| wundergraph          |  168   | 100951 total, 0 failed  | avg: 900ms, p95: 2583ms  | ✅                                                                           |
+| mesh-supergraph-bun  |  120   |  72820 total, 0 failed  | avg: 2400ms, p95: 4116ms | ✅                                                                           |
+| mesh-bun             |  111   |  67229 total, 0 failed  | avg: 2606ms, p95: 4439ms | ✅                                                                           |
+| mesh                 |   94   |  57124 total, 0 failed  | avg: 3092ms, p95: 3723ms | ✅                                                                           |
+| mesh-supergraph      |   94   |  56839 total, 0 failed  | avg: 3109ms, p95: 3815ms | ✅                                                                           |
+| apollo-server        |   69   | 41971 total, 980 failed | avg: 4282ms, p95: 3174ms | ❌ 980 failed requests, 980 non-200 responses, 980 unexpected GraphQL errors |
+| apollo-server-node16 |   67   |  40578 total, 0 failed  | avg: 4432ms, p95: 6252ms | ✅                                                                           |
+| mercurius            |   50   | 30432 total, 50 failed  | avg: 5912ms, p95: 6121ms | ❌ 50 failed requests                                                        |
 
 <Callout type="info" emoji="">
   <NextImage src={fedV1ConstantVusOverTime} alt="" className="mt-6 w-full" />
@@ -200,14 +200,14 @@ realistic scenario.
 
 | Gateway             | RPS ⬇️ |        Requests        |          Duration          | Notes                                                                     |
 | :------------------ | :----: | :--------------------: | :------------------------: | :------------------------------------------------------------------------ |
-| wundergraph         |  192   | 115747 total, 0 failed |  avg: 1310ms, p95: 2009ms  | ✅                                                                        |
-| apollo-router       |  185   | 111723 total, 0 failed |  avg: 1135ms, p95: 2333ms  | ✅                                                                        |
-| mesh-supergraph-bun |  110   | 66375 total, 0 failed  |  avg: 2647ms, p95: 4503ms  | ✅                                                                        |
-| mesh-bun            |  102   | 61855 total, 0 failed  |  avg: 2852ms, p95: 4849ms  | ✅                                                                        |
-| mesh-supergraph     |  100   | 60320 total, 0 failed  |  avg: 2923ms, p95: 3485ms  | ✅                                                                        |
-| mesh                |   92   | 55629 total, 0 failed  |  avg: 3182ms, p95: 3720ms  | ✅                                                                        |
-| apollo-server       |   64   | 38749 total, 86 failed |  avg: 4647ms, p95: 6003ms  | ❌ 86 failed requests, 86 non-200 responses, 86 unexpected GraphQL errors |
-| mercurius           |   12   |  7838 total, 0 failed  | avg: 23409ms, p95: 24461ms | ✅                                                                        |
+| wundergraph         |  192   | 115808 total, 0 failed |  avg: 1311ms, p95: 2017ms  | ✅                                                                        |
+| apollo-router       |  186   | 112402 total, 0 failed |  avg: 1123ms, p95: 2335ms  | ✅                                                                        |
+| mesh-supergraph-bun |  109   | 65876 total, 0 failed  |  avg: 2664ms, p95: 4510ms  | ✅                                                                        |
+| mesh-bun            |  103   | 62060 total, 0 failed  |  avg: 2832ms, p95: 4791ms  | ✅                                                                        |
+| mesh-supergraph     |  101   | 61344 total, 0 failed  |  avg: 2875ms, p95: 3437ms  | ✅                                                                        |
+| mesh                |   93   | 56112 total, 0 failed  |  avg: 3154ms, p95: 3838ms  | ✅                                                                        |
+| apollo-server       |   64   | 38683 total, 92 failed |  avg: 4652ms, p95: 6050ms  | ❌ 92 failed requests, 92 non-200 responses, 92 unexpected GraphQL errors |
+| mercurius           |   12   |  7838 total, 0 failed  | avg: 23393ms, p95: 24457ms | ✅                                                                        |
 
 <Callout type="info" emoji="">
   <NextImage src={fedV1ConstantVusOverTimeDelay} alt="" className="mt-6 w-full" />
@@ -243,14 +243,14 @@ more concurrent VUs.
 
 | Gateway             | RPS ⬇️ |         Requests         |          Duration          | Notes                                                                           |
 | :------------------ | :----: | :----------------------: | :------------------------: | :------------------------------------------------------------------------------ |
-| wundergraph         |  193   |  116207 total, 0 failed  |  avg: 1843ms, p95: 3334ms  | ✅                                                                              |
-| apollo-router       |  182   |  109551 total, 0 failed  |  avg: 1656ms, p95: 3585ms  | ✅                                                                              |
-| mesh-supergraph-bun |  109   |  65836 total, 0 failed   |  avg: 4455ms, p95: 7551ms  | ✅                                                                              |
-| mesh-supergraph     |  102   |  61881 total, 0 failed   |  avg: 4743ms, p95: 5622ms  | ✅                                                                              |
-| mesh-bun            |  101   |  61488 total, 0 failed   |  avg: 4783ms, p95: 8025ms  | ✅                                                                              |
-| mesh                |   98   |  59289 total, 0 failed   |  avg: 4974ms, p95: 6117ms  | ✅                                                                              |
-| apollo-server       |   66   | 40714 total, 2620 failed | avg: 7363ms, p95: 59994ms  | ❌ 2620 failed requests, 2620 non-200 responses, 2620 unexpected GraphQL errors |
-| mercurius           |   12   |   7929 total, 0 failed   | avg: 38511ms, p95: 41511ms | ✅                                                                              |
+| wundergraph         |  192   |  115980 total, 0 failed  |  avg: 1808ms, p95: 3277ms  | ✅                                                                              |
+| apollo-router       |  185   |  111874 total, 0 failed  |  avg: 1674ms, p95: 3630ms  | ✅                                                                              |
+| mesh-supergraph-bun |  109   |  65985 total, 0 failed   |  avg: 4451ms, p95: 7530ms  | ✅                                                                              |
+| mesh-bun            |  102   |  61716 total, 0 failed   |  avg: 4756ms, p95: 7949ms  | ✅                                                                              |
+| mesh-supergraph     |  102   |  61806 total, 0 failed   |  avg: 4746ms, p95: 5971ms  | ✅                                                                              |
+| mesh                |   95   |  57722 total, 0 failed   |  avg: 5109ms, p95: 5981ms  | ✅                                                                              |
+| apollo-server       |   67   | 40608 total, 2610 failed | avg: 7387ms, p95: 59998ms  | ❌ 2610 failed requests, 2610 non-200 responses, 2610 unexpected GraphQL errors |
+| mercurius           |   12   |   7941 total, 0 failed   | avg: 38437ms, p95: 41293ms | ✅                                                                              |
 
 <Callout type="info" emoji="">
   <NextImage src={fedV1ConstantVusOverTimeDelayResources} alt="" className="mt-6 w-full" />
@@ -283,14 +283,13 @@ The chart below measures the **p95** of the request duration (lower is better).
 
 | Gateway             | duration(p95)⬇️ | RPS |         Requests         |                       Durations                        | Notes                                                                           |
 | :------------------ | :-------------: | :-: | :----------------------: | :----------------------------------------------------: | :------------------------------------------------------------------------------ |
-| apollo-router       |     6242ms      | 173 |  106281 total, 0 failed  |  avg: 2583ms, p95: 6242ms, max: 23131ms, med: 2148ms   | ✅                                                                              |
-| wundergraph         |     6814ms      | 165 |  100885 total, 0 failed  |  avg: 2651ms, p95: 6815ms, max: 27757ms, med: 2140ms   | ✅                                                                              |
-| mesh-supergraph-bun |     16884ms     | 114 |  70264 total, 0 failed   |  avg: 8854ms, p95: 16885ms, max: 42783ms, med: 8286ms  | ✅                                                                              |
-| mesh-supergraph     |     17757ms     | 105 |  65177 total, 0 failed   |  avg: 9541ms, p95: 17758ms, max: 25547ms, med: 9563ms  | ✅                                                                              |
-| mesh-bun            |     18478ms     | 108 |  67032 total, 0 failed   |  avg: 9342ms, p95: 18479ms, max: 45471ms, med: 8590ms  | ✅                                                                              |
-| mesh                |     18740ms     | 101 |  62707 total, 0 failed   |  avg: 9956ms, p95: 18740ms, max: 24969ms, med: 9904ms  | ✅                                                                              |
-| apollo-server       |     60000ms     | 76  | 48202 total, 7443 failed | avg: 13301ms, p95: 60001ms, max: 61167ms, med: 4285ms  | ❌ 7443 failed requests, 7443 non-200 responses, 7443 unexpected GraphQL errors |
-| mercurius           |     60000ms     | 37  | 24106 total, 2878 failed | avg: 25803ms, p95: 60001ms, max: 60014ms, med: 21404ms | ❌ 2878 failed requests, 2878 non-200 responses, 2878 unexpected GraphQL errors |
+| wundergraph         |     6798ms      | 168 |  102752 total, 0 failed  |  avg: 2665ms, p95: 6799ms, max: 18164ms, med: 2218ms   | ✅                                                                              |
+| apollo-router       |     6826ms      | 172 |  104975 total, 0 failed  |  avg: 2565ms, p95: 6827ms, max: 18279ms, med: 2098ms   | ✅                                                                              |
+| mesh-supergraph-bun |     16168ms     | 120 |  74289 total, 0 failed   |  avg: 8354ms, p95: 16169ms, max: 40017ms, med: 7648ms  | ✅                                                                              |
+| mesh-supergraph     |     18031ms     | 105 |  64859 total, 0 failed   |  avg: 9598ms, p95: 18032ms, max: 25650ms, med: 9483ms  | ✅                                                                              |
+| mesh-bun            |     18066ms     | 109 |  67768 total, 0 failed   |  avg: 9245ms, p95: 18067ms, max: 44697ms, med: 8680ms  | ✅                                                                              |
+| mesh                |     19777ms     | 98  |  60981 total, 0 failed   | avg: 10275ms, p95: 19777ms, max: 27667ms, med: 10122ms | ✅                                                                              |
+| apollo-server       |     60000ms     | 75  | 48009 total, 7489 failed | avg: 13363ms, p95: 60001ms, max: 60717ms, med: 4289ms  | ❌ 7489 failed requests, 7489 non-200 responses, 7489 unexpected GraphQL errors |
 
 <Callout type="info" emoji="">
   <NextImage src={fedV1rampingVus} alt="" className="mt-6 w-full" />
