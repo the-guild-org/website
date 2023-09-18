@@ -183,7 +183,7 @@ Bun runtime, it's even faster (x1.5).
 resources (x3, 1.3GB) to handle the same amount of requests. Memory consumption of **GraphQL-Mesh**
 in the test above was 550MB on Bun, and 1.4GB on NodeJS 18.
 
-📊 `mercurius` (Fastify-based) was able to handle ~50 requests.
+📊 `mercurius` (Fastify-based) failed to handle ~50 requests.
 
 ### `constant-vus-subgraphs-delay`
 
@@ -264,6 +264,9 @@ memory consumption (almost 3GB).
 
 📈 The ability of **GraphQL-Mesh** to use NodeJS's `cluster` feature pays off when more CPUs are
 available to use.
+
+📊 Under pressure, `apollo-server` (JS) was not able to some percentage of the requests.
+
 
 ### `ramping-vus`
 
