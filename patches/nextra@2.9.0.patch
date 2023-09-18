@@ -1,0 +1,33 @@
+diff --git a/dist/components/callout.d.ts b/dist/components/callout.d.ts
+index bde2741e82a75cf9c9cdd96794e032538a689ebe..ebd05a9d4e412aadf9be65540f18173cf1147c04 100644
+--- a/dist/components/callout.d.ts
++++ b/dist/components/callout.d.ts
+@@ -9,6 +9,7 @@ declare const TypeToEmoji: {
+ type CalloutType = keyof typeof TypeToEmoji;
+ type CalloutProps = {
+     type?: CalloutType;
++    overwriteClassName?: string;
+     emoji?: string | ReactNode;
+     children: ReactNode;
+ };
+diff --git a/dist/components/callout.js b/dist/components/callout.js
+index f05991903edcab806a7219b638f6c83e4549efa0..58a558a5e0d35c1741da1cfe7ddc28b2444a666a 100644
+--- a/dist/components/callout.js
++++ b/dist/components/callout.js
+@@ -25,6 +25,7 @@ var classes = {
+ function Callout({
+   children,
+   type = "default",
++  overwriteClassName,
+   emoji = TypeToEmoji[type]
+ }) {
+   return /* @__PURE__ */ jsxs(
+@@ -33,7 +34,7 @@ function Callout({
+       className: cn(
+         "nextra-callout nx-overflow-x-auto nx-mt-6 nx-flex nx-rounded-lg nx-border nx-py-2 ltr:nx-pr-4 rtl:nx-pl-4",
+         "contrast-more:nx-border-current contrast-more:dark:nx-border-current",
+-        classes[type]
++        overwriteClassName ?? classes[type]
+       ),
+       children: [
+         /* @__PURE__ */ jsx(
