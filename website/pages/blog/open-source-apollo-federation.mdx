@@ -131,13 +131,13 @@ tool that supports Supergraph SDL.
 > It allows other vendors to introduce new schema registries,
 > [GraphQL Hive](https://the-guild.dev/graphql/hive) is a good example of that.
 
-## 24 Times Faster than the Original
+## 20 Times Faster than the Original
 
 In head-to-head comparisons, our implementation outperforms the original by a significant margin.
 When working with simple schemas, our solution is a staggering **5 times faster**.
 
 However, when it comes to large-scale graphs, the difference is even more pronounced, with our
-implementation boasting an astounding **24 times speed improvement**.
+implementation boasting an astounding **20 times speed improvement** (231ms instead of 4.48s).
 
 ```text
 cpu: Apple M1 Max
@@ -156,12 +156,12 @@ summary for small supergraph
 
 • huge supergraph (100+ subgraphs)
 ------------------------------------------------- -----------------------------
-apollo        4.64 s/iter        (4.5 s … 4.94 s)    4.69 s    4.94 s    4.94 s
-guild      193.77 ms/iter (180.85 ms … 224.47 ms) 192.89 ms 224.47 ms 224.47 ms
+apollo        4.48 s/iter       (4.41 s … 4.53 s)    4.51 s    4.53 s    4.53 s
+guild      231.71 ms/iter (217.79 ms … 265.92 ms) 232.53 ms 265.92 ms 265.92 ms
 
 summary for huge supergraph
   guild
-   23.97x faster than apollo
+   19.32x faster than apollo
 ```
 
 ---
