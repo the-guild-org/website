@@ -1,0 +1,10 @@
+export default {
+  '*': {
+    type: 'page',
+    display: 'hidden',
+    theme: {
+      layout: 'full',
+      timestamp: false,
+    },
+  },
+};

@@ -1,10 +1,11 @@
-import Head from 'next/head'
-import { Toaster } from 'react-hot-toast'
-import '@theguild/components/style.css'
-import { globalStyles } from '../styles/global'
+import Head from 'next/head';
+import { Toaster } from 'react-hot-toast';
+import '@theguild/components/style.css';
+import { AppProps } from 'next/app';
+import { globalStyles } from '../styles/global';
 
-export default function App({ Component, pageProps, router }) {
-  globalStyles()
+export default function App({ Component, pageProps, router }: AppProps) {
+  globalStyles();
   return (
     <>
       <Head>
@@ -55,5 +56,5 @@ export default function App({ Component, pageProps, router }) {
       <Toaster />
       <Component {...pageProps} />
     </>
-  )
+  );
 }

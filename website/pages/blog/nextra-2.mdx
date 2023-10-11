@@ -138,9 +138,8 @@ Rendering remote markdown is simple, you will need:
    layout shifts
 
 import { MDXRemote } from 'next-mdx-remote'
-import { compileMdx } from 'nextra/compile'
-import { useMDXComponents } from 'nextra/mdx'
-import { useSSG } from 'nextra/ssg'
+import { useData, useMDXComponents } from '@theguild/components'
+import { compileMdx } from '@theguild/components/compile'
 
 export const getStaticProps = async () => {
   const response = await fetch('https://raw.githubusercontent.com/shuding/nextra/main/README.md')
@@ -156,7 +155,7 @@ export const getStaticProps = async () => {
 }
 
 export const NextraReadme = () => {
-  const compiledSource = useSSG()
+  const compiledSource = useData()
   const components = useMDXComponents()
   return <MDXRemote compiledSource={compiledSource} components={components} />
 }
