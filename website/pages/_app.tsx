@@ -1,3 +1,4 @@
+/* eslint react/no-unknown-property: ['error', { ignore: ['global', 'jsx'] }] */
 import Head from 'next/head';
 import { Toaster } from 'react-hot-toast';
 import '@theguild/components/style.css';
@@ -11,6 +12,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
+
       <style global jsx>{`
         :root {
           --colors-text: white;

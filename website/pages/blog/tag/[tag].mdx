@@ -3,11 +3,13 @@ title: Blog
 description: List of related articles
 ---
 
+import { buildDynamicMeta } from '@theguild/components/compile'
 import blogs from '../../../blogs.json'
 import Blog from '../../blog.mdx'
 
-export const getStaticProps = () => {
-  return { props: {} }
+export const getStaticProps = async () => {
+  const props = await buildDynamicMeta()
+  return { props }
 }
 
 export const getStaticPaths = async () => {
