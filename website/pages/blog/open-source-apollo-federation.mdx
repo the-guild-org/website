@@ -3,48 +3,49 @@ title: Open Source composition and validation library for Apollo Federation
 tags: [graphql]
 authors: [kamil]
 date: 2023-10-05
-description: Introducing MIT licensed drop-in replacement for Apollo Federation composition library.
+description:
+  Introducing MIT licensed drop-in replacement for the Apollo Federation composition library.
 image: /blog-assets/open-source-apollo-federation/cover.png
 thumbnail: /blog-assets/open-source-apollo-federation/thumbnail.png
 ---
 
-The Guild is proud to unveil its latest contribution to the GraphQL community: **an MIT licensed
+The Guild is proud to unveil its latest contribution to the GraphQL community: **an MIT-licensed
 drop-in replacement for `@apollo/composition` library**.
 
-We recognized the importance of already existing ecosystem of tools and existing knowledge base,
-that's why `@theguild/federation-composition` library shares the same API, produces the exact same
-SupergraphSDL and has an identical set of validation rules (including error messages and codes).
+We recognized the importance of the already existing ecosystem of tools and existing knowledge base.
+That is why `@theguild/federation-composition` library shares the same API, produces the exact same
+supergraph SDL, and has an identical set of validation rules (including error messages and codes).
 
 - [GitHub repository](https://github.com/the-guild-org/federation)
 - [NPM package](https://www.npmjs.com/package/@theguild/federation-composition)
 
 ## What Is Composition and Validation?
 
-As you know, **Apollo Federation** is an architectural approach for building and managing GraphQL
-APIs at scale. It consists of several key components:
+**Apollo Federation** is an architectural approach for building and managing GraphQL APIs at scale.
+It consists of several key components:
 
 - **Subgraphs**: These are individual GraphQL services that represent specific domains or
   capabilities. Each subgraph serves a portion of the overall data and functionality that the API
   provides.
 - **Supergraph**: The supergraph is the unified GraphQL schema that contains all the subgraphs. It's
   essentially the merged view of all the individual subgraphs, creating a single API.
-- **Schema Registry**: This is a central repository that stores the schemas of the subgraphs. It's
+- **Schema registry**: This is a central repository that stores the schemas of the subgraphs. It's
   where the gateway retrieves information about the available subgraphs and their schemas.
 - **Gateway**: The gateway is responsible for handling incoming GraphQL requests from clients. It
   requires a supergraph to know how to route these requests across the appropriate subgraphs. The
   gateway retrieves this supergraph from the Schema Registry.
-- **Validation and Composition**: The process of composing the supergraph involves merging the
+- **Validation and composition**: The process of composing the supergraph involves merging the
   schemas of the individual subgraphs. During this step, the system also checks for any potential
   errors that might arise from the composition. This is crucial to ensure that the resulting
   supergraph is both correct and compatible.
 
-As you can see the **“Validation and Composition”** step is critical to ensure reliability and
-integrity of the API, and so it the Schema Registry.
+As you can see, the **"Validation and Composition"** step is critical to ensure reliability and
+integrity of the API within the schema registry.
 
 ## Why Did We Create an Open Source Alternative?
 
-The restrictions enforced by Elastic License 2.0 blocks vendors interested in offering a Schema
-Registry as a service to utilize the `@apollo/composition` library. This library is crucial for
+The restrictions enforced by Elastic License 2.0 blocks vendors interested in offering a schema
+registry as a service to utilize the `@apollo/composition` library. This library is crucial for
 composing and validating federated subgraphs, as it's the only available solution.
 
 This situation creates a monopoly that prevents or at least slows down innovation in this space.
@@ -53,13 +54,13 @@ We wanted to change that and introduced alternatives:
 
 - **[GraphQL Hive](https://the-guild.dev/graphql/hive)** - replacement for Apollo Studio
 - [**`@theguild/federation-composition`**](https://www.npmjs.com/package/@theguild/federation-composition) -
-  Open Source alternative to `@apollo/composition`
+  Open source alternative to `@apollo/composition`
 
 ---
 
 > In parallel to this, we're working together with [ChilliCream](https://chillicream.com/) on an
-> **Open Source alternative to Apollo Federation**, called
-> [**GraphQL Fustion**](https://chillicream.com/blog/2023/08/15/graphql-fusion).
+> **Open source alternative for Apollo Federation**, called
+> [**GraphQL Fusion**](https://chillicream.com/blog/2023/08/15/graphql-fusion).
 >
 > You can watch a talk from [GraphQLConf 2023](/blog/graphqlconf-2023-recap) about GraphQL Fustion
 > [here](https://graphql.org/conf/schedule/4a4e842d1cd0c06083f484d31225abd1/?name=GraphQL%20Fusion:%20Rethinking%20Distributed%20GraphQL).
@@ -68,7 +69,7 @@ We wanted to change that and introduced alternatives:
 
 ## A Familiar API
 
-One of the core features of our open-source replacement is its seamless compatibility with
+One of the core features of our open source replacement is its seamless compatibility with the
 `@apollo/composition` API. This means that transitioning to our solution is not only effortless but
 also ensures that developers can continue working with the familiar interface they've come to rely
 on.
@@ -90,12 +91,10 @@ and no vendor locking.**
 
 Maintaining consistent validation rules, error codes, and error messages with the
 `@apollo/composition` library is crucial as it streamlines the process of troubleshooting
-composition errors using official Apollo Federation documentation, GitHub issues, and StackOverflow
-questions.
+composition errors using the official Apollo Federation documentation, GitHub issues, and
+StackOverflow questions.
 
-**Example validation rule**
-
-```diff
+```diff filename="Example validation rule"
 - import { composeServices } from '@apollo/composition';
 + import { composeServices } from '@theguild/federation-composition';
 import { services } from './services';
@@ -118,20 +117,21 @@ console.log(compositionResult);
 ```
 
 Because both libraries yields the same error code and message, you can look up
-`PROVIDES_FIELDS_MISSING_EXTERNAL` at https://www.apollographql.com/docs/federation/errors or ask
+`PROVIDES_FIELDS_MISSING_EXTERNAL` on the
+[Apollo Federation error documentation](https://www.apollographql.com/docs/federation/errors) or ask
 other Apollo Federation users for help.
 
 ## Identical Supergraph SDL
 
-Our composition library is capable of producing Supergraph SDL. This means that it can seamlessly
+Our composition library is capable of producing supergraph SDL. This means that it can seamlessly
 integrate with [Apollo Router](https://www.apollographql.com/docs/router/),
 [Apollo Server](https://www.apollographql.com/docs/apollo-server/), Apollo Gateway and any other
-tool that supports Supergraph SDL.
+tool that supports supergraph SDL.
 
 > It allows other vendors to introduce new schema registries,
 > [GraphQL Hive](https://the-guild.dev/graphql/hive) is a good example of that.
 
-## 20 Times Faster than the Original
+## 20x Times Faster
 
 In head-to-head comparisons, our implementation outperforms the original by a significant margin.
 When working with simple schemas, our solution is a staggering **5 times faster**.
