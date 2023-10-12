@@ -1,4 +1,4 @@
-import blogs from '../../../blogs.json';
+import { allBlogs } from '../../../lib/all-blogs';
 
 export default () => {
   return {
@@ -7,6 +7,6 @@ export default () => {
         layout: 'full',
       },
     },
-    ...Object.fromEntries([...new Set(blogs.flatMap(art => art.tags))].map(name => [name, ''])),
+    ...Object.fromEntries([...new Set(allBlogs.flatMap(art => art.tags))].map(name => [name, ''])),
   };
 };
