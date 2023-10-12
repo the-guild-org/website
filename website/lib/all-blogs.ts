@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { asArray } from './as-array';
 import { sortByDateDesc } from './sort-by-date';
+// eslint-disable-next-line import/no-useless-path-segments -- false positive?
 import { pageMap } from '.next/static/chunks/nextra-page-map-.mjs';
 
 const blogFolder = pageMap.find(item => item.name === 'blog' && item.children).children;

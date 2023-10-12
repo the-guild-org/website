@@ -1,6 +1,6 @@
 import { writeFile } from 'node:fs/promises';
 import RSS from 'rss';
-import blogsMeta from './blogs.json';
+import { allBlogs } from './lib/all-blogs';
 import { MetaWithLink } from './lib/meta';
 
 export async function generateRSS(articles: MetaWithLink[]) {
@@ -27,7 +27,7 @@ export async function generateRSS(articles: MetaWithLink[]) {
 }
 
 try {
-  await Promise.all([generateRSS(blogsMeta)]);
+  await Promise.all([generateRSS(allBlogs)]);
 } catch (e) {
   // eslint-disable-next-line no-console
   console.error(e);
