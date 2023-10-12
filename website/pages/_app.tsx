@@ -1,6 +1,6 @@
 /* eslint react/no-unknown-property: ['error', { ignore: ['global', 'jsx'] }] */
-import { Toaster } from 'react-hot-toast';
 import { AppProps } from 'next/app';
+import { Toaster } from 'react-hot-toast';
 import { globalStyles } from '../styles/global';
 import '@theguild/components/style.css';
 
