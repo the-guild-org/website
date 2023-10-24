@@ -1,16 +1,29 @@
-import { writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import RSS from 'rss';
-import { allBlogs } from './lib/all-blogs';
 import { MetaWithLink } from './lib/meta';
 
-export async function generateRSS(articles: MetaWithLink[]) {
+const NEXTRA_PAGE_MAP_PATH = './.next/static/chunks/nextra-page-map-.mjs';
+
+async function generateRSS() {
+  const RAW_PAGE_MAP = await readFile(NEXTRA_PAGE_MAP_PATH, 'utf8');
+
+  const pageMapWithoutResolvePageMap = RAW_PAGE_MAP.slice(
+    0,
+    RAW_PAGE_MAP.indexOf("import { resolvePageMap } from 'nextra/page-map-dynamic'"),
+  );
+
+  await writeFile(NEXTRA_PAGE_MAP_PATH, pageMapWithoutResolvePageMap);
+
+  // use dynamic import since we remove import statement in nextra's page map
+  const { allBlogs } = await import('./lib/all-blogs');
+
   const feed = new RSS({
     title: 'The Guild Blog',
     site_url: 'https://the-guild.dev',
     feed_url: 'https://the-guild.dev/feed.xml',
   });
 
-  for (const meta of articles) {
+  for (const meta of allBlogs as MetaWithLink[]) {
     feed.item({
       title: meta.title,
       guid: meta.link,
@@ -27,7 +40,7 @@ export async function generateRSS(articles: MetaWithLink[]) {
 }
 
 try {
-  await Promise.all([generateRSS(allBlogs)]);
+  await generateRSS();
 } catch (e) {
   // eslint-disable-next-line no-console
   console.error(e);

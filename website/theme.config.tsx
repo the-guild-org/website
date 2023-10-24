@@ -24,9 +24,8 @@ export default defineConfig({
     component: <Header sameSite accentColor="var(--colors-accent)" themeSwitch />,
   },
   head: function useHead() {
-    const { frontMatter, title: pageTitle } = useConfig();
+    const { frontMatter, title } = useConfig();
 
-    const title = `${pageTitle} – Nextra`;
     const {
       description = `${siteName}: Modern API Platform and Ecosystem that scales`,
       canonical,
@@ -42,8 +41,7 @@ export default defineConfig({
         <meta
           name="og:image"
           content={ensureAbsolute(
-            thumbnail ||
-              `https://og-image.the-guild.dev/?product=GUILD&title=${encodeURI(pageTitle)}`,
+            thumbnail || `https://og-image.the-guild.dev/?product=GUILD&title=${encodeURI(title)}`,
           )}
         />
         <meta property="og:site_name" content={siteName} />
