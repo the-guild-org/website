@@ -128,8 +128,8 @@ export const AUTHORS: Record<string, Author> = {
   },
   dimitri: {
     name: 'Dimitri POSTOLOV',
-    link: 'https://github.com/B2o5T',
-    github: 'B2o5T',
+    link: 'https://github.com/dimaMachina',
+    github: 'dimaMachina',
   },
   notrab: {
     name: 'Jamie Barton',

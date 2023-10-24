@@ -3,19 +3,20 @@ title: Blog
 description: List of related articles
 ---
 
-import blogs from '../../../blogs.json'
-import Blog from '../../blog.mdx'
+import { buildDynamicMeta } from '@theguild/components/compile'
+import { allBlogs } from '../../../lib/all-blogs'
 
-export const getStaticProps = () => {
-  return { props: {} }
+export { default } from '../../blog.mdx'
+
+export const getStaticProps = async () => {
+  const props = await buildDynamicMeta()
+  return { props }
 }
 
 export const getStaticPaths = async () => {
-  const allTags = new Set(blogs.flatMap(art => art.tags))
+  const allTags = new Set(allBlogs.flatMap(art => art.tags))
   return {
     paths: Array.from(allTags).map(tag => ({ params: { tag } })),
     fallback: false
   }
 }
-
-<Blog />

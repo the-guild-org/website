@@ -1,15 +1,13 @@
-import Head from 'next/head'
-import { Toaster } from 'react-hot-toast'
-import '@theguild/components/style.css'
-import { globalStyles } from '../styles/global'
+/* eslint react/no-unknown-property: ['error', { ignore: ['global', 'jsx'] }] */
+import { AppProps } from 'next/app';
+import { Toaster } from 'react-hot-toast';
+import { globalStyles } from '../styles/global';
+import '@theguild/components/style.css';
 
-export default function App({ Component, pageProps, router }) {
-  globalStyles()
+export default function App({ Component, pageProps, router }: AppProps) {
+  globalStyles();
   return (
     <>
-      <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
       <style global jsx>{`
         :root {
           --colors-text: white;
@@ -55,5 +53,5 @@ export default function App({ Component, pageProps, router }) {
       <Toaster />
       <Component {...pageProps} />
     </>
-  )
+  );
 }

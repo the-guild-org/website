@@ -10,13 +10,7 @@ description:
   Federation spec in 2023.
 ---
 
-import NextImage from 'next/image'
 import { Callout } from '@theguild/components'
-import fedV1ConstantVusOverTime from './fed-v1-constant-vus-over-time.svg'
-import fedV1ConstantVusOverTimeDelayResources from './fed-v1-constants-vus-subgraphs-delay-resources.svg'
-import fedV1ConstantVusOverTimeDelay from './fed-v1-constants-vus-subgraphs-delay.svg'
-import fedV1rampingVus from './fed-v1-ramping-vus.svg'
-import gatewayImage from './gw.png'
 
 The GraphQL ecosystem is growing rapidly, and solutions to complex problems are more accessible than
 ever before.
@@ -43,7 +37,7 @@ consumer and the actual GraphQL server(s) running the GraphQL schema(s). An arch
 this setup will look like the following:
 
 <Callout type="info" emoji="">
-  <NextImage src={gatewayImage} alt="" className="mt-6" />
+  <>![](./gw.png)</>
 </Callout>
 
 In the architecture chart above, the GraphQL gateway responsible for exposing your GraphQL server
@@ -118,7 +112,7 @@ For the benchmark, we picked the following gateways:
    subgraphs
 
 In addition to that, we used various runtimes for the JavaScript/TypeScript solutions:
-[NodeJS](https://nodejs.org/en) (18 and 20), and [Bun](https://bun.sh/).
+[Node.js](https://nodejs.org/en) (18 and 20), and [Bun](https://bun.sh).
 
 Also, all scenarios are running within Docker container environment, on a stable runner (a dedicated
 GitHub Actions runner, that runs 1 concurrent job, to avoid race conditions or missing resources),
@@ -161,19 +155,19 @@ different entities across multiple subgraphs, and some fragments spreads).
 | apollo-server-node16 |   67   |  40578 total, 0 failed  | avg: 4432ms, p95: 6252ms | ✅                                                                           |
 | mercurius            |   50   | 30432 total, 50 failed  | avg: 5912ms, p95: 6121ms | ❌ 50 failed requests                                                        |
 
-<Callout
-  type="info"
-  emoji=""
-  overwriteClassName="border-blue-200/40 bg-[#151d36] text-gray-200 dark:border-blue-200/30 dark:bg-blue-900/30 dark:text-blue-200"
->
-  <NextImage src={fedV1ConstantVusOverTime} alt="" className="mt-6 w-full text-black" />
-</Callout>
+export const Card = ({ children }) => (
+  <div className="rounded-lg border border-blue-200/40 bg-[#151d36] p-3 text-gray-200 dark:border-blue-200/30 dark:bg-blue-900/30 dark:text-blue-200 [&_img]:w-full">
+    {children}
+  </div>
+)
+
+<Card>![](./fed-v1-constant-vus-over-time.svg)</Card>
 
 Here are some insights worth mentioning:
 
 ✅ Almost gateways tested were able to process all requests without any failures (side note: when
 CPU limit is lower, some JS gateways are failing to respond to requests, and the requests are
-failing with a timeout or connecting drop, as you can see with `apollo-server` on NodeJS 18).
+failing with a timeout or connecting drop, as you can see with `apollo-server` on Node.js 18).
 
 🏆 **Apollo-Router** and **Wundergraph** are the fastest gateways, with an average response time of
 900ms and a p95 of 2500ms, while under pressure of incoming requests.
@@ -183,7 +177,7 @@ Bun runtime, it's even faster (x1.5).
 
 📈 The peak memory usage of **Apollo-Router** was around 400MB, while **Wundergraph** needed more
 resources (x3, 1.3GB) to handle the same amount of requests. Memory consumption of **GraphQL-Mesh**
-in the test above was 550MB on Bun, and 1.4GB on NodeJS 18.
+in the test above was 550MB on Bun, and 1.4GB on Node.js 18.
 
 📊 `mercurius` (Fastify-based) failed to handle ~50 requests.
 
@@ -211,13 +205,7 @@ realistic scenario.
 | apollo-server       |   64   | 38683 total, 92 failed |  avg: 4652ms, p95: 6050ms  | ❌ 92 failed requests, 92 non-200 responses, 92 unexpected GraphQL errors |
 | mercurius           |   12   |  7838 total, 0 failed  | avg: 23393ms, p95: 24457ms | ✅                                                                        |
 
-<Callout
-  type="info"
-  emoji=""
-  overwriteClassName="border-blue-200/40 bg-[#151d36] text-gray-200 dark:border-blue-200/30 dark:bg-blue-900/30 dark:text-blue-200"
->
-  <NextImage src={fedV1ConstantVusOverTimeDelay} alt="" className="mt-6 w-full" />
-</Callout>
+<Card>![](./fed-v1-constants-vus-subgraphs-delay.svg)</Card>
 
 Here are some insights worth mentioning:
 
@@ -258,13 +246,7 @@ more concurrent VUs.
 | apollo-server       |   67   | 40608 total, 2610 failed | avg: 7387ms, p95: 59998ms  | ❌ 2610 failed requests, 2610 non-200 responses, 2610 unexpected GraphQL errors |
 | mercurius           |   12   |   7941 total, 0 failed   | avg: 38437ms, p95: 41293ms | ✅                                                                              |
 
-<Callout
-  type="info"
-  emoji=""
-  overwriteClassName="border-blue-200/40 bg-[#151d36] text-gray-200 dark:border-blue-200/30 dark:bg-blue-900/30 dark:text-blue-200"
->
-  <NextImage src={fedV1ConstantVusOverTimeDelayResources} alt="" className="mt-6 w-full" />
-</Callout>
+<Card>![](./fed-v1-constants-vus-subgraphs-delay-resources.svg)</Card>
 
 Here are some insights worth mentioning:
 
@@ -272,7 +254,7 @@ Here are some insights worth mentioning:
 didn't seem to use most of the provided RAM (only needed 700MB) while **Wundergraph** has high
 memory consumption (almost 3GB).
 
-📈 The ability of **GraphQL-Mesh** to use NodeJS's `cluster` feature pays off when more CPUs are
+📈 The ability of **GraphQL-Mesh** to use Node.js' `cluster` feature pays off when more CPUs are
 available to use.
 
 📊 Under pressure, `apollo-server` (JS) was not able to some percentage of the requests.
@@ -303,13 +285,7 @@ The chart below measures the **p95** of the request duration (lower is better).
 | mesh                |     19777ms     | 98  |  60981 total, 0 failed   | avg: 10275ms, p95: 19777ms, max: 27667ms, med: 10122ms | ✅                                                                              |
 | apollo-server       |     60000ms     | 75  | 48009 total, 7489 failed | avg: 13363ms, p95: 60001ms, max: 60717ms, med: 4289ms  | ❌ 7489 failed requests, 7489 non-200 responses, 7489 unexpected GraphQL errors |
 
-<Callout
-  type="info"
-  emoji=""
-  overwriteClassName="border-blue-200/40 bg-[#151d36] text-gray-200 dark:border-blue-200/30 dark:bg-blue-900/30 dark:text-blue-200"
->
-  <NextImage src={fedV1rampingVus} alt="" className="mt-6 w-full" />
-</Callout>
+<Card>![](./fed-v1-ramping-vus.svg)</Card>
 
 Here are some insights worth mentioning:
 
@@ -335,8 +311,8 @@ Here are some important points to consider regarding the gateways tested in this
     real-time composition based on GraphQL introspection.
   - We chose to use Federation v1 and not Federation v2 for this test because it is widely adopted
     and more supported by available gateways.
-- **NodeJS runtimes:**
-  - For NodeJS, we used version 18 (LTS) of the engine.
+- **Node.js runtimes:**
+  - For Node.js, we used version 18 (LTS) of the engine.
   - In some of the scenarios mentioned above, we used Bun (recently released v1).
 - **Fair comparison:**
   - All gateways were running the same GraphQL schema, and the same GraphQL query was executed.
@@ -361,7 +337,7 @@ Here are some important points to consider regarding the gateways tested in this
   requests and to scale easily is a must-have for any GraphQL gateway. Resource consumption is also
   a big concern, and it's important to aim to keep the memory and CPU usage low, to avoid
   bottlenecks and to keep the cost low.
-- **Runtime environment matters:** NodeJS is great, but we are keeping an eye on other runtimes,
+- **Runtime environment matters:** Node.js is great, but we are keeping an eye on other runtimes,
   such as Bun. We are also looking forward to seeing more solutions built with these runtimes. Rust
   keeps RAM lower when written correctly, and Go is also a great option for building GraphQL
   gateways, but memory consumption could be higher.

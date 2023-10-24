@@ -1,7 +1,6 @@
 import { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import { Article } from '@/article';
-import { AUTHORS } from '@/authors';
 import { BlogCardList, Newsletter, Video } from '@/components';
 import { CodeSandbox } from '@/shared/embed/code-sandbox';
 import { Gfycat } from '@/shared/embed/gfycat';
@@ -10,8 +9,7 @@ import { OgCard } from '@/shared/embed/og-card';
 import { StackBlitz } from '@/shared/embed/stack-blitz';
 import { Tweet } from '@/shared/embed/tweet';
 import { Callout, defineConfig, Giscus, Header, useConfig, useTheme } from '@theguild/components';
-import blogs from './blogs.json';
-import { asArray } from './lib/as-array';
+import { allBlogs } from './lib/all-blogs';
 
 const siteName = 'The Guild';
 
@@ -23,35 +21,34 @@ export default defineConfig({
   siteName,
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
   navbar: {
-    component: (
-      <Header
-        sameSite
-        accentColor="var(--colors-accent)"
-        themeSwitch
-        searchBarProps={{ version: 'v2' }}
-      />
-    ),
+    component: <Header sameSite accentColor="var(--colors-accent)" themeSwitch />,
   },
-  useNextSeoProps() {
-    const { frontMatter, title } = useConfig();
-    const { description, authors, tags, thumbnail, date, updateDate } = frontMatter;
-    const image =
-      thumbnail || `https://og-image.the-guild.dev/?product=GUILD&title=${encodeURI(title)}`;
+  head: function useHead() {
+    const { frontMatter, title: pageTitle } = useConfig();
 
-    return {
-      description: description || `${siteName}: Modern API Platform and Ecosystem that scales`,
-      openGraph: {
-        siteName,
-        images: [{ url: ensureAbsolute(image) }],
-        article: date && {
-          authors: authors && asArray(authors).map(authorId => AUTHORS[authorId]?.name || authorId),
-          publishedTime: new Date(date).toISOString(),
-          modifiedTime: new Date(updateDate || date).toISOString(),
-          tags: tags && asArray(tags),
-        },
-      },
-      additionalMetaTags: [{ name: 'twitter:image', content: ensureAbsolute(image) }],
-    };
+    const title = `${pageTitle} – ${siteName}`;
+    const {
+      description = `${siteName}: Modern API Platform and Ecosystem that scales`,
+      canonical,
+      thumbnail,
+    } = frontMatter;
+    return (
+      <>
+        <title>{title}</title>
+        <meta property="og:title" content={title} />
+        <meta name="description" content={description} />
+        <meta property="og:description" content={description} />
+        {canonical && <link rel="canonical" href={canonical} />}
+        <meta
+          name="og:image"
+          content={ensureAbsolute(
+            thumbnail ||
+              `https://og-image.the-guild.dev/?product=GUILD&title=${encodeURI(pageTitle)}`,
+          )}
+        />
+        <meta property="og:site_name" content={siteName} />
+      </>
+    );
   },
   main: function Main({ children }) {
     const { route } = useRouter();
@@ -61,7 +58,7 @@ export default defineConfig({
 
     const similarArticles =
       tags &&
-      blogs
+      allBlogs
         .filter(
           article =>
             article.link !== route &&
