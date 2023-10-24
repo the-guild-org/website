@@ -13,8 +13,8 @@ export const Input = ({
           w-full
           rounded-xl
           border
-          py-3
           px-4
+          py-3
           font-medium
           placeholder:text-gray-500
           focus:outline-none

@@ -16,7 +16,7 @@ const Tag = ({
       href={href}
       className={clsx(
         'rounded-md bg-gray-200 hover:!no-underline dark:bg-[#24272E]',
-        'flex py-1.5 px-2.5 text-sm font-medium transition-colors',
+        'flex px-2.5 py-1.5 text-sm font-medium transition-colors',
         href
           ? 'hover:text-black hover:dark:bg-[#15AFD04C] hover:dark:text-[#82E9FF]'
           : 'cursor-default',

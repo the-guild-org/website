@@ -52,7 +52,7 @@ export const ServicesSection = (): ReactElement => {
             <div className="flex-1">
               <Image src={service.icon} alt={`${service.name} illustration`} placeholder="empty" />
               <Heading size="md">{service.name}</Heading>
-              <Description className="line-clamp-3 px-4 text-xs leading-4 !leading-[18px]">
+              <Description className="line-clamp-3 px-4 text-xs !leading-[18px] leading-4">
                 {service.description}
               </Description>
             </div>

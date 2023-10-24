@@ -49,7 +49,7 @@ export const Button = ({
     >
       {loading && (
         <svg
-          className="mr-2 -ml-5 inline h-5 w-5 animate-spin text-white"
+          className="-ml-5 mr-2 inline h-5 w-5 animate-spin text-white"
           fill="none"
           viewBox="0 0 24 24"
         >
