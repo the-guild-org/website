@@ -346,12 +346,12 @@ function main() {
             <div class="flex-item-left">
               <div class="ossCells">
                 <img
-                  src="https://raw.githubusercontent.com/B2o5T/graphql-eslint/master/logo.png"
+                  src="https://raw.githubusercontent.com/dimaMachina/graphql-eslint/master/logo.png"
                   width="100"
                 />
               </div>
               <div class="ossContentCells">
-                <a href="https://github.com/B2o5T/graphql-eslint" target="_blank">
+                <a href="https://github.com/dimaMachina/graphql-eslint" target="_blank">
                   <h4>GraphQL ESLint</h4>
                 </a>
                 GraphQL-ESLint integrates GraphQL AST in the ESLint core (as a parser).
