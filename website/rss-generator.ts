@@ -7,14 +7,14 @@ const NEXTRA_PAGE_MAP_PATH = './.next/static/chunks/nextra-page-map-.mjs';
 async function generateRSS() {
   const RAW_PAGE_MAP = await readFile(NEXTRA_PAGE_MAP_PATH, 'utf8');
 
-  const pageMapWithoutResolvePageMap = RAW_PAGE_MAP.slice(
-    0,
-    RAW_PAGE_MAP.indexOf("import { resolvePageMap } from 'nextra/page-map-dynamic'"),
-  );
+  const indexOf = RAW_PAGE_MAP.indexOf("import { resolvePageMap } from 'nextra/page-map-dynamic'");
 
-  await writeFile(NEXTRA_PAGE_MAP_PATH, pageMapWithoutResolvePageMap);
+  if (indexOf !== -1) {
+    const pageMapWithoutResolvePageMap = RAW_PAGE_MAP.slice(0, indexOf);
+    await writeFile(NEXTRA_PAGE_MAP_PATH, pageMapWithoutResolvePageMap);
+  }
 
-  // use dynamic import since we remove import statement in nextra's page map
+  // Use dynamic import since we remove import statement in nextra's page map
   const { allBlogs } = await import('./lib/all-blogs');
 
   const feed = new RSS({
