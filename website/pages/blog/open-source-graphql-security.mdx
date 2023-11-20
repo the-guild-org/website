@@ -18,7 +18,7 @@ practices to build better, bigger & more efficient APIs from day to day. Now tha
 well-established and with a lots of queries on a daily basis, ensuring their security becomes
 crucial.
 
-In this exploration, we'll dive into how these open-source practices are important and benefic for
+In this exploration, we'll dive into how these open-source practices are important and benefits for
 the security of GraphQL and which community tools you can leverage today to secure your APIs.
 
 ## GraphQL Is Open-Source at Its Core
@@ -46,6 +46,22 @@ generation or even fully fledged API platforms are legion. You can find a comphr
 tools on the [graphql.org website](https://graphql.org/code/). [The Guild](https://the-guild.dev/)
 are also masters when it comes to GrahpQL & Open-source and their tools come highly recommended.
 
+For instance, as GraphQL is transport agnostic, it can be used with any protocol, a tremendous
+amount of open-source tools have been built to leverage this flexibility, especially by
+[@enisdenjo](https://github.com/enisdenjo): [graphql-http](https://github.com/graphql/graphql-http)
+[graphql-ws](https://github.com/enisdenjo/graphql-ws)
+[graphql-sse](https://github.com/enisdenjo/graphql-sse)
+
+I can also mention the work on unified APIs via GraphQL federation that is also under active
+open-source development, with the [Open-Federation](https://open-federation.org) initiative, and
+upcoming
+[GraphQL Fusion](https://graphql.org/conf/sessions/4a4e842d1cd0c06083f484d31225abd1/?name=GraphQL%20Fusion:%20Rethinking%20Distributed%20GraphQL)
+specification.
+
+And last but not least, the GraphQL community is also very community centered, wether via the
+[GraphQL working group](https://graphql.org/community/developers/#working-groups) or the various
+events and meetups such as the [GraphQL Conf](https://graphql.org/conf/).
+
 In essence, GraphQL isn’t simply open-source in its availability but embodies open-source in its
 ongoing development, enhancements, and community engagement, perpetually enriching its ecosystem
 with diverse inputs, insights, and innovations.
@@ -56,34 +72,22 @@ Keeping the internet safe is a big challenge. It's like a tightly connected plac
 potential threats. Open source and public tools have been doing a great job at protecting it for
 years.
 
-### Shared Safety with Public Security Resources
+Cybersecurity thrives on collaboration, exemplified by the Common Vulnerabilities and Exposures
+([CVE](https://cve.mitre.org/)) system. This public database acts as a central repository for known
+cybersecurity threats, allowing for quick dissemination and response. By making vulnerabilities
+public, the CVE system ensures timely and widespread implementation of security measures. For
+instance, the identification and patching of the Heartbleed bug in OpenSSL was significantly aided
+by the CVE system, showcasing its effectiveness in promoting rapid response.
 
-Let’s talk about public security resources, like the Common Vulnerabilities and Exposures
-([CVE](https://cve.mitre.org/)) system. It's like a public library of cybersecurity issues,
-describing and referencing known vulnerabilities for everyone to see and learn from. This database
-gives developers and cybersecurity pros a common ground to talk about cybersecurity threats,
-spreading the word about new dangers fast and wide. It’s our shared language and memory for
-cybersecurity issues, helping us all to better safeguard our digital spaces from known threats.
-Making sure that vulnerabilites are made public can seem counter-intuitive at first glance, but is a
-massive need to ensure that fixes or other security measures are deployed rapidely and widely.
+Open source plays a crucial role in cybersecurity by fostering an environment of transparency and
+collaboration. It allows for the open identification and resolution of vulnerabilities, benefiting
+the entire digital ecosystem. For example, the Linux Kernel, known for its security, continually
+improves through community contributions. Similarly, tools like Kali Linux offer insights into
+offensive cybersecurity strategies, helping developers strengthen their defenses.
 
-### Open Source: Our Collective Eye in Cybersecurity
-
-Open source in cybersecurity shines a light on possible threats and also hands us the tools and
-methods to tackle them. It’s a world where problems are solved together, providing a stage where
-vulnerabilities are spotted, discussed, and fixed openly and transparently. This cooperative space
-crafts tools and strategies available to everyone, ensuring the fruits of new discoveries and
-developments are shared with the whole digital world.
-
-Moreover, open-source security tools allow organizations, big or small, to protect their operations
-without starting from scratch. These tools lay down a solid base upon which any company can build on
-and mold their cybersecurity strategies as per their needs.
-
-Open offensive security tools, for instance the ones packed into the popular Kali linux distribution
-or Parrot OS, are also benefic to the cyber world, as making the attack strategies public helps to
-build more secure applications and infrastructures.
-
-### Open Source and Cybersecurity: A Perfect Pair
+This combination of open source and CVE is especially vital in areas like GraphQL and API security,
+providing a foundation for robust, adaptable cybersecurity strategies. Through shared knowledge and
+tools, open source and CVE create a proactive defense against evolving cyber threats.
 
 In a field like cybersecurity, where dangers morph quickly, having shared knowledge, united
 alertness, and available-to-all tools become an essential shield against potential attacks. The
@@ -94,25 +98,70 @@ Moving forward, we'll dive into how this perfect pairing of open source and cybe
 crucial, not just relevant, for GraphQL and API security. We'll highlight practical tools and
 strategies you can use today to protect your applications.
 
-## Open Source GraphQL Security Tools
+## Open Source GraphQL Security Ressources & Tools
 
 There are many GraphQL open-source tools available to help developers and businesses defend against
 possible cybersecurity threats. From defensive measures that shield sensitive data to offensive
 tools aimed at identifying vulnerabilities, the open-source community has build invaluable resources
 to cover a wide variedy of cyber-security needs.
 
+### Learning Tools & Resources: Armoring with Knowledge
+
+In the sphere of cybersecurity, especially concerning GraphQL, the adage 'knowledge is power' is
+paramount. Continual learning, embracing best practices, and leveraging insights from the community
+is an essential shield to secure APIs against vulnerabilities.
+
+1.  **Best Practices**
+
+    - [Automatic persisted queries](https://the-guild.dev/graphql/yoga-server/docs/features/automatic-persisted-queries)
+      GraphQL yoga, as well as most of the popular GraphQL servers, support automatic persisted
+      queries. This feature allows you to save bandwidth and improve performance by sending a hash
+      of the query instead of the full query. It also has a huge impact on security, as it prevents
+      attackers from sending arbitrary queries to your server.
+    - [9 GraphQL Security Best Practices](https://escape.tech/blog/9-graphql-security-best-practices/):
+      Dive into Escape’s comprehensive guide which unveils nine pivotal security best practices,
+      presenting a blend of actionable insights and theoretical knowledge to fortify GraphQL
+      implementations against potential threats.
+    - [The Guild’s best practices article](https://the-guild.dev/blog/best-practices-of-graphql-clients):
+      While this resource by The Guild isn’t strictly security-focused, it provides invaluable best
+      practices on GraphQL clients that, when adeptly applied, augment the robustness and efficiency
+      of GraphQL APIs, subsequently enhancing their inherent security.
+    - [Official authorization docs](https://graphql.org/learn/authorization/) The official GraphQL
+      documentation provides a comprehensive guide to authorization, which is a crucial aspect of
+      security in your API. Generally speaking, knowing the specification and documentation is a key
+      to understanding how your application works and therefore how to secure it.
+
+2.  **[API Security Academy](https://escape.tech/blog/api-security-academy/)**
+
+    The API Security Academy, an open-source platform developed by Escape, navigates through the
+    multifaceted world of GraphQL security. A wellspring of knowledge, it offers structured learning
+    paths, exploring vulnerabilities, attack vectors, and preventive strategies, thereby forging a
+    security-savvy developer who can intuitively construct and validate secure APIs.
+
+3.  **Blogs and More**
+
+    Explore the many insights and experiences shared by experts through different channels:
+
+    - **Blogs**: Immerse yourself in rich content through blogs from
+      [Escape](https://escape.tech/blog/) and [The Guild](https://the-guild.dev/blog/), offering a
+      spectrum of perspectives, learnings, and strategies around GraphQL and cybersecurity.
+    - **Videos**: Discover visual insights through a collection of videos curated by
+      [GraphQL WTF](https://graphql.wtf/). Although not strictly centered around security,
+      understanding various facets of GraphQL enhances your capability to architect, implement, and
+      secure GraphQL APIs more effectively.
+
+Online security is always changing, often at a rapid pace. By adhering to best practices, engaging
+with learning platforms and tapping into the collective knowledge shared through blogs and videos,
+we arm ourselves and our APIs against the multifaceted cybersecurity threats that persist in the
+digital realm.
+
+This path of continuous learning and adaptation ensures that as developers and cybersecurity
+professionals, we remain up to date to secure our GraphQL APIs against both prevalent and emerging
+threats.
+
 ### Defensive Tools
 
-1.  **[GraphQL Shield](https://github.com/dimatill/graphql-shield)**
-
-    Imagine a brave guard protecting the gates of your GraphQL API, ensuring every request has the
-    right to enter. GraphQL Shield does exactly that for you. It empowers developers with a
-    permission layer for applications, securing APIs by utilizing an intuitive rule-API that
-    activates the Shield engine on every request. Moreover, it smartly caches data to keep your
-    application sprightly and ensures internal data remains under wraps, enhancing both performance
-    and security.
-
-2.  **[GraphQL Armor](https://github.com/Escape-Technologies/graphql-armor)**
+1.  **[GraphQL Armor](https://github.com/Escape-Technologies/graphql-armor)**
 
     Developed by our tech team at Escape, GraphQL Armor is a middleware plugin designed to be an
     immediate security upgrade for your GraphQL server. Acting like a personal bodyguard for your
@@ -122,7 +171,14 @@ to cover a wide variedy of cyber-security needs.
     solutions that can be efficiently integrated into your GraphQL setup, safeguarding it from
     potential vulnerabilities and threats.
 
-With open-source defensive tools like GraphQL Shield and GraphQL Armor, businesses and developers
+2.  **[GraphQL Shield](https://github.com/dimatill/graphql-shield)**
+
+    GraphQL Shield empowers developers with a permission layer for applications, securing APIs by
+    utilizing an intuitive rule-API that activates the Shield engine on every request. Moreover, it
+    smartly caches data to keep your application sprightly and ensures internal data remains under
+    wraps, enhancing both performance and security.
+
+With open-source defensive tools like GraphQL Armor and GraphQL Shield, businesses and developers
 can reinforce the security of their GraphQL APIs, protecting data and operations from unauthorized
 access and potential malicious activities. Navigating through the extensive open-source ecosystem
 and leveraging these security tools not only fortifies your GraphQL APIs but also enriches the
@@ -170,54 +226,6 @@ evolving cybersecurity threats.
 As we move forward, our journey will venture into open-source learning resources and best practices
 in GraphQL security, ensuring that your armory is not just stocked with tools but also with
 knowledge and strategies to implement them effectively.
-
-### Learning Tools & Resources: Armoring with Knowledge
-
-In the sphere of cybersecurity, especially concerning GraphQL, the adage 'knowledge is power' is
-paramount. Continual learning, embracing best practices, and leveraging insights from the community
-isn’t just a growth catalyst but an essential shield that safeguards APIs against breaches and
-vulnerabilities. Immersing oneself in a sea of resources and tools fortifies our understanding of
-GraphQL and its associated security paradigms, forging a defense that is as robust in theory as it
-is in practice.
-
-1.  **[API Security Academy](https://escape.tech/blog/api-security-academy/)**
-
-    The API Security Academy, an open-source platform developed by Escape, navigates through the
-    multifaceted world of GraphQL security. A wellspring of knowledge, it offers structured learning
-    paths, exploring vulnerabilities, attack vectors, and preventive strategies, thereby forging a
-    security-savvy developer who can intuitively construct and validate secure APIs.
-
-2.  **Best Practices**
-
-    - [9 GraphQL Security Best Practices](https://escape.tech/blog/9-graphql-security-best-practices/):
-      Dive into Escape’s comprehensive guide which unveils nine pivotal security best practices,
-      presenting a blend of actionable insights and theoretical knowledge to fortify GraphQL
-      implementations against potential threats.
-    - [The Guild’s Resource](https://the-guild.dev/blog/best-practices-of-graphql-clients): While
-      this resource by The Guild isn’t strictly security-focused, it provides invaluable best
-      practices on GraphQL clients that, when adeptly applied, augment the robustness and efficiency
-      of GraphQL APIs, subsequently enhancing their inherent security.
-
-3.  **Blogs and More**
-
-    Explore the many insights and experiences shared by experts through different channels:
-
-    - **Blogs**: Immerse yourself in rich content through blogs from
-      [Escape](https://escape.tech/blog/) and [The Guild](https://the-guild.dev/blog/), offering a
-      spectrum of perspectives, learnings, and strategies around GraphQL and cybersecurity.
-    - **Videos**: Discover visual insights through a collection of videos curated by
-      [GraphQL WTF](https://graphql.wtf/). Although not strictly centered around security,
-      understanding various facets of GraphQL enhances your capability to architect, implement, and
-      secure GraphQL APIs more effectively.
-
-Online security is always changing, often at a rapid pace. By engaging with learning platforms,
-adhering to best practices, and tapping into the collective knowledge shared through blogs and
-videos, we arm ourselves and our APIs against the multifaceted cybersecurity threats that persist in
-the digital realm.
-
-This path of continuous learning and adaptation ensures that as developers and cybersecurity
-professionals, we remain up to date to secure our GraphQL APIs against both prevalent and emerging
-threats.
 
 ## Wrapping up and Joining Forces
 
