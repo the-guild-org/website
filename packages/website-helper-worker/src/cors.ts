@@ -6,7 +6,10 @@ export function buildResponseCorsHeaders(headers: Headers) {
 
   if (
     origin &&
-    (parsedOrigin?.hostname === 'the-guild.dev' || parsedOrigin?.hostname === 'www.the-guild.dev')
+    (parsedOrigin?.hostname === 'the-guild.dev' ||
+      parsedOrigin?.hostname === 'www.the-guild.dev' ||
+      // TODO: ⚠️ DELETE AFTER TESTING
+      parsedOrigin?.hostname.includes('heltin.pages.dev'))
   ) {
     headersResponse['Access-Control-Allow-Origin'] = origin;
   }
