@@ -126,6 +126,13 @@ export const jsonConfig = {
       },
       sitemap: true,
     },
+    '/heltin': {
+      rewrite: 'heltin.pages.dev',
+      crisp: {
+        segments: ['heltin'],
+      },
+      sitemap: false, // TODO: change to true when we have docs
+    },
     // Redirects
     '/bob': {
       redirect: 'https://github.com/kamilkisiela/bob',
