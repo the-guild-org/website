@@ -2,6 +2,7 @@ import { Toucan } from 'toucan-js';
 import { Client } from '@notionhq/client';
 import { handleConductorContact } from './contact-conductor';
 import { handleContactUs } from './contact-guild';
+import { handleHeltinContact } from './contact-heltin';
 import { buildResponseCorsHeaders } from './cors';
 import { createCrispClient } from './crisp-client';
 import { Env } from './env';
@@ -46,6 +47,15 @@ export default {
       sentry.configureScope(scope => {
         scope.setExtra('Body', maybeBody);
       });
+
+      if (request.method === 'POST' && url.pathname === '/api/heltin/signup') {
+        return await handleHeltinContact({
+          request,
+          body: maybeBody ? JSON.parse(maybeBody) : null,
+          notion,
+          notionDatabaseId: env.NOTION_HELTIN_DATABASE_ID,
+        });
+      }
 
       if (request.method === 'POST' && url.pathname === '/api/conductor') {
         return await handleConductorContact({
