@@ -8,7 +8,15 @@ import { LinkPreview } from '@/shared/embed/link-preview';
 import { OgCard } from '@/shared/embed/og-card';
 import { StackBlitz } from '@/shared/embed/stack-blitz';
 import { Tweet } from '@/shared/embed/tweet';
-import { Callout, defineConfig, Giscus, Header, useConfig, useTheme } from '@theguild/components';
+import {
+  Callout,
+  defineConfig,
+  Giscus,
+  Header,
+  Steps,
+  useConfig,
+  useTheme,
+} from '@theguild/components';
 import { allBlogs } from './lib/all-blogs';
 
 const siteName = 'The Guild';
@@ -30,6 +38,7 @@ export default defineConfig({
     const {
       description = `${siteName}: Modern API Platform and Ecosystem that scales`,
       canonical,
+      image,
       thumbnail,
     } = frontMatter;
     return (
@@ -43,6 +52,7 @@ export default defineConfig({
           name="og:image"
           content={ensureAbsolute(
             thumbnail ||
+              image ||
               `https://og-image.the-guild.dev/?product=GUILD&title=${encodeURI(pageTitle)}`,
           )}
         />
@@ -108,5 +118,6 @@ export default defineConfig({
     Gfycat,
     Tweet,
     StackBlitz,
+    Steps,
   },
 });

@@ -54,6 +54,10 @@ const IGNORE_CASING_WORDS = [
   'feTS',
   'tRPC',
   'ORM',
+  'TOC',
+  'CJS',
+  'MathJax',
+  'LaTeX',
 ];
 
 module.exports = {
