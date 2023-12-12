@@ -48,7 +48,7 @@ export const BlogCardList = ({
             </Heading>
             <Description
               size="md"
-              className="line-clamp-3 overflow-hidden text-ellipsis !leading-[18px] [hyphens:auto]"
+              className="line-clamp-4 overflow-hidden text-ellipsis !leading-[18px] [hyphens:auto]"
             >
               {article.description}
             </Description>

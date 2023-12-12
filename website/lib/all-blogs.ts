@@ -30,13 +30,13 @@ export const allBlogs = blogFolder
 
     if (description.length > 160) {
       throw new Error(
-        `SEO issue: The description (${description.length}) "${description}" is too long, should be less than 160 characters - route ${route}`,
+        `SEO issue: The description "${description}" is too long, should be less than 160 characters, not ${description.length}, route "${route}"`,
       );
     }
 
     if (description.length < 50) {
       throw new Error(
-        `SEO issue: The description (${description.length}) "${description}" is too short, should be more than 50 characters - route ${route}`,
+        `SEO issue: The description "${description}" is too short, should be more than 50 characters, not ${description.length}, route "${route}"`,
       );
     }
 
