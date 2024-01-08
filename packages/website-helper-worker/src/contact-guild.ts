@@ -23,8 +23,8 @@ export async function handleContactUs(options: {
     await sendEmail(
       options.email,
       'contact@the-guild.dev',
-      'uri@the-guild.dev',
-      'New Contact Us Form Submission - The Guild',
+      'uri.goldshtein@gmail.com',
+      `Contact Us Form Submission - The Guild (${body.email})`,
       [`Name: ${body.name}`, `Email: ${body.email}`, `Notes: ${body.notes || ''}`].join('\n'),
       createMimeMessage().setSender(body.email),
     );
