@@ -68,6 +68,7 @@ export default {
 
       if (request.method === 'POST' && url.pathname === '/api/contact-us') {
         return await handleContactUs({
+          email: env.EMAIL_SENDER,
           request,
           body: maybeBody ? JSON.parse(maybeBody) : null,
           crisp,

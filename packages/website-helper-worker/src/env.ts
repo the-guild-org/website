@@ -7,4 +7,5 @@ export interface Env {
   NOTION_CONTACT_US_DATABASE_ID: string;
   SENTRY_DSN: string;
   BEEHIIV_API_KEY: string;
+  EMAIL_SENDER: SendEmail;
 }
