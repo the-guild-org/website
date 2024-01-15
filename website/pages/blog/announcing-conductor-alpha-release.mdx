@@ -1,0 +1,129 @@
+---
+title: 'Announcing Conductor, a robust, free MIT-Licensed GraphQL Gateway'
+tags: [graphQL, conductor, gateway, alpha]
+authors: [Yassin Eldeeb]
+date: 2024-01-15
+description:
+  Announcing the alpha release of Conductor, an MIT-licensed, open-source GraphQL Gateway. Designed
+  for simplicity and efficiency, it's a robust solution for modern GraphQL needs.
+image: /blog-assets/graphql-conductor-alpha-release/cover.png
+thumbnail: /blog-assets/graphql-conductor-alpha-release/thumbnail.png
+---
+
+After months of intense development, we're thrilled to announce the public launch of
+[Conductor](https://the-guild.dev/graphql/gateway) - our latest venture into the world of GraphQL!
+
+## For the Community, Embracing All GraphQL Projects
+
+Conductor has been crafted with a clear vision: to empower developers with their advanced GraphQL
+needs. Here's what sets it apart:
+
+- **Built with Rust**: Focused on performance and reliability, leveraging Rust's safety and
+  concurrency capabilities.
+- **Exceptional Developer Experience**: We understand that developer experience is paramount. That's
+  why Conductor is designed to be intuitive, straightforward, and hassle-free, allowing you to focus
+  on what matters most - building great and performant GraphQL applications.
+- **Real open-source**: Conductor is designed to be accessible to everyone, it is open-source (MIT)
+  and free - and will always be.
+- **Self Hosted**: You can self-host Conductor, ensuring that there are no barriers to using this
+  powerful GraphQL gateway.
+- **Supporting Diverse GraphQL Architectures**: Whether you're working with federated, or standalone
+  APIs, Conductor is versatile enough to handle it all. Our goal is to provide a gateway that adapts
+  to all graphql projects' needs.
+- **Community-Driven Development**: As a community-focused organization, The Guild is constantly
+  seeking feedback and contributions. Our roadmap is public! Your insights and suggestions will
+  shape the future of Conductor, making it a tool by the community, for the community.
+
+## Unpacking Conductor's Feature Set
+
+Conductor isn't just another tool; it's a comprehensive solution for managing your GraphQL
+architecture. Here's a glimpse of what it offers:
+
+- **GraphQL Spec Compliance**: Fully adheres to the GraphQL specification, ensuring reliable and
+  standard-compliant behavior.
+- **Advanced Gateway Capabilities**: Serves as a dynamic very thin layer between GraphQL consumers
+  and servers, enhancing GraphQL runtime with robust plugins for caching, authentication, rate
+  limiting, CORS, persisted queries (trusted documents), and OpenTelemetry.
+- **Flexible and Scalable**: Whether you're working on a small project or a large enterprise
+  application, Conductor scales with your needs. Its architecture is modular, and can fully
+  efficiently utlize your resources.
+- **Extensible Endpoint Configuration**: Allows exposure of multiple GraphQL endpoints from a single
+  instance with configurable plugins per endpoint.
+- **VRL (Vector Routing Language) Support**: Offers limitless possibilities for custom logic,
+  plugins, and response transformers.
+- **Comprehensive Security & Monitoring**: Built-in support for various authentication methods,
+  authorization, rate limiting, and OpenTelemetry for monitoring.
+- **Flexible runtime**: Conductor runs either as a binary (and dockerized), and can also run on the
+  Edge (CloudFlare Worker).
+
+## Use It Today!
+
+Conductor's configuration can be defined in both YAML and JSON formats. The config file contains
+several key sections:
+
+- **Server**: Configure the HTTP server settings, including port and host.
+- **Logger**: Set up logging levels for Conductor's operations.
+- **Sources**: Define the GraphQL sources/endpoints that Conductor will interact with. We support
+  both monolith GraphQL and Federation sources.
+- **Endpoints**: Specify the GraphQL endpoints Conductor will expose, including path, source, and
+  plugins.
+- **Plugins**: List global plugins that apply to all endpoints, including CORS, authentication, and
+  more.
+
+### Configuration File Example
+
+```yaml
+server:
+  port: 9000
+
+logger:
+  level: info
+
+sources:
+  - type: graphql
+    id: my-source
+    config:
+      endpoint: https://my-source.com/graphql
+
+endpoints:
+  - path: /graphql
+    from: my-source
+    plugins:
+      - type: graphiql
+
+plugins:
+  - type: cors
+    config:
+      allowed_origin: '*'
+```
+
+### Running Conductor
+
+Conductor can be ran via the docker image, and it can even be ran via npx for quick and convenient
+usage. It also fully supports running as a WASM on Cloudflare Workers, providing flexibility in
+deployment options.
+
+```sh
+npx @graphql-conductor/bin ./conductor.config.yaml
+```
+
+For more details on setting up and running Conductor, refer to our documentation.
+
+## Join the Alpha Release: Be Part of the Conductor Community
+
+This alpha release is an invitation to early adopters in the GraphQL community to join us in
+refining and enhancing Conductor.
+
+### How to Get Involved
+
+- **Try the Alpha Version**: Sign up for the alpha release [here](). We can connect and learn about
+  your needs and how to integrate Conductor within your architecture!
+- **Provide Feedback and Contribute**: Your insights are invaluable. Share your feedback, report
+  bugs, or contribute to the codebase.
+
+### The Journey Ahead
+
+The alpha release is just the beginning. We're committed to continuously improving Conductor, adding
+new features, and ensuring it remains at the forefront. By participating in this early stage, you're
+not just trying out a new tool; you're actively contributing to the shaping of a gateway heading to
+redefine what it means to have a community-driven open source and free GraphQL gateway.
