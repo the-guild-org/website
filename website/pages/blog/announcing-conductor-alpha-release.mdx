@@ -24,7 +24,9 @@ needs:
   why Conductor is designed to be intuitive, straightforward, and hassle-free, allowing you to focus
   on what matters most - building great and performant GraphQL applications.
 - **Real open-source**: Conductor is designed to be accessible to everyone, it is open-source (MIT)
-  and free - and will always be. You can self-host it!
+  and free - and will always be. You can self-host it, and you have full access to all the plugins
+  typically reserved for enterprise plans in other solutions. This includes rate limiting, caching,
+  authentication, persisted queries, open telemetry, and federation capabilities.
 - **Supporting Diverse GraphQL Architectures**: Whether you're working with federated, or standalone
   APIs, Conductor is versatile enough to handle it all. Our goal is to provide a gateway that adapts
   to all graphql projects' needs.
@@ -98,6 +100,35 @@ In addition, Conductor allow you to expose multiple GraphQL endpoints, each with
 plugins. This allows you to expose the same GraphQL server with different workflows, and have
 fine-grained contorl over your GraphQL traffic.
 
+## Benchmarking and Performance
+
+In the development of Conductor, a key focus has been on performance. We've actively engaged in
+benchmarking Conductor against other GraphQL gateways to ensure it not only meets but exceeds
+industry standards.
+
+- **Ongoing Benchmarking Efforts**: We are continuously evaluating Conductor's performance against
+  other gateways.
+- **Transparent Benchmarking Process**: To provide a clear and objective comparison, we're
+  participating in the
+  [GraphQL Gateways Benchmark](https://github.com/the-guild-org/gateways-benchmark) tests. This
+  initiative offers a transparent and consistent benchmarking process, allowing for a fair
+  comparison across different gateways.
+- **Follow Our Progress**: For detailed insights and updates on how Conductor stacks up in various
+  scenarios, we invite you to follow the ongoing benchmarking process. Keep an eye on the GraphQL
+  Gateways Benchmark repository, particularly the
+  [pull request that adds Conductor](https://github.com/the-guild-org/gateways-benchmark/pull/254).
+  This repository provides a comprehensive and accurate benchmark testing across different tools,
+  ensuring a level playing field and transparent results.
+- **Stay Updated on Our Progress**: For detailed insights and live updates on how Conductor is
+  performing in various benchmark scenarios, follow the ongoing process at our GitHub repository,
+  specifically the
+  [pull request that adds Conductor](https://github.com/the-guild-org/gateways-benchmark/pull/254).
+  While we are still refining the numbers, the preliminary results are promising, and we're excited
+  to share them with you soon.
+
+About GraphQL Gateways Benchmark Repository, you can learn more about it in
+[this blog post](https://the-guild.dev/blog/state-of-graphql-gateways-in-2023)
+
 ## Use It Today!
 
 Conductor's configuration can be defined in both YAML and JSON formats. The config file contains
@@ -141,25 +172,40 @@ plugins:
 
 ### Running Conductor
 
-Conductor can be ran via the docker image, and it can even be ran via npx for quick and convenient
-usage. It also fully supports running as a WASM on Cloudflare Workers, providing flexibility in
-deployment options.
+Conductor supports various methods of deployment to cater to different user preferences and
+requirements. Currently, it's fully compatible with Docker, and we're excited to announce that npx
+support is coming soon!
+
+#### Running with Docker:
+
+Docker provides a convenient and consistent way to deploy Conductor. Here's how you can run
+Conductor using Docker:
+
+```sh
+docker run -v ./conductor.config.yaml the-guild-org/conductor:latest
+```
+
+#### Npx Support (Coming Soon):
+
+We are also working on bringing npx support for Conductor. This will offer an even more
+straightforward way to run Conductor. Stay tuned for updates!
+
+Once available, you'll be able to run Conductor with just a simple command:
 
 ```sh
 npx @graphql-conductor/bin ./conductor.config.yaml
 ```
 
-For more details on setting up and running Conductor, refer to our documentation.
-
 ### How to Get Involved
 
-- **Try the Alpha Version**: Try out Conductor, it's available today!
-- **Provide Feedback and Contribute**: Your insights are invaluable. Share your feedback, report
-  bugs, or contribute to the codebase.
+- **Try the Alpha Version**: Experience Conductor for yourself, available now in its alpha version.
+  No need to join anything - simply download, install, and start using it!
+- **Provide Feedback and Contribute**: We value your insights. Feel free to share feedback, report
+  bugs, or contribute to the codebase. Your involvement is key to refining Conductor.
 
 ### The Journey Ahead
 
-The alpha release is just the beginning. We're committed to continuously improving Conductor, adding
-new features, and ensuring it remains at the forefront. By participating in this early stage, you're
-not just trying out a new tool; you're actively contributing to the shaping of a gateway heading to
-redefine what it means to have a community-driven open source and free GraphQL gateway.
+This alpha release marks just the beginning. Our commitment to continuous improvement means we're
+always adding new features and ensuring Conductor remains cutting-edge. By using Conductor now,
+you're not just adopting a new tool; you're actively participating in the evolution of a
+community-driven, open-source, and free GraphQL gateway.
