@@ -85,7 +85,7 @@ export const jsonConfig = {
       sitemap: true,
     },
     '/graphql/gateway': {
-      rewrite: 'conductor.pages.dev',
+      rewrite: 'conductor-t2.pages.dev',
       crisp: {
         segments: ['conductor'],
       },
