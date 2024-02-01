@@ -200,5 +200,5 @@ export const AUTHORS: Record<string, Author> = {
     name: 'Lars de Bruijn',
     link: 'https://github.com/ldebruijn',
     github: 'ldebruijn',
-  }
+  },
 };
