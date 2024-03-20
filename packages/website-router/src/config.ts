@@ -1,15 +1,23 @@
-export type RewriteRecord = { rewrite: string; crisp?: { segments: string[] }; sitemap?: boolean };
+import { REBRANDING_SURVEY } from './banner';
+
+export type RewriteRecord = {
+  rewrite: string;
+  crisp?: { segments: string[] };
+  sitemap?: boolean;
+  banner?: string;
+};
 export type RedirectRecord = { redirect: string; status?: number };
 export type WebsiteRecord = RewriteRecord | RedirectRecord;
 
 export const jsonConfig = {
   // Change if you wish to invalidate/drop all caches for all websites
-  cacheStorageId: 58,
+  cacheStorageId: 100,
   publicDomain: 'the-guild.dev',
   clientToWorkerMaxAge: 60,
   cfFetchCacheTtl: 60,
   gaTrackingId: 'G-VN2KZS6FK4',
   crispWebsiteId: 'af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
+  defaultBanner: REBRANDING_SURVEY,
   fallbackRoute: {
     rewrite: 'guild-dev-website.pages.dev',
     crisp: {
