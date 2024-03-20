@@ -1,4 +1,4 @@
-import { GRAPHQL_CONF_2024_BANNER } from './banner';
+import { REBRANDING_SURVEY } from './banner';
 
 export type RewriteRecord = {
   rewrite: string;
@@ -17,12 +17,12 @@ export const jsonConfig = {
   cfFetchCacheTtl: 60,
   gaTrackingId: 'G-VN2KZS6FK4',
   crispWebsiteId: 'af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
+  defaultBanner: REBRANDING_SURVEY,
   fallbackRoute: {
     rewrite: 'guild-dev-website.pages.dev',
     crisp: {
       segments: ['guild-website'],
     },
-    banner: GRAPHQL_CONF_2024_BANNER,
   } satisfies RewriteRecord,
   mappings: {
     // Rewrites
@@ -37,7 +37,6 @@ export const jsonConfig = {
       rewrite: 'graphql-yoga.pages.dev',
       crisp: { segments: ['yoga'] },
       sitemap: true,
-      banner: GRAPHQL_CONF_2024_BANNER,
     },
     '/graphql/scalars': {
       rewrite: 'graphql-scalars.pages.dev',

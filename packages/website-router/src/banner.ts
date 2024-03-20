@@ -1,3 +1,17 @@
+export const REBRANDING_SURVEY = `
+
+<div class="flex flex-col items-center justify-center space-x-1 p-2 text-xs font-medium text-white sm:flex-row" style="background: rgb(38, 38, 38)">
+<a
+    class="text-white outline-none focus-visible:ring transition flex gap-2"
+    target="_blank"
+    style="font-size: 14px;"
+    href="https://966uxfqe3ss.typeform.com/to/qimBMLmb?typeform-source=t.co"
+  >
+    Let us know how The Guild could be better for you by answering our survey! <svg style="width: 18px; height: 18px; margin-top: 2px;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+  </a>
+</div>
+`;
+
 export const GRAPHQL_CONF_2024_BANNER = `
 <div class="hidden md:block">
   <div
