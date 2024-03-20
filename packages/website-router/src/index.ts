@@ -5,6 +5,7 @@ import { createSentry } from './error-handling/sentry';
 import { handleFavicon, shouldHandleFavicon } from './favicon/handler';
 import { FaviconHandler } from './favicon/transformer';
 import { handleFeed, shouldHandleFeed } from './feed/handler';
+import { BannerHandler } from './html-handlers/banner';
 import { CrispHandler } from './html-handlers/crisp';
 import { GoogleAnalyticsHandler } from './html-handlers/ga';
 import { handleRobotsTxt, shouldHandleRobotsTxt } from './robots/handler';
@@ -37,6 +38,7 @@ const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => 
     result = new HTMLRewriter()
       .on('head', new FaviconHandler())
       .on('head', new CrispHandler(crispWebsiteId, record))
+      .on('body', new BannerHandler(record.banner))
       .on('head', new GoogleAnalyticsHandler(gaTrackingId))
       .transform(result);
   }

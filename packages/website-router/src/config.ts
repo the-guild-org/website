@@ -1,10 +1,17 @@
-export type RewriteRecord = { rewrite: string; crisp?: { segments: string[] }; sitemap?: boolean };
+import { GRAPHQL_CONF_2024_BANNER } from './banner';
+
+export type RewriteRecord = {
+  rewrite: string;
+  crisp?: { segments: string[] };
+  sitemap?: boolean;
+  banner?: string;
+};
 export type RedirectRecord = { redirect: string; status?: number };
 export type WebsiteRecord = RewriteRecord | RedirectRecord;
 
 export const jsonConfig = {
   // Change if you wish to invalidate/drop all caches for all websites
-  cacheStorageId: 58,
+  cacheStorageId: Date.now(),
   publicDomain: 'the-guild.dev',
   clientToWorkerMaxAge: 60,
   cfFetchCacheTtl: 60,
@@ -15,6 +22,7 @@ export const jsonConfig = {
     crisp: {
       segments: ['guild-website'],
     },
+    banner: GRAPHQL_CONF_2024_BANNER,
   } satisfies RewriteRecord,
   mappings: {
     // Rewrites
@@ -29,6 +37,7 @@ export const jsonConfig = {
       rewrite: 'graphql-yoga.pages.dev',
       crisp: { segments: ['yoga'] },
       sitemap: true,
+      banner: GRAPHQL_CONF_2024_BANNER,
     },
     '/graphql/scalars': {
       rewrite: 'graphql-scalars.pages.dev',
