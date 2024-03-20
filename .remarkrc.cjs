@@ -58,6 +58,7 @@ const IGNORE_CASING_WORDS = [
   'CJS',
   'MathJax',
   'LaTeX',
+  'MikroORM',
 ];
 
 module.exports = {

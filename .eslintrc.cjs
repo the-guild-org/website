@@ -1,6 +1,12 @@
 module.exports = {
-  extends: ['@theguild'],
   overrides: [
+    {
+      files: ['*.js', '*.mjs', '*.cjs'],
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 2022,
+      },
+    },
     {
       files: '*.md{,x}',
       parser: 'eslint-mdx',
@@ -15,11 +21,15 @@ module.exports = {
       },
     },
     {
-      files: 'website/**',
-      extends: '@theguild/eslint-config/react',
+      files: 'website/**/*.{ts,tsx}',
+      extends: ['@theguild', '@theguild/eslint-config/react'],
       rules: {
         // enable without breaking existing iframes
         'react/iframe-missing-sandbox': 'off',
+        'import/extensions': 'off',
+      },
+      parserOptions: {
+        project: 'website/tsconfig.json',
       },
       settings: {
         'import/resolver': {
@@ -31,14 +41,22 @@ module.exports = {
     },
     {
       files: 'packages/website-router/**',
+      extends: ['@theguild'],
       rules: {
         'import/extensions': 'off',
+      },
+      parserOptions: {
+        project: 'packages/website-router/tsconfig.json',
       },
     },
     {
       files: 'packages/website-helper-worker/**',
+      extends: ['@theguild'],
       rules: {
         'import/extensions': 'off',
+      },
+      parserOptions: {
+        project: 'packages/website-helper-worker/tsconfig.json',
       },
     },
   ],
