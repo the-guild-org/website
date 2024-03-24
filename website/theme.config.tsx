@@ -19,14 +19,14 @@ import {
 } from '@theguild/components';
 import { allBlogs } from './lib/all-blogs';
 
-const siteName = 'The Guild';
-
 function ensureAbsolute(url: string): string {
   return url.startsWith('/') ? `https://the-guild.dev${url}` : url;
 }
 
+const siteDescription = 'Modern, Open-source API Tooling and Ecosystem that scales';
+const siteName = 'The Guild';
+
 export default defineConfig({
-  siteName,
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
   navbar: {
     component: <Header sameSite accentColor="var(--colors-accent)" themeSwitch />,
@@ -34,9 +34,9 @@ export default defineConfig({
   head: function useHead() {
     const { frontMatter, title: pageTitle } = useConfig();
 
-    const title = `${pageTitle} – ${siteName}`;
+    const title = `${pageTitle} (${siteName})`;
     const {
-      description = `${siteName}: Modern API Platform and Ecosystem that scales`,
+      description = `${siteName}: ${siteDescription}`,
       canonical,
       image,
       thumbnail,
@@ -120,4 +120,6 @@ export default defineConfig({
     StackBlitz,
     Steps,
   },
+  websiteName: 'The Guild',
+  description: siteDescription,
 });
