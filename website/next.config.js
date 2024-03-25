@@ -8,6 +8,7 @@ export default withGuildDocs({
     // needs for canonical <link />
     SITE_URL: 'https://the-guild.dev',
   },
+  output: 'export',
   redirects: () =>
     Object.entries({
       '/contact': '/#get-in-touch',
