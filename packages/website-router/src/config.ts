@@ -1,5 +1,3 @@
-import { REBRANDING_SURVEY } from './banner';
-
 export type RewriteRecord = {
   rewrite: string;
   crisp?: { segments: string[] };
@@ -17,7 +15,7 @@ export const jsonConfig = {
   cfFetchCacheTtl: 60,
   gaTrackingId: 'G-VN2KZS6FK4',
   crispWebsiteId: 'af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
-  defaultBanner: REBRANDING_SURVEY,
+  // defaultBanner: REBRANDING_SURVEY,
   fallbackRoute: {
     rewrite: 'guild-dev-website.pages.dev',
     crisp: {
