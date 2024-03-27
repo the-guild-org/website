@@ -42,7 +42,7 @@ export const GRAPHQL_CONF_2024_BANNER = `
     <a
       class="flex gap-2 items-center justify-center rounded-none font-bold text-white outline-none focus-visible:ring transition"
       style="background: #E535AB; border-radius: 0; font-size: 14px; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px;"
-      href="https://graphql.org/conf/" target="_blank">
+      href="https://graphql.org/conf/2024" target="_blank">
       <span style="padding-left: 2px;">Register Now</span>
       <svg style="width: 18px; height: 18px;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
     </a>
