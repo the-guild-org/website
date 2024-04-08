@@ -43,7 +43,7 @@ export default {
   contact: {
     title: 'Contact Us',
     type: 'page',
-    route: '/contact'
+    route: '/contact',
   },
   404: {
     type: 'page',
