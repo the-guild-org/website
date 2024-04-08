@@ -8,15 +8,7 @@ import { LinkPreview } from '@/shared/embed/link-preview';
 import { OgCard } from '@/shared/embed/og-card';
 import { StackBlitz } from '@/shared/embed/stack-blitz';
 import { Tweet } from '@/shared/embed/tweet';
-import {
-  Callout,
-  defineConfig,
-  Giscus,
-  Header,
-  Steps,
-  useConfig,
-  useTheme,
-} from '@theguild/components';
+import { Callout, defineConfig, Giscus, Steps, useConfig, useTheme } from '@theguild/components';
 import { allBlogs } from './lib/all-blogs';
 
 function ensureAbsolute(url: string): string {
@@ -28,9 +20,6 @@ const siteName = 'The Guild';
 
 export default defineConfig({
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
-  navbar: {
-    component: <Header sameSite accentColor="var(--colors-accent)" themeSwitch />,
-  },
   head: function useHead() {
     const { frontMatter, title: pageTitle } = useConfig();
 

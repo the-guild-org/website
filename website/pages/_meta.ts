@@ -1,9 +1,8 @@
 export default {
-  'about-us': {
-    type: 'page',
+  index: {
+    display: 'hidden',
     theme: {
-      typesetting: 'article',
-      timestamp: false,
+      layout: 'raw',
     },
   },
   blog: {
@@ -20,34 +19,31 @@ export default {
       timestamp: false,
     },
   },
-  'open-source': {
+  services: {
     type: 'page',
     theme: {
-      layout: 'full',
-      timestamp: false,
+      layout: 'raw',
     },
   },
-  logos: {
+  'about-us': {
     type: 'page',
     theme: {
       typesetting: 'article',
       timestamp: false,
     },
   },
+  logos: {
+    type: 'page',
+    display: 'hidden',
+    theme: {
+      typesetting: 'article',
+      timestamp: false,
+    },
+  },
   contact: {
-    theme: {
-      layout: 'raw',
-    },
-  },
-  services: {
-    theme: {
-      layout: 'raw',
-    },
-  },
-  index: {
-    theme: {
-      layout: 'raw',
-    },
+    title: 'Contact Us',
+    type: 'page',
+    route: '/contact'
   },
   404: {
     type: 'page',
