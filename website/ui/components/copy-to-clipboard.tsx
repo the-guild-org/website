@@ -53,7 +53,9 @@ export const CopyToClipboard = ({ value }: { value: string }): ReactElement => {
     };
   }, [isCopied]);
 
-  const handleClick = useCallback<ComponentProps<'button'>['onClick']>(async () => {
+  const handleClick = useCallback<
+    Exclude<ComponentProps<'button'>['onClick'], undefined>
+  >(async () => {
     setIsCopied(true);
     if (!navigator?.clipboard) {
       return;

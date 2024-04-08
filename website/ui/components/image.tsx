@@ -8,7 +8,7 @@ export const Image = ({
   alt?: string;
   src: string;
   className?: string;
-}): ReactElement => {
+}): ReactElement | null => {
   if (!src) {
     return null;
   }
