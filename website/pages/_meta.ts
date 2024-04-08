@@ -6,6 +6,7 @@ export default {
     },
   },
   blog: {
+    display: 'hidden',
     type: 'page',
     theme: {
       layout: 'full',
@@ -13,6 +14,7 @@ export default {
     },
   },
   solutions: {
+    display: 'hidden',
     type: 'page',
     theme: {
       typesetting: 'article',
@@ -26,6 +28,7 @@ export default {
     },
   },
   'about-us': {
+    display: 'hidden',
     type: 'page',
     theme: {
       typesetting: 'article',
@@ -39,11 +42,6 @@ export default {
       typesetting: 'article',
       timestamp: false,
     },
-  },
-  contact: {
-    title: 'Contact Us',
-    type: 'page',
-    route: '/contact',
   },
   404: {
     type: 'page',
