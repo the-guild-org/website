@@ -1,3 +1,5 @@
+import { PRODUCTS } from '@theguild/components';
+
 export default {
   index: {
     display: 'hidden',
@@ -20,6 +22,19 @@ export default {
       typesetting: 'article',
       timestamp: false,
     },
+  },
+  ecosystem: {
+    type: 'menu',
+    title: 'Ecosystem',
+    items: Object.values(PRODUCTS).map(product => ({
+      title: (
+        <span className="flex items-center gap-2">
+          <product.logo className="h-7 w-auto" />
+          {product.name}
+        </span>
+      ),
+      href: new URL(product.href).pathname,
+    })),
   },
   services: {
     type: 'page',
