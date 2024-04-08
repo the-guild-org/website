@@ -5,7 +5,10 @@ import { MetaWithLink } from './lib/meta';
 const NEXTRA_PAGE_MAP_PATH = './.next/static/chunks/nextra-page-map-.mjs';
 
 async function generateRSS() {
-  const RAW_PAGE_MAP = await readFile(NEXTRA_PAGE_MAP_PATH, 'utf8');
+  const RAW_PAGE_MAP = (await readFile(NEXTRA_PAGE_MAP_PATH, 'utf8')).replace(
+    'import meta from "../../../pages/_meta.tsx";',
+    'const meta = {};',
+  );
 
   const indexOf = RAW_PAGE_MAP.indexOf("import { resolvePageMap } from 'nextra/page-map-dynamic'");
 
