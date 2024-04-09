@@ -1,4 +1,4 @@
-import { PRODUCTS } from '@theguild/components';
+import { productsItems } from '@theguild/components';
 
 export default {
   index: {
@@ -7,34 +7,17 @@ export default {
       layout: 'raw',
     },
   },
+  products: {
+    type: 'menu',
+    title: 'Products',
+    items: productsItems,
+  },
   blog: {
-    display: 'hidden',
     type: 'page',
     theme: {
       layout: 'full',
       timestamp: false,
     },
-  },
-  solutions: {
-    display: 'hidden',
-    type: 'page',
-    theme: {
-      typesetting: 'article',
-      timestamp: false,
-    },
-  },
-  ecosystem: {
-    type: 'menu',
-    title: 'Ecosystem',
-    items: Object.values(PRODUCTS).map(product => ({
-      title: (
-        <span className="flex items-center gap-2">
-          <product.logo className="h-7 w-auto" />
-          {product.name}
-        </span>
-      ),
-      href: new URL(product.href).pathname,
-    })),
   },
   services: {
     type: 'page',
@@ -43,7 +26,6 @@ export default {
     },
   },
   'about-us': {
-    display: 'hidden',
     type: 'page',
     theme: {
       typesetting: 'article',
@@ -57,6 +39,11 @@ export default {
       typesetting: 'article',
       timestamp: false,
     },
+  },
+  contact: {
+    title: 'Contact Us',
+    type: 'page',
+    route: '/contact',
   },
   404: {
     type: 'page',
