@@ -6,7 +6,7 @@ const NEXTRA_PAGE_MAP_PATH = './.next/static/chunks/nextra-page-map-.mjs';
 
 async function generateRSS() {
   const RAW_PAGE_MAP = (await readFile(NEXTRA_PAGE_MAP_PATH, 'utf8')).replace(
-    'import meta from "../../../pages/_meta.tsx";',
+    'import meta from "../../../pages/_meta.ts";',
     'const meta = {};',
   );
 
