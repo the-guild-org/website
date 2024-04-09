@@ -4,7 +4,7 @@ import { Anchor } from '@theguild/components';
 
 export const Link = ({
   children,
-  href,
+  href = '',
   className,
   ...props
 }: Omit<ComponentProps<'a'>, 'ref'>): ReactElement => {

@@ -11,7 +11,7 @@ const files = globbySync('*.mdx', {
   cwd: CWD,
 }).filter(filename => filename !== 'nextra-2.mdx');
 
-const errors = [];
+const errors: string[] = [];
 
 for (const file of files)
   checkFile(file.replace('.mdx', ''), error => {

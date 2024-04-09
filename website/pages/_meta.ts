@@ -1,10 +1,16 @@
+import { productsItems } from '@theguild/components';
+
 export default {
-  'about-us': {
-    type: 'page',
+  index: {
+    display: 'hidden',
     theme: {
-      typesetting: 'article',
-      timestamp: false,
+      layout: 'raw',
     },
+  },
+  products: {
+    type: 'menu',
+    title: 'Products',
+    items: productsItems,
   },
   blog: {
     type: 'page',
@@ -13,41 +19,31 @@ export default {
       timestamp: false,
     },
   },
-  solutions: {
+  services: {
+    type: 'page',
+    theme: {
+      layout: 'raw',
+    },
+  },
+  'about-us': {
     type: 'page',
     theme: {
       typesetting: 'article',
       timestamp: false,
     },
   },
-  'open-source': {
-    type: 'page',
-    theme: {
-      layout: 'full',
-      timestamp: false,
-    },
-  },
   logos: {
     type: 'page',
+    display: 'hidden',
     theme: {
       typesetting: 'article',
       timestamp: false,
     },
   },
   contact: {
-    theme: {
-      layout: 'raw',
-    },
-  },
-  services: {
-    theme: {
-      layout: 'raw',
-    },
-  },
-  index: {
-    theme: {
-      layout: 'raw',
-    },
+    title: 'Contact Us',
+    type: 'page',
+    route: '/contact',
   },
   404: {
     type: 'page',

@@ -45,8 +45,8 @@ export const ServicesSection = (): ReactElement => {
               duration-200
               hover:border-gray-200
               hover:[box-shadow:0_-6px_34px_rgba(117,117,117,0.15)]
-              dark:bg-[#24272E4C]
-              dark:hover:border-[#24272E] sm:w-1/2 md:w-1/3 lg:w-1/5
+              sm:w-1/2
+              md:w-1/3 lg:w-1/5 dark:bg-[#24272E4C] dark:hover:border-[#24272E]
             "
           >
             <div className="flex-1">

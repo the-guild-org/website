@@ -95,6 +95,7 @@ const ImageLink = styled('a', {
 });
 
 const useIsomorphicLayoutEffect =
+  // @ts-expect-error fixme
   typeof window !== 'undefined' && window.document?.createElement ? useLayoutEffect : useEffect;
 
 export const LinkPreview = ({ link }: { link: string }): ReactElement => {
