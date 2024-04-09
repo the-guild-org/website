@@ -3,7 +3,6 @@ import { AppProps } from 'next/app';
 import { Toaster } from 'react-hot-toast';
 import { globalStyles } from '../styles/global';
 import '@theguild/components/style.css';
-import './globals.css';
 
 export default function App({ Component, pageProps, router }: AppProps) {
   globalStyles();

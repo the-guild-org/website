@@ -111,4 +111,7 @@ export default defineConfig({
   },
   websiteName: 'The Guild',
   description: siteDescription,
+  search: {
+    placeholder: 'Search…',
+  },
 });
