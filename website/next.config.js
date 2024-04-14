@@ -16,6 +16,7 @@ export default withGuildDocs({
       '/connected-build': '/',
       '/blog/announcing-graphql-hive-public': '/blog/announcing-graphql-hive-release',
       '/blog/announcing-graphql-yoga-2': '/blog/announcing-graphql-yoga-v2',
+      '/blog/graphql-eslint-3': '/blog/graphql-eslint-3.14',
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
     }).map(([from, to]) => ({
       source: from,
