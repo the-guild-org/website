@@ -18,7 +18,7 @@ export default withGuildDocs({
       '/blog/announcing-graphql-yoga-2': '/blog/announcing-graphql-yoga-v2',
       '/blog/graphql-eslint-3': '/blog/graphql-eslint-3.14',
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
-      '/open-source': '/about',
+      '/open-source': '/about-us',
     }).map(([from, to]) => ({
       source: from,
       destination: to,
