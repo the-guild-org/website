@@ -76,11 +76,6 @@ export const jsonConfig = {
       crisp: { segments: ['envelop'] },
       sitemap: true,
     },
-    '/graphql/shield': {
-      rewrite: 'graphql-shield.pages.dev',
-      crisp: { segments: ['shield'] },
-      sitemap: false,
-    },
     '/graphql/apollo-angular': {
       rewrite: 'apollo-angular.pages.dev',
       sitemap: true,
