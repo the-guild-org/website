@@ -15,7 +15,7 @@ export const jsonConfig = {
   cfFetchCacheTtl: 60,
   gaTrackingId: 'G-VN2KZS6FK4',
   crispWebsiteId: 'af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
-  // defaultBanner: REBRANDING_SURVEY,
+  defaultBanner: undefined,
   fallbackRoute: {
     rewrite: 'guild-dev-website.pages.dev',
     crisp: {
@@ -74,11 +74,6 @@ export const jsonConfig = {
     '/graphql/envelop': {
       rewrite: 'envelop.pages.dev',
       crisp: { segments: ['envelop'] },
-      sitemap: true,
-    },
-    '/graphql/shield': {
-      rewrite: 'graphql-shield.pages.dev',
-      crisp: { segments: ['shield'] },
       sitemap: true,
     },
     '/graphql/apollo-angular': {
