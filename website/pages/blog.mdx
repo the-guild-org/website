@@ -9,6 +9,8 @@ import { BlogCardList, Heading, Newsletter, TagList } from '@/components'
 import { HeroSection } from '@/hero-section'
 import { allBlogs } from '../lib/all-blogs'
 import { asArray } from '../lib/as-array'
+import Head from 'next/head';
+
 
 export function extractRelevantTags(articles) {
   const allTags = articles.flatMap(article => article.tags || [])
@@ -40,8 +42,13 @@ export default function Blog() {
         tagsFilter.length === 0 || asArray(article.tags).some(tag => tagsFilter.includes(tag))
     )
   }
+
+  const canonicalUrl = `https://the-guild.dev/blog${tagsFilter.length ? `/tag/${tagsFilter.join(',')}` : ''}`
   return (
     <>
+      <Head>
+        <link rel="canonical" href={canonicalUrl} />
+      </Head>
       <HeroSection>
         <Heading>The Guild's blog</Heading>
       </HeroSection>
