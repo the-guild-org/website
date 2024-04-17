@@ -9,6 +9,7 @@ import { BlogCardList, Heading, Newsletter, TagList } from '@/components'
 import { HeroSection } from '@/hero-section'
 import { allBlogs } from '../lib/all-blogs'
 import { asArray } from '../lib/as-array'
+import Head from 'next/head'
 
 export function extractRelevantTags(articles) {
   const allTags = articles.flatMap(article => article.tags || [])
@@ -40,8 +41,13 @@ export default function Blog() {
         tagsFilter.length === 0 || asArray(article.tags).some(tag => tagsFilter.includes(tag))
     )
   }
-  return (
-    <>
+  const title = tagsFilter.length ? `Blog - ${tagsFilter.join(', ')} (The Guild)` : 'Blog - (The Guild)'
+
+return ( <>
+
+      <Head>
+        <title>{title}</title>
+      </Head>
       <HeroSection>
         <Heading>The Guild's blog</Heading>
       </HeroSection>
@@ -51,5 +57,5 @@ export default function Blog() {
         {<BlogCardList articles={articles} />}
       </div>
     </>
-  )
-}
+
+) }
