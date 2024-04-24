@@ -21,6 +21,12 @@ export const GetInTouchForm = (): ReactElement => {
         notes: Yup.string().optional().default(''),
       }),
       async onSubmit({ name, email, notes }) {
+        try {
+          if ('ko' in globalThis) {
+            globalThis.ko.identify({ email, name });
+          }
+        } catch (e) {}
+
         const response = await fetch('https://utils.the-guild.dev/api/contact-us', {
           method: 'POST',
           headers: {

@@ -11,11 +11,12 @@ export const jsonConfig = {
   // Change if you wish to invalidate/drop all caches for all websites
   cacheStorageId: 100,
   publicDomain: 'the-guild.dev',
+  koaliaPk: 'pk_fab338b8afd93b93f49fafebf9651287060e',
   clientToWorkerMaxAge: 60,
   cfFetchCacheTtl: 60,
   gaTrackingId: 'G-VN2KZS6FK4',
   crispWebsiteId: 'af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
-  // defaultBanner: REBRANDING_SURVEY,
+  defaultBanner: undefined,
   fallbackRoute: {
     rewrite: 'guild-dev-website.pages.dev',
     crisp: {
