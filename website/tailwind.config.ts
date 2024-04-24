@@ -2,7 +2,6 @@
 import plugin from 'tailwindcss/plugin';
 import config from '@theguild/tailwind-config';
 
-// eslint-disable-next-line import/no-default-export
 export default {
   ...config,
   content: [
