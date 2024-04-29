@@ -61,7 +61,7 @@ const IGNORE_CASING_WORDS = [
   'MikroORM',
   'GraphQL.js',
   'AbortController',
-  'fetch'
+  'fetch',
 ];
 
 module.exports = {
