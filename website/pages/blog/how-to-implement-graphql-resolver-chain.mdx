@@ -10,10 +10,52 @@ thumbnail: /blog-assets/the-complete-graphql-scalar-guide/thumbnail.png
 
 import { Callout } from '@theguild/components'
 
-Resolver chaining is a powerful technique in GraphQL server development. It can reduce duplication of logic and defer execution of logic to the right resolver to avoid unnecessary work. This keeps the codebase performant and maintainable.
-In this article, we'll explore what resolver chaining is and how you can implement it safely in your GraphQL server.
+Resolver chain is a fundamental yet powerful concept in GraphQL server development. Mastering it can reduce duplication and defer execution of logic to the right resolver to avoid unnecessary work. This keeps the codebase performant and maintainable.
+In this article, we'll explore what resolver chain is and how you can implement it safely in your GraphQL server.
 
 ## What Is Resolver Chain?
+
+In a GraphQL server, a resolver is a function that "resolves" a value. Resolving a value means doing arbitrary combination of logic to produce a value:
+
+- returning a value statically
+- fetching data from a database
+- calling an external API 
+- executing a complex business logic
+
+If a value is resolved into an object type node, that value becomes the first argument (usually called `parent`) of every resolver of that object type. Each resolver of said object type can use `parent` to resolve its value. The process is repeated when resolving object types, until every field requested in selection set is resolved at a scalar or enum node. This is called the **resolver chain**.
+
+### Resolver Chain Example
+
+In this article, we will use the following schema as an example:
+
+```graphql
+type Query {
+  movie(id: ID!): Movie
+  novel(id: ID!): Novel
+}
+
+type Character {
+  id: ID!
+  bestFriend: Character
+}
+
+type Movie {
+  id: ID!
+  characters: [Character!]!
+}
+
+type Novel {
+  id: ID!
+  characters: [Character!]!
+}
+```
+
+Schema explanation:
+- There are two queries: `movie` and `novel` to return a `Movie` and a `Novel` object type, respectively.
+- Each `Movie` and `Novel` object type has a field `characters` that returns a list of `Character` object type.
+- `Character` object type has a field `bestFriend` that returns another `Character` object type.
+- Note: for simplicity, `id` field is the name of the `Movie` (e.g. `Harry Potter and the Deathly Hallows - Part 1`), `Novel` (e.g. `Harry Potter and the Philosopher's Stone`), and `Character` (e.g. `Hermione Granger`).
+
 
 TODO:
 - Explain resolver chain
