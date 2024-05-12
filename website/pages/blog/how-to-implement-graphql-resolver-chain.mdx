@@ -3,7 +3,7 @@ title: How to implement GraphQL resolver chain
 authors: eddeee888
 tags: [graphql, codegen, node, server, typescript]
 date: 2023-05-01
-description: TODO date, description, image, thumbnail
+description: TODO date, description, image, thumbnail, etc.etc.etc.etc.etc.etc.etc.etc.
 image: /blog-assets/the-complete-graphql-scalar-guide/cover.png
 thumbnail: /blog-assets/the-complete-graphql-scalar-guide/thumbnail.png
 ---
@@ -26,7 +26,7 @@ If a value is resolved into an object type node, that value becomes the first ar
 
 Read on to the next section for an example of resolver chain.
 
-### Resolver Chain Example
+### Example: Schema and Database
 
 In this article, we will use the following schema as an example:
 
@@ -66,45 +66,54 @@ To power the schema, we can use the following object as the data source:
 const database = {
   movies: {
     "1": {
+      id: "1",
       name: "Harry Potter and the Half-Blood Prince"
-      characters: ["1", "2", "3", "4"]
+      characterIds: ["1", "2", "3", "4"]
     },
     "2": {
+      id: "2",
       name: "Harry Potter and the Deathly Hallows - Part 1"
-      characters: ["1", "2", "3"]
+      characterIds: ["1", "2", "3"]
     },
     "3": {
+      id: "3",
       name: "Harry Potter and the Deathly Hallows - Part 2"
-      characters: ["1", "2", "3"]
+      characterIds: ["1", "2", "3"]
     }
   },
   novels: {
     "1": {
+      id: "1",
       name: "Harry Potter and the Half-Blood Prince"
-      characters: ["1", "2", "3", "4"]
+      characterIds: ["1", "2", "3", "4"]
     },
     "2": {
+      id: "2",
       name: "Harry Potter and the Deathly Hallows"
-      characters: ["1", "2", "3"]
+      characterIds: ["1", "2", "3"]
     }
   },
   characters: {
     "1": {
+      id: "1",
       firstName: "Harry",
       lastName: "Potter",
       bestFriendCharacterId: "2"
     },
     "2": {
+      id: "2",
       firstName: "Hermione",
       lastName: "Granger",
       bestFriendCharacterId: "1"
     },
     "3": {
+      id: "3",
       firstName: "Ron",
       lastName: "Weasley",
       bestFriendCharacterId: "1"
     }
     "4": {
+      id: "4",
       firstName: "Albus",
       lastName: "Dumbledore",
       bestFriendCharacterId: null
@@ -118,10 +127,160 @@ Database notes:
 - Like a real relational database, the records contain references to other records using IDs else.getComputedStyle. each `character` record has a `bestFriendCharacterId` field that references another `character` record.
 - For this example, let's imagine every time we query data from the database, it is an asynchronous operation like in real life.
 
+### Example: Resolvers Implementation
+
+Let's start by implementing the `movie` query resolver statically to visualise the resolver chain concept:
+
+```javascript
+// 1.
+const resolvers = {
+  Query: {
+    movie: () => {
+      // 2.
+      return {
+        id: "1",
+        name: "Harry Potter and the Half-Blood Prince"
+        // 3.
+        // ...
+      }
+    },
+  },
+};
+```
+
+Notes:
+
+1. This is what a resolver map: 
+   a. It contains an object with keys that match the schema's types e.g. `Query`, `Movie`, `Character`.
+   b. Each key of an object is a resolver function that resolves a field of the corresponding type. e.g. `Query.movie` resolves a `Movie` type.
+2. This is where the `Query.movie` resolver resolves the `Movie` type. Note: we are not using the database yet to keep it simple.
+   a. The object returned here corresponds to the `Movie` type in the schema.
+   b. The returned object has `id` field and `name` field that matches the schema's `Movie` type, and will be returned to the client with the current implementation.
+3. However, what about the `characters` field? Without returning any value here, the client cannot query for characters in this movie. We will implement it in the next section.
+
+#### Resolving `characters` Field the Wrong Way
+
+It is very tempting to call the database to resolve for the characters in the movie:
+
+```javascript
+const resolvers = {
+  Query: {
+    movie: () => {
+      return {
+        id: "1",
+        name: "Harry Potter and the Half-Blood Prince"
+        // 1.
+        characters: ["1", "2", "3"].map(characterId => {
+          // 2.
+          return database.characters[characterId]
+        })
+      }
+    },
+  },
+};
+```
+
+1. This is where we attempt to resolve the `characters` field of the `Movie` type using the linked `characterIds`.
+2. For each character ID, we attempt to fetch the character from the database.
+
+However, this is the wrong way to resolve the `characters` field. Here, we are sending three asynchronous requests to the database to fetch the characters. This function is always called whenever `Query.movie` is triggered, which is unnecessary and inefficient when the client does not request for the `characters` field. This is called "eager-resolve".
+
+Furthermore, each character may or may not have a best friend, which is another `Character` type. The client can query for the `bestFriend` field of each character:
+
+```graphql
+query {
+  movie {
+    characters {
+      # client can query for abitrairy depth of bestFriend
+      bestFriend {
+        bestFriend {
+          bestFriend {
+            name
+            # ... and so on
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+At the `Query.movie` resolver, we do not know how deep the client will query for the `bestFriend` field. On the other hand, if we decide to resolve for certain level of `bestFriend` here, and if the client does not request for the `bestFriend` field, we will have to make unnecessary requests to the database for each `bestFriend`.
+
+#### Resolving `characters` Field the Right Way using Mapper
+
+The right way to resolve `characters` field is to defer the resolving logic to the `Movie.characters` field resolver:
+
+```javascript
+const resolvers = {
+  Query: {
+    movie: () => {
+      // 1.
+      return {
+        id: "1",
+        name: "Harry Potter and the Half-Blood Prince",
+        characterIds: ["1", "2", "3"]
+      }
+    },
+  },
+  // 2.
+  Movie: {
+    // 3.
+    characters: (parent) => {
+      // 4.
+      return parent.characterIds.map(characterId => database.characters[characterId]);
+    }
+  },
+  // 5.
+  Character: {
+    // ...
+  }
+};
+```
+
+1. We are still statically resolving the `Movie` type in the `Query.movie` resolver. When we do not return an object with the exact shape of the schema's `Movie` type, it is commonly known as returning a Movie *mapper*.
+2. We create a `Movie` object in the resolver map to match the schema's `Movie` type.
+3. When we return anything into a `Movie` node (like the `Query.movie` resolver), the `Movie` type resolver/s are triggered if they are declared.
+4. `Movie.characters` resolver is triggered to return of an array of `Character` mappers...
+5. And each `Character` mapper returned in (4.) will run any `Character` type resolver/s if they are declared.
+
+Putting everything together, here's the complete implementation of the resolvers using the database:
+
+```javascript
+const resolvers = {
+  Query: {
+    // 1.
+    movie: (_, { id }) => {
+      return database.movies[id];
+    },
+  },
+  Movie: {
+    characters: ({ characterIds }) => {
+      return characterIds.map(characterId => database.characters[characterId]);
+    }
+  },
+  Character: {
+    // 2.
+    name: ({ firstName, lastName }) => `${firstName} ${lastName}`,
+    // 3.
+    bestFriend: ({ bestFriendCharacterId }) => {
+      if(!bestFriendCharacterId) {
+        return null;
+      }
+      return database.characters[bestFriendCharacterId]
+    }
+  }
+};
+```
+
+1. Now, we use the `id` argument to resolve the `Movie` type dynamically from the database.
+2. We resolve the `name` field of the `Character` type by combining the `firstName` and `lastName` fields of the `Character` mapper.
+3. We resolve the `bestFriend` field of the `Character` type by fetching the `Character` mapper using the `bestFriendCharacterId` field of the `Character` mapper. 
+   - Since `bestFriend` returns another `Character` wrapper, it will recursively handle any arbitrary depth of `bestFriend` field requested by the client.
+
 TODO:
-- Explain resolver chain
-- Explain mapper
-- Explain inconsistent mapper usage issue when implementing resolver chain
+- Write an example client query and show the resolver chain in action
+- Pit fall: Explain inconsistent mapper usage issue when implementing resolver chain
 
 ## How to Implement Resolver Chain Safely
 
