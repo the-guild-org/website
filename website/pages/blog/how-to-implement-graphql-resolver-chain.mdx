@@ -24,6 +24,8 @@ In a GraphQL server, a resolver is a function that "resolves" a value. Resolving
 
 If a value is resolved into an object type node, that value becomes the first argument (usually called `parent`) of every resolver of that object type. Each resolver of said object type can use `parent` to resolve its value. The process is repeated when resolving object types, until every field requested in selection set is resolved at a scalar or enum node. This is called the **resolver chain**.
 
+Read on to the next section for an example of resolver chain.
+
 ### Resolver Chain Example
 
 In this article, we will use the following schema as an example:
@@ -36,26 +38,85 @@ type Query {
 
 type Character {
   id: ID!
+  name: String!
   bestFriend: Character
 }
 
 type Movie {
   id: ID!
+  name: String!
   characters: [Character!]!
 }
 
 type Novel {
   id: ID!
+  name: String!
   characters: [Character!]!
 }
 ```
 
-Schema explanation:
+Schema notes:
 - There are two queries: `movie` and `novel` to return a `Movie` and a `Novel` object type, respectively.
 - Each `Movie` and `Novel` object type has a field `characters` that returns a list of `Character` object type.
 - `Character` object type has a field `bestFriend` that returns another `Character` object type.
-- Note: for simplicity, `id` field is the name of the `Movie` (e.g. `Harry Potter and the Deathly Hallows - Part 1`), `Novel` (e.g. `Harry Potter and the Philosopher's Stone`), and `Character` (e.g. `Hermione Granger`).
 
+To power the schema, we can use the following object as the data source:
+
+```javascript
+const database = {
+  movies: {
+    "1": {
+      name: "Harry Potter and the Half-Blood Prince"
+      characters: ["1", "2", "3", "4"]
+    },
+    "2": {
+      name: "Harry Potter and the Deathly Hallows - Part 1"
+      characters: ["1", "2", "3"]
+    },
+    "3": {
+      name: "Harry Potter and the Deathly Hallows - Part 2"
+      characters: ["1", "2", "3"]
+    }
+  },
+  novels: {
+    "1": {
+      name: "Harry Potter and the Half-Blood Prince"
+      characters: ["1", "2", "3", "4"]
+    },
+    "2": {
+      name: "Harry Potter and the Deathly Hallows"
+      characters: ["1", "2", "3"]
+    }
+  },
+  characters: {
+    "1": {
+      firstName: "Harry",
+      lastName: "Potter",
+      bestFriendCharacterId: "2"
+    },
+    "2": {
+      firstName: "Hermione",
+      lastName: "Granger",
+      bestFriendCharacterId: "1"
+    },
+    "3": {
+      firstName: "Ron",
+      lastName: "Weasley",
+      bestFriendCharacterId: "1"
+    }
+    "4": {
+      firstName: "Albus",
+      lastName: "Dumbledore",
+      bestFriendCharacterId: null
+    }
+  }
+};
+```
+
+Database notes:
+- Each first-level key-value represents a table i.e. there are three tables: `movies`, `novels`, and `characters` in this database.
+- Like a real relational database, the records contain references to other records using IDs else.getComputedStyle. each `character` record has a `bestFriendCharacterId` field that references another `character` record.
+- For this example, let's imagine every time we query data from the database, it is an asynchronous operation like in real life.
 
 TODO:
 - Explain resolver chain
