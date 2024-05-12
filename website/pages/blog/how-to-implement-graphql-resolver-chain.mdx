@@ -17,10 +17,10 @@ In this article, we'll explore what resolver chain is and how you can implement 
 
 In a GraphQL server, a resolver is a function that "resolves" a value. Resolving a value means doing arbitrary combination of logic to produce a value:
 
-- returning a value statically
-- fetching data from a database
-- calling an external API 
-- executing a complex business logic
+* returning a value statically
+* fetching data from a database
+* calling an external API
+* executing a complex business logic
 
 If a value is resolved into an object type node, that value becomes the first argument (usually called `parent`) of every resolver of that object type. Each resolver of said object type can use `parent` to resolve its value. The process is repeated when resolving object types, until every field requested in selection set is resolved at a scalar or enum node. This is called the **resolver chain**.
 
@@ -56,9 +56,10 @@ type Novel {
 ```
 
 Schema notes:
-- There are two queries: `movie` and `novel` to return a `Movie` and a `Novel` object type, respectively.
-- Each `Movie` and `Novel` object type has a field `characters` that returns a list of `Character` object type.
-- `Character` object type has a field `bestFriend` that returns another `Character` object type.
+
+* There are two queries: `movie` and `novel` to return a `Movie` and a `Novel` object type, respectively.
+* Each `Movie` and `Novel` object type has a field `characters` that returns a list of `Character` object type.
+* `Character` object type has a field `bestFriend` that returns another `Character` object type.
 
 To power the schema, we can use the following object as the data source:
 
@@ -123,9 +124,10 @@ const database = {
 ```
 
 Database notes:
-- Each first-level key-value represents a table i.e. there are three tables: `movies`, `novels`, and `characters` in this database.
-- Like a real relational database, the records contain references to other records using IDs else.getComputedStyle. each `character` record has a `bestFriendCharacterId` field that references another `character` record.
-- For this example, let's imagine every time we query data from the database, it is an asynchronous operation like in real life.
+
+* Each first-level key-value represents a table i.e. there are three tables: `movies`, `novels`, and `characters` in this database.
+* Like a real relational database, the records contain references to other records using IDs else.getComputedStyle. each `character` record has a `bestFriendCharacterId` field that references another `character` record.
+* For this example, let's imagine every time we query data from the database, it is an asynchronous operation like in real life.
 
 ### Example: Resolvers Implementation
 
@@ -150,15 +152,15 @@ const resolvers = {
 
 Notes:
 
-1. This is what a resolver map: 
-   a. It contains an object with keys that match the schema's types e.g. `Query`, `Movie`, `Character`.
-   b. Each key of an object is a resolver function that resolves a field of the corresponding type. e.g. `Query.movie` resolves a `Movie` type.
+1. This is a resolver map:
+   * It contains an object with keys that match the schema's types e.g. `Query`, `Movie`, `Character`.
+   * Each key of an object is a resolver function that resolves a field of the corresponding type. e.g. `Query.movie` resolves a `Movie` type.
 2. This is where the `Query.movie` resolver resolves the `Movie` type. Note: we are not using the database yet to keep it simple.
-   a. The object returned here corresponds to the `Movie` type in the schema.
-   b. The returned object has `id` field and `name` field that matches the schema's `Movie` type, and will be returned to the client with the current implementation.
+   * The object returned here corresponds to the `Movie` type in the schema.
+   * The returned object has `id` field and `name` field that matches the schema's `Movie` type, and will be returned to the client with the current implementation.
 3. However, what about the `characters` field? Without returning any value here, the client cannot query for characters in this movie. We will implement it in the next section.
 
-#### Resolving `characters` Field the Wrong Way
+#### Resolving `characters` Field - The Wrong Way
 
 It is very tempting to call the database to resolve for the characters in the movie:
 
@@ -207,7 +209,7 @@ query {
 
 At the `Query.movie` resolver, we do not know how deep the client will query for the `bestFriend` field. On the other hand, if we decide to resolve for certain level of `bestFriend` here, and if the client does not request for the `bestFriend` field, we will have to make unnecessary requests to the database for each `bestFriend`.
 
-#### Resolving `characters` Field the Right Way using Mapper
+#### Resolving `characters` Field - The Right Way Using Mapper
 
 The right way to resolve `characters` field is to defer the resolving logic to the `Movie.characters` field resolver:
 
@@ -275,12 +277,13 @@ const resolvers = {
 
 1. Now, we use the `id` argument to resolve the `Movie` type dynamically from the database.
 2. We resolve the `name` field of the `Character` type by combining the `firstName` and `lastName` fields of the `Character` mapper.
-3. We resolve the `bestFriend` field of the `Character` type by fetching the `Character` mapper using the `bestFriendCharacterId` field of the `Character` mapper. 
-   - Since `bestFriend` returns another `Character` wrapper, it will recursively handle any arbitrary depth of `bestFriend` field requested by the client.
+3. We resolve the `bestFriend` field of the `Character` type by fetching the `Character` mapper using the `bestFriendCharacterId` field of the `Character` mapper.
+   * Since `bestFriend` returns another `Character` wrapper, it will recursively handle any arbitrary depth of `bestFriend` field requested by the client.
 
 TODO:
-- Write an example client query and show the resolver chain in action
-- Pit fall: Explain inconsistent mapper usage issue when implementing resolver chain
+
+* Write an example client query and show the resolver chain in action
+* Pit fall: Explain inconsistent mapper usage issue when implementing resolver chain
 
 ## How to Implement Resolver Chain Safely
 
