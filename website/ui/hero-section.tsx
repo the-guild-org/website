@@ -13,26 +13,26 @@ export const HeroSection = ({
 }): ReactElement => {
   return (
     <div>
-      {/*<Image*/}
-      {/*  alt=""*/}
-      {/*  src={blueCircle}*/}
-      {/*  placeholder="empty"*/}
-      {/*  loading="eager"*/}
-      {/*  className={clsx(*/}
-      {/*    'absolute -left-40 top-0 z-[-1] lg:left-0',*/}
-      {/*    hideCirclesOnMobile && 'hidden xl:block',*/}
-      {/*  )}*/}
-      {/*/>*/}
-      {/*<Image*/}
-      {/*  alt=""*/}
-      {/*  src={pinkCircle}*/}
-      {/*  placeholder="empty"*/}
-      {/*  loading="eager"*/}
-      {/*  className={clsx(*/}
-      {/*    'drag-none absolute right-0 top-96 z-[-1] w-32 sm:top-80 sm:w-60 md:top-24 lg:w-96',*/}
-      {/*    hideCirclesOnMobile && 'hidden xl:block',*/}
-      {/*  )}*/}
-      {/*/>*/}
+      <Image
+        alt=""
+        src={blueCircle}
+        placeholder="empty"
+        loading="eager"
+        className={clsx(
+          'absolute -left-40 top-0 z-[-1] lg:left-0',
+          hideCirclesOnMobile && 'hidden xl:block',
+        )}
+      />
+      <Image
+        alt=""
+        src={pinkCircle}
+        placeholder="empty"
+        loading="eager"
+        className={clsx(
+          'drag-none absolute right-0 top-96 z-[-1] w-32 sm:top-80 sm:w-60 md:top-24 lg:w-96',
+          hideCirclesOnMobile && 'hidden xl:block',
+        )}
+      />
       <div className="flex flex-col items-center justify-center text-center">
         <div
           className="

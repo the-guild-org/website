@@ -1,63 +1,72 @@
 import { ReactElement } from 'react';
-import { Anchor, PRODUCTS } from '@theguild/components';
-import { Description, Heading, Link, Tooltip } from './components';
+import { clsx } from 'clsx';
+import { PRODUCTS } from '@theguild/components';
+import { Description, Heading, Link } from './components';
 
-export const PlatformSection = ({ className }: { className?: string }): ReactElement => {
+const classes = {
+  title: clsx('font-medium text-lg pb-3.5'),
+  section: clsx('mt-8 flex flex-wrap gap-5 items-start'),
+  divider: clsx('border-0 h-0.5 bg-gradient-to-r from-gray-500 to-transparent'),
+};
+
+function renderProduct(product: (typeof PRODUCTS)[keyof typeof PRODUCTS]) {
   return (
-    <Tooltip.Provider>
-      <div id="platform" className={className}>
-        <div className="container flex flex-col items-center px-4 pb-28 pt-20 text-center sm:px-6 md:px-8">
-          <Heading>The Ecosystem</Heading>
-          <Description className="max-w-[400px] md:max-w-[700px]">
-            Our advanced, modular solutions can be adopted gradually as individual open source
-            libraries or as a complete unified API platform. Explore our suite of sustainable, open
-            source API tools that covers everything you need to scale your API infrastructure:
-          </Description>
+    <Link
+      key={product.name}
+      href={product.href}
+      className={clsx(
+        'rounded-[10px] py-3.5 text-gray-500 transition-all duration-300',
+        'hocus:bg-zinc-800/70 hocus:pl-3.5 hocus:pr-0 hocus:text-current hocus:no-underline pr-3.5',
+      )}
+    >
+      <span className="mb-2 flex items-center gap-2.5 text-lg">
+        <product.logo className="h-7 w-auto transition-colors duration-300 [a:not(:hover,:focus)>span>&]:fill-gray-500" />
+        {product.name}
+      </span>
+      <p className="pr-4 text-sm">{product.title}</p>
+    </Link>
+  );
+}
 
-          {/* TODO: Add this when we'll have `/products` route */}
-          {/* <Link href="#">View All Products ➔</Link> */}
-          <Link
-            href="/about-us"
-            className="font-bold !text-gray-500 hover:!text-gray-600 hover:no-underline dark:hover:!text-gray-300"
-          >
-            Learn more about The Guild ➔
-          </Link>
-
-          <div className="mt-10 flex max-w-[900px] flex-wrap justify-center">
-            {Object.values(PRODUCTS).map(product => (
-              <Tooltip key={product.name} content={product.title}>
-                <Anchor
-                  style={{ width: 135 }}
-                  className="
-                  flex
-                  flex-shrink-0
-                  flex-col
-                  gap-2
-                  rounded
-                  border
-                  border-solid
-                  border-transparent
-                  py-3
-                  contrast-0
-                  grayscale
-                  transition-all
-                  duration-200
-                  ease-linear
-                  hover:text-gray-600
-                  hover:filter-none
-                  dark:hover:border-gray-800
-                  dark:hover:text-white
-                "
-                  href={product.href}
-                >
-                  <product.logo className="h-16 w-auto" />
-                  <h4 className="text-xs font-medium">{product.name}</h4>
-                </Anchor>
-              </Tooltip>
-            ))}
+export function PlatformSection({ className }: { className?: string }): ReactElement {
+  return (
+    <div id="platform" className={clsx('py-24', className)}>
+      <div className="nextra-container text-center">
+        <Heading>The Ecosystem</Heading>
+        <Description className="max-w-xl mx-auto mb-24">
+          Our advanced, modular solutions can be adopted gradually as individual open source
+          libraries or as a complete unified API platform. Explore our suite of sustainable, open
+          source API tools that covers everything you need to scale your API infrastructure:
+        </Description>
+      </div>
+      <div className="nextra-container grid w-full grid-cols-6 gap-3.5">
+        <div>
+          <h3 className={classes.title}>Schema Evolution</h3>
+          <hr className={classes.divider} />
+          <div className={classes.section}>
+            {[PRODUCTS.HIVE, PRODUCTS.INSPECTOR].map(renderProduct)}
+          </div>
+        </div>
+        <div>
+          <h3 className={classes.title}>Gateway</h3>
+          <hr className={classes.divider} />
+          <div className={classes.section}>{[PRODUCTS.MESH].map(renderProduct)}</div>
+        </div>
+        <div className="col-span-2">
+          <h3 className={classes.title}>Subgraph / Schema</h3>
+          <hr className={classes.divider} />
+          <div className={clsx(classes.section, '[&>a]:w-[calc(50%-10px)]')}>
+            {[PRODUCTS.YOGA, PRODUCTS.ENVELOP, PRODUCTS.SOFA, PRODUCTS.SCALARS].map(renderProduct)}
+          </div>
+        </div>
+        <div className="col-span-2">
+          <h3 className={classes.title}>Developer Experience</h3>
+          <hr className={classes.divider} />
+          <div className={clsx(classes.section, '[&>a]:w-[calc(50%-10px)]')}>
+            {[PRODUCTS.CODEGEN, PRODUCTS.ESLINT, PRODUCTS.NEXTRA].map(renderProduct)}
           </div>
         </div>
       </div>
-    </Tooltip.Provider>
+    </div>
   );
-};
+}

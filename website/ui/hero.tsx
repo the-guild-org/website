@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import NextImage from 'next/image';
+import NextLink from 'next/link';
 import { clsx } from 'clsx';
 import hiveHero from '@/hive-hero.png';
 import meshHero from '@/mesh-hero.svg';
@@ -11,7 +12,7 @@ export function Hero() {
   const { primaryColor } = isHive ? PRODUCTS.HIVE : PRODUCTS.MESH;
 
   return (
-    <div className="container py-[10vh]">
+    <div className="nextra-container py-[10vh]">
       <div className="mb-12 flex gap-10">
         <button
           className={clsx(
@@ -40,7 +41,7 @@ export function Hero() {
           GraphQL-Mesh
         </button>
       </div>
-      <div className="grid grid-cols-5 gap-24">
+      <div className="grid grid-cols-5 gap-32">
         <div className="col-span-2">
           <h2 className="mb-4 text-[64px] font-medium">
             {isHive ? 'Schema Registry and observability for GraphQL' : 'The Graph of Everything'}
@@ -50,12 +51,13 @@ export function Hero() {
               ? 'Prevent breaking changes, monitor performance of your GraphQL API, and manage your API gateway'
               : 'Federate and serve any kind of API'}
           </p>
-          <button
+          <NextLink
+            href={isHive ? '/graphql/hive' : '/graphql/mesh'}
             className="rounded-[10px] px-5 py-3 font-medium"
             style={{ background: primaryColor }}
           >
             Explore {isHive ? 'Hive' : 'Mesh'}
-          </button>
+          </NextLink>
         </div>
         <NextImage
           className="col-span-3"
