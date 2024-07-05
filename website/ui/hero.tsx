@@ -41,8 +41,8 @@ export function Hero() {
           GraphQL-Mesh
         </button>
       </div>
-      <div className="grid grid-cols-5 gap-32">
-        <div className="col-span-2">
+      <div className="flex gap-24">
+        <div className={clsx(isHive ? 'w-[45%]' : '1/3')}>
           <h2 className="mb-4 text-[64px] font-medium">
             {isHive ? 'Schema Registry and observability for GraphQL' : 'The Graph of Everything'}
           </h2>
@@ -53,14 +53,17 @@ export function Hero() {
           </p>
           <NextLink
             href={isHive ? '/graphql/hive' : '/graphql/mesh'}
-            className="rounded-[10px] px-5 py-3 font-medium"
+            className={clsx(
+              'text-dark inline-flex items-center gap-3 rounded-[10px] px-5 py-3 font-medium',
+              'after:font-mono after:text-2xl after:leading-none after:transition-transform after:duration-100 after:content-["➔"] hover:after:translate-x-1.5',
+            )}
             style={{ background: primaryColor }}
           >
             Explore {isHive ? 'Hive' : 'Mesh'}
           </NextLink>
         </div>
         <NextImage
-          className="col-span-3"
+          className={clsx(isHive ? 'w-[55%]' : 'w-2/3')}
           src={isHive ? hiveHero : meshHero}
           alt={isHive ? 'Hive dashboard' : 'Mesh diagram'}
         />
