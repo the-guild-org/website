@@ -2,9 +2,12 @@ import { useState } from 'react';
 import NextImage from 'next/image';
 import NextLink from 'next/link';
 import { clsx } from 'clsx';
+import { AnimatePresence, motion } from 'framer-motion';
 import hiveHero from '@/hive-hero.png';
 import meshHero from '@/mesh-hero.svg';
 import { PRODUCTS } from '@theguild/components';
+
+const MotionNextImage = motion(NextImage);
 
 export function Hero() {
   const [isHive, setIsHive] = useState(true);
@@ -42,30 +45,44 @@ export function Hero() {
         </button>
       </div>
       <div className="flex gap-24">
-        <div className={clsx(isHive ? 'w-[45%]' : '1/3')}>
-          <h2 className="mb-4 text-[64px] font-medium">
-            {isHive ? 'Schema Registry and observability for GraphQL' : 'The Graph of Everything'}
-          </h2>
-          <p className="mb-12 text-gray-500">
-            {isHive
-              ? 'Prevent breaking changes, monitor performance of your GraphQL API, and manage your API gateway'
-              : 'Federate and serve any kind of API'}
-          </p>
-          <NextLink
-            href={isHive ? '/graphql/hive' : '/graphql/mesh'}
-            className={clsx(
-              'text-dark inline-flex items-center gap-3 rounded-[10px] px-5 py-3 font-medium',
-              'after:font-mono after:text-2xl after:leading-none after:transition-transform after:duration-100 after:content-["➔"] hover:after:translate-x-1.5',
-            )}
-            style={{ background: primaryColor }}
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.div
+            key={isHive.toString()}
+            className={clsx(isHive ? 'w-[45%]' : 'w-1/3')}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            Explore {isHive ? 'Hive' : 'Mesh'}
-          </NextLink>
-        </div>
-        <NextImage
-          className={clsx(isHive ? 'w-[55%]' : 'w-2/3')}
+            <h2 className="mb-4 text-[64px] font-medium">
+              {isHive ? 'Schema Registry and observability for GraphQL' : 'The Graph of Everything'}
+            </h2>
+            <p className="mb-12 text-gray-500">
+              {isHive
+                ? 'Prevent breaking changes, monitor performance of your GraphQL API, and manage your API gateway'
+                : 'Federate and serve any kind of API'}
+            </p>
+            <NextLink
+              href={isHive ? '/graphql/hive' : '/graphql/mesh'}
+              className={clsx(
+                'text-dark inline-flex items-center gap-3 rounded-[10px] px-5 py-3 font-medium',
+                'after:font-mono after:text-2xl after:leading-none after:transition-transform after:duration-100 after:content-["➔"] hover:after:translate-x-1.5',
+              )}
+              style={{ background: primaryColor }}
+            >
+              Explore {isHive ? 'Hive' : 'Mesh'}
+            </NextLink>
+          </motion.div>
+        </AnimatePresence>
+        <MotionNextImage
+          key={isHive.toString()}
+          className={clsx('h-full', isHive ? 'w-[55%]' : 'w-2/3')}
           src={isHive ? hiveHero : meshHero}
           alt={isHive ? 'Hive dashboard' : 'Mesh diagram'}
+          initial={{ x: isHive ? -100 : 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: 0, opacity: 0 }}
+          transition={{ duration: 0.5 }}
         />
       </div>
     </div>
