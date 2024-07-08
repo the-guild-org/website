@@ -16,10 +16,10 @@ export function Hero() {
 
   return (
     <div
-      className="nextra-container py-[10vh]"
+      className="nextra-container pb-14 pt-20 lg:pb-44 lg:pt-36"
       // min-h-[calc(100vh-var(--nextra-navbar-height))] flex flex-col justify-center
     >
-      <div className="mb-12 flex gap-10">
+      <div className="mb-8 flex gap-10 font-medium max-lg:justify-center max-lg:text-sm lg:mb-12">
         <button
           className={clsx(
             'flex items-center gap-2.5 border-b-2 pb-3.5',
@@ -51,13 +51,13 @@ export function Hero() {
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={isHive.toString()}
-            className={isHive ? 'w-[45%]' : 'w-1/3'}
+            className={clsx('max-lg:w-full max-lg:text-center', isHive ? 'lg:w-[45%]' : 'lg:w-1/3')}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.7 }}
           >
-            <h2 className="mb-4 text-[3.625rem]/[4.5rem] font-medium">
+            <h2 className="mb-4 text-4xl/snug font-medium lg:text-[3.625rem]/tight">
               {isHive ? (
                 <>
                   Schema Registry
@@ -74,7 +74,7 @@ export function Hero() {
                 </>
               )}
             </h2>
-            <p className="mb-12 text-gray-500">
+            <p className="mb-10 text-gray-500 lg:mb-12">
               {isHive
                 ? 'Prevent breaking changes, monitor performance of your GraphQL API, and manage your API gateway'
                 : 'Federate and serve any kind of API'}
@@ -91,16 +91,18 @@ export function Hero() {
             </NextLink>
           </motion.div>
         </AnimatePresence>
-        <MotionNextImage
-          key={isHive.toString()}
-          className={clsx('h-full', isHive ? 'w-[55%]' : 'w-2/3')}
-          src={isHive ? hiveHero : meshHero}
-          alt={isHive ? 'Hive dashboard' : 'Mesh diagram'}
-          initial={{ x: isHive ? -100 : 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 0, opacity: 0 }}
-          transition={{ duration: 0.5 }}
-        />
+        <AnimatePresence mode="popLayout" initial={false}>
+          <MotionNextImage
+            key={isHive.toString()}
+            className={clsx('h-full max-lg:hidden', isHive ? 'w-[55%]' : 'w-2/3')}
+            src={isHive ? hiveHero : meshHero}
+            alt={isHive ? 'Hive dashboard' : 'Mesh diagram'}
+            initial={{ x: isHive ? -100 : 100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 0, opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          />
+        </AnimatePresence>
       </div>
     </div>
   );

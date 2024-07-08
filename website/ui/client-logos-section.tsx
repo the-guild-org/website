@@ -53,14 +53,14 @@ const logos: Record<string, StaticImageData> = {
 export const ClientLogosSection = (): ReactElement => {
   return (
     <div className="nextra-container">
-      <InfiniteMovingCards direction="right" speed="slow" className="py-16">
+      <InfiniteMovingCards direction="right" speed="slow" className="py-10 lg:py-16">
         {Object.entries(logos).map(([name, logo]) => (
           <Image
             key={name}
             src={logo}
             title={name}
             alt={`${name} logo`}
-            className="h-8 sm:h-12 lg:h-16 w-auto opacity-50 invert transition-opacity hover:opacity-100 dark:invert-0"
+            className="h-11 lg:h-16 w-auto opacity-50 invert transition-opacity hover:opacity-100 dark:invert-0"
             placeholder="empty"
             loading="eager"
             // className="
