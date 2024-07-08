@@ -1,9 +1,8 @@
+import hocusPlugin from 'tailwindcss-hocus';
 // @ts-expect-error -- types are missing
 import plugin from 'tailwindcss/plugin';
 import config from '@theguild/tailwind-config';
 
-const hocusPlugin = require('tailwindcss-hocus');
-console.log(hocusPlugin)
 export default {
   ...config,
   theme: {
@@ -17,7 +16,7 @@ export default {
       keyframes: {
         scroll: {
           to: {
-            transform: "translate(calc(-50% - .5rem))",
+            transform: 'translate(calc(-50% - .5rem))',
           },
         },
       },
@@ -31,9 +30,7 @@ export default {
   plugins: [
     plugin(({ addUtilities }) => {
       addUtilities({
-        '.drag-none': {
-          userDrag: 'none',
-        },
+        '.drag-none': { userDrag: 'none' },
       });
     }),
     // Adds hocus:, hocus-within:, group-hocus:, group-hocus-within:, peer-hocus:, peer-hocus-within:

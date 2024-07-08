@@ -28,10 +28,10 @@ function renderProduct(product: (typeof PRODUCTS)[keyof typeof PRODUCTS]) {
   );
 }
 
-export function PlatformSection({ className }: { className?: string }): ReactElement {
+export function Ecosystem({ className }: { className?: string }): ReactElement {
   return (
-    <div id="platform" className={clsx('py-24', className)}>
-      <div className="nextra-container text-center">
+    <div id="platform" className={clsx('py-32', className)}>
+      <div className="nextra-container text-center mb-24">
         <Heading>The Ecosystem</Heading>
         <Description className="max-w-xl mx-auto mb-24">
           Our advanced, modular solutions can be adopted gradually as individual open source
