@@ -19,6 +19,9 @@ const siteDescription = 'Modern, Open-source API Tooling and Ecosystem that scal
 const siteName = 'The Guild';
 
 export default defineConfig({
+  backgroundColor: {
+   dark: '15,17,20'
+  },
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
   head: function useHead() {
     const { frontMatter, title: pageTitle } = useConfig();

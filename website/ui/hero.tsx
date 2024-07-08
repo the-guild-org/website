@@ -57,8 +57,22 @@ export function Hero() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.7 }}
           >
-            <h2 className="mb-4 text-[64px] font-medium">
-              {isHive ? 'Schema Registry and observability for GraphQL' : 'The Graph of Everything'}
+            <h2 className="mb-4 text-[4rem]/[5rem] font-medium">
+              {isHive ? (
+                <>
+                  Schema Registry
+                  <br />
+                  and Observability
+                  <br />
+                  for GraphQL
+                </>
+              ) : (
+                <>
+                  The Graph
+                  <br />
+                  of Everything
+                </>
+              )}
             </h2>
             <p className="mb-12 text-gray-500">
               {isHive

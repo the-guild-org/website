@@ -60,7 +60,7 @@ export const ClientLogosSection = (): ReactElement => {
             src={logo}
             title={name}
             alt={`${name} logo`}
-            className="h-16 w-auto opacity-50 transition-opacity hover:opacity-100"
+            className="h-16 w-auto opacity-50 invert transition-opacity hover:opacity-100 dark:invert-0"
             placeholder="empty"
             loading="eager"
             // className="

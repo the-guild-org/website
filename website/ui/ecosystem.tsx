@@ -16,7 +16,7 @@ function renderProduct(product: (typeof PRODUCTS)[keyof typeof PRODUCTS]) {
       href={product.href}
       className={clsx(
         'rounded-[10px] py-3.5 text-gray-500 transition-all duration-300',
-        'hocus:bg-zinc-800/70 hocus:pl-3.5 hocus:pr-0 hocus:text-current hocus:no-underline pr-3.5',
+        'hocus:bg-zinc-800/20 hocus:dark:bg-zinc-800/70 hocus:pl-3.5 hocus:pr-0 hocus:text-current hocus:no-underline pr-3.5',
       )}
     >
       <span className="mb-2 flex items-center gap-2.5 text-lg">
@@ -31,9 +31,9 @@ function renderProduct(product: (typeof PRODUCTS)[keyof typeof PRODUCTS]) {
 export function Ecosystem({ className }: { className?: string }): ReactElement {
   return (
     <div id="platform" className={clsx('py-32', className)}>
-      <div className="nextra-container text-center mb-24">
+      <div className="nextra-container mb-24 text-center">
         <Heading>The Ecosystem</Heading>
-        <Description className="max-w-xl mx-auto mb-24">
+        <Description className="mx-auto mb-24 max-w-xl">
           Our advanced, modular solutions can be adopted gradually as individual open source
           libraries or as a complete unified API platform. Explore our suite of sustainable, open
           source API tools that covers everything you need to scale your API infrastructure:

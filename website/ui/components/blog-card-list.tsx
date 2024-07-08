@@ -15,14 +15,13 @@ export const BlogCardList = ({
   className?: string;
 }): ReactElement => {
   return (
-    <div className={clsx('my-12 flex flex-wrap justify-center gap-x-7 gap-y-10', className)}>
+    <div className={clsx('my-12 grid grid-cols-4 gap-14', className)}>
       {articles.map(article => (
         <NextLink
           key={article.link}
           href={article.link}
           className="
           flex
-          w-[278px]
           cursor-pointer
           flex-col
           overflow-hidden

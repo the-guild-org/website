@@ -28,7 +28,7 @@ export function ServicesSection(): ReactElement {
               <ol className="flex flex-col gap-2.5">
                 {service.list.map(item => (
                   <li key={item} className="flex items-center gap-2.5 text-gray-500">
-                    <CheckIcon className="h-2.5 text-white" />
+                    <CheckIcon className="h-2.5 text-dark dark:text-white" />
                     {item}
                   </li>
                 ))}
