@@ -13,7 +13,7 @@ export function ServicesSection(): ReactElement {
   return (
     <div className="nextra-container py-32">
       <div className="mb-24 text-center">
-        <Heading>The Guild&apos;s Services</Heading>
+        <Heading id="services">The Guild&apos;s Services</Heading>
         <Description className="mx-auto mb-24 max-w-xl">
           Work directly with the most powerful group of API developers that created the open source
           infrastructure you use today
@@ -28,7 +28,7 @@ export function ServicesSection(): ReactElement {
               <ol className="flex flex-col gap-2.5">
                 {service.list.map(item => (
                   <li key={item} className="flex items-center gap-2.5 text-gray-500">
-                    <CheckIcon className="h-2.5 text-dark dark:text-white" />
+                    <CheckIcon className="text-dark h-2.5 dark:text-white" />
                     {item}
                   </li>
                 ))}

@@ -15,7 +15,7 @@ export const BlogCardList = ({
   className?: string;
 }): ReactElement => {
   return (
-    <div className={clsx('my-12 grid grid-cols-4 gap-14', className)}>
+    <div className={clsx('my-12 grid md:grid-cols-2 xl:grid-cols-4 gap-14', className)}>
       {articles.map(article => (
         <NextLink
           key={article.link}
