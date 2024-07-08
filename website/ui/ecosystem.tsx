@@ -7,6 +7,7 @@ const classes = {
   title: clsx(
     'font-medium text-lg sm:pb-3.5 list-none sm:pointer-events-none',
     'max-sm:cursor-pointer max-sm:flex max-sm:items-center max-sm:gap-2 transition-colors',
+    'max-sm:-m-5 max-sm:p-5 max-sm:rounded-[10px]', // for better focus
   ),
   section: clsx('mt-8 flex flex-wrap gap-5 items-start'),
   divider: clsx('border-0 h-0.5 bg-gradient-to-r from-gray-500 to-transparent max-sm:hidden'),

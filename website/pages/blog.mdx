@@ -4,12 +4,12 @@ description: Announcements about our Open-Source projects
 skipSync: true
 ---
 
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { BlogCardList, Heading, Newsletter, TagList } from '@/components'
 import { HeroSection } from '@/hero-section'
 import { allBlogs } from '../lib/all-blogs'
 import { asArray } from '../lib/as-array'
-import Head from 'next/head'
 
 export function extractRelevantTags(articles) {
   const allTags = articles.flatMap(article => article.tags || [])
@@ -41,21 +41,22 @@ export default function Blog() {
         tagsFilter.length === 0 || asArray(article.tags).some(tag => tagsFilter.includes(tag))
     )
   }
-  const title = tagsFilter.length ? `Blog - ${tagsFilter.join(', ')} (The Guild)` : 'Blog - (The Guild)'
-
-return ( <>
-
+  const title = tagsFilter.length
+    ? `Blog - ${tagsFilter.join(', ')} (The Guild)`
+    : 'Blog - (The Guild)'
+  return (
+    <>
       <Head>
         <title>{title}</title>
       </Head>
       <HeroSection>
         <Heading>The Guild's blog</Heading>
       </HeroSection>
-      <div className="container max-w-[1200px]">
+      <div className="nextra-container">
         <TagList tags={allTags} withCount asLink className="mb-20 mt-10" />
         {!tagsFilter.length && <Newsletter />}
         {<BlogCardList articles={articles} />}
       </div>
     </>
-
-) }
+  )
+}

@@ -15,55 +15,57 @@ export const Newsletter = ({
   hideLinkToIssues?: boolean;
 }): ReactElement => {
   return (
-    <div
-      className={clsx(
-        'my-12 flex max-w-3xl flex-col gap-2 rounded bg-gray-100 p-6 sm:mx-auto dark:bg-zinc-900',
-        className,
-      )}
-    >
-      <Heading size="md" className="!m-0">
-        Join our newsletter
-      </Heading>
-      <Description className="!mb-2">
-        Want to hear from us when there&apos;s something new? Sign up and stay up to date!
-      </Description>
-      <form
-        onSubmit={async e => {
-          e.preventDefault();
-
-          const email = e.currentTarget.email.value;
-
-          const response = await fetch('https://utils.the-guild.dev/api/newsletter-subscribe', {
-            body: JSON.stringify({
-              email,
-            }),
-            method: 'POST',
-          });
-
-          const responseData: { status: 'success' | 'error'; message: string } =
-            await response.json();
-
-          toast[responseData.status](responseData.message);
-        }}
-        name="beehiiv-form"
-        target="_blank"
-        className="flex items-start gap-2"
+    <div className="nextra-container">
+      <div
+        className={clsx(
+          'my-12 flex max-w-3xl flex-col gap-2 rounded bg-gray-100 p-6 dark:bg-zinc-900',
+          className,
+        )}
       >
-        <Input type="email" name="email" id="member_email" placeholder="Enter your email" />
-        <Button type="submit" variant="primary">
-          Submit
-        </Button>
-      </form>
-      <Description className="!mt-2">
-        By subscribing, you agree with Beehiiv’s{' '}
-        <Link href="https://www.beehiiv.com/tou">Terms of Service</Link> and{' '}
-        <Link href="https://www.beehiiv.com/privacy">Privacy Policy</Link>.
-      </Description>
-      {!hideLinkToIssues && (
-        <Link href="https://newsletter.the-guild.dev/" className="self-start">
-          Recent issues of our newsletter
-        </Link>
-      )}
+        <Heading size="md" className="!m-0">
+          Join our newsletter
+        </Heading>
+        <Description className="!mb-2">
+          Want to hear from us when there&apos;s something new? Sign up and stay up to date!
+        </Description>
+        <form
+          onSubmit={async e => {
+            e.preventDefault();
+
+            const email = e.currentTarget.email.value;
+
+            const response = await fetch('https://utils.the-guild.dev/api/newsletter-subscribe', {
+              body: JSON.stringify({
+                email,
+              }),
+              method: 'POST',
+            });
+
+            const responseData: { status: 'success' | 'error'; message: string } =
+              await response.json();
+
+            toast[responseData.status](responseData.message);
+          }}
+          name="beehiiv-form"
+          target="_blank"
+          className="flex items-start gap-2"
+        >
+          <Input type="email" name="email" id="member_email" placeholder="Enter your email" />
+          <Button type="submit" variant="primary">
+            Submit
+          </Button>
+        </form>
+        <Description className="!mt-2">
+          By subscribing, you agree with Beehiiv’s{' '}
+          <Link href="https://www.beehiiv.com/tou">Terms of Service</Link> and{' '}
+          <Link href="https://www.beehiiv.com/privacy">Privacy Policy</Link>.
+        </Description>
+        {!hideLinkToIssues && (
+          <Link href="https://newsletter.the-guild.dev/" className="self-start">
+            Recent issues of our newsletter
+          </Link>
+        )}
+      </div>
     </div>
   );
 };

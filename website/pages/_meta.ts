@@ -19,12 +19,6 @@ export default {
       timestamp: false,
     },
   },
-  services: {
-    type: 'page',
-    theme: {
-      layout: 'raw',
-    },
-  },
   'about-us': {
     type: 'page',
     theme: {

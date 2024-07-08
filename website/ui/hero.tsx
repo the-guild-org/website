@@ -57,7 +57,7 @@ export function Hero() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.7 }}
           >
-            <h2 className="mb-4 text-[4rem]/[5rem] font-medium">
+            <h2 className="mb-4 text-[3.625rem]/[4.5rem] font-medium">
               {isHive ? (
                 <>
                   Schema Registry

@@ -41,7 +41,7 @@ export function InfiniteMovingCards({
     >
       <ul
         className={clsx(
-          'flex w-max min-w-full shrink-0 flex-nowrap gap-20 py-4',
+          'flex w-max min-w-full shrink-0 flex-nowrap gap-10 sm:gap-16 lg:gap-20 py-4',
           'animate-scroll',
           pauseOnHover && 'hover:[animation-play-state:paused]',
         )}
