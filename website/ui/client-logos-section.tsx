@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { StaticImageData } from 'next/image';
+import { InfiniteMovingCards } from '@/infinite-moving-cards';
 import { Image } from '@theguild/components';
 import thirdFriday from '../public/img/logos/companies/3rdfriday-white.png';
 import airFrance from '../public/img/logos/companies/air-france-white.png';
@@ -51,29 +52,30 @@ const logos: Record<string, StaticImageData> = {
 
 export const ClientLogosSection = (): ReactElement => {
   return (
-    <div className="container">
-      <div className="mx-auto mt-44 flex max-w-[1260px] flex-wrap items-center justify-center gap-12 pb-20">
+    <div className="nextra-container">
+      <InfiniteMovingCards direction="right" speed="slow" className="py-16">
         {Object.entries(logos).map(([name, logo]) => (
           <Image
             key={name}
             src={logo}
             title={name}
             alt={`${name} logo`}
+            className="h-16 w-auto opacity-50 transition-opacity hover:opacity-100"
             placeholder="empty"
             loading="eager"
-            className="
-            h-8
-            w-auto
-            opacity-70
-            invert
-            transition-opacity
-            duration-300
-            hover:opacity-100
-            dark:invert-0
-            "
+            // className="
+            // h-8
+            // w-auto
+            // opacity-70
+            // invert
+            // transition-opacity
+            // duration-300
+            // hover:opacity-100
+            // dark:invert-0
+            // "
           />
         ))}
-      </div>
+      </InfiniteMovingCards>
     </div>
   );
 };

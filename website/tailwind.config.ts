@@ -1,10 +1,28 @@
 // @ts-expect-error -- types are missing
 import plugin from 'tailwindcss/plugin';
 import config from '@theguild/tailwind-config';
-const hocusPlugin = require('tailwindcss-hocus')
 
+const hocusPlugin = require('tailwindcss-hocus');
+console.log(hocusPlugin)
 export default {
   ...config,
+  theme: {
+    ...config.theme,
+    extend: {
+      ...config.theme.extend,
+      animation: {
+        scroll:
+          'scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite',
+      },
+      keyframes: {
+        scroll: {
+          to: {
+            transform: "translate(calc(-50% - .5rem))",
+          },
+        },
+      },
+    },
+  },
   content: [
     // @ts-expect-error -- fixme
     ...config.content,

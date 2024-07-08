@@ -15,7 +15,10 @@ export function Hero() {
   const { primaryColor } = isHive ? PRODUCTS.HIVE : PRODUCTS.MESH;
 
   return (
-    <div className="nextra-container py-[10vh]">
+    <div
+      className="nextra-container py-[10vh]"
+      // min-h-[calc(100vh-var(--nextra-navbar-height))] flex flex-col justify-center
+    >
       <div className="mb-12 flex gap-10">
         <button
           className={clsx(
@@ -48,11 +51,11 @@ export function Hero() {
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={isHive.toString()}
-            className={clsx(isHive ? 'w-[45%]' : 'w-1/3')}
+            className={isHive ? 'w-[45%]' : 'w-1/3'}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.7 }}
           >
             <h2 className="mb-4 text-[64px] font-medium">
               {isHive ? 'Schema Registry and observability for GraphQL' : 'The Graph of Everything'}
