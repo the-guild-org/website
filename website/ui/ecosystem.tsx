@@ -67,7 +67,7 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
     <div className={clsx('nextra-container py-16 lg:py-32', className)}>
       <div className="md:text-center">
         <Heading id="platform">The Ecosystem</Heading>
-        <Description className="mx-auto !mb-10 md:max-w-xl md:!mb-24">
+        <Description className="mx-auto !mb-10 md:!mb-24 md:max-w-xl">
           Our advanced, modular solutions can be adopted gradually as individual open source
           libraries or as a complete unified API platform. Explore our suite of sustainable, open
           source API tools that covers everything you need to scale your API infrastructure:

@@ -20,7 +20,7 @@ const siteName = 'The Guild';
 
 export default defineConfig({
   backgroundColor: {
-   dark: '15,17,20'
+    dark: '15,17,20',
   },
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
   head: function useHead() {

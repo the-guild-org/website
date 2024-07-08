@@ -20,11 +20,7 @@ export function InfiniteMovingCards({
   pauseOnHover?: boolean;
   className?: string;
 }): ReactElement {
-  const content = Children.map(children, (child, index) => (
-    <li key={index}>
-      {child}
-    </li>
-  ));
+  const content = Children.map(children, (child, index) => <li key={index}>{child}</li>);
 
   return (
     <div

@@ -11,7 +11,7 @@ export const RecommendedReadingSection = ({
     <div className="nextra-container py-16 lg:py-32">
       <div className="md:text-center">
         <Heading>Recommended Reading</Heading>
-        <Description className="mx-auto !mb-10 md:max-w-xl md:!mb-24">
+        <Description className="mx-auto !mb-10 md:!mb-24 md:max-w-xl">
           Read and follow the most popular blog in the GraphQL Ecosystem
         </Description>
         <Link

@@ -14,7 +14,7 @@ export function ServicesSection(): ReactElement {
     <div className="nextra-container py-16 lg:py-32">
       <div className="md:text-center">
         <Heading id="services">The Guild&apos;s Services</Heading>
-        <Description className="mx-auto !mb-10 md:max-w-xl md:!mb-24">
+        <Description className="mx-auto !mb-10 md:!mb-24 md:max-w-xl">
           Work directly with the most powerful group of API developers that created the open source
           infrastructure you use today
         </Description>

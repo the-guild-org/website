@@ -16,7 +16,7 @@ export const Heading = ({
       className={clsx(
         'm-0 mb-3.5',
         {
-          lg: 'text-3xl font-medium leading-snug dark:text-gray-50 md:text-5xl',
+          lg: 'text-3xl font-medium leading-snug md:text-5xl dark:text-gray-50',
           md: 'text-lg font-bold leading-7 dark:text-gray-50',
         }[size],
         className,
