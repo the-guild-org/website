@@ -11,10 +11,10 @@ function CheckIcon(props: ComponentProps<'svg'>): ReactElement {
 
 export function ServicesSection(): ReactElement {
   return (
-    <div className="nextra-container py-32">
-      <div className="mb-24 text-center">
+    <div className="nextra-container py-16 lg:py-32">
+      <div className="md:text-center">
         <Heading id="services">The Guild&apos;s Services</Heading>
-        <Description className="mx-auto mb-24 max-w-xl">
+        <Description className="mx-auto !mb-10 md:max-w-xl md:!mb-24">
           Work directly with the most powerful group of API developers that created the open source
           infrastructure you use today
         </Description>

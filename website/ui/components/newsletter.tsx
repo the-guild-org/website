@@ -15,10 +15,10 @@ export const Newsletter = ({
   hideLinkToIssues?: boolean;
 }): ReactElement => {
   return (
-    <div className="nextra-container">
+    <div className="nextra-container py-16 lg:py-32">
       <div
         className={clsx(
-          'my-12 flex max-w-3xl flex-col gap-2 rounded bg-gray-100 p-6 dark:bg-zinc-900',
+          'mx-auto flex max-w-3xl flex-col gap-2 rounded bg-gray-100 p-6 dark:bg-zinc-900',
           className,
         )}
       >

@@ -130,38 +130,29 @@ export const GetInTouchForm = (): ReactElement => {
   );
 };
 
-export const GetInTouchSection = ({
-  hideCover,
-  hideHeading,
-}: {
-  hideCover?: boolean;
-  hideHeading?: boolean;
-}): ReactElement => {
+export function GetInTouchSection({ hideCover }: { hideCover?: boolean }): ReactElement {
   return (
-    <div className={clsx('relative my-[200px]', !hideCover && 'md:mb-[400px]')}>
-      <div className="container flex">
-        <div
-          className={clsx('flex-1', !hideCover && 'p-4 xl:max-w-[40%] 2xl:pl-40')}
-          id="get-in-touch"
-        >
-          {hideHeading !== true && <Heading>Get in touch</Heading>}
+    <div
+      className={clsx(
+        'py-16 lg:py-32',
+        hideCover ? 'mx-auto max-w-xl' : 'nextra-container grid gap-16 lg:grid-cols-2',
+      )}
+    >
+      <div className={hideCover ? 'md:text-center' : ''}>
+        <Heading id="get-in-touch">Get in Touch</Heading>
 
-          <Description>
-            Looking to work with The Guild, learn more about our solutions or just validate with us
-            your API strategy? We will be happy to speak with you and learn about your efforts for
-            free! <Link href="mailto:contact@the-guild.dev">contact@the-guild.dev</Link>
-          </Description>
+        <Description className={clsx('mx-auto !mb-10 md:!mb-24', hideCover && 'md:max-w-xl')}>
+          Looking to work with The Guild, learn more about our solutions or just validate with us
+          your API strategy? We will be happy to speak with you and learn about your efforts for
+          free! <Link href="mailto:contact@the-guild.dev">contact@the-guild.dev</Link>
+        </Description>
 
-          <GetInTouchForm />
-        </div>
-        {!hideCover && (
-          <Image
-            src={getInTouch}
-            alt="Hive website"
-            className="drag-none absolute right-0 hidden max-w-3xl xl:block"
-          />
-        )}
+        <GetInTouchForm />
       </div>
+
+      {!hideCover && (
+        <Image src={getInTouch} alt="Hive website" className="drag-none max-lg:hidden" />
+      )}
     </div>
   );
-};
+}
