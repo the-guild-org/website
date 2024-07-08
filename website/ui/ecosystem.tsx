@@ -57,6 +57,9 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
       setIsDetailsOpen(window.innerWidth > 639);
     }
 
+    // on mount
+    onResize();
+    // on change
     window.addEventListener('resize', onResize);
     return () => {
       window.removeEventListener('resize', onResize);
