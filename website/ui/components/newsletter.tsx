@@ -1,71 +1,84 @@
 import { ReactElement } from 'react';
 import clsx from 'clsx';
 import { toast } from 'react-hot-toast';
-import { Button } from './button';
-import { Description } from './description';
+import { GuildButton } from '@/hero';
 import { Heading } from './heading';
 import { Input } from './input';
 import { Link } from './link';
 
-export const Newsletter = ({
-  className,
-  hideLinkToIssues,
-}: {
-  className?: string;
-  hideLinkToIssues?: boolean;
-}): ReactElement => {
+const classes = {
+  link: clsx(
+    'text-white underline hocus:no-underline _decoration-from-font [text-underline-position:from-font]',
+  ),
+};
+
+export const Newsletter = ({ className }: { className?: string }): ReactElement => {
   return (
-    <div className="nextra-container py-16 lg:py-32">
-      <div
-        className={clsx(
-          'mx-auto flex max-w-3xl flex-col gap-2 rounded bg-gray-100 p-6 dark:bg-zinc-900',
-          className,
-        )}
+    <div
+      className={clsx(
+        'mb-16 flex gap-14 rounded-[30px] bg-[#24272E]/50 p-7 max-xl:flex-col md:p-24 lg:mb-32 xl:gap-48',
+        className,
+      )}
+    >
+      <div className="text-gray-500">
+        <Heading className="mb-4">Join our newsletter</Heading>
+        <p className="mb-4">
+          Want to hear from us when there&apos;s something new?
+          <br />
+          Sign up and stay up to date!
+        </p>
+        <p>
+          *By subscribing, you agree with Beehiiv’s{' '}
+          <a className={classes.link} href="https://www.beehiiv.com/tou">
+            Terms of Service
+          </a>{' '}
+          and{' '}
+          <a className={classes.link} href="https://www.beehiiv.com/privacy">
+            Privacy Policy
+          </a>
+          .
+        </p>
+      </div>
+      <form
+        onSubmit={async e => {
+          e.preventDefault();
+
+          const email = e.currentTarget.email.value;
+
+          const response = await fetch('https://utils.the-guild.dev/api/newsletter-subscribe', {
+            body: JSON.stringify({ email }),
+            method: 'POST',
+          });
+
+          const responseData: { status: 'success' | 'error'; message: string } =
+            await response.json();
+
+          toast[responseData.status](responseData.message);
+        }}
+        name="beehiiv-form"
+        target="_blank"
+        className=""
       >
-        <Heading size="md" className="!m-0">
-          Join our newsletter
-        </Heading>
-        <Description className="!mb-2">
-          Want to hear from us when there&apos;s something new? Sign up and stay up to date!
-        </Description>
-        <form
-          onSubmit={async e => {
-            e.preventDefault();
-
-            const email = e.currentTarget.email.value;
-
-            const response = await fetch('https://utils.the-guild.dev/api/newsletter-subscribe', {
-              body: JSON.stringify({
-                email,
-              }),
-              method: 'POST',
-            });
-
-            const responseData: { status: 'success' | 'error'; message: string } =
-              await response.json();
-
-            toast[responseData.status](responseData.message);
-          }}
-          name="beehiiv-form"
-          target="_blank"
-          className="flex items-start gap-2"
-        >
-          <Input type="email" name="email" id="member_email" placeholder="Enter your email" />
-          <Button type="submit" variant="primary">
+        <Input
+          className="mb-14"
+          type="email"
+          name="email"
+          id="member_email"
+          placeholder="Enter your email *"
+        />
+        <div className="flex items-start gap-10 max-md:flex-col md:items-center">
+          <GuildButton
+            as="button"
+            type="submit"
+            className="hocus:mr-5 mr-10 bg-[#fcfcfc] text-[#0f1114]"
+          >
             Submit
-          </Button>
-        </form>
-        <Description className="!mt-2">
-          By subscribing, you agree with Beehiiv’s{' '}
-          <Link href="https://www.beehiiv.com/tou">Terms of Service</Link> and{' '}
-          <Link href="https://www.beehiiv.com/privacy">Privacy Policy</Link>.
-        </Description>
-        {!hideLinkToIssues && (
-          <Link href="https://newsletter.the-guild.dev/" className="self-start">
+          </GuildButton>
+          <Link href="https://newsletter.the-guild.dev/" className={classes.link}>
             Recent issues of our newsletter
           </Link>
-        )}
-      </div>
+        </div>
+      </form>
     </div>
   );
 };
