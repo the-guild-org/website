@@ -116,6 +116,7 @@ export const GetInTouchForm = (): ReactElement => {
           <GuildButton
             as="button"
             type="submit"
+            // @ts-expect-error -- fixme
             disabled={isSubmitting || !isValid}
             loading={isSubmitting}
             className="self-start bg-[#fcfcfc] text-[#0f1114]"

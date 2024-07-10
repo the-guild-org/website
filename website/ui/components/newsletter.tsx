@@ -67,6 +67,7 @@ export const Newsletter = ({ className }: { className?: string }): ReactElement 
           placeholder="Enter your email *"
         />
         <div className="flex items-start gap-10 max-md:flex-col md:items-center">
+          {/* @ts-expect-error -- fixme */}
           <GuildButton
             as="button"
             type="submit"

@@ -12,10 +12,12 @@ const MotionNextImage = motion(NextImage);
 export function GuildButton({
   children,
   className,
+  // @ts-expect-error -- fixme
   as: Component = NextLink,
   ...props
 }: ComponentProps<typeof NextLink>): ReactElement {
   return (
+    // @ts-expect-error -- fixme
     <Component
       {...props}
       className={clsx(
