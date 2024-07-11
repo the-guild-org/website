@@ -4,12 +4,12 @@ description: Announcements about our Open-Source projects
 skipSync: true
 ---
 
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { BlogCardList, Heading, Newsletter, TagList } from '@/components'
 import { HeroSection } from '@/hero-section'
 import { allBlogs } from '../lib/all-blogs'
 import { asArray } from '../lib/as-array'
-import Head from 'next/head'
 
 export function extractRelevantTags(articles) {
   const allTags = articles.flatMap(article => article.tags || [])

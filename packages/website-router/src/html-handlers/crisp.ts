@@ -1,7 +1,10 @@
 import type { RewriteRecord } from '../config';
 
 export class CrispHandler implements HTMLRewriterElementContentHandlers {
-  constructor(private crispWebsiteId: string, private websiteRecord: RewriteRecord) {}
+  constructor(
+    private crispWebsiteId: string,
+    private websiteRecord: RewriteRecord,
+  ) {}
 
   element(element: Element) {
     if (this.crispWebsiteId && this.websiteRecord.crisp) {

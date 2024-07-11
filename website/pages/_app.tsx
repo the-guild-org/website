@@ -46,7 +46,9 @@ export default function App({ Component, pageProps, router }: AppProps) {
         }
         // Remove autocomplete color in Chrome
         input:-webkit-autofill {
-          -webkit-transition: color 9999s ease-out, background-color 9999s ease-out;
+          -webkit-transition:
+            color 9999s ease-out,
+            background-color 9999s ease-out;
           -webkit-transition-delay: 9999s;
         }
       `}</style>

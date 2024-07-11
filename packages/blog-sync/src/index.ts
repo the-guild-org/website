@@ -51,8 +51,8 @@ async function syncToDevTo(items) {
           Array.isArray(item.meta.authors)
             ? item.meta.authors[0]
             : typeof item.meta.authors === 'string'
-            ? item.meta.authors
-            : item.meta.author
+              ? item.meta.authors
+              : item.meta.author
         ];
       const markdown = `> This article was published on ${item.meta.date.toLocaleDateString(
         undefined,
