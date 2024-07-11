@@ -1,8 +1,14 @@
 /* eslint react/no-unknown-property: ['error', { ignore: ['global', 'jsx'] }] */
 import { AppProps } from 'next/app';
+import { IBM_Plex_Sans } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
 import '@theguild/components/style.css';
 import './globals.css';
+
+const ibmPlexSans = IBM_Plex_Sans({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+});
 
 export default function App({ Component, pageProps, router }: AppProps) {
   return (
@@ -21,6 +27,9 @@ export default function App({ Component, pageProps, router }: AppProps) {
           margin: 0;
           width: 100%;
           height: 100%;
+        }
+        html {
+          font-family: ${ibmPlexSans.style.fontFamily};
         }
         ${router.route === '/'
           ? "/* For smooth scrolling effect when click on '#' hash links */ html { scroll-behavior: smooth }"
