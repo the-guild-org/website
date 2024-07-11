@@ -17,7 +17,7 @@ export const GetInTouchForm = (): ReactElement => {
       validationSchema: Yup.object().shape({
         email: Yup.string().email().required(),
         name: Yup.string().required(),
-        notes: Yup.string().optional().default(''),
+        notes: Yup.string().optional().required(),
       }),
       async onSubmit({ name, email, notes }) {
         try {
@@ -89,7 +89,7 @@ export const GetInTouchForm = (): ReactElement => {
             isInvalid={touched.name && !!errors.name}
           />
           {touched.name && errors.name && (
-            <p className="-mt-11 text-sm text-red-600">{errors.name}</p>
+            <p className="-mt-11 text-sm text-[#f6547b]">{errors.name}</p>
           )}
           <Input
             name="email"
@@ -102,7 +102,7 @@ export const GetInTouchForm = (): ReactElement => {
             isInvalid={touched.email && !!errors.email}
           />
           {touched.email && errors.email && (
-            <p className="-mt-11 text-sm text-red-600">{errors.email}</p>
+            <p className="-mt-11 text-sm text-[#f6547b]">{errors.email}</p>
           )}
           <Input
             name="notes"
@@ -113,13 +113,16 @@ export const GetInTouchForm = (): ReactElement => {
             onBlur={handleBlur}
             disabled={isSubmitting}
           />
+          {touched.notes && errors.notes && (
+            <p className="-mt-11 text-sm text-[#f6547b]">{errors.notes}</p>
+          )}
           <GuildButton
             as="button"
             type="submit"
             // @ts-expect-error -- fixme
             disabled={isSubmitting || !isValid}
             loading={isSubmitting}
-            className="self-start bg-[#fcfcfc] text-[#0f1114]"
+            className="self-start bg-[#24272e] dark:bg-[#fcfcfc] text-[#fcfcfc] dark:text-[#0f1114]"
           >
             Submit
           </GuildButton>
@@ -133,7 +136,7 @@ export function GetInTouchSection({ className }: { className?: string }): ReactE
   return (
     <div
       className={clsx(
-        'mb-16 grid gap-14 rounded-[30px] bg-[#24272E]/50 p-7 md:p-24 lg:mb-32 lg:grid-cols-2 xl:gap-48',
+        'mb-16 grid gap-14 rounded-[30px] bg-[#f1f1f1] dark:bg-[#24272E]/50 p-7 md:p-24 lg:mb-32 lg:grid-cols-2 xl:gap-48',
         className,
       )}
     >
