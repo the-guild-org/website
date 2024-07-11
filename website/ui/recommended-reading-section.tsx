@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
+import { Anchor } from '@theguild/components';
 import { MetaWithLink } from '../lib/meta';
-import { BlogCardList, Description, Heading, Link } from './components';
+import { BlogCardList, Heading } from './components';
 
 export const RecommendedReadingSection = ({
   articles = [],
@@ -9,17 +10,17 @@ export const RecommendedReadingSection = ({
 }): ReactElement => {
   return (
     <div className="nextra-container py-16 lg:py-32">
-      <div className="md:text-center">
+      <div className="md:mb-24 md:text-center">
         <Heading>Recommended Reading</Heading>
-        <Description className="mx-auto !mb-10 md:!mb-24 md:max-w-xl">
+        <p className="mb-3.5 text-[#7F818C] md:mb-[30px]">
           Read and follow the most popular blog in the GraphQL Ecosystem
-        </Description>
-        <Link
+        </p>
+        <Anchor
           href="/blog"
-          className="font-bold !text-gray-500 hover:!text-gray-600 hover:no-underline dark:hover:!text-gray-300"
+          className="font-medium hover:text-gray-600 hover:no-underline dark:text-[#fcfcfc] dark:hover:text-gray-300"
         >
           View all posts ➔
-        </Link>
+        </Anchor>
       </div>
       <BlogCardList articles={articles} />
     </div>

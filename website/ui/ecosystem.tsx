@@ -84,7 +84,7 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
       </div>
       <div className="grid w-full gap-3.5 sm:gap-y-10 lg:grid-cols-6">
         <details className={classes.details} open={isDetailsOpen}>
-          <summary className={classes.title}>
+          <summary className={classes.title} tabIndex={isDetailsOpen ? -1 : 0}>
             Schema Evolution
             <ArrowDownIcon className={classes.arrow} />
           </summary>
@@ -94,7 +94,7 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
           </div>
         </details>
         <details className={classes.details} open={isDetailsOpen}>
-          <summary className={classes.title}>
+          <summary className={classes.title} tabIndex={isDetailsOpen ? -1 : 0}>
             Gateway
             <ArrowDownIcon className={classes.arrow} />
           </summary>
@@ -102,7 +102,7 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
           <div className={classes.section}>{[PRODUCTS.MESH].map(renderProduct)}</div>
         </details>
         <details className={clsx(classes.details, 'md:col-span-2')} open={isDetailsOpen}>
-          <summary className={classes.title}>
+          <summary className={classes.title} tabIndex={isDetailsOpen ? -1 : 0}>
             Subgraph / Schema
             <ArrowDownIcon className={classes.arrow} />
           </summary>
@@ -112,7 +112,7 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
           </div>
         </details>
         <details className={clsx(classes.details, 'md:col-span-2')} open={isDetailsOpen}>
-          <summary className={classes.title}>
+          <summary className={classes.title} tabIndex={isDetailsOpen ? -1 : 0}>
             Developer Experience
             <ArrowDownIcon className={classes.arrow} />
           </summary>
