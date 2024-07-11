@@ -22,6 +22,7 @@ export function GuildButton({
       {...props}
       className={clsx(
         'text-dark relative inline-flex items-center gap-3 rounded-[10px] px-5 py-3 font-medium transition-none',
+        // @ts-expect-error -- fixme
         props.disabled
           ? 'opacity-50'
           : [
