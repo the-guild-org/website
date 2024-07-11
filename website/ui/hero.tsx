@@ -22,9 +22,13 @@ export function GuildButton({
       {...props}
       className={clsx(
         'text-dark relative inline-flex items-center gap-3 rounded-[10px] px-5 py-3 font-medium transition-none',
-        'after:font-mono after:text-3xl after:leading-none after:transition after:delay-100 after:duration-500 after:content-["➔"]',
-        'lg:hocus:after:opacity-100 lg:after:opacity-0',
-        'lg:hocus:after:right-3 lg:hocus:pr-10 lg:after:absolute lg:after:-right-2',
+        props.disabled
+          ? 'opacity-50'
+          : [
+              'after:font-mono after:text-3xl after:leading-none after:transition after:delay-100 after:duration-500 after:content-["➔"]',
+              'lg:hocus:after:opacity-100 lg:after:opacity-0',
+              'lg:hocus:after:right-3 lg:hocus:pr-10 lg:after:absolute lg:after:-right-2',
+            ],
         className,
       )}
     >

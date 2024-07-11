@@ -20,7 +20,7 @@ export const Newsletter = ({ className }: { className?: string }): ReactElement 
         className,
       )}
     >
-      <div className="text-gray-500">
+      <div className="text-[#7f818c] dark:text-[#7f818c]">
         <Heading className="mb-4">Join our newsletter</Heading>
         <p className="mb-4">
           Want to hear from us when there&apos;s something new?

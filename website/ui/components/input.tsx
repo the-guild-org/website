@@ -9,10 +9,10 @@ export const Input = ({
   return (
     <input
       className={clsx(
-        'placeholder:text-[#b4b5be]',
+        'placeholder-[#24272e] dark:placeholder:text-[#b4b5be]',
         'w-full border-b bg-transparent pb-2.5',
         'disabled:cursor-not-allowed disabled:opacity-30',
-        isInvalid ? 'border-[#f6547b]' : 'border-[#b4b5be]',
+        isInvalid ? 'text-[#f6547b] border-[#f6547b]' : 'border-[#24272e] dark:border-[#b4b5be]',
         className,
       )}
       {...props}
