@@ -42,7 +42,13 @@ function renderProduct(product: (typeof PRODUCTS)[keyof typeof PRODUCTS]) {
       )}
     >
       <span className="mb-2 flex items-center gap-2.5 text-lg">
-        <product.logo className="h-7 w-auto transition-colors duration-300 sm:[a:not(:hover,:focus)>span>&]:fill-gray-500" />
+        <product.logo
+          className={clsx(
+            'h-7 w-auto transition-[fill,stroke]',
+            'sm:[a:not(:hover,:focus)>span>&]:fill-gray-500',
+            product.name === 'ESLint' && 'sm:[a:not(:hover,:focus)>span>&]:stroke-gray-500',
+          )}
+        />
         {product.name}
       </span>
       <p className="pr-4 text-sm">{product.title}</p>
