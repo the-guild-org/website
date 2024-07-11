@@ -36,7 +36,7 @@ function renderProduct(product: (typeof PRODUCTS)[keyof typeof PRODUCTS]) {
       href={product.href}
       className={clsx(
         'rounded-[10px] py-3.5 transition-all duration-300',
-        'sm:hocus:bg-zinc-800/20 sm:hocus:dark:bg-zinc-800/70 hocus:no-underline',
+        'sm:hocus:bg-[#f1f1f1] sm:hocus:dark:bg-zinc-800/70 hocus:no-underline',
         'sm:hocus:pl-3.5 sm:hocus:pr-0 sm:hocus:text-current w-full max-sm:pl-3.5 sm:pr-3.5 sm:text-gray-500',
         'max-sm:bg-zinc-800/20 max-sm:text-current max-sm:dark:bg-gray-500/30',
       )}
