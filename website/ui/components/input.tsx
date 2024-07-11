@@ -12,7 +12,7 @@ export const Input = ({
         'placeholder-[#24272e] dark:placeholder:text-[#b4b5be]',
         'w-full border-b bg-transparent pb-2.5',
         'disabled:cursor-not-allowed disabled:opacity-30',
-        isInvalid ? 'text-[#f6547b] border-[#f6547b]' : 'border-[#24272e] dark:border-[#b4b5be]',
+        isInvalid ? 'border-[#f6547b] text-[#f6547b]' : 'border-[#24272e] dark:border-[#b4b5be]',
         className,
       )}
       {...props}

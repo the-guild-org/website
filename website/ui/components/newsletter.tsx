@@ -16,7 +16,7 @@ export const Newsletter = ({ className }: { className?: string }): ReactElement 
   return (
     <div
       className={clsx(
-        'mb-16 flex gap-14 rounded-[30px] bg-[#f1f1f1] dark:bg-[#24272E]/50 p-7 max-xl:flex-col md:p-24 lg:mb-32 xl:gap-48',
+        'mb-16 flex gap-14 rounded-[30px] bg-[#f1f1f1] p-7 max-xl:flex-col md:p-24 lg:mb-32 xl:gap-48 dark:bg-[#24272E]/50',
         className,
       )}
     >
@@ -71,7 +71,7 @@ export const Newsletter = ({ className }: { className?: string }): ReactElement 
           <GuildButton
             as="button"
             type="submit"
-            className="hocus:mr-5 mr-10 bg-[#24272e] dark:bg-[#fcfcfc] text-[#fcfcfc] dark:text-[#0f1114]"
+            className="hocus:mr-5 mr-10 bg-[#24272e] text-[#fcfcfc] dark:bg-[#fcfcfc] dark:text-[#0f1114]"
           >
             Submit
           </GuildButton>
