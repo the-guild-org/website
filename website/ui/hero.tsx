@@ -47,7 +47,7 @@ export function Hero() {
       className="nextra-container pb-14 pt-20 lg:pb-44 lg:pt-36"
       // min-h-[calc(100vh-var(--nextra-navbar-height))] flex flex-col justify-center
     >
-      <div className="mb-8 flex gap-10 font-medium max-lg:justify-center max-lg:text-sm lg:mb-12">
+      <div className="mb-8 flex gap-10 text-sm font-medium max-lg:justify-center lg:mb-12 lg:text-lg">
         <button
           className={clsx(
             'flex items-center gap-2.5 border-b-2 pb-2.5 lg:pb-3.5',
