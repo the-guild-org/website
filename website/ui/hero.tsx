@@ -50,7 +50,7 @@ export function Hero() {
       <div className="mb-8 flex gap-10 font-medium max-lg:justify-center max-lg:text-sm lg:mb-12">
         <button
           className={clsx(
-            'flex items-center gap-2.5 border-b-2 pb-3.5',
+            'flex items-center gap-2.5 border-b-2 pb-2.5 lg:pb-3.5',
             !isHive && 'border-gray-500 text-gray-500',
           )}
           style={isHive ? { borderColor: primaryColor } : undefined}
@@ -76,45 +76,38 @@ export function Hero() {
         </button>
       </div>
       <div className="flex gap-24">
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.div
-            key={isHive.toString()}
-            className={clsx('max-lg:w-full max-lg:text-center', isHive ? 'lg:w-[45%]' : 'lg:w-1/3')}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.7 }}
+        <div
+          className={clsx('max-lg:w-full max-lg:text-center', isHive ? 'lg:w-[45%]' : 'lg:w-1/3')}
+        >
+          <h2 className="mb-4 text-4xl/snug font-medium lg:text-[3.625rem]/tight">
+            {isHive ? (
+              <>
+                Schema Registry
+                <br />
+                and Observability
+                <br />
+                for GraphQL
+              </>
+            ) : (
+              <>
+                The Graph
+                <br />
+                of Everything
+              </>
+            )}
+          </h2>
+          <p className="mb-10 text-gray-500 lg:mb-12">
+            {isHive
+              ? 'Prevent breaking changes, monitor performance of your GraphQL API, and manage your API gateway'
+              : 'Federate and serve any kind of API'}
+          </p>
+          <GuildButton
+            href={isHive ? '/graphql/hive' : '/graphql/mesh'}
+            style={{ background: primaryColor }}
           >
-            <h2 className="mb-4 text-4xl/snug font-medium lg:text-[3.625rem]/tight">
-              {isHive ? (
-                <>
-                  Schema Registry
-                  <br />
-                  and Observability
-                  <br />
-                  for GraphQL
-                </>
-              ) : (
-                <>
-                  The Graph
-                  <br />
-                  of Everything
-                </>
-              )}
-            </h2>
-            <p className="mb-10 text-gray-500 lg:mb-12">
-              {isHive
-                ? 'Prevent breaking changes, monitor performance of your GraphQL API, and manage your API gateway'
-                : 'Federate and serve any kind of API'}
-            </p>
-            <GuildButton
-              href={isHive ? '/graphql/hive' : '/graphql/mesh'}
-              style={{ background: primaryColor }}
-            >
-              Explore {isHive ? 'Hive' : 'Mesh'}
-            </GuildButton>
-          </motion.div>
-        </AnimatePresence>
+            Explore {isHive ? 'Hive' : 'Mesh'}
+          </GuildButton>
+        </div>
         <AnimatePresence mode="popLayout" initial={false}>
           <MotionNextImage
             key={isHive.toString()}
@@ -124,7 +117,7 @@ export function Hero() {
             )}
             src={isHive ? hiveHero : meshHero}
             alt={isHive ? 'Hive dashboard' : 'Mesh diagram'}
-            initial={{ x: isHive ? -100 : 100, opacity: 0 }}
+            initial={{ x: 100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 0, opacity: 0 }}
             transition={{ duration: 0.5 }}

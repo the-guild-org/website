@@ -112,6 +112,7 @@ export const GetInTouchForm = (): ReactElement => {
             onChange={handleChange}
             onBlur={handleBlur}
             disabled={isSubmitting}
+            isInvalid={touched.notes && !!errors.notes}
           />
           {touched.notes && errors.notes && (
             <p className="-mt-9 text-sm text-[#f6547b]">{errors.notes}</p>
