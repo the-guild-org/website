@@ -50,32 +50,30 @@ const logos: Record<string, StaticImageData> = {
   Sequence: sequence,
 };
 
-export const ClientLogosSection = (): ReactElement => {
+export function ClientLogosSection(): ReactElement {
   return (
-    <div className="nextra-container">
-      <InfiniteMovingCards direction="right" speed="slow" className="py-10 lg:py-16">
-        {Object.entries(logos).map(([name, logo]) => (
-          <Image
-            key={name}
-            src={logo}
-            title={name}
-            alt={`${name} logo`}
-            className="h-11 w-auto opacity-50 invert transition-opacity hover:opacity-100 lg:h-16 dark:invert-0"
-            placeholder="empty"
-            loading="eager"
-            // className="
-            // h-8
-            // w-auto
-            // opacity-70
-            // invert
-            // transition-opacity
-            // duration-300
-            // hover:opacity-100
-            // dark:invert-0
-            // "
-          />
-        ))}
-      </InfiniteMovingCards>
-    </div>
+    <InfiniteMovingCards direction="right" speed="slow" className="py-10 lg:py-16">
+      {Object.entries(logos).map(([name, logo]) => (
+        <Image
+          key={name}
+          src={logo}
+          title={name}
+          alt={`${name} logo`}
+          className="h-11 w-auto opacity-50 invert transition-opacity hover:opacity-100 dark:invert-0 lg:h-16"
+          placeholder="empty"
+          loading="eager"
+          // className="
+          // h-8
+          // w-auto
+          // opacity-70
+          // invert
+          // transition-opacity
+          // duration-300
+          // hover:opacity-100
+          // dark:invert-0
+          // "
+        />
+      ))}
+    </InfiniteMovingCards>
   );
-};
+}
