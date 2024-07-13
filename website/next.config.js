@@ -1,9 +1,4 @@
-import path from 'node:path';
 import { withGuildDocs } from '@theguild/components/next.config';
-
-const sep = path.sep === '/' ? '/' : '\\\\';
-
-const ALLOWED_SVG_REGEX = new RegExp(`ui${sep}logos${sep}.+\\.svg$`);
 
 export default withGuildDocs({
   eslint: {
@@ -30,14 +25,4 @@ export default withGuildDocs({
       destination: to,
       permanent: true,
     })),
-  webpack(config) {
-    const fileLoaderRule = config.module.rules.find(rule => rule.test?.test?.('.svg'));
-    fileLoaderRule.exclude = ALLOWED_SVG_REGEX;
-
-    config.module.rules.push({
-      test: ALLOWED_SVG_REGEX,
-      use: ['@svgr/webpack'],
-    });
-    return config;
-  },
 });
