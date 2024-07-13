@@ -2,7 +2,6 @@ import { ReactElement } from 'react';
 import { StaticImageData } from 'next/image';
 import { InfiniteMovingCards } from '@/infinite-moving-cards';
 import { Image } from '@theguild/components';
-import lance from '../public/img/logos/companies/lance-white.png';
 import thirdFriday from './logos/3rd-friday.svg';
 import airFrance from './logos/air-france.svg';
 import bankHapoalim from './logos/bank-hapoalim.svg';
@@ -27,7 +26,6 @@ import uber from './logos/uber.svg';
 
 const logos: Record<string, StaticImageData> = {
   'The Graph': theGraph,
-  Lance: lance,
   Outreach: outreach,
   Dalet: dalet,
   Klarna: klarna,
@@ -44,7 +42,7 @@ const logos: Record<string, StaticImageData> = {
   '3rdFriday': thirdFriday,
   'Mount St. Joseph University': msj,
   'FUSE autotech': fuse,
-  Formidable: formidable,
+  'Formidable Labs': formidable,
   'Parse Platform': parse,
   RedwoodJS: redwoodjs,
   Sequence: sequence,
@@ -52,54 +50,18 @@ const logos: Record<string, StaticImageData> = {
 
 export function ClientLogosSection(): ReactElement {
   return (
-    <>
-      <div className="nextra-container">
-        <div className="mx-auto mt-44 flex max-w-[1260px] flex-wrap items-center justify-center gap-12 pb-20">
-          {Object.entries(logos).map(([name, logo]) => (
-            <Image
-              key={name}
-              src={logo}
-              title={name}
-              alt={`${name} logo`}
-              placeholder="empty"
-              loading="eager"
-              className="
-            h-8
-            w-auto
-            opacity-70
-            invert
-            transition-opacity
-            duration-300
-            hover:opacity-100
-            dark:invert-0
-            "
-            />
-          ))}
-        </div>
-      </div>
-      <InfiniteMovingCards direction="right" speed="slow" className="py-10 lg:py-16">
-        {Object.entries(logos).map(([name, logo]) => (
-          <Image
-            key={name}
-            src={logo}
-            title={name}
-            alt={`${name} logo`}
-            className="h-11 w-auto opacity-50 invert transition-opacity hover:opacity-100 dark:invert-0 lg:h-16"
-            placeholder="empty"
-            loading="eager"
-            // className="
-            // h-8
-            // w-auto
-            // opacity-70
-            // invert
-            // transition-opacity
-            // duration-300
-            // hover:opacity-100
-            // dark:invert-0
-            // "
-          />
-        ))}
-      </InfiniteMovingCards>
-    </>
+    <InfiniteMovingCards direction="right" speed="slow" className="py-10 lg:py-16">
+      {Object.entries(logos).map(([name, logo]) => (
+        <Image
+          key={name}
+          src={logo}
+          title={name}
+          alt={`${name} logo`}
+          placeholder="empty"
+          loading="eager"
+          className="max-w-64 h-11 w-auto brightness-0 saturate-100 dark:invert lg:h-16"
+        />
+      ))}
+    </InfiniteMovingCards>
   );
 }
