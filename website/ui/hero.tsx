@@ -26,9 +26,12 @@ export function GuildButton({
         props.disabled
           ? 'opacity-50'
           : [
-              'after:font-mono after:text-3xl after:leading-none after:transition after:delay-100 after:duration-500 after:content-["➔"]',
+              'after:font-mono after:text-3xl after:leading-none after:content-["➔"]',
+              'hocus:after:transition-[opacity]',
+              'lg:hocus:pr-10 duration-700 lg:transition-[padding]',
+              'hocus:after:delay-100 hocus:after:duration-500',
               'lg:hocus:after:opacity-100 lg:after:opacity-0',
-              'lg:hocus:after:right-3 lg:hocus:pr-10 lg:after:absolute lg:after:-right-2',
+              'lg:after:absolute lg:after:right-3',
             ],
         className,
       )}

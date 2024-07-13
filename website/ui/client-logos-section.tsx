@@ -59,7 +59,7 @@ export function ClientLogosSection(): ReactElement {
           alt={`${name} logo`}
           placeholder="empty"
           loading="eager"
-          className="max-w-64 h-11 w-auto brightness-0 saturate-100 dark:invert lg:h-16"
+          className="max-w-64 h-7 lg:h-10 w-auto brightness-0 saturate-100 dark:invert opacity-60"
         />
       ))}
     </InfiniteMovingCards>
