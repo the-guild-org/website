@@ -30,7 +30,7 @@ export const BlogCardList = ({
           rounded-[20px]
           bg-[#f1f1f1]
           transition-colors
-          duration-500
+          duration-300
           dark:bg-[#24272E]/50
           lg:[:is(&:hover,&:focus)>img]:h-36
           "
