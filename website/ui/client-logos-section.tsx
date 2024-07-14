@@ -1,32 +1,31 @@
 import { ReactElement } from 'react';
 import { StaticImageData } from 'next/image';
+import { InfiniteMovingCards } from '@/infinite-moving-cards';
 import { Image } from '@theguild/components';
-import thirdFriday from '../public/img/logos/companies/3rdfriday-white.png';
-import airFrance from '../public/img/logos/companies/air-france-white.png';
-import bankHapoalim from '../public/img/logos/companies/bank-hapoalim-white.png';
-import dalet from '../public/img/logos/companies/dalet-white.png';
-import dfds from '../public/img/logos/companies/dfds-white.png';
-import formidable from '../public/img/logos/companies/formidable-white.png';
-import fuse from '../public/img/logos/companies/fuse-white.png';
-import klarna from '../public/img/logos/companies/klarna-white.png';
-import klm from '../public/img/logos/companies/klm-white.png';
-import lance from '../public/img/logos/companies/lance-white.png';
-import microsoft from '../public/img/logos/companies/microsoft-white.png';
-import msj from '../public/img/logos/companies/msj-white.png';
-import nordea from '../public/img/logos/companies/nordea-white.png';
-import outreach from '../public/img/logos/companies/outreach-white.png';
-import parse from '../public/img/logos/companies/parse-white.png';
-import pepper from '../public/img/logos/companies/pepper-white.png';
-import rabobank from '../public/img/logos/companies/rabobank-white.png';
-import redwoodjs from '../public/img/logos/companies/redwoodjs-white.png';
-import schneiderElectric from '../public/img/logos/companies/schneider-electric-white.png';
-import sequence from '../public/img/logos/companies/seq-white.png';
-import theGraph from '../public/img/logos/companies/thegraph-white.png';
-import uber from '../public/img/logos/companies/uber-white.png';
+import thirdFriday from './logos/3rd-friday.svg';
+import airFrance from './logos/air-france.svg';
+import bankHapoalim from './logos/bank-hapoalim.svg';
+import dalet from './logos/dalet.svg';
+import dfds from './logos/dfds.svg';
+import formidable from './logos/formidable-labs.svg';
+import fuse from './logos/fuse-autotech.svg';
+import klarna from './logos/klarna.svg';
+import klm from './logos/klm.svg';
+import microsoft from './logos/microsoft.svg';
+import msj from './logos/msj.svg';
+import nordea from './logos/nordea.svg';
+import outreach from './logos/outreach.svg';
+import parse from './logos/parse-platform.svg';
+import pepper from './logos/pepper.svg';
+import rabobank from './logos/rabobank.svg';
+import redwoodjs from './logos/redwood-js.svg';
+import schneiderElectric from './logos/schneider-electric.svg';
+import sequence from './logos/sequence.svg';
+import theGraph from './logos/the-graph.svg';
+import uber from './logos/uber.svg';
 
 const logos: Record<string, StaticImageData> = {
   'The Graph': theGraph,
-  Lance: lance,
   Outreach: outreach,
   Dalet: dalet,
   Klarna: klarna,
@@ -43,37 +42,26 @@ const logos: Record<string, StaticImageData> = {
   '3rdFriday': thirdFriday,
   'Mount St. Joseph University': msj,
   'FUSE autotech': fuse,
-  Formidable: formidable,
+  'Formidable Labs': formidable,
   'Parse Platform': parse,
   RedwoodJS: redwoodjs,
   Sequence: sequence,
 };
 
-export const ClientLogosSection = (): ReactElement => {
+export function ClientLogosSection(): ReactElement {
   return (
-    <div className="container">
-      <div className="mx-auto mt-44 flex max-w-[1260px] flex-wrap items-center justify-center gap-12 pb-20">
-        {Object.entries(logos).map(([name, logo]) => (
-          <Image
-            key={name}
-            src={logo}
-            title={name}
-            alt={`${name} logo`}
-            placeholder="empty"
-            loading="eager"
-            className="
-            h-8
-            w-auto
-            opacity-70
-            invert
-            transition-opacity
-            duration-300
-            hover:opacity-100
-            dark:invert-0
-            "
-          />
-        ))}
-      </div>
-    </div>
+    <InfiniteMovingCards direction="right" speed="slow" className="py-10 lg:py-16">
+      {Object.entries(logos).map(([name, logo]) => (
+        <Image
+          key={name}
+          src={logo}
+          title={name}
+          alt={`${name} logo`}
+          placeholder="empty"
+          loading="eager"
+          className="h-7 w-auto max-w-64 opacity-60 brightness-0 saturate-100 lg:h-10 dark:invert"
+        />
+      ))}
+    </InfiniteMovingCards>
   );
-};
+}

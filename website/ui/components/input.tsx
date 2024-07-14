@@ -9,25 +9,10 @@ export const Input = ({
   return (
     <input
       className={clsx(
-        `
-          w-full
-          rounded-xl
-          border
-          px-4
-          py-3
-          font-medium
-          placeholder:text-gray-500
-          focus:outline-none
-          focus:ring-1
-          invalid:focus:border-red-500
-          invalid:focus:bg-red-500/20
-          invalid:focus:ring-red-500
-          disabled:cursor-not-allowed
-          disabled:opacity-30
-          `,
-        isInvalid
-          ? 'border-red-500 bg-red-500/20 focus:ring-red-500'
-          : 'border-transparent bg-gray-200 focus:border-cyan-400 focus:ring-cyan-400 dark:bg-zinc-800',
+        'placeholder-[#24272e] dark:placeholder:text-[#b4b5be]',
+        'w-full border-b bg-transparent pb-2.5',
+        'disabled:cursor-not-allowed disabled:opacity-30',
+        isInvalid ? 'border-[#f6547b] text-[#f6547b]' : 'border-[#24272e] dark:border-[#b4b5be]',
         className,
       )}
       {...props}

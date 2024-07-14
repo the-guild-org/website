@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
+import { Anchor } from '@theguild/components';
 import { MetaWithLink } from '../lib/meta';
-import { BlogCardList, Description, Heading, Link } from './components';
+import { BlogCardList, Heading } from './components';
 
 export const RecommendedReadingSection = ({
   articles = [],
@@ -8,28 +9,20 @@ export const RecommendedReadingSection = ({
   articles: MetaWithLink[];
 }): ReactElement => {
   return (
-    <div
-      className="
-        px-4
-        [background:linear-gradient(180deg,rgba(41,40,40,0.1)0%,rgba(0,0,0,0)100%)]
-        sm:px-6
-        md:px-8
-        dark:[background:linear-gradient(180deg,rgba(41,40,40,0.2)0%,rgba(0,0,0,0)100%),#0b0d11]
-      "
-    >
-      <div className="flex flex-col items-center py-28">
-        <Heading className="text-center">Recommended Reading</Heading>
-        <Description className="max-w-[700px] text-center">
+    <div className="nextra-container py-16 lg:py-32">
+      <div className="md:mb-24 md:text-center">
+        <Heading>Recommended Reading</Heading>
+        <p className="mb-3.5 text-[#7F818C] md:mb-[30px]">
           Read and follow the most popular blog in the GraphQL Ecosystem
-        </Description>
-        <Link
+        </p>
+        <Anchor
           href="/blog"
-          className="font-bold !text-gray-500 hover:!text-gray-600 hover:no-underline dark:hover:!text-gray-300"
+          className="font-medium hover:text-gray-600 hover:no-underline dark:text-[#fcfcfc] dark:hover:text-gray-300"
         >
           View all posts ➔
-        </Link>
-        <BlogCardList articles={articles} />
+        </Anchor>
       </div>
+      <BlogCardList articles={articles} />
     </div>
   );
 };

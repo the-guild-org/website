@@ -14,6 +14,7 @@ export default withGuildDocs({
       '/contact': '/#get-in-touch',
       '/solutions': '/#platform',
       '/connected-build': '/',
+      '/services': '/#services',
       '/blog/announcing-graphql-hive-public': '/blog/announcing-graphql-hive-release',
       '/blog/announcing-graphql-yoga-2': '/blog/announcing-graphql-yoga-v2',
       '/blog/graphql-eslint-3': '/blog/graphql-eslint-3.14',

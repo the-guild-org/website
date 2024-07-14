@@ -7,10 +7,10 @@ thumbnail: https://open-graph-image.theguild.workers.dev/?product=GUILD&title=Gr
 ---
 
 import { ClientLogosSection } from '@/client-logos-section'
-import { Button, Description, Heading, Newsletter } from '@/components'
+import { Newsletter } from '@/components'
+import { Ecosystem } from '@/ecosystem'
 import { GetInTouchSection } from '@/get-in-touch-section'
-import { HeroSection } from '@/hero-section'
-import { PlatformSection } from '@/platform-section'
+import { Hero } from '@/hero'
 import { RecommendedReadingSection } from '@/recommended-reading-section'
 import { ServicesSection } from '@/services-section'
 import { allBlogs } from '../lib/all-blogs'
@@ -18,27 +18,17 @@ import { allBlogs } from '../lib/all-blogs'
 export default function IndexPage() {
   return (
     <>
-      <HeroSection>
-        <Heading>Modern API Platform and ecosystem that scales</Heading>
-        <Description>
-          The Guild's advanced open source ecosystem covers everything you need for your API
-          infrastructure with a modular, open source and complete platform
-        </Description>
-        <Button as="a" href="#platform">
-          Explore The Ecosystem
-        </Button>
-      </HeroSection>
+      <Hero />
       <ClientLogosSection />
-      <PlatformSection
-        className="
-          [background:linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(41,40,40,0.1)100%)]
-          dark:[background:linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(41,40,40,0.2)100%),#0b0d11]
-        "
-      />
+      <Ecosystem />
       <ServicesSection />
-      <GetInTouchSection />
+      <div className="nextra-container">
+        <GetInTouchSection />
+      </div>
       <RecommendedReadingSection articles={allBlogs.slice(0, 4)} />
-      <Newsletter />
+      <div className="nextra-container">
+        <Newsletter />
+      </div>
     </>
   )
 }

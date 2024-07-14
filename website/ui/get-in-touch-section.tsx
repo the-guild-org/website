@@ -3,9 +3,8 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import Confetti from 'react-confetti';
 import * as Yup from 'yup';
-import { Image } from '@theguild/components';
-import { Button, Description, Heading, Input, Link } from './components';
-import getInTouch from '../public/img/get-in-touch.png';
+import { GuildButton } from '@/hero';
+import { Heading, Input } from './components';
 
 export const GetInTouchForm = (): ReactElement => {
   const [success, setSuccess] = useState(false);
@@ -18,14 +17,14 @@ export const GetInTouchForm = (): ReactElement => {
       validationSchema: Yup.object().shape({
         email: Yup.string().email().required(),
         name: Yup.string().required(),
-        notes: Yup.string().optional().default(''),
+        notes: Yup.string().optional().required(),
       }),
       async onSubmit({ name, email, notes }) {
         try {
           if ('ko' in globalThis) {
             globalThis.ko.identify({ email, name });
           }
-        } catch (_e) {
+        } catch {
           // nothing to do here, maybe koala was not loaded
         }
 
@@ -78,90 +77,85 @@ export const GetInTouchForm = (): ReactElement => {
       </p>
 
       {!success && (
-        <form onSubmit={handleSubmit} className="flex items-start gap-2">
-          <div className="grow">
-            <Input
-              name="name"
-              placeholder="Your name"
-              className="peer mb-2"
-              value={values.name}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              disabled={isSubmitting}
-              isInvalid={touched.name && !!errors.name}
-            />
-            {touched.name && errors.name && (
-              <p className="mt-2 text-sm text-red-600">{errors.name}</p>
-            )}
-            <Input
-              name="email"
-              placeholder="Enter your email"
-              className="peer mb-2"
-              value={values.email}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              disabled={isSubmitting}
-              isInvalid={touched.email && !!errors.email}
-            />
-            {touched.email && errors.email && (
-              <p className="mt-2 text-sm text-red-600">{errors.email}</p>
-            )}
-            <Input
-              name="notes"
-              placeholder="Notes?"
-              className="peer"
-              value={values.notes}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              disabled={isSubmitting}
-            />
-          </div>
-          <Button
+        <form onSubmit={handleSubmit} className="flex flex-col gap-11">
+          <Input
+            name="name"
+            placeholder="Name *"
+            className="peer"
+            value={values.name}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            disabled={isSubmitting}
+            isInvalid={touched.name && !!errors.name}
+          />
+          {touched.name && errors.name && (
+            <p className="-mt-9 text-sm text-[#f6547b]">{errors.name}</p>
+          )}
+          <Input
+            name="email"
+            placeholder="Email *"
+            className="peer"
+            value={values.email}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            disabled={isSubmitting}
+            isInvalid={touched.email && !!errors.email}
+          />
+          {touched.email && errors.email && (
+            <p className="-mt-9 text-sm text-[#f6547b]">{errors.email}</p>
+          )}
+          <Input
+            name="notes"
+            placeholder="Your message *"
+            className="peer"
+            value={values.notes}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            disabled={isSubmitting}
+            isInvalid={touched.notes && !!errors.notes}
+          />
+          {touched.notes && errors.notes && (
+            <p className="-mt-9 text-sm text-[#f6547b]">{errors.notes}</p>
+          )}
+          <GuildButton
+            as="button"
             type="submit"
+            // @ts-expect-error -- fixme
             disabled={isSubmitting || !isValid}
-            variant="primary"
             loading={isSubmitting}
+            className="self-start bg-[#24272e] !text-[#fcfcfc] dark:bg-[#fcfcfc] dark:!text-[#0f1114]"
           >
             Submit
-          </Button>
+          </GuildButton>
         </form>
       )}
     </>
   );
 };
 
-export const GetInTouchSection = ({
-  hideCover,
-  hideHeading,
-}: {
-  hideCover?: boolean;
-  hideHeading?: boolean;
-}): ReactElement => {
+export function GetInTouchSection({ className }: { className?: string }): ReactElement {
   return (
-    <div className={clsx('relative my-[200px]', !hideCover && 'md:mb-[400px]')}>
-      <div className="container flex">
-        <div
-          className={clsx('flex-1', !hideCover && 'p-4 xl:max-w-[40%] 2xl:pl-40')}
-          id="get-in-touch"
-        >
-          {hideHeading !== true && <Heading>Get in touch</Heading>}
+    <div
+      className={clsx(
+        'mb-16 grid gap-14 rounded-[30px] bg-[#f1f1f1] p-7 md:p-24 lg:mb-32 lg:grid-cols-2 xl:gap-48 dark:bg-[#24272E]/50',
+        className,
+      )}
+    >
+      <div className="text-gray-500">
+        <Heading id="get-in-touch" className="mb-4">
+          Get in Touch
+        </Heading>
 
-          <Description>
-            Looking to work with The Guild, learn more about our solutions or just validate with us
-            your API strategy? We will be happy to speak with you and learn about your efforts for
-            free! <Link href="mailto:contact@the-guild.dev">contact@the-guild.dev</Link>
-          </Description>
+        <p className="text-[#7f818c] dark:text-[#7f818c]">
+          Looking to work with The Guild, learn more about our solutions or just validate with us
+          your API strategy? We will be happy to speak with you and learn about your efforts for
+          free!
+        </p>
+      </div>
 
-          <GetInTouchForm />
-        </div>
-        {!hideCover && (
-          <Image
-            src={getInTouch}
-            alt="Hive website"
-            className="drag-none absolute right-0 hidden max-w-3xl xl:block"
-          />
-        )}
+      <div>
+        <GetInTouchForm />
       </div>
     </div>
   );
-};
+}

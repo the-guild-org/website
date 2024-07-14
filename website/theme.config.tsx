@@ -19,6 +19,10 @@ const siteDescription = 'Modern, Open-source API Tooling and Ecosystem that scal
 const siteName = 'The Guild';
 
 export default defineConfig({
+  backgroundColor: {
+    dark: '15,17,20',
+    light: '250,250,250',
+  },
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
   head: function useHead() {
     const { frontMatter, title: pageTitle } = useConfig();
@@ -86,13 +90,13 @@ export default defineConfig({
           mapping="pathname"
           theme={resolvedTheme}
         />
-        <Newsletter />
+        <Newsletter className="mt-6 flex-col !gap-10" />
         {!!similarArticles?.length && (
           <>
             <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">
               Similar articles
             </h3>
-            <BlogCardList articles={similarArticles} />
+            <BlogCardList articles={similarArticles} className="xl:grid-cols-2" />
           </>
         )}
       </>
