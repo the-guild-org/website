@@ -90,7 +90,13 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
           </summary>
           <hr className={classes.divider} />
           <div className={classes.section}>
-            {[PRODUCTS.HIVE, PRODUCTS.INSPECTOR].map(renderProduct)}
+            {[
+              PRODUCTS.HIVE,
+              {
+                ...PRODUCTS.INSPECTOR,
+                title: 'Schema management library. A core building block of Hive',
+              },
+            ].map(renderProduct)}
           </div>
         </details>
         <details className={classes.details} open={isDetailsOpen}>
@@ -108,7 +114,15 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
           </summary>
           <hr className={classes.divider} />
           <div className={clsx(classes.section, 'sm:[&>a]:w-[calc(50%-10px)]')}>
-            {[PRODUCTS.YOGA, PRODUCTS.ENVELOP, PRODUCTS.SOFA, PRODUCTS.SCALARS].map(renderProduct)}
+            {[
+              PRODUCTS.YOGA,
+              {
+                ...PRODUCTS.ENVELOP,
+                title: 'The simple yet flexible GraphQL plugin system that powers Yoga and Mesh',
+              },
+              PRODUCTS.SOFA,
+              { ...PRODUCTS.SCALARS, name: 'GraphQL-Scalars' },
+            ].map(renderProduct)}
           </div>
         </details>
         <details className={clsx(classes.details, 'md:col-span-2')} open={isDetailsOpen}>
@@ -118,7 +132,14 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
           </summary>
           <hr className={classes.divider} />
           <div className={clsx(classes.section, 'sm:[&>a]:w-[calc(50%-10px)]')}>
-            {[PRODUCTS.CODEGEN, PRODUCTS.ESLINT, PRODUCTS.NEXTRA].map(renderProduct)}
+            {[
+              { ...PRODUCTS.CODEGEN, name: 'GraphQL-Codegen' },
+              { ...PRODUCTS.ESLINT, name: 'GraphQL-ESLint' },
+              {
+                ...PRODUCTS.NEXTRA,
+                title: 'Powerful and flexible site generation framework, built on top of Next.js',
+              },
+            ].map(renderProduct)}
           </div>
         </details>
       </div>
