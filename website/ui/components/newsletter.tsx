@@ -57,7 +57,7 @@ export const Newsletter = ({ className }: { className?: string }): ReactElement 
         }}
         name="beehiiv-form"
         target="_blank"
-        className=""
+        className="grow"
       >
         <Input
           className="mb-14"
@@ -66,12 +66,12 @@ export const Newsletter = ({ className }: { className?: string }): ReactElement 
           id="member_email"
           placeholder="Enter your email *"
         />
-        <div className="flex items-start gap-10 max-md:flex-col md:items-center">
+        <div className="flex items-start items-center justify-between gap-10 max-md:flex-col">
           {/* @ts-expect-error -- fixme */}
           <GuildButton
             as="button"
             type="submit"
-            className="hocus:mr-5 mr-10 bg-[#24272e] !text-[#fcfcfc] dark:bg-[#fcfcfc] dark:!text-[#0f1114]"
+            className="bg-[#24272e] !text-[#fcfcfc] dark:bg-[#fcfcfc] dark:!text-[#0f1114]"
           >
             Submit
           </GuildButton>
