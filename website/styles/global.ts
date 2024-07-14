@@ -7,4 +7,8 @@ export const globalStyles = globalCss({
       background: 'var(--colors-background)',
     },
   },
+  '.nextra-sidebar-container': {
+    // 37px is the banner's height
+    'padding-top': 'calc(var(--nextra-navbar-height + 37)) !important',
+  },
 });
