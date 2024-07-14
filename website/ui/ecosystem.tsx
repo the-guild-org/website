@@ -46,7 +46,7 @@ function renderProduct(product: (typeof PRODUCTS)[keyof typeof PRODUCTS]) {
           className={clsx(
             'h-7 w-auto transition-[fill,stroke]',
             'sm:[a:not(:hover,:focus)>span>&]:fill-gray-500',
-            product.name === 'ESLint' && 'sm:[a:not(:hover,:focus)>span>&]:stroke-gray-500',
+            product.name === 'GraphQL-ESLint' && 'sm:[a:not(:hover,:focus)>span>&]:stroke-gray-500',
           )}
         />
         {product.name}
