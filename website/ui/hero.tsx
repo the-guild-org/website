@@ -63,7 +63,7 @@ export function Hero() {
           }}
         >
           <PRODUCTS.HIVE.logo className={clsx('h-7 w-auto', !isHive && 'fill-current')} />
-          GraphQL Hive
+          GraphQL-Hive
         </button>
         <button
           className={clsx(
@@ -76,7 +76,7 @@ export function Hero() {
           }}
         >
           <PRODUCTS.MESH.logo className={clsx('h-7 w-auto', isHive && 'fill-current')} />
-          GraphQL Mesh
+          GraphQL-Mesh
         </button>
       </div>
       <div className="flex gap-24">
