@@ -48,7 +48,7 @@ export function Hero() {
 
   return (
     <div
-      className="nextra-container pb-14 pt-20 lg:pb-44 lg:pt-36"
+      className="nextra-container pb-14 pt-20 lg:pb-36 lg:pt-28"
       // min-h-[calc(100vh-var(--nextra-navbar-height))] flex flex-col justify-center
     >
       <div className="mb-8 flex gap-10 text-sm font-medium max-lg:justify-center lg:mb-12 lg:text-lg">
