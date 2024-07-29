@@ -20,14 +20,7 @@ export async function handleContactUs(options: {
   };
 
   if (body?.email && body?.name) {
-    await sendEmail(
-      options.email,
-      'contact@the-guild.dev',
-      'uri.goldshtein@gmail.com',
-      `Contact Us Form Submission - The Guild (${body.email})`,
-      [`Name: ${body.name}`, `Email: ${body.email}`, `Notes: ${body.notes || ''}`].join('\n'),
-      createMimeMessage().setSender(body.email),
-    );
+    
 
     let crispUser = await options.crisp.getCrispUser(body.email);
 
@@ -81,6 +74,15 @@ export async function handleContactUs(options: {
         },
       })
       .then(r => (isFullPage(r) ? r : null));
+
+    await sendEmail(
+      options.email,
+      'contact@the-guild.dev',
+      'uri.goldshtein@gmail.com',
+      `Contact Us Form Submission - The Guild (${body.email})`,
+      [`Name: ${body.name}`, `Email: ${body.email}`, `Notes: ${body.notes || ''}`].join('\n'),
+      createMimeMessage().setSender(body.email),
+    );
 
     await options.crisp.addCrispUserEvent(crispUser.people_id, {
       text: 'contact:website',
