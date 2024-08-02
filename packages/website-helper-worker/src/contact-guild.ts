@@ -20,8 +20,6 @@ export async function handleContactUs(options: {
   };
 
   if (body?.email && body?.name) {
-    
-
     let crispUser = await options.crisp.getCrispUser(body.email);
 
     if (!crispUser) {
