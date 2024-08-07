@@ -1,4 +1,4 @@
-import { GRAPHQL_CONF_2024_BANNER } from "./banner";
+import { GRAPHQL_CONF_2024_BANNER } from './banner';
 
 export type RewriteRecord = {
   rewrite: string;
