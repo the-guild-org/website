@@ -20,7 +20,6 @@ const IGNORE_CASING_WORDS = [
   'vs',
   'AST',
   'SDK',
-  's',
   'DI', // Dependency Injection
   'APIs',
   'SvelteKit',
@@ -60,8 +59,6 @@ const IGNORE_CASING_WORDS = [
   'LaTeX',
   'MikroORM',
   'GraphQL.js',
-  'AbortController',
-  'fetch',
 ];
 
 module.exports = {
