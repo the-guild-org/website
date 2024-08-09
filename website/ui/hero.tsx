@@ -1,4 +1,4 @@
-import { ComponentProps, ReactElement, useState } from 'react';
+import { ComponentProps, MouseEvent, ReactElement, useCallback, useState } from 'react';
 import NextImage from 'next/image';
 import NextLink from 'next/link';
 import { clsx } from 'clsx';
@@ -46,6 +46,11 @@ export function Hero() {
 
   const { primaryColor } = isHive ? PRODUCTS.HIVE : PRODUCTS.MESH;
 
+  const handleClick = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+    const isHive = e.currentTarget.dataset.name === 'hive';
+    setIsHive(isHive);
+  }, []);
+
   return (
     <div
       className="nextra-container pb-14 pt-20 lg:pb-36 lg:pt-28"
@@ -58,9 +63,8 @@ export function Hero() {
             !isHive && 'border-gray-500 text-gray-500',
           )}
           style={isHive ? { borderColor: primaryColor } : undefined}
-          onClick={() => {
-            setIsHive(prev => !prev);
-          }}
+          data-name="hive"
+          onClick={handleClick}
         >
           <PRODUCTS.HIVE.logo className={clsx('h-7 w-auto', !isHive && 'fill-current')} />
           GraphQL Hive
@@ -71,9 +75,7 @@ export function Hero() {
             isHive && 'border-gray-500 text-gray-500',
           )}
           style={isHive ? undefined : { borderColor: primaryColor }}
-          onClick={() => {
-            setIsHive(prev => !prev);
-          }}
+          onClick={handleClick}
         >
           <PRODUCTS.MESH.logo className={clsx('h-7 w-auto', isHive && 'fill-current')} />
           GraphQL Mesh
