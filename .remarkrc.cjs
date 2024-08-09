@@ -59,7 +59,6 @@ const IGNORE_CASING_WORDS = [
   'LaTeX',
   'MikroORM',
   'GraphQL.js',
-  'AbortController',
 ];
 
 module.exports = {
