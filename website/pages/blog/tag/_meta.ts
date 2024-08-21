@@ -1,7 +1,6 @@
 import { createCatchAllMeta } from '@theguild/components';
 
 export default async () => {
-  // @ts-expect-error -- TODO: add types
   const { getStaticPaths } = await import('./[tag].mdx');
 
   const { paths } = await getStaticPaths();
