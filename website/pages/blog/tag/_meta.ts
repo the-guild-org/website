@@ -1,12 +1,21 @@
-import { allBlogs } from '../../../lib/all-blogs';
+import { createCatchAllMeta } from '@theguild/components';
 
-export default () => {
-  return {
+export default async () => {
+  // @ts-expect-error -- TODO: add types
+  const { getStaticPaths } = await import('./[tag].mdx');
+
+  const { paths } = await getStaticPaths();
+
+  const tags = paths.map(o => o.params.tag);
+
+  // TODO: remove this requirements of specifying files, since there is `*` symbol which could be applied
+  const result = createCatchAllMeta(tags, {
     '*': {
       theme: {
-        layout: 'full',
+        layout: 'raw',
       },
     },
-    ...Object.fromEntries([...new Set(allBlogs.flatMap(art => art.tags))].map(name => [name, ''])),
-  };
+  });
+
+  return result;
 };

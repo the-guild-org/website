@@ -6,6 +6,10 @@ import { Giscus, useConfig, useTheme } from '@theguild/components';
 import { MetaWithLink } from '../../lib/meta';
 
 export default {
+  tag: {
+    // TODO: fix `normalizePages` in nextra, currently it cannot find right item since we have `display: hidden` in `*`
+    display: 'normal',
+  },
   '*': {
     display: 'hidden',
     theme: {
@@ -15,9 +19,7 @@ export default {
       typesetting: 'article',
       breadcrumb: false,
       pagination: false,
-      topContent() {
-        return <Article />;
-      },
+      topContent: Article,
       bottomContent: function BottomContent() {
         const { resolvedTheme } = useTheme();
         const { route } = useRouter();
