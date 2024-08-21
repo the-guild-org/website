@@ -3,8 +3,7 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import Confetti from 'react-confetti';
 import * as Yup from 'yup';
-import { GuildButton } from '@/hero';
-import { Heading, Input } from './components';
+import { GuildButton, Heading, Input } from './components';
 
 export const GetInTouchForm = (): ReactElement => {
   const [success, setSuccess] = useState(false);

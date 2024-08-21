@@ -1,10 +1,7 @@
 import { ReactElement } from 'react';
 import clsx from 'clsx';
 import { toast } from 'react-hot-toast';
-import { GuildButton } from '@/hero';
-import { Heading } from './heading';
-import { Input } from './input';
-import { Link } from './link';
+import { GuildButton, Heading, Input, Link } from '@/components';
 
 const classes = {
   link: clsx(
