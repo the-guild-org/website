@@ -11,9 +11,9 @@ export function Comparison({
   return (
     <div
       className={clsx(
-        'mt-6 flex items-stretch gap-1',
-        '[&>div]:mt-0 [&>div]:w-1/2 [&_button]:hidden',
-        '[&_pre]:mb-0 [&_pre]:h-full',
+        'mt-6 grid grid-cols-2 items-stretch gap-1',
+        '*:!mt-0 [&_button]:hidden',
+        '[&_pre]:h-[calc(100%-3rem)]',
         className,
       )}
     >

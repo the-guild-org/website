@@ -3,3 +3,9 @@ declare module '.next/static/chunks/nextra-page-map-.mjs' {
   let pageMap: any[];
   export { pageMap };
 }
+
+declare module '*/[tag].mdx' {
+  let getStaticPaths: () => Promise<{ paths: { params: { tag: string } }[] }>;
+
+  export { getStaticPaths };
+}

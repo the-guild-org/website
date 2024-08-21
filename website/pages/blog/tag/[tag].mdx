@@ -1,19 +1,24 @@
----
-title: Blog
-description: List of related articles
----
-
 import { buildDynamicMeta } from '@theguild/components/compile'
 import { allBlogs } from '../../../lib/all-blogs'
 
 export { default } from '../../blog.mdx'
 
-export const getStaticProps = async () => {
-  const props = await buildDynamicMeta()
-  return { props }
+export async function getStaticProps({ params: { tag } }) {
+  const { __nextra_pageMap } = await buildDynamicMeta()
+  return {
+    props: {
+      __nextra_pageMap,
+      __nextra_dynamic_opts: {
+        title: `Blog - ${tag}`,
+        frontMatter: {
+          description: 'List of related articles.'
+        }
+      }
+    }
+  }
 }
 
-export const getStaticPaths = async () => {
+export async function getStaticPaths() {
   const allTags = new Set(allBlogs.flatMap(art => art.tags))
   return {
     paths: Array.from(allTags).map(tag => ({ params: { tag } })),

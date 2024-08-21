@@ -1,45 +1,13 @@
-import { ComponentProps, MouseEvent, ReactElement, useCallback, useState } from 'react';
+import { MouseEvent, useCallback, useState } from 'react';
 import NextImage from 'next/image';
-import NextLink from 'next/link';
 import { clsx } from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
+import { GuildButton } from '@/components';
 import hiveHero from '@/hive-hero.png';
 import meshHero from '@/mesh-hero.svg';
 import { PRODUCTS } from '@theguild/components';
 
 const MotionNextImage = motion(NextImage);
-
-export function GuildButton({
-  children,
-  className,
-  // @ts-expect-error -- fixme
-  as: Component = NextLink,
-  ...props
-}: ComponentProps<typeof NextLink>): ReactElement {
-  return (
-    // @ts-expect-error -- fixme
-    <Component
-      {...props}
-      className={clsx(
-        'text-dark relative inline-flex items-center gap-3 rounded-[10px] px-5 py-3 font-medium transition-none',
-        // @ts-expect-error -- fixme
-        props.disabled
-          ? 'opacity-50'
-          : [
-              'after:font-mono after:text-3xl after:leading-none after:content-["➔"]',
-              'hocus:after:transition-[opacity]',
-              'lg:hocus:pr-10 duration-700 lg:transition-[padding]',
-              'hocus:after:delay-100 hocus:after:duration-500',
-              'lg:hocus:after:opacity-100 lg:after:opacity-0',
-              'lg:after:absolute lg:after:right-3',
-            ],
-        className,
-      )}
-    >
-      {children}
-    </Component>
-  );
-}
 
 export function Hero() {
   const [isHive, setIsHive] = useState(true);

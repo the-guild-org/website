@@ -5,17 +5,20 @@ import { MetaWithLink } from './lib/meta';
 const NEXTRA_PAGE_MAP_PATH = './.next/static/chunks/nextra-page-map-.mjs';
 
 async function generateRSS() {
-  const RAW_PAGE_MAP = (await readFile(NEXTRA_PAGE_MAP_PATH, 'utf8')).replace(
-    'import meta from "../../../pages/_meta.ts";',
-    'const meta = {};',
-  );
+  let RAW_PAGE_MAP = (await readFile(NEXTRA_PAGE_MAP_PATH, 'utf8'))
+    .replace('import meta from "../../../pages/_meta.ts";', 'const meta = {};')
+    .replace('import blog_meta from "../../../pages/blog/_meta.tsx";', 'const blog_meta = {};')
+    .replace(
+      'import blog_tag_meta from "../../../pages/blog/tag/_meta.ts"',
+      'const blog_tag_meta = {};',
+    );
 
   const indexOf = RAW_PAGE_MAP.indexOf("import { resolvePageMap } from 'nextra/page-map-dynamic'");
 
   if (indexOf !== -1) {
-    const pageMapWithoutResolvePageMap = RAW_PAGE_MAP.slice(0, indexOf);
-    await writeFile(NEXTRA_PAGE_MAP_PATH, pageMapWithoutResolvePageMap);
+    RAW_PAGE_MAP = RAW_PAGE_MAP.slice(0, indexOf);
   }
+  await writeFile(NEXTRA_PAGE_MAP_PATH, RAW_PAGE_MAP);
 
   // Use dynamic import since we remove import statement in nextra's page map
   const { allBlogs } = await import('./lib/all-blogs');
