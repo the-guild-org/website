@@ -122,7 +122,6 @@ export const GetInTouchForm = (): ReactElement => {
             type="submit"
             // @ts-expect-error -- fixme
             disabled={isSubmitting || !isValid}
-            loading={isSubmitting}
             className="self-start bg-[#24272e] !text-[#fcfcfc] dark:bg-[#fcfcfc] dark:!text-[#0f1114]"
           >
             Submit

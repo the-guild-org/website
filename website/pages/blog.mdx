@@ -4,7 +4,6 @@ description: Announcements about our Open-Source projects
 skipSync: true
 ---
 
-import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { BlogCardList, Heading, Newsletter, TagList } from '@/components'
 import { HeroSection } from '@/hero-section'
@@ -41,14 +40,8 @@ export default function Blog() {
         tagsFilter.length === 0 || asArray(article.tags).some(tag => tagsFilter.includes(tag))
     )
   }
-  const title = tagsFilter.length
-    ? `Blog - ${tagsFilter.join(', ')} (The Guild)`
-    : 'Blog - (The Guild)'
   return (
     <>
-      <Head>
-        <title>{title}</title>
-      </Head>
       <HeroSection>
         <Heading>The Guild's blog</Heading>
       </HeroSection>
