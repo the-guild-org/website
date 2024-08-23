@@ -6,10 +6,8 @@ import config from '@theguild/tailwind-config';
 export default {
   ...config,
   theme: {
-    // @ts-expect-error -- fixme
     ...config.theme,
     extend: {
-      // @ts-expect-error -- fixme
       ...config.theme.extend,
       animation: {
         scroll:
@@ -24,11 +22,7 @@ export default {
       },
     },
   },
-  content: [
-    // @ts-expect-error -- fixme
-    ...config.content,
-    './{pages,ui}/**/*.{tsx,mdx}',
-  ],
+  content: [...config.content, './{pages,ui}/**/*.{tsx,mdx}'],
   plugins: [
     plugin(({ addUtilities }) => {
       addUtilities({
