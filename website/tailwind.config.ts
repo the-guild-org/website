@@ -22,10 +22,7 @@ export default {
       },
     },
   },
-  content: [
-    ...config.content,
-    './{pages,ui}/**/*.{tsx,mdx}',
-  ],
+  content: [...config.content, './{pages,ui}/**/*.{tsx,mdx}'],
   plugins: [
     plugin(({ addUtilities }) => {
       addUtilities({
