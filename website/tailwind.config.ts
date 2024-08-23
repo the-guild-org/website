@@ -8,7 +8,6 @@ export default {
   theme: {
     ...config.theme,
     extend: {
-      // @ts-expect-error -- fixme
       ...config.theme.extend,
       animation: {
         scroll:
