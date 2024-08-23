@@ -23,7 +23,6 @@ export default {
     },
   },
   content: [
-    // @ts-expect-error -- fixme
     ...config.content,
     './{pages,ui}/**/*.{tsx,mdx}',
   ],
