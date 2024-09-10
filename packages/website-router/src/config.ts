@@ -88,6 +88,11 @@ export const jsonConfig = {
       rewrite: 'apollo-angular.pages.dev',
       sitemap: true,
     },
+    '/graphql/hive/federation-gateway-audit': {
+      rewrite: 'federation-gateway-compatibility.pages.dev',
+      crisp: { segments: ['hive-website'] },
+      sitemap: false,
+    },
     '/graphql/hive': {
       rewrite: 'hive-landing-page.pages.dev',
       crisp: { segments: ['hive-website'] },
