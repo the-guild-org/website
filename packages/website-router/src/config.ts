@@ -11,7 +11,7 @@ export type WebsiteRecord = RewriteRecord | RedirectRecord;
 
 export const jsonConfig = {
   // Change if you wish to invalidate/drop all caches for all websites
-  cacheStorageId: 100,
+  cacheStorageId: 101,
   publicDomain: 'the-guild.dev',
   koaliaPk: 'pk_fab338b8afd93b93f49fafebf9651287060e',
   clientToWorkerMaxAge: 60,
