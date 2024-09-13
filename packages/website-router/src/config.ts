@@ -1,5 +1,3 @@
-import { GRAPHQL_CONF_2024_BANNER } from './banner';
-
 export type RewriteRecord = {
   rewrite: string;
   crisp?: { segments: string[] };
@@ -18,7 +16,7 @@ export const jsonConfig = {
   cfFetchCacheTtl: 60,
   gaTrackingId: 'G-VN2KZS6FK4',
   crispWebsiteId: 'af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
-  defaultBanner: GRAPHQL_CONF_2024_BANNER,
+  defaultBanner: undefined,
   fallbackRoute: {
     rewrite: 'guild-dev-website.pages.dev',
     crisp: {
