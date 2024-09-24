@@ -79,7 +79,6 @@ export const Article = (): ReactElement => {
       <Authors meta={frontMatter as Meta} />
       <TagList tags={frontMatter.tags} asLink className="mt-4" />
       <Image src={frontMatter.image} className="mx-auto mt-6 aspect-video object-contain" />
-      <LookingForExperts />
     </>
   );
 };
