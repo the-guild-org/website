@@ -177,6 +177,10 @@ export const jsonConfig = {
       redirect: 'https://linkedin.com/company/the-guild-software',
       status: 302,
     },
+    '/stellate': {
+      redirect: 'https://stellate.co?utm_source=theguild&utm_medium=redirect&utm_campaign=router',
+      status: 302,
+    },
   } satisfies Record<string, WebsiteRecord>,
 };
 
