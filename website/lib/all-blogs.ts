@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { asArray } from './as-array';
 import { sortByDateDesc } from './sort-by-date';
-import { pageMap } from '.next/static/chunks/nextra-page-map-.mjs';
+import { pageMap } from './.next/static/chunks/nextra-page-map-.mjs';
 
 const blogFolder = pageMap.find(item => item.name === 'blog' && item.children).children;
 
