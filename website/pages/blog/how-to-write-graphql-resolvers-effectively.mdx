@@ -10,11 +10,14 @@ thumbnail: /blog-assets/the-complete-graphql-scalar-guide/thumbnail.png
 
 import { Callout } from '@theguild/components'
 
-Resolvers are the fundamental building blocks of a GraphQL server. To build a robust and scalable GraphQL server, we must understand how to write GraphQL resolvers effectively. In this blog post, we will explore how it works, and advanced concepts such as deferring resolve, resolver chain, and mappers.
+Resolvers are the fundamental building blocks of a GraphQL server. To build a robust and scalable GraphQL server, we must understand how to write GraphQL resolvers effectively. In this blog post, we will explore:
+- how resolvers work
+- concepts such as resolvers map, resolver chain, defer resolve and mappers
+- tools and best practices 
 
 ## What Are Resolvers?
 
-In a GraphQL server, a resolver is a function that "resolves" a value. Resolving a value means doing arbitrary combination of logic to return a value:
+In a GraphQL server, a resolver is a function that "resolves" a value which means doing arbitrary combination of logic to return a value. For example:
 
 * returning a value statically
 * fetching data from a database or an external API to return a value
@@ -41,7 +44,7 @@ type Actor {
 }
 ```
 
-We can write a _resolvers map_ like this:
+We can write a **resolvers map** like this:
 
 ```ts filename="src/graphql/resolvers.ts"
 const resolvers = {
@@ -60,11 +63,11 @@ const resolvers = {
 }
 ```
 
-We will discuss how the code flows through resolvers when the server handles a request in the next section
+We will discuss how the code flows through resolvers when the server handles a request in the next section.
 
 ## Code Flow and Resolver Chain
 
-Using the same schema, we may receive a query like this:
+Using the same schema, we may send a query like this:
 
 ```graphql
 query Movie {
@@ -82,19 +85,9 @@ query Movie {
 Once the server receives this query, it starts at `Query.movie` resolver, and since it returns a nullable `Movie` object type, two scenarios can happen:
 
 - If `Query.movie` resolver returns `null` or `undefined`, the code flow stops here, and the server returns `movie: null` to the client.
-- If `Query.movie` resolver returns anything else (e.g. objects, class instances, number, non-null falsy values, etc.), the code flow continues. Whatever being returned - usually called _mapper_ - will be the first argument of the Movie resolvers i.e. `Movie.id` and `Movie.name` resolvers.
+- If `Query.movie` resolver returns anything else (e.g. objects, class instances, number, non-null falsy values, etc.), the code flow continues. Whatever being returned - usually called **mapper** - will be the first argument of the Movie resolvers i.e. `Movie.id` and `Movie.name` resolvers.
 
-<Callout type="info" emoji="💡">
-  There are four positonal arguments of a resolver function:
-  - `parent`: the value returned by the parent resolver.
-    - For root-level resolvers like `Query.movie`, `parent` is always `undefined`.
-    - For other object-type resolvers like `Movie.id` and `Movie.name`, `parent` is the value returned by parent resolvers like `Query.movie`
-  - `args`: this is the arguments passed by client opertaions. In our example query, `Query.movie` resolver would receive `{ id: "1" }` as `args`
-  - `context`: An object passed through the resolver chain. It is useful for passing information between resolvers, such as authentication information, database connection, etc.
-  - `info`: An object containing information about the operation, such as operation AST, path to the resolver, etc.
-</Callout>
-
-This process repeats itself until the a GraphQL scalar field needs to be resolved. The order of the resolvers execution is called the _resolver chain_. For the example request, the resolver chain may look like this:
+This process repeats itself until a GraphQL scalar field needs to be resolved. The order of the resolvers execution is called the **resolver chain**. For the example request, the resolver chain may look like this:
 
 ```mermaid
 flowchart LR
@@ -105,7 +98,17 @@ flowchart LR
   D --> F(Actor.stageName)
 ```
 
-We must return a value that can be handled by the Scalars. In our example:
+<Callout type="info" emoji="💡">
+  There are four positonal arguments of a resolver function:
+  - `parent`: the value returned by the parent resolver.
+    - For root-level resolvers like `Query.movie`, `parent` is always `undefined`.
+    - For other object-type resolvers like `Movie.id` and `Movie.name`, `parent` is the value returned by parent resolvers like `Query.movie`
+  - `args`: this is the arguments passed by client operations. In our example query, `Query.movie` resolver would receive `{ id: "1" }` as `args`
+  - `context`: An object passed through the resolver chain. It is useful for passing information between resolvers, such as authentication information, database connection, etc.
+  - `info`: An object containing information about the operation, such as operation AST, path to the resolver, etc.
+</Callout>
+
+We must return a value that can be handled by the scalars. In our example:
 
 - `Movie.id` and `Actor.id` resolvers must return a non-nullable value that can be coerced into the `ID` scalar i.e. `string` or `number` values.
 - `Movie.name` and `Actor.stageName` resolver must return a non-nullable value that can be coerced into the `String` scalar i.e. `string`, `boolean` or `number` values.
@@ -114,21 +117,26 @@ We must return a value that can be handled by the Scalars. In our example:
   You can learn about GraphQL Scalar, including native Scalar and coercion concept, in this guide [here](https://the-guild.dev/blog/the-complete-graphql-scalar-guide)
 </Callout>
 
-It is important to remember that we will encounter runtime errors if resolver returns unexpected values. Some common scenarios are:
+It is important to remember that we will encounter runtime errors if the resolver returns unexpected values. Some common scenarios are:
 
-- a resolver returns `null` into a non-nullable field
+- a resolver returns `null` to a non-nullable field
 - a resolver returns a value that cannot be coerced into the expected scalar type
-- a resolver returns a non-array into an array field, such as `Movie.actors`
+- a resolver returns a non-array value to an array field, such as `Movie.actors`
 
-## Implementing Resolvers
+## How to Implement Resolvers
 
 ### Implementing Resolvers - Or Not
 
-If an empty resolver map is provided to the GraphQL server, the server will still run, however, it will return `null` for every root-level field in the schema. This means if a root-level field like `Query.movie`'s return type is non-nullable, we will encounter runtime error.
+If an empty resolver map is provided to the GraphQL server, the server still tries to handle incoming requests. However, it will return `null` for every root-level field in the schema. This means if a root-level field like `Query.movie`'s return type is non-nullable, we will encounter runtime error.
+
 If object type resolvers are omitted, the server will try to return the property of the same name from `parent`. Here's what `Movie` resolvers may look like if they are omitted:
 
 ```ts
 const resolvers = {
+  Movie: {},        // 👈 Empty `Movie` resolvers object,
+  Movie: undefined, // 👈 or undefined/omitted `Movie` resolvers object...
+
+  // 👇 ...are the equivalent of the following `Movie` resolvers:
   Movie: {
     id: (parent) => parent.id,
     name: (parent) => parent.name,
@@ -154,6 +162,8 @@ const resolvers = {
       }
     },
   },
+  // 💡 `Movie` and `Actor` resolvers are omitted here but it still works, 
+  // Thanks to default resolvers!
 }
 ```
 
@@ -199,7 +209,7 @@ We usually pass database connection through context, so we might update `Query.m
 const resolvers = {
   Query: {
     movie: (_, { id }, { database }) => {
-      const movie = database.movies[id]; // Database access counter: (1)
+      const movie = database.movies[id]; // 🔄 Database access counter: (1)
 
       if (!movie) {
         return null;
@@ -208,9 +218,9 @@ const resolvers = {
       return {
         id: movie.id,
         name: movie.movieName,
-        actors: (database.movies_actors[id] || []) // (2)
+        actors: (database.movies_actors[id] || []) // 🔄 (2)
           .actorIds.map(actorId => {
-            return database.actors[actorId] // (3), (4), (5)
+            return database.actors[actorId] // 🔄 (3), 🔄 (4), 🔄 (5)
           })
       }
     },
@@ -220,10 +230,10 @@ const resolvers = {
 
 This works, however, there are a few issues:
 
-- We are accessing the database 5 times every time `Query.movie` runs. However, the client may not request for `actors` field, so we are making unnecessary database calls. This is called eager resolve.
-- We are doing mapping `movie.movieName` in the return statement. This is fine here but our schema may scale to have multiple fields returning Movie, and we may have to repeat the same mapping logic in multiple resolvers.
+- We are accessing the database 5 times every time `Query.movie` runs (Counted using 🔄 emoji in the previous code snippet). Even if the client may not request for `actors` field, this still happens. So, we are making unnecessary database calls. This is called **eager resolve**.
+- We are mapping `movie.movieName` in the return statement. This is fine here, but our schema may scale to have multiple fields returning `Movie`, and we may have to repeat the same mapping logic in multiple resolvers.
 
-To fix these issues, we can use _mappers_ and _deferred resolve_ concepts:
+To improve this implementation, we can use **mappers** and **defer resolve** to avoid unnecessary database calls and reduce code duplication:
 
 ```ts
 type MovieMapper = { // 1.
@@ -245,37 +255,43 @@ const resolvers = {
     },
   },
   Movie: {
-    // 4.
-    name: (parent: MovieMapper) => parent.movieName, // 5.
-    actors: (parent: MovieMapper, _, { database }): ActorMapper[] => database.movies_actors[parent.id].actorIds, // 6.
+    name: (parent: MovieMapper) => parent.movieName, // 4.
+    actors: (parent: MovieMapper, _, { database }): ActorMapper[] => 
+      database.movies_actors[parent.id].actorIds, // 5.
+    // 6.
   },
   Actor: {
     id: (parent: ActorMapper) => parent, // 7.
-    stageName: (parent: ActorMapper, _, { database }) => database.actors[parent].stageName, // 8.
+    stageName: (parent: ActorMapper, _, { database }) => 
+      database.actors[parent].stageName, // 8.
   }
 }
 ```
 
 1. We define a `MovieMapper` type to represent the shape of the object returned by `Query.movie` resolver.
-2. Similarly, we define `ActorMapper` to be returned wherever `Actor` type is expected. Note that `ActorMapper` is a `string` representing the ID of an actor in this case, instead of an object.
-3. The `MovieMapper` is returned by `Query.movie` resolver, and it becomes the `parent` of `Movie` resolvers in (5) and (6).
-4. We can skip implementing `Movie.id` resolver because by default it passes `MovieMapper.id` property safely.
-5. Since `MovieMapper` has `movieName` property, but the GraphQL type expects String scalar for `name` instead. So, we need to map mapper's `movieName` to the schema's `Movie.name` field.
-6. `MovieMapper` doesn't have `actors` property, so we must find all the related actors from the database. Here, we expect an array of `ActorMapper` (i.e. an array of `string`) to be returned, which is the `actorIds` array in the database. This just means the `parent` of each `Actor` resolver is a string in (7) and (8)
+2. Similarly, we define `ActorMapper` to be returned wherever `Actor` type is expected. Note that in this example, `ActorMapper` is a `string` representing the ID of an actor in this case, instead of an object.
+3. The `MovieMapper` is returned by `Query.movie` resolver, and it becomes the `parent` of `Movie` resolvers in (4) and (5).
+4. Since `MovieMapper` has `movieName` property, but the GraphQL type expects String scalar for `name` instead. So, we need to return the mapper's `movieName` to the schema's `Movie.name` field.
+5. `MovieMapper` doesn't have `actors` property, so we must find all the related actors from the database. Here, we expect an array of `ActorMapper` (i.e. an array of `string`) to be returned, which is the `actorIds` array in the database. This just means the `parent` of each `Actor` resolver is a string in (7) and (8)
+6. We can skip implementing `Movie.id` resolver because by default it passes `MovieMapper.id` property safely.
 7. Because each `ActorMapper` is the ID of an actor, we return the `parent` instead of `parent.id` 
 8. Similarly, we use `parent` as the ID of the actor to fetch the actor's `stageName` from the database.
 
-By using mappers and deferred resolve techniques, we avoid unnecessary database calls and reduce code duplication. The next time we need to write a resolver that returns `Movie`, `Actor` objects, we can simply return the corresponding mapper objects.
+<Callout type='info' emoji="💡">
+By using **mappers** and **defer resolve** techniques, we avoid unnecessary database calls and reduce code duplication. The next time we need to write a resolver that returns `Movie`, `Actor` objects, we can simply return the corresponding mapper objects.
+</Callout>
 
-### Implementing Resolvers with Mappers and Deferred Resolve Best Practices
+### Implementing Resolvers with Mappers and Defer Resolve Best Practices
 
-We saw the benefits of using mappers and deferred resolve techniques in the previous section. Here are some TypeScript best practices to keep in mind when implementing resolvers, failing to enforce them may result in runtime errors:
+We saw the benefits of using mappers and defer resolve in the previous section. Here are some TypeScript best practices to keep in mind when implementing these techniques, failing to enforce them may result in runtime errors:
 
 - Mappers MUST be correctly typed as the return type of a resolver and the parent type of the next resolver.
 - Object resolvers MUST be implemented if the expected schema field does not exist in the mapper or, the mapper's field cannot be coerced into the expected schema type of the same name.
 
 At a small scale, it is easy to keep track of the types and mappers. However, as our schema grows, it becomes harder to maintain the typing and remembering which resolvers to implement. 
-This is where [GraphQL Code Generator](https://the-guild.dev/graphql/codegen) and Server Preset (`@eddeee888/gcg-typescript-resolver-files`) can be used to enforce strong type-safety and to reduce the risk of runtime errors using code analysis.
+This is where tools like [GraphQL Code Generator](https://the-guild.dev/graphql/codegen) and [Server Preset](https://www.npmjs.com/package/@eddeee888/gcg-typescript-resolver-files) can be used:
+- GraphQL Code Generator: generates TypeScript types for the resolvers, focusing on correct nullability, array and types.
+- Server Preset: generates and wires up resolvers conveniently, and runs analysis to suggests resolvers that require implementation, reducing the risk of runtime errors.
 
 To get started, install the required packages:
 
@@ -283,9 +299,9 @@ To get started, install the required packages:
 npm i -D @graphql-codegen/cli @eddeee888/gcg-typescript-resolver-files
 ```
 
-Next, create a `codegen.ts` file in the root of your project:
+Next, create a `codegen.ts` file at the root of your project:
 
-```ts
+```ts filename="codegen.ts"
 import type { CodegenConfig } from "@graphql-codegen/cli";
 import { defineConfig } from "@eddeee888/gcg-typescript-resolver-files";
 
@@ -363,4 +379,4 @@ By providing mappers, codegen is smart enough to understand that we want to defe
 
 ## Summary
 
-In this article, we have discussed how resolvers work in a GraphQL server resolver code flow and resolver chain, and how to write resolvers effectively using mappers and defer resolve techniques. Finally, we add GraphQL Code Generator and Server Preset to automatically generate resolver types and resolvers that need implementation to ensure strong type-safety and reduce runtime errors.
+In this article, we have explored how resolvers work in a GraphQL server resolver code flow and **resolver chain**, and how to write resolvers effectively using **mappers** and **defer resolve** techniques. Finally, we add GraphQL Code Generator and Server Preset to automatically generate resolvers and their types to ensure strong type-safety and reduce runtime errors.
