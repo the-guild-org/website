@@ -97,11 +97,8 @@ export const jsonConfig = {
       sitemap: true,
     },
     '/graphql/gateway': {
-      rewrite: 'conductor-t2.pages.dev',
-      crisp: {
-        segments: ['conductor'],
-      },
-      sitemap: true,
+      redirect: 'https://the-guild.dev/graphql/hive/docs/gateway',
+      status: 302
     },
     '/graphql/eslint': {
       rewrite: 'graphql-eslint.pages.dev',
