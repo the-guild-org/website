@@ -98,7 +98,7 @@ export const jsonConfig = {
     },
     '/graphql/gateway': {
       redirect: 'https://the-guild.dev/graphql/hive/docs/gateway',
-      status: 302
+      status: 302,
     },
     '/graphql/eslint': {
       rewrite: 'graphql-eslint.pages.dev',
