@@ -1,7 +1,8 @@
+import { Authors } from '@/article';
+import { BlogCardList, Image, Newsletter, TagList } from '@/components';
 import { useMDXComponents as getDocsMDXComponents } from '@mdx-components';
-import { generateStaticParamsFor, importPage } from '@theguild/components/nextra';
 import { Giscus } from '@theguild/components';
-import { BlogCardList, Newsletter } from '@/components';
+import { generateStaticParamsFor, importPage } from '@theguild/components/nextra';
 
 export const generateStaticParams = generateStaticParamsFor('mdxPath');
 
@@ -21,6 +22,10 @@ export default async function Page(props) {
 
   return (
     <Wrapper toc={useTOC()} metadata={metadata} title={title}>
+      <h1>{metadata.title}</h1>
+      <Authors meta={metadata} />
+      <TagList tags={metadata.tags} asLink className="mt-4" />
+      <Image src={metadata.image} className="mx-auto mt-6 aspect-video object-contain" />
       <MDXContent {...props} params={params} />
       <Giscus
         // ensure giscus is reloaded when client side route is changed

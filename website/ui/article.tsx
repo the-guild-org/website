@@ -1,12 +1,12 @@
-import { ReactElement } from 'react';
+import { FC } from 'react';
 import { format } from 'date-fns';
 import { AUTHORS } from '@/authors';
-import { Avatar, Image, TagList } from '@/components';
-import { Anchor, useConfig } from '@theguild/components';
+import { Avatar } from '@/components';
+import { Anchor } from '@theguild/components';
 import { asArray } from '../lib/as-array';
 import { Meta } from '../lib/meta';
 
-const Authors = ({ meta }: { meta: Meta }): ReactElement => {
+export const Authors: FC<{ meta: Meta }> = ({ meta }) => {
   const date = meta.date ? new Date(meta.date) : new Date();
   const updatedDate = meta.updateDate ? new Date(meta.updateDate) : null;
 
@@ -65,19 +65,6 @@ const Authors = ({ meta }: { meta: Meta }): ReactElement => {
           );
         })}
       </div>
-    </>
-  );
-};
-
-export const Article = (): ReactElement => {
-  const { frontMatter } = useConfig();
-
-  return (
-    <>
-      <h1>{frontMatter.title}</h1>
-      <Authors meta={frontMatter as Meta} />
-      <TagList tags={frontMatter.tags} asLink className="mt-4" />
-      <Image src={frontMatter.image} className="mx-auto mt-6 aspect-video object-contain" />
     </>
   );
 };

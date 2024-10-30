@@ -1,11 +1,11 @@
-import { ReactElement } from 'react';
+'use client';
+
+import { FC } from 'react';
 import ReactAvatar from 'react-avatar';
 
-export const Avatar = ({
-  author,
-}: {
+export const Avatar: FC<{
   author: { name: string; github?: string; twitter?: string };
-}): ReactElement => {
+}> = ({ author }) => {
   return (
     <ReactAvatar
       round

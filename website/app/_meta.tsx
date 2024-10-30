@@ -1,4 +1,3 @@
-// import { Article } from '@/article';
 // import { MetaWithLink } from '../../lib/meta';
 
 export default {
@@ -6,6 +5,7 @@ export default {
     type: 'page',
     title: 'Blog',
     theme: {
+      breadcrumb: false,
       sidebar: false,
       pagination: false,
     },
@@ -23,7 +23,6 @@ export default {
   //     typesetting: 'article',
   //     breadcrumb: false,
   //     pagination: false,
-  //     topContent: Article,
   //     bottomContent: function BottomContent() {
   //       const { route } = useRouter();
   //       const config = useConfig();
