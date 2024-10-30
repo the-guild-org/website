@@ -1,5 +1,6 @@
+'use client'
 import { ComponentProps, ReactElement } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { Anchor } from '@theguild/components';
 

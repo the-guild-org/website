@@ -1,3 +1,5 @@
+'use client'
+
 import { ComponentProps, ReactElement, useCallback, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { Tooltip } from './tooltip';
