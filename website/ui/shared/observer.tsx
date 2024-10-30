@@ -1,3 +1,5 @@
+'use client'
+
 import { ReactElement, ReactNode, RefObject, useEffect, useRef, useState } from 'react';
 
 interface ObserverProps {
