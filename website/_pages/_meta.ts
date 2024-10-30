@@ -1,12 +1,6 @@
 import { productsItems } from '@theguild/components';
 
 export default {
-  index: {
-    display: 'hidden',
-    theme: {
-      layout: 'raw',
-    },
-  },
   products: {
     type: 'menu',
     title: 'Products',
@@ -24,18 +18,6 @@ export default {
     theme: {
       typesetting: 'article',
       timestamp: false,
-    },
-  },
-  contact: {
-    title: 'Contact Us',
-    type: 'page',
-    route: '/contact',
-  },
-  404: {
-    type: 'page',
-    theme: {
-      timestamp: false,
-      typesetting: 'article',
     },
   },
 };
