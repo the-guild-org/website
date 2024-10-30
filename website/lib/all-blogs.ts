@@ -7,11 +7,14 @@ export const allBlogs = [];
 
 export async function getAllBlogs() {
   const pageMap = await getPageMap();
-
   const blogFolder = pageMap.find(item => item.name === 'blog' && item.children).children;
   return blogFolder
-    .filter(item => !item.data && item.route !== '/blog/tag')
-    .map(blog => {
+    // Use flatMap to avoid use filter + map
+    .flatMap(blog => {
+      if (blog.name === 'index') {
+        return [];
+      }
+
       if (blog.children) {
         blog = blog.children.find(item => item.name === 'index');
       }
@@ -43,18 +46,20 @@ export async function getAllBlogs() {
         );
       }
 
-      return {
-        title,
-        description,
-        tags,
-        authors: asArray(authors),
-        link: route,
-        image,
-        date: format(new Date(date), 'y-MM-dd'),
-        thumbnail,
-        canonical,
-        updateDate: updateDate ? format(new Date(updateDate), 'y-MM-dd') : undefined,
-      };
+      return [
+        {
+          title,
+          description,
+          tags,
+          authors: asArray(authors),
+          link: route,
+          image,
+          date: format(new Date(date), 'y-MM-dd'),
+          thumbnail,
+          canonical,
+          updateDate: updateDate ? format(new Date(updateDate), 'y-MM-dd') : undefined,
+        },
+      ];
     })
     .sort(sortByDateDesc);
 }

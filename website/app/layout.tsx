@@ -2,6 +2,7 @@ import { FC, ReactNode } from 'react';
 import { getDefaultMetadata, GuildLayout, Search } from '@theguild/components';
 import { getPageMap } from '@theguild/components/nextra';
 import '@theguild/components/style.css';
+import './globals.css'
 
 const description = 'Modern, Open-source API Tooling and Ecosystem that scales';
 const websiteName = 'The Guild';

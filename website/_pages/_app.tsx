@@ -1,7 +1,6 @@
 /* eslint react/no-unknown-property: ['error', { ignore: ['global', 'jsx'] }] */
 import { IBM_Plex_Sans } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
-import './globals.css';
 
 const ibmPlexSans = IBM_Plex_Sans({
   weight: ['400', '500', '600', '700'],
