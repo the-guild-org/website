@@ -1,13 +1,13 @@
-import { Callout, useMDXComponents as docsMDXComponents, Steps } from '@theguild/components';
+import { Callout, useMDXComponents as getDocsMDXComponents, Steps } from '@theguild/components';
 import { Tweet } from '@/shared/embed/tweet';
 
-const docsComponents = docsMDXComponents({
+const docsComponents = getDocsMDXComponents({
   Callout,
   Steps,
   Tweet
 });
 
-export const useMDXComponents: typeof docsMDXComponents = components => {
+export const useMDXComponents: typeof getDocsMDXComponents = components => {
   return {
     ...docsComponents,
     ...components,

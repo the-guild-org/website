@@ -1,6 +1,10 @@
 import { withGuildDocs } from '@theguild/components/next.config';
 
+// eslint-disable-next-line import/no-default-export
 export default withGuildDocs({
+  nextraConfig: {
+    contentDirBasePath: '/blog'
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -9,7 +13,7 @@ export default withGuildDocs({
     SITE_URL: 'https://the-guild.dev',
   },
   output: 'export',
-  redirects: () =>
+  redirects: async () =>
     Object.entries({
       '/contact': '/#get-in-touch',
       '/solutions': '/#platform',
