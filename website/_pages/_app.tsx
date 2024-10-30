@@ -17,8 +17,7 @@ const ibmPlexSans = IBM_Plex_Sans({
     --hover-opacity: 0.75;
   }
   html,
-  body,
-  #__next {
+  body {
     margin: 0;
     width: 100%;
     height: 100%;
@@ -37,7 +36,7 @@ const ibmPlexSans = IBM_Plex_Sans({
     text-decoration: none;
     transition: all 0.2s ease 0s;
   }
-  // Remove autocomplete color in Chrome
+  /* Remove autocomplete color in Chrome */
   input:-webkit-autofill {
     -webkit-transition:
       color 9999s ease-out,

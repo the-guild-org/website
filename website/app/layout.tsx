@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react';
-import { getDefaultMetadata, GuildLayout } from '@theguild/components';
+import { getDefaultMetadata, GuildLayout, Search } from '@theguild/components';
 import { getPageMap } from '@theguild/components/nextra';
 import '@theguild/components/style.css';
 
@@ -30,10 +30,7 @@ const RootLayout: FC<{
         pageMap: await getPageMap(),
         docsRepositoryBase:
           'https://github.com/the-guild-org/the-guild-website/tree/master/website',
-      }}
-      sameSite
-      searchProps={{
-        placeholder: 'Search…',
+        search: <Search placeholder="Search…" />,
       }}
     >
       {children}
