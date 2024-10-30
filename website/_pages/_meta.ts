@@ -26,14 +26,6 @@ export default {
       timestamp: false,
     },
   },
-  logos: {
-    type: 'page',
-    display: 'hidden',
-    theme: {
-      typesetting: 'article',
-      timestamp: false,
-    },
-  },
   contact: {
     title: 'Contact Us',
     type: 'page',

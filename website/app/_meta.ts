@@ -10,6 +10,14 @@ export default {
       pagination: false,
     },
   },
+  logos: {
+    type: 'page',
+    display: 'hidden',
+    theme: {
+      typesetting: 'article',
+      timestamp: false,
+    },
+  },
   // tag: {
   //   // TODO: fix `normalizePages` in nextra, currently it cannot find right item since we have `display: hidden` in `*`
   //   display: 'normal',
