@@ -1,11 +1,15 @@
-// import { useEffect, useState } from 'react';
-// import { useRouter } from 'next/router';
 // import { Article } from '@/article';
-// import { BlogCardList, Newsletter } from '@/components';
-// import { Giscus, useConfig, useTheme } from '@theguild/components';
 // import { MetaWithLink } from '../../lib/meta';
 
 export default {
+  blog: {
+    type: 'page',
+    title: 'Blog',
+    theme: {
+      sidebar: false,
+      pagination: false,
+    },
+  },
   // tag: {
   //   // TODO: fix `normalizePages` in nextra, currently it cannot find right item since we have `display: hidden` in `*`
   //   display: 'normal',
@@ -21,7 +25,6 @@ export default {
   //     pagination: false,
   //     topContent: Article,
   //     bottomContent: function BottomContent() {
-  //       const { resolvedTheme } = useTheme();
   //       const { route } = useRouter();
   //       const config = useConfig();
   //       const { tags } = config.frontMatter;
@@ -47,30 +50,6 @@ export default {
   //           setSimilarArticles(similarArticles);
   //         });
   //       }, []);
-  //
-  //       return (
-  //         <>
-  //           <Giscus
-  //             // ensure giscus is reloaded when client side route is changed
-  //             key={route}
-  //             repo="the-guild-org/website"
-  //             repoId="MDEwOlJlcG9zaXRvcnkxOTk3MTM1NzI="
-  //             category="Docs Discussions"
-  //             categoryId="DIC_kwDOC-djJM4CSZk-"
-  //             mapping="pathname"
-  //             theme={resolvedTheme}
-  //           />
-  //           <Newsletter className="mt-6 flex-col !gap-10" />
-  //           {similarArticles.length > 0 && (
-  //             <>
-  //               <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">
-  //                 Similar articles
-  //               </h3>
-  //               <BlogCardList articles={similarArticles} className="!grid-cols-2" />
-  //             </>
-  //           )}
-  //         </>
-  //       );
   //     },
   //   },
   // },
