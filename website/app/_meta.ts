@@ -18,11 +18,18 @@ export default {
       timestamp: false,
     },
   },
+  'about-us': {
+    type: 'page',
+    theme: {
+      typesetting: 'article',
+      timestamp: false,
+    },
+  },
   contact: {
     title: 'Contact Us',
     type: 'page',
     href: '/contact',
-  }
+  },
   // tag: {
   //   // TODO: fix `normalizePages` in nextra, currently it cannot find right item since we have `display: hidden` in `*`
   //   display: 'normal',

@@ -13,11 +13,4 @@ export default {
       timestamp: false,
     },
   },
-  'about-us': {
-    type: 'page',
-    theme: {
-      typesetting: 'article',
-      timestamp: false,
-    },
-  },
 };
