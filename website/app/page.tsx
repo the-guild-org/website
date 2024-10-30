@@ -6,7 +6,7 @@ import { GetInTouchSection } from '@/get-in-touch-section';
 import { Hero } from '@/hero';
 import { RecommendedReadingSection } from '@/recommended-reading-section';
 import { ServicesSection } from '@/services-section';
-import { allBlogs } from '../lib/all-blogs';
+import { getAllBlogs } from '../lib/all-blogs';
 
 export const metadata: Metadata = {
   title: 'GraphQL',
@@ -18,7 +18,8 @@ export const metadata: Metadata = {
 };
 
 // eslint-disable-next-line import/no-default-export
-export default function IndexPage() {
+export default async function IndexPage() {
+  const allBlogs = await getAllBlogs();
   return (
     <>
       <Hero />
