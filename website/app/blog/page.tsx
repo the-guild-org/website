@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import { BlogCardList, Heading, Newsletter, TagList } from '@/components';
 import { HeroSection } from '@/hero-section';
 import { getAllBlogs } from '../../lib/all-blogs';
@@ -27,25 +28,11 @@ function extractRelevantTags(articles) {
   return sorted.slice(0, 10);
 }
 
-export default function Blog() {
-  const { query } = useRouter()
-  const tagsFilter = !query.tag ? [] : asArray(query.tag)
-  const allTags = extractRelevantTags(allBlogs)
-  let articles = allBlogs
-// eslint-disable-next-line import/no-default-export
-export default async function BlogPage() {
+const BlogPage: FC<{ tag: string }> = async ({ tag }) => {
   const allBlogs = await getAllBlogs();
-
-
-  const tagsFilter = query.tag ? asArray(query.tag) : [];
   const allTags = extractRelevantTags(allBlogs);
-  let articles = allBlogs;
-  if (tagsFilter.length > 0) {
-    articles = articles.filter(
-      article =>
-        tagsFilter.length === 0 || asArray(article.tags).some(tag => tagsFilter.includes(tag)),
-    );
-  }
+  const articles = tag ? allBlogs.filter(article => asArray(article.tags).includes(tag)) : allBlogs;
+
   return (
     <>
       <HeroSection>
@@ -53,9 +40,12 @@ export default async function BlogPage() {
       </HeroSection>
       <div className="nextra-container">
         <TagList tags={allTags} withCount asLink className="mb-20 mt-10" />
-        {!tagsFilter.length && <Newsletter />}
+        {!tag && <Newsletter />}
         <BlogCardList articles={articles} />
       </div>
     </>
   );
-}
+};
+
+// eslint-disable-next-line import/no-default-export
+export default BlogPage;

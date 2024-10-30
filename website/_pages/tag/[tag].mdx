@@ -1,10 +1,4 @@
-import { buildDynamicMeta } from '@theguild/components/compile'
-import { allBlogs } from '../../lib/all-blogs.ts'
-
-export { default } from '../../blog.mdx'
-
 export async function getStaticProps({ params: { tag } }) {
-  const { __nextra_pageMap } = await buildDynamicMeta()
   return {
     props: {
       __nextra_pageMap,
@@ -18,10 +12,3 @@ export async function getStaticProps({ params: { tag } }) {
   }
 }
 
-export async function getStaticPaths() {
-  const allTags = new Set(allBlogs.flatMap(art => art.tags))
-  return {
-    paths: Array.from(allTags).map(tag => ({ params: { tag } })),
-    fallback: false
-  }
-}
