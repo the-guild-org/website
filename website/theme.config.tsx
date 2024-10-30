@@ -1,11 +1,9 @@
-import { Video } from '@/components';
 import { CodeSandbox } from '@/shared/embed/code-sandbox';
 import { Gfycat } from '@/shared/embed/gfycat';
 import { LinkPreview } from '@/shared/embed/link-preview';
 import { OgCard } from '@/shared/embed/og-card';
 import { StackBlitz } from '@/shared/embed/stack-blitz';
-import { Tweet } from '@/shared/embed/tweet';
-import { Callout, Steps } from '@theguild/components';
+import { Steps } from '@theguild/components';
 
 function ensureAbsolute(url: string): string {
   return url.startsWith('/') ? `https://the-guild.dev${url}` : url;
@@ -29,17 +27,11 @@ export default defineConfig({
     );
   },
   components: {
-    Callout,
-    Video,
     CodeSandbox,
     LinkPreview,
     OgCard,
     Gfycat,
-    Tweet,
     StackBlitz,
     Steps,
-  },
-  search: {
-    placeholder: 'Search…',
   },
 });

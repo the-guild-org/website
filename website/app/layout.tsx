@@ -31,6 +31,10 @@ const RootLayout: FC<{
         docsRepositoryBase:
           'https://github.com/the-guild-org/the-guild-website/tree/master/website',
       }}
+      sameSite
+      searchProps={{
+        placeholder: 'Search…',
+      }}
     >
       {children}
     </GuildLayout>

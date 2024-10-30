@@ -11,6 +11,9 @@ import NextImage from 'next/image'
 import nextraContrastMode from 'public/blog-assets/nextra-2/contrast-mode.png'
 import nextraPage from 'public/blog-assets/nextra-2/page.png'
 import nextraRtl from 'public/blog-assets/nextra-2/rtl.png'
+import { compileMdx } from '@theguild/components/nextra'
+import { defaultNextraOptions } from '@theguild/components/next.config'
+import { RemoteContent } from '@theguild/components'
 
 ## What's Nextra
 
@@ -65,12 +68,12 @@ Nextra 2 comes with support for the latest **Next.js 13** version and also up to
 
 ### Images and Links Optimization
 
-Static images are always optimized with `<NextImage />` component, internal links are replaced with
-`<NextLink />` component, external links will have `target="_blank"` and `rel="noreferrer"` and will
+Static images are always optimized with `<NextImage>` component, internal links are replaced with
+`<NextLink>` component, external links will have `target="_blank"` and `rel="noreferrer"` and will
 inform screen readers about opening a link in a new tab.
 
-`<NextImage />` will prevent to have layout shifts on your page. Instantiate (client-side)
-navigation would be done with `<NextLink />`.
+`<NextImage>` will prevent to have layout shifts on your page. Instantiate (client-side)
+navigation would be done with `<NextLink>`.
 
 ```text filename="Markdown"
 ![Hero](/hero.png)
@@ -137,27 +140,13 @@ Rendering remote markdown is simple, you will need:
 1. Provide `components` from `useMDXComponents` hook from `nextra/mdx` for `MDXRemote` to prevent
    layout shifts
 
-import { MDXRemote } from 'next-mdx-remote'
-import { useData, useMDXComponents } from '@theguild/components'
-import { compileMdx } from '@theguild/components/compile'
-
-export const getStaticProps = async () => {
+export async function NextraReadme() {
   const response = await fetch(
     'https://raw.githubusercontent.com/shuding/nextra/a27a83da5bad80b7d41a5c0cb8bf10a51869866f/README.md'
   )
   const markdown = await response.text()
-  const mdx = await compileMdx(markdown, { defaultShowCopyCode: true })
-  return {
-    props: {
-      ssg: mdx.result
-    }
-  }
-}
-
-export const NextraReadme = () => {
-  const compiledSource = useData()
-  const components = useMDXComponents()
-  return <MDXRemote compiledSource={compiledSource} components={components} />
+  const { result } = await compileMdx(markdown, defaultNextraOptions)
+  return <RemoteContent compiledSource={result} />
 }
 
 ```mdx filename="Remote Nextra Readme" showLineNumbers {1,9,12,20,22}
@@ -212,7 +201,7 @@ Here is an overview of different options for customization elements such as:
 - Banner
 - Header (logo / chat icon / project icon)
 - Footer
-- `<head />` content and Next SEO props
+- `<head>` content and Next SEO props
 - Various search / sidebar / TOC options
 - Pagination on page
 - Dark mode
@@ -258,7 +247,7 @@ function App() {
 
 Out of the box, `nextra-theme-docs` has Next SEO installed. By default, in the front matter you can
 set `title`, `description`, `canonical` and `openGraph` and they will be passed directly to the
-`<NextSeo />` component.
+`<NextSeo>` component.
 
 ```md filename="Markdown"
 ---
