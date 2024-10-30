@@ -2,12 +2,12 @@
 title: How to write GraphQL resolvers effectively
 authors: eddeee888
 tags: [graphql, codegen, node, server, typescript]
-date: 2024-10-15
+date: 2024-10-31
 description:
   Learn GraphQL concepts like resolver map, resolver chain, mappers, defer resolve and use GraphQL
   Code Generator and Server Preset to write resolvers.
-image: /blog-assets/the-complete-graphql-scalar-guide/cover.png
-thumbnail: /blog-assets/the-complete-graphql-scalar-guide/thumbnail.png
+image: /blog-assets/how-to-write-graphql-resolvers-effectively/cover.png
+thumbnail: /blog-assets/how-to-write-graphql-resolvers-effectively/thumbnail.png
 ---
 
 import { Callout } from '@theguild/components'
@@ -19,6 +19,16 @@ will explore:
 - how resolvers work
 - concepts such as resolver map, resolver chain, defer resolve and mappers
 - tools and best practices
+
+## Glossary
+
+- **Resolver map**: An object containing resolvers that match the types and fields in the GraphQL
+  schema.
+- **Resolver chain**: The order of resolvers execution when the GraphQL server handles a request.
+- **Mapper**: The shape of the data returned by a resolver to become the `parent` parameter of the
+  next resolver in the resolver chain.
+- **Defer resolve**: A technique to avoid unnecessary resolver execution of a field early in the
+  resolver chain.
 
 ## What Are Resolvers?
 
