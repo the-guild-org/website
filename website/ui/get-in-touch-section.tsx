@@ -1,11 +1,13 @@
-import { ReactElement, useState } from 'react';
+'use client';
+
+import { FC, useState } from 'react';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import Confetti from 'react-confetti';
 import * as Yup from 'yup';
 import { GuildButton, Heading, Input } from './components';
 
-export const GetInTouchForm = (): ReactElement => {
+export const GetInTouchForm: FC = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [confetti, setConfetti] = useState(false);
@@ -131,11 +133,11 @@ export const GetInTouchForm = (): ReactElement => {
   );
 };
 
-export function GetInTouchSection({ className }: { className?: string }): ReactElement {
+export const GetInTouchSection: FC<{ className?: string }> = ({ className }) => {
   return (
     <div
       className={clsx(
-        'mb-16 grid gap-14 rounded-[30px] bg-[#f1f1f1] p-7 md:p-24 lg:mb-32 lg:grid-cols-2 xl:gap-48 dark:bg-[#24272E]/50',
+        'mb-16 grid gap-14 rounded-[30px] bg-[#f1f1f1] p-7 dark:bg-[#24272E]/50 md:p-24 lg:mb-32 lg:grid-cols-2 xl:gap-48',
         className,
       )}
     >
@@ -156,4 +158,4 @@ export function GetInTouchSection({ className }: { className?: string }): ReactE
       </div>
     </div>
   );
-}
+};

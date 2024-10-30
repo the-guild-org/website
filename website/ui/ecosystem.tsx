@@ -1,3 +1,5 @@
+'use client'
+
 import { ComponentProps, ReactElement, useEffect, useState } from 'react';
 import { clsx } from 'clsx';
 import { PRODUCTS } from '@theguild/components';

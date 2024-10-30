@@ -1,8 +1,9 @@
 import { format } from 'date-fns';
 import { asArray } from './as-array';
 import { sortByDateDesc } from './sort-by-date';
-// eslint-disable-next-line import/no-useless-path-segments -- this will exist when we do `next build`
-import { pageMap } from '.next/static/chunks/nextra-page-map-.mjs';
+import { getPageMap } from '@theguild/components/nextra';
+
+const pageMap = await getPageMap()
 
 const blogFolder = pageMap.find(item => item.name === 'blog' && item.children).children;
 
