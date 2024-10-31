@@ -12,7 +12,7 @@ export async function generateMetadata(props) {
   return metadata;
 }
 
-const Wrapper = getDocsMDXComponents().wrapper;
+const { wrapper: Wrapper, h1: H1 } = getDocsMDXComponents();
 
 // eslint-disable-next-line import/no-default-export
 export default async function Page(props) {
@@ -22,7 +22,7 @@ export default async function Page(props) {
 
   return (
     <Wrapper toc={useTOC()} metadata={metadata} title={title}>
-      <h1>{metadata.title}</h1>
+      <H1>{metadata.title}</H1>
       <Authors meta={metadata} />
       <TagList tags={metadata.tags} asLink className="mt-4" />
       <Image src={metadata.image} className="mx-auto mt-6 aspect-video object-contain" />

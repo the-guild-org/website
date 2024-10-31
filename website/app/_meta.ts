@@ -6,9 +6,9 @@ export default {
     type: 'page',
     title: 'Blog',
     theme: {
-      breadcrumb: false,
       sidebar: false,
       pagination: false,
+      typesetting: 'article',
     },
   },
   logos: {
@@ -31,10 +31,6 @@ export default {
     type: 'page',
     href: '/contact',
   },
-  // tag: {
-  //   // TODO: fix `normalizePages` in nextra, currently it cannot find right item since we have `display: hidden` in `*`
-  //   display: 'normal',
-  // },
   // '*': {
   //   display: 'hidden',
   //   theme: {
