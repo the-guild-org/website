@@ -2,7 +2,7 @@
 title: How to write GraphQL resolvers effectively
 authors: eddeee888
 tags: [graphql, codegen, node, server, typescript]
-date: 2024-10-31
+date: 2024-11-04
 description:
   Learn GraphQL concepts like resolver map, resolver chain, mappers, defer resolve and use GraphQL
   Code Generator and Server Preset to write resolvers.
@@ -394,6 +394,15 @@ type MovieMapper = {
 }
 type ActorMapper = string
 ```
+
+<Callout type="info" emoji="💡">
+Server Preset automatically detects and wires up mappers if they follow the convention:
+1. The mappers are declared in a file in the same directory as the schema source file, and has the file name ending with `.mappers.ts` segment instead of the schema source file's extension. For example:
+   - If your schema file is `schema.graphql`, the mappers file is `schema.mappers.ts`.
+   - If your schema file is `schema.graphql.ts`, the mappers file is `schema.graphql.mappers.ts`.
+2. The mapper type names are in the format of `<TypeName>Mapper` where `<TypeName>` is the GraphQL schema name. For example:
+   - If the schema type is `Movie`, then the mapper type is `MovieMapper`.
+</Callout>
 
 Finally, run codegen to generate resolvers:
 
