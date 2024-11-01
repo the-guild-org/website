@@ -4,6 +4,7 @@ import { BlogCardList, Image, Newsletter, TagList } from '@/components';
 import { useMDXComponents as getDocsMDXComponents } from '@mdx-components';
 import { Giscus } from '@theguild/components';
 import { generateStaticParamsFor, importPage } from '@theguild/components/nextra';
+import { getAllBlogs } from '../../../lib/all-blogs';
 
 type Props = {
   params: Promise<{ mdxPath: string[] }>;
@@ -24,6 +25,20 @@ const Page: FC<Props> = async props => {
   const result = await importPage(params.mdxPath);
   const { default: MDXContent, useTOC, metadata, title } = result;
 
+  const allBlogs = await getAllBlogs();
+  const { tags } = result.metadata;
+
+  const similarArticles = allBlogs
+    .filter(
+      article =>
+        (article.link !== `/blog/${params.mdxPath}` && tags.length === 0) ||
+        article.tags?.some(tag => tags.includes(tag)),
+    )
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 12)
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 4);
+
   return (
     <Wrapper toc={useTOC()} metadata={metadata} title={title}>
       <H1>{metadata.title}</H1>
@@ -40,15 +55,15 @@ const Page: FC<Props> = async props => {
         categoryId="DIC_kwDOC-djJM4CSZk-"
         mapping="pathname"
       />
-      {/*<Newsletter className="mt-6 flex-col !gap-10" />*/}
-      {/*{similarArticles.length > 0 && (*/}
-      {/*  <>*/}
-      {/*    <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">*/}
-      {/*      Similar articles*/}
-      {/*    </h3>*/}
-      {/*    <BlogCardList articles={similarArticles} className="!grid-cols-2" />*/}
-      {/*  </>*/}
-      {/*)}*/}
+      <Newsletter className="mt-6 flex-col !gap-10" />
+      {similarArticles.length > 0 && (
+        <>
+          <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">
+            Similar articles
+          </h3>
+          <BlogCardList articles={similarArticles} className="!grid-cols-2" />
+        </>
+      )}
     </Wrapper>
   );
 };

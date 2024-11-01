@@ -10,15 +10,6 @@ import { Toaster } from 'react-hot-toast';
     --colors-primary: white;
     --hover-opacity: 0.75;
   }
-  html,
-  body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-  }
-  html {
-    font-family: ${ibmPlexSans.style.fontFamily};
-  }
   ${router.route === '/'
     ? "/* For smooth scrolling effect when click on '#' hash links */ html { scroll-behavior: smooth }"
     : ''}

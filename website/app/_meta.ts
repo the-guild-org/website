@@ -44,16 +44,7 @@ export default {
   //             return;
   //           }
   //
-  //           const similarArticles = allBlogs
-  //             .filter(
-  //               article =>
-  //                 article.link !== route &&
-  //                 (tags.length === 0 || article.tags?.some(tag => tags.includes(tag))),
-  //             )
-  //             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  //             .slice(0, 12)
-  //             .sort(() => 0.5 - Math.random())
-  //             .slice(0, 4);
+
   //
   //           setSimilarArticles(similarArticles);
   //         });
