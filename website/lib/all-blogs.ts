@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { getPageMap } from '@theguild/components/nextra';
 import { asArray } from './as-array';
 
-let allBlogs: any[];
+let allBlogs: unknown[];
 
 export async function getAllBlogs() {
   if (allBlogs) {

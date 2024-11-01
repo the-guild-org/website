@@ -25,7 +25,7 @@ function extractRelevantTags(articles) {
   if (sorted.every(([tagName]) => tagName !== 'envelop')) {
     sorted.unshift(['envelop', 0]);
   }
-  return sorted.slice(0, 10) as string[];
+  return sorted.slice(0, 10) as unknown as string[];
 }
 
 const BlogPage: FC<{ tag: string }> = async ({ tag }) => {
