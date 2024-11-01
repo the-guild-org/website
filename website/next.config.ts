@@ -33,6 +33,6 @@ export default withGuildDocs({
       permanent: true,
     })),
   experimental: {
-    optimizePackageImports: ['@theguild/components/nextra'],
+    optimizePackageImports: ['@theguild/components/nextra', '@theguild/components'],
   },
 });
