@@ -12,14 +12,13 @@ Run `cd website && pnpm dev` to start the server locally.
 
 ## Build and Run the Website (Production)
 
-Run `pnpm build` followed by `pnpm export` to build and export a static version of the website in
-production mode.
+Run `pnpm build` to build a static version of the website in production mode.
 
 ## Contributing to Our Blog
 
 We use [MDX](https://mdxjs.com) (Markdown with JSX) for our blog posts. To add a new blog post:
 
-- Create a new MDX file in `website/pages/blog` directory with the same template as other blog posts
+- Create a new MDX file in `website/content` directory with the same template as other blog posts
 - Update the meta object with all the information regarding the blog post including title,
   thumbnails, author name, etc.
 - Any assets related to the blog can be placed in `website/public/blog-assets` directory within its

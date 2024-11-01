@@ -32,14 +32,7 @@ export default {
     href: '/contact',
   },
   // '*': {
-  //   display: 'hidden',
   //   theme: {
-  //     layout: 'default',
-  //     sidebar: false,
-  //     toc: true,
-  //     typesetting: 'article',
-  //     breadcrumb: false,
-  //     pagination: false,
   //     bottomContent: function BottomContent() {
   //       const { route } = useRouter();
   //       const config = useConfig();
