@@ -15,7 +15,7 @@ export const Newsletter: FC<{ className?: string }> = ({ className }) => {
   return (
     <div
       className={clsx(
-        'mb-16 flex gap-14 rounded-[30px] bg-[#f1f1f1] p-7 dark:bg-[#24272E]/50 max-xl:flex-col md:p-24 lg:mb-32 xl:gap-48',
+        'mb-16 flex gap-14 rounded-[30px] bg-[#f1f1f1] p-7 max-xl:flex-col md:p-24 lg:mb-32 xl:gap-48 dark:bg-[#24272E]/50',
         className,
       )}
     >
