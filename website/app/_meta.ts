@@ -1,5 +1,3 @@
-// import { MetaWithLink } from '../../lib/meta';
-
 export default {
   blog: {
     type: 'page',
@@ -30,26 +28,4 @@ export default {
     type: 'page',
     href: '/contact',
   },
-  // '*': {
-  //   theme: {
-  //     bottomContent: function BottomContent() {
-  //       const { route } = useRouter();
-  //       const config = useConfig();
-  //       const { tags } = config.frontMatter;
-  //       const [similarArticles, setSimilarArticles] = useState<MetaWithLink[]>([]);
-  //
-  //       useEffect(() => {
-  //         import('../../lib/all-blogs').then(({ allBlogs }) => {
-  //           if (!tags) {
-  //             return;
-  //           }
-  //
-
-  //
-  //           setSimilarArticles(similarArticles);
-  //         });
-  //       }, []);
-  //     },
-  //   },
-  // },
 };
