@@ -24,6 +24,9 @@ const RootLayout: FC<{
 }> = async ({ children }) => {
   return (
     <GuildLayout
+      websiteName={websiteName}
+      description={description}
+      logo={null}
       htmlProps={{
         className: ibmPlexSans.className,
       }}
@@ -33,9 +36,6 @@ const RootLayout: FC<{
           light: 'rgb(250, 250, 250)',
         },
       }}
-      logo={null}
-      websiteName={websiteName}
-      description={description}
       layoutProps={{
         pageMap: await getPageMap(),
         docsRepositoryBase:
