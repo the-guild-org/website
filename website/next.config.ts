@@ -7,6 +7,10 @@ export default withGuildDocs({
   eslint: {
     ignoreDuringBuilds: true,
   },
+  env: {
+    // needs for canonical <link />
+    SITE_URL: 'https://the-guild.dev',
+  },
   typescript: {
     // behaves weird
     ignoreBuildErrors: true,
@@ -28,4 +32,7 @@ export default withGuildDocs({
       destination: to,
       permanent: true,
     })),
+  experimental: {
+    optimizePackageImports: ['@theguild/components/nextra'],
+  },
 });
