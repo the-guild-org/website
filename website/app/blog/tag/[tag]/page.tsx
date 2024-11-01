@@ -14,7 +14,7 @@ export async function generateStaticParams() {
 export async function generateMetadata(props: Props) {
   const { tag } = await props.params;
   return {
-    title: `Blog - ${tag}`,
+    title: `Blog articles tagged with "${tag}"`,
     description: 'List of related articles.',
   };
 }

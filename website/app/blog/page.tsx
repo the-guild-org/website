@@ -25,7 +25,7 @@ function extractRelevantTags(articles) {
   if (sorted.every(([tagName]) => tagName !== 'envelop')) {
     sorted.unshift(['envelop', 0]);
   }
-  return sorted.slice(0, 10);
+  return sorted.slice(0, 10) as string[];
 }
 
 const BlogPage: FC<{ tag: string }> = async ({ tag }) => {
@@ -39,7 +39,7 @@ const BlogPage: FC<{ tag: string }> = async ({ tag }) => {
         <Heading>The Guild's blog</Heading>
       </HeroSection>
       <div className="nextra-container">
-        <TagList tags={allTags} withCount asLink className="mb-20 mt-10" />
+        <TagList tags={allTags} withCount className="mb-20 mt-10" />
         {!tag && <Newsletter />}
         <BlogCardList articles={articles} />
       </div>

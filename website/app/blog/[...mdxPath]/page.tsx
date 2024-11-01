@@ -43,7 +43,7 @@ const Page: FC<Props> = async props => {
     <Wrapper toc={useTOC()} metadata={metadata} title={title}>
       <H1>{metadata.title}</H1>
       <Authors meta={metadata} />
-      <TagList tags={metadata.tags} asLink className="mt-4" />
+      <TagList tags={metadata.tags} className="mt-4" />
       <Image src={metadata.image} className="mx-auto mt-6 aspect-video object-contain" />
       <MDXContent {...props} params={params} />
       <Giscus

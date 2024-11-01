@@ -1,16 +1,15 @@
-'use client'
-import { ComponentProps, ReactElement } from 'react';
-import { useRouter } from 'next/navigation';
+'use client';
+
+import { ComponentProps, FC, ReactElement } from 'react';
+import { useParams } from 'next/navigation';
 import clsx from 'clsx';
 import { Anchor } from '@theguild/components';
 
-const Tag = ({
+const Tag: FC<ComponentProps<typeof Anchor> & { isActive: boolean }> = ({
   children,
-  isActive = false,
-  href = '',
+  isActive,
+  href,
   ...props
-}: Omit<ComponentProps<'a'>, 'ref'> & {
-  isActive?: boolean;
 }): ReactElement => {
   return (
     <Anchor
@@ -30,29 +29,18 @@ const Tag = ({
   );
 };
 
-export const TagList = ({
-  tags,
-  asLink = false,
-  withCount = false,
-  className,
-  ...props
-}: {
+export const TagList: FC<{
   tags: (string | [string, number])[];
-  asLink?: boolean;
   withCount?: boolean;
   className?: string;
-}): ReactElement => {
-  const router = useRouter();
+}> = ({ tags, withCount, className, ...props }): ReactElement => {
+  const params = useParams();
   return (
     <div className={clsx('flex flex-wrap justify-center gap-2.5', className)} {...props}>
       {tags.map(tagOrTagCount => {
         const [tag, count] = Array.isArray(tagOrTagCount) ? tagOrTagCount : [tagOrTagCount, 0];
         return (
-          <Tag
-            key={tag}
-            href={asLink ? `/blog/tag/${tag}` : ''}
-            isActive={tag === router.query.tag}
-          >
+          <Tag key={tag} href={`/blog/tag/${tag}`} isActive={tag === params.tag}>
             {withCount && count > 0 ? `${tag} (${count})` : tag}
           </Tag>
         );
