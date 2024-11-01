@@ -5,11 +5,12 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "//prebuild": "pnpm types:check",
     "analyze": "ANALYZE=true pnpm build",
-    "build": "SITE_URL=https://the-guild.dev pnpm check-links && next build && next-sitemap",
-    "check-links": "tsx check-links.ts",
+    "build": "SITE_URL=https://the-guild.dev next build && next-sitemap",
     "dev": "SITE_URL=https://the-guild.dev next",
-    "start": "next start"
+    "start": "next start",
+    "types:check": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-tooltip": "1.1.2",
