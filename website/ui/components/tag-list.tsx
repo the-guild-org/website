@@ -15,12 +15,12 @@ const Tag: FC<ComponentProps<typeof Anchor> & { isActive: boolean }> = ({
     <Anchor
       href={href}
       className={clsx(
-        'rounded-md bg-gray-200 hover:!no-underline dark:bg-[#24272E]',
+        'rounded-md bg-gray-200 hover:!no-underline dark:bg-[#24272e]',
         'flex px-2.5 py-1.5 text-sm font-medium transition-colors',
         href
-          ? 'hover:text-black hover:dark:bg-[#15AFD04C] hover:dark:text-[#82E9FF]'
+          ? 'hover:text-black hover:dark:bg-[#15afd04c] hover:dark:text-[#82e9ff]'
           : 'cursor-default',
-        isActive ? 'dark:bg-[#15AFD04C] dark:text-[#82E9FF]' : 'text-gray-500 dark:text-[#7F818C]',
+        isActive ? 'dark:bg-[#15afd04c] dark:text-[#82e9ff]' : 'text-gray-500 dark:text-[#7f818c]',
       )}
       {...props}
     >
