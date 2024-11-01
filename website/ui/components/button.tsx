@@ -1,9 +1,6 @@
-import { ComponentProps, ReactElement } from 'react';
+import { ComponentPropsWithoutRef, ReactElement } from 'react';
 import NextLink from 'next/link';
 import clsx from 'clsx';
-import { styled } from '../../stitches.config';
-
-const ButtonWithAsProp = styled('button', {});
 
 export const Button = ({
   className,
@@ -12,14 +9,14 @@ export const Button = ({
   disabled,
   loading,
   ...props
-}: Omit<ComponentProps<'button'>, 'ref'> & {
+}: ComponentPropsWithoutRef<'button'> & {
   variant?: 'secondary' | 'primary';
   as?: 'a';
   href?: string;
   loading?: boolean;
 }): ReactElement => {
   return (
-    <ButtonWithAsProp
+    <button
       className={clsx(
         `
   cursor-pointer
@@ -62,7 +59,7 @@ export const Button = ({
         </svg>
       )}
       {children}
-    </ButtonWithAsProp>
+    </button>
   );
 };
 
@@ -72,7 +69,7 @@ export function GuildButton({
   // @ts-expect-error -- fixme
   as: Component = NextLink,
   ...props
-}: ComponentProps<typeof NextLink>): ReactElement {
+}: ComponentPropsWithoutRef<typeof NextLink>): ReactElement {
   return (
     // @ts-expect-error -- fixme
     <Component

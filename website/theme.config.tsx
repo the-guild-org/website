@@ -1,7 +1,6 @@
 import { CodeSandbox } from '@/shared/embed/code-sandbox';
 import { Gfycat } from '@/shared/embed/gfycat';
 import { LinkPreview } from '@/shared/embed/link-preview';
-import { OgCard } from '@/shared/embed/og-card';
 import { StackBlitz } from '@/shared/embed/stack-blitz';
 
 function ensureAbsolute(url: string): string {
@@ -24,12 +23,5 @@ export default defineConfig({
         <meta property="og:site_name" content={siteName} />
       </>
     );
-  },
-  components: {
-    CodeSandbox,
-    LinkPreview,
-    OgCard,
-    Gfycat,
-    StackBlitz,
   },
 });
