@@ -1,8 +1,3 @@
-// import { CodeSandbox } from '@/shared/embed/code-sandbox';
-// import { Gfycat } from '@/shared/embed/gfycat';
-// import { LinkPreview } from '@/shared/embed/link-preview';
-// import { StackBlitz } from '@/shared/embed/stack-blitz';
-
 // function ensureAbsolute(url: string): string {
 //   return url.startsWith('/') ? `https://the-guild.dev${url}` : url;
 // }
