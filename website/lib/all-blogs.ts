@@ -1,7 +1,6 @@
 import { format } from 'date-fns';
 import { getPageMap } from '@theguild/components/nextra';
 import { asArray } from './as-array';
-import { sortByDateDesc } from './sort-by-date';
 
 let allBlogs: any[];
 
@@ -69,4 +68,16 @@ export async function getAllBlogs() {
         ];
       })
       .sort(sortByDateDesc));
+}
+
+function sortByDateDesc(left, right) {
+  const date1 = new Date(left.date);
+  const date2 = new Date(right.date);
+  if (date1 > date2) {
+    return -1;
+  }
+  if (date1 < date2) {
+    return 1;
+  }
+  return 0;
 }
