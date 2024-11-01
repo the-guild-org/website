@@ -7,7 +7,6 @@
 //   return url.startsWith('/') ? `https://the-guild.dev${url}` : url;
 // }
 
-
 // {canonical && <link rel="canonical" href={canonical} />}
 // <meta
 //   name="og:image"

@@ -146,15 +146,15 @@ if you need `locale` or `defaultLocale` values.
 
 > [!TIP]
 >
->  Keep in mind that, you may not need the above i18n libraries since maintaining docs and keeping
->  them updated for multiple languages is really hard, and you may just use some platform like
->  [Crowdin](https://crowdin.com) that will translate docs for you once the default language is
->  changed. Also, Crowdin is free for Open Source 😍.
+> Keep in mind that, you may not need the above i18n libraries since maintaining docs and keeping
+> them updated for multiple languages is really hard, and you may just use some platform like
+> [Crowdin](https://crowdin.com) that will translate docs for you once the default language is
+> changed. Also, Crowdin is free for Open Source 😍.
 
 > [!NOTE]
 >
->  On the other hand, since Nextra under the hood disables `i18n` in `next.config` your i18n docs
->  website could have static exports!
+> On the other hand, since Nextra under the hood disables `i18n` in `next.config` your i18n docs
+> website could have static exports!
 
 ### New `_meta.{js,jsx,ts,tsx}` Files with JSX Support
 
@@ -179,9 +179,9 @@ This means that:
 
 > [!WARNING]
 >
->  In the case of using [`next-sitemap`](https://github.com/iamvishnusankar/next-sitemap), you probably
->  need to add `exclude: ['*/_meta']{:js}` in your `next-sitemap.config.js` since [it's tricky to exclude
->  `_meta` files from the build](https://github.com/vercel/next.js/issues/8974#issuecomment-542525837).
+> In the case of using [`next-sitemap`](https://github.com/iamvishnusankar/next-sitemap), you
+> probably need to add `exclude: ['*/_meta']{:js}` in your `next-sitemap.config.js` since
+> [it's tricky to exclude `_meta` files from the build](https://github.com/vercel/next.js/issues/8974#issuecomment-542525837).
 
 ### More Powerful TOC
 
@@ -212,9 +212,8 @@ Let's do some calculations! 🧮
 
 > [!NOTE]
 >
-> All 4 examples for v2 and v3 were updated on the latest Next.js 13.5.6 at the moment of
-> writing this blog post.
-
+> All 4 examples for v2 and v3 were updated on the latest Next.js 13.5.6 at the moment of writing
+> this blog post.
 
 #### Build Output of Blog Example Website
 
@@ -297,17 +296,18 @@ Let's compare everything starting from the `First Load JS shared by all` lines:
    ├ chunks/webpack-109eb0aced926db3.js      1.81 kB
 -  └ css/e187e49945a86f29.css                8.61 kB
 ```
+
 > [!NOTE]
 >
->  We can assume that the first load is decreased by **17.89%** and `_app` file is decreased by
->  **45.27%** for `nextra-theme-blog` 🤯.
+> We can assume that the first load is decreased by **17.89%** and `_app` file is decreased by
+> **45.27%** for `nextra-theme-blog` 🤯.
 
 > [!WARNING]
 >
->  The `.css` file is not included in the bundle report for Nextra 3, because the v3 blog
->  example just doesn't contain a custom `_app` file, and importing CSS from `node_modules` is not
->  possible for `pages` router, so instead `.css` file is imported in each MDX page (in Nextra's
->  webpack loader).
+> The `.css` file is not included in the bundle report for Nextra 3, because the v3 blog example
+> just doesn't contain a custom `_app` file, and importing CSS from `node_modules` is not possible
+> for `pages` router, so instead `.css` file is imported in each MDX page (in Nextra's webpack
+> loader).
 
 #### Build Output of I18n Docs Website with LaTeX Enabled
 
@@ -620,9 +620,8 @@ Let's compare everything starting from the `First Load JS shared by all` lines:
 
 > [!NOTE]
 >
->  We can assume that the first load is decreased by **19.7%** and the `_app` file is decreased by
->  **37.23%** for `nextra-theme-docs` 🤯.
-
+> We can assume that the first load is decreased by **19.7%** and the `_app` file is decreased by
+> **37.23%** for `nextra-theme-docs` 🤯.
 
 ### Remote Docs Support
 
@@ -640,9 +639,9 @@ You can do it with a few lines of code 🤯. To render your remote docs, you'll 
    MDX.
    > [!WARNING]
    >
-   >  All imports/exports expressions are stripped by the `buildDynamicMDX` function since in remote
-   >  MDX it's impossible to use them, imported components in your remote MDX should be passed
-   >  instead in `RemoteContent`'s `components` prop.
+   > All imports/exports expressions are stripped by the `buildDynamicMDX` function since in remote
+   > MDX it's impossible to use them, imported components in your remote MDX should be passed
+   > instead in `RemoteContent`'s `components` prop.
 
 #### [An Example of Remote Docs Fetched from GitHub](https://github.com/shuding/nextra/tree/c2ad837d3dacd87e1aa3ea3b9839f18062ae1c25/examples/swr-site/pages/en/remote/graphql-eslint)
 
@@ -726,8 +725,8 @@ With the v3 release, I'm happy to announce that your bundle size is improved wit
 > [!TIP]
 >
 > A good thing to know is that if you don't use custom `_app`/`_document`/`_error` in your project,
-> Next.js anyway will use some [default
-> ones](https://github.com/vercel/next.js/tree/canary/packages/next/src/pages) 🤓.
+> Next.js anyway will use some
+> [default ones](https://github.com/vercel/next.js/tree/canary/packages/next/src/pages) 🤓.
 
 ### [MathJax](https://mathjax.org) Support
 
@@ -760,8 +759,8 @@ Nextra 2 was a mix of CJS/ESM bundles, Nextra 3 now is built as an ESM-only pack
 
 > [!NOTE]
 >
->  To use Nextra 3 you should use an ESM `next.config.mjs` or add `"type": "module"` in your
->  `package.json` file and use an ESM `next.config.js` with `js` extension.
+> To use Nextra 3 you should use an ESM `next.config.mjs` or add `"type": "module"` in your
+> `package.json` file and use an ESM `next.config.js` with `js` extension.
 
 ### Bumping Minimal Node.js to 18
 
