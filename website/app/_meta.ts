@@ -1,6 +1,5 @@
 // import { MetaWithLink } from '../../lib/meta';
 
-// eslint-disable-next-line import/no-default-export
 export default {
   blog: {
     type: 'page',

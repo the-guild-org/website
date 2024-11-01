@@ -47,5 +47,4 @@ const BlogPage: FC<{ tag: string }> = async ({ tag }) => {
   );
 };
 
-// eslint-disable-next-line import/no-default-export
 export default BlogPage;

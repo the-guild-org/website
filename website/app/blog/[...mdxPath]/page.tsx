@@ -1,12 +1,17 @@
+import { FC } from 'react';
 import { Authors } from '@/article';
 import { BlogCardList, Image, Newsletter, TagList } from '@/components';
 import { useMDXComponents as getDocsMDXComponents } from '@mdx-components';
 import { Giscus } from '@theguild/components';
 import { generateStaticParamsFor, importPage } from '@theguild/components/nextra';
 
+type Props = {
+  params: Promise<{ mdxPath: string[] }>;
+};
+
 export const generateStaticParams = generateStaticParamsFor('mdxPath');
 
-export async function generateMetadata(props) {
+export async function generateMetadata(props: Props) {
   const params = await props.params;
   const { metadata } = await importPage(params.mdxPath);
   return metadata;
@@ -14,8 +19,7 @@ export async function generateMetadata(props) {
 
 const { wrapper: Wrapper, h1: H1 } = getDocsMDXComponents();
 
-// eslint-disable-next-line import/no-default-export
-export default async function Page(props) {
+const Page: FC<Props> = async props => {
   const params = await props.params;
   const result = await importPage(params.mdxPath);
   const { default: MDXContent, useTOC, metadata, title } = result;
@@ -47,4 +51,6 @@ export default async function Page(props) {
       {/*)}*/}
     </Wrapper>
   );
-}
+};
+
+export default Page;

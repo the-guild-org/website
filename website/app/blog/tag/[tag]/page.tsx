@@ -19,7 +19,6 @@ export async function generateMetadata(props: Props) {
   };
 }
 
-// eslint-disable-next-line import/no-default-export
 export default async function Page(props: Props) {
   const { tag } = await props.params;
   return <BlogPage tag={tag} />;

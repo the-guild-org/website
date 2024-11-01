@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   },
 };
 
-// eslint-disable-next-line import/no-default-export
 export default async function IndexPage() {
   const allBlogs = await getAllBlogs();
   return (
