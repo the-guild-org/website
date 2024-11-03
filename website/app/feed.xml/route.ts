@@ -1,5 +1,5 @@
 import RSS from 'rss';
-import { getAllBlogs } from '../../lib/all-blogs';
+import { getAllBlogs } from '@all-blogs';
 
 export const dynamic = 'force-static';
 

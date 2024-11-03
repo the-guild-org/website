@@ -21,7 +21,6 @@ export default {
       },
     },
   },
-  content: [...config.content, './ui/**/*.{tsx,mdx}'],
   plugins: [
     plugin(({ addUtilities }) => {
       addUtilities({

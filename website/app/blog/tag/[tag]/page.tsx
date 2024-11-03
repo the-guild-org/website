@@ -1,4 +1,4 @@
-import { getAllBlogs } from '../../../../lib/all-blogs';
+import { getAllBlogs } from '@all-blogs';
 import BlogPage from '../../page';
 
 type Props = {

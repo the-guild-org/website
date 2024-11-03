@@ -33,9 +33,6 @@ export default withGuildDocs({
       permanent: true,
     })),
   experimental: {
-    optimizePackageImports: [
-      '@components',
-      // 'framer-motion',
-    ],
+    optimizePackageImports: ['@components'],
   },
 });

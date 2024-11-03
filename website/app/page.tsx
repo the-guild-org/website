@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { getAllBlogs } from '@all-blogs';
 import {
   Ecosystem,
   GetInTouchSection,
@@ -7,7 +8,6 @@ import {
   RecommendedReadingSection,
   ServicesSection,
 } from '@components';
-import { getAllBlogs } from '../lib/all-blogs';
 import { ClientLogosSection } from './_logos/client-logos-section';
 
 export const metadata: Metadata = {

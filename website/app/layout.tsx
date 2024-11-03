@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react';
 import { IBM_Plex_Sans } from 'next/font/google';
 import { Search } from '@theguild/components';
-import { getDefaultMetadata, getPageMap, GuildLayout } from '@theguild/components/server';
+import { getDefaultMetadata, GuildLayout } from '@theguild/components/server';
 import '@theguild/components/style.css';
 import './globals.css';
 
@@ -37,7 +37,6 @@ const RootLayout: FC<{
         },
       }}
       layoutProps={{
-        pageMap: await getPageMap(),
         docsRepositoryBase:
           'https://github.com/the-guild-org/the-guild-website/tree/master/website',
         search: <Search placeholder="Search…" />,
