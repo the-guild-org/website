@@ -1,3 +1,4 @@
+export { Authors } from './article';
 export { HeroSection } from './hero-section';
 export { asArray } from './as-array';
 export { Tweet } from './tweet';

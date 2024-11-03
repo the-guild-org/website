@@ -1,4 +1,6 @@
+import { getAllBlogs } from '@all-blogs';
 import {
+  Authors,
   BlogCardList,
   CodeSandbox,
   Gfycat,
@@ -12,8 +14,6 @@ import {
 } from '@components';
 import { Callout, Giscus, Steps } from '@theguild/components';
 import { useMDXComponents as getDocsMDXComponents } from '@theguild/components/server';
-import { Authors } from './app/_components/article';
-import { getAllBlogs } from './lib/all-blogs';
 
 const {
   wrapper: Wrapper,
@@ -30,10 +30,14 @@ const {
   StackBlitz,
 });
 
-const MyWrapper: typeof Wrapper = async ({ children, ...props }) => {
+const BlogLayout: typeof Wrapper = async ({ children, ...props }) => {
   const { filePath, tags, title, image } = props.metadata;
   const allBlogs = await getAllBlogs();
-  const route = filePath.replace(/(^app|\/page\.mdx$)/g, '');
+  const route = filePath
+    .replace(/(^app|\/page\.mdx$)/g, '')
+    // Normalize path to remove years inside parenthesis in folders
+    .replaceAll(/\(.*?\)\//g, '');
+
   if (!route.startsWith('/blog/')) {
     return <Wrapper {...props}>{children}</Wrapper>;
   }
@@ -79,7 +83,7 @@ const MyWrapper: typeof Wrapper = async ({ children, ...props }) => {
 
 export const useMDXComponents = components => {
   return {
-    wrapper: MyWrapper,
+    wrapper: BlogLayout,
     h1: H1,
     ...docsComponents,
     ...components,

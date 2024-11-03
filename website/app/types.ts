@@ -1,4 +1,4 @@
-export type Meta = {
+export type Blog = {
   title: string;
   tags: string | string[];
   date: string;
@@ -10,7 +10,7 @@ export type Meta = {
   canonical?: string;
 };
 
-export type MetaWithLink = Omit<Meta, 'tags' | 'authors'> & {
+export type BlogWithLink = Omit<Blog, 'tags' | 'authors'> & {
   tags: string[];
   authors: string[];
   link: string;

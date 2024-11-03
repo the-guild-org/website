@@ -2,16 +2,16 @@ import { ReactElement } from 'react';
 import NextLink from 'next/link';
 import clsx from 'clsx';
 import { format } from 'date-fns';
+import { BlogWithLink } from '../types';
 import { AUTHORS } from './authors';
 import { Description } from './description';
 import { Heading } from './heading';
-import { MetaWithLink } from './meta';
 
 export const BlogCardList = ({
   articles,
   className,
 }: {
-  articles: MetaWithLink[];
+  articles: BlogWithLink[];
   className?: string;
 }): ReactElement => {
   return (

@@ -1,12 +1,12 @@
 import { ReactElement } from 'react';
 import { BlogCardList, Heading } from '@components';
 import { Anchor } from '@theguild/components';
-import { MetaWithLink } from './meta';
+import { BlogWithLink } from '../types';
 
 export const RecommendedReadingSection = ({
   articles = [],
 }: {
-  articles: MetaWithLink[];
+  articles: BlogWithLink[];
 }): ReactElement => {
   return (
     <div className="nextra-container py-16 lg:py-32">

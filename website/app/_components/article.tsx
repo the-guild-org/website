@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import { format } from 'date-fns';
 import { Anchor } from '@theguild/components';
+import { Blog } from '../types';
 import { asArray } from './as-array';
 import { AUTHORS } from './authors';
 import { Avatar } from './avatar';
-import { Meta } from './meta';
 
-export const Authors: FC<{ meta: Meta }> = ({ meta }) => {
+export const Authors: FC<{ meta: Blog }> = ({ meta }) => {
   const date = meta.date ? new Date(meta.date) : new Date();
   const updatedDate = meta.updateDate ? new Date(meta.updateDate) : null;
 
