@@ -1,5 +1,5 @@
 import { ComponentProps, ReactElement } from 'react';
-import { Description, Heading } from './components';
+import { Description, Heading } from '@components';
 
 function CheckIcon(props: ComponentProps<'svg'>): ReactElement {
   return (

@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import Confetti from 'react-confetti';
 import * as Yup from 'yup';
-import { GuildButton, Heading, Input } from './components';
+import { GuildButton, Heading, Input } from '@components';
 
 export const GetInTouchForm: FC = () => {
   const [success, setSuccess] = useState(false);

@@ -1,11 +1,6 @@
 import { Metadata } from 'next';
-import { ClientLogosSection } from '@/client-logos-section';
-import { Newsletter } from '@/components';
-import { Ecosystem } from '@/ecosystem';
-import { GetInTouchSection } from '@/get-in-touch-section';
-import { Hero } from '@/hero';
-import { RecommendedReadingSection } from '@/recommended-reading-section';
-import { ServicesSection } from '@/services-section';
+import { ClientLogosSection } from './_logos/client-logos-section';
+import { Newsletter, Ecosystem, GetInTouchSection, Hero, RecommendedReadingSection, ServicesSection } from '@components';
 import { getAllBlogs } from '../lib/all-blogs';
 
 export const metadata: Metadata = {

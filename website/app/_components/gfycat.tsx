@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { Observer } from '../observer';
+import { Observer } from './observer';
 
 export interface IGfycatProps {
   gifId: string;

@@ -3,7 +3,7 @@
 import { FC } from 'react';
 import clsx from 'clsx';
 import { toast } from 'react-hot-toast';
-import { GuildButton, Heading, Input, Link } from '@/components';
+import { GuildButton, Heading, Input, Link } from '@components';
 
 const classes = {
   link: clsx(

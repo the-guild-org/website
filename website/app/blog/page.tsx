@@ -1,8 +1,6 @@
 import { FC } from 'react';
-import { BlogCardList, Heading, Newsletter, TagList } from '@/components';
-import { HeroSection } from '@/hero-section';
+import { BlogCardList, Heading, Newsletter, TagList, asArray, HeroSection } from '@components';
 import { getAllBlogs } from '../../lib/all-blogs';
-import { asArray } from '../../lib/as-array';
 
 export const metadata = {
   title: 'Blog',

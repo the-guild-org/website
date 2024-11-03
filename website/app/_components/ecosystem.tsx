@@ -3,7 +3,7 @@
 import { ComponentProps, ReactElement, useEffect, useState } from 'react';
 import { clsx } from 'clsx';
 import { PRODUCTS } from '@theguild/components';
-import { Description, Heading, Link } from './components';
+import { Description, Heading, Link } from '@components';
 
 const classes = {
   title: clsx(

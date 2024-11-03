@@ -2,7 +2,7 @@
 
 import { FC } from 'react';
 import { useTheme } from '@theguild/components';
-import { Observer } from '../observer';
+import { Observer } from './observer';
 import { handleTwttrLoad } from './utils';
 
 export const Tweet: FC<{

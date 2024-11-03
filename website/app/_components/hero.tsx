@@ -4,9 +4,9 @@ import { MouseEvent, useCallback, useState } from 'react';
 import NextImage from 'next/image';
 import { clsx } from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
-import { GuildButton } from '@/components';
-import hiveHero from '@/hive-hero.png';
-import meshHero from '@/mesh-hero.svg';
+import { GuildButton } from './button';
+import hiveHero from './hive-hero.png';
+import meshHero from './mesh-hero.svg';
 import { PRODUCTS } from '@theguild/components';
 
 const MotionNextImage = motion(NextImage);

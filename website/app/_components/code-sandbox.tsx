@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { Observer } from '../observer';
+import { Observer } from './observer';
 
 export type EmbbedBoolean = '0' | '1';
 
