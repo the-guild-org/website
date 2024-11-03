@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { getPageMap } from '@theguild/components/server';
-import { asArray } from './as-array';
+import { asArray } from '@components';
 
 let allBlogs: unknown[];
 

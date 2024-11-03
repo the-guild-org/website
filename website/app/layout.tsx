@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react';
 import { IBM_Plex_Sans } from 'next/font/google';
-import { getDefaultMetadata, GuildLayout, Search } from '@theguild/components';
-import { getPageMap } from '@theguild/components/nextra';
+import { Search } from '@theguild/components';
+import { getDefaultMetadata, GuildLayout, getPageMap } from '@theguild/components/server';
 import '@theguild/components/style.css';
 import './globals.css';
 
