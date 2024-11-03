@@ -1,7 +1,8 @@
-import { ReactElement, useEffect, useLayoutEffect, useState } from 'react';
-import { styled } from '../../../stitches.config';
-import { Link } from '../../components';
-import { Observer } from '../observer';
+'use client';
+
+import { FC, useEffect, useLayoutEffect, useState } from 'react';
+import { Link } from './link';
+import { Observer } from './observer';
 
 type PreviewData = {
   description: string;
@@ -95,17 +96,12 @@ const ImageLink = styled('a', {
 });
 
 const useIsomorphicLayoutEffect =
-  // @ts-expect-error fixme
-  typeof window !== 'undefined' && window.document?.createElement ? useLayoutEffect : useEffect;
+  typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
-export const LinkPreview = ({ link }: { link: string }): ReactElement => {
+export const LinkPreview: FC<{ link: string }> = ({ link }) => {
   const [data, setData] = useState<PreviewData>(null);
 
   useIsomorphicLayoutEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
     const fetchData = async () => {
       const absoluteLink = link.startsWith('/') ? `https://the-guild.dev${link}` : link;
       const previewData = await fetchPreview(absoluteLink);
