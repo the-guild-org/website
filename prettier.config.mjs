@@ -1,7 +1,7 @@
+import prettierTailwindPlugin from 'prettier-plugin-tailwindcss';
 import prettierConfig from '@theguild/prettier-config';
-import prettierTailwindPlugin from 'prettier-plugin-tailwindcss'
 
 export default {
-  ...config,
+  ...prettierConfig,
   plugins: [...prettierConfig.plugins, prettierTailwindPlugin],
 };

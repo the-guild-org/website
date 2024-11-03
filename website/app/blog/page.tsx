@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { BlogCardList, Heading, Newsletter, TagList, asArray, HeroSection } from '@components';
+import { asArray, BlogCardList, Heading, HeroSection, Newsletter, TagList } from '@components';
 import { getAllBlogs } from '../../lib/all-blogs';
 
 export const metadata = {

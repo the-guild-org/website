@@ -1,7 +1,14 @@
 import { Metadata } from 'next';
-import { ClientLogosSection } from './_logos/client-logos-section';
-import { Newsletter, Ecosystem, GetInTouchSection, Hero, RecommendedReadingSection, ServicesSection } from '@components';
+import {
+  Ecosystem,
+  GetInTouchSection,
+  Hero,
+  Newsletter,
+  RecommendedReadingSection,
+  ServicesSection,
+} from '@components';
 import { getAllBlogs } from '../lib/all-blogs';
+import { ClientLogosSection } from './_logos/client-logos-section';
 
 export const metadata: Metadata = {
   title: 'GraphQL',

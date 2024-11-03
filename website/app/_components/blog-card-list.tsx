@@ -3,9 +3,9 @@ import NextLink from 'next/link';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import { AUTHORS } from './authors';
-import { MetaWithLink } from './meta';
 import { Description } from './description';
 import { Heading } from './heading';
+import { MetaWithLink } from './meta';
 
 export const BlogCardList = ({
   articles,

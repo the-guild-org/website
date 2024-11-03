@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import { format } from 'date-fns';
-import { AUTHORS } from './authors';
-import { Avatar } from './avatar';
 import { Anchor } from '@theguild/components';
 import { asArray } from './as-array';
+import { AUTHORS } from './authors';
+import { Avatar } from './avatar';
 import { Meta } from './meta';
 
 export const Authors: FC<{ meta: Meta }> = ({ meta }) => {

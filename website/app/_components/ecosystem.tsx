@@ -2,8 +2,8 @@
 
 import { ComponentProps, ReactElement, useEffect, useState } from 'react';
 import { clsx } from 'clsx';
-import { PRODUCTS } from '@theguild/components';
 import { Description, Heading, Link } from '@components';
+import { PRODUCTS } from '@theguild/components';
 
 const classes = {
   title: clsx(

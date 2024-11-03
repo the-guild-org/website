@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
+import { BlogCardList, Heading } from '@components';
 import { Anchor } from '@theguild/components';
 import { MetaWithLink } from './meta';
-import { BlogCardList, Heading } from '@components';
 
 export const RecommendedReadingSection = ({
   articles = [],
