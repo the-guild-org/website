@@ -21,10 +21,6 @@ export async function getAllBlogs(): Promise<Blog[]> {
         if (blog.name === 'index') {
           return [];
         }
-
-        if (blog.children) {
-          blog = blog.children.find(item => item.name === 'index');
-        }
         const { title, description, tags, authors, image, date, updateDate, thumbnail, canonical } =
           blog.frontMatter;
         const { route } = blog;
