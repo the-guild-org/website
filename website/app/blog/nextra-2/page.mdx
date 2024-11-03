@@ -8,9 +8,8 @@ image: https://nextra.site/og.jpeg
 ---
 
 import NextImage from 'next/image'
-import { RemoteContent } from '@theguild/components'
 import { defaultNextraOptions } from '@theguild/components/next.config'
-import { compileMdx } from '@theguild/components/server'
+import { compileMdx, MDXRemote } from '@theguild/components/server'
 import nextraContrastMode from './contrast-mode.png'
 import nextraPage from './page.png'
 import nextraRtl from './rtl.png'
@@ -146,7 +145,7 @@ export async function NextraReadme() {
   )
   const markdown = await response.text()
   const { result } = await compileMdx(markdown, defaultNextraOptions)
-  return <RemoteContent compiledSource={result} />
+  return <MDXRemote compiledSource={result} />
 }
 
 ```mdx filename="Remote Nextra Readme" showLineNumbers {1,9,12,20,22}

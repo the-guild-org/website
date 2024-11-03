@@ -4,7 +4,8 @@ import { Gfycat } from '@/shared/embed/gfycat';
 import { LinkPreview } from '@/shared/embed/link-preview';
 import { StackBlitz } from '@/shared/embed/stack-blitz';
 import { Tweet } from '@/shared/embed/tweet';
-import { Callout, useMDXComponents as getDocsMDXComponents, Steps } from '@theguild/components';
+import { Callout, Steps } from '@theguild/components';
+import { useMDXComponents as getDocsMDXComponents } from '@theguild/components/server';
 
 const docsComponents = getDocsMDXComponents({
   Callout,
@@ -17,7 +18,7 @@ const docsComponents = getDocsMDXComponents({
   StackBlitz,
 });
 
-export const useMDXComponents: typeof getDocsMDXComponents = components => {
+export const useMDXComponents = components => {
   return {
     ...docsComponents,
     ...components,

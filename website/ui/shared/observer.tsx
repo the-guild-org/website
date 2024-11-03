@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, ReactNode, RefObject, useEffect, useRef, useState } from 'react';
+import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 
 interface ObserverProps {
   /** Fires when IntersectionObserver enters viewport */
@@ -9,7 +9,7 @@ interface ObserverProps {
 }
 
 export const Observer = ({ children, onEnter }: ObserverProps): ReactElement => {
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [isChildVisible, setIsChildVisible] = useState(false);
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -30,5 +30,5 @@ export const Observer = ({ children, onEnter }: ObserverProps): ReactElement => 
     }
   }, [ref, onEnter]);
 
-  return <div ref={ref as RefObject<HTMLDivElement>}>{isChildVisible ? children : null}</div>;
+  return <div ref={ref}>{isChildVisible ? children : null}</div>;
 };
