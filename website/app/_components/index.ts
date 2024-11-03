@@ -2,7 +2,6 @@ export { Authors } from './article';
 export { HeroSection } from './hero-section';
 export { asArray } from './as-array';
 export { Tweet } from './tweet';
-export { LinkPreview } from './link-preview';
 export { StackBlitz } from './stack-blitz';
 export { Gfycat } from './gfycat';
 export { CodeSandbox } from './code-sandbox';
