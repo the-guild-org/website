@@ -1,11 +1,11 @@
 import { format } from 'date-fns';
 import { asArray } from '@components';
 import { getPageMap } from '@theguild/components/server';
-import { Meta } from './_components/meta';
+import { Blog } from './types';
 
-let allBlogs: Meta[];
+let allBlogs: Blog[];
 
-export async function getAllBlogs(): Promise<Meta[]> {
+export async function getAllBlogs(): Promise<Blog[]> {
   if (allBlogs) {
     return allBlogs;
   }
