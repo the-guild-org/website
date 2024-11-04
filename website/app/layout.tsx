@@ -38,8 +38,8 @@ const RootLayout: FC<{
     '@type': 'Organization',
     url: 'https://the-guild.dev',
     logo: 'https://the-guild.dev/static/logo.svg',
-    name: 'The Guild'
-  }
+    name: 'The Guild',
+  };
 
   return (
     <GuildLayout
