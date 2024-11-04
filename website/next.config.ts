@@ -1,6 +1,10 @@
 import { withGuildDocs } from '@theguild/components/next.config';
 
 export default withGuildDocs({
+  nextraConfig: {
+    // Do not include code blocks
+    search: true,
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
