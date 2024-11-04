@@ -1,5 +1,6 @@
 import { FC, ReactNode } from 'react';
 import { IBM_Plex_Sans } from 'next/font/google';
+import { Toaster } from 'react-hot-toast';
 import { Search } from '@theguild/components';
 import { getDefaultMetadata, GuildLayout } from '@theguild/components/server';
 import '@theguild/components/style.css';
@@ -12,6 +13,16 @@ export const metadata = getDefaultMetadata({
   description,
   websiteName,
   productName: 'GUILD',
+  alternates: {
+    types: {
+      'application/rss+xml': [
+        {
+          title: 'RSS Feed for the-guild.dev',
+          url: '/feed.xml',
+        },
+      ],
+    },
+  },
 });
 
 const ibmPlexSans = IBM_Plex_Sans({
@@ -43,6 +54,7 @@ const RootLayout: FC<{
       }}
     >
       {children}
+      <Toaster />
     </GuildLayout>
   );
 };
