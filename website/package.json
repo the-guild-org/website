@@ -5,11 +5,11 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "//prebuild": "pnpm types:check",
     "analyze": "ANALYZE=true pnpm build",
     "build": "next build && SITE_URL=https://the-guild.dev next-sitemap",
     "dev": "next --turbopack",
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
-    "prebuild": "pnpm types:check",
     "start": "next start",
     "types:check": "tsc --noEmit"
   },

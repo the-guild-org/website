@@ -37,6 +37,7 @@ const BlogLayout: typeof Wrapper = async ({ children, ...props }) => {
     .replaceAll(/\(.*?\)\//g, '');
 
   if (!route.startsWith('/blog/')) {
+    // @ts-expect-error -- fix type in nextra
     return <Wrapper {...props}>{children}</Wrapper>;
   }
   const similarArticles = allBlogs
@@ -51,6 +52,7 @@ const BlogLayout: typeof Wrapper = async ({ children, ...props }) => {
     .slice(0, 4);
 
   return (
+    // @ts-expect-error -- fix type in nextra
     <Wrapper {...props}>
       <H1>{title}</H1>
       <Authors meta={props.metadata} />
