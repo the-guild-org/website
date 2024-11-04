@@ -33,6 +33,14 @@ const ibmPlexSans = IBM_Plex_Sans({
 const RootLayout: FC<{
   children: ReactNode;
 }> = async ({ children }) => {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    url: 'https://the-guild.dev',
+    logo: 'https://the-guild.dev/static/logo.svg',
+    name: 'The Guild'
+  }
+
   return (
     <GuildLayout
       websiteName={websiteName}
@@ -53,6 +61,11 @@ const RootLayout: FC<{
         search: <Search placeholder="Search…" />,
       }}
     >
+      {/* Add JSON-LD to your page */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {children}
       <Toaster />
     </GuildLayout>
