@@ -13,7 +13,9 @@ export async function GET() {
   for (const meta of await getAllBlogs()) {
     feed.item({
       title: meta.title,
+      // @ts-expect-error -- fixme
       guid: meta.link,
+      // @ts-expect-error -- fixme
       url: `https://the-guild.dev${meta.link}`,
       date: meta.date,
       description: meta.description,

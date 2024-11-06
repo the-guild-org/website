@@ -1,5 +1,5 @@
 import { getAllBlogs } from '@all-blogs';
-import BlogPage from '../../page';
+import { BlogPage } from '../../blog-page';
 
 type Props = {
   params: Promise<{ tag: string }>;

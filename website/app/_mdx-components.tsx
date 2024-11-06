@@ -43,7 +43,9 @@ const BlogLayout: typeof Wrapper = async ({ children, ...props }) => {
   const similarArticles = allBlogs
     .filter(
       article =>
+        // @ts-expect-error -- fixme
         (article.link !== route && tags.length === 0) ||
+        // @ts-expect-error -- fixme
         article.tags?.some(tag => tags.includes(tag)),
     )
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -74,6 +76,7 @@ const BlogLayout: typeof Wrapper = async ({ children, ...props }) => {
           <h3 className="text-center text-[28px] font-extrabold dark:text-[#FCFCFC]">
             Similar articles
           </h3>
+          {/* @ts-expect-error -- fixme */}
           <BlogCardList articles={similarArticles} className="!grid-cols-2" />
         </>
       )}
@@ -81,7 +84,7 @@ const BlogLayout: typeof Wrapper = async ({ children, ...props }) => {
   );
 };
 
-export const useMDXComponents = components => {
+export const useMDXComponents: typeof getDocsMDXComponents = components => {
   return {
     wrapper: BlogLayout,
     h1: H1,

@@ -12,16 +12,6 @@ export default withGuildDocs({
     // needs for canonical <link />
     SITE_URL: 'https://the-guild.dev',
   },
-  typescript: {
-    /*
-     * behaves weird
-     *
-     * app/blog/page.tsx
-     * Type error: Page "app/blog/page.tsx" has an invalid "default" export:
-     * Type "{ tag: string; }" is not valid.
-     */
-    ignoreBuildErrors: true,
-  },
   output: 'export',
   redirects: async () =>
     Object.entries({

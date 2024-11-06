@@ -11,7 +11,7 @@ import {
 import { ClientLogosSection } from './_logos/client-logos-section';
 
 export const metadata: Metadata = {
-  title: 'GraphQL',
+  title: 'Build. Integrate. Succeed: Expert Guidance for Your API Journey',
   description:
     'Open Source developers with experience of working with the largest companies and applications. GraphQL consulting, workshops and trainings.',
   openGraph: {
@@ -30,6 +30,7 @@ export default async function IndexPage() {
       <div className="nextra-container">
         <GetInTouchSection />
       </div>
+      {/* @ts-expect-error -- fixme */}
       <RecommendedReadingSection articles={allBlogs.slice(0, 4)} />
       <div className="nextra-container">
         <Newsletter />
