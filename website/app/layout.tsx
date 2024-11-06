@@ -39,6 +39,11 @@ const RootLayout: FC<{
     url: 'https://the-guild.dev',
     logo: 'https://the-guild.dev/static/logo.svg',
     name: 'The Guild',
+    sameAs: ["https://x.com/TheGuildDev", "https://www.linkedin.com/company/the-guild-software", "https://github.com/the-guild-org"],
+    contactPoint: {
+  "@type": "ContactPoint",
+  email: "contact@the-guild.dev"
+}
   };
 
   return (
