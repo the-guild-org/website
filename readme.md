@@ -18,7 +18,7 @@ Run `pnpm build` to build a static version of the website in production mode.
 
 We use [MDX](https://mdxjs.com) (Markdown with JSX) for our blog posts. To add a new blog post:
 
-- Create a new MDX file in `website/content` directory with the same template as other blog posts
+- Create a new MDX file in `website/app/blog/(current-year)` directory with the same template as other blog posts
 - Update the meta object with all the information regarding the blog post including title,
   thumbnails, author name, etc.
 - Any assets related to the blog can be placed directly in your blog folder
