@@ -21,7 +21,7 @@ We use [MDX](https://mdxjs.com) (Markdown with JSX) for our blog posts. To add a
 - Create a new MDX file in `website/content` directory with the same template as other blog posts
 - Update the meta object with all the information regarding the blog post including title,
   thumbnails, author name, etc.
-- Any assets related to the blog can be placed in `website/public/blog-assets` directory within its
+- Any assets related to the blog can be placed directly in your blog folder
   own folder
 - If you are contributing for the first time, make sure that you add your details in `ui/authors.ts`
   file with a new entry to the `authors` object
