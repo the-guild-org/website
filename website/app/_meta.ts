@@ -1,10 +1,17 @@
 export default {
-  blog: {
+  index: {
+    display: 'hidden',
+  },
+  // To have link in navbar
+  blog2: {
     type: 'page',
     title: 'Blog',
+    href: '/blog',
+  },
+  // Remove link from mobile menu
+  blog: {
+    display: 'hidden',
     theme: {
-      sidebar: false,
-      pagination: false,
       typesetting: 'article',
     },
   },
