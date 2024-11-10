@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react';
 import { IBM_Plex_Sans } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
-import { Search } from '@theguild/components';
+import { GuildLogo } from '@theguild/components';
 import { getDefaultMetadata, GuildLayout } from '@theguild/components/server';
 import '@theguild/components/style.css';
 import './globals.css';
@@ -54,7 +54,7 @@ const RootLayout: FC<{
     <GuildLayout
       websiteName={websiteName}
       description={description}
-      logo={null}
+      logo={<GuildLogo height="40" width="37.7" />}
       htmlProps={{
         className: ibmPlexSans.className,
       }}
@@ -67,7 +67,15 @@ const RootLayout: FC<{
       layoutProps={{
         docsRepositoryBase:
           'https://github.com/the-guild-org/the-guild-website/tree/master/website',
-        search: <Search placeholder="Search…" />,
+      }}
+      navbarProps={{
+        navLinks: [
+          { children: 'Blog', href: '/blog' },
+          { children: 'About us', href: '/about-us' },
+        ],
+        searchProps: {
+          placeholder: 'Search…',
+        },
       }}
     >
       {/* Add JSON-LD to your page */}
