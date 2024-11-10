@@ -12,7 +12,7 @@ import { toVFile } from 'to-vfile';
 import { unified } from 'unified';
 import { remove } from 'unist-util-remove';
 import { visit } from 'unist-util-visit';
-import { AUTHORS } from '../../../website/ui/authors.js';
+import { AUTHORS } from '../../../website/app/_components/authors.js';
 
 const DEV_TO_ORG_ID = 4467;
 

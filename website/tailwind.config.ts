@@ -1,5 +1,4 @@
 import hocusPlugin from 'tailwindcss-hocus';
-// @ts-expect-error -- types are missing
 import plugin from 'tailwindcss/plugin';
 import config from '@theguild/tailwind-config';
 
@@ -22,7 +21,6 @@ export default {
       },
     },
   },
-  content: [...config.content, './{pages,ui}/**/*.{tsx,mdx}'],
   plugins: [
     plugin(({ addUtilities }) => {
       addUtilities({

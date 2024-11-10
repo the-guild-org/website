@@ -1,0 +1,34 @@
+'use client';
+
+import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
+
+interface ObserverProps {
+  /** Fires when IntersectionObserver enters viewport */
+  onEnter?: (id?: string) => void;
+  children: ReactNode;
+}
+
+export const Observer = ({ children, onEnter }: ObserverProps): ReactElement => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isChildVisible, setIsChildVisible] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsChildVisible(true);
+          onEnter?.();
+        }
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 1,
+      },
+    );
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+  }, [ref, onEnter]);
+
+  return <div ref={ref}>{isChildVisible ? children : null}</div>;
+};

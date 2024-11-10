@@ -12,19 +12,18 @@ Run `cd website && pnpm dev` to start the server locally.
 
 ## Build and Run the Website (Production)
 
-Run `pnpm build` followed by `pnpm export` to build and export a static version of the website in
-production mode.
+Run `pnpm build` to build a static version of the website in production mode.
 
 ## Contributing to Our Blog
 
 We use [MDX](https://mdxjs.com) (Markdown with JSX) for our blog posts. To add a new blog post:
 
-- Create a new MDX file in `website/pages/blog` directory with the same template as other blog posts
-- Update the meta object with all the information regarding the blog post including title,
-  thumbnails, author name, etc.
-- Any assets related to the blog can be placed in `website/public/blog-assets` directory within its
-  own folder
-- If you are contributing for the first time, make sure that you add your details in `ui/authors.ts`
-  file with a new entry to the `authors` object
+- Create a new MDX file in `website/app/blog/(current-year)` directory with the same template as
+  other blog posts
+- Update the front matter with all the information regarding the blog post including title, image,
+  author name, etc.
+- Any assets related to the blog can be placed directly in your blog folder
+- If you are contributing for the first time, make sure that you add your details in
+  `website/app/_components/authors.ts` file with a new entry to the `authors` object
 - Once you send us a PR, we will review the same, provide the feedback as necessary and merge it if
   everything looks good

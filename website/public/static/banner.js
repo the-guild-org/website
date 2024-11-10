@@ -40,8 +40,7 @@ function main() {
 
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function (event) {
-      // eslint-disable-next-line eqeqeq
-      if (event.target == modal) {
+      if (event.target === modal) {
         modal.style.display = 'none';
       }
     };
