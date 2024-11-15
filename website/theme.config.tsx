@@ -21,7 +21,7 @@ export default defineConfig({
   },
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
   head: function useHead() {
-    const { frontMatter, title: pageTitle } = useConfig();
+    const { frontMatter, title: pageTitle, normalizePagesResult } = useConfig();
 
     const title = `${pageTitle} (${siteName})`;
     const {
@@ -30,13 +30,19 @@ export default defineConfig({
       image,
       thumbnail,
     } = frontMatter;
+
+    // Get the current page path
+    // Because it shows the full path, from top to bottom,
+    // we need to get the last one to get the current page.
+    const pagePath = normalizePagesResult.activePath[normalizePagesResult.activePath.length - 1];
+
     return (
       <>
         <title>{title}</title>
         <meta property="og:title" content={title} />
         <meta name="description" content={description} />
         <meta property="og:description" content={description} />
-        {canonical && <link rel="canonical" href={canonical} />}
+        <link rel="canonical" href={canonical ?? ensureAbsolute(pagePath.route)} />
         <meta
           name="og:image"
           content={ensureAbsolute(
