@@ -29,7 +29,7 @@ One of the most powerful trend in the JS ecosystem was the **proliferation of ne
 platforms** that can run JS (Lambdas, Cloudflare Workers, Deno, Bun etc.). So we set up to build a
 single GraphQL server framework that could run on any of these platforms.
 
-What we’ve found in the process was fascinating, and we believe would change how any JS HTTP
+What we've found in the process was fascinating, and we believe would change how any JS HTTP
 frameworks are being built, without any relation to GraphQL
 
 While Node.js is the most popular environment, multiple platforms can run JavaScript, usually,
@@ -103,13 +103,13 @@ See more in our code;
 ## What about Node.js?
 
 Even though many new platforms support the Fetch API Standard, which means we can have a single
-solution for all, currently, in the older LTS versions of Node.js, we don’t have an implementation
+solution for all, currently, in the older LTS versions of Node.js, we don't have an implementation
 of the Fetch API built in.
 
 Furthermore, Node.js doesn't use Web standard streams and the Fetch API in its `http` and `https`
 modules.
 
-That’s why we created the [`@whatwg-node/fetch` package](https://github.com/ardatan/whatwg-node)
+That's why we created the [`@whatwg-node/fetch` package](https://github.com/ardatan/whatwg-node)
 (previously known as `cross-undici-fetch` ) that fills in the gaps of different `fetch`
 implementations in all the LTS Node.js versions. Under the hood, `@whatwg-node/fetch` utilizes
 `undici` if available or otherwise falls back to using `node-fetch`, which you are probably already
@@ -122,7 +122,7 @@ familiar with.
 #### Ponyfill vs Polyfill
 
 Polyfill patches the native parts of an environment while ponyfill just exports the “patched” stuff
-without touching the environment’s internals. We prefer pony filling because it prevents us from
+without touching the environment's internals. We prefer pony filling because it prevents us from
 breaking other libraries and environmental functionalities.
 
 ## Is It Possible to Have a Library That Creates a Cross-Platform Server?
@@ -135,14 +135,14 @@ few additional lines of code.
 After a few iterations, it was clear to us that this is certainly possible and finally shipped this
 as part of GraphQL Yoga v2.
 
-GraphQL Yoga instance itself can be used directly as a request listener that you pass to Express’s
-`app.use`, Node’s native `http.createServer`, Next.js functions and other non-Node.js environments;
-we just pass GraphQL Yoga as an event listener for CF Workers’
+GraphQL Yoga instance itself can be used directly as a request listener that you pass to Express's
+`app.use`, Node's native `http.createServer`, Next.js functions and other non-Node.js environments;
+we just pass GraphQL Yoga as an event listener for CF Workers'
 `self.addEventListener('fetch', yoga)`.
 
 As we already mentioned in the “Why Fetch API?” part, the server library itself doesn't need to care
-about the platform’s connection-specific details like Node’s `IncomingMessage` and `ServerResponse`
-or Next.js’s `NextApi.Request` objects. You are now able to focus on your server implementation
+about the platform's connection-specific details like Node's `IncomingMessage` and `ServerResponse`
+or Next.js's `NextApi.Request` objects. You are now able to focus on your server implementation
 details by consuming a “universal standard”
 [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) and returning “another
 standard” [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response)
