@@ -21,7 +21,7 @@ export default defineConfig({
   },
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
   head: function useHead() {
-    const { frontMatter, title: pageTitle, normalizePagesResult, filePath } = useConfig();
+    const { frontMatter, title: pageTitle, normalizePagesResult } = useConfig();
 
     const title = `${pageTitle} (${siteName})`;
     const {
@@ -37,11 +37,11 @@ export default defineConfig({
     const pagePath = normalizePagesResult.activePath[normalizePagesResult.activePath.length - 1];
 
     if (!pagePath) {
-      throw new Error(`No path found for a page.`);
+      throw new Error('No path found for a page.');
     }
 
     if (!pagePath.route) {
-      throw new Error(`No route found for page.`);
+      throw new Error('No route found for page.');
     }
 
     return (
