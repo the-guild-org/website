@@ -19,9 +19,18 @@ export async function getStaticProps({ params: { tag } }) {
 }
 
 export async function getStaticPaths() {
-  const allTags = new Set(allBlogs.flatMap(art => art.tags))
-  return {
-    paths: Array.from(allTags).map(tag => ({ params: { tag } })),
-    fallback: false
-  }
+  const allTags = Array.from(new Set(allBlogs.flatMap(art => art.tags)))
+  
+  const paths = [];
+  for (const tag of allTags) {
+    if (tag.includes(' ')) {
+      // This is a quick check to prevent errors when building the site.
+      // If a tag contains a space, it will break the url generation.
+      throw new Error(`Tag "${tag}" cannot contain spaces. Please fix the tag in the blog post.`);
+    }
+
+    paths.push({ params: { tag } });
+
 }
+
+return { paths, fallback: false } }
