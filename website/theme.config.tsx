@@ -21,7 +21,7 @@ export default defineConfig({
   },
   docsRepositoryBase: 'https://github.com/the-guild-org/the-guild-website/tree/master/website', // base URL for the docs repository
   head: function useHead() {
-    const { frontMatter, title: pageTitle, normalizePagesResult } = useConfig();
+    const { frontMatter, title: pageTitle, normalizePagesResult, filePath } = useConfig();
 
     const title = `${pageTitle} (${siteName})`;
     const {
@@ -35,6 +35,14 @@ export default defineConfig({
     // Because it shows the full path, from top to bottom,
     // we need to get the last one to get the current page.
     const pagePath = normalizePagesResult.activePath[normalizePagesResult.activePath.length - 1];
+
+    if (!pagePath) {
+      throw new Error(`No path found for a page.`);
+    }
+
+    if (!pagePath.route) {
+      throw new Error(`No route found for page.`);
+    }
 
     return (
       <>
