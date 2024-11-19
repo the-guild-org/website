@@ -93,15 +93,15 @@ declared the type.
 
 #### [Stitching Directives](https://the-guild.dev/graphql/stitching/docs/approaches/stitching-directives) (service level configuration)
 
-Similar to Apollo Federation, schema stitching allows for directives-based approach of schema
-stitching. This allows you to configure your merging at the service level versus the gateway level.
+Similar to Federation, schema stitching allows for directives-based approach of schema stitching.
+This allows you to configure your merging at the service level versus the gateway level.
 
 In this example you would use the `@merge` directive and `@key` directive with a selectionSet to
 explain how to merge the schemas.
 
-## Apollo Federation
+## Federation
 
-Apollo Federation lets you use directives to combine multiple APIs into a single federated graph.
+Federation lets you use directives to combine multiple APIs into a single federated graph.
 
 When a user makes a request, it goes through the router. Based on the directives, the router
 orchestrates and distributes the request across the APIs and returns a unified response.
@@ -110,12 +110,16 @@ This router needs a supergraph as a map to route to the different subgraphs, thi
 created by paid applications like GraphOS or free services such as The Guild’s own
 [Hive](https://the-guild.dev/graphql/hive).
 
-Apollo Federation introduces the concept of Entities which are federated types that exist across
-multiple subgraphs.
+Federation introduces the concept of Entities which are federated types that exist across multiple
+subgraphs.
 
 Here is a comparison of Federation-Compatible Gateway Implementations:
 
 https://the-guild.dev/graphql/hive/federation-gateway-audit
+
+For more information on Federation and The Guild's support, please see here:
+
+https://the-guild.dev/graphql/hive/federation
 
 ## What is the overall difference?
 
@@ -123,9 +127,9 @@ Schema stitching merges multiple schemas into a single unified schema by directl
 this setup, the gateway executes the requests by resolving data from multiple services, often
 relying on custom logic to determine how to fetch and combine the data from different schemas.
 
-Apollo Federation allows each subgraph to manage part of the unified schema independently. The
-central gateway composes these subgraphs into a unified graph, and relationships between services
-are handled through federation directives like `@key`, `@provides`, and `@extends`. The gateway uses
+Federation allows each subgraph to manage part of the unified schema independently. The central
+gateway composes these subgraphs into a unified graph, and relationships between services are
+handled through federation directives like `@key`, `@provides`, and `@extends`. The gateway uses
 these directives to predetermine how data is fetched and merged across services.
 
 This structure enables static checks, ensuring predictable behavior of the gateway in production. By
@@ -134,27 +138,27 @@ ahead of time, preventing conflicts before the supergraph is deployed. Additiona
 provide insight into how the gateway will execute queries, giving you confidence in its behavior
 after deployment.
 
-The Guild’s products are compatible with both Apollo Federation and Schema Stitching.
+The Guild’s products are compatible with both Federation and Schema Stitching.
 
 ## Which one is better for your use case?
 
 This is a question only you can answer, but let’s look at common questions you should ask to
 determine which approach is better for your use case.
 
-|                                                         | Schema Stitching | Apollo Federation |
-| ------------------------------------------------------- | ---------------- | ----------------- |
-| Customizability                                         | More             | Less              |
-| Scalability                                             | Less             | More              |
-| Collaboration                                           | Less             | More              |
-| GraphQL Knowledge Required for subschema/graphlet teams | Less             | More              |
-| GraphQL Knowledge Required for Gateway team             | More             | Less              |
+|                                                         | Schema Stitching | Federation |
+| ------------------------------------------------------- | ---------------- | ---------- |
+| Customizability                                         | More             | Less       |
+| Scalability                                             | Less             | More       |
+| Collaboration                                           | Less             | More       |
+| GraphQL Knowledge Required for subschema/graphlet teams | Less             | More       |
+| GraphQL Knowledge Required for Gateway team             | More             | Less       |
 
 **What is the overall GraphQL knowledge for the teams involved?**
 
-Apollo Federation requires more over knowledge of GraphQL from all teams involved as they need to
-work together to make the federated schema work as expected. Schema Stitching requires less
-knowledge from subschema teams but more knowledge from the team owning the gateway as the stitching
-logic can become complex as the number of services grow.
+Federation requires more over knowledge of GraphQL from all teams involved as they need to work
+together to make the federated schema work as expected. Schema Stitching requires less knowledge
+from subschema teams but more knowledge from the team owning the gateway as the stitching logic can
+become complex as the number of services grow.
 
 **What is your organizational structure?**
 
@@ -173,8 +177,8 @@ Schema Stitching is usually a faster approach for smaller or simpler projects si
 forward. You can combine schemas quickly without much additional infrastructure but it takes longer
 to develop as the overall service grows.
 
-Apollo Federation takes a bit longer to set up as it requires multiple subgraphs, a gateway, and a
-registry. As the services grow, Apollo Federation can speed up development for teams since each team
+Federation takes a bit longer to set up as it requires multiple subgraphs, a gateway, and a
+registry. As the services grow, Federation can speed up development for teams since each team
 independently manages their service.
 
 **How customizable does your implementation of the gateway need to be?**
@@ -182,8 +186,8 @@ independently manages their service.
 Schema stitching allows for a deeper customization of schemas, resolvers, and transformations since
 you have full control over how each service is combined.
 
-Apollo Federation is more suited for scalability and team collaboration. Customization is more
-structured through federation directives.
+Federation is more suited for scalability and team collaboration. Customization is more structured
+through federation directives.
 
 If you would like to talk to an expert in regards to your GraphQL implementation, feel free to get
 in touch with The Guild [here](https://the-guild.dev/#get-in-touch).
