@@ -34,6 +34,7 @@ function renderProduct(product: (typeof PRODUCTS)[keyof typeof PRODUCTS]) {
     <Link
       key={product.name}
       href={product.href}
+      title={`${product.name} - ${product.title}`}
       className={clsx(
         'rounded-[10px] py-3.5 transition-all duration-300',
         'sm:hocus:bg-[#f1f1f1] sm:hocus:dark:bg-zinc-800/70 hocus:no-underline',
@@ -94,7 +95,7 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
               PRODUCTS.HIVE,
               {
                 ...PRODUCTS.INSPECTOR,
-                title: 'Schema management library. A core building block of Hive',
+                title: 'GraphQL API Management and Schema Governance',
               },
             ].map(renderProduct)}
           </div>
