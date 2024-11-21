@@ -94,7 +94,7 @@ export const jsonConfig = {
     '/graphql/hive': {
       rewrite: 'hive-landing-page.pages.dev',
       crisp: { segments: ['hive-website'] },
-      sitemap: true,
+      sitemap: false,
     },
     '/graphql/gateway': {
       redirect: 'https://the-guild.dev/graphql/hive/docs/gateway',
