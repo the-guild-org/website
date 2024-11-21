@@ -78,6 +78,11 @@ export function Hero() {
           <GuildButton
             href={isHive ? '/graphql/hive' : '/graphql/mesh'}
             style={{ background: primaryColor }}
+            title={
+              isHive
+                ? 'Hive - Open Source GraphQL Federation Platform'
+                : 'Mesh - Federated architecture for every API'
+            }
           >
             Explore {isHive ? 'Hive' : 'Mesh'}
           </GuildButton>
