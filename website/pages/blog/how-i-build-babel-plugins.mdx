@@ -73,11 +73,11 @@ relations:
 
 - The parser parses the code string into a data representational structure called AST (abstract
   syntax tree) using
-  [`@babel/parser`](http://github.com/babel/babel/tree/master/packages/babel-parser).
+  [`@babel/parser`](https://github.com/babel/babel/tree/master/packages/babel-parser).
 - The AST is being manipulated by pre-defined plug-ins which
-  use[`@babel/traverse`](http://github.com/babel/babel/tree/master/packages/babel-traverse).
+  use[`@babel/traverse`](https://github.com/babel/babel/tree/master/packages/babel-traverse).
 - The AST is being transformed back into code using
-  [`@babel/generator`](http://github.com/babel/babel/tree/master/packages/babel-generator).
+  [`@babel/generator`](https://github.com/babel/babel/tree/master/packages/babel-generator).
 
 Now you have a better understanding of Babel and you can actually understand what's happening when
 you build a plug-in; and speaking of which, how do we do that?
@@ -197,17 +197,17 @@ plug-in above:
   building, validating, and converting AST nodes. It's useful for cleaning up AST logic with well
   thought out utility methods. Its methods should all start be equivalent to camel cased node types.
   All types are defined in
-  [`@babel/types`](http://github.com/babel/babel/tree/master/packages/babel-types), and further
+  [`@babel/types`](https://github.com/babel/babel/tree/master/packages/babel-types), and further
   more, I recommend you to look at the source code as you build the plug-in in order to define the
   desired node creators' signatures, since most of it is not documented. More information regards
   `types` can be found
-  [here](http://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#babel-types).
+  [here](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#babel-types).
 - Just like the `types` object, the `scope` object contains utilities which are related to the
   current node's scope. It can check whether a variable is defined or not, generate unique variable
   IDs, or rename variables. In the plug-in above, we used the `hasBinding()` method to check whether
   the identifier has a corresponding declared variable or not by climbing up the AST. More
   information regards `scope` can be found
-  [here](http://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#scope).
+  [here](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#scope).
 
 Now we will add the missing peace to the puzzle which is transforming assignment expressions into
 conditional assignment expressions. So we wanna turn this code:
@@ -282,6 +282,6 @@ plug-ins that you'll build down the road.
 
 As a recap, whenever you forget for any reason how a plug-in works, go through this article. As you
 work on the plug-in itself, investigate through the desired AST outcome at
-[astexplorer.net](http://astexplorer.net) and for API docs I recommend you to work with this
+[astexplorer.net](https://astexplorer.net) and for API docs I recommend you to work with this
 wonderful
-[handbook](http://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md).
+[handbook](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md).
