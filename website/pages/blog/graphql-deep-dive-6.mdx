@@ -1,7 +1,7 @@
 ---
 title: GraphQL - The Workflow
 authors: tvvignesh
-tags: [graphql, deepdive, workflow]
+tags: [graphql, federation]
 date: 2020-12-12
 description: The Workflow when taking GraphQL from development to production.
 image: /blog-assets/graphql-deep-dive-6/cover.png
@@ -192,17 +192,29 @@ workflow. So, doing this as you go along can help.
 When you work on GraphQL or anything else for that matter, there is often a set of operations which
 you repeatedly do again and again. And over time, the cost of doing it would exponentially grow up.
 
-For eg. you might push your schema to a registry if you use something like federation for all the
-changes you do, validate/lint your schema, do code generation as you change the SDL or anything else
-which is specific to your use case. This is where automation and scripting plays a major role and I
-can definitely say that I have saved countless hours of my valuable time by just scripting out
-things which I do repeatedly as part of my workflow.
+For eg. you might push your schema to a [registry](https://the-guild.dev/graphql/hive) if you use
+something like [Federation](https://the-guild.dev/graphql/hive/federation) for all the changes you
+do,
+validate/[lint your schema](https://the-guild.dev/graphql/hive/docs/schema-registry/schema-policy),
+do code generation as you change the SDL or anything else which is specific to your use case. This
+is where automation and scripting plays a major role and I can definitely say that I have saved
+countless hours of my valuable time by just scripting out things which I do repeatedly as part of my
+workflow.
 
 Automation, especially with CI/CD becomes even more impactful when you are working with teams. There
-are a lot of interesting things you can do in your CI/CD pipeline like linting your schema and
-validating it, getting the list of breaking changes, pushing it to the registry, running automated
-tests, sending notifications to relevant people in your team as needed and so on saving a lot of
-time and also providing a high degree of reliability and confidence to what you ship to production.
+are a lot of interesting things
+[you can do in your CI/CD pipeline](https://the-guild.dev/graphql/hive/docs/other-integrations/ci-cd)
+like [linting your schema](https://the-guild.dev/graphql/hive/docs/schema-registry/schema-policy)
+and
+[validating it, getting the list of breaking changes](https://the-guild.dev/graphql/hive/docs/get-started/apollo-federation#schema-checks),
+pushing it to the [registry](https://the-guild.dev/graphql/hive/docs/schema-registry), running
+automated tests, sending notifications to relevant people in your team as needed and so on saving a
+lot of time and also providing a high degree of reliability and confidence to what you ship to
+production.
+
+This is when GraphQL platforms like [Hive](https://the-guild.dev/graphql/hive) can come in handy.
+Hive provides you with a lot of tools and integrations covering those workflows, plus it's fully
+open-source and can be self-hosted.
 
 This summarizes the most important steps you need to perform as part of your workflow with GraphQL
 and there are somethings which have been purposefully avoided in this list like setting up your

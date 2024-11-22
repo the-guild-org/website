@@ -1,15 +1,15 @@
 ---
 title: GraphQL - Diving Deep
 authors: tvvignesh
-tags: [graphql, deepdive, faq]
+tags: [graphql, federation]
 date: 2020-12-01
 description: Answering all the questions you may have about GraphQL and its ecosystem.
 image: /blog-assets/graphql-deep-dive-1/cover.png
 thumbnail: /blog-assets/graphql-deep-dive-1/cover.png
 ---
 
-_This blog is a part of a series on GraphQL where we will dive deep into GraphQL and its ecosystem
-one piece at a time_
+_This blog is a part of a series on [GraphQL](https://graphql.org) where we will dive deep into
+GraphQL and its ecosystem one piece at a time_
 
 - Part 1: [**Diving Deep**](/blog/graphql-deep-dive-1)
 - Part 2: [**The Usecase & Architecture**](/blog/graphql-deep-dive-2)
@@ -22,18 +22,18 @@ The GraphQL specification was open sourced in 2015 by Facebook along with some b
 with a completely unique approach on how to structure, consume, transmit and process data and data
 graphs.
 
-Today, the GraphQL spec and its implementations have been donated by Facebook to the GraphQL
-Foundation with open license for development and governance from the community, and it has been
-great so far. And today, the GraphQL foundation comprises not just of companies like Facebook but
-other organizational members as well.
+Today, the GraphQL spec and its implementations have been donated by Facebook to the
+[GraphQL Foundation](https://graphql.org/community/foundation/) with open license for development
+and governance from the community, and it has been great so far. And today, the GraphQL foundation
+comprises not just of companies like Facebook but other organizational members as well.
 
 It was a moment when a lot of people were convinced by its power, utility and promise that the rest
 became history.
 
-And today, there is a [**GraphQL foundation**](https://foundation.graphql.org) which tries to ensure
-that GraphQL and the ecosystem thrives over time,
+And today, there is a [**GraphQL foundation**](https://graphql.org/community/foundation/) which
+tries to ensure that GraphQL and the ecosystem thrives over time,
 [**a huge landscape of projects**](https://github.com/graphql/graphql-landscape), a huge set of
-tools like [**this**](https://graphql.org/code) and
+tools like [**this**](https://graphql.org/community/tools-and-libraries/) and
 [**this**](https://github.com/chentsulin/awesome-graphql) and these can just be few of the examples
 on how big the ecosystem has grown with a lot of languages, frameworks, tools supporting it as a
 first class citizen, so much so that even some [**huge enterprises**](https://graphql.org/users) are
@@ -140,24 +140,25 @@ or even within Node.js if you are using other ways of implementation like
 If you are using Node.js there are a lot of implementations of GraphQL servers with a few being
 [express-graphql](https://github.com/graphql/express-graphql),
 [apollo-server](https://github.com/apollographql/apollo-server),
-[mercurius](https://github.com/mercurius-js/mercurius),
-[graphql-helix](https://github.com/contrawork/graphql-helix) and more. And if you are using other
+[GraphQL Yoga](https://the-guild.dev/graphql/yoga-server),
+[Hive Gateway](https://the-guild.dev/graphql/hive/docs/gateway),
+[mercurius](https://github.com/mercurius-js/mercurius) and more. And if you are using other
 languages, you can see a great list [here](https://graphql.org/code)
 
 Now, talking in context with Node.js it all varies depending on your use case.
 
 - Are you dependent on [Apollo](https://apollographql.com) or its ecosystem like
-  [federation](https://the-guild.dev/graphql/hive/federation)? Go for apollo-server
+  [Federation](https://the-guild.dev/graphql/hive/federation)? Go for apollo-server
 - Do you use [express](https://github.com/expressjs/express) as your framework? Use express-graphql
 - Are you using fastify or are looking for a performant graphql library with comprehensive support?
   Go for mercurius
 - Are you looking for making things as modular as possible, reduce bloat, and progressively extend
-  functionality as you go along? Go for graphql-helix
+  functionality as you go along? Go for [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server).
 
 Well, there are a lot of things that I have not mentioned but this is just a start to decide which
 suggests some factors to keep into account.
 
-And infact, if you are keen on understanding how every graphql-server performs, I would recommend
+And in fact, if you are keen on understanding how every graphql-server performs, I would recommend
 checking out [this](https://github.com/benawad/node-graphql-benchmarks)
 
 **What is the best way to leverage GraphQL with Typescript?**
@@ -167,7 +168,7 @@ give us an amazing experience with the help of some tooling. This will help us t
 request-response lifecycle strongly typed.
 
 For instance, there are some amazing projects from [**The Guild**](/) like
-[**GraphQL Codegen**](https://graphql-code-generator.com) which we can use for generating types
+[**GraphQL Codegen**](https://the-guild.dev/graphql/codegen) which we can use for generating types
 based on our local/remote schema with great Typescript integration, and you have a lot of
 plugins/recepies you can use along with it as well.
 
@@ -279,8 +280,9 @@ One of the great examples of real-world implementation of this would be
 gets converted to GraphQL with plugins which can then be used in your workflow.
 
 If you are to build it in the server side, either you can use an out-of-the-box solution like
-[**GraphQL Mesh**](https://graphql-mesh.com) or you can build it on your own since GraphQL just acts
-as an abstraction on top.
+[**GraphQL Mesh**](https://graphql-mesh.com) or
+[**Hive Gateway**](https://the-guild.dev/graphql/hive/docs/gateway) or you can build it on your own
+since GraphQL just acts as an abstraction on top.
 
 Or if you are on the apollo stack and want to connect to multiple data sources, you can have a look
 at [**apollo-datasource**](https://apollographql.com/docs/tutorial/data-source)
@@ -343,10 +345,10 @@ just to have it make sense for any end user and reduce the complexity for client
 
 **Are there some helpers libraries I can use to work with my GraphQL schemas?**
 
-Yes. [**GraphQL Tools**](https://graphql-tools.com) (which was initially from Apollo and then taken
-over by the Guild) is one of those libraries which I highly recommend. You can do a lot of
-operations on your SDL or schema like merging multiple schemas, mocking your schemas with test data,
-building custom directives, loading remote schemas and so on which you can add as part of your
+Yes. [**GraphQL Tools**](https://the-guild.dev/graphql/tools) (which was initially from Apollo and
+then taken over by the Guild) is one of those libraries which I highly recommend. You can do a lot
+of operations on your SDL or schema like merging multiple schemas, mocking your schemas with test
+data, building custom directives, loading remote schemas and so on which you can add as part of your
 stack.
 
 **What is the best strategy to distribute your schema? What if I am using Microservices with
@@ -355,7 +357,7 @@ GraphQL?**
 While GraphQL is meant to be a single endpoint or provide a single unified view of the data for the
 clients, it is often not possible to do it all at one place since it can create a lot of
 bottlenecks. This is why
-[**Schema stitching**](https://graphql-tools.com/docs/stitch-combining-schemas) or
+[**Schema stitching**](https://the-guild.dev/graphql/tools/docs/stitch-combining-schemas) or
 [**Apollo Federation**](https://apollographql.com/docs/federation) came into place where multiple
 subschemas can contribute to the unified data graph.
 
@@ -365,7 +367,7 @@ own set of merits and demerits which you can understand only if you give both a 
 
 These videos can help get some basics (but a lot has changed since these videos were released
 especially with GraphQL Tools introducing
-[**Type Merging**](https://graphql-tools.com/docs/stitch-type-merging)):
+[**Type Merging**](https://the-guild.dev/graphql/tools/docs/stitch-type-merging)):
 
 <Video
   src="https://youtube.com/embed/Vq0ajno-zgw"
