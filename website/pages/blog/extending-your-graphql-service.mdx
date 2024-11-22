@@ -14,7 +14,7 @@ two key terms: schema stitching and federation. Even if these concepts are new t
 worry—this post will introduce you to both approaches and help you understand their role in
 enhancing your GraphQL infrastructure.
 
-## What is GraphQL?
+## What Is GraphQL?
 
 Let's start with a brief overview of GraphQL: it's a query language and runtime for APIs that work
 with your existing data. GraphQL delivers precisely the data you need—no more, no less—and allows
@@ -50,7 +50,7 @@ different teams. It also simplifies ownership and accountability, as each servic
 maintained independently. Smaller, focused services are easier to understand, test, and deploy,
 making long-term maintenance less burdensome compared to a single, complex monolith.
 
-## What is the Solution?
+## What Is the Solution?
 
 The solution may seem straightforward: separate the different domains and information into different
 schemas. But what happens when domains or information are related?
@@ -68,7 +68,7 @@ the query to different subschema services.
 
 There are three main approaches to schema stitching:
 
-#### [Schema Extension](https://the-guild.dev/graphql/stitching/docs/approaches/schema-extensions) (gateway-level configuration)
+#### [Schema Extension](https://the-guild.dev/graphql/stitching/docs/approaches/schema-extensions) (Gateway-Level Configuration)
 
 Schema extension uses schema delegation to take different subschemas and extend them at the gateway
 level.
@@ -77,7 +77,7 @@ Say you had a type, `book` and a type `author` in different schemas and services
 level you can extend the type `book` with a new field `author` that delegates to the `author`
 service.
 
-#### [Type Merging](https://the-guild.dev/graphql/stitching/docs/approaches/type-merging) (gateway-level configuration)
+#### [Type Merging](https://the-guild.dev/graphql/stitching/docs/approaches/type-merging) (Gateway-Level Configuration)
 
 Type merging allows for partial definitions of a type to exist in any subschema which are all merged
 into a unified type at the gateway.
@@ -91,7 +91,7 @@ fields `id` and `description`. In the gateway it would merge the `author` type t
 fields `id`, `description`, and `name`. When you built a query it would go to the service that
 declared the type.
 
-#### [Stitching Directives](https://the-guild.dev/graphql/stitching/docs/approaches/stitching-directives) (service level configuration)
+#### [Stitching Directives](https://the-guild.dev/graphql/stitching/docs/approaches/stitching-directives) (Service Level Configuration)
 
 Similar to Federation, schema stitching allows for directives-based approach of schema stitching.
 This allows you to configure your merging at the service level versus the gateway level.
@@ -121,7 +121,7 @@ For more information on Federation and The Guild's support, please see here:
 
 https://the-guild.dev/graphql/hive/federation
 
-## What is the overall difference?
+## What Is the Overall Difference?
 
 Schema stitching merges multiple schemas into a single unified schema by directly combining them. In
 this setup, the gateway executes the requests by resolving data from multiple services, often
@@ -140,7 +140,7 @@ after deployment.
 
 The Guild’s products are compatible with both Federation and Schema Stitching.
 
-## Which one is better for your use case?
+## Which One Is Better for Your Use Case?
 
 This is a question only you can answer, but let’s look at common questions you should ask to
 determine which approach is better for your use case.
