@@ -36,7 +36,13 @@ export const TagList = ({
   className,
   ...props
 }: {
-  tags: (string | [string, number])[];
+  tags:
+    | Array<{
+        tag: string;
+        title: string;
+        count: number;
+      }>
+    | string[];
   asLink?: boolean;
   withCount?: boolean;
   className?: string;
@@ -44,15 +50,19 @@ export const TagList = ({
   const router = useRouter();
   return (
     <div className={clsx('flex flex-wrap justify-center gap-2.5', className)} {...props}>
-      {tags.map(tagOrTagCount => {
-        const [tag, count] = Array.isArray(tagOrTagCount) ? tagOrTagCount : [tagOrTagCount, 0];
+      {tags.map(tag => {
+        const tagToDisplay = typeof tag === 'string' ? tag.replaceAll('-', ' ') : tag.title;
+        const tagSlug = typeof tag === 'string' ? tag : tag.tag;
+        const count = typeof tag === 'string' ? 0 : tag.count;
+
         return (
           <Tag
-            key={tag}
-            href={asLink ? `/blog/tag/${tag}` : ''}
-            isActive={tag === router.query.tag}
+            key={tagToDisplay}
+            href={asLink ? `/blog/tag/${tagSlug}` : ''}
+            title={`View other articles about ${tagToDisplay}`}
+            isActive={tagSlug === router.query.tag}
           >
-            {withCount && count > 0 ? `${tag} (${count})` : tag}
+            {withCount && count > 0 ? `${tagToDisplay} (${count})` : tagToDisplay}
           </Tag>
         );
       })}
