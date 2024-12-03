@@ -9,25 +9,7 @@ import { BlogCardList, Heading, Newsletter, TagList } from '@/components'
 import { HeroSection } from '@/hero-section'
 import { allBlogs } from '../lib/all-blogs'
 import { asArray } from '../lib/as-array'
-
-export function extractRelevantTags(articles) {
-  const allTags = articles.flatMap(article => article.tags || [])
-  const map = Object.create(null)
-  for (const tag of allTags) {
-    map[tag] = map[tag] == null ? 0 : map[tag]
-    map[tag] += 1
-  }
-  const sorted = Object.entries(map)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
-  if (sorted.every(([tagName]) => tagName !== 'codegen')) {
-    sorted.unshift(['codegen', 0])
-  }
-  if (sorted.every(([tagName]) => tagName !== 'envelop')) {
-    sorted.unshift(['envelop', 0])
-  }
-  return sorted.slice(0, 10)
-}
+import { extractRelevantTags } from '../lib/tags'
 
 export default function Blog() {
   const { query } = useRouter()

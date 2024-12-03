@@ -1,17 +1,19 @@
 import { buildDynamicMeta } from '@theguild/components/compile'
 import { allBlogs } from '../../../lib/all-blogs'
+import { definedTags } from '../../../lib/tags'
 
 export { default } from '../../blog.mdx'
 
 export async function getStaticProps({ params: { tag } }) {
   const { __nextra_pageMap } = await buildDynamicMeta()
+  const tagDetail = definedTags[tag] || { title: tag, description: `Articles about ${tag}` }
   return {
     props: {
       __nextra_pageMap,
       __nextra_dynamic_opts: {
-        title: `Blog - ${tag}`,
+        title: `${tagDetail.title} - Blog`,
         frontMatter: {
-          description: 'List of related articles.'
+          description: tagDetail.description
         }
       }
     }
@@ -20,17 +22,14 @@ export async function getStaticProps({ params: { tag } }) {
 
 export async function getStaticPaths() {
   const allTags = Array.from(new Set(allBlogs.flatMap(art => art.tags)))
-  
-  const paths = [];
+  const paths = []
   for (const tag of allTags) {
     if (tag.includes(' ')) {
       // This is a quick check to prevent errors when building the site.
       // If a tag contains a space, it will break the url generation.
-      throw new Error(`Tag "${tag}" cannot contain spaces. Please fix the tag in the blog post.`);
+      throw new Error(`Tag "${tag}" cannot contain spaces. Please fix the tag in the blog post.`)
     }
-
-    paths.push({ params: { tag } });
-
+    paths.push({ params: { tag } })
+  }
+  return { paths, fallback: false }
 }
-
-return { paths, fallback: false } }
