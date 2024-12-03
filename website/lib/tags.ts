@@ -37,6 +37,7 @@ export function extractRelevantTags(
   } = {};
 
   for (const tag of allTags) {
+    // eslint-disable-next-line logical-assignment-operators
     if (!tagMap[tag]) {
       tagMap[tag] = {
         count: 0,
