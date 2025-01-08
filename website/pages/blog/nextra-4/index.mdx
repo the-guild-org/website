@@ -1020,6 +1020,18 @@ same result by setting `asIndexPage: true` in the front matter of `docs/index.md
   </FileTree.Folder>
 </FileTree>
 
+### Sidebar Title Priority Changes
+
+In Nextra 4, the sidebar title is determined in the following order:
+
+1. A non-empty title from the `_meta` file.
+1. `sidebarTitle` in the front matter.
+1. `title` in the front matter.
+1. **New in Nextra 4:** The title derived from the first `h1` Markdown heading (e.g.
+   `# Dima Machina`).
+1. If none of the above are available, it falls back to the filename of the page, formatted
+   according to [The Chicago Manual of Style](https://title.sh).
+
 ### Code Block Icons Changes
 
 #### Overriding Icons
