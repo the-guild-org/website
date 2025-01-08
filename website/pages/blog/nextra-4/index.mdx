@@ -1,8 +1,8 @@
 ---
 title: Nextra 4 x App Router
 description:
-  App Router, Turbopack, new Rust search Pagefind, RSC i18n, server/client components, compiled by
-  React Compiler, GitHub Alert Syntax, new _meta.global file
+  App Router, Turbopack, Rust search engine Pagefind, RSC i18n, server/client components, compiled
+  by React Compiler, GitHub Alert Syntax, new _meta.global file
 date: 2025-01-10
 authors: [dimitri]
 image: https://nextra.site/og?title=Nextra%204%0AApp%20Router%20/%20Turbopack
@@ -976,6 +976,49 @@ const withNextra = nextra({
 {/* This will be replaced as well */}
 <h1>World</h1>
 ```
+
+### Folders with Index Pages Changes
+
+Below structure is named
+[folders with index pages](https://nextra.site/docs/docs-theme/page-configuration#folders-with-index-page)
+in Nextra 3. You can see that there is a folder `docs` and `docs.mdx` in the same level.
+
+<FileTree>
+  <FileTree.Folder name="content" open>
+    <FileTree.Folder name="docs" open>
+      <FileTree.File name="getting-started.mdx" />
+    </FileTree.Folder>
+    <FileTree.File name="docs.mdx" active />
+  </FileTree.Folder>
+</FileTree>
+
+Above structure can't be implemented with [page file convention](#page-file-convention), to fix it
+in Nextra 4 there is a new front matter option called `asIndexPage`. You should set
+`asIndexPage: true` in front matter of `docs/page.mdx`
+
+<FileTree>
+  <FileTree.Folder name="app" open>
+    <FileTree.File name="layout.jsx" />
+    <FileTree.Folder name="docs" open>
+      <FileTree.File name="page.mdx" active />
+      <FileTree.Folder name="getting-started" open>
+        <FileTree.File name="page.mdx" />
+      </FileTree.Folder>
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+With [content directory convention](#content-directory-convention) set `asIndexPage: true` in front
+matter of `docs/index.mdx`
+
+<FileTree>
+  <FileTree.Folder name="content" open>
+    <FileTree.Folder name="docs" open>
+      <FileTree.File name="index.mdx" active />
+      <FileTree.File name="getting-started.mdx" />
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
 
 ### Code Block Icons Changes
 
