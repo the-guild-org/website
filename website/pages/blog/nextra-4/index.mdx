@@ -488,7 +488,21 @@ except places where we need
 `useConfig` and `useThemeConfig` hooks which needs
 [initialize their state with props](https://zustand.docs.pmnd.rs/guides/initialize-state-with-props).
 
-### Headings Have Animation for `:target` State
+### Migrated to TailwindCSS 4
+
+Theme Docs has been updated to [TailwindCSS 4](https://tailwindcss.com/docs/v4-beta). The previously
+used [TailwindCSS prefix](https://tailwindcss.com/docs/configuration#prefix) `_` which helped
+prevent class name conflicts, has been replaced with `x:`. If you have overridden Nextra's theme
+classes, make sure to update them accordingly.
+
+```diff filename="my-styles.css"
+- ._text-primary-600 { ... }
++ .x\:text-primary-600 { ... }
+```
+
+### New Headings `:target` State Animation
+
+All headings now have animation for `:target` state
 
 <Video
   alt="Example animation for headings for `:target` state"
