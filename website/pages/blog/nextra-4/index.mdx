@@ -65,13 +65,15 @@ follow these steps:
 
 <h5>Ensure `content` directory is placed in root of your project</h5>
 
-<h5>Add `useContentDir: true` in `next.config` file</h5>
+<h5>Set `contentDirBasePath` option in `next.config` file (_optional_)</h5>
+
+If you want to serve your content from a different path, you can set `contentDirBasePath` option:
 
 ```js filename="next.config.mjs" {4}
 import nextra from 'nextra'
 
 const withNextra = nextra({
-  useContentDir: true
+  contentDirBasePath: '/docs' // Or even nested e.g. `/docs/advanced`
 })
 ```
 
@@ -102,6 +104,9 @@ you should get the following structure:
 
 Consider the single catch-all route `[[...mdxPath]]/page.jsx` as a gateway to your `content`
 directory.
+
+If you set `contentDirBasePath` option in `next.config` file, you should put
+`[[...mdxPath]]/page.jsx` in corresponding directory.
 
 </Callout>
 
