@@ -791,30 +791,6 @@ export function useMDXComponents(components) {
 1. `theme.layout: 'raw'` option has been removed. To create pages without a layout, use
    `page.{jsx,tsx}` files instead.
 
-### Bump Minimal Next.js to V14
-
-Nextra 4 requires at least Next.js 14 to be installed in your project.
-
-### Update Your `tsconfig.json`
-
-If you are using TypeScript and have `moduleResolution` set to `node`, you will receive type errors:
-
-```text
-Type error: Cannot find module 'nextra/components' or its corresponding type declarations.
-```
-
-`"typesVersions"` fields from `package.json`'s of Nextra packages were removed. You need to set
-`"moduleResolution": "bundler"` in your `tsconfig.json`.
-
-```diff filename="tsconfig.json"
-{
-  "compilerOptions": {
--   "moduleResolution": "node"
-+   "moduleResolution": "bundler"
-  }
-}
-```
-
 ### Code Block Icons Changes
 
 #### Overriding Icons
@@ -1002,6 +978,30 @@ Imports from `nextra/components`, `nextra-theme-docs` and `nextra-theme-blog` ar
 internally with Next.js'
 [`optimizePackageImports`](https://nextjs.org/docs/app/api-reference/config/next-config-js/optimizePackageImports)
 option resulting in improved bundle size.
+
+### Bump Minimal Next.js to V14
+
+Nextra 4 requires at least Next.js 14 to be installed in your project.
+
+### Update Your `tsconfig.json`
+
+If you are using TypeScript and have `moduleResolution` set to `node`, you will receive type errors:
+
+```text
+Type error: Cannot find module 'nextra/components' or its corresponding type declarations.
+```
+
+`"typesVersions"` fields from `package.json`'s of Nextra packages were removed. You need to set
+`"moduleResolution": "bundler"` in your `tsconfig.json`.
+
+```diff filename="tsconfig.json"
+{
+  "compilerOptions": {
+-   "moduleResolution": "node"
++   "moduleResolution": "bundler"
+  }
+}
+```
 
 ## Next Steps
 
