@@ -886,6 +886,19 @@ within a `<Table>`.
 </Table>
 ```
 
+### Simplified `compileMdx` Return Value
+
+`compileMdx` function now returns a `Promise<string>` instead of a `Promise<object>`.
+
+```diff
+import { compileMdx } from 'nextra/compile'
+
+const rawMdx = '# Hello Nextra 4'
+
+- const { result: rawJs } = await compileMdx(rawMdx)
++ const rawJs = await compileMdx(rawMdx)
+```
+
 ## Next Steps
 
 Nextra 4 is a major release with a lot of breaking changes. I plan to cut a stable release after a
