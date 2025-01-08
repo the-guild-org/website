@@ -791,42 +791,6 @@ export function useMDXComponents(components) {
 1. `theme.layout: 'raw'` option has been removed. To create pages without a layout, use
    `page.{jsx,tsx}` files instead.
 
-### Code Block Icons Changes
-
-#### Overriding Icons
-
-You can now override or add additional icons for code blocks. Here is an example how to do it for
-`nextra-theme-docs`, but it's the same approach for custom themes. Import `withIcons` HOC function
-from `nextra/components`, Wrap the `Pre` component with `withIcons`, passing in your custom icon for
-the desired language.
-
-```jsx filename="mdx-components.jsx"
-import { useMDXComponents as useDocsMDXComponents } from 'nextra-theme-docs'
-import { Pre, withIcons } from 'nextra/components'
-
-const docsComponents = getDocsMDXComponents({
-  pre: withIcons(Pre, { js: MyCustomIcon })
-})
-
-export function useMDXComponents(components) {
-  return {
-    ...docsComponents,
-    ...components
-    // ... your additional components
-  }
-}
-```
-
-#### JSX Icons
-
-The `jsx` and `tsx` languages now display the React icon for better visual identification.
-
-#### Diff Icons
-
-For code blocks with the diff language, if a
-[`filename` attribute](https://nextra.site/docs/guide/syntax-highlighting#filenames-and-titles) is
-provided, the icon will automatically correspond to the file extension of the specified filename.
-
 ### Component Migration: Moving UI Elements
 
 Several components were migrated from `nextra-theme-docs` to `nextra/components` to make them
@@ -888,6 +852,42 @@ Here’s the table sorted alphabetically by component name:
 | `<Steps>`           | **server** |
 
 </details>
+
+### Code Block Icons Changes
+
+#### Overriding Icons
+
+You can now override or add additional icons for code blocks. Here is an example how to do it for
+`nextra-theme-docs`, but it's the same approach for custom themes. Import `withIcons` HOC function
+from `nextra/components`, Wrap the `Pre` component with `withIcons`, passing in your custom icon for
+the desired language.
+
+```jsx filename="mdx-components.jsx"
+import { useMDXComponents as useDocsMDXComponents } from 'nextra-theme-docs'
+import { Pre, withIcons } from 'nextra/components'
+
+const docsComponents = getDocsMDXComponents({
+  pre: withIcons(Pre, { js: MyCustomIcon })
+})
+
+export function useMDXComponents(components) {
+  return {
+    ...docsComponents,
+    ...components
+    // ... your additional components
+  }
+}
+```
+
+#### JSX Icons
+
+The `jsx` and `tsx` languages now display the React icon for better visual identification.
+
+#### Diff Icons
+
+For code blocks with the diff language, if a
+[`filename` attribute](https://nextra.site/docs/guide/syntax-highlighting#filenames-and-titles) is
+provided, the icon will automatically correspond to the file extension of the specified filename.
 
 ### External Markdown Links Have `↗` Suffix Icon
 
