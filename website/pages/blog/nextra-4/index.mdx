@@ -270,7 +270,7 @@ JavaScript to Rust-powered [Pagefind](https://pagefind.app).
 
 Pagefind is _**MUCH**_ faster and has _**MUCH**_ better search results than Flexsearch:
 
-1. Indexing remote MDX
+1. Indexing remote MDX.
 
    {/* prettier-ignore */}
    ```mdx filename="page.mdx" "{await getUpdatedAt()}" "<Stars />"
@@ -298,7 +298,7 @@ Pagefind is _**MUCH**_ faster and has _**MUCH**_ better search results than Flex
     </Callout>
     ```
 
-1. Indexing dynamic content written in Markdown/MDX
+1. Indexing dynamic content written in Markdown/MDX.
 
    {/* prettier-ignore */}
    ```mdx filename="page.mdx" "{new Date().getFullYear()}"
@@ -306,7 +306,7 @@ Pagefind is _**MUCH**_ faster and has _**MUCH**_ better search results than Flex
     MIT {new Date().getFullYear()} © Nextra.
     ```
 
-1. Indexing imported JavaScript or MDX files in MDX page
+1. Indexing imported JavaScript or MDX files in MDX page.
 
    ```jsx filename="../path/to/your/reused-js-component.js"
    export function ReusedJsComponent() {
@@ -326,7 +326,7 @@ Pagefind is _**MUCH**_ faster and has _**MUCH**_ better search results than Flex
    <ReusedMdxComponent />
    ```
 
-1. Indexing static pages written in JavaScript or TypeScript
+1. Indexing static pages written in JavaScript or TypeScript.
 
    ```jsx filename="page.jsx" /data-pagefind-body/ /data-pagefind-ignore/
    export default function Page() {
@@ -344,14 +344,14 @@ Pagefind is _**MUCH**_ faster and has _**MUCH**_ better search results than Flex
 <Callout type='info'>
 **Note**
 
-1. No one of the above examples didn't work in previous versions of Nextra
+1. No one of the above examples didn't work in previous versions of Nextra.
 1. For JavaScript/TypeScript pages **you must add**
    [`data-pagefind-body` attribute](https://pagefind.app/docs/indexing/#limiting-what-sections-of-a-page-are-indexed)
-   to tag your main content area which you want to index
+   to tag your main content area which you want to index.
 1. You can ignore indexing of specific tags by adding
-   [`data-pagefind-ignore` attribute](https://pagefind.app/docs/indexing/#removing-individual-elements-from-the-index)
+   [`data-pagefind-ignore` attribute](https://pagefind.app/docs/indexing/#removing-individual-elements-from-the-index).
 1. For MDX pages while using `nextra-theme-docs` and `nextra-theme-blog` **you don't need to add**
-   `data-pagefind-body` attribute
+   `data-pagefind-body` attribute.
 
 </Callout>
 
@@ -781,24 +781,25 @@ export function useMDXComponents(components) {
 
 ### Improvements for `_meta` Files
 
-1. Your `_meta` files should be server component files, without `'use client'` directive
+1. Your `_meta` files should be server component files, without `'use client'` directive.
 1. [zod](https://github.com/colinhacks/zod) now parses and transforms `_meta` files on server, to
-   improve DX and avoid typos
-1. The `_meta`'s `newWindow` field was removed
+   improve DX and avoid typos.
+1. The `_meta`'s `newWindow` field was removed.
 1. All external links declared in `_meta` files now opens in a new tab with with `rel="noreferrer"`
-   attribute and have visual `↗` suffix icon
-1. `theme.topContent` and `theme.bottomContent` fields were removed
+   attribute and have visual `↗` suffix icon.
+1. `theme.topContent` and `theme.bottomContent` fields were removed.
 1. `theme.layout: 'raw'` option has been removed. To create pages without a layout, use
    `page.{jsx,tsx}` files instead.
 
 #### New Single `_meta.global.{js,jsx,ts,tsx}` File
 
-It's now possible do define your pages in single `_meta` file, suffixed with `.global`. All API is
-same as per folder `_meta` files, with 1 exception: folder items should have `items` field.
+You can now define all your pages in a single `_meta` file, suffixed with `.global`. The API remains
+the same as folder-specific `_meta` files, with 1 exception: folder items must include an `items`
+field.
 
 ##### Example
 
-For the following structure you may have following `_meta` files:
+For the following structure, you might use the following `_meta` files:
 
 <div className='md:flex gap-4 [&_pre]:h-[calc(100%-48px)]'>
 
