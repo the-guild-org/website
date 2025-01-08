@@ -2,7 +2,7 @@
 title: Nextra 4 x App Router
 description:
   App Router, Turbopack, new Rust search Pagefind, RSC i18n, server/client components, compiled by
-  React Compiler, GitHub Alert Syntax
+  React Compiler, GitHub Alert Syntax, _meta.global file
 date: 2025-01-10
 authors: [dimitri]
 image: https://nextra.site/og?title=Nextra%204%0AApp%20Router%20/%20Turbopack
@@ -791,6 +791,72 @@ export function useMDXComponents(components) {
 1. `theme.layout: 'raw'` option has been removed. To create pages without a layout, use
    `page.{jsx,tsx}` files instead.
 
+#### New Single `_meta.global.{js,jsx,ts,tsx}` File
+
+It's now possible do define your pages in single `_meta` file, suffixed with `.global`. All API is
+same as per folder `_meta` files, with 1 exception: folder items should have `items` field.
+
+##### Example
+
+For the following structure you may have following `_meta` files:
+
+<div className='md:flex gap-4 [&_pre]:h-[calc(100%-48px)]'>
+
+<FileTree>
+  <FileTree.Folder name="app" open>
+    <FileTree.File name="layout.jsx" />
+    <FileTree.File name="_meta.js" active />
+    <FileTree.File name="page.jsx" />
+    <FileTree.Folder name="docs" open>
+      <FileTree.File name="page.mdx" />
+      <FileTree.File name="_meta.js" active />
+      <FileTree.Folder name="getting-started" open>
+        <FileTree.File name="page.mdx" />
+      </FileTree.Folder>
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+```js filename="app/_meta.js" copy=false
+export default {
+  docs: {
+    type: 'page',
+    title: 'Documentation'
+  }
+}
+```
+
+```js filename="app/docs/_meta.js" copy=false
+export default {
+  items: {
+    index: 'Getting Started'
+  }
+}
+```
+
+</div>
+
+With signle `_meta.global` file it can be defined as below:
+
+```js filename="app/_meta.global.js" copy=false
+export default {
+  docs: {
+    type: 'page',
+    title: 'Documentation',
+    items: {
+      index: 'Getting Started'
+    }
+  }
+}
+```
+
+<Callout type='warning'>
+**Warning**
+
+You can't use both `_meta.global` and `_meta` files in your project.
+
+</Callout>
+
 ### Component Migration: Moving UI Elements
 
 Several components were migrated from `nextra-theme-docs` to `nextra/components` to make them
@@ -911,7 +977,7 @@ Will compiles to:
 Variant of primary color which is set via `color` prop on `<Head>` component is now used for
 `::selection` styles.
 
-### `<Th>`, `<Tr>` and `<Td>` Components Removed
+### `<Table>` Changes
 
 The `<Th>`, `<Tr>` and `<Td>` components have been removed and are now attached directly into
 `<Table>` component. This change improves the DX, as these components are typically used together
