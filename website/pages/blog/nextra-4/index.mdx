@@ -919,9 +919,40 @@ Here's the table sorted alphabetically by component name:
 
 ### Front Matter = Metadata
 
-All fields from front matter are exported as `metadata` object in MDX files. If you don't want to
-use front matter you can export `metadata` from your MDX file, but you can't use both - front matter
-and export of `metadata` from MDX file.
+All fields from the front matter are now exported as a `metadata` object in MDX file. If you prefer
+not to use front matter, you can directly export a `metadata` from your MDX file, but you can't use
+both in same file.
+
+{/* prettier-ignore */}
+```mdx filename="✅ Front matter"
+---
+title: Foo
+description: Bar
+---
+
+{/* Will be compiled to 👇 */}
+export const metadata = {
+  title: 'Foo',
+  description: 'Bar'
+}
+```
+
+{/* prettier-ignore */}
+```mdx filename="✅ export of a metadata"
+export const metadata = {
+  title: 'Foo',
+  description: 'Bar'
+}
+```
+
+{/* prettier-ignore */}
+```mdx filename="❌ Invalid"
+---
+title: Foo
+---
+
+export const metadata = { description: 'Bar' }
+```
 
 ### Code Block Icons Changes
 
