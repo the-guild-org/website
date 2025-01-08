@@ -638,12 +638,7 @@ using [`next-view-transitions`](https://github.com/shuding/next-view-transitions
 follow [search setup steps](#pagefind-setup).
 
 ```jsx filename="app/layout.jsx" {7}
-<Navbar
-  navs={[
-    { url: '/', name: 'About' },
-    { url: '/posts', name: 'Posts' }
-  ]}
->
+<Navbar pageMap={await getPageMap()}>
   <Search />
   <ThemeSwitch />
 </Navbar>
