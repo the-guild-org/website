@@ -519,6 +519,11 @@ All headings now have animation for `:target` state
   src="/blog-assets/nextra-4/heading-target-animation.mp4"
 />
 
+### Enhanced `<NotFoundPage>`
+
+The built-in `<NotFoundPage>` now includes a URL for creating a issue with the `referrer` URL
+included. This makes it easier to identify the broken page that led the user to the 404 error.
+
 ### Migration Guide
 
 <Steps>
@@ -893,6 +898,13 @@ const rawMdx = '# Hello Nextra 4'
 - const { result: rawJs } = await compileMdx(rawMdx)
 + const rawJs = await compileMdx(rawMdx)
 ```
+
+### Optimized Imports
+
+Imports from `nextra/components`, `nextra-theme-docs` and `nextra-theme-blog` are now optimized
+internally with Next.js'
+[`optimizePackageImports`](https://nextjs.org/docs/app/api-reference/config/next-config-js/optimizePackageImports)
+option resulting in improved bundle size.
 
 ## Next Steps
 
