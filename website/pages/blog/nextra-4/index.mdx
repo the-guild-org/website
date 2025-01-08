@@ -169,42 +169,42 @@ written in Rust. To benefit it, simple append the `--turbopack` flag to your dev
 }
 ```
 
-> [!NOTE]
->
-> Without `--turbopack` flag Next.js under the hood uses
-> [Webpack](https://github.com/webpack/webpack), written in JavaScript.
+<Callout type='info'>
+Without `--turbopack` flag Next.js under the hood uses
+[Webpack](https://github.com/webpack/webpack), written in JavaScript.
+</Callout>
 
-> [!WARNING]
->
-> Only serializable options are supported:
->
-> At the time of writing this blog **only JSON serializable values** can be passed in `nextra`
-> function. This mean that with Turbopack enabled you can't pass custom `remarkPlugins`,
-> `rehypePlugins` or `recmaPlugins` since they are functions.
->
-> The following options could be passed only without Turbopack or only while building your app with
-> `next build`
-> ([since Turbopack isn't support `next build` for now](https://nextjs.org/docs/architecture/turbopack#unsupported-features)
-> and Webpack is used instead).
->
-> ```js filename="next.config.mjs" {5-7}
-> import nextra from 'nextra'
->
-> const withNextra = nextra({
->   mdxOptions: {
->     remarkPlugins: [myRemarkPlugin],
->     rehypePlugins: [myRehypePlugin],
->     recmaPlugins: [myRecmaPlugin]
->   }
-> })
-> ```
->
-> If you try to pass them, you'll get an error from Turbopack:
->
-> ```text copy=false
-> Error: loader nextra/loader for match "./{src/app,app}/**/page.{md,mdx}" does not have serializable options.
-> Ensure that options passed are plain JavaScript objects and values.
-> ```
+<Callout type='warning'>
+Only serializable options are supported:
+
+At the time of writing this blog **only JSON serializable values** can be passed in `nextra`
+function. This mean that with Turbopack enabled you can't pass custom `remarkPlugins`,
+`rehypePlugins` or `recmaPlugins` since they are functions.
+
+The following options could be passed only without Turbopack or only while building your app with
+`next build`
+([since Turbopack isn't support `next build` for now](https://nextjs.org/docs/architecture/turbopack#unsupported-features)
+and Webpack is used instead).
+
+```js filename="next.config.mjs" {5-7}
+import nextra from 'nextra'
+
+const withNextra = nextra({
+  mdxOptions: {
+    remarkPlugins: [myRemarkPlugin],
+    rehypePlugins: [myRehypePlugin],
+    recmaPlugins: [myRecmaPlugin]
+  }
+})
+```
+
+If you try to pass them, you'll get an error from Turbopack:
+
+```text copy=false
+Error: loader nextra/loader for match "./{src/app,app}/**/page.{md,mdx}" does not have serializable options.
+Ensure that options passed are plain JavaScript objects and values.
+```
+</Callout>
 
 ## Drop Support of `theme.config` Files
 
@@ -218,10 +218,10 @@ const withNextra = nextra({
 })
 ```
 
-> [!NOTE]
->
-> Previously theme config options now should be passed as `props` for `<Layout>`, `<Navbar>`,
-> `<Footer>`, `<Search>` and `<Banner>` components in `app/layout.jsx` file.
+<Callout type='info'>
+Previously theme config options now should be passed as `props` for `<Layout>`, `<Navbar>`,
+`<Footer>`, `<Search>` and `<Banner>` components in `app/layout.jsx` file.
+</Callout>
 
 ## New Search Engine – Pagefind
 
@@ -303,16 +303,16 @@ Pagefind is _**MUCH**_ faster and has _**MUCH**_ better search results than Flex
    }
    ```
 
-> [!NOTE]
->
-> 1. No one of the above examples didn't work in previous versions of Nextra
-> 1. For JavaScript/TypeScript pages **you must add**{''}
->    [`data-pagefind-body` attribute](https://pagefind.app/docs/indexing/#limiting-what-sections-of-a-page-are-indexed)
->    to tag your main content area which you want to index
-> 1. You can ignore indexing of specific tags by adding
->    [`data-pagefind-ignore` attribute](https://pagefind.app/docs/indexing/#removing-individual-elements-from-the-index)
-> 1. For MDX pages while using `nextra-theme-docs` and `nextra-theme-blog` **you don't need to
->    add**{' '} `data-pagefind-body` attribute
+<Callout type='info'>
+1. No one of the above examples didn't work in previous versions of Nextra
+1. For JavaScript/TypeScript pages **you must add**{''}
+   [`data-pagefind-body` attribute](https://pagefind.app/docs/indexing/#limiting-what-sections-of-a-page-are-indexed)
+   to tag your main content area which you want to index
+1. You can ignore indexing of specific tags by adding
+   [`data-pagefind-ignore` attribute](https://pagefind.app/docs/indexing/#removing-individual-elements-from-the-index)
+1. For MDX pages while using `nextra-theme-docs` and `nextra-theme-blog` **you don't need to
+   add**{' '} `data-pagefind-body` attribute
+</Callout>
 
 ### Setup [#pagefind-setup]
 
@@ -345,10 +345,10 @@ enable it via `.npmrc` file via `enable-pre-post-scripts` setting:
 enable-pre-post-scripts=true
 ```
 
-> [!NOTE]
->
-> `pnpm@9` by default
-> [run `pre`/`post` scripts](https://pnpm.io/9.x/cli/run#enable-pre-post-scripts).
+<Callout type='info'>
+`pnpm@9` by default
+[run `pre`/`post` scripts](https://pnpm.io/9.x/cli/run#enable-pre-post-scripts).
+</Callout>
 
 <h4>Add `_pagefind/` directory to `.gitignore` file</h4>
 
@@ -388,9 +388,9 @@ export function RootLayout({ children }) {
 
 ## Smallest Bundle Size _**`EVER`**_ for a Nextra-Powered Website
 
-> [!WARNING]
->
-> TODO
+<Callout type='warning'>
+TODO
+</Callout>
 
 ## RSC I18n Support
 
@@ -435,13 +435,13 @@ export function getDirection(locale) {
 }
 ```
 
-> [!NOTE]
->
-> Read more about server components i18n in
-> [Next.js docs](https://nextjs.org/docs/app/building-your-application/routing/internationalization).<br/>
-> See
-> [working example of i18n website](https://github.com/shuding/nextra/tree/d5cb1bc0e84494cbcc8decbae56fb091ce9999f0/examples/swr-site)
-> in Nextra's examples.
+<Callout type='info'>
+Read more about server components i18n in
+[Next.js docs](https://nextjs.org/docs/app/building-your-application/routing/internationalization).<br/>
+See
+[working example of i18n website](https://github.com/shuding/nextra/tree/d5cb1bc0e84494cbcc8decbae56fb091ce9999f0/examples/swr-site)
+in Nextra's examples.
+</Callout>
 
 ## GitHub Alert Syntax
 
@@ -708,17 +708,17 @@ accessible for use in your custom themes:
 - `<Bleed>`
 - `<Head>`
 
-> [!TIP]
->
-> With migration `<Head>` component to `nextra/components`, both `nextra-theme-blog` and your custom
-> themes can now configure:
->
-> - primary color, `color` prop
-> - background color, `backgroundColor` prop
-> - glyph to use as the favicon, `faviconGlyph` prop
-> - color of selection based on primary color
->
-> Previously all of these options were exclusive to `nextra-theme-docs` only
+<Callout>
+With migration `<Head>` component to `nextra/components`, both `nextra-theme-blog` and your custom
+themes can now configure:
+
+- primary color, `color` prop
+- background color, `backgroundColor` prop
+- glyph to use as the favicon, `faviconGlyph` prop
+- color of selection based on primary color
+
+Previously all of these options were exclusive to `nextra-theme-docs` only
+</Callout>
 
 All built-in Nextra components were refactored to be either server or client.
 
