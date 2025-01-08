@@ -352,7 +352,9 @@ Pagefind indexes `.html` pages and search indexing should be done after building
 "scripts": {
   "dev": "next --turbopack",
   "build": "next build",
-  "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind"
+  "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
+  // Or if you use Next.js' Static Exports
+  "postbuild": "pagefind --site .next/server/app --output-path out/_pagefind"
 }
 ```
 
@@ -833,6 +835,44 @@ Will compiles to:
 
 Variant of primary color which is set via `color` prop on `<Head>` component is now used for
 `::selection` styles.
+
+### `<Th>`, `<Tr>` and `<Td>` Components were Removed
+
+`<Th>`, `<Table.Tr>` and `<Td>` components were removed and attached directly on `<Table>`
+component. This was done to better UX since these components are expected to use together with
+`<Table>`.
+
+```diff filename="Example of migration"
+- import { Table, Th, Tr, Td } from 'nextra/components'
++ import { Table } from 'nextra/components'
+
+<Table>
+  <thead>
+-    <Tr>
++    <Table.Tr>
+-      <Th>Items</Th>
++      <Table.Th>Items</Table.Th>
+-    </Tr>
++    </Table.Tr>
+  </thead>
+  <tbody>
+-    <Tr>
++    <Table.Tr>
+-      <Th>Donuts</Th>
++      <Table.Th>Donuts</Table.Th>
+-    </Tr>
++    </Table.Tr>
+  </tbody>
+  <tfoot>
+-    <Tr>
++    <Table.Tr>
+-      <Th>Totals</Th>
++      <Table.Th>Totals</Table.Th>
+-     </Tr>
++    </Table.Tr>
+  </tfoot>
+</Table>
+```
 
 ## Next Steps
 
