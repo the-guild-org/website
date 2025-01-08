@@ -154,6 +154,14 @@ looks like:
   </FileTree.Folder>
 </FileTree>
 
+<Callout>
+**Warning**
+
+All pages `page.{jsx,tsx}` should export
+[`metadata` object](https://nextjs.org/docs/app/building-your-application/optimizing/metadata#static-metadata).
+
+</Callout>
+
 <Callout type="info">
 **Note**
 
@@ -805,6 +813,7 @@ Here’s the table sorted alphabetically by component name:
 
 ### Improvements for `_meta` Files
 
+1. Your `_meta` files should be server component files, without `'use client'` directive
 1. [zod](https://github.com/colinhacks/zod) now parses and transforms `_meta` files on server, to
    improve DX and avoid typos
 1. The `_meta`'s `newWindow` field was removed
