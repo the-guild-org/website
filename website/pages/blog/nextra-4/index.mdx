@@ -898,7 +898,7 @@ within a `<Table>`.
 </Table>
 ```
 
-### Simplified `compileMdx` Return Value
+### `compileMdx` Changes
 
 `compileMdx` function now returns a `Promise<string>` instead of a `Promise<object>`.
 
@@ -910,6 +910,13 @@ const rawMdx = '# Hello Nextra 4'
 - const { result: rawJs } = await compileMdx(rawMdx)
 + const rawJs = await compileMdx(rawMdx)
 ```
+
+### `<RemoteContent>` Changes
+
+1. The `<RemoteContent>` component has been renamed to `<MDXRemote>`.
+1. He has been removed from `nextra/components` and moved to `nextra/mdx-remote`
+1. You no longer need to manually pass your default components to `<MDXRemote>`. They will now be
+   automatically provided from your [`mdx-components.jsx` file](#use-mdx-components).
 
 ### Optimized Imports
 
