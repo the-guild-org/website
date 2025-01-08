@@ -954,6 +954,29 @@ title: Foo
 export const metadata = { description: 'Bar' }
 ```
 
+### New Option `whiteListTagsStyling`
+
+Nextra introduce new option `whiteListTagsStyling` which allows you to whitelist html elements which
+will be replaced with components defined in [`mdx-components.js` file](#use-mdx-components). By
+default, Nextra replaces only `<details>` and `<summary>`, but with this option you can replace any html
+element.
+
+```js filename="next.config.mjs"
+import nextra from 'nextra'
+
+const withNextra = nextra({
+  whiteListTagsStyling: ['h1']
+})
+```
+
+{/* prettier-ignore */}
+```mdx filename="Example of replacing <h1>"
+# Hello
+
+{/* Will be replaced and styled too */}
+<h1>World</h1>
+```
+
 ### Code Block Icons Changes
 
 #### Overriding Icons
