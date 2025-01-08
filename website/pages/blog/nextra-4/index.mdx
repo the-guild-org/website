@@ -6,7 +6,7 @@ description:
 date: 2025-01-10
 authors: [dimitri]
 image: https://nextra.site/og?title=Nextra%204%0AApp%20Router%20/%20Turbopack
-tags: [react, nextra, nextjs, app-router, turbopack, pagefind, rsc, i18n]
+tags: [react, nextra, nextjs, app-router, turbopack, pagefind, rsc, i18n, react-compiler]
 ---
 
 import { Button, FileTree, Steps } from 'nextra/components'
@@ -779,6 +779,18 @@ export function useMDXComponents(components) {
 
 ## Various Changes
 
+### Improvements for `_meta` Files
+
+1. Your `_meta` files should be server component files, without `'use client'` directive
+1. [zod](https://github.com/colinhacks/zod) now parses and transforms `_meta` files on server, to
+   improve DX and avoid typos
+1. The `_meta`'s `newWindow` field was removed
+1. All external links declared in `_meta` files now opens in a new tab with with `rel="noreferrer"`
+   attribute and have visual `↗` suffix icon
+1. `theme.topContent` and `theme.bottomContent` fields were removed
+1. `theme.layout: 'raw'` option has been removed. To create pages without a layout, use
+   `page.{jsx,tsx}` files instead.
+
 ### Bump Minimal Next.js to V14
 
 Nextra 4 requires at least Next.js 14 to be installed in your project.
@@ -900,18 +912,6 @@ Here’s the table sorted alphabetically by component name:
 | `<Steps>`           | **server** |
 
 </details>
-
-### Improvements for `_meta` Files
-
-1. Your `_meta` files should be server component files, without `'use client'` directive
-1. [zod](https://github.com/colinhacks/zod) now parses and transforms `_meta` files on server, to
-   improve DX and avoid typos
-1. The `_meta`'s `newWindow` field was removed
-1. All external links declared in `_meta` files now opens in a new tab with with `rel="noreferrer"`
-   attribute and have visual `↗` suffix icon
-1. `theme.topContent` and `theme.bottomContent` fields were removed
-1. `theme.layout: 'raw'` option has been removed. To create pages without a layout, use
-   `page.{jsx,tsx}` files instead.
 
 ### External Markdown Links Have `↗` Suffix Icon
 
