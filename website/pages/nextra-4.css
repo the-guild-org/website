@@ -1,0 +1,21 @@
+/* Remove this file once The Guild Blog will be migrated to Nextra 4 */
+
+.nextra-steps {
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    counter-increment: var(--counter-id);
+    /* resets from nextra-theme-docs */
+    @apply border-0 pb-0 font-semibold tracking-tight mt-8 text-2xl;
+    
+    &:before {
+      @apply absolute size-[33px];
+      @apply border-4 border-[rgb(var(--nextra-bg))] bg-gray-100 dark:bg-neutral-800;
+      @apply rounded-full text-neutral-400 text-base font-normal text-center -indent-px;
+      @apply mt-[3px] ms-[-41px];
+      content: counter(var(--counter-id));
+    }
+  }
+}

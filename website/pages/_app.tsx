@@ -4,6 +4,7 @@ import { IBM_Plex_Sans } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
 import '@theguild/components/style.css';
 import './globals.css';
+import './nextra-4.css';
 
 const ibmPlexSans = IBM_Plex_Sans({
   weight: ['400', '500', '600', '700'],
