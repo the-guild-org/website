@@ -1013,6 +1013,48 @@ same result by setting `asIndexPage: true` in the front matter of `docs/index.md
   </FileTree.Folder>
 </FileTree>
 
+#### List Subpages
+
+It's now possible to automatically list all subpages of a given route as cards.
+
+1. Import `createIndexPage` and `getPageMap` from `nextra/page-map`.
+1. Use `MDXRemote` from `nextra/mdx-remote` to render list of subpages
+1. Replace `'/my-route'` with the route whose subpages you want to display
+1. To show card's icon, use `icon` front matter field in your subpages (_optional_)
+1. Provide `Cards` and your icons to `MDXRemote`'s components prop
+
+<div className="mt-6 md:grid gap-4 grid-cols-2 [&_pre]:h-[calc(100%-48px)] [&>div]:!mt-0">
+
+{/* prettier-ignore */}
+```mdx filename="app/my-route/page.mdx"
+import { Cards } from 'nextra/components'
+import { MDXRemote } from 'nextra/mdx-remote'
+import { createIndexPage, getPageMap } from 'nextra/page-map'
+import { MyIcon } from '../path/to/your/icons'
+
+<MDXRemote
+  compiledSource={
+    await createIndexPage(
+      await getPageMap('/my-route')
+    )
+  }
+  components={{
+    Cards,
+    MyIcon
+  }}
+/>
+```
+
+```mdx filename="app/my-route/demo/page.mdx"
+---
+icon: MyIcon
+---
+
+# My Subpage
+```
+
+</div>
+
 ### Sidebar Title Priority Changes
 
 In Nextra 4, the sidebar title is now determined by the following order:
