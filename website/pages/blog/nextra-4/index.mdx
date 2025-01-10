@@ -56,21 +56,27 @@ improvements. Here's what's new:
 ## App Router Support
 
 Nextra 4 exclusively uses Next.js [App Router](https://nextjs.org/docs/app). Support for the
-[Pages Router](https://nextjs.org/docs/pages) has been discontinued.
+[Pages Router](https://nextjs.org/docs/pages) has been discontinued. In Nextra 4, there are two ways
+to render MDX files using file-based routing:
 
-### Two Ways to Render
+- **Content directory convention:** Using
+  [a `catch-all` route](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes#catch-all-segments)
+  which loads MDX files from the specific directory.
+- **Page file convention:** Follows
+  [Next.js App Router convention](https://nextjs.org/docs/getting-started/project-structure#app-routing-conventions)
+  with enhanced page extensions: `page.{md,mdx}`.
 
-#### `content` Directory Convention
+### Using Content Directory Convention
 
-Migrate your Pages Router site with minimal changes using this mode. Here's what to do:
+Migrate your Pages Router site with minimal changes using this mode. Follow these steps:
 
 <Steps>
 
-<h5>Rename your `pages` folder to `content`</h5>
+<h4>Rename your `pages` folder to `content`</h4>
 
 You can keep `content` directory in root of your project, or in `src` directory.
 
-<h5>Set `contentDirBasePath` option in `next.config` file (_optional_)</h5>
+<h4>Set `contentDirBasePath` option in `next.config` file (_optional_)</h4>
 
 If you want to serve your content from a different path, you can set `contentDirBasePath` option:
 
@@ -82,7 +88,7 @@ const withNextra = nextra({
 })
 ```
 
-<h5 id="add-mdxpath-page-jsx-file">Add `[[...mdxPath]]/page.jsx` file</h5>
+<h4>Add `[[...mdxPath]]/page.jsx` file</h4>
 
 Place this file in `app` directory with
 [the following content](https://github.com/shuding/nextra/blob/d5cb1bc0e84494cbcc8decbae56fb091ce9999f0/examples/docs/app/%5B%5B...mdxPath%5D%5D/page.jsx),
@@ -94,12 +100,12 @@ you should get the following structure:
     <FileTree.Folder name="[[...mdxPath]]" open active>
       <FileTree.File name="page.jsx" active />
     </FileTree.Folder>
-    <FileTree.Folder name="content" open>
+  </FileTree.Folder>
+  <FileTree.Folder name="content" open>
+    <FileTree.File name="index.mdx" />
+    <FileTree.Folder name="docs" open>
       <FileTree.File name="index.mdx" />
-      <FileTree.Folder name="docs" open>
-        <FileTree.File name="index.mdx" />
-        <FileTree.File name="getting-started.mdx" />
-      </FileTree.Folder>
+      <FileTree.File name="getting-started.mdx" />
     </FileTree.Folder>
   </FileTree.Folder>
 </FileTree>
@@ -115,7 +121,7 @@ If you set `contentDirBasePath` option in `next.config` file, you should put
 
 </Callout>
 
-<h5>You are ready to go!</h5>
+<h4>You are ready to go!</h4>
 
 <Callout type="info">
 **Note**
@@ -142,14 +148,11 @@ and
 
 </Steps>
 
-#### `page` File Convention
+### Using Page File Convention
 
-The second mode follows
-[Next.js App Router convention](https://nextjs.org/docs/getting-started/project-structure#app-routing-conventions)
-with ✨ enhanced page extensions `page.{md,mdx}`.
-
-Above [`content` directory convention structure](#add-mdxpath-page-jsx-file), with this mode will
-looks like:
+The above file-based routing structure, following the
+[Using Content Directory Convention](#using-content-directory-convention), will appear as follows
+when using this mode:
 
 <FileTree>
   <FileTree.Folder name="app" open>
