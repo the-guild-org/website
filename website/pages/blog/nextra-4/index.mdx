@@ -255,13 +255,13 @@ Previously theme config options now should be passed as `props` for `<Layout>`, 
 
 ## New Search Engine – Pagefind
 
-Search engine was migrated from [Flexsearch](https://github.com/nextapps-de/flexsearch) written in
+Search engine was migrated from [FlexSearch](https://github.com/nextapps-de/flexsearch) written in
 JavaScript to Rust-powered [Pagefind](https://pagefind.app).
 
 ### Benefits
 
 Pagefind is **significantly** faster and delivers **far superior** search results compared to
-Flexsearch. Here are some examples that previously didn't work in earlier versions of Nextra:
+FlexSearch. Here are some examples that previously didn't work in earlier versions of Nextra:
 
 1. Indexing remote MDX.
 
@@ -772,7 +772,7 @@ export function useMDXComponents(components) {
 
 ## Various Changes
 
-### Improvements for `_meta` Files
+### `_meta` Files Changes
 
 1. Your `_meta` files should be server component files, without `'use client'` directive.
 1. [zod](https://github.com/colinhacks/zod) now parses and transforms `_meta` files on server, to
@@ -1061,7 +1061,7 @@ For code blocks with the diff language, if a
 [`filename` attribute](https://nextra.site/docs/guide/syntax-highlighting#filenames-and-titles) is
 provided, the icon will automatically correspond to the file extension of the specified filename.
 
-### External Markdown Links Have `↗` Suffix Icon
+### Markdown Links Changes
 
 All external Markdown links declared in MDX files now opens in a new tab with with
 `rel="noreferrer"` attribute and have visual `↗` suffix icon. (Was inspired from Next.js docs)
@@ -1174,6 +1174,45 @@ Type error: Cannot find module 'nextra/components' or its corresponding type dec
   }
 }
 ```
+
+## Conclusion. Why Prefer **Nextra 4** over Other MDX Libraries?
+
+Nextra 4 introduces several key features that enhance its functionality and performance:
+
+- **App Router Support**: Nextra 4 uses Next.js App Router, discontinuing support for the Pages
+  Router. This change aligns with the latest Next.js API such as Metadata API.
+
+- **Turbopack Support**: Improved development experience, addressing a long-standing community
+  request.
+
+- **New Search Engine**: New Rust-powered search engine Pagefind provides faster performance and
+  significantly better search results.
+
+- **RSC I18n Support**: Enhanced internationalization by supporting React Server Components (RSC)
+  with built-in i18n capabilities, facilitating the creation of multilingual websites.
+
+- **Enhanced by React Compiler**: Compiling official Nextra packages source code with the React
+  Compiler in leads to optimized performance, resulting in a better user experience.
+
+- **Reduced Bundle Size**: Through various optimizations, the smallest bundle size ever for a
+  Nextra-powered website was achieved, enhancing load times and overall performance.
+
+- **Improved Pages Collection**: Structure of pages called
+  "[Page Map](https://nextra.site/docs/guide/organize-files)" was improved and now collects not only
+  static `md`/`mdx` pages, but any static `jsx`/`tsx` pages from `app/` directory as well.
+
+- **Powerful Table of Content**:
+  [The improved Table of Content (TOC)](https://the-guild.dev/blog/nextra-3#more-powerful-toc) from
+  Nextra 3 shows exact same content from your Markdown headings, including interpolated content,
+  inlined code-blocks, JSX elements, React components and even rendered math formulas LaTeX.
+
+- **Remote MDX Rendering**:
+  [Remote rendering of MDX content](https://the-guild.dev/blog/nextra-3#remote-docs-support) added
+  in Nextra 3 allows you to render your content from any source, and rendering proper sidebar
+  navigation links.
+
+These features make Nextra 4 a more powerful and efficient framework for building content-focused
+websites.
 
 ## Next Steps
 
