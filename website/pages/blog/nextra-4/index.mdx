@@ -1,5 +1,5 @@
 ---
-title: Nextra 4 x App Router
+title: Nextra 4 x App Router. What's New and Migration Guide
 description:
   App Router, Turbopack, Rust search engine Pagefind, RSC i18n, server/client components, compiled
   by React Compiler, GitHub Alert Syntax, new _meta.global file
@@ -55,7 +55,8 @@ improvements. Here's what's new:
 
 ## App Router Support
 
-Nextra 4 exclusively uses Next.js [App Router](https://nextjs.org/docs/app). Support for the [Pages Router](https://nextjs.org/docs/pages) has been discontinued.
+Nextra 4 exclusively uses Next.js [App Router](https://nextjs.org/docs/app). Support for the
+[Pages Router](https://nextjs.org/docs/pages) has been discontinued.
 
 ### Two Ways to Render
 
@@ -116,7 +117,7 @@ If you set `contentDirBasePath` option in `next.config` file, you should put
 
 <h5>You are ready to go!</h5>
 
-<Callout type='info'>
+<Callout type="info">
 **Note**
 
 In Web you can found article such as
@@ -145,7 +146,8 @@ as an examples of this mode.
 #### `page` File Convention
 
 The second mode follows
-[Next.js App Router convention](https://nextjs.org/docs/getting-started/project-structure#app-routing-conventions) with ✨ enhanced page extensions `page.{md,mdx}`.
+[Next.js App Router convention](https://nextjs.org/docs/getting-started/project-structure#app-routing-conventions)
+with ✨ enhanced page extensions `page.{md,mdx}`.
 
 Above [`content` directory convention structure](#add-mdxpathpagejsx-file), with this mode will
 looks like:
@@ -184,7 +186,9 @@ as an examples of this mode.
 
 ## Turbopack Support
 
-After being one of our [most requested features](https://github.com/shuding/nextra/issues/1054) for over 2 years, Nextra 4 finally supports [Turbopack](https://nextjs.org/docs/architecture/turbopack), the Rust-based incremental bundler. Enable it by adding `--turbopack` to your dev command:
+After being one of our [most requested features](https://github.com/shuding/nextra/issues/1054) for
+over 2 years, Nextra 4 finally supports [Turbopack](https://nextjs.org/docs/architecture/turbopack),
+the Rust-based incremental bundler. Enable it by adding `--turbopack` to your dev command:
 
 ```diff filename="package.json"
 "scripts": {
@@ -201,11 +205,12 @@ Without `--turbopack` flag Next.js under the hood uses
 
 </Callout>
 
-<Callout type='warning'>
+<Callout type="warning">
 **Warning**
 
 At the time of writing this blog **only JSON serializable values** can be passed to `nextra`
-function. You cannot pass custom `remarkPlugins`, `rehypePlugins` or `recmaPlugins` since they are functions.
+function. You cannot pass custom `remarkPlugins`, `rehypePlugins` or `recmaPlugins` since they are
+functions.
 
 ```js filename="next.config.mjs" {5-7}
 import nextra from 'nextra'
@@ -240,7 +245,7 @@ const withNextra = nextra({
 })
 ```
 
-<Callout type='info'>
+<Callout type="info">
 **Note**
 
 Previously theme config options now should be passed as `props` for `<Layout>`, `<Navbar>`,
@@ -255,7 +260,8 @@ JavaScript to Rust-powered [Pagefind](https://pagefind.app).
 
 ### Benefits
 
-Pagefind is _**MUCH**_ faster and has _**MUCH**_ better search results than Flexsearch:
+Pagefind is **significantly** faster and delivers **far superior** search results compared to
+Flexsearch. Here are some examples that previously didn't work in earlier versions of Nextra:
 
 1. Indexing remote MDX.
 
@@ -315,6 +321,13 @@ Pagefind is _**MUCH**_ faster and has _**MUCH**_ better search results than Flex
 
 1. Indexing static pages written in JavaScript or TypeScript.
 
+   For JavaScript/TypeScript pages **you need to add**
+   [`data-pagefind-body` attribute](https://pagefind.app/docs/indexing/#limiting-what-sections-of-a-page-are-indexed)
+   to the tag enclosing the main content area you want indexed.
+
+   You can ignore indexing of specific tags by adding
+   [`data-pagefind-ignore` attribute](https://pagefind.app/docs/indexing/#removing-individual-elements-from-the-index).
+
    ```jsx filename="page.jsx" /data-pagefind-body/ /data-pagefind-ignore/
    export default function Page() {
      return (
@@ -328,19 +341,12 @@ Pagefind is _**MUCH**_ faster and has _**MUCH**_ better search results than Flex
    }
    ```
 
-<Callout type='info'>
-**Note**
-
-1. No one of the above examples didn't work in previous versions of Nextra.
-1. For JavaScript/TypeScript pages **you must add**
-   [`data-pagefind-body` attribute](https://pagefind.app/docs/indexing/#limiting-what-sections-of-a-page-are-indexed)
-   to tag your main content area which you want to index.
-1. You can ignore indexing of specific tags by adding
-   [`data-pagefind-ignore` attribute](https://pagefind.app/docs/indexing/#removing-individual-elements-from-the-index).
-1. For MDX pages while using `nextra-theme-docs` and `nextra-theme-blog` **you don't need to add**
-   `data-pagefind-body` attribute.
-
-</Callout>
+   <Callout>
+     **Tip**
+     {''}
+     For MDX pages while using `nextra-theme-docs` and `nextra-theme-blog` **you don't need to add**
+     `data-pagefind-body` attribute.
+   </Callout>
 
 ### Setup {/* eslint-disable-line mdx/remark */}[#pagefind-setup]
 
@@ -539,7 +545,7 @@ All 4 examples were updated to the latest Next.js 15.1.3 at the moment of writin
 
 **First Load JS shared by all** is decreased by **7.9%** from **114 kB** to **105 kB**.
 
-<Callout type='info' emoji='🚀'>
+<Callout type="info" emoji="🚀">
 **Conclusion**
 
 First Load JS is significantly decreased in all above examples.
@@ -788,7 +794,7 @@ field.
 
 For the following structure, you might use the following `_meta` files:
 
-<div className='md:flex gap-4 [&_pre]:h-[calc(100%-48px)]'>
+<div className="md:flex gap-4 [&_pre]:h-[calc(100%-48px)]">
 
 <FileTree>
   <FileTree.Folder name="app" open>
@@ -838,7 +844,7 @@ export default {
 }
 ```
 
-<Callout type='warning'>
+<Callout type="warning">
 **Warning**
 
 You can't use both `_meta.global` and `_meta` files in your project.
@@ -1191,8 +1197,14 @@ Huge thanks for Nextra sponsors:
 
 - [xyflow - Node Based UIs for React and Svelte](https://xyflow.com/?utm_source=the-guild.dev&utm_campaign=nextra-4-blog&utm_content=blog_post)
 
-Help spread the word about Nextra on [X](https://x.com) using the `#Nextra` hashtag. Also, feel free
-to follow me on [X](https://x.com/dimaMachina_) and [GitHub](https://github.com/dimaMachina)!
+<Callout type="error" emoji="❤️">
+The Nextra 4 documentation is still a work in progress, and we need your help to improve it!<br />
+Check out the recent updates in this blog post, and feel free to submit your contribution PRs to improve Nextra docs.
+
+Spread the word about Nextra on [X](https://x.com) using the `#Nextra` hashtag. You can also follow
+me on [X](https://x.com/dimaMachina_) and [GitHub](https://github.com/dimaMachina) to stay updated!
+
+</Callout>
 
 ---
 
