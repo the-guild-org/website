@@ -791,11 +791,11 @@ export function useMDXComponents(components) {
 1. `theme.layout: 'raw'` option has been removed. To create pages without a layout, use
    `page.{jsx,tsx}` files instead.
 
-#### New Single `_meta.global.{js,jsx,ts,tsx}` File
+#### `_meta.global` File
 
 You can now define all your pages in a single `_meta` file, suffixed with `.global`. The API remains
-the same as folder-specific `_meta` files, with 1 exception: folder items must include an `items`
-field.
+the same as for folder-specific `_meta` files, with 1 exception: folder items must include an
+`items` field.
 
 ##### Example
 
@@ -954,7 +954,7 @@ title: Foo
 export const metadata = { description: 'Bar' }
 ```
 
-### New Option `whiteListTagsStyling`
+### `whiteListTagsStyling` Option
 
 Nextra introduces a new option called `whiteListTagsStyling`, which allows you to whitelist HTML
 elements to be replaced with components defined in the
@@ -1205,6 +1205,15 @@ Imports from `nextra/components`, `nextra-theme-docs` and `nextra-theme-blog` ar
 internally with Next.js'
 [`optimizePackageImports`](https://nextjs.org/docs/app/api-reference/config/next-config-js/optimizePackageImports)
 option resulting in improved bundle size.
+
+### `useRouter` Removed
+
+Nextra's `useRouter` hook was removed, use Next.js' `useRouter` from `next/navigation` instead now.
+
+```diff
+- import { useRouter } from 'nextra/hooks'
++ import { useRouter } from 'next/navigation'
+```
 
 ### Bump Minimal Next.js to V14
 
