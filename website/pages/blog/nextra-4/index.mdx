@@ -60,11 +60,19 @@ Nextra 4 exclusively uses Next.js [App Router](https://nextjs.org/docs/app). Sup
 to render MDX files using file-based routing:
 
 - **Content directory convention:** Using
-  [a `catch-all` route](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes#catch-all-segments)
+  [a **catch-all** route](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes#catch-all-segments)
   which loads MDX files from the specific directory.
 - **Page file convention:** Follows
   [Next.js App Router convention](https://nextjs.org/docs/getting-started/project-structure#app-routing-conventions)
   with enhanced page extensions: `page.{md,mdx}`.
+
+<Callout type="info">
+**Trade-offs**
+
+- The **catch-all** route route may lead to longer compilation times, depending on the number of MDX files.
+- The **page file convention** works well with colocation, allowing you to keep all the assets for an article in one place.
+
+</Callout>
 
 ### Using Content Directory Convention
 
