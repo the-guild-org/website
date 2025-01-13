@@ -742,7 +742,7 @@ export const metadata = {
 }
 ```
 
-```jsx filename="app/page.mdx" {2,3}
+```jsx filename="app/page.mdx" {2,5}
 ---
 description: Make beautiful websites with Next.js & MDX.
 ---
@@ -750,15 +750,17 @@ description: Make beautiful websites with Next.js & MDX.
 # Hello Nextra 4
 ```
 
-First Markdown heading `<h1>` will set `<title>` and `<meta property="og:title">` and front matter
-`description` will set `<meta name="description">` and `<meta property="og:description">` in
-`<head>` element.
+Front matter `title` field or first Markdown heading `<h1>` will set `<title>` and
+`<meta property="og:title">{:jsx}` and front matter `description` field will set
+`<meta name="description">{:jsx}` and `<meta property="og:description">{:jsx}` in `<head>` element.
 
 ```html
-<title>Hello Nextra 4 | Nextra</title>
-<meta property="og:title" content="Hello Nextra 4 | Nextra" />
-<meta name="description" content="Make beautiful websites with Next.js &amp; MDX." />
-<meta property="og:description" content="Make beautiful websites with Next.js &amp; MDX." />
+<head>
+  <title>Hello Nextra 4 | Nextra</title>
+  <meta property="og:title" content="Hello Nextra 4 | Nextra" />
+  <meta name="description" content="Make beautiful websites with Next.js &amp; MDX." />
+  <meta property="og:description" content="Make beautiful websites with Next.js &amp; MDX." />
+</head>
 ```
 
 ## `nextra-theme-blog` Changes
