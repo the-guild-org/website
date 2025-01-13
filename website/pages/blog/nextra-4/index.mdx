@@ -69,8 +69,10 @@ to render MDX files using file-based routing:
 <Callout type="info">
 **Trade-offs**
 
-- The **catch-all** route route may lead to longer compilation times, depending on the number of MDX files.
-- The **page file convention** works well with colocation, allowing you to keep all the assets for an article in one place.
+- The **catch-all** route route may lead to longer compilation times, depending on the number of MDX
+  files.
+- The **page file convention** works well with colocation, allowing you to keep all the assets for
+  an article in one place.
 
 </Callout>
 
@@ -698,6 +700,66 @@ export function useMDXComponents(components) {
 </details>
 
 </Steps>
+
+### Dynamic `<head>` Tags
+
+Dynamic head tags previously were configured via `head` theme config option. In Nextra 4 you should
+use Next.js
+[Metadata API](https://nextjs.org/docs/app/building-your-application/optimizing/metadata) instead.
+
+**Nextra 3:**
+
+```jsx filename="theme.config.jsx"
+export default {
+  head() {
+    const config = useConfig()
+    const { route } = useRouter()
+    const title = config.title + (route === '/' ? '' : ' | Nextra')
+    return (
+      <>
+        <title>{title}</title>
+        <meta property="og:title" content={title} />
+      </>
+    )
+  }
+}
+```
+
+**Nextra 4:**
+
+```jsx filename="app/layout.jsx"
+export const metadata = {
+  title: {
+    default: 'Nextra – Next.js Static Site Generator',
+    template: '%s | Nextra'
+  },
+  openGraph: {
+    url: 'https://nextra.site',
+    siteName: 'Nextra',
+    locale: 'en_US',
+    type: 'website'
+  }
+}
+```
+
+```jsx filename="app/page.mdx" {2,3}
+---
+description: Make beautiful websites with Next.js & MDX.
+---
+
+# Hello Nextra 4
+```
+
+First Markdown heading `<h1>` will set `<title>` and `<meta property="og:title">` and front matter
+`description` will set `<meta name="description">` and `<meta property="og:description">` in
+`<head>` element.
+
+```html
+<title>Hello Nextra 4 | Nextra</title>
+<meta property="og:title" content="Hello Nextra 4 | Nextra" />
+<meta name="description" content="Make beautiful websites with Next.js &amp; MDX." />
+<meta property="og:description" content="Make beautiful websites with Next.js &amp; MDX." />
+```
 
 ## `nextra-theme-blog` Changes
 
