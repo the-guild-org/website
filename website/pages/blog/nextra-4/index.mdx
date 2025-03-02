@@ -9,7 +9,7 @@ image: https://nextra.site/og?title=Nextra%204%0AApp%20Router%20/%20Turbopack
 tags: [react, nextjs, nextra, react-compiler, rsc, app-router, turbopack, pagefind, i18n]
 ---
 
-import { Button, FileTree, Steps } from 'nextra/components'
+import { Button, FileTree, Steps, Tabs } from 'nextra/components'
 import BlogV3BundleSize from 'public/blog-assets/nextra-4/blog-v3-bundle-size.mdx'
 import BlogV4BundleSize from 'public/blog-assets/nextra-4/blog-v4-bundle-size.mdx'
 import DocsV3BundleSize from 'public/blog-assets/nextra-4/docs-v3-bundle-size.mdx'
@@ -267,13 +267,13 @@ Previously theme config options now should be passed as `props` for `<Layout>`, 
 
 ## New Search Engine – Pagefind
 
-Search engine was migrated from [FlexSearch](https://github.com/nextapps-de/flexsearch) written in
-JavaScript to Rust-powered [Pagefind](https://pagefind.app).
+The search engine has been migrated from [FlexSearch](https://github.com/nextapps-de/flexsearch),
+which is written in JavaScript to the Rust-powered [Pagefind](https://pagefind.app).
 
 ### Benefits
 
 Pagefind is **significantly** faster and delivers **far superior** search results compared to
-FlexSearch. Here are some examples that previously didn't work in earlier versions of Nextra:
+FlexSearch. Here are some examples that didn’t work in earlier versions of Nextra:
 
 1. Indexing remote MDX.
 
@@ -365,23 +365,30 @@ FlexSearch. Here are some examples that previously didn't work in earlier versio
 New search engine requires few steps to setup:
 
 <Steps>
-<h4>Instal `pagefind` as `devDependency`</h4>
+<h4>Install `pagefind` as a dev dependency</h4>
 ```sh npm2yarn
 npm i -D pagefind
 ```
-<h4>Add `postbuild` script</h4>
+<h4>Add a `postbuild` script</h4>
 
 Pagefind indexes `.html` pages and search indexing should be done after building your application:
 
-```json filename="package.json" {4}
+<Tabs items={['Server builds', 'Static exports']}>
+<Tabs.Tab>
+```json filename="package.json" {2}
 "scripts": {
-  "dev": "next --turbopack",
-  "build": "next build",
-  "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
-  // Or if you use Next.js' Static Exports
+  "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind"
+}
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```json filename="package.json" {2}
+"scripts": {
   "postbuild": "pagefind --site .next/server/app --output-path out/_pagefind"
 }
 ```
+</Tabs.Tab>
+</Tabs>
 
 <h4>Enable `pre`/`post` scripts (_optional_)</h4>
 
@@ -402,7 +409,7 @@ enable-pre-post-scripts=true
 
 <h4>Add `_pagefind/` directory to `.gitignore` file</h4>
 
-You don't need to commit `_pagefind/` directory to your git repository, he should be always newly
+You don’t need to commit `_pagefind/` directory to your Git repository, as it is always newly
 generated.
 
 ```text filename=".gitignore" {3}
@@ -414,8 +421,8 @@ _pagefind/
 <h4>Use `<Search>` component in your custom theme</h4>
 
 Search from `nextra-theme-docs` was exported in `nextra/components`. With this change
-`nextra-theme-blog` received search feature too. And you can benefit from it as well in your custom
-themes.
+`nextra-theme-blog` now also supports search. You can take advantage of this feature as well in your
+custom themes.
 
 ```jsx filename="app/layout.jsx" {1,8}
 import { Search } from 'nextra/components'
@@ -443,10 +450,8 @@ Thanks to server components, we no longer need to ship to client translation dic
 according translation as `props` to `<Layout>`, `<Banner>`, `<Footer>`, etc. components in
 `app/[lang]/layout.jsx`.
 
-### Example
-
-Below an example of server components i18n using `nextra-theme-docs`, but the same approach should
-be applied for your custom theme:
+Below is an example of server components i18n using `nextra-theme-docs`, but the same approach
+should be applied to your custom theme:
 
 <ExampleLayoutForI18nDocsTheme />
 
