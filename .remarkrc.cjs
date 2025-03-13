@@ -26,6 +26,8 @@ const IGNORE_CASING_WORDS = [
   'RabbitMQ',
   'PWA',
   'WebSocket',
+  'SOC-2',
+  'Type II',
   'WebSockets',
   'SSE',
   'SSEs',
