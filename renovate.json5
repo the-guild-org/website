@@ -1,5 +1,18 @@
 {
   extends: ['github>the-guild-org/shared-config:renovate'],
-  // ignore Nextra to avoid conflicts with @theguild/components
-  ignoreDeps: ['nextra'],
+  "automerge": true,
+  "major": {
+    "automerge": false
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
+    }
+  ]
 }
