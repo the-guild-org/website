@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/new-graphql-inspector': 'https://the-guild.dev/graphql/hive/blog/new-graphql-inspector',
       '/blog/hive-introducing-schema-policy': 'https://the-guild.dev/graphql/hive/blog/hive-introducing-schema-policy',
       '/blog/improved-security-with-graphql-armor-support-for-yoga-server-2': 'https://the-guild.dev/graphql/hive/blog/improved-security-with-graphql-armor-support-for-yoga-server-2',
       '/blog/graphql-modules-scoped-providers': 'https://the-guild.dev/graphql/hive/blog/graphql-modules-scoped-providers',
