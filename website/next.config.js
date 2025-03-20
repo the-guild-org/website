@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/on-demand-shared-graphql-subscriptions-with-rxjs': 'https://the-guild.dev/graphql/hive/blog/on-demand-shared-graphql-subscriptions-with-rxjs',
       '/blog/dependency-injection-library-in-graphql-modules': 'https://the-guild.dev/graphql/hive/blog/dependency-injection-library-in-graphql-modules',
       '/blog/graphql-error-handling-with-fp': 'https://the-guild.dev/graphql/hive/blog/graphql-error-handling-with-fp',
       '/blog/how-we-shipped-cdn-access-tokens-with-cloudflare-workers-and-r2': 'https://the-guild.dev/graphql/hive/blog/how-we-shipped-cdn-access-tokens-with-cloudflare-workers-and-r2',
