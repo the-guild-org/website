@@ -37,8 +37,9 @@ for (const post of postsToRemove) {
   const marker = '// Blog posts moved to the Hive blog'
   let start = nextConfig.indexOf(marker);
   start += marker.length;
-  // we'll add a line below the marker
-  const filename = post.replace('.mdx', '');
+  const filename = post.slice(2)
+    .replace('/index.mdx', '')
+    .replace('.mdx', '');
   const oldPath = `/blog/${filename}`;
   const newPath = `https://the-guild.dev/graphql/hive/blog/${filename}`;
   const line = `\n      '${oldPath}': '${newPath}',`;
@@ -46,6 +47,7 @@ for (const post of postsToRemove) {
   fs.writeFileSync('../../next.config.js', nextConfig);
 
   execSync(`git add ${post}`);
+  execSync(`git add ../../next.config.js`);
   execSync(`git commit -m "Remove ${post}"`);
 }
 
