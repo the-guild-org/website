@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/swift-graphql': 'https://the-guild.dev/graphql/hive/blog/swift-graphql',
       '/blog/graphql-authentication-with-envelop-and-auth0': 'https://the-guild.dev/graphql/hive/blog/graphql-authentication-with-envelop-and-auth0',
       '/blog/graphql-request-cancellation': 'https://the-guild.dev/graphql/hive/blog/graphql-request-cancellation',
       '/blog/remote-control-graphql-inspector': 'https://the-guild.dev/graphql/hive/blog/remote-control-graphql-inspector',
