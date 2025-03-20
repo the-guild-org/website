@@ -20,7 +20,7 @@ export default withGuildDocs({
       '/blog/graphql-eslint-3': '/blog/graphql-eslint-3.14',
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
-      // Blog posts moved to the Hive blog
+      // #region Blog posts moved to the Hive blog
       '/blog/graphql-eslint-3.14': 'https://the-guild.dev/graphql/hive/blog/graphql-eslint-3.14',
       '/blog/supercharge-your-subgraph-with-hive': 'https://the-guild.dev/graphql/hive/blog/supercharge-your-subgraph-with-hive',
       '/blog/state-of-graphql-gateways-in-2023': 'https://the-guild.dev/graphql/hive/blog/state-of-graphql-gateways-in-2023',
@@ -139,6 +139,7 @@ export default withGuildDocs({
       '/blog/whatsapp-clone-react-hooks-graphql-typescript-and-postgresql': 'https://the-guild.dev/graphql/hive/blog/whatsapp-clone-react-hooks-graphql-typescript-and-postgresql',
       '/blog/multiple-environments-endpoints-graphql-inspector': 'https://the-guild.dev/graphql/hive/blog/multiple-environments-endpoints-graphql-inspector',
       '/blog/graphql-deep-dive-2': 'https://the-guild.dev/graphql/hive/blog/graphql-deep-dive-2',
+      // #endregion Blog posts moved to the Hive blog
     }).map(([from, to]) => ({
       source: from,
       destination: to,
