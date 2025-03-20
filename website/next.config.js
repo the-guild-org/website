@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/accountsjs-graphql-modules': 'https://the-guild.dev/graphql/hive/blog/accountsjs-graphql-modules',
       '/blog/graphql-codegen-plugin-typescript-swr': 'https://the-guild.dev/graphql/hive/blog/graphql-codegen-plugin-typescript-swr',
       '/blog/new-graphql-inspector': 'https://the-guild.dev/graphql/hive/blog/new-graphql-inspector',
       '/blog/hive-introducing-schema-policy': 'https://the-guild.dev/graphql/hive/blog/hive-introducing-schema-policy',
