@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/federation-gateway-audit': 'https://the-guild.dev/graphql/hive/blog/federation-gateway-audit',
       '/blog/the-complete-graphql-scalar-guide': 'https://the-guild.dev/graphql/hive/blog/the-complete-graphql-scalar-guide',
       '/blog/graphql-authz': 'https://the-guild.dev/graphql/hive/blog/graphql-authz',
       '/blog/graphql-yoga-worker': 'https://the-guild.dev/graphql/hive/blog/graphql-yoga-worker',
