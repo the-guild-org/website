@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/graphql-modules-scoped-providers': 'https://the-guild.dev/graphql/hive/blog/graphql-modules-scoped-providers',
       '/blog/hive-summer-update-2023': 'https://the-guild.dev/graphql/hive/blog/hive-summer-update-2023',
       '/blog/codegen-typescript-react-apollo': 'https://the-guild.dev/graphql/hive/blog/codegen-typescript-react-apollo',
       '/blog/graphql-codegen-hooks-support-react-apollo': 'https://the-guild.dev/graphql/hive/blog/graphql-codegen-hooks-support-react-apollo',
