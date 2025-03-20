@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/stellate-acquisition': 'https://the-guild.dev/graphql/hive/blog/stellate-acquisition',
       '/blog/graphql-modules': 'https://the-guild.dev/graphql/hive/blog/graphql-modules',
       '/blog/a-new-year-for-schema-stitching': 'https://the-guild.dev/graphql/hive/blog/a-new-year-for-schema-stitching',
       '/blog/on-demand-shared-graphql-subscriptions-with-rxjs': 'https://the-guild.dev/graphql/hive/blog/on-demand-shared-graphql-subscriptions-with-rxjs',
