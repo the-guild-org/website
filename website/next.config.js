@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/open-source-apollo-federation': 'https://the-guild.dev/graphql/hive/blog/open-source-apollo-federation',
       '/blog/graphql-over-websockets': 'https://the-guild.dev/graphql/hive/blog/graphql-over-websockets',
       '/blog/the-anatomy-of-a-graphql-request': 'https://the-guild.dev/graphql/hive/blog/the-anatomy-of-a-graphql-request',
       '/blog/graphql-code-generator-090': 'https://the-guild.dev/graphql/hive/blog/graphql-code-generator-090',
