@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/how-to-write-graphql-resolvers-effectively': 'https://the-guild.dev/graphql/hive/blog/how-to-write-graphql-resolvers-effectively',
       '/blog/graphql-config': 'https://the-guild.dev/graphql/hive/blog/graphql-config',
       '/blog/houdini-and-kitql': 'https://the-guild.dev/graphql/hive/blog/houdini-and-kitql',
       '/blog/federation-gateway-audit': 'https://the-guild.dev/graphql/hive/blog/federation-gateway-audit',
