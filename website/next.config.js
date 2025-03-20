@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/slack-bot-with-cloudflare': 'https://the-guild.dev/graphql/hive/blog/slack-bot-with-cloudflare',
       '/blog/graphql-modules-v1': 'https://the-guild.dev/graphql/hive/blog/graphql-modules-v1',
       '/blog/graphql-deep-dive-1': 'https://the-guild.dev/graphql/hive/blog/graphql-deep-dive-1',
       '/blog/how-not-to-learn-graphql': 'https://the-guild.dev/graphql/hive/blog/how-not-to-learn-graphql',
