@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/introducing-graphql-inspector': 'https://the-guild.dev/graphql/hive/blog/introducing-graphql-inspector',
       '/blog/graphql-deep-dive-6': 'https://the-guild.dev/graphql/hive/blog/graphql-deep-dive-6',
       '/blog/graphql-over-internet': 'https://the-guild.dev/graphql/hive/blog/graphql-over-internet',
       '/blog/subscriptions-and-live-queries-real-time-with-graphql': 'https://the-guild.dev/graphql/hive/blog/subscriptions-and-live-queries-real-time-with-graphql',
