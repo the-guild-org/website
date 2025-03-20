@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/graphql-yoga-v3': 'https://the-guild.dev/graphql/hive/blog/graphql-yoga-v3',
       '/blog/manage-circular-imports-hell-in-graphql-modules': 'https://the-guild.dev/graphql/hive/blog/manage-circular-imports-hell-in-graphql-modules',
       '/blog/graphql-over-sse': 'https://the-guild.dev/graphql/hive/blog/graphql-over-sse',
       '/blog/typescript-graphql-unions-types': 'https://the-guild.dev/graphql/hive/blog/typescript-graphql-unions-types',
