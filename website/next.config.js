@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/graphql-over-internet': 'https://the-guild.dev/graphql/hive/blog/graphql-over-internet',
       '/blog/subscriptions-and-live-queries-real-time-with-graphql': 'https://the-guild.dev/graphql/hive/blog/subscriptions-and-live-queries-real-time-with-graphql',
       '/blog/graphql-typescript-modules-codegen': 'https://the-guild.dev/graphql/hive/blog/graphql-typescript-modules-codegen',
       '/blog/graphql-codegen-best-practices': 'https://the-guild.dev/graphql/hive/blog/graphql-codegen-best-practices',
