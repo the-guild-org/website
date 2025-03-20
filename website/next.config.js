@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/open-source-graphql-security': 'https://the-guild.dev/graphql/hive/blog/open-source-graphql-security',
       '/blog/optimize-bundle-size-with-swc-and-graphql-codegen': 'https://the-guild.dev/graphql/hive/blog/optimize-bundle-size-with-swc-and-graphql-codegen',
       '/blog/defer-support-codegen': 'https://the-guild.dev/graphql/hive/blog/defer-support-codegen',
       '/blog/graphqxl-language': 'https://the-guild.dev/graphql/hive/blog/graphqxl-language',
