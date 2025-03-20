@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/announcing-graphql-network-inspector': 'https://the-guild.dev/graphql/hive/blog/announcing-graphql-network-inspector',
       '/blog/graphql-cli-is-back': 'https://the-guild.dev/graphql/hive/blog/graphql-cli-is-back',
       '/blog/understanding-the-differences-between-graphql-and-rest-api-gateways': 'https://the-guild.dev/graphql/hive/blog/understanding-the-differences-between-graphql-and-rest-api-gateways',
       '/blog/ci-ci-graphql-inspector': 'https://the-guild.dev/graphql/hive/blog/ci-ci-graphql-inspector',
