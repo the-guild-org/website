@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/graphql-code-generator-and-prisma': 'https://the-guild.dev/graphql/hive/blog/graphql-code-generator-and-prisma',
       '/blog/joining-graphql-foundation': 'https://the-guild.dev/graphql/hive/blog/joining-graphql-foundation',
       '/blog/add-reactivity-to-an-existing-source': 'https://the-guild.dev/graphql/hive/blog/add-reactivity-to-an-existing-source',
       '/blog/graphqlconf-2023-recap': 'https://the-guild.dev/graphql/hive/blog/graphqlconf-2023-recap',
