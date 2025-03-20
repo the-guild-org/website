@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/announcing-free-single-sign-on-for-graphql-hive': 'https://the-guild.dev/graphql/hive/blog/announcing-free-single-sign-on-for-graphql-hive',
       '/blog/whats-new-in-graphql-cli-4.1.0': 'https://the-guild.dev/graphql/hive/blog/whats-new-in-graphql-cli-4.1.0',
       '/blog/announcing-self-hosted-graphql-hive': 'https://the-guild.dev/graphql/hive/blog/announcing-self-hosted-graphql-hive',
       '/blog/introducing-graphql-inspector': 'https://the-guild.dev/graphql/hive/blog/introducing-graphql-inspector',
