@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/state-of-graphql-gateways-in-2023': 'https://the-guild.dev/graphql/hive/blog/state-of-graphql-gateways-in-2023',
       '/blog/introducing-envelop': 'https://the-guild.dev/graphql/hive/blog/introducing-envelop',
       '/blog/graphql-hive-and-clickhouse': 'https://the-guild.dev/graphql/hive/blog/graphql-hive-and-clickhouse',
       '/blog/migrating-from-rest': 'https://the-guild.dev/graphql/hive/blog/migrating-from-rest',
