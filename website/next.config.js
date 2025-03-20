@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/whatsapp-clone-react-hooks-graphql-typescript-and-postgresql': 'https://the-guild.dev/graphql/hive/blog/whatsapp-clone-react-hooks-graphql-typescript-and-postgresql',
       '/blog/multiple-environments-endpoints-graphql-inspector': 'https://the-guild.dev/graphql/hive/blog/multiple-environments-endpoints-graphql-inspector',
       '/blog/graphql-deep-dive-2': 'https://the-guild.dev/graphql/hive/blog/graphql-deep-dive-2',
     }).map(([from, to]) => ({
