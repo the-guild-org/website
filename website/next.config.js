@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/modular-encapsulation-graphql-modules': 'https://the-guild.dev/graphql/hive/blog/modular-encapsulation-graphql-modules',
       '/blog/graphql-deep-dive-5': 'https://the-guild.dev/graphql/hive/blog/graphql-deep-dive-5',
       '/blog/announcing-graphql-network-inspector': 'https://the-guild.dev/graphql/hive/blog/announcing-graphql-network-inspector',
       '/blog/graphql-cli-is-back': 'https://the-guild.dev/graphql/hive/blog/graphql-cli-is-back',
