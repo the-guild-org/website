@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/collecting-graphql-live-query-resource-identifier-with-graphql-tools': 'https://the-guild.dev/graphql/hive/blog/collecting-graphql-live-query-resource-identifier-with-graphql-tools',
       '/blog/graphql-response-caching-with-envelop': 'https://the-guild.dev/graphql/hive/blog/graphql-response-caching-with-envelop',
       '/blog/offline-graphql-the-easy-parts': 'https://the-guild.dev/graphql/hive/blog/offline-graphql-the-easy-parts',
       '/blog/graphql-scalars': 'https://the-guild.dev/graphql/hive/blog/graphql-scalars',
