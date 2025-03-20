@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/graphql-over-sse': 'https://the-guild.dev/graphql/hive/blog/graphql-over-sse',
       '/blog/typescript-graphql-unions-types': 'https://the-guild.dev/graphql/hive/blog/typescript-graphql-unions-types',
       '/blog/graphql-code-generator-011': 'https://the-guild.dev/graphql/hive/blog/graphql-code-generator-011',
       '/blog/graphql-codegen-and-apollo-client-3': 'https://the-guild.dev/graphql/hive/blog/graphql-codegen-and-apollo-client-3',
