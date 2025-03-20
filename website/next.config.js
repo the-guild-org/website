@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/sofa': 'https://the-guild.dev/graphql/hive/blog/sofa',
       '/blog/unleash-the-power-of-fragments-with-graphql-codegen': 'https://the-guild.dev/graphql/hive/blog/unleash-the-power-of-fragments-with-graphql-codegen',
       '/blog/graphql-mesh': 'https://the-guild.dev/graphql/hive/blog/graphql-mesh',
       '/blog/graphql-cursor-pagination-with-postgresql': 'https://the-guild.dev/graphql/hive/blog/graphql-cursor-pagination-with-postgresql',
