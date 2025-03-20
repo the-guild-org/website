@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/graphql-yoga-nestjs-v9': 'https://the-guild.dev/graphql/hive/blog/graphql-yoga-nestjs-v9',
       '/blog/graphql-as-a-best-practice-for-modern-angular-apps': 'https://the-guild.dev/graphql/hive/blog/graphql-as-a-best-practice-for-modern-angular-apps',
       '/blog/graphql-stencil-apollo': 'https://the-guild.dev/graphql/hive/blog/graphql-stencil-apollo',
       '/blog/better-type-safety-for-resolvers-with-graphql-codegen': 'https://the-guild.dev/graphql/hive/blog/better-type-safety-for-resolvers-with-graphql-codegen',
