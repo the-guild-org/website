@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/migrating-from-rest': 'https://the-guild.dev/graphql/hive/blog/migrating-from-rest',
       '/blog/graphql-hive-improvements-in-schema-registry': 'https://the-guild.dev/graphql/hive/blog/graphql-hive-improvements-in-schema-registry',
       '/blog/sofa': 'https://the-guild.dev/graphql/hive/blog/sofa',
       '/blog/unleash-the-power-of-fragments-with-graphql-codegen': 'https://the-guild.dev/graphql/hive/blog/unleash-the-power-of-fragments-with-graphql-codegen',
