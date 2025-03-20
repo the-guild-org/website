@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/graphql-yoga-worker': 'https://the-guild.dev/graphql/hive/blog/graphql-yoga-worker',
       '/blog/caching-data-with-dataloader': 'https://the-guild.dev/graphql/hive/blog/caching-data-with-dataloader',
       '/blog/announcing-graphql-yoga-v2': 'https://the-guild.dev/graphql/hive/blog/announcing-graphql-yoga-v2',
       '/blog/graphql-yoga-nestjs-v9': 'https://the-guild.dev/graphql/hive/blog/graphql-yoga-nestjs-v9',
