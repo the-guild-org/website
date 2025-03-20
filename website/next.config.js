@@ -20,6 +20,7 @@ export default withGuildDocs({
       '/blog/graphql-eslint-3': '/blog/graphql-eslint-3.14',
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
+      // Blog posts moved to the Hive blog
     }).map(([from, to]) => ({
       source: from,
       destination: to,
