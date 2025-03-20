@@ -21,6 +21,7 @@ export default withGuildDocs({
       '/blog/graphql-cli': '/blog/graphql-cli-is-back',
       '/open-source': '/about-us',
       // Blog posts moved to the Hive blog
+      '/blog/graphql-codegen-relay-compiler': 'https://the-guild.dev/graphql/hive/blog/graphql-codegen-relay-compiler',
       '/blog/apollo-angular-011': 'https://the-guild.dev/graphql/hive/blog/apollo-angular-011',
       '/blog/graphql-codegen-java': 'https://the-guild.dev/graphql/hive/blog/graphql-codegen-java',
       '/blog/graphql-mesh-v1-hive-gateway-v1': 'https://the-guild.dev/graphql/hive/blog/graphql-mesh-v1-hive-gateway-v1',
