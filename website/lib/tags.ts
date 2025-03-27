@@ -59,7 +59,6 @@ export function extractRelevantTags(
     // Map to the final format
     .map(([tag, { title, count }]) => ({ tag, title, count }));
 
-
   // Return only top 10 as we could have more
   // than 10 because of the important tags
   return top10.slice(0, 10);
