@@ -59,19 +59,6 @@ export function extractRelevantTags(
     // Map to the final format
     .map(([tag, { title, count }]) => ({ tag, title, count }));
 
-  // Ensure that the most important tags are always present
-  const importantTags = ['codegen', 'graphql-hive', 'graphql-federation'];
-
-  for (const tag of importantTags) {
-    if (!top10.some(({ tag: t }) => t === tag)) {
-      top10.unshift({
-        tag,
-        title: definedTags[tag]?.title ?? tag,
-        count: 0,
-      });
-    }
-  }
-
   // Return only top 10 as we could have more
   // than 10 because of the important tags
   return top10.slice(0, 10);
