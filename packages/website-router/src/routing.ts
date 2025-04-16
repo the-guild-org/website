@@ -202,8 +202,10 @@ export async function handleRewrite(options: {
 
     response = await options.manipulateResponse(options.record, freshResponse);
 
-    // Make sure the worker wait behind the scenes, for the Response content.
-    await cache.put(cacheKey, response.clone());
+    if (options.request.method === 'GET') {
+      // Make sure the worker wait behind the scenes, for the Response content.
+      await cache.put(cacheKey, response.clone());
+    }
   }
 
   return response;
