@@ -46,13 +46,14 @@ async function handleErrorResponse(options: {
       });
     }
 
-    options.sentry.captureException(
-      new Error(` ${options.response.status}: ${requestedEndpoint} `),
-    );
-
     // return original response if it isnt a 404, will help with
     // debugging especially if Cloudflare is blocking the request
     if (options.response.status !== 404) {
+      // we don't want to report 404
+      options.sentry.captureException(
+        new Error(` ${options.response.status}: ${requestedEndpoint} `),
+      );
+
       return options.response;
     }
 
