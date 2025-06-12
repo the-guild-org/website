@@ -9,6 +9,7 @@ async function handleErrorResponse(options: {
   endpoint: string;
   cfFetchCacheTtl: number;
   fallbackRoute: RewriteRecord;
+  manipulateResponse: ManipulateResponseFn;
 }) {
   const requestedEndpoint = options.request.url;
 
@@ -64,10 +65,15 @@ async function handleErrorResponse(options: {
       },
     });
 
-    return new Response(errorResponseContent.body, {
-      status: options.response.status,
-      headers: errorResponseContent.headers,
-    });
+    // Inject analytics and other HTMLRewriter handlers
+    const rewrittenNotFound = await options.manipulateResponse(
+      options.fallbackRoute,
+      new Response(errorResponseContent.body, {
+        status: options.response.status,
+        headers: errorResponseContent.headers,
+      })
+    );
+    return rewrittenNotFound;
   }
 
   return options.response;
@@ -197,6 +203,7 @@ export async function handleRewrite(options: {
         response: freshResponse,
         cfFetchCacheTtl: options.cfFetchCacheTtl,
         fallbackRoute: options.fallbackRoute,
+        manipulateResponse: options.manipulateResponse,
       });
     }
 
