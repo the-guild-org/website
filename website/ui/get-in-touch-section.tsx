@@ -127,7 +127,7 @@ export function GetInTouchSection({ className }: { className?: string }): ReactE
   return (
     <div
       className={clsx(
-        'mb-16 grid gap-14 rounded-[30px] bg-[#f1f1f1] p-7 dark:bg-[#24272E]/50 md:p-24 lg:mb-32 lg:grid-cols-2 xl:gap-48',
+        'mb-16 grid gap-14 rounded-[30px] bg-[#f1f1f1] p-7 md:p-24 lg:mb-32 lg:grid-cols-2 xl:gap-48 dark:bg-[#24272E]/50',
         className,
       )}
     >

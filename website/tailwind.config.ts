@@ -1,6 +1,6 @@
-import hocusPlugin from 'tailwindcss-hocus';
 // @ts-expect-error -- types are missing
-import plugin from 'tailwindcss/plugin';
+import plugin from 'prettier-plugin-tailwindcss';
+import hocusPlugin from 'tailwindcss-hocus';
 import config from '@theguild/tailwind-config';
 
 export default {
