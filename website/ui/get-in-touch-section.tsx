@@ -19,14 +19,6 @@ export const GetInTouchForm = (): ReactElement => {
         notes: Yup.string().optional().required(),
       }),
       async onSubmit({ name, email, notes }) {
-        try {
-          if ('ko' in globalThis) {
-            globalThis.ko.identify({ email, name });
-          }
-        } catch {
-          // nothing to do here, maybe koala was not loaded
-        }
-
         const response = await fetch('https://utils.the-guild.dev/api/contact-us', {
           method: 'POST',
           headers: {
@@ -135,7 +127,7 @@ export function GetInTouchSection({ className }: { className?: string }): ReactE
   return (
     <div
       className={clsx(
-        'mb-16 grid gap-14 rounded-[30px] bg-[#f1f1f1] p-7 md:p-24 lg:mb-32 lg:grid-cols-2 xl:gap-48 dark:bg-[#24272E]/50',
+        'mb-16 grid gap-14 rounded-[30px] bg-[#f1f1f1] p-7 dark:bg-[#24272E]/50 md:p-24 lg:mb-32 lg:grid-cols-2 xl:gap-48',
         className,
       )}
     >
