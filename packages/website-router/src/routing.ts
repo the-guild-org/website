@@ -71,7 +71,7 @@ async function handleErrorResponse(options: {
       new Response(errorResponseContent.body, {
         status: options.response.status,
         headers: errorResponseContent.headers,
-      })
+      }),
     );
     return rewrittenNotFound;
   }
