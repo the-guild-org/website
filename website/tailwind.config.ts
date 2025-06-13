@@ -1,5 +1,5 @@
-import plugin from 'prettier-plugin-tailwindcss';
 import hocusPlugin from 'tailwindcss-hocus';
+import plugin from 'tailwindcss/plugin';
 import config from '@theguild/tailwind-config';
 
 export default {
