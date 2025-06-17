@@ -8,7 +8,6 @@ import { handleFeed, shouldHandleFeed } from './feed/handler';
 import { BannerHandler } from './html-handlers/banner';
 import { CrispHandler } from './html-handlers/crisp';
 import { GoogleAnalyticsHandler } from './html-handlers/ga';
-import { KoalaHandler } from './html-handlers/koala';
 import { handleRobotsTxt, shouldHandleRobotsTxt } from './robots/handler';
 import { handleRewrite, ManipulateResponseFn, redirect } from './routing';
 import { handleSitemap, shouldHandleSitemap } from './sitemap/handler';
@@ -41,7 +40,6 @@ const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => 
     result = new HTMLRewriter()
       .on('head', new FaviconHandler())
       .on('head', new CrispHandler(crispWebsiteId, record))
-      .on('head', new KoalaHandler(koaliaPk))
       .on('body', new BannerHandler(defaultBanner || record.banner))
       .on('head', new GoogleAnalyticsHandler(gaTrackingId))
       .transform(result);
