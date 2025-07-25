@@ -5,18 +5,20 @@ authors: [valentin]
 date: 2024-03-23
 description:
   Explore OpenTelemetry's role in GraphQL Gateway monitoring and Hive Gateway's latest improvements.
-image: /blog-assets/opentelemetry-graphql/opentelemetry-logo.png
-thumbnail: /blog-assets/opentelemetry-graphql/opentelemetry-thumbnail.png
+thumbnail: /blog-assets/opentelemetry-graphql/thumbnail.png
+image: /blog-assets/opentelemetry-graphql/thumbnail.png
 ---
 
-## The Importance of Monitoring GraphQL Gateways
+import { Tabs} from '@theguild/components'
+
+## The Importance of Monitoring and Tracing for GraphQL Gateways
 
 GraphQL Gateways play a crucial role in modern API architectures, acting as the central point for
 request routing, schema composition, and performance optimization. As these gateways handle
 increasing amounts of traffic and complexity, monitoring their performance and behavior becomes
 essential for maintaining reliable and efficient systems.
 
-## Current State of GraphQL Gateway Monitoring
+### Current State of GraphQL Gateway Monitoring
 
 Traditionally, monitoring GraphQL Gateways has been challenging due to several factors:
 
@@ -32,7 +34,7 @@ Traditionally, monitoring GraphQL Gateways has been challenging due to several f
    from the gateway itself, a specific subgraph, or the communication between them, making debugging
    a complex process.
 
-## OpenTelemetry: A Game-Changer for GraphQL Monitoring
+### OpenTelemetry: A Game-Changer for GraphQL Monitoring
 
 OpenTelemetry has emerged as a powerful solution for monitoring GraphQL Gateways, offering:
 
@@ -40,101 +42,277 @@ OpenTelemetry has emerged as a powerful solution for monitoring GraphQL Gateways
    traces, and logs across different programming languages and frameworks.
 2. **Rich Context**: The ability to propagate context across service boundaries helps track requests
    through the entire system.
-3. **Vendor Agnostic**: OpenTelemetry's vendor-agnostic approach allows you to choose your preferred
+3. **Cross Platform and Languages**: OpenTelemetry is available on most languages and platforms,
+   allowing to extend the boundaries of your observable system.
+4. **Vendor Agnostic**: OpenTelemetry's vendor-agnostic approach allows you to choose your preferred
    observability backend.
-4. **Open Source**: As an open-source project, OpenTelemetry perfectly aligns with The Guild's
-   values of transparency and community-driven development.
 
-## Key Metrics and Traces for GraphQL Gateways
+## New Hive Gateway's OpenTelemetry Integration
 
-When monitoring GraphQL Gateways with OpenTelemetry, several key metrics and traces are essential:
+Hive Gateway's integration of OpenTelemetry have been entirely re-written to better use it's
+standard SDK features, and allow for better interoperability with other tools (being custom ones or
+third party libraries). We're excited to announce significant improvements to Hive Gateway's
 
-1. **Request Lifecycle Tracing**:
+### New cross-runtime configuration helper
 
-   - HTTP request/response spans
-   - GraphQL operation execution spans
-   - Query parsing and validation timing
+You can now enable OpenTelemetry support with just one CLI option! You can easily test our new
+integration by providing the [`--opentelemetry` option of our `hive-gateway` CLI. You can either
+provide a custom endpoint our rely on the standard default OTLP over HTTP exporter.
 
-2. **Subgraph Communication**:
+For more control over the OpenTelemetry setup, we also now provide a cross-runtime
+`openTelemetrySetup` function from `@graphql-mesh/plugin-opentelemetry/setup` or we support standard
+`NodeSDK` from `@opentelemetry/sdk-node` for a NodeJS specific setup.
 
-   - Upstream HTTP fetch calls to subgraphs
-   - Subgraph execution timing and status
-   - Subgraph-specific error rates and latency
+<Tabs items={["CLI", <code>openTelemetrySetup</code>, <code>NodeSDK</code>]}>
 
-3. **Operation Performance**:
-   - Overall query execution time
-   - Subgraph-specific execution times
-   - Error rates and types
-   - Request throughput
+<Tabs.Tab>
 
-## Hive Gateway's OpenTelemetry Integration
+```bash
+hive-gateway supergraph --opentelemtry
+```
 
-We're excited to announce significant improvements to Hive Gateway's OpenTelemetry integration.
-These enhancements provide:
+</Tabs.Tab>
 
-1. **Enhanced Tracing**:
+<Tabs.Tab>
 
-   - Detailed request tracing across subgraphs
-   - Automatic span creation for schema operations
-   - Context propagation between services
+```ts filename="telemetry.ts"
+import { openTelemetrySetup } '@graphql-mesh/plugin-opentelemetry'
+import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks'
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
 
-2. **Comprehensive Metrics**:
+openTelemetrySetup({
+   contextManager: new AsyncLocalStorageManager(),
+   traces: {
+      exporter: new OTLPTraceExporter({ url: process.env('OTLP_EXPORTER_URL') })
+   }
+})
+```
 
-   - Real-time performance metrics
-   - Detailed error tracking
-   - Resource utilization monitoring
-
-3. **Improved Debugging**:
-   - Better error context
-   - Request/response correlation
-   - Performance bottleneck identification
-
-## Getting Started with Hive Gateway's OpenTelemetry Integration
-
-You can try the new OpenTelemetry integration with Hive Gateway by simply enabling it in your
-gateway configuration!
-
-We support most used exporters out of the box, but you can also import your own custom ones.
-
-> If you don't already have a tracing backend setup, you can use our
-> [OpenTelemetry example repository](https://github.com/the-guild-org/graphql-gateway-otel/tree/main/otel)
-> to get started.
-
-```typescript
-import { createOtlpHttpExporter, defineConfig } from "@graphql-hive/gateway";
-import { createOtlpHttpExporter, setupOpenTelemetry } from "@graphql-hive/opentelemetry-setup";
-
-setupOpenTelemetry({
-  exporters: [
-    createOtlpHttpExporter({ url: "http://localhost:4317" }),
-  ],
-});
+```ts filename="gateway.config.ts"
+import './telemetry.ts'
+import { defineConfig } from '@graphql-hive/gateway'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: {
-    tracing: true,
+    traces: true
   }
-});
+})
 ```
 
-This configuration enables OpenTelemetry tracing with HTTP OTLP exporter. The exporter will
-automatically set up the Node.js OpenTelemetry SDK and ensure trace context is properly propagated
-across service boundaries.
+</Tabs.Tab>
 
-## Future Improvements
+<Tabs.Tab>
 
-The OpenTelemetry integration we're releasing today lays the foundation for several exciting future
-improvements. Thanks to OpenTelemetry's unified context, metrics, logs, and traces will be
-automatically correlated, making it easier to debug errors and performance issues. When a problem
-occurs, you'll be able to jump from a slow query trace directly to the relevant logs and metrics,
-providing a complete picture of what happened during problematic requests.
+```ts filename="telemetry.ts"
+import { NodeSDK, tracing } from '@opentelemetry/sdk-node'
+
+const sdk = new NodeSDK({
+  traceExporter: new tracing.OTLPTraceExporter({ url: process.env('OTLP_EXPORTER_URL') })
+})
+
+skd.start()
+```
+
+```ts filename="gateway.config.ts"
+import './telemetry.ts'
+import { defineConfig } from '@graphql-hive/gateway'
+
+export const gatewayConfig = defineConfig({
+  openTelemetry: {
+    traces: true
+  }
+})
+```
+
+</Tabs.Tab>
+
+</Tabs>
+
+### Span parenting and Critical Path Analysis
+
+Spans are now nested within each-other, making it easier to understand execution flow. It also
+allows the usage of
+[Critical Path Analysis](https://www.uber.com/en-FR/blog/crisp-critical-path-analysis-for-microservice-architectures/)
+in your visualization tool (like
+[Grafana's Critical Path Highlighting](https://github.com/grafana/grafana/pull/76857)).
+
+<video>
+   <source src="/blog-assets/opentelemetry-graphql/demo-span-parenting.webm" type="video/webm"/>
+   <source src="/blog-assets/opentelemetry-graphql/demo-span-parenting.mp4" type="video/mp4"/>
+   <a alt="Click on this image to download video demo" href="/blog-assets/opentelemetry-graphql/demo-span-parenting.mp4">
+      <img src="/blog-assets/opentelemetry-graphql/demo-span-parenting.png"/>
+   </a>
+   Click on image to download the video demo.
+</video>
+
+### Support of HTTP batching
+
+Our integration now fully support batched queries with the addition of a new `graphql.operation`
+span.
+
+This span represent the processing and execution of a single graphql operation. A single HTTP span
+can contain multiple graphql operation span in case of a batched HTTP request.
+
+![A screenshot demoing batched graphql operation tracing](/blog-assets/opentelemetry-graphql/demo-http-batching.png)
+
+### Standard OpenTelemetry Context support
+
+The OpenTelemetry integration now fully support the standard Context, which opens a wide range of
+new customization possibilities we will see later in this post.
+
+Our integration also have an internal Context Manager, so that span parenting is working on all
+runtimes, even those without `AsyncLocalStorage` API implementation.
+
+### Easier custom spans
+
+You can now easily register custom spans from your custom plugins! Thanks to the standard
+OpenTelemetry Context, your custom spans will be parented correctly.
+
+```ts filename="gateway.config.ts"
+import 'telemetry.ts'
+import { defineConfig } from '@graphql-hive/gateway'
+import { trace } from '@opentelemetry/api'
+import { getUserFromRequest } from './authentication'
+
+export const gatewayConfig = defineConfig({
+  openTelemetry: { traces: true },
+
+  genericAuth: {
+    mode: 'protect-granular',
+    resolveUserFn: ctx =>
+      trace.getTracer('gateway').startActiveSpan('auth.validate_user', async span => {
+        const token = ctx.request.headers.get('authorization')
+        const user = await fetch(`https://auth/validate?token=${token}`).then(r => r.json())
+        span.end()
+        return user
+      })
+  }
+})
+```
+
+![A screenshot showing custom span registered at context building time](/blog-assets/opentelemetry-graphql/demo-custom-span.png)
+
+### Custom Span Attributes
+
+You can now easily add your own custom attributes to any span using the standard
+`@opentelemetry/api` module.
+
+The most straight forward usage is to add an attribute to the current span, the `graphql.execute`
+span for example:
+
+```ts filename="gateway.config.ts"
+import 'telemetry.ts'
+import { defineConfig } from '@graphql-hive/gateway'
+import { trace } from '@opentelemetry/api'
+
+export const defineConfig({
+  openTelemetry: { traces: true },
+  genericAuth: {
+    //...
+  }
+
+  plugins: () => [{
+    onExecute({ context }) {
+      trace.getActiveSpan()?.setAttribute('auth.user.id', context.user.id ?? '<unauthenticated>')
+    }
+  }]
+})
+```
+
+You can also have access to one of the "root" spans (http, graphql operation and subgraph execution)
+to add or modify there attributes:
+
+```ts filename="gateway.config.ts"
+import './telemetry.ts'
+import { defineConfig } from '@graphql-hive/gateway'
+import { trace } from '@opentelemetry/api'
+
+export const gatewayConfig = defineConfig({
+  openTelemetry: { traces: true },
+
+  genericAuth: {
+    mode: 'protect-granular',
+    async resolveUserFn(ctx) {
+      const token = ctx.request.headers.get('authorization')
+      const user = await fetch(`https://auth/validate?token=${token}`).then(r => r.json)
+
+      const httpSpan = trace.getSpan(ctx.opentelemetry.httpContext())
+      httpSpan?.setAttribute('auth.user.id', user?.id ?? '<unauthenticated>')
+
+      return user
+    }
+  }
+})
+```
+
+![A screenshot showing an example of custom attribute](/blog-assets/opentelemetry-graphql/demo-custom-attributes.png)
+
+### Log Correlation
+
+The new OpenTelemetry integration leverage the new [Hive Logger](!!!!todo!!!!) feature with an
+integration with the beta Logger API of OpenTelemetry.
+
+You can now correlate the logs related to a trace for the best debugging experience!
+
+```ts filename="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway'
+import { Logger } from '@graphql-hive/logger'
+import {
+  OpenTelemetryLogWriter,
+  openTelemetrySetup
+} from '@graphql-mesh/plugin-opentelemetry/setup'
+import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks'
+import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-http'
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
+
+openTelemetrySetup({
+  contextManager: new AsyncLocalStorageManager(),
+  traces: {
+    exporter: new OTLPTraceExporter({ url: process.env('OTLP_EXPORTER_URL') })
+  }
+})
+
+export const gatewayConfig = defineConfig({
+  openTelemetry: { traces: true },
+  logging: new Logger({
+    writers: [
+      new OpenTelemetryLogWriter({
+        exporter: new OTLPLogExporter({ url: process.env('OTLP_EXPORTER_URL') })
+      })
+    ]
+  })
+})
+```
+
+## More coming soon!
+
+Our effort to build the best GraphQL Gateway OpenTelemetry integration is not a short journey, and
+we are preparing more improvement for the future!
+
+We joined the OpenTelemetry Graphql Working Group to push forward the state of GraphQL observability
+further.
+
+Some problems specific to GraphQl are yet to be solved, and we can't wait to share the exiting
+solutions we will build together:
+
+- Subscription traces
+- Better error reporting
+- Attribute cardinality optimization
+- Resolver level spans
+- Data access level spans (integration with `DataLoader`)
 
 ## Conclusion
 
-Hive Gateway's new OpenTelemetry integration brings comprehensive monitoring capabilities to your
-GraphQL infrastructure. By providing detailed traces, metrics, and logs with unified context, it
-helps you identify and resolve issues faster, whether they're in the gateway, subgraphs, or the
-communication between them.
+The OpenTelemetry integration we're releasing today lays the foundation for several exciting future
+improvements. Thanks to OpenTelemetry's unified context, logs and traces will be automatically
+correlated, making it easier to debug errors and performance issues. When a problem occurs, you'll
+be able to jump from a slow query trace directly to the relevant logs, providing a complete picture
+of what happened during problematic requests.
+
+Hive Gateway's integration brings comprehensive monitoring capabilities to your GraphQL
+infrastructure. By providing detailed traces, metrics, and logs with unified context, it helps you
+identify and resolve issues faster, whether they're in the gateway, subgraphs, or the communication
+between them.
 
 To learn more about Hive Gateway's OpenTelemetry integration or to get started with monitoring your
 GraphQL Gateway, visit our [documentation](https://docs.graphql-hive.com) or contact our team.
