@@ -2,9 +2,8 @@
 title: Monitoring GraphQL Gateways with OpenTelemetry
 tags: [graphql, monitoring, opentelemetry, hive]
 authors: [valentin]
-date: 2024-03-23
-description:
-  Explore OpenTelemetry's role in GraphQL Gateway monitoring and Hive Gateway's latest improvements.
+date: 2025-08-04
+description: Explore the new OpenTelemetry integration for Hive Gateway
 thumbnail: /blog-assets/opentelemetry-graphql/thumbnail.png
 image: /blog-assets/opentelemetry-graphql/thumbnail.png
 ---
@@ -53,7 +52,7 @@ Hive Gateway's integration of OpenTelemetry have been entirely re-written to bet
 standard SDK features, and allow for better interoperability with other tools (being custom ones or
 third party libraries). We're excited to announce significant improvements to Hive Gateway's
 
-### New cross-runtime configuration helper
+### New cross-runtime simplified configuration helper
 
 You can now enable OpenTelemetry support with just one CLI option! You can easily test our new
 integration by providing the [`--opentelemetry` option of our `hive-gateway` CLI. You can either
@@ -81,7 +80,7 @@ import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-ho
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
 
 openTelemetrySetup({
-   contextManager: new AsyncLocalStorageManager(),
+   contextManager: new AsyncLocalStorageContextManager(),
    traces: {
       exporter: new OTLPTraceExporter({ url: process.env('OTLP_EXPORTER_URL') })
    }
@@ -128,6 +127,56 @@ export const gatewayConfig = defineConfig({
 
 </Tabs>
 
+#### Sampling
+
+Packed with this new way of configuring OpenTelemetry, we now offer out of the box a
+[Sampling Strategy](https://opentelemetry.io/docs/concepts/sampling/):
+
+```ts filename="telemetry.ts"
+import { openTelemetrySetup } from '@graphql-mesh/plugin-opentelemetry'
+import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks'
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
+
+openTelemetrySetup({
+  contextManager: new AsyncLocalStorageContextManager(),
+  traces: {
+    exporter: new OTLPTraceExporter({ url: process.env('OTLP_EXPORTER_URL') })
+  },
+  samplingRate: 0.1 // Only 10% of requests will be traced (or if enabled via context propagation)
+})
+```
+
+#### Limits
+
+To improve the safety of your observability infrastructure, OpenTelemetry's
+[Limits](https://open-telemetry.github.io/opentelemetry-js/interfaces/_opentelemetry_sdk-node.node.SpanLimits.html)
+can now be configured:
+
+```ts filename="telemetry.ts"
+import { openTelemetrySetup } from '@graphql-mesh/plugin-opentelemetry'
+import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks'
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
+
+openTelemetrySetup({
+  contextManager: new AsyncLocalStorageContextManager(),
+  traces: {
+    exporter: new OTLPTraceExporter({ url: process.env('OTLP_EXPORTER_URL') })
+    spanLimits: {
+      // limits specific to spans, like `eventCountLimit` or `attributeCountLimit`
+    },
+  },
+  generalLimits: {
+    // global default limits, like `attributeValueLengthLimit` and `attributeCountLimit`
+  }
+})
+```
+
+#### Diagnostic Logs
+
+The OpenTelemetry Diagnostic logs (the internal OpenTelemetry logging system allowing you to debug
+your configuration), is now configured to use Hive Gateway logger by default, and follow the
+`OTEL_LOG_LEVEL` standard environment variable.
+
 ### Span parenting and Critical Path Analysis
 
 Spans are now nested within each-other, making it easier to understand execution flow. It also
@@ -145,6 +194,14 @@ in your visualization tool (like
    Click on image to download the video demo.
 </video>
 
+### Improved Span coverage
+
+Thanks to a brand new
+[Plugin API](https://the-guild.dev/graphql/hive/docs/gateway/other-features/custom-plugins#instrumentation),
+spans are now more precise and covers each phases entirely, including plugins execution time.
+
+You can also instrument plugins if you need to track the performance of a specific plugin.
+
 ### Support of HTTP batching
 
 Our integration now fully support batched queries with the addition of a new `graphql.operation`
@@ -155,6 +212,16 @@ can contain multiple graphql operation span in case of a batched HTTP request.
 
 ![A screenshot demoing batched graphql operation tracing](/blog-assets/opentelemetry-graphql/demo-http-batching.png)
 
+### Support of HTTP Retry
+
+In production, upstream subgraph requests are often retirable in case of failure, to improve success
+rate of the gateway.
+
+Those retry request are now properly registered and the standard `http.request.resend_count`
+attribute is used to indicate a failed retry attempt.
+
+![A screenshot demoing failed and retried upstream request with appropriate attribute](/blog-assets/opentelemetry-graphql/demo-http-retry.png)
+
 ### Standard OpenTelemetry Context support
 
 The OpenTelemetry integration now fully support the standard Context, which opens a wide range of
@@ -162,6 +229,16 @@ new customization possibilities we will see later in this post.
 
 Our integration also have an internal Context Manager, so that span parenting is working on all
 runtimes, even those without `AsyncLocalStorage` API implementation.
+
+### Support of standard instrumentations
+
+Thanks to OpenTelemetry Context, standard instrumentations are now also supported and correctly
+nested in Hive Gateways' spans.
+
+This allows you to keep track of performance of low level Node's internals and usage of third party
+libraries, such as Databases accesses.
+
+![A screenshot demoing support of standard fetch instrumentation](/blog-assets/opentelemetry-graphql/demo-instrumentation.png)
 
 ### Easier custom spans
 
@@ -247,6 +324,36 @@ export const gatewayConfig = defineConfig({
 
 ![A screenshot showing an example of custom attribute](/blog-assets/opentelemetry-graphql/demo-custom-attributes.png)
 
+### Custom Baggage
+
+[OpenTelemetry Baggage](https://opentelemetry.io/docs/concepts/signals/baggage/) allows to attach
+data to the current context, allowing to easily enrich future spans. You can now set Baggage using
+the new
+[`instrumentation` Plugin API](https://the-guild.dev/graphql/hive/docs/gateway/other-features/custom-plugins#instrumentation):
+
+```ts filename="gateway.config.ts"
+import './telemetry.ts'
+import { defineConfig } from '@graphql-hive/gateway'
+import { context, propagation } from '@opentelemetry/api'
+
+export const gatewayConfig = defineConfig({
+  openTelemetry: { traces: true },
+  plugins: () => ({
+    instrumentation: {
+      request({ request }, wrapped) {
+        const requestId = request.headers.get('request-id')
+        const baggage = propagation.createBaggage({ requestId })
+        const ctxWithBaggage = propagation.setBaggage(context.active(), baggage)
+
+        // The wrapped function represent the processing of the request. It allows you to wrap
+        // the entire request pipeline into an other function call, the OTEL context in this case.
+        return context.with(ctxWithBaggage, wrapped)
+      }
+    }
+  })
+})
+```
+
 ### Log Correlation
 
 The new OpenTelemetry integration leverage the new [Hive Logger](!!!!todo!!!!) feature with an
@@ -266,7 +373,7 @@ import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-http'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
 
 openTelemetrySetup({
-  contextManager: new AsyncLocalStorageManager(),
+  contextManager: new AsyncLocalStorageContextManager(),
   traces: {
     exporter: new OTLPTraceExporter({ url: process.env('OTLP_EXPORTER_URL') })
   }
@@ -281,6 +388,31 @@ export const gatewayConfig = defineConfig({
       })
     ]
   })
+})
+```
+
+### A unified plugin for Hive Gateway and GraphQL Yoga
+
+Our new OpenTelemetry is not only about Hive Gateway, but is also usable in GraphQL Yoga! You can
+use `@graphql-mesh/plugin-opentelemetry` to improve your GraphQL server observability and take
+profit of all the new features presented in this blog post:
+
+```ts filename="server.ts"
+import 'telemetry.ts'
+import { createServer } from 'node:http'
+import { createYoga } from 'graphql-yoga'
+import { useOpenTelemetry } from '@graphql-mesh/plugin-opentelemetry'
+import { schema } from './schema'
+
+const server = createServer(
+  createYoga({
+    schema,
+    plugins: [useOpenTelemetry({ traces: true })]
+  })
+)
+
+server.listen(4000, () => {
+  console.info('Server is running on http://localhost:4000/graphql')
 })
 ```
 
