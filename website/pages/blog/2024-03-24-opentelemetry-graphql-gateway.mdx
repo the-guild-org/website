@@ -263,7 +263,7 @@ export const gatewayConfig = defineConfig({
   genericAuth: {
     mode: 'protect-granular',
     resolveUserFn: ctx =>
-      trace.getTracer('gateway').startActiveSpan('auth.validate_user', async span => {
+      ctx.tracer.startActiveSpan('auth.validate_user', async span => {
         const token = ctx.request.headers.get('authorization')
         const user = await fetch(`https://auth/validate?token=${token}`).then(r => r.json())
         span.end()
@@ -319,7 +319,7 @@ export const gatewayConfig = defineConfig({
       const token = ctx.request.headers.get('authorization')
       const user = await fetch(`https://auth/validate?token=${token}`).then(r => r.json)
 
-      const httpSpan = trace.getSpan(ctx.opentelemetry.httpContext())
+      const httpSpan = trace.getSpan(ctx.opentelemetry.getHttpContext())
       httpSpan?.setAttribute('auth.user.id', user?.id ?? '<unauthenticated>')
 
       return user
