@@ -91,6 +91,11 @@ export const jsonConfig = {
       crisp: { segments: ['hive-website'] },
       sitemap: false,
     },
+    '/graphql/hive/federation-gateway-performance': {
+      rewrite: 'federation-gateway-benchmark.theguild.workers.dev',
+      crisp: { segments: ['hive-website'] },
+      sitemap: false,
+    },
     '/graphql/hive': {
       rewrite: 'hive-landing-page.pages.dev',
       crisp: { segments: ['hive-website'] },
