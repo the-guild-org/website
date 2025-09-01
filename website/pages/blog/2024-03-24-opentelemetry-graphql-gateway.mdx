@@ -78,7 +78,7 @@ hive-gateway supergraph --opentelemtry
 <Tabs.Tab>
 
 ```ts filename="telemetry.ts"
-import { openTelemetrySetup } '@graphql-mesh/plugin-opentelemetry'
+import { openTelemetrySetup } '@graphql-hive/gateway/opentelemetry/setup'
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
 
@@ -136,7 +136,7 @@ Packed with this new way of configuring OpenTelemetry, we now offer out of the b
 [Sampling Strategy](https://opentelemetry.io/docs/concepts/sampling/):
 
 ```ts filename="telemetry.ts"
-import { openTelemetrySetup } from '@graphql-mesh/plugin-opentelemetry'
+import { openTelemetrySetup } from '@graphql-hive/gateway/opentelemetry/setup'
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
 
@@ -156,7 +156,7 @@ To improve the safety of your observability infrastructure, OpenTelemetry's
 can now be configured:
 
 ```ts filename="telemetry.ts"
-import { openTelemetrySetup } from '@graphql-mesh/plugin-opentelemetry'
+import { openTelemetrySetup } from '@graphql-hive/gateway/opentelemetry/setup'
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
 
@@ -254,7 +254,7 @@ OpenTelemetry Context, your custom spans will be parented correctly.
 ```ts filename="gateway.config.ts"
 import 'telemetry.ts'
 import { defineConfig } from '@graphql-hive/gateway'
-import { trace } from '@opentelemetry/api'
+import { hive, trace } from '@graphql-hive/gateway/opentelemetry/api'
 import { getUserFromRequest } from './authentication'
 
 export const gatewayConfig = defineConfig({
@@ -263,7 +263,7 @@ export const gatewayConfig = defineConfig({
   genericAuth: {
     mode: 'protect-granular',
     resolveUserFn: ctx =>
-      ctx.openTelemetry.tracer.startActiveSpan('auth.validate_user', async span => {
+      hive.tracer!.startActiveSpan('auth.validate_user', async span => {
         const token = ctx.request.headers.get('authorization')
         const user = await fetch(`https://auth/validate?token=${token}`).then(r => r.json())
         span.end()
@@ -308,7 +308,7 @@ to add or modify there attributes:
 ```ts filename="gateway.config.ts"
 import './telemetry.ts'
 import { defineConfig } from '@graphql-hive/gateway'
-import { trace } from '@opentelemetry/api'
+import { hive, trace } from '@graphql-hive/gateway/opentelemetry/api'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: { traces: true },
@@ -319,7 +319,7 @@ export const gatewayConfig = defineConfig({
       const token = ctx.request.headers.get('authorization')
       const user = await fetch(`https://auth/validate?token=${token}`).then(r => r.json)
 
-      const httpSpan = trace.getSpan(ctx.opentelemetry.getHttpContext())
+      const httpSpan = trace.getSpan(hive.getHttpContext(ctx.request)
       httpSpan?.setAttribute('auth.user.id', user?.id ?? '<unauthenticated>')
 
       return user
@@ -340,7 +340,7 @@ the new
 ```ts filename="gateway.config.ts"
 import './telemetry.ts'
 import { defineConfig } from '@graphql-hive/gateway'
-import { context, propagation } from '@opentelemetry/api'
+import { context, hive, propagation } from '@graphql-hive/gateway/opentelemetry/api'
 
 export const gatewayConfig = defineConfig({
   openTelemetry: { traces: true },
@@ -349,7 +349,7 @@ export const gatewayConfig = defineConfig({
       request({ request }, wrapped) {
         const requestId = request.headers.get('request-id')
         const baggage = propagation.createBaggage({ requestId })
-        const ctxWithBaggage = propagation.setBaggage(context.active(), baggage)
+        const ctxWithBaggage = propagation.setBaggage(hive.getActiveContext({ request }), baggage)
 
         // The wrapped function represent the processing of the request. It allows you to wrap
         // the entire request pipeline into an other function call, the OTEL context in this case.
@@ -369,11 +369,11 @@ You can now correlate the logs related to a trace for the best debugging experie
 
 ```ts filename="gateway.config.ts"
 import { defineConfig } from '@graphql-hive/gateway'
-import { Logger } from '@graphql-hive/logger'
 import {
   OpenTelemetryLogWriter,
   openTelemetrySetup
-} from '@graphql-mesh/plugin-opentelemetry/setup'
+} from '@graphql-hive/gateway/opentelemetry/setup'
+import { Logger } from '@graphql-hive/logger'
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks'
 import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-http'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
