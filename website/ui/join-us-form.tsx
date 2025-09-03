@@ -4,9 +4,7 @@ import { useFormik } from 'formik';
 import Confetti from 'react-confetti';
 import * as Yup from 'yup';
 import { GuildButton, Heading, Input } from './components';
-import { notion } from './notion-client';
 
-const NOTION_DATABASE_ID = 'f43d5911-0af3-4ebc-9996-a3a1a5f11ba4';
 async function upsertContact({
   name,
   email,
@@ -16,52 +14,22 @@ async function upsertContact({
   email: string;
   github: string;
 }) {
-  // קודם ננסה לחפש לפי שדה מסוג Email
-  let query = await notion.databases.query({
-    database_id: NOTION_DATABASE_ID,
-    filter: {
-      property: 'Email',
-      email: { equals: email },
+  const res = await fetch('https://utils.the-guild.dev/api/join-us', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
     },
+    
+    body: JSON.stringify({ name, email, github }),
   });
 
-  // אם לא נמצאה רשומה, ננסה לחפש כ-rich_text
-  if (query.results.length === 0) {
-    query = await notion.databases.query({
-      database_id: NOTION_DATABASE_ID,
-      filter: {
-        property: 'Email',
-        rich_text: { equals: email },
-      },
-    });
+  if (!res.ok) {
+    throw new Error(`Failed to submit: ${res.status}`);
   }
 
-  const properties = {
-    Name: {
-      title: [{ text: { content: name } }],
-    },
-    Email: {
-      email, // אם השדה באמת מסוג Email
-      rich_text: [{ text: { content: email } }], // אם השדה מסוג טקסט
-    },
-    Link: {
-      url: github,
-    },
-  };
-
-  if (query.results.length > 0) {
-    const pageId = query.results[0].id;
-    return notion.pages.update({
-      page_id: pageId,
-      properties,
-    });
-  } else {
-    return notion.pages.create({
-      parent: { database_id: NOTION_DATABASE_ID },
-      properties,
-    });
-  }
+  return res.json();
 }
+
 
 
 export const JoinUsForm = (): ReactElement => {
