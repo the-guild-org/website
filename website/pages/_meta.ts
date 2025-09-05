@@ -1,4 +1,4 @@
-import { productsItems } from '@theguild/components';
+import { PRODUCTS_MENU_LIST } from '../lib/future-components/products';
 
 export default {
   index: {
@@ -10,7 +10,7 @@ export default {
   products: {
     type: 'menu',
     title: 'Products',
-    items: productsItems,
+    items: PRODUCTS_MENU_LIST,
   },
   blog: {
     type: 'page',
