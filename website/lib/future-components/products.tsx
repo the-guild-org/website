@@ -1,4 +1,5 @@
 import { FC, HTMLProps, ReactElement, SVGProps } from 'react';
+import { PRODUCTS as OLD_PRODUCTS } from '@theguild/components';
 import { cn } from './cn';
 import {
   CodegenIcon,
@@ -9,24 +10,6 @@ import {
   StellateIcon,
   YogaIcon,
 } from './components/icons';
-import {
-  AngularLettermark,
-  ConfigLettermark,
-  EnvelopLettermark,
-  FetsLettermark,
-  GraphQLESlintLettermark,
-  HeltinLettermark,
-  InspectorLettermark,
-  KitQLLettermark,
-  ModulesLettermark,
-  ScalarsLettermark,
-  SofaLettermark,
-  SSELettermark,
-  StitchingLettermark,
-  ToolsLettermark,
-  WhatsAppLettermark,
-  WSLettermark,
-} from './logos';
 
 export type ProductType =
   | 'HIVE'
@@ -52,7 +35,7 @@ export type ProductType =
   | 'WS'
   | 'FETS'
   | 'HELTIN'
-  | 'NEXTRA';
+  | 'STELLATE';
 
 export interface ProductInfo {
   name: string;
@@ -105,104 +88,103 @@ export const PRODUCTS: Record<ProductType, ProductInfo> = {
     title: 'The GraphQL Edge Platform for security, caching, and observability',
     href: 'https://stellate.co',
     logo: StellateIcon,
-    primaryColor: '#FF7752',
   },
   ENVELOP: {
     name: 'Envelop',
     title: 'Develop and share plugins that are usable with any GraphQL server framework or schema',
     href: 'https://the-guild.dev/graphql/envelop',
-    logo: EnvelopLettermark,
+    logo: OLD_PRODUCTS.ENVELOP.logo,
   },
   STITCHING: {
     name: 'Stitching',
     title:
       'Automatically stitch multiple schemas together into one larger API in a simple, fast and powerful way',
     href: 'https://the-guild.dev/graphql/stitching',
-    logo: StitchingLettermark,
+    logo: OLD_PRODUCTS.STITCHING.logo,
   },
   INSPECTOR: {
     name: 'Inspector',
     title: 'Schema management tool',
     href: 'https://the-guild.dev/graphql/inspector',
-    logo: InspectorLettermark,
+    logo: OLD_PRODUCTS.INSPECTOR.logo,
   },
   TOOLS: {
     name: 'Tools',
     title: 'A set of utilities for faster GraphQL development',
     href: 'https://the-guild.dev/graphql/tools',
-    logo: ToolsLettermark,
+    logo: OLD_PRODUCTS.TOOLS.logo,
   },
   MODULES: {
     name: 'Modules',
     title: 'Enterprise grade tooling for your GraphQL server',
     href: 'https://the-guild.dev/graphql/modules',
-    logo: ModulesLettermark,
+    logo: OLD_PRODUCTS.MODULES.logo,
   },
   ESLINT: {
     name: 'GraphQL ESLint',
     title: 'Customizable ESLint parser, plugin, and rule set for GraphQL',
     href: 'https://the-guild.dev/graphql/eslint',
-    logo: GraphQLESlintLettermark,
+    logo: OLD_PRODUCTS.ESLINT.logo,
   },
   CONFIG: {
     name: 'Config',
     title: 'One configuration for all your GraphQL projects',
     href: 'https://the-guild.dev/graphql/config',
-    logo: ConfigLettermark,
+    logo: OLD_PRODUCTS.CONFIG.logo,
   },
   FETS: {
     name: 'feTS',
     title: 'Build and consume REST APIs with the e2e type safety using TypeScript and OpenAPI',
     href: 'https://the-guild.dev/fets',
-    logo: FetsLettermark,
+    logo: OLD_PRODUCTS.FETS.logo,
   },
   SCALARS: {
     name: 'Scalars',
     title: 'Common custom GraphQL Scalars for precise type-safe GraphQL schemas',
     href: 'https://the-guild.dev/graphql/scalars',
-    logo: ScalarsLettermark,
+    logo: OLD_PRODUCTS.SCALARS.logo,
   },
   SOFA: {
     name: 'SOFA',
     title: 'Generate RESTful APIs from your GraphQL server',
     href: 'https://the-guild.dev/graphql/sofa-api',
-    logo: SofaLettermark,
+    logo: OLD_PRODUCTS.SOFA.logo,
   },
   ANGULAR: {
     name: 'Angular',
     title: 'A fully-featured GraphQL client for Angular',
     href: 'https://the-guild.dev/graphql/apollo-angular',
-    logo: AngularLettermark,
+    logo: OLD_PRODUCTS.ANGULAR.logo,
   },
   WHATSAPP: {
     name: 'WhatsApp',
     title: 'Full stack, open source tutorial',
     href: 'https://github.com/Urigo/WhatsApp-Clone-Tutorial',
-    logo: WhatsAppLettermark,
+    logo: OLD_PRODUCTS.WHATSAPP.logo,
   },
   KITQL: {
     name: 'KitQL',
     title: 'A set of tools, helping you building efficient apps in a fast way',
     href: 'https://kitql.dev',
-    logo: KitQLLettermark,
+    logo: OLD_PRODUCTS.KITQL.logo,
   },
   WS: {
     name: 'WS',
     title: 'Reference implementation of the GraphQL over WS spec',
     href: 'https://the-guild.dev/graphql/ws',
-    logo: WSLettermark,
+    logo: OLD_PRODUCTS.WS.logo,
   },
   SSE: {
     name: 'SSE',
     title: 'Reference implementation of the GraphQL over SSE spec',
     href: 'https://the-guild.dev/graphql/sse',
-    logo: SSELettermark,
+    logo: OLD_PRODUCTS.SSE.logo,
   },
   HELTIN: {
     name: 'heltin',
     title: 'Mental healthcare registry',
     href: 'https://the-guild.dev/heltin',
-    logo: HeltinLettermark,
+    logo: OLD_PRODUCTS.HELTIN.logo,
   },
 };
 
@@ -224,13 +206,15 @@ export const PRODUCTS_MENU_LIST = Object.fromEntries<
         href: item.href,
         title: (
           <div className="flex items-center gap-2">
-            <div
-              className={cn(
-                'flex translate-y-[0.25px]',
-                i > 6 && 'rounded-sm bg-gray-500 text-white dark:bg-white/10',
-              )}
-            >
-              <item.logo className="size-5 whitespace-pre font-mono text-[9px]" />
+            <div className="flex translate-y-[0.25px]">
+              <item.logo
+                className={cn(
+                  'size-5 whitespace-pre font-mono text-[9px] text-gray-500 dark:text-gray-400 [[data-headlessui-state=active]_&]:text-gray-900 dark:[[data-headlessui-state=active]_&]:text-white',
+                  (item.name === PRODUCTS.ESLINT.name || item.name === PRODUCTS.SSE.name) &&
+                    '[&_path]:stroke-current',
+                )}
+                fill="currentColor"
+              />
             </div>
             {item.name}
           </div>
