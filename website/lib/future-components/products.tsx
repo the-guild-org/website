@@ -15,7 +15,6 @@ export type ProductType =
   | 'HIVE'
   | 'HIVE_GATEWAY'
   | 'HIVE_ROUTER'
-  | 'CONDUCTOR'
   | 'YOGA'
   | 'ENVELOP'
   | 'INSPECTOR'
