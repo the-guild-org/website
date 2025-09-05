@@ -53,7 +53,7 @@ export const PRODUCTS: Record<ProductType, ProductInfo> = {
   HIVE_GATEWAY: {
     name: 'Hive Gateway',
     title:
-      'GraphQL Gateway (Router) for federated GraphQL with Subscriptions support and built-in security features',
+      'GraphQL Gateway for federated GraphQL with Subscriptions support and built-in security features',
     href: 'https://the-guild.dev/graphql/hive/gateway',
     logo: HiveGatewayIcon,
   },
