@@ -1,3 +1,4 @@
 import 'react';
-export { ReactComponent } from './angular.mjs';
 import 'nextra/icons';
+
+export { ReactComponent } from './angular.mjs';

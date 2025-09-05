@@ -1,3 +1,34 @@
-export { ReactComponent as AccountBox, ReactComponent as AppsIcon, ReactComponent as ArrowIcon, ReactComponent as BardIcon, ReactComponent as CSAStarLevelOneIcon, ReactComponent as CaretSlimIcon, ReactComponent as CheckIcon, ReactComponent as CloseIcon, ReactComponent as CodegenIcon, ReactComponent as GroupIcon, ReactComponent as HiveGatewayIcon, ReactComponent as HiveIcon, ReactComponent as HiveRouterIcon, ReactComponent as HonourIcon, ReactComponent as LinkedInIcon, ReactComponent as ListIcon, ReactComponent as MeshIcon, ReactComponent as MoreIcon, ReactComponent as PaperIcon, ReactComponent as PencilIcon, ReactComponent as RightCornerIcon, ReactComponent as SearchIcon, ReactComponent as ShareIcon, ReactComponent as ShieldFlashIcon, ReactComponent as StellateIcon, ReactComponent as TargetIcon, ReactComponent as TwitterIcon, ReactComponent as YogaIcon, ReactComponent as YouTubeIcon } from '../../logos/angular.mjs';
-export { DiscordIcon, GitHubIcon, InformationCircleIcon } from 'nextra/icons';
 import 'react';
+
+export {
+  ReactComponent as AccountBox,
+  ReactComponent as AppsIcon,
+  ReactComponent as ArrowIcon,
+  ReactComponent as BardIcon,
+  ReactComponent as CSAStarLevelOneIcon,
+  ReactComponent as CaretSlimIcon,
+  ReactComponent as CheckIcon,
+  ReactComponent as CloseIcon,
+  ReactComponent as CodegenIcon,
+  ReactComponent as GroupIcon,
+  ReactComponent as HiveGatewayIcon,
+  ReactComponent as HiveIcon,
+  ReactComponent as HiveRouterIcon,
+  ReactComponent as HonourIcon,
+  ReactComponent as LinkedInIcon,
+  ReactComponent as ListIcon,
+  ReactComponent as MeshIcon,
+  ReactComponent as MoreIcon,
+  ReactComponent as PaperIcon,
+  ReactComponent as PencilIcon,
+  ReactComponent as RightCornerIcon,
+  ReactComponent as SearchIcon,
+  ReactComponent as ShareIcon,
+  ReactComponent as ShieldFlashIcon,
+  ReactComponent as StellateIcon,
+  ReactComponent as TargetIcon,
+  ReactComponent as TwitterIcon,
+  ReactComponent as YogaIcon,
+  ReactComponent as YouTubeIcon,
+} from '../../logos/angular.mjs';
+export { DiscordIcon, GitHubIcon, InformationCircleIcon } from 'nextra/icons';
