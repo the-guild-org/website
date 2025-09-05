@@ -1,6 +1,6 @@
 import { ComponentProps, ReactElement, useEffect, useState } from 'react';
 import { clsx } from 'clsx';
-import { PRODUCTS } from '@theguild/components';
+import { PRODUCTS } from '../lib/future-components/products';
 import { Description, Heading, Link } from './components';
 
 const classes = {
@@ -106,7 +106,9 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
             <ArrowDownIcon className={classes.arrow} />
           </summary>
           <hr className={classes.divider} />
-          <div className={classes.section}>{[PRODUCTS.MESH].map(renderProduct)}</div>
+          <div className={classes.section}>
+            {[PRODUCTS.HIVE_ROUTER, PRODUCTS.HIVE_GATEWAY, PRODUCTS.MESH].map(renderProduct)}
+          </div>
         </details>
         <details className={clsx(classes.details, 'md:col-span-2')} open={isDetailsOpen}>
           <summary className={classes.title} tabIndex={isDetailsOpen ? -1 : 0}>
@@ -116,6 +118,7 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
           <hr className={classes.divider} />
           <div className={clsx(classes.section, 'sm:[&>a]:w-[calc(50%-10px)]')}>
             {[
+              PRODUCTS.MESH,
               PRODUCTS.YOGA,
               {
                 ...PRODUCTS.ENVELOP,
@@ -136,10 +139,6 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
             {[
               { ...PRODUCTS.CODEGEN, name: 'GraphQL-Codegen' },
               { ...PRODUCTS.ESLINT, name: 'GraphQL-ESLint' },
-              {
-                ...PRODUCTS.NEXTRA,
-                title: 'Powerful and flexible site generation framework, built on top of Next.js',
-              },
             ].map(renderProduct)}
           </div>
         </details>
