@@ -92,7 +92,7 @@ export const jsonConfig = {
       sitemap: false,
     },
     '/graphql/hive/federation-gateway-performance': {
-      rewrite: 'federation-gateway-benchmark.theguild.workers.dev',
+      rewrite: 'federation-gateway-benchmark.pages.dev',
       crisp: { segments: ['hive-website'] },
       sitemap: false,
     },
