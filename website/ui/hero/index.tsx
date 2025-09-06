@@ -11,7 +11,7 @@ import meshHero from './mesh-hero.svg';
 const MotionNextImage = motion(NextImage);
 
 interface HeroProductInfo extends Pick<ProductInfo, 'name' | 'href' | 'logo'> {
-  title: string;
+  title?: string;
   color: string;
   description: string;
   heading: ReactNode;
@@ -19,6 +19,13 @@ interface HeroProductInfo extends Pick<ProductInfo, 'name' | 'href' | 'logo'> {
     src: StaticImageData;
     alt: string;
     className?: string;
+  };
+  ctaText?: string;
+  secondaryCta?: {
+    href: string;
+    className?: string;
+    title?: string;
+    children?: ReactNode;
   };
 }
 
@@ -53,9 +60,10 @@ const products: HeroProductInfo[] = [
   },
   {
     ...PRODUCTS.MESH,
+    name: 'GraphQL Mesh',
     description: 'Federate and serve any kind of API',
     title: 'Mesh - Federated architecture for every API',
-    color: '#FFB21E',
+    color: '#1ACBE2',
     heading: (
       <>
         The Graph
@@ -70,23 +78,29 @@ const products: HeroProductInfo[] = [
     },
   },
   {
-    name: 'Hive Gateway',
+    name: 'Hive Gateway & Router',
     href: PRODUCTS.HIVE_GATEWAY.href,
-    logo: PRODUCTS.HIVE_GATEWAY.logo, // todo: show both logos of gateway and router
-    color: '#E1FF00',
-    description: PRODUCTS.HIVE_GATEWAY.title,
-    title: '',
+    logo: PRODUCTS.HIVE_GATEWAY.logo,
+    color: '#378f7f',
+    description:
+      'Choose Hive Router for maximum throughput and low latency or the Hive Gateway for deep ecosystem integration and enterprise features.',
     heading: (
       <>
-        The Gateway
+        The Gateways
         <br />
-        for your API
+        to your API
       </>
     ),
     illustration: {
       src: diagram,
       alt: 'GraphQL architecture diagram',
-      className: 'w-[2/3]',
+      className: 'w-[65%] bg-[#00342C] dark:bg-transparent rounded-3xl p-4 dark:py-0',
+    },
+    ctaText: 'Explore the Gateway',
+    secondaryCta: {
+      href: PRODUCTS.HIVE_ROUTER.href,
+      className: 'bg-gray-200',
+      children: 'Hive Router',
     },
   },
 ];
@@ -95,7 +109,7 @@ export function Hero() {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const currentProduct = products[currentTab];
   return (
-    <div className="nextra-container pb-14 pt-20 lg:pb-36 lg:pt-28">
+    <div className="nextra-container pb-14 pt-20 lg:pb-36 lg:pt-28 dark:[--gateway-primary:#E1FF00]">
       <div className="mb-8 flex gap-10 text-sm font-medium max-lg:justify-center lg:mb-12 lg:text-lg">
         {products.map((product, index) => {
           const isCurrent = currentTab === index;
@@ -117,15 +131,23 @@ export function Hero() {
           <h2 className="mb-4 text-4xl/snug font-medium lg:text-[3.625rem]/tight">
             {currentProduct.heading}
           </h2>
-          <p className="mb-10 text-gray-500 lg:mb-12">{currentProduct.description}</p>
-          <GuildButton
-            as="a"
-            style={{ background: currentProduct.color }}
-            href={currentProduct.href}
-            title={currentProduct.title}
-          >
-            Explore {currentProduct.name}
-          </GuildButton>
+          <p className="mb-10 text-gray-600 lg:mb-12 dark:text-gray-200">
+            {currentProduct.description}
+          </p>
+          <div className="flex items-center gap-2">
+            <GuildButton
+              as="a"
+              style={{
+                background: currentProduct.color,
+                color: currentTab === 2 ? 'white' : undefined,
+              }}
+              href={currentProduct.href}
+              title={currentProduct.title}
+            >
+              {currentProduct.ctaText || `Explore ${currentProduct.name}`}
+            </GuildButton>
+            {currentProduct.secondaryCta && <GuildButton as="a" {...currentProduct.secondaryCta} />}
+          </div>
         </div>
         <AnimatePresence mode="popLayout" initial={false}>
           {products.map((product, i) => {
@@ -136,7 +158,7 @@ export function Hero() {
                 {...animationConfig}
                 {...product.illustration}
                 className={clsx(
-                  'pointer-events-none h-full w-1/2 max-lg:hidden',
+                  'pointer-events-none h-full max-lg:hidden',
                   product.illustration.className,
                 )}
               />
