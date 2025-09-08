@@ -107,7 +107,7 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
           </summary>
           <hr className={classes.divider} />
           <div className={classes.section}>
-            {[PRODUCTS.HIVE_ROUTER, PRODUCTS.HIVE_GATEWAY, PRODUCTS.MESH].map(renderProduct)}
+            {[PRODUCTS.HIVE_ROUTER, PRODUCTS.HIVE_GATEWAY].map(renderProduct)}
           </div>
         </details>
         <details className={clsx(classes.details, 'md:col-span-2')} open={isDetailsOpen}>
@@ -118,7 +118,11 @@ export function Ecosystem({ className }: { className?: string }): ReactElement {
           <hr className={classes.divider} />
           <div className={clsx(classes.section, 'sm:[&>a]:w-[calc(50%-10px)]')}>
             {[
-              PRODUCTS.MESH,
+              {
+                ...PRODUCTS.MESH,
+                title:
+                  'Unifies your API landscape with its federated architecture, integrating any API into a cohesive graph.',
+              },
               PRODUCTS.YOGA,
               {
                 ...PRODUCTS.ENVELOP,
