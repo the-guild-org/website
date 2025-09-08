@@ -40,7 +40,7 @@ const products: HeroProductInfo[] = [
   {
     ...PRODUCTS.HIVE,
     description:
-      'Prevent breaking changes, monitor performance of your GraphQL API, and manage your API gateway',
+      'Prevent breaking changes, monitor performance of your GraphQL API, and manage your API gateway.',
     title: 'Hive - Open Source GraphQL Federation Platform',
     color: '#FFB21E', // outdated, but it matches the screenshot.
     heading: (
@@ -61,7 +61,8 @@ const products: HeroProductInfo[] = [
   {
     ...PRODUCTS.MESH,
     name: 'GraphQL Mesh',
-    description: 'Federate and serve any kind of API',
+    description:
+      'Unify your API landscape with Mesh’s federated architecture, integrating any API service into a cohesive graph.',
     title: 'Mesh - Federated architecture for every API',
     color: '#1ACBE2',
     heading: (
@@ -78,9 +79,9 @@ const products: HeroProductInfo[] = [
     },
   },
   {
-    name: 'Hive Gateway & Router',
-    href: PRODUCTS.HIVE_GATEWAY.href,
-    logo: PRODUCTS.HIVE_GATEWAY.logo,
+    name: 'Hive Router & Gateway',
+    href: PRODUCTS.HIVE_ROUTER.href,
+    logo: PRODUCTS.HIVE_ROUTER.logo,
     color: '#378f7f',
     description:
       'Choose Hive Router for maximum throughput and low latency or the Hive Gateway for deep ecosystem integration and enterprise features.',
@@ -96,11 +97,11 @@ const products: HeroProductInfo[] = [
       alt: 'GraphQL architecture diagram',
       className: 'w-[65%] bg-[#00342C] dark:bg-transparent rounded-3xl p-4 dark:py-0',
     },
-    ctaText: 'Explore the Gateway',
+    ctaText: 'Explore the Router',
     secondaryCta: {
-      href: PRODUCTS.HIVE_ROUTER.href,
+      href: PRODUCTS.HIVE_GATEWAY.href,
       className: 'bg-gray-200',
-      children: 'Hive Router',
+      children: 'Hive Gateway',
     },
   },
 ];
