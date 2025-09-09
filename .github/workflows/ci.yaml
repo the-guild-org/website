@@ -35,6 +35,27 @@ jobs:
           buildScript: pnpm build && pnpm export
           artifactDir: out
 
+  seo:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: the-guild-org/shared-config/setup@main
+        name: setup env
+        with:
+          nodeVersion: 18
+          packageManager: pnpm
+
+      - name: check
+        env:
+          SEO_ISSUE_LEVEL: error
+        working-directory: website
+        run: pnpm next build
+
   blogsync:
     runs-on: ubuntu-latest
     steps:

@@ -5,6 +5,7 @@ import { sortByDateDesc } from './sort-by-date';
 import { pageMap } from '.next/static/chunks/nextra-page-map-.mjs';
 
 const blogFolder = pageMap.find(item => item.name === 'blog' && item.children).children;
+const SEO_ISSUE_LEVEL = process.env.SEO_ISSUE_LEVEL === 'error' ? 'error' : 'warn';
 
 export const allBlogs = blogFolder
   .filter(item => !item.data && item.route !== '/blog/tag')
@@ -16,29 +17,7 @@ export const allBlogs = blogFolder
       blog.frontMatter;
     const { route } = blog;
 
-    if (title.length > 70) {
-      throw new Error(
-        `SEO issue: The title "${title}" is too long, should be less than 70 characters - route ${route}`,
-      );
-    }
-
-    if (title.length < 20) {
-      throw new Error(
-        `SEO issue: The title "${title}" is too short, should be more than 20 characters - route ${route}`,
-      );
-    }
-
-    if (description.length > 160) {
-      throw new Error(
-        `SEO issue: The description "${description}" is too long, should be less than 160 characters, not ${description.length}, route "${route}"`,
-      );
-    }
-
-    if (description.length < 50) {
-      throw new Error(
-        `SEO issue: The description "${description}" is too short, should be more than 50 characters, not ${description.length}, route "${route}"`,
-      );
-    }
+    detectSEOIssues({ title, description, route });
 
     return {
       title,
@@ -54,3 +33,46 @@ export const allBlogs = blogFolder
     };
   })
   .sort(sortByDateDesc);
+
+function warnOrThrow(message: string): void {
+  if (SEO_ISSUE_LEVEL === 'error') {
+    throw new Error(message);
+  } else {
+    // eslint-disable-next-line no-console
+    console.warn(message);
+  }
+}
+
+function detectSEOIssues({
+  title,
+  description,
+  route,
+}: {
+  title: string;
+  description: string;
+  route: string;
+}): void {
+  if (title.length > 70) {
+    warnOrThrow(
+      `SEO issue: The title "${title}" is too long, should be less than 70 characters - route ${route}`,
+    );
+  }
+
+  if (title.length < 20) {
+    warnOrThrow(
+      `SEO issue: The title "${title}" is too short, should be more than 20 characters - route ${route}`,
+    );
+  }
+
+  if (description.length > 160) {
+    warnOrThrow(
+      `SEO issue: The description "${description}" is too long, should be less than 160 characters, not ${description.length}, route "${route}"`,
+    );
+  }
+
+  if (description.length < 50) {
+    warnOrThrow(
+      `SEO issue: The description "${description}" is too short, should be more than 50 characters, not ${description.length}, route "${route}"`,
+    );
+  }
+}
