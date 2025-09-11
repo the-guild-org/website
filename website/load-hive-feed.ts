@@ -6,7 +6,10 @@ const parser = new RSSParser();
 await parser
   .parseURL('https://the-guild.dev/graphql/hive/blog/feed.xml')
   .then(feed =>
-    fs.writeFileSync(__dirname + '/lib/hive-blog-feed.json', JSON.stringify(feed, null, 2)),
+    fs.writeFileSync(
+      import.meta.dirname + '/lib/hive-blog-feed.json',
+      JSON.stringify(feed, null, 2),
+    ),
   )
   .catch(err => {
     console.log(err);
