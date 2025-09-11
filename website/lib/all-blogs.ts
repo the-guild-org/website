@@ -1,12 +1,13 @@
 import { format } from 'date-fns';
 import { asArray } from './as-array';
+import externalFeed from './hive-blog-feed.json';
 import { sortByDateDesc } from './sort-by-date';
 // eslint-disable-next-line import/no-useless-path-segments -- this will exist when we do `next build`
 import { pageMap } from '.next/static/chunks/nextra-page-map-.mjs';
 
 const blogFolder = pageMap.find(item => item.name === 'blog' && item.children).children;
 
-export const allBlogs = blogFolder
+const allInternalBlogs = blogFolder
   .filter(item => !item.data && item.route !== '/blog/tag')
   .map(blog => {
     if (blog.children) {
@@ -51,6 +52,21 @@ export const allBlogs = blogFolder
       thumbnail,
       canonical,
       updateDate: updateDate ? format(new Date(updateDate), 'y-MM-dd') : undefined,
+      isHive: false,
     };
-  })
-  .sort(sortByDateDesc);
+  });
+
+const allExternalBlogs = externalFeed.items.map(item => ({
+  title: item.title,
+  description: item.content,
+  tags: item.categories,
+  authors: [item.creator],
+  link: item.link,
+  image: null,
+  date: format(new Date(item.isoDate), 'y-MM-dd'),
+  thumbnail: null,
+  canonical: item.link,
+  updateDate: format(new Date(item.isoDate), 'y-MM-dd'),
+}));
+
+export const allBlogs = [...allInternalBlogs, ...allExternalBlogs].sort(sortByDateDesc);

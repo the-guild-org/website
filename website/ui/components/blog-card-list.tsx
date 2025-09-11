@@ -36,11 +36,6 @@ export const BlogCardList = ({
           lg:[:is(&:hover,&:focus)>img]:h-36
           "
         >
-          <img
-            src={article.thumbnail ?? article.image}
-            alt="Article logo"
-            className="h-40 w-full object-cover transition-all duration-500"
-          />
           <div className="flex grow flex-col p-5">
             <Heading size="md" className="line-clamp-3 [hyphens:auto]">
               {article.title}
@@ -53,7 +48,7 @@ export const BlogCardList = ({
             </Description>
             <div className="mt-auto text-xs">
               <span className="font-bold dark:text-[#C4C4C4]">
-                {AUTHORS[article.authors[0]].name}
+                {AUTHORS[article.authors[0]]?.name ?? article.authors[0]}
               </span>
               <span className="before:content-['_•_'] dark:text-gray-500">
                 {format(new Date(article.date), 'LLL do y')}
