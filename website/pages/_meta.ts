@@ -26,6 +26,14 @@ export default {
       timestamp: false,
     },
   },
+  'join-us': {
+    type: 'page',
+    display: 'hidden',
+    theme: {
+      layout: 'full',
+      timestamp: false,
+    },
+  },
   logos: {
     type: 'page',
     display: 'hidden',
