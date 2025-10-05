@@ -78,9 +78,8 @@ export const jsonConfig = {
       sitemap: true,
     },
     '/graphql/shield': {
-      rewrite: 'graphql-shield.pages.dev',
-      crisp: { segments: ['shield'] },
-      sitemap: true,
+      redirect: 'https://github.com/maticzav/graphql-shield',
+      status: 302
     },
     '/graphql/apollo-angular': {
       rewrite: 'apollo-angular.pages.dev',
