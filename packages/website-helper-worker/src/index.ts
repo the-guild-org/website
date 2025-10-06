@@ -7,6 +7,7 @@ import { buildResponseCorsHeaders } from './cors';
 import { createCrispClient } from './crisp-client';
 import { Env } from './env';
 import { handleSubscribeToNewsletter } from './newsletter-subscribe';
+import { handleJoinUs } from './join-us';
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -63,6 +64,22 @@ export default {
           body: maybeBody ? JSON.parse(maybeBody) : null,
           notion,
           notionDatabaseId: env.NOTION_CONDUCTOR_DATABASE_ID,
+        });
+      }
+
+      if (request.method === 'POST' && url.pathname === '/api/join-us') {
+      return await handleJoinUs({
+      request,
+      body: maybeBody ? JSON.parse(maybeBody) : null,
+      notion,
+      notionDatabaseId: env.NOTION_CONTACT_US_DATABASE_ID, 
+        });
+      }
+
+      if (request.method === 'GET' && url.pathname === '/api/join-us') {
+        return new Response(JSON.stringify({ message: 'GET not allowed' }), {
+          status: 405,
+          headers: { 'Content-Type': 'application/json' },
         });
       }
 
