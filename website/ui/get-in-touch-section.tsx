@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import Confetti from 'react-confetti';
 import * as Yup from 'yup';
+import ClientOnly from './client-only';
 import { GuildButton, Heading, Input } from './components';
 
 export const GetInTouchForm = (): ReactElement => {
@@ -108,6 +109,13 @@ export const GetInTouchForm = (): ReactElement => {
           {touched.notes && errors.notes && (
             <p className="-mt-9 text-sm text-[#f6547b]">{errors.notes}</p>
           )}
+          <ClientOnly>
+            <div
+              className="cf-turnstile"
+              data-sitekey="0x4AAAAAAB-9vuIUJrCPlFK3"
+              data-theme="dark"
+            />
+          </ClientOnly>
           <GuildButton
             as="button"
             type="submit"

@@ -20,6 +20,8 @@ export default class MyDocument extends Document {
             title="RSS Feed for the-guild.dev"
             href="/feed.xml"
           />
+          <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+          <link rel="preconnect" href="https://challenges.cloudflare.com" />
         </Head>
         <body>
           <Main />

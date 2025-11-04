@@ -1,6 +1,5 @@
 import { Toucan } from 'toucan-js';
 import { Client } from '@notionhq/client';
-import { handleConductorContact } from './contact-conductor';
 import { handleContactUs } from './contact-guild';
 import { handleHeltinContact } from './contact-heltin';
 import { buildResponseCorsHeaders } from './cors';
@@ -54,15 +53,6 @@ export default {
           body: maybeBody ? JSON.parse(maybeBody) : null,
           notion,
           notionDatabaseId: env.NOTION_HELTIN_DATABASE_ID,
-        });
-      }
-
-      if (request.method === 'POST' && url.pathname === '/api/conductor') {
-        return await handleConductorContact({
-          request,
-          body: maybeBody ? JSON.parse(maybeBody) : null,
-          notion,
-          notionDatabaseId: env.NOTION_CONDUCTOR_DATABASE_ID,
         });
       }
 

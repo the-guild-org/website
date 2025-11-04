@@ -79,7 +79,7 @@ export const jsonConfig = {
     },
     '/graphql/shield': {
       redirect: 'https://github.com/maticzav/graphql-shield',
-      status: 302
+      status: 302,
     },
     '/graphql/apollo-angular': {
       rewrite: 'apollo-angular.pages.dev',
