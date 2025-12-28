@@ -25,6 +25,9 @@ import theGraph from './logos/the-graph.svg';
 import uber from './logos/uber.svg';
 
 const logos: Record<string, StaticImageData> = {
+  'Parse Platform': parse,
+  Sequence: sequence,
+  RedwoodJS: redwoodjs,
   'The Graph': theGraph,
   Outreach: outreach,
   Dalet: dalet,
@@ -43,9 +46,6 @@ const logos: Record<string, StaticImageData> = {
   'Mount St. Joseph University': msj,
   'FUSE autotech': fuse,
   'Formidable Labs': formidable,
-  'Parse Platform': parse,
-  RedwoodJS: redwoodjs,
-  Sequence: sequence,
 };
 
 export function ClientLogosSection(): ReactElement {
