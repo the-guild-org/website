@@ -13,7 +13,7 @@ export const Newsletter = ({ className }: { className?: string }): ReactElement 
   return (
     <div
       className={clsx(
-        'mb-16 flex gap-14 rounded-[30px] bg-[#f1f1f1] p-7 max-xl:flex-col md:p-24 lg:mb-32 xl:gap-48 dark:bg-[#24272E]/50',
+        'mb-10 flex gap-10 rounded-[30px] bg-[#f1f1f1]/60 p-7 backdrop-blur-xl backdrop-saturate-[1.3] [box-shadow:inset_2px_2px_8px_rgba(153,192,255,0.015),inset_-2px_-2px_8px_rgba(229,253,190,0.015)] max-xl:flex-col md:p-12 xl:gap-20 dark:bg-[#24272E]/50',
         className,
       )}
     >

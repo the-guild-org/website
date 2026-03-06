@@ -15,26 +15,29 @@ export const BlogCardList = ({
   className?: string;
 }): ReactElement => {
   return (
-    <div className={clsx('my-12 grid gap-14 md:grid-cols-2 xl:grid-cols-4', className)}>
+    <div className={clsx('my-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4', className)}>
       {articles.map(article => (
         <NextLink
           key={article.link}
           href={article.link}
           className="
-          hocus:bg-neutral-200
-          hocus:dark:bg-[#24272E]
-          flex
-          cursor-pointer
-          flex-col
-          overflow-hidden
-          rounded-[20px]
-          bg-[#f1f1f1]
-          transition-colors
-          duration-300
-          hover:!no-underline
-          dark:bg-[#24272E]/50
-          lg:[:is(&:hover,&:focus)>img]:h-36
-          "
+            hocus:bg-neutral-200/60
+            hocus:dark:bg-[#2b2f37]/60
+            flex
+            cursor-pointer
+            flex-col
+            overflow-hidden
+            rounded-[20px]
+            bg-[#f1f1f1]/60
+            backdrop-blur-xl
+            backdrop-saturate-[1.3]
+            transition-colors
+            duration-300 [box-shadow:inset_2px_2px_8px_rgba(153,192,255,0.015),inset_-2px_-2px_8px_rgba(229,253,190,0.015)]
+            hover:!no-underline
+            hover:duration-0
+            dark:bg-[#24272E]/50
+            lg:[:is(&:hover,&:focus)>img]:h-36
+            "
         >
           <div className="flex grow flex-col p-5">
             <Heading size="md" className="line-clamp-3 [hyphens:auto]">
