@@ -100,6 +100,11 @@ export const jsonConfig = {
       crisp: { segments: ['hive-website'] },
       sitemap: false,
     },
+    '/graphql/hive-testing': {
+      rewrite: 'hive-platform-docs.theguild.workers.dev',
+      crisp: { segments: ['hive-website'] },
+      sitemap: false,
+    },
     '/graphql/gateway': {
       redirect: 'https://the-guild.dev/graphql/hive/docs/gateway',
       status: 302,

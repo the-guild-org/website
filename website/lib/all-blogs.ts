@@ -59,7 +59,7 @@ const allInternalBlogs = blogFolder
 const allExternalBlogs = externalFeed.items.map(item => ({
   title: item.title,
   description: item.content,
-  tags: item.categories,
+  tags: item.categories?.map(tag => tag.replaceAll(' ', '-').toLowerCase()),
   authors: [item.creator],
   link: item.link,
   image: null,
