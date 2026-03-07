@@ -1,5 +1,6 @@
 export type RewriteRecord = {
   rewrite: string;
+  preserveSearch?: boolean;
   crisp?: { segments: string[] };
   sitemap?: boolean;
   banner?: string;
@@ -102,6 +103,7 @@ export const jsonConfig = {
     },
     '/graphql/hive-testing': {
       rewrite: 'hive-platform-docs.theguild.workers.dev',
+      preserveSearch: true,
       crisp: { segments: ['hive-website'] },
       sitemap: false,
     },
