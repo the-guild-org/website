@@ -2,7 +2,6 @@
 
 import { equal } from 'node:assert/strict';
 import { test } from 'node:test';
-
 import { buildUpstreamUrl } from './routing';
 
 test('preserveSearch keeps the original query string', () => {
@@ -34,8 +33,5 @@ test('default rewrite behavior still drops search params', () => {
     upstreamPath: '/_serverFn/test',
   });
 
-  equal(
-    upstreamUrl.toString(),
-    'https://hive-platform-docs.theguild.workers.dev/_serverFn/test',
-  );
+  equal(upstreamUrl.toString(), 'https://hive-platform-docs.theguild.workers.dev/_serverFn/test');
 });
