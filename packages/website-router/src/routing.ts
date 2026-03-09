@@ -102,6 +102,20 @@ export function redirect(sentry: Toucan, from: string, url: string, code = 301) 
 
 export type ManipulateResponseFn = (record: RewriteRecord, response: Response) => Promise<Response>;
 
+export function buildUpstreamUrl(options: {
+  request: Request;
+  record: RewriteRecord;
+  upstreamPath: string;
+}) {
+  const upstreamUrl = new URL(`https://${options.record.rewrite}${options.upstreamPath || ''}`);
+
+  if (options.record.preserveSearch) {
+    upstreamUrl.search = new URL(options.request.url).search;
+  }
+
+  return upstreamUrl;
+}
+
 export async function handleRewrite(options: {
   request: Request;
   cacheStorageId: number;
@@ -114,7 +128,7 @@ export async function handleRewrite(options: {
   match: string | null;
   publicDomain: string;
 }): Promise<Response> {
-  const url = `https://${options.record.rewrite}${options.upstreamPath || ''}`;
+  const url = buildUpstreamUrl(options).toString();
   const cacheKey = new Request(url, options.request);
   const cache = await caches.open(String(options.cacheStorageId));
   let response = await cache.match(cacheKey);
