@@ -7,7 +7,7 @@ import { buildUpstreamUrl } from './routing';
 test('preserveSearch keeps the original query string', () => {
   const upstreamUrl = buildUpstreamUrl({
     request: new Request(
-      'https://the-guild.dev/graphql/hive-testing/_serverFn/test?payload=%7B%22foo%22%3A1%7D',
+      'https://the-guild.dev/graphql/hive/_serverFn/test?payload=%7B%22foo%22%3A1%7D',
     ),
     record: {
       preserveSearch: true,
@@ -25,7 +25,7 @@ test('preserveSearch keeps the original query string', () => {
 test('default rewrite behavior still drops search params', () => {
   const upstreamUrl = buildUpstreamUrl({
     request: new Request(
-      'https://the-guild.dev/graphql/hive-testing/_serverFn/test?payload=%7B%22foo%22%3A1%7D',
+      'https://the-guild.dev/graphql/hive/_serverFn/test?payload=%7B%22foo%22%3A1%7D',
     ),
     record: {
       rewrite: 'hive-platform-docs.theguild.workers.dev',
