@@ -96,6 +96,11 @@ export const jsonConfig = {
       crisp: { segments: ['hive-website'] },
       sitemap: false,
     },
+    '/graphql/hive/federation-playground': {
+      rewrite: 'federation-playground.pages.dev',
+      crisp: { segments: ['hive-website'] },
+      sitemap: false,
+    },
     '/graphql/hive': {
       rewrite: 'hive-platform-docs.theguild.workers.dev',
       preserveSearch: true,
