@@ -101,6 +101,11 @@ export const jsonConfig = {
       crisp: { segments: ['hive-website'] },
       sitemap: false,
     },
+    '/graphql/hive/docs/schema-registry/management': {
+      redirect:
+        'https://the-guild.dev/graphql/hive/docs/schema-registry/management/targets#registry-access-tokens',
+      status: 302,
+    },
     '/graphql/hive': {
       rewrite: 'hive-platform-docs.theguild.workers.dev',
       preserveSearch: true,
