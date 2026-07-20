@@ -49,7 +49,7 @@ export const jsonConfig = {
       sitemap: true,
     },
     '/graphql/mesh': {
-      rewrite: 'graphql-mesh.pages.dev',
+      rewrite: 'graphql-mesh-ai3.pages.dev',
       crisp: { segments: ['mesh'] },
       sitemap: true,
     },
@@ -69,7 +69,7 @@ export const jsonConfig = {
       sitemap: true,
     },
     '/graphql/tools': {
-      rewrite: 'graphql-tools.pages.dev',
+      rewrite: 'graphql-tools-8ja.pages.dev',
       crisp: { segments: ['tools'] },
       sitemap: true,
     },
@@ -119,7 +119,7 @@ export const jsonConfig = {
       sitemap: true,
     },
     '/graphql/stitching': {
-      rewrite: 'schema-stitching.pages.dev',
+      rewrite: 'schema-stitching-9g8.pages.dev',
       crisp: {
         segments: ['stitching'],
       },
@@ -140,7 +140,7 @@ export const jsonConfig = {
       sitemap: true,
     },
     '/openapi/fets': {
-      rewrite: 'fets.pages.dev',
+      rewrite: 'fets-3ku.pages.dev',
       crisp: {
         segments: ['fets'],
       },
