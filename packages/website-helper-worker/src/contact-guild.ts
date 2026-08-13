@@ -33,46 +33,6 @@ export async function handleContactUs(options: {
       });
     }
 
-    console.debug(`Crisp user: `, crispUser);
-    const crispContactLink = `https://app.crisp.chat/website/${options.crisp.websiteId}/contacts/profile/${crispUser.people_id}/`;
-
-    const pageData = await options.notion.pages
-      .create({
-        parent: {
-          database_id: options.notionDatabaseId,
-          type: 'database_id',
-        },
-        properties: {
-          Name: {
-            type: 'title',
-            title: [{ type: 'text', text: { content: body.name } }],
-          },
-          Email: {
-            type: 'email',
-            email: body.email,
-          },
-          Created: {
-            type: 'date',
-            date: { start: new Date().toISOString() },
-          },
-          'Crisp Link': {
-            type: 'url',
-            url: crispContactLink,
-          },
-          Notes: {
-            type: 'rich_text',
-            rich_text: [
-              {
-                text: {
-                  content: body.notes || '',
-                },
-              },
-            ],
-          },
-        },
-      })
-      .then(r => (isFullPage(r) ? r : null));
-
     await sendEmail(
       options.email,
       'contact@the-guild.dev',
@@ -82,11 +42,13 @@ export async function handleContactUs(options: {
       createMimeMessage().setSender(body.email),
     );
 
+    console.debug(`Crisp user: `, crispUser);
+    const crispContactLink = `https://app.crisp.chat/website/${options.crisp.websiteId}/contacts/profile/${crispUser.people_id}/`;
+
     await options.crisp.addCrispUserEvent(crispUser.people_id, {
       text: 'contact:website',
       data: {
         Details: `Contacted us through our website`,
-        Notion: pageData?.url,
       },
       color: 'grey',
     });
