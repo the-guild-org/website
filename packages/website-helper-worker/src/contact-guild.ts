@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { createMimeMessage } from 'mimetext';
-import { Client, isFullPage } from '@notionhq/client';
 import { buildResponseCorsHeaders } from './cors';
 import { CrispClient } from './crisp-client';
 import { sendEmail } from './email';
@@ -9,17 +8,33 @@ export async function handleContactUs(options: {
   email: SendEmail;
   request: Request;
   body: Record<string, unknown>;
-  notion: Client;
   crisp: CrispClient;
-  notionDatabaseId: string;
 }) {
+  console.log("handling contact us");
+
   const body = options.body as {
     email: string;
     name: string;
     notes?: string;
   };
 
+  console.log("body", body);
+
   if (body?.email && body?.name) {
+    console.log("valid body");
+
+    await sendEmail(
+      options.email,
+      'contact@the-guild.dev',
+      'contact@the-guild.dev',
+      `Contact Us Form Submission - The Guild (${body.email})`,
+      [`Name: ${body.name}`, `Email: ${body.email}`, `Notes: ${body.notes || ''}`].join('\n'),
+      createMimeMessage().setSender(body.email),
+    );
+
+    console.log("email sent");
+    console.log("syncing crisp");
+
     let crispUser = await options.crisp.getCrispUser(body.email);
 
     if (!crispUser) {
@@ -33,16 +48,7 @@ export async function handleContactUs(options: {
       });
     }
 
-    await sendEmail(
-      options.email,
-      'contact@the-guild.dev',
-      'uri.goldshtein@gmail.com',
-      `Contact Us Form Submission - The Guild (${body.email})`,
-      [`Name: ${body.name}`, `Email: ${body.email}`, `Notes: ${body.notes || ''}`].join('\n'),
-      createMimeMessage().setSender(body.email),
-    );
-
-    console.debug(`Crisp user: `, crispUser);
+    console.log(`Crisp user: `, crispUser);
     const crispContactLink = `https://app.crisp.chat/website/${options.crisp.websiteId}/contacts/profile/${crispUser.people_id}/`;
 
     await options.crisp.addCrispUserEvent(crispUser.people_id, {

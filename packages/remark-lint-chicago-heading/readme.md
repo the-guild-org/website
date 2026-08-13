@@ -1,1 +1,0 @@
-# `remark-lint-heading-increment`

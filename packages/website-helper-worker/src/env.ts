@@ -1,9 +1,6 @@
 export interface Env {
   CRISP_TOKEN: string;
   CRISP_WEBSITE_ID: string;
-  NOTION_TOKEN: string;
-  NOTION_HELTIN_DATABASE_ID: string;
-  NOTION_CONTACT_US_DATABASE_ID: string;
   SENTRY_DSN: string;
   BEEHIIV_API_KEY: string;
   EMAIL_SENDER: SendEmail;

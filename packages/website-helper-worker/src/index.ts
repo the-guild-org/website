@@ -1,7 +1,5 @@
 import { Toucan } from 'toucan-js';
-import { Client } from '@notionhq/client';
 import { handleContactUs } from './contact-guild';
-import { handleHeltinContact } from './contact-heltin';
 import { buildResponseCorsHeaders } from './cors';
 import { createCrispClient } from './crisp-client';
 import { Env } from './env';
@@ -31,9 +29,6 @@ export default {
         token: env.CRISP_TOKEN,
         websiteId: env.CRISP_WEBSITE_ID,
       });
-      const notion = new Client({
-        auth: env.NOTION_TOKEN,
-      });
 
       if (request.method === 'OPTIONS') {
         return new Response(null, {
@@ -48,12 +43,7 @@ export default {
       });
 
       if (request.method === 'POST' && url.pathname === '/api/heltin/signup') {
-        return await handleHeltinContact({
-          request,
-          body: maybeBody ? JSON.parse(maybeBody) : null,
-          notion,
-          notionDatabaseId: env.NOTION_HELTIN_DATABASE_ID,
-        });
+        return new Response(JSON.stringify({ error: "todo" }), { status: 500 });
       }
 
       if (request.method === 'POST' && url.pathname === '/api/contact-us') {
@@ -62,8 +52,6 @@ export default {
           request,
           body: maybeBody ? JSON.parse(maybeBody) : null,
           crisp,
-          notion,
-          notionDatabaseId: env.NOTION_CONTACT_US_DATABASE_ID,
         });
       }
 
