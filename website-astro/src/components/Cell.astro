@@ -1,0 +1,23 @@
+---
+interface Props {
+  title: string;
+  evidence?: string;
+}
+
+const { title, evidence } = Astro.props;
+---
+
+<article
+  class="min-h-full border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]"
+>
+  <slot name="metric" />
+  <h3 class="mb-2.5 font-mono text-[15px] font-semibold text-[var(--strong)]">{title}</h3>
+  <div class="text-sm text-[var(--muted)] [&_b]:font-semibold [&_b]:text-[var(--text)]">
+    <slot />
+  </div>
+  {
+    evidence && (
+      <div class="mt-4 font-mono text-[11px] leading-[1.45] text-[var(--faint)]">{evidence}</div>
+    )
+  }
+</article>

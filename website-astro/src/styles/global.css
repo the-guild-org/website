@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --bg: #f8f8f5;
+  --text: #1c1c1a;
+  --strong: #080808;
+  --muted: #666661;
+  --faint: #96968f;
+  --line: #deded7;
+  --line-strong: #c9c9c1;
+  --green: #24713b;
+  --amber: #8d651b;
+  --violet: #6b54a0;
+  --hero-copy: #4f4f4b;
+  --badge-line: #9dbda5;
+  --nav-bg: rgb(248 248 245 / 92%);
+  --selection: rgb(36 113 59 / 16%);
+  --button-hover: rgb(8 8 8 / 3.5%);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0a0a0a;
+  --text: #e8e8e8;
+  --strong: #fff;
+  --muted: #8d8d8d;
+  --faint: #555;
+  --line: #242424;
+  --line-strong: #343434;
+  --green: #8bd49c;
+  --amber: #e4c07a;
+  --violet: #b7a0e8;
+  --hero-copy: #bdbdbd;
+  --badge-line: #2c4b35;
+  --nav-bg: rgb(10 10 10 / 92%);
+  --selection: rgb(139 212 156 / 18%);
+  --button-hover: rgb(255 255 255 / 4.5%);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: theme('fontFamily.sans');
+  line-height: 1.6;
+  letter-spacing: -0.006em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--selection);
+  color: var(--strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
