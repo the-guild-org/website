@@ -1,0 +1,38 @@
+<button
+  id="theme-switch"
+  type="button"
+  aria-label="Switch color theme"
+  aria-pressed="false"
+  class="group relative ml-0.5 inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-[3px] border-0 bg-transparent font-mono text-[17px] leading-none text-[var(--muted)] transition-colors hover:bg-[var(--button-hover)] hover:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-[var(--muted)]"
+>
+  <span id="theme-icon" aria-hidden="true"></span>
+  <span
+    id="theme-label"
+    class="pointer-events-none absolute right-0 top-[calc(100%+7px)] translate-y-[-2px] whitespace-nowrap border border-[var(--line)] bg-[var(--bg)] px-[5px] py-[3px] font-mono text-[9px] leading-none tracking-[.08em] text-[var(--faint)] opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100"
+  ></span>
+</button>
+
+<script>
+  const root = document.documentElement;
+  const toggle = document.querySelector('#theme-switch');
+  const icon = document.querySelector('#theme-icon');
+  const label = document.querySelector('#theme-label');
+
+  function syncThemeToggle() {
+    if (!toggle || !icon || !label) return;
+    const dark = root.dataset.theme === 'dark';
+    toggle.setAttribute('aria-pressed', String(dark));
+    toggle.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    icon.textContent = dark ? '☾' : '☀';
+    label.textContent = dark ? 'LIGHT' : 'DARK';
+  }
+
+  toggle?.addEventListener('click', () => {
+    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    try {
+      localStorage.setItem('guild-theme', root.dataset.theme);
+    } catch {}
+    syncThemeToggle();
+  });
+  syncThemeToggle();
+</script>

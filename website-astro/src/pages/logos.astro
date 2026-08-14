@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 
 import CommandLink from '../components/CommandLink.astro';
 import Footer from '../components/Footer.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
 import Layout from '../layouts/Layout.astro';
 
 const logoSvg = readFileSync(
@@ -31,8 +32,9 @@ const logoSvg = readFileSync(
       </a>
       <span class="text-[var(--faint)]">/</span>
       <span class="text-[var(--muted)]">press-kit</span>
-      <div class="ml-auto">
+      <div class="ml-auto flex items-center gap-2.5">
         <CommandLink href="/static/logos.zip" primary>download logo pack</CommandLink>
+        <ThemeToggle />
       </div>
     </div>
   </header>
