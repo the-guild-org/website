@@ -1,6 +1,7 @@
 ---
 import Cell from '../components/Cell.astro';
 import CommandLink from '../components/CommandLink.astro';
+import Footer from '../components/Footer.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import Layout from '../layouts/Layout.astro';
 
@@ -52,32 +53,6 @@ const packages = [
   ['Scalars', 'custom GraphQL scalars'],
   ['ESLint plugin', 'GraphQL linting'],
   ['Inspector', 'schema change checks'],
-];
-
-const footerProjects = [
-  ['Hive Console', 'https://the-guild.dev/graphql/hive'],
-  ['Hive Router', 'https://github.com/graphql-hive/router'],
-  ['Hive Gateway', 'https://the-guild.dev/graphql/hive/gateway'],
-  ['Stellate', 'https://stellate.co'],
-  ['Yoga', 'https://the-guild.dev/graphql/yoga-server'],
-  ['Mesh', 'https://the-guild.dev/graphql/mesh'],
-  ['Codegen', 'https://the-guild.dev/graphql/codegen'],
-  ['Inspector', 'https://the-guild.dev/graphql/inspector'],
-  ['Envelop', 'https://the-guild.dev/graphql/envelop'],
-  ['SOFA', 'https://the-guild.dev/graphql/sofa-api'],
-  ['Scalars', 'https://the-guild.dev/graphql/scalars'],
-  ['GraphQL ESLint', 'https://the-guild.dev/graphql/eslint'],
-];
-
-const socialLinks = [
-  ['X', 'https://x.com/TheGuildDev'],
-  ['Discord', 'https://discord.com/invite/xud7bH9'],
-  ['LinkedIn', 'https://www.linkedin.com/company/the-guild-software/'],
-  ['GitHub', 'https://github.com/the-guild-org'],
-  [
-    'YouTube',
-    'https://www.youtube.com/watch?v=d_GBgH-L5c4&list=PLhCf3AUOg4PgQoY_A6xWDQ70yaNtPYtZd',
-  ],
 ];
 
 const caseStudies = [
@@ -302,9 +277,9 @@ const caseStudies = [
           <div
             class="mt-[34px] border-t border-[var(--line)] pt-[18px] font-mono text-xs text-[var(--muted)] [&_strong]:text-[var(--text)]"
           >
-            <strong>Stewardship test:</strong> ask any vendor what happened to the last project they lost
-            interest in. Our answer is a commit log — Codegen, GraphQL-Tools, Yoga, Stellate, and Grafbase
-            are all actively maintained today, no matter where they started.
+            <strong>Stewardship test:</strong> ask any vendor what happened to the last project they
+            lost interest in. Our answer is a commit log — Codegen, GraphQL-Tools, Yoga, Stellate, and
+            Grafbase are all actively maintained today, no matter where they started.
           </div>
         </div>
         <div class="border-l border-[var(--line-strong)]">
@@ -365,9 +340,9 @@ const caseStudies = [
               <li
                 class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-sm text-[var(--muted)] before:absolute before:left-0 before:text-[var(--green)] before:content-['--']"
               >
-                <b class="font-semibold text-[var(--text)]">Schema registry</b> — composition checks against
-                live traffic and persisted operations, so a breaking change is caught in CI, not by a
-                customer.
+                <b class="font-semibold text-[var(--text)]">Schema registry</b> — composition checks
+                against live traffic and persisted operations, so a breaking change is caught in CI,
+                not by a customer.
               </li>
               <li
                 class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-sm text-[var(--muted)] before:absolute before:left-0 before:text-[var(--green)] before:content-['--']"
@@ -575,10 +550,10 @@ const caseStudies = [
         <div
           class="max-w-[900px] border-t border-[var(--line)] pt-[18px] font-mono text-[var(--muted)] [&_strong]:text-[var(--text)]"
         >
-          <strong>Also: AI agents, when you're ready.</strong> The same supergraph that governs your GraphQL
-          consumers extends to agents — skills declared in the schema, exposed over MCP, governed by the
-          same checks. No new platform, no replatforming. It's there when you want it, and invisible until
-          you do.
+          <strong>Also: AI agents, when you're ready.</strong> The same supergraph that governs your
+          GraphQL consumers extends to agents — skills declared in the schema, exposed over MCP, governed
+          by the same checks. No new platform, no replatforming. It's there when you want it, and invisible
+          until you do.
         </div>
       </div>
     </section>
@@ -605,65 +580,7 @@ const caseStudies = [
     </section>
   </main>
 
-  <footer class="mx-auto w-[calc(100%-24px)] max-w-shell pb-[60px] pt-12 sm:w-[calc(100%-40px)]">
-    <div
-      class="grid gap-10 border-b border-[var(--line)] pb-12 md:grid-cols-[minmax(220px,.7fr)_1.3fr]"
-    >
-      <div>
-        <a href="#top" class="font-mono text-sm font-bold text-[var(--strong)]">the-guild</a>
-        <p class="mt-3 max-w-[300px] text-sm text-[var(--muted)]">
-          Open-source GraphQL infrastructure, maintained for the long run.
-        </p>
-        <nav class="mt-6" aria-label="The Guild social media">
-          <ul class="flex max-w-[300px] flex-wrap gap-x-4 gap-y-2">
-            {
-              socialLinks.map(([name, href]) => (
-                <li>
-                  <a
-                    class="font-mono text-[11px] text-[var(--muted)] underline-offset-4 transition-colors hover:text-[var(--strong)] hover:underline"
-                    href={href}
-                  >
-                    {name}
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-        </nav>
-      </div>
-      <nav aria-label="The Guild projects">
-        <div class="mb-4 font-mono text-[11px] tracking-[.075em] text-[var(--faint)]">
-          ~/projects
-        </div>
-        <ul class="grid grid-cols-2 gap-x-6 sm:grid-cols-3">
-          {
-            footerProjects.map(([name, href]) => (
-              <li class="border-t border-[var(--line)]">
-                <a
-                  class="group flex items-center justify-between gap-3 py-3 font-mono text-xs text-[var(--muted)] transition-colors hover:text-[var(--strong)]"
-                  href={href}
-                >
-                  {name}
-                  <span
-                    aria-hidden="true"
-                    class="text-[var(--faint)] transition-transform group-hover:translate-x-0.5"
-                  >
-                    ↗
-                  </span>
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-    </div>
-    <div
-      class="flex flex-wrap justify-between gap-[18px] pt-[30px] font-mono text-[11px] tracking-[.01em] text-[var(--faint)]"
-    >
-      <span>© 2026 The Guild — MIT-licensed, bootstrapped, profitable.</span>
-      <span>GraphQL infrastructure · since 2015</span>
-    </div>
-  </footer>
+  <Footer />
 
   <script>
     const root = document.documentElement;
