@@ -31,9 +31,9 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           projectName: guild-dev-website
           prId: ${{ github.event.pull_request.number }}
-          websiteDirectory: website
-          buildScript: pnpm build && pnpm export
-          artifactDir: out
+          websiteDirectory: website-astro
+          buildScript: pnpm build
+          artifactDir: dist
 
   prettier:
     runs-on: ubuntu-latest
