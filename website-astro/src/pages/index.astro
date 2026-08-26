@@ -590,67 +590,76 @@ const caseStudies = [
       class="scroll-mt-[54px] border-b border-[var(--line)] py-[68px] sm:py-[100px]"
     >
       <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
-        <SectionHeader path="~/the-guild/security" title="The diligence answers, up front.">
-          The four questions every procurement and security review asks — answered before the first
+        <SectionHeader path="~/the-guild/security" title="Your security review, pre-answered.">
+          For procurement and security reviewers: the attestations, controls, and deployment
+          options you'll ask about — each with a public source you can check before the first
           call.
         </SectionHeader>
         <div class="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-4">
-          <Cell title="Audited, continuously"
+          <Cell
+            title="Audited, continuously"
+            evidence="source: security.graphql-hive.com — trust center"
+            evidenceHref="https://security.graphql-hive.com"
             ><div
               slot="metric"
               class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
             >
               SOC 2 · II
             </div><p>
-              SOC 2 Type II attestation and Cloud Security Alliance STAR registry listing — reports
-              available at <a
-                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
-                href="https://security.graphql-hive.com">security.graphql-hive.com</a
-              >.
+              <b>SOC 2 Type II</b> attested and listed in the <b>Cloud Security Alliance STAR</b>
+              registry. Reports, policies, and subprocessors are published in the trust center — no
+              NDA required to read them.
             </p></Cell
           >
-          <Cell title="Exit clause built in"
+          <Cell
+            title="Enterprise access controls"
+            evidence="source: Hive docs — SSO, roles, audit logs"
+            evidenceHref="https://the-guild.dev/graphql/hive/docs/management/sso-oidc-provider"
+            ><div
+              slot="metric"
+              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
+            >
+              SSO · RBAC
+            </div><p>
+              SAML/OIDC <b>single sign-on</b>, custom <a
+                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                href="https://the-guild.dev/graphql/hive/docs/schema-registry/management/members-roles-permissions"
+                >roles and permissions</a
+              >, and exportable <a
+                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                href="https://the-guild.dev/graphql/hive/docs/schema-registry/management/audit-logs"
+                >audit logs</a
+              > — the controls your review checklist actually names, documented publicly.
+            </p></Cell
+          >
+          <Cell
+            title="Runs where policy demands"
+            evidence="source: self-hosting docs — the full platform"
+            evidenceHref="https://the-guild.dev/graphql/hive/docs/self-hosting"
+            ><div
+              slot="metric"
+              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
+            >
+              air-gap
+            </div><p>
+              Run the entire platform on your own infrastructure — in your VPC or fully
+              <b>air-gapped</b>. It's the same MIT-licensed code as the cloud, not a stripped
+              "enterprise edition."
+            </p></Cell
+          >
+          <Cell
+            title="Vendor continuity, by license"
+            evidence="source: MIT license — github.com/graphql-hive"
+            evidenceHref="https://github.com/graphql-hive/console/blob/main/LICENSE"
             ><div
               slot="metric"
               class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
             >
               MIT
             </div><p>
-              The self-hosted platform is the cloud platform. Continuity risk is capped by <a
-                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
-                href="https://github.com/graphql-hive/console/blob/main/LICENSE">license</a
-              >, not by contract negotiation.
-            </p></Cell
-          >
-          <Cell title="Stable by structure"
-            ><div
-              slot="metric"
-              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
-            >
-              0 VC
-            </div><p>
-              Profitable and bootstrapped for a decade — profitable enough to <a
-                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
-                href={stellateAcquisitionHref}>acquire</a
-              > <a
-                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
-                href={grafbaseAcquisitionHref}>twice</a
-              >. No runway anxiety, no forced pivot, no acquisition exit looming over your
-              dependency.
-            </p></Cell
-          >
-          <Cell title="Reference-checkable"
-            ><div
-              slot="metric"
-              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
-            >
-              10+ yrs
-            </div><p>
-              A decade of public commit history, named enterprise customers, and every major project
-              still maintained. <a
-                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
-                href="https://github.com/the-guild-org">Diligence us on GitHub</a
-              >.
+              The what-if-the-vendor-disappears question has a structural answer: the license. You
+              keep the platform, your data, and the right to run it forever — no escrow agreement
+              needed.
             </p></Cell
           >
         </div>
