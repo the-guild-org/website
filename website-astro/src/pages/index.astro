@@ -1,6 +1,7 @@
 ---
 import Cell from '../components/Cell.astro';
 import CommandLink from '../components/CommandLink.astro';
+import ContactDialog from '../components/ContactDialog.astro';
 import Footer from '../components/Footer.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
@@ -140,7 +141,7 @@ const caseStudies = [
           ><CommandLink href="https://the-guild.dev/graphql/hive">explore platform</CommandLink
           ></span
         >
-        <CommandLink href="#contact" primary>talk to an engineer</CommandLink>
+        <CommandLink href="#contact" primary data-contact-open>talk to an engineer</CommandLink>
         <ThemeToggle />
       </div>
     </div>
@@ -699,13 +700,15 @@ const caseStudies = [
           SDR.
         </p>
         <div class="flex flex-wrap gap-2.5">
-          <CommandLink href="#" primary>talk to an engineer</CommandLink>
+          <CommandLink href="#contact" primary data-contact-open>talk to an engineer</CommandLink>
           <CommandLink href="https://the-guild.dev/graphql/hive">start with hive</CommandLink>
           <CommandLink href="https://stellate.co">cache with stellate</CommandLink>
         </div>
       </div>
     </section>
   </main>
+
+  <ContactDialog />
 
   <Footer />
 
