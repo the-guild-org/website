@@ -1,15 +1,11 @@
 ---
 import { readFileSync } from 'node:fs';
-
 import CommandLink from '../components/CommandLink.astro';
 import Footer from '../components/Footer.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import Layout from '../layouts/Layout.astro';
 
-const logoSvg = readFileSync(
-  new URL('../../public/static/logo.svg', import.meta.url),
-  'utf8',
-)
+const logoSvg = readFileSync(new URL('../../public/static/logo.svg', import.meta.url), 'utf8')
   .replaceAll('#0B0D11', 'currentColor')
   .replace('<svg ', '<svg aria-hidden="true" focusable="false" ');
 ---
@@ -51,8 +47,8 @@ const logoSvg = readFileSync(
           The Guild press kit.
         </h1>
         <p class="mt-6 max-w-[680px] text-lg leading-[1.7] text-[var(--muted)]">
-          Official logos and guidance for articles, meetups, conferences, podcasts, and
-          co-marketing involving The Guild.
+          Official logos and guidance for articles, meetups, conferences, podcasts, and co-marketing
+          involving The Guild.
         </p>
         <div class="mt-8">
           <a
@@ -83,7 +79,9 @@ const logoSvg = readFileSync(
           </p>
         </div>
 
-        <div class="grid grid-cols-1 gap-px overflow-hidden border border-[var(--line)] bg-[var(--line)] md:grid-cols-2">
+        <div
+          class="grid grid-cols-1 gap-px overflow-hidden border border-[var(--line)] bg-[var(--line)] md:grid-cols-2"
+        >
           <figure class="flex min-h-[280px] flex-col bg-[#f8f8f5] p-6 sm:p-9">
             <figcaption class="font-mono text-[10px] uppercase tracking-[.08em] text-[#666661]">
               Dark logo / light background
@@ -91,7 +89,7 @@ const logoSvg = readFileSync(
             <div
               class="flex flex-1 items-center justify-center py-10 text-[#0b0d11] [&_svg]:h-auto [&_svg]:w-[176px]"
               set:html={logoSvg}
-            ></div>
+            />
           </figure>
           <figure class="flex min-h-[280px] flex-col bg-[#0a0a0a] p-6 sm:p-9">
             <figcaption class="font-mono text-[10px] uppercase tracking-[.08em] text-[#8d8d8d]">
@@ -100,7 +98,7 @@ const logoSvg = readFileSync(
             <div
               class="flex flex-1 items-center justify-center py-10 text-white [&_svg]:h-auto [&_svg]:w-[176px]"
               set:html={logoSvg}
-            ></div>
+            />
           </figure>
         </div>
       </div>
