@@ -4,7 +4,13 @@ import CommandLink from '../components/CommandLink.astro';
 import Footer from '../components/Footer.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
+import { caseStudyLogos } from '../components/case-study-logos';
 import Layout from '../layouts/Layout.astro';
+
+const stellateAcquisitionHref = 'https://the-guild.dev/graphql/hive/blog/stellate-acquisition';
+const grafbaseAcquisitionHref = 'https://the-guild.dev/graphql/hive/blog/acquired-grafbase';
+const benchmarksHref = 'https://the-guild.dev/graphql/hive/federation-gateway-performance';
+const federationAuditHref = 'https://github.com/graphql-hive/federation-gateway-audit';
 
 const history = [
   {
@@ -15,45 +21,50 @@ const history = [
   {
     year: '2016',
     title: 'GraphQL Codegen ships',
+    href: 'https://the-guild.dev/graphql/codegen',
     badge: 'maintained 10+ years',
     copy: 'Type-safe GraphQL for millions of developers. A decade of continuous releases — the longest-maintained tool of its kind in the ecosystem.',
   },
   {
     year: '2020',
     title: 'GraphQL-Tools — adopted from Apollo',
+    href: 'https://the-guild.dev/graphql/tools',
     badge: 'alive & growing',
     copy: 'When Apollo stepped back, we took over the most-depended-on schema library in GraphQL and kept every user shipping.',
   },
   {
     year: '2021',
     title: 'GraphQL Yoga — adopted from Prisma',
+    href: 'https://the-guild.dev/graphql/yoga-server',
     badge: 'alive & growing',
     copy: 'Prisma moved on; we rebuilt Yoga into the fully-featured, spec-compliant GraphQL server it is today.',
   },
   {
     year: '2024',
     title: 'Stellate — acquired, product saved',
+    href: stellateAcquisitionHref,
     badge: 'alive & growing',
     copy: 'The CDN for GraphQL joined The Guild — customers kept their edge, the product kept its roadmap.',
   },
   {
     year: '2026',
     title: 'Grafbase — acquired, users migrated to Hive',
+    href: grafbaseAcquisitionHref,
     badge: 'users saved',
     copy: 'Second acquisition funded from profit, not funding.',
   },
 ];
 
 const packages = [
-  ['GraphQL Codegen', 'type-safe code · since 2016'],
-  ['Yoga', 'GraphQL server'],
-  ['GraphQL-Tools', 'schema tooling'],
-  ['Mesh', 'any API → graph'],
-  ['Envelop', 'server plugins'],
-  ['SOFA', 'GraphQL → REST'],
-  ['Scalars', 'custom GraphQL scalars'],
-  ['ESLint plugin', 'GraphQL linting'],
-  ['Inspector', 'schema change checks'],
+  ['GraphQL Codegen', 'type-safe code · since 2016', 'https://the-guild.dev/graphql/codegen'],
+  ['Yoga', 'GraphQL server', 'https://the-guild.dev/graphql/yoga-server'],
+  ['GraphQL-Tools', 'schema tooling', 'https://the-guild.dev/graphql/tools'],
+  ['Mesh', 'any API → graph', 'https://the-guild.dev/graphql/mesh'],
+  ['Envelop', 'server plugins', 'https://the-guild.dev/graphql/envelop'],
+  ['SOFA', 'GraphQL → REST', 'https://the-guild.dev/graphql/sofa-api'],
+  ['Scalars', 'custom GraphQL scalars', 'https://the-guild.dev/graphql/scalars'],
+  ['ESLint plugin', 'GraphQL linting', 'https://the-guild.dev/graphql/eslint'],
+  ['Inspector', 'schema change checks', 'https://the-guild.dev/graphql/inspector'],
 ];
 
 const caseStudies = [
@@ -148,11 +159,20 @@ const caseStudies = [
         <div
           class="max-w-[790px] text-pretty text-lg leading-[1.68] text-[var(--hero-copy)] [&_strong]:font-semibold [&_strong]:text-[var(--strong)]"
         >
-          Open source isn't the risk. <strong>It's the risk mitigation.</strong> The SaaS and self-hosted
-          product are the same MIT-licensed code, so you always hold the exit. The Guild is <strong
-            >profitable and bootstrapped</strong
-          >: no investor pressure to pivot, get acquired, or move features behind an enterprise
-          license. A decade in GraphQL, building what customers actually need.
+          We build <a
+            class="font-semibold text-[var(--green)] hover:text-[var(--strong)]"
+            href="https://the-guild.dev/graphql/hive">Hive</a
+          >, the open-source GraphQL federation platform — schema registry, router, and
+          observability — and <a
+            class="font-semibold text-[var(--violet)] hover:text-[var(--strong)]"
+            href="https://stellate.co">Stellate</a
+          >, the CDN for GraphQL. And we build it all <strong>open source</strong>: the SaaS and
+          self-hosted product are the same MIT-licensed code, so you always hold the exit. The
+          Guild is <strong>profitable and bootstrapped</strong> — no investor pressure to pivot, get
+          acquired, or move features behind an enterprise license. <a
+            class="text-[var(--green)] hover:text-[var(--strong)]"
+            href="#why">Read how the whole company is structured around that →</a
+          >
           <br /><br />
           When you're ready for AI agents, the same supergraph governs them — <a
             class="text-[var(--violet)] hover:text-[var(--strong)]"
@@ -162,6 +182,17 @@ const caseStudies = [
         <div class="mt-[30px] flex flex-wrap gap-2.5">
           <CommandLink href="#platform" primary>explore platform</CommandLink>
           <CommandLink href="#track-record">view history</CommandLink>
+        </div>
+        <div
+          class="mt-9 border-t border-[var(--line)] pt-4 font-mono text-xs leading-[1.9] text-[var(--muted)] [&_a]:text-[var(--text)] [&_a]:underline [&_a]:decoration-[var(--line-strong)] [&_a]:underline-offset-2 [&_a]:transition-colors hover:[&_a]:text-[var(--strong)] hover:[&_a]:decoration-current"
+        >
+          Running in production at <a href="#proof">Fortune 500 scale</a>
+          <span class="mx-1.5 text-[var(--faint)]">·</span> Open <a href={benchmarksHref}
+            >gateway benchmarks</a
+          > and <a href={federationAuditHref}>federation audit</a>
+          <span class="mx-1.5 text-[var(--faint)]">·</span> Acquired <a
+            href={stellateAcquisitionHref}>Stellate (2024)</a
+          > and <a href={grafbaseAcquisitionHref}>Grafbase (2026)</a>
         </div>
       </div>
     </div>
@@ -183,16 +214,17 @@ const caseStudies = [
       <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
         <SectionHeader
           path="~/the-guild/why"
-          title="Every vendor promise here is structural. Verify it, don't trust it."
+          title="Don't take our word for it. Every promise here is verifiable."
         >
-          Most infrastructure vendors ask you to trust their intentions. We've arranged the company
-          so you don't have to: the license, the finances, and the track record each remove a
-          category of risk on their own.
+          Most infrastructure vendors ask you to trust their intentions. We've structured the whole
+          company from the beginning so you don't have to: the license, the finances, and the track
+          record each remove a category of risk on their own.
         </SectionHeader>
         <div class="grid grid-cols-1 gap-x-9 gap-y-11 md:grid-cols-2 lg:grid-cols-3">
           <Cell
             title="MIT, all the way down"
             evidence="evidence: github.com/graphql-hive — full platform source"
+            evidenceHref="https://github.com/graphql-hive"
             ><p>
               Cloud and self-hosted are the <b>same code</b>. No open-core bait, no features clawed
               back into an enterprise tier. If we disappeared tomorrow, you'd keep running.
@@ -201,12 +233,21 @@ const caseStudies = [
           <Cell
             title="Profitable, bootstrapped"
             evidence="evidence: two acquisitions, no funding rounds on record"
+            evidenceHref={grafbaseAcquisitionHref}
             ><p>
-              Stable finances, zero venture capital. Profitable enough to acquire Stellate (2024)
-              and Grafbase (2026) from cash flow — not from a raise.
+              Stable finances, zero venture capital. Profitable enough to acquire <a
+                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                href={stellateAcquisitionHref}>Stellate (2024)</a
+              > and <a
+                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                href={grafbaseAcquisitionHref}>Grafbase (2026)</a
+              > from cash flow — not from a raise.
             </p></Cell
           >
-          <Cell title="No renewal shock" evidence="evidence: MIT license = permanent exit option"
+          <Cell
+            title="No renewal shock"
+            evidence="evidence: MIT license = permanent exit option"
+            evidenceHref="https://github.com/graphql-hive/console/blob/main/LICENSE"
             ><p>
               Predictable economics, without the enterprise-license ambush at year two. Pricing that
               doesn't change shape once you're locked in — because you're never locked in.
@@ -215,23 +256,34 @@ const caseStudies = [
           <Cell
             title="We don't abandon software"
             evidence="evidence: commit history, 2016 → present"
+            evidenceHref="https://github.com/dotansimha/graphql-code-generator/commits/master"
             ><p>
-              <span class="font-mono font-semibold text-[var(--text)]">GraphQL Codegen</span>:
-              maintained for <b>more than ten years</b>. When Apollo stepped back from <span
-                class="font-mono font-semibold text-[var(--text)]">GraphQL-Tools</span
-              > and Prisma from <span class="font-mono font-semibold text-[var(--text)]">Yoga</span
+              <a
+                class="font-mono font-semibold text-[var(--text)] hover:underline"
+                href="https://the-guild.dev/graphql/codegen">GraphQL Codegen</a
+              >: maintained for <b>more than ten years</b>. When Apollo stepped back from <a
+                class="font-mono font-semibold text-[var(--text)] hover:underline"
+                href="https://the-guild.dev/graphql/tools">GraphQL-Tools</a
+              > and Prisma from <a
+                class="font-mono font-semibold text-[var(--text)] hover:underline"
+                href="https://the-guild.dev/graphql/yoga-server">Yoga</a
               >, we adopted them — both are healthier today than the day we took them in.
             </p></Cell
           >
           <Cell
-            title="No takeover required"
+            title="Adopt one piece — or the whole platform"
             evidence="evidence: works with existing federation setups"
+            evidenceHref="https://the-guild.dev/graphql/hive/docs/gateway"
             ><p>
-              Zero lock-in cuts both ways: Hive plugs into the gateways, routers, and observability
-              you already run instead of replacing them. Adopt one piece, or the whole platform.
+              The opposite of lock-in: <b>Hive Console</b> and <b>Hive Router</b> each work standalone.
+              Run just the schema registry with the gateway you already have, or just the router with
+              your existing registry — and migrate the rest gradually, only what you want, when you want.
             </p></Cell
           >
-          <Cell title="Audited security" evidence="evidence: security.graphql-hive.com"
+          <Cell
+            title="Audited security"
+            evidence="evidence: security.graphql-hive.com"
+            evidenceHref="https://security.graphql-hive.com"
             ><p>
               <b>SOC 2 Type II</b> attested and listed in the <b>Cloud Security Alliance STAR</b> registry.
               Enterprise SSO, RBAC, audit logs, and fully air-gapped self-hosting when policy demands
@@ -267,8 +319,22 @@ const caseStudies = [
             class="mt-[34px] border-t border-[var(--line)] pt-[18px] font-mono text-xs text-[var(--muted)] [&_strong]:text-[var(--text)]"
           >
             <strong>Stewardship test:</strong> ask any vendor what happened to the last project they
-            lost interest in. Our answer is a commit log — Codegen, GraphQL-Tools, Yoga, Stellate, and
-            Grafbase are all actively maintained today, no matter where they started.
+            lost interest in. Our answer is a commit log — <a
+              class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)]"
+              href="https://the-guild.dev/graphql/codegen">Codegen</a
+            >, <a
+              class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)]"
+              href="https://the-guild.dev/graphql/tools">GraphQL-Tools</a
+            >, <a
+              class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)]"
+              href="https://the-guild.dev/graphql/yoga-server">Yoga</a
+            >, <a
+              class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)]"
+              href="https://stellate.co">Stellate</a
+            >, and <a
+              class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)]"
+              href={grafbaseAcquisitionHref}>Grafbase</a
+            > are all actively maintained today, no matter where they started.
           </div>
         </div>
         <div class="border-l border-[var(--line-strong)]">
@@ -280,7 +346,13 @@ const caseStudies = [
                 </div>
                 <div>
                   <h3 class="mb-1 font-mono text-base font-semibold text-[var(--strong)]">
-                    {event.title}
+                    {event.href ? (
+                      <a class="hover:underline" href={event.href}>
+                        {event.title}
+                      </a>
+                    ) : (
+                      event.title
+                    )}
                     {event.badge && (
                       <span class="ml-2 inline-block rounded-sm border border-[var(--badge-line)] px-1.5 py-px align-middle font-mono text-[10px] font-normal tracking-[.02em] text-[var(--green)] before:mr-[5px] before:inline-block before:size-1 before:rounded-full before:bg-current before:align-[1px] before:content-['']">
                         {event.badge}
@@ -336,9 +408,16 @@ const caseStudies = [
               <li
                 class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-sm text-[var(--muted)] before:absolute before:left-0 before:text-[var(--green)] before:content-['--']"
               >
-                <b class="font-mono font-semibold text-[var(--text)]">Hive Router</b> — open-source (MIT)
-                federation router built in Rust; the fastest gateway in public benchmarks, verified by
-                a reproducible federation audit.
+                <a
+                  class="font-mono font-semibold text-[var(--text)] hover:underline"
+                  href="https://github.com/graphql-hive/router">Hive Router</a
+                > — open-source (MIT) federation router built in Rust; the fastest gateway in <a
+                  class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                  href={benchmarksHref}>public benchmarks</a
+                >, verified by a <a
+                  class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                  href={federationAuditHref}>reproducible federation audit</a
+                >.
               </li>
               <li
                 class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-sm text-[var(--muted)] before:absolute before:left-0 before:text-[var(--green)] before:content-['--']"
@@ -366,7 +445,10 @@ const caseStudies = [
             <div class="mb-5 font-mono text-[11px] text-[var(--muted)]">the CDN for GraphQL</div>
             <p class="text-[var(--muted)]">
               GraphQL-aware edge caching and protection, in front of any GraphQL API — including the
-              ones Hive doesn't run. Acquired by The Guild in 2024, actively developed since.
+              ones Hive doesn't run. <a
+                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                href={stellateAcquisitionHref}>Acquired by The Guild in 2024</a
+              >, actively developed since.
             </p>
             <ul class="mt-6">
               <li
@@ -401,15 +483,15 @@ const caseStudies = [
           aria-label="The Guild ecosystem"
         >
           {
-            packages.map(([name, description]) => (
-              <div class="min-w-28 shrink-0 pr-0.5">
-                <span class="block whitespace-nowrap font-mono text-xs font-semibold text-[var(--text)]">
+            packages.map(([name, description, href]) => (
+              <a class="group min-w-28 shrink-0 pr-0.5" href={href}>
+                <span class="block whitespace-nowrap font-mono text-xs font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--strong)] group-hover:underline">
                   {name}
                 </span>
                 <span class="mt-[3px] block whitespace-nowrap font-mono text-[10px] leading-[1.35] text-[var(--faint)]">
                   {description}
                 </span>
-              </div>
+              </a>
             ))
           }
         </div>
@@ -452,8 +534,18 @@ const caseStudies = [
         <div class="mt-5 grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-5">
           {
             caseStudies.map(study => (
-              <article class="border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]">
-                <div class="font-mono text-[15px] font-semibold text-[var(--strong)]">
+              <article class="group border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]">
+                <div class="flex items-center gap-2 font-mono text-[15px] font-semibold text-[var(--strong)]">
+                  {caseStudyLogos[study.company] && (
+                    <svg
+                      aria-hidden="true"
+                      class="size-4 shrink-0 text-[var(--faint)] transition-colors group-hover:text-[var(--text)]"
+                      fill="currentColor"
+                      viewBox={caseStudyLogos[study.company].viewBox}
+                      xmlns="http://www.w3.org/2000/svg"
+                      set:html={caseStudyLogos[study.company].markup}
+                    />
+                  )}
                   {study.company}
                 </div>
                 <div class="mb-3 mt-1 font-mono text-[10px] uppercase text-[var(--faint)]">
@@ -491,7 +583,10 @@ const caseStudies = [
               SOC 2 · II
             </div><p>
               SOC 2 Type II attestation and Cloud Security Alliance STAR registry listing — reports
-              available at security.graphql-hive.com.
+              available at <a
+                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                href="https://security.graphql-hive.com">security.graphql-hive.com</a
+              >.
             </p></Cell
           >
           <Cell title="Exit clause built in"
@@ -501,8 +596,10 @@ const caseStudies = [
             >
               MIT
             </div><p>
-              The self-hosted platform is the cloud platform. Continuity risk is capped by license,
-              not by contract negotiation.
+              The self-hosted platform is the cloud platform. Continuity risk is capped by <a
+                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                href="https://github.com/graphql-hive/console/blob/main/LICENSE">license</a
+              >, not by contract negotiation.
             </p></Cell
           >
           <Cell title="Stable by structure"
@@ -512,8 +609,14 @@ const caseStudies = [
             >
               0 VC
             </div><p>
-              Profitable and bootstrapped for a decade. No runway anxiety, no forced pivot, no
-              acquisition exit looming over your dependency.
+              Profitable and bootstrapped for a decade — profitable enough to <a
+                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                href={stellateAcquisitionHref}>acquire</a
+              > <a
+                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                href={grafbaseAcquisitionHref}>twice</a
+              >. No runway anxiety, no forced pivot, no acquisition exit looming over your
+              dependency.
             </p></Cell
           >
           <Cell title="Reference-checkable"
@@ -524,7 +627,10 @@ const caseStudies = [
               10+ yrs
             </div><p>
               A decade of public commit history, named enterprise customers, and every major project
-              still maintained. Diligence us on GitHub.
+              still maintained. <a
+                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                href="https://github.com/the-guild-org">Diligence us on GitHub</a
+              >.
             </p></Cell
           >
         </div>
@@ -555,10 +661,13 @@ const caseStudies = [
         <h2
           class="mb-3.5 max-w-[900px] text-balance font-mono text-[clamp(28px,4vw,48px)] font-semibold leading-[1.12] tracking-[-.045em] text-[var(--strong)]"
         >
-          Build on the GraphQL company that's still here in ten years.
+          Get in touch.
         </h2>
         <p class="mb-7 max-w-[700px] text-[var(--muted)]">
-          Talk to the engineers who maintain the tools you already run — no SDR gauntlet.
+          Looking to work with The Guild, learn more about our products, or just validate your API
+          strategy with us? We'll be happy to speak with you and learn about your efforts — for
+          free. You'll be talking to the engineers who maintain the tools you already run, not an
+          SDR.
         </p>
         <div class="flex flex-wrap gap-2.5">
           <CommandLink href="#" primary>talk to an engineer</CommandLink>

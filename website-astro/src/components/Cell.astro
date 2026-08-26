@@ -2,9 +2,10 @@
 interface Props {
   title: string;
   evidence?: string;
+  evidenceHref?: string;
 }
 
-const { title, evidence } = Astro.props;
+const { title, evidence, evidenceHref } = Astro.props;
 ---
 
 <article
@@ -16,8 +17,16 @@ const { title, evidence } = Astro.props;
     <slot />
   </div>
   {
-    evidence && (
-      <div class="mt-4 font-mono text-[11px] leading-[1.45] text-[var(--faint)]">{evidence}</div>
-    )
+    evidence &&
+      (evidenceHref ? (
+        <a
+          href={evidenceHref}
+          class="mt-4 block font-mono text-[11px] leading-[1.45] text-[var(--faint)] underline decoration-[var(--line-strong)] underline-offset-2 transition-colors hover:text-[var(--text)] hover:decoration-current"
+        >
+          {evidence}
+        </a>
+      ) : (
+        <div class="mt-4 font-mono text-[11px] leading-[1.45] text-[var(--faint)]">{evidence}</div>
+      ))
   }
 </article>
