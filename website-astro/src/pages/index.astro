@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import { caseStudyLogos } from '../components/case-study-logos';
+import { productLogos } from '../components/product-logos';
 import Layout from '../layouts/Layout.astro';
 
 const stellateAcquisitionHref = 'https://the-guild.dev/graphql/hive/blog/stellate-acquisition';
@@ -386,8 +387,16 @@ const caseStudies = [
             class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
           >
             <a
-              class="mb-[3px] inline-block font-mono text-[28px] font-semibold text-[var(--green)] hover:underline"
-              href="https://the-guild.dev/graphql/hive">Hive</a
+              class="mb-[3px] inline-flex items-center gap-2.5 font-mono text-[28px] font-semibold text-[var(--green)] hover:underline"
+              href="https://the-guild.dev/graphql/hive"
+              ><svg
+                aria-hidden="true"
+                class="size-6 shrink-0"
+                fill="currentColor"
+                viewBox={productLogos.Hive.viewBox}
+                xmlns="http://www.w3.org/2000/svg"
+                set:html={productLogos.Hive.markup}
+              />Hive</a
             >
             <div class="mb-5 font-mono text-[11px] text-[var(--muted)]">
               open-source GraphQL federation platform
@@ -437,9 +446,17 @@ const caseStudies = [
             class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
           >
             <a
-              class="mb-[3px] inline-block font-mono text-[28px] font-semibold text-[var(--violet)] hover:underline"
+              class="mb-[3px] inline-flex items-center gap-2.5 font-mono text-[28px] font-semibold text-[var(--violet)] hover:underline"
               href="https://stellate.co"
             >
+              <svg
+                aria-hidden="true"
+                class="size-6 shrink-0"
+                fill="currentColor"
+                viewBox={productLogos.Stellate.viewBox}
+                xmlns="http://www.w3.org/2000/svg"
+                set:html={productLogos.Stellate.markup}
+              />
               Stellate
             </a>
             <div class="mb-5 font-mono text-[11px] text-[var(--muted)]">the CDN for GraphQL</div>
