@@ -101,6 +101,75 @@ const caseStudies = [
     href: 'https://the-guild.dev/graphql/hive/case-studies/sound-xyz',
   },
 ];
+
+const stellateCaseStudies = [
+  {
+    company: 'Hashnode',
+    industry: 'Developer blogging',
+    copy: 'Edge caching for SEO wins and a database that stays up.',
+    href: 'https://stellate.co/case-study/hashnode-boosted-seo-and-stability',
+  },
+  {
+    company: 'Drive',
+    industry: 'Automotive media',
+    copy: "Australia's top automotive source cut API traffic while growing its audience.",
+    href: 'https://stellate.co/case-study/cost-savings-at-drive',
+  },
+  {
+    company: 'Gamma',
+    industry: 'NFT marketplace',
+    copy: '120M+ GraphQL requests a month on Hasura, made super fast.',
+    href: 'https://stellate.co/case-study/super-fast-hasura-graphql-for-stxnft',
+  },
+  {
+    company: 'Airheart',
+    industry: 'Travel',
+    copy: 'Scaled to 500K travelers globally in under 6 months.',
+    href: 'https://stellate.co/case-study/how-airheart-scaled-to-500k-travelers-globally-in-less-than-6-months',
+  },
+  {
+    company: 'Italic',
+    industry: 'E-commerce',
+    copy: 'From Black Friday crashes to a Black Friday that just worked.',
+    href: 'https://stellate.co/case-study/how-italic-prepared-for-black-friday-2021',
+  },
+  {
+    company: 'Patronage',
+    industry: 'Publishing',
+    copy: '99% less traffic to their headless WordPress servers.',
+    href: 'https://stellate.co/case-study/super-fast-wpgraphql-at-scale-with-graphql-edge-caching-at-patronage',
+  },
+  {
+    company: 'InnerSpace',
+    industry: 'Workplace analytics',
+    copy: 'Hasura p95 response times improved by 83%.',
+    href: 'https://stellate.co/case-study/super-fast-hasura-graphql-at-innerspace',
+  },
+  {
+    company: 'THAT Conference',
+    industry: 'Events',
+    copy: '40× faster GraphQL; database reads down 96%.',
+    href: 'https://stellate.co/case-study/40x-faster-graphql-for-that-conference',
+  },
+  {
+    company: 'RMRK',
+    industry: 'NFT marketplace',
+    copy: 'Traffic-spike downtime on Hasura, ended.',
+    href: 'https://stellate.co/case-study/scaling-hasura-at-rmrk',
+  },
+  {
+    company: 'FLOOD Magazine',
+    industry: 'Media',
+    copy: 'WPGraphQL served from the edge — drastically lighter servers.',
+    href: 'https://stellate.co/case-study/super-fast-wordpress-graphql-for-flood-magazine',
+  },
+  {
+    company: 'Ken Bromley Art Supplies',
+    industry: 'E-commerce',
+    copy: 'Fast global load times and lower cloud costs on Vendure.',
+    href: 'https://stellate.co/case-study/how-vendure-and-stellate-supercharged-an-online-art-supply-store',
+  },
+];
 ---
 
 <Layout
@@ -511,6 +580,39 @@ const caseStudies = [
               </article>
             ))
           }
+        </div>
+        <div class="mt-12 border-t border-[var(--line)] pt-7">
+          <div class="mb-6 font-mono text-[11px] tracking-[.075em] text-[var(--muted)]">
+            On Stellate's edge — case studies:
+          </div>
+          <div class="grid grid-cols-1 gap-x-8 gap-y-7 md:grid-cols-2 lg:grid-cols-3">
+            {
+              stellateCaseStudies.map(study => (
+                <a
+                  class="group border-t border-dotted border-[var(--line-strong)] pt-3 transition-colors hover:border-[var(--stellate)]"
+                  href={study.href}
+                >
+                  <div class="flex items-baseline justify-between gap-3">
+                    <span class="font-mono text-[13px] font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--strong)]">
+                      {study.company}
+                    </span>
+                    <span class="whitespace-nowrap font-mono text-[10px] uppercase text-[var(--faint)]">
+                      {study.industry}
+                    </span>
+                  </div>
+                  <p class="mt-1.5 text-[13px] leading-normal text-[var(--muted)]">
+                    {study.copy}
+                    <span
+                      aria-hidden="true"
+                      class="ml-1 inline-block font-mono text-[11px] text-[var(--stellate)] transition-transform group-hover:translate-x-0.5"
+                    >
+                      ↗
+                    </span>
+                  </p>
+                </a>
+              ))
+            }
+          </div>
         </div>
       </div>
     </section>
