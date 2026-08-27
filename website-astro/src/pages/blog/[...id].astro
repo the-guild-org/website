@@ -1,0 +1,213 @@
+---
+import { getCollection, render } from 'astro:content';
+import { AUTHORS } from '../../components/blog-authors';
+import CommandLink from '../../components/CommandLink.astro';
+import Footer from '../../components/Footer.astro';
+import Callout from '../../components/mdx/Callout.astro';
+import FileTreeBase from '../../components/mdx/FileTree.astro';
+import FileTreeFile from '../../components/mdx/FileTreeFile.astro';
+import FileTreeFolder from '../../components/mdx/FileTreeFolder.astro';
+import LinkPreview from '../../components/mdx/LinkPreview.astro';
+import Removed from '../../components/mdx/Removed.astro';
+import Steps from '../../components/mdx/Steps.astro';
+import Tweet from '../../components/mdx/Tweet.astro';
+import Video from '../../components/mdx/Video.astro';
+import { guildMark } from '../../components/product-logos';
+import ThemeToggle from '../../components/ThemeToggle.astro';
+import Layout from '../../layouts/Layout.astro';
+
+const FileTree = Object.assign(FileTreeBase, { Folder: FileTreeFolder, File: FileTreeFile });
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({ params: { id: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const authors = post.data.authors.map(id => AUTHORS[id]).filter(Boolean);
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<Layout title={`${post.data.title} — The Guild Blog`} description={post.data.description}>
+  <header
+    class="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--nav-bg)] backdrop-blur-[10px]"
+  >
+    <div
+      class="mx-auto flex min-h-[48px] w-[calc(100%-24px)] max-w-shell items-center gap-[26px] font-mono text-[14px] sm:min-h-[54px] sm:w-[calc(100%-40px)]"
+    >
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 whitespace-nowrap font-bold tracking-[-.02em] text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+        ><svg
+          aria-hidden="true"
+          class="size-[18px] shrink-0"
+          fill="currentColor"
+          viewBox={guildMark.viewBox}
+          xmlns="http://www.w3.org/2000/svg"
+          set:html={guildMark.markup}
+        />the-guild</a
+      >
+      <a href="/blog" class="text-[var(--muted)] transition-colors hover:text-[var(--strong)]"
+        >/ blog</a
+      >
+      <div class="ml-auto flex items-center gap-2.5">
+        <CommandLink href="/blog">all posts</CommandLink>
+        <ThemeToggle />
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <article
+      class="mx-auto w-[calc(100%-24px)] max-w-[860px] py-[56px] sm:w-[calc(100%-40px)] sm:py-[80px]"
+    >
+      <div class="mb-3.5 font-mono text-[12px] lowercase tracking-[.075em] text-[var(--muted)]">
+        ~/the-guild/blog
+      </div>
+      <h1
+        class="mb-5 text-balance font-mono text-[clamp(26px,4vw,42px)] font-semibold leading-[1.15] tracking-[-.04em] text-[var(--strong)]"
+      >
+        {post.data.title}
+      </h1>
+      <div
+        class="mb-10 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-[var(--line)] pb-6 font-mono text-[13px] text-[var(--muted)]"
+      >
+        <time datetime={post.data.date.toISOString()} class="text-[var(--green)]"
+          >{formatDate(post.data.date)}</time
+        >
+        {
+          authors.map(author => (
+            <a
+              class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 transition-colors hover:text-[var(--strong)] hover:decoration-current"
+              href={author.link}
+            >
+              {author.name}
+            </a>
+          ))
+        }
+        <span class="flex flex-wrap gap-x-3 text-[var(--faint)]">
+          {post.data.tags.map(tag => <span>#{tag}</span>)}
+        </span>
+      </div>
+
+      <div class="post-body text-[16px] leading-[1.75] text-[var(--text)]">
+        <Content components={{ Callout, Video, LinkPreview, Tweet, Steps, Removed, FileTree }} />
+      </div>
+
+      <div class="mt-14 border-t border-[var(--line)] pt-6">
+        <CommandLink href="/blog">back to all posts</CommandLink>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style is:global>
+  .post-body h2,
+  .post-body h3,
+  .post-body h4 {
+    font-family: theme('fontFamily.mono');
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--strong);
+    margin: 2.2em 0 0.7em;
+    line-height: 1.25;
+  }
+  .post-body h2 {
+    font-size: 26px;
+  }
+  .post-body h3 {
+    font-size: 20px;
+  }
+  .post-body h4 {
+    font-size: 17px;
+  }
+  .post-body p {
+    margin: 1.1em 0;
+  }
+  .post-body a:not([class]) {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 2px;
+  }
+  .post-body a:not([class]):hover {
+    color: var(--strong);
+    text-decoration-color: currentColor;
+  }
+  .post-body ul,
+  .post-body ol {
+    margin: 1.1em 0;
+    padding-left: 1.5em;
+  }
+  .post-body ul {
+    list-style: disc;
+  }
+  .post-body ol {
+    list-style: decimal;
+  }
+  .post-body li {
+    margin: 0.4em 0;
+  }
+  .post-body li::marker {
+    color: var(--green);
+  }
+  .post-body blockquote {
+    border-left: 2px solid var(--line-strong);
+    padding-left: 1.1em;
+    margin: 1.4em 0;
+    color: var(--muted);
+  }
+  .post-body img,
+  .post-body video {
+    max-width: 100%;
+    margin: 1.6em auto;
+    border: 1px solid var(--line);
+  }
+  .post-body hr {
+    border: 0;
+    border-top: 1px solid var(--line);
+    margin: 2.5em 0;
+  }
+  .post-body table {
+    width: 100%;
+    margin: 1.6em 0;
+    border-collapse: collapse;
+    font-size: 14px;
+    display: block;
+    overflow-x: auto;
+  }
+  .post-body th,
+  .post-body td {
+    border: 1px solid var(--line);
+    padding: 0.5em 0.8em;
+    text-align: left;
+  }
+  .post-body th {
+    font-family: theme('fontFamily.mono');
+    color: var(--strong);
+    font-weight: 600;
+  }
+  .post-body code:not(pre code) {
+    font-family: theme('fontFamily.mono');
+    font-size: 0.9em;
+    background: var(--button-hover);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 0.1em 0.35em;
+    color: var(--strong);
+  }
+  .post-body pre {
+    margin: 1.5em 0;
+    padding: 1em 1.2em;
+    border: 1px solid var(--line);
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.6;
+    border-radius: 4px;
+  }
+</style>
