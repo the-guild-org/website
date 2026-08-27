@@ -1,10 +1,10 @@
 ---
-import { caseStudyLogos } from '../components/case-study-logos';
+import { caseStudyLogos, stellateCaseStudyLogos } from '../components/case-study-logos';
 import Cell from '../components/Cell.astro';
 import CommandLink from '../components/CommandLink.astro';
 import ContactDialog from '../components/ContactDialog.astro';
 import Footer from '../components/Footer.astro';
-import { productLogos } from '../components/product-logos';
+import { guildMark, productLogos } from '../components/product-logos';
 import SectionHeader from '../components/SectionHeader.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import Layout from '../layouts/Layout.astro';
@@ -110,10 +110,10 @@ const stellateCaseStudies = [
     href: 'https://stellate.co/case-study/40x-faster-graphql-for-that-conference',
   },
   {
-    company: 'Drive',
-    industry: 'Automotive media',
-    copy: "Australia's top automotive source cut API traffic while growing its audience.",
-    href: 'https://stellate.co/case-study/cost-savings-at-drive',
+    company: 'Italic',
+    industry: 'E-commerce',
+    copy: 'From Black Friday crashes to a Black Friday that just worked.',
+    href: 'https://stellate.co/case-study/how-italic-prepared-for-black-friday-2021',
   },
   {
     company: 'Patronage',
@@ -128,46 +128,16 @@ const stellateCaseStudies = [
     href: 'https://stellate.co/case-study/super-fast-wordpress-graphql-for-flood-magazine',
   },
   {
-    company: 'Italic',
-    industry: 'E-commerce',
-    copy: 'From Black Friday crashes to a Black Friday that just worked.',
-    href: 'https://stellate.co/case-study/how-italic-prepared-for-black-friday-2021',
+    company: 'Drive',
+    industry: 'Automotive media',
+    copy: "Australia's top automotive source cut API traffic while growing its audience.",
+    href: 'https://stellate.co/case-study/cost-savings-at-drive',
   },
   {
     company: 'InnerSpace',
     industry: 'Workplace analytics',
     copy: 'Hasura p95 response times improved by 83%.',
     href: 'https://stellate.co/case-study/super-fast-hasura-graphql-at-innerspace',
-  },
-  {
-    company: 'Gamma',
-    industry: 'NFT marketplace',
-    copy: '120M+ GraphQL requests a month on Hasura, made super fast.',
-    href: 'https://stellate.co/case-study/super-fast-hasura-graphql-for-stxnft',
-  },
-  {
-    company: 'RMRK',
-    industry: 'NFT marketplace',
-    copy: 'Traffic-spike downtime on Hasura, ended.',
-    href: 'https://stellate.co/case-study/scaling-hasura-at-rmrk',
-  },
-  {
-    company: 'Airheart',
-    industry: 'Travel',
-    copy: 'Scaled to 500K travelers globally in under 6 months.',
-    href: 'https://stellate.co/case-study/how-airheart-scaled-to-500k-travelers-globally-in-less-than-6-months',
-  },
-  {
-    company: 'Ken Bromley Art Supplies',
-    industry: 'E-commerce',
-    copy: 'Fast global load times and lower cloud costs on Vendure.',
-    href: 'https://stellate.co/case-study/how-vendure-and-stellate-supercharged-an-online-art-supply-store',
-  },
-  {
-    company: 'Hashnode',
-    industry: 'Developer blogging',
-    copy: 'Edge caching for SEO wins and a database that stays up.',
-    href: 'https://stellate.co/case-study/hashnode-boosted-seo-and-stability',
   },
 ];
 ---
@@ -184,8 +154,15 @@ const stellateCaseStudies = [
     >
       <a
         href="#top"
-        class="inline-flex items-center whitespace-nowrap font-bold tracking-[-.02em] text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
-        >the-guild</a
+        class="inline-flex items-center gap-2 whitespace-nowrap font-bold tracking-[-.02em] text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+        ><svg
+          aria-hidden="true"
+          class="size-[18px] shrink-0"
+          fill="currentColor"
+          viewBox={guildMark.viewBox}
+          xmlns="http://www.w3.org/2000/svg"
+          set:html={guildMark.markup}
+        />the-guild</a
       >
       <nav class="hidden flex-wrap gap-5 text-[var(--muted)] lg:flex" aria-label="Main navigation">
         {
@@ -593,7 +570,17 @@ const stellateCaseStudies = [
                   href={study.href}
                 >
                   <div class="flex items-baseline justify-between gap-3">
-                    <span class="font-mono text-[13px] font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--strong)]">
+                    <span class="flex items-center gap-2 font-mono text-[13px] font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--strong)]">
+                      {stellateCaseStudyLogos[study.company] && (
+                        <svg
+                          aria-hidden="true"
+                          class="size-3.5 shrink-0 text-[var(--faint)] transition-colors group-hover:text-[var(--text)]"
+                          fill="currentColor"
+                          viewBox={stellateCaseStudyLogos[study.company].viewBox}
+                          xmlns="http://www.w3.org/2000/svg"
+                          set:html={stellateCaseStudyLogos[study.company].markup}
+                        />
+                      )}
                       {study.company}
                     </span>
                     <span class="whitespace-nowrap font-mono text-[10px] uppercase text-[var(--faint)]">
@@ -613,6 +600,12 @@ const stellateCaseStudies = [
               ))
             }
           </div>
+          <a
+            class="group mt-8 inline-flex items-center gap-1.5 font-mono text-[11px] text-[var(--stellate)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
+            href="https://stellate.co/use-cases/industry/ecommerce"
+          >
+            Read more Stellate case studies
+          </a>
         </div>
       </div>
     </section>
@@ -626,7 +619,7 @@ const stellateCaseStudies = [
           For procurement and security reviewers: the attestations, controls, and deployment options
           you'll ask about — each with a public source you can check before the first call.
         </SectionHeader>
-        <div class="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-4">
+        <div class="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
           <Cell
             title="Audited, continuously"
             evidence="source: security.graphql-hive.com — trust center"
@@ -643,28 +636,7 @@ const stellateCaseStudies = [
             </p></Cell
           >
           <Cell
-            title="Enterprise access controls"
-            evidence="source: Hive docs — SSO, roles, audit logs"
-            evidenceHref="https://the-guild.dev/graphql/hive/docs/management/sso-oidc-provider"
-            ><div
-              slot="metric"
-              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
-            >
-              SSO · RBAC
-            </div><p>
-              SAML/OIDC <b>single sign-on</b>, custom <a
-                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
-                href="https://the-guild.dev/graphql/hive/docs/schema-registry/management/members-roles-permissions"
-                >roles and permissions</a
-              >, and exportable <a
-                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
-                href="https://the-guild.dev/graphql/hive/docs/schema-registry/management/audit-logs"
-                >audit logs</a
-              > — the controls your review checklist actually names, documented publicly.
-            </p></Cell
-          >
-          <Cell
-            title="Runs where policy demands"
+            title="Managed or self-hosted"
             evidence="source: self-hosting docs — the full platform"
             evidenceHref="https://the-guild.dev/graphql/hive/docs/self-hosting"
             ><div
@@ -673,24 +645,30 @@ const stellateCaseStudies = [
             >
               air-gap
             </div><p>
-              Run the entire platform on your own infrastructure — in your VPC or fully
-              <b>air-gapped</b>. It's the same MIT-licensed code as the cloud, not a stripped
+              Use the managed cloud, or run the entire platform on your own infrastructure — in your
+              VPC or fully <b>air-gapped</b>. Same MIT-licensed code either way, not a stripped
               "enterprise edition."
             </p></Cell
           >
           <Cell
-            title="Vendor continuity, by license"
-            evidence="source: MIT license — github.com/graphql-hive"
-            evidenceHref="https://github.com/graphql-hive/console/blob/main/LICENSE"
+            title="Enterprise-ready"
+            evidence="source: Hive docs — SSO, roles, audit logs"
+            evidenceHref="https://the-guild.dev/graphql/hive/docs/management/sso-oidc-provider"
             ><div
               slot="metric"
               class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
             >
-              MIT
+              SSO · SCIM
             </div><p>
-              The what-if-the-vendor-disappears question has a structural answer: the license. You
-              keep the platform, your data, and the right to run it forever — no escrow agreement
-              needed.
+              SAML/OIDC <b>single sign-on</b>, SCIM provisioning, custom <a
+                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                href="https://the-guild.dev/graphql/hive/docs/schema-registry/management/members-roles-permissions"
+                >roles and permissions</a
+              >, and exportable <a
+                class="underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--text)]"
+                href="https://the-guild.dev/graphql/hive/docs/schema-registry/management/audit-logs"
+                >audit logs</a
+              > — the controls your review checklist actually names.
             </p></Cell
           >
         </div>

@@ -1,4 +1,6 @@
 ---
+import { guildMark } from './product-logos';
+
 const projects = [
   ['Hive Console', 'https://the-guild.dev/graphql/hive'],
   ['Hive Router', 'https://github.com/graphql-hive/router'],
@@ -8,10 +10,7 @@ const projects = [
   ['Mesh', 'https://the-guild.dev/graphql/mesh'],
   ['Codegen', 'https://the-guild.dev/graphql/codegen'],
   ['Inspector', 'https://the-guild.dev/graphql/inspector'],
-  ['Envelop', 'https://the-guild.dev/graphql/envelop'],
   ['SOFA', 'https://the-guild.dev/graphql/sofa-api'],
-  ['Scalars', 'https://the-guild.dev/graphql/scalars'],
-  ['GraphQL ESLint', 'https://the-guild.dev/graphql/eslint'],
 ];
 
 const socialLinks = [
@@ -33,7 +32,18 @@ const socialLinks = [
     class="grid gap-10 border-b border-[var(--line)] pb-12 md:grid-cols-[minmax(220px,.7fr)_1.3fr]"
   >
     <div>
-      <a href="/" class="font-mono text-sm font-bold text-[var(--strong)]">the-guild</a>
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 font-mono text-sm font-bold text-[var(--strong)]"
+        ><svg
+          aria-hidden="true"
+          class="size-[18px] shrink-0"
+          fill="currentColor"
+          viewBox={guildMark.viewBox}
+          xmlns="http://www.w3.org/2000/svg"
+          set:html={guildMark.markup}
+        />the-guild</a
+      >
       <p class="mt-3 max-w-[300px] text-sm text-[var(--muted)]">
         Open-source GraphQL infrastructure, maintained for the long run.
       </p>
