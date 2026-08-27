@@ -127,22 +127,16 @@ const stellateCaseStudies = [
     href: 'https://stellate.co/case-study/super-fast-wpgraphql-at-scale-with-graphql-edge-caching-at-patronage',
   },
   {
-    company: 'FLOOD Magazine',
-    industry: 'Media',
-    copy: 'WPGraphQL served from the edge — drastically lighter servers.',
-    href: 'https://stellate.co/case-study/super-fast-wordpress-graphql-for-flood-magazine',
+    company: 'InnerSpace',
+    industry: 'Workplace analytics',
+    copy: 'Hasura p95 response times improved by 83%.',
+    href: 'https://stellate.co/case-study/super-fast-hasura-graphql-at-innerspace',
   },
   {
     company: 'Drive',
     industry: 'Automotive media',
     copy: "Australia's top automotive source cut API traffic while growing its audience.",
     href: 'https://stellate.co/case-study/cost-savings-at-drive',
-  },
-  {
-    company: 'InnerSpace',
-    industry: 'Workplace analytics',
-    copy: 'Hasura p95 response times improved by 83%.',
-    href: 'https://stellate.co/case-study/super-fast-hasura-graphql-at-innerspace',
   },
 ];
 ---
@@ -210,7 +204,7 @@ const stellateCaseStudies = [
           ></span>
         </h1>
         <div
-          class="max-w-[790px] text-pretty text-lg leading-[1.68] text-[var(--hero-copy)] [&_strong]:font-semibold [&_strong]:text-[var(--strong)]"
+          class="max-w-[880px] text-pretty text-lg leading-[1.68] text-[var(--hero-copy)] [&_strong]:font-semibold [&_strong]:text-[var(--strong)]"
         >
           The Guild is the engine behind open-source GraphQL. <strong
             >Profitable and bootstrapped</strong
@@ -535,7 +529,10 @@ const stellateCaseStudies = [
         <div class="mt-5 grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-5">
           {
             caseStudies.map(study => (
-              <article class="group border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]">
+              <a
+                class="group border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]"
+                href={study.href}
+              >
                 <div class="flex items-center gap-2 font-mono text-[16px] font-semibold text-[var(--strong)]">
                   {caseStudyLogos[study.company] && (
                     <svg
@@ -552,14 +549,16 @@ const stellateCaseStudies = [
                 <div class="mb-3 mt-1 font-mono text-[11px] uppercase text-[var(--faint)]">
                   {study.industry}
                 </div>
-                <p class="text-[15px] text-[var(--muted)]">{study.copy}</p>
-                <a
-                  class="group mt-4 inline-flex items-center gap-1.5 font-mono text-[12px] text-[var(--green)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
-                  href={study.href}
-                >
-                  Read case study
-                </a>
-              </article>
+                <p class="text-[15px] text-[var(--muted)]">
+                  {study.copy}
+                  <span
+                    aria-hidden="true"
+                    class="ml-1 inline-block font-mono text-[12px] text-[var(--hive)] transition-transform group-hover:translate-x-0.5"
+                  >
+                    ↗
+                  </span>
+                </p>
+              </a>
             ))
           }
         </div>
@@ -567,32 +566,30 @@ const stellateCaseStudies = [
           <div class="mb-6 font-mono text-[12px] tracking-[.075em] text-[var(--muted)]">
             On Stellate's edge — case studies:
           </div>
-          <div class="grid grid-cols-1 gap-x-8 gap-y-7 md:grid-cols-2 lg:grid-cols-3">
+          <div class="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-5">
             {
               stellateCaseStudies.map(study => (
                 <a
-                  class="group border-t border-dotted border-[var(--line-strong)] pt-3 transition-colors hover:border-[var(--stellate)]"
+                  class="group border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]"
                   href={study.href}
                 >
-                  <div class="flex items-baseline justify-between gap-3">
-                    <span class="flex items-center gap-2 font-mono text-[14px] font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--strong)]">
-                      {stellateCaseStudyLogos[study.company] && (
-                        <svg
-                          aria-hidden="true"
-                          class="size-3.5 shrink-0 text-[var(--faint)] transition-colors group-hover:text-[var(--text)]"
-                          fill="currentColor"
-                          viewBox={stellateCaseStudyLogos[study.company].viewBox}
-                          xmlns="http://www.w3.org/2000/svg"
-                          set:html={stellateCaseStudyLogos[study.company].markup}
-                        />
-                      )}
-                      {study.company}
-                    </span>
-                    <span class="whitespace-nowrap font-mono text-[11px] uppercase text-[var(--faint)]">
-                      {study.industry}
-                    </span>
+                  <div class="flex items-center gap-2 font-mono text-[16px] font-semibold text-[var(--strong)]">
+                    {stellateCaseStudyLogos[study.company] && (
+                      <svg
+                        aria-hidden="true"
+                        class="size-4 shrink-0 text-[var(--faint)] transition-colors group-hover:text-[var(--text)]"
+                        fill="currentColor"
+                        viewBox={stellateCaseStudyLogos[study.company].viewBox}
+                        xmlns="http://www.w3.org/2000/svg"
+                        set:html={stellateCaseStudyLogos[study.company].markup}
+                      />
+                    )}
+                    {study.company}
                   </div>
-                  <p class="mt-1.5 text-[14px] leading-normal text-[var(--muted)]">
+                  <div class="mb-3 mt-1 font-mono text-[11px] uppercase text-[var(--faint)]">
+                    {study.industry}
+                  </div>
+                  <p class="text-[15px] text-[var(--muted)]">
                     {study.copy}
                     <span
                       aria-hidden="true"
@@ -606,7 +603,7 @@ const stellateCaseStudies = [
             }
           </div>
           <a
-            class="group mt-8 inline-flex items-center gap-1.5 font-mono text-[12px] text-[var(--stellate)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
+            class="group mt-8 inline-flex items-center gap-1.5 font-mono text-[12px] text-[var(--green)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
             href="https://stellate.co/use-cases/industry/ecommerce"
           >
             Read more Stellate case studies
@@ -633,7 +630,7 @@ const stellateCaseStudies = [
               slot="metric"
               class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
             >
-              SOC 2 · II
+              SOC 2 Type II
             </div><p>
               <b>SOC 2 Type II</b> attested and listed in the <b>Cloud Security Alliance STAR</b>
               registry. Reports, policies, and subprocessors are published in the trust center — no NDA
@@ -656,14 +653,14 @@ const stellateCaseStudies = [
             </p></Cell
           >
           <Cell
-            title="Enterprise-ready"
+            title="SSO · SCIM"
             evidence="learn more ↗"
             evidenceHref="https://the-guild.dev/graphql/hive/docs/management/sso-oidc-provider"
             ><div
               slot="metric"
               class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
             >
-              SSO · SCIM
+              Enterprise-ready
             </div><p>
               SAML/OIDC <b>single sign-on</b>, SCIM provisioning, custom <a
                 class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
@@ -689,7 +686,10 @@ const stellateCaseStudies = [
           <strong>Also: AI agents, when you're ready.</strong> The same supergraph that governs your
           GraphQL consumers extends to agents — skills declared in the schema, exposed over MCP, governed
           by the same checks. No new platform, no replatforming. It's there when you want it, and invisible
-          until you do.
+          until you do. <a
+            class="text-[var(--green)] transition-colors hover:text-[var(--strong)]"
+            href="https://www.npmjs.com/package/@graphql-hive/plugin-mcp">learn more ↗</a
+          >
         </div>
       </div>
     </section>
