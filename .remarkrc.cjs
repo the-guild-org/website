@@ -77,8 +77,5 @@ module.exports = {
     // ]
     'frontmatter',
     'lint-no-multiple-toplevel-headings',
-    ['lint-chicago-heading', ['error', IGNORE_CASING_WORDS]],
-    'lint-no-dot-at-end-of-heading',
-    'lint-no-full-bold-heading',
   ],
 };

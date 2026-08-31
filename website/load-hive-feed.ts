@@ -12,6 +12,7 @@ await parser
     ),
   )
   .catch(err => {
+    // eslint-disable-next-line no-console
     console.log(err);
     process.exit(1);
   });
