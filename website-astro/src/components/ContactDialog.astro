@@ -1,0 +1,186 @@
+---
+// Same backend as the current Guild website's Get in Touch form:
+// POST https://utils.the-guild.dev/api/contact-us { name, email, notes }
+// (packages/website-helper-worker). CORS is limited to the-guild.dev origins,
+// so submissions only succeed on the production domain.
+---
+
+<dialog
+  id="contact-dialog"
+  class="m-auto w-[min(560px,calc(100vw-32px))] border border-[var(--line-strong)] bg-[var(--bg)] p-0 text-[var(--text)] backdrop:bg-black/60 backdrop:backdrop-blur-[2px]"
+>
+  <div class="p-7 sm:p-9">
+    <div class="mb-3.5 flex items-baseline justify-between">
+      <div class="font-mono text-[12px] lowercase tracking-[.075em] text-[var(--muted)]">
+        ~/the-guild/contact
+      </div>
+      <button
+        type="button"
+        data-contact-close
+        class="rounded-sm px-1 font-mono text-[13px] text-[var(--muted)] transition-colors hover:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+        aria-label="Close contact form">[ esc ]</button
+      >
+    </div>
+
+    <div data-contact-form-view>
+      <h2 class="mb-2 font-mono text-[22px] font-semibold tracking-[-.03em] text-[var(--strong)]">
+        Talk to an engineer
+      </h2>
+      <p class="mb-6 text-sm text-[var(--muted)]">
+        Tell us a bit about your setup and what you're after — an engineer who maintains these tools
+        will get back to you.
+      </p>
+      <form data-contact-form novalidate>
+        <div class="flex flex-col gap-5">
+          <label class="block">
+            <span
+              class="mb-1.5 block font-mono text-[12px] lowercase tracking-[.075em] text-[var(--muted)]"
+              >name *</span
+            >
+            <input
+              name="name"
+              type="text"
+              required
+              autocomplete="name"
+              class="w-full border border-[var(--line-strong)] bg-transparent px-3 py-2 text-sm text-[var(--text)] placeholder:text-[var(--faint)] focus:outline focus:outline-1 focus:outline-offset-2 focus:outline-[var(--green)]"
+              placeholder="Ada Lovelace"
+            />
+          </label>
+          <label class="block">
+            <span
+              class="mb-1.5 block font-mono text-[12px] lowercase tracking-[.075em] text-[var(--muted)]"
+              >email *</span
+            >
+            <input
+              name="email"
+              type="email"
+              required
+              autocomplete="email"
+              class="w-full border border-[var(--line-strong)] bg-transparent px-3 py-2 text-sm text-[var(--text)] placeholder:text-[var(--faint)] focus:outline focus:outline-1 focus:outline-offset-2 focus:outline-[var(--green)]"
+              placeholder="you@company.com"
+            />
+          </label>
+          <label class="block">
+            <span
+              class="mb-1.5 block font-mono text-[12px] lowercase tracking-[.075em] text-[var(--muted)]"
+              >message *</span
+            >
+            <textarea
+              name="notes"
+              required
+              rows="4"
+              class="w-full resize-y border border-[var(--line-strong)] bg-transparent px-3 py-2 text-sm text-[var(--text)] placeholder:text-[var(--faint)] focus:outline focus:outline-1 focus:outline-offset-2 focus:outline-[var(--green)]"
+              placeholder="What are you building, and how can we help?"></textarea>
+          </label>
+        </div>
+        <p data-contact-error hidden class="mt-4 font-mono text-[13px] text-[var(--amber)]">
+          Something went wrong — please try again, or email us at <a
+            class="underline underline-offset-2 hover:text-[var(--strong)]"
+            href="mailto:contact@the-guild.dev">contact@the-guild.dev</a
+          >.
+        </p>
+        <p data-contact-invalid hidden class="mt-4 font-mono text-[13px] text-[var(--amber)]">
+          Please fill in all fields with a valid email.
+        </p>
+        <div class="mt-6 flex flex-wrap items-center gap-2.5">
+          <button
+            type="submit"
+            data-contact-submit
+            class="inline-flex cursor-pointer items-center whitespace-nowrap rounded-sm px-0.5 py-1.5 font-mono text-[13px] leading-tight text-[var(--strong)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)] disabled:cursor-wait disabled:opacity-60"
+            >send message</button
+          >
+          <button
+            type="button"
+            data-contact-close
+            class="inline-flex cursor-pointer items-center whitespace-nowrap rounded-sm px-0.5 py-1.5 font-mono text-[13px] leading-tight text-[var(--muted)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:text-[var(--strong)] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+            >cancel</button
+          >
+        </div>
+      </form>
+    </div>
+
+    <div data-contact-success-view hidden>
+      <h2 class="mb-2 font-mono text-[22px] font-semibold tracking-[-.03em] text-[var(--green)]">
+        Message sent
+      </h2>
+      <p class="mb-6 text-sm text-[var(--muted)]">Thank you — we'll contact you soon.</p>
+      <button
+        type="button"
+        data-contact-close
+        class="inline-flex cursor-pointer items-center whitespace-nowrap rounded-sm px-0.5 py-1.5 font-mono text-[13px] leading-tight text-[var(--strong)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+        >close</button
+      >
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('#contact-dialog')!;
+  const form = dialog.querySelector<HTMLFormElement>('[data-contact-form]')!;
+  const formView = dialog.querySelector<HTMLElement>('[data-contact-form-view]')!;
+  const successView = dialog.querySelector<HTMLElement>('[data-contact-success-view]')!;
+  const errorMessage = dialog.querySelector<HTMLElement>('[data-contact-error]')!;
+  const invalidMessage = dialog.querySelector<HTMLElement>('[data-contact-invalid]')!;
+  const submitButton = dialog.querySelector<HTMLButtonElement>('[data-contact-submit]')!;
+
+  function openDialog() {
+    formView.hidden = false;
+    successView.hidden = true;
+    errorMessage.hidden = true;
+    invalidMessage.hidden = true;
+    dialog.showModal();
+    dialog.querySelector<HTMLInputElement>('input[name="name"]')?.focus();
+  }
+
+  for (const opener of document.querySelectorAll('[data-contact-open]')) {
+    opener.addEventListener('click', event => {
+      event.preventDefault();
+      openDialog();
+    });
+  }
+
+  for (const closer of dialog.querySelectorAll('[data-contact-close]')) {
+    closer.addEventListener('click', () => dialog.close());
+  }
+
+  // Click on the backdrop (outside the panel) closes the dialog
+  dialog.addEventListener('click', event => {
+    if (event.target === dialog) dialog.close();
+  });
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    errorMessage.hidden = true;
+    invalidMessage.hidden = true;
+
+    if (!form.checkValidity()) {
+      invalidMessage.hidden = false;
+      return;
+    }
+
+    const data = new FormData(form);
+    submitButton.disabled = true;
+    submitButton.textContent = 'sending…';
+
+    try {
+      const response = await fetch('https://utils.the-guild.dev/api/contact-us', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.get('name'),
+          email: data.get('email'),
+          notes: data.get('notes'),
+        }),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      form.reset();
+      formView.hidden = true;
+      successView.hidden = false;
+    } catch {
+      errorMessage.hidden = false;
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = 'send message';
+    }
+  });
+</script>
