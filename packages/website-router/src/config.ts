@@ -102,12 +102,6 @@ export const jsonConfig = {
       sitemap: false,
     },
     '/graphql/hive': {
-      rewrite: 'hive-platform-docs.theguild.workers.dev',
-      preserveSearch: true,
-      crisp: { segments: ['hive-website'] },
-      sitemap: false,
-    },
-    '/graphql/hive_astro': {
       rewrite: 'hive-platform-docs-astro.theguild.workers.dev',
       preserveSearch: true,
       crisp: { segments: ['hive-website'] },
