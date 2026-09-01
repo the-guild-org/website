@@ -34,7 +34,7 @@ export const GET: APIRoute = async ({ site }) => {
   <channel>
     <title>The Guild Blog</title>
     <link>${site}</link>
-    <description>Writing from The Guild — open source, GraphQL, and the craft of long-term software.</description>
+    <description>Writing from The Guild on open source, GraphQL, and the craft of long-term software.</description>
     <atom:link href="${new URL('/feed.xml', site).href}" rel="self" type="application/rss+xml"/>
 ${items
   .map(
