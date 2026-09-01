@@ -107,6 +107,12 @@ export const jsonConfig = {
       crisp: { segments: ['hive-website'] },
       sitemap: false,
     },
+    '/graphql/hive_astro': {
+      rewrite: 'hive-platform-docs-astro.theguild.workers.dev',
+      preserveSearch: true,
+      crisp: { segments: ['hive-website'] },
+      sitemap: false,
+    },
     '/graphql/gateway': {
       redirect: 'https://the-guild.dev/graphql/hive/docs/gateway',
       status: 302,
