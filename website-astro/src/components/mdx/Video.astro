@@ -1,0 +1,27 @@
+---
+interface Props {
+  src: string;
+  title?: string;
+}
+
+const { src, title } = Astro.props;
+const isEmbed = src.startsWith('https://');
+const extension = src.slice(src.lastIndexOf('.') + 1);
+---
+
+{
+  isEmbed ? (
+    <iframe
+      class="my-6 h-[400px] w-full border border-[var(--line)]"
+      src={src}
+      title={title}
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+    />
+  ) : (
+    <video class="mx-auto my-6 max-w-full" playsinline autoplay loop muted controls>
+      <source src={src} type={`video/${extension}`} />
+      Your browser does not support the video tag.
+    </video>
+  )
+}

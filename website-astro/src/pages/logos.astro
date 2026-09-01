@@ -1,0 +1,175 @@
+---
+import { readFileSync } from 'node:fs';
+import CommandLink from '../components/CommandLink.astro';
+import Footer from '../components/Footer.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import Layout from '../layouts/Layout.astro';
+
+const logoSvg = readFileSync(new URL('../../public/static/logo.svg', import.meta.url), 'utf8')
+  .replaceAll('#0B0D11', 'currentColor')
+  .replace('<svg ', '<svg aria-hidden="true" focusable="false" ');
+---
+
+<Layout
+  title="Press Kit | The Guild"
+  description="The Guild logos, brand assets, and usage guidelines for press and co-marketing."
+>
+  <header
+    class="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--nav-bg)] backdrop-blur-[10px]"
+  >
+    <div
+      class="mx-auto flex min-h-[48px] w-[calc(100%-24px)] max-w-shell items-center gap-5 font-mono text-[13px] sm:min-h-[54px] sm:w-[calc(100%-40px)]"
+    >
+      <a
+        href="/"
+        class="font-bold tracking-[-.02em] text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+      >
+        the-guild
+      </a>
+      <span class="text-[var(--faint)]">/</span>
+      <span class="text-[var(--muted)]">press-kit</span>
+      <div class="ml-auto flex items-center gap-2.5">
+        <CommandLink href="/static/logos.zip" primary>download logo pack</CommandLink>
+        <ThemeToggle />
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="border-b border-[var(--line)] py-[72px] sm:py-[112px]">
+      <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
+        <div class="mb-4 font-mono text-[11px] tracking-[.075em] text-[var(--muted)]">
+          ~/the-guild/press-kit
+        </div>
+        <h1
+          class="max-w-[900px] text-balance font-mono text-[44px] font-semibold leading-[1.02] tracking-[-.06em] text-[var(--strong)] sm:text-[clamp(48px,7vw,76px)]"
+        >
+          The Guild press kit.
+        </h1>
+        <p class="mt-6 max-w-[680px] text-lg leading-[1.7] text-[var(--muted)]">
+          Official logos and guidance for articles, meetups, conferences, podcasts, and co-marketing
+          involving The Guild.
+        </p>
+        <div class="mt-8">
+          <a
+            href="/static/logos.zip"
+            download
+            class="inline-flex items-center rounded-sm border border-[var(--line-strong)] bg-[var(--strong)] px-5 py-3 font-mono text-xs font-semibold text-[var(--bg)] transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+          >
+            Download logo pack (.zip)
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-[var(--line)] py-[68px] sm:py-[96px]">
+      <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
+        <div class="mb-9 max-w-[680px]">
+          <div class="mb-3 font-mono text-[11px] tracking-[.075em] text-[var(--muted)]">
+            ~/assets/logo
+          </div>
+          <h2
+            class="font-mono text-[clamp(28px,4vw,44px)] font-semibold leading-[1.12] tracking-[-.045em] text-[var(--strong)]"
+          >
+            Logo and brand assets
+          </h2>
+          <p class="mt-4 text-[var(--muted)]">
+            Use the version with enough contrast for its background. Keep clear space around the
+            mark and preserve its original proportions.
+          </p>
+        </div>
+
+        <div
+          class="grid grid-cols-1 gap-px overflow-hidden border border-[var(--line)] bg-[var(--line)] md:grid-cols-2"
+        >
+          <figure class="flex min-h-[280px] flex-col bg-[#f8f8f5] p-6 sm:p-9">
+            <figcaption class="font-mono text-[10px] uppercase tracking-[.08em] text-[#666661]">
+              Dark logo / light background
+            </figcaption>
+            <div
+              class="flex flex-1 items-center justify-center py-10 text-[#0b0d11] [&_svg]:h-auto [&_svg]:w-[176px]"
+              set:html={logoSvg}
+            />
+          </figure>
+          <figure class="flex min-h-[280px] flex-col bg-[#0a0a0a] p-6 sm:p-9">
+            <figcaption class="font-mono text-[10px] uppercase tracking-[.08em] text-[#8d8d8d]">
+              Light logo / dark background
+            </figcaption>
+            <div
+              class="flex flex-1 items-center justify-center py-10 text-white [&_svg]:h-auto [&_svg]:w-[176px]"
+              set:html={logoSvg}
+            />
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-[var(--line)] py-[68px] sm:py-[96px]">
+      <div
+        class="mx-auto grid w-[calc(100%-24px)] max-w-shell grid-cols-1 gap-12 sm:w-[calc(100%-40px)] lg:grid-cols-[minmax(240px,.7fr)_minmax(0,1.3fr)] lg:gap-20"
+      >
+        <div>
+          <div class="mb-3 font-mono text-[11px] tracking-[.075em] text-[var(--muted)]">
+            ~/guidelines
+          </div>
+          <h2
+            class="font-mono text-[clamp(28px,4vw,44px)] font-semibold leading-[1.12] tracking-[-.045em] text-[var(--strong)]"
+          >
+            Use it accurately.
+          </h2>
+          <p class="mt-4 text-[var(--muted)]">
+            These assets are for contexts where The Guild is directly involved or referenced.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-10 sm:grid-cols-2">
+          <div class="border-t border-[var(--line-strong)] pt-5">
+            <h3 class="font-mono text-sm font-semibold text-[var(--green)]">Do</h3>
+            <ul class="mt-5 space-y-4 text-sm text-[var(--muted)]">
+              <li class="border-t border-dotted border-[var(--line)] pt-4">
+                Use these assets when referring to The Guild.
+              </li>
+              <li class="border-t border-dotted border-[var(--line)] pt-4">
+                Use them when mentioning The Guild in an article, meetup, conference, or podcast.
+              </li>
+              <li class="border-t border-dotted border-[var(--line)] pt-4">
+                Preserve the logo's proportions, colors, and clear space.
+              </li>
+            </ul>
+          </div>
+          <div class="border-t border-[var(--line-strong)] pt-5">
+            <h3 class="font-mono text-sm font-semibold text-[var(--amber)]">Don't</h3>
+            <ul class="mt-5 space-y-4 text-sm text-[var(--muted)]">
+              <li class="border-t border-dotted border-[var(--line)] pt-4">
+                Don't change, redraw, distort, recolor, or otherwise alter the logo.
+              </li>
+              <li class="border-t border-dotted border-[var(--line)] pt-4">
+                Don't imply ownership, endorsement, or involvement where none exists.
+              </li>
+              <li class="border-t border-dotted border-[var(--line)] pt-4">
+                Don't use these assets for projects The Guild doesn't own, maintain, or contribute
+                to.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-[68px] sm:py-[96px]">
+      <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
+        <div class="max-w-[760px] border-t border-[var(--line)] pt-6">
+          <h2 class="font-mono text-2xl font-semibold tracking-[-.035em] text-[var(--strong)]">
+            Need another format or have a usage question?
+          </h2>
+          <p class="mb-5 mt-3 text-[var(--muted)]">
+            Contact us before publishing and we'll help you use the brand correctly.
+          </p>
+          <CommandLink href="mailto:contact@the-guild.dev" primary>contact the guild</CommandLink>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

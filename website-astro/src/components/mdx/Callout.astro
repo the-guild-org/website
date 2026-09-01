@@ -1,0 +1,24 @@
+---
+interface Props {
+  type?: 'info' | 'warning' | 'error' | 'default';
+  emoji?: string;
+}
+
+const { type = 'default', emoji } = Astro.props;
+
+const accent = type === 'warning' || type === 'error' ? 'var(--amber)' : 'var(--green)';
+---
+
+<aside
+  class="my-6 flex gap-3 border border-l-2 border-[var(--line)] bg-[var(--button-hover)] px-4 py-3 text-[15px] text-[var(--muted)] [&_code]:text-[var(--text)]"
+  style={`border-left-color: ${accent}`}
+>
+  {
+    emoji && (
+      <span aria-hidden="true" class="shrink-0 text-[18px] leading-[1.6]">
+        {emoji}
+      </span>
+    )
+  }
+  <div class="[&>p]:m-0"><slot /></div>
+</aside>

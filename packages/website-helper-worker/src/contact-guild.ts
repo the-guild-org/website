@@ -10,7 +10,7 @@ export async function handleContactUs(options: {
   body: Record<string, unknown>;
   crisp: CrispClient;
 }) {
-  console.log("handling contact us");
+  console.log('handling contact us');
 
   const body = options.body as {
     email: string;
@@ -18,10 +18,10 @@ export async function handleContactUs(options: {
     notes?: string;
   };
 
-  console.log("body", body);
+  console.log('body', body);
 
   if (body?.email && body?.name) {
-    console.log("valid body");
+    console.log('valid body');
 
     await sendEmail(
       options.email,
@@ -32,8 +32,8 @@ export async function handleContactUs(options: {
       createMimeMessage().setSender(body.email),
     );
 
-    console.log("email sent");
-    console.log("syncing crisp");
+    console.log('email sent');
+    console.log('syncing crisp');
 
     let crispUser = await options.crisp.getCrispUser(body.email);
 

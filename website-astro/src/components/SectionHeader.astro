@@ -1,0 +1,22 @@
+---
+interface Props {
+  path: string;
+  title: string;
+}
+
+const { path, title } = Astro.props;
+---
+
+<header class="mb-12 max-w-[820px]">
+  <div class="mb-3.5 font-mono text-[12px] lowercase tracking-[.075em] text-[var(--muted)]">
+    {path}
+  </div>
+  <h2
+    class="mb-3.5 text-balance font-mono text-[clamp(28px,4vw,48px)] font-semibold leading-[1.12] tracking-[-.045em] text-[var(--strong)]"
+  >
+    {title}
+  </h2>
+  <div class="max-w-[800px] text-pretty text-[17px] leading-[1.65] text-[var(--muted)]">
+    <slot />
+  </div>
+</header>

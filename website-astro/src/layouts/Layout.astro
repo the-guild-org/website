@@ -1,0 +1,37 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <link rel="icon" href="/static/favicon.ico" sizes="any" />
+    <link rel="icon" href="/static/favicon-dark.ico" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png" />
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
+    <title>{title}</title>
+    <script is:inline>
+      try {
+        const saved = localStorage.getItem('guild-theme');
+        document.documentElement.dataset.theme =
+          saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      } catch {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    </script>
+  </head>
+  <body class="min-h-screen bg-[var(--bg)] text-[var(--text)] transition-colors duration-150">
+    <slot />
+  </body>
+</html>

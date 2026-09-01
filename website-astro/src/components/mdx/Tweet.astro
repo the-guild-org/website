@@ -1,0 +1,17 @@
+---
+interface Props {
+  tweetLink: string;
+  theme?: 'light' | 'dark';
+}
+
+const { tweetLink } = Astro.props;
+---
+
+<div class="my-6 flex justify-center">
+  <blockquote class="twitter-tweet" data-dnt="true">
+    <a href={`https://twitter.com/${tweetLink}?ref_src=twsrc%5Etfw`}>
+      View tweet: twitter.com/{tweetLink}
+    </a>
+  </blockquote>
+</div>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8" is:inline></script>

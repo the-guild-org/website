@@ -1,0 +1,790 @@
+---
+import { caseStudyLogos, stellateCaseStudyLogos } from '../components/case-study-logos';
+import Cell from '../components/Cell.astro';
+import CommandLink from '../components/CommandLink.astro';
+import ContactDialog from '../components/ContactDialog.astro';
+import Footer from '../components/Footer.astro';
+import { guildMark, productLogos } from '../components/product-logos';
+import SectionHeader from '../components/SectionHeader.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import Layout from '../layouts/Layout.astro';
+
+const stellateAcquisitionHref = 'https://the-guild.dev/graphql/hive/blog/stellate-acquisition';
+const grafbaseAcquisitionHref = 'https://the-guild.dev/graphql/hive/blog/acquired-grafbase';
+const benchmarksHref = 'https://the-guild.dev/graphql/hive/federation-gateway-performance';
+const federationAuditHref = 'https://github.com/graphql-hive/federation-gateway-audit';
+
+const history = [
+  {
+    year: '2015',
+    title: "GraphQL goes public — we're already in",
+    copy: "Building and contributing from the ecosystem's first year. Not tourists who arrived when it got popular.",
+  },
+  {
+    year: '2016',
+    title: 'GraphQL Codegen ships',
+    href: 'https://the-guild.dev/graphql/codegen',
+    badge: 'maintained 10+ years',
+    copy: 'Type-safe GraphQL for millions of developers. A decade of continuous releases — the longest-maintained tool of its kind in the ecosystem.',
+  },
+  {
+    year: '2020',
+    title: 'GraphQL-Tools — adopted from Apollo',
+    href: 'https://the-guild.dev/graphql/tools',
+    badge: 'alive & growing',
+    copy: 'When Apollo stepped back, we took over the most-depended-on schema library in GraphQL and kept every user shipping.',
+  },
+  {
+    year: '2021',
+    title: 'GraphQL Yoga — adopted from Prisma',
+    href: 'https://the-guild.dev/graphql/yoga-server',
+    badge: 'alive & growing',
+    copy: 'Prisma moved on; we rebuilt Yoga into the fully-featured, spec-compliant GraphQL server it is today.',
+  },
+  {
+    year: '2022',
+    title: 'Launched Hive platform',
+    href: 'https://the-guild.dev/graphql/hive/blog/announcing-graphql-hive-release',
+    badge: 'flagship',
+    copy: 'The GraphQL federation platform — schema registry, observability, and gateway. MIT-licensed from day one, and fully self-hostable by the end of the year.',
+  },
+  {
+    year: '2024',
+    title: 'Stellate — acquired, product saved',
+    href: stellateAcquisitionHref,
+    badge: 'alive & growing',
+    copy: 'The CDN for GraphQL joined The Guild — customers kept their edge, the product kept its roadmap.',
+  },
+  {
+    year: '2026',
+    title: 'Grafbase — acquired, users migrated to Hive',
+    href: grafbaseAcquisitionHref,
+    badge: 'users saved',
+    copy: 'Second acquisition funded from profit, not funding.',
+  },
+];
+
+const packages = [
+  ['GraphQL Codegen', 'type-safe code · since 2016', 'https://the-guild.dev/graphql/codegen'],
+  ['Yoga', 'GraphQL server', 'https://the-guild.dev/graphql/yoga-server'],
+  ['GraphQL-Tools', 'schema tooling', 'https://the-guild.dev/graphql/tools'],
+  ['Mesh', 'any API → graph', 'https://the-guild.dev/graphql/mesh'],
+  ['SOFA', 'GraphQL → REST', 'https://the-guild.dev/graphql/sofa-api'],
+  ['Scalars', 'custom GraphQL scalars', 'https://the-guild.dev/graphql/scalars'],
+  ['Inspector', 'schema change checks', 'https://the-guild.dev/graphql/inspector'],
+];
+
+const caseStudies = [
+  {
+    company: 'Buffer',
+    industry: 'Social media',
+    copy: 'Planning, publishing, and analytics across 10+ networks — on Hive.',
+    href: 'https://the-guild.dev/graphql/hive/case-studies/buffer',
+  },
+  {
+    company: 'Trivago',
+    industry: 'Travel',
+    copy: 'One GraphQL gateway unifying data access across internal services at scale.',
+    href: 'https://the-guild.dev/graphql/hive/case-studies/trivago',
+  },
+  {
+    company: 'Hemnet',
+    industry: 'Real estate',
+    copy: 'Apollo Router → Hive Gateway, at under 30% of the resource usage.',
+    href: 'https://the-guild.dev/graphql/hive/case-studies/hemnet',
+  },
+  {
+    company: 'Wealthsimple',
+    industry: 'Finance',
+    copy: 'GraphQL with Hive as the central API management layer for a growing fintech.',
+    href: 'https://the-guild.dev/graphql/hive/case-studies/wealthsimple',
+  },
+  {
+    company: 'Sound.xyz',
+    industry: 'Music',
+    copy: '750M+ requests a month; hours of schema archaeology reduced to minutes.',
+    href: 'https://the-guild.dev/graphql/hive/case-studies/sound-xyz',
+  },
+];
+
+const stellateCaseStudies = [
+  {
+    company: 'THAT Conference',
+    industry: 'Events',
+    copy: '40× faster GraphQL; database reads down 96%.',
+    href: 'https://stellate.co/case-study/40x-faster-graphql-for-that-conference',
+  },
+  {
+    company: 'Italic',
+    industry: 'E-commerce',
+    copy: 'From Black Friday crashes to a Black Friday that just worked.',
+    href: 'https://stellate.co/case-study/how-italic-prepared-for-black-friday-2021',
+  },
+  {
+    company: 'Patronage',
+    industry: 'Publishing',
+    copy: '99% less traffic to their headless WordPress servers.',
+    href: 'https://stellate.co/case-study/super-fast-wpgraphql-at-scale-with-graphql-edge-caching-at-patronage',
+  },
+  {
+    company: 'InnerSpace',
+    industry: 'Workplace analytics',
+    copy: 'Hasura p95 response times improved by 83%.',
+    href: 'https://stellate.co/case-study/super-fast-hasura-graphql-at-innerspace',
+  },
+  {
+    company: 'Drive',
+    industry: 'Automotive media',
+    copy: "Australia's top automotive source cut API traffic while growing its audience.",
+    href: 'https://stellate.co/case-study/cost-savings-at-drive',
+  },
+];
+---
+
+<Layout
+  title="The Guild — GraphQL infrastructure for teams that ship"
+  description="Open-source GraphQL infrastructure for enterprises, built and maintained by The Guild."
+>
+  <header
+    class="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--nav-bg)] backdrop-blur-[10px]"
+  >
+    <div
+      class="mx-auto flex min-h-[48px] w-[calc(100%-24px)] max-w-shell items-center gap-[26px] font-mono text-[14px] sm:min-h-[54px] sm:w-[calc(100%-40px)]"
+    >
+      <a
+        href="#top"
+        class="inline-flex items-center gap-2 whitespace-nowrap font-bold tracking-[-.02em] text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+        ><svg
+          aria-hidden="true"
+          class="size-[18px] shrink-0"
+          fill="currentColor"
+          viewBox={guildMark.viewBox}
+          xmlns="http://www.w3.org/2000/svg"
+          set:html={guildMark.markup}
+        />the-guild</a
+      >
+      <nav class="hidden flex-wrap gap-5 text-[var(--muted)] lg:flex" aria-label="Main navigation">
+        {
+          [
+            ['why', '#why'],
+            ['history', '#track-record'],
+            ['platform', '#platform'],
+            ['proof', '#proof'],
+            ['security', '#assurance'],
+            ['blog', '/blog'],
+          ].map(([label, href]) => (
+            <a
+              href={href}
+              class="relative transition-colors after:absolute after:-bottom-2 after:left-0 after:right-0 after:h-px after:origin-left after:scale-x-0 after:bg-[var(--strong)] after:transition-transform after:content-[''] hover:text-[var(--strong)] aria-[current=true]:text-[var(--strong)] aria-[current=true]:after:scale-x-100"
+            >
+              {label}
+            </a>
+          ))
+        }
+      </nav>
+      <div class="ml-auto flex items-center gap-2.5">
+        <span class="hidden lg:inline-flex"
+          ><CommandLink href="https://the-guild.dev/graphql/hive">explore platform</CommandLink
+          ></span
+        >
+        <CommandLink href="#contact" primary data-contact-open>talk to an engineer</CommandLink>
+        <ThemeToggle />
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
+      <div class="max-w-[920px] py-[76px] sm:py-[102px] sm:pt-[118px]">
+        <h1
+          class="mb-6 max-w-[840px] text-balance font-mono text-[44px] font-semibold leading-[1.02] tracking-[-.06em] text-[var(--strong)] sm:text-[clamp(40px,6vw,68px)]"
+        >
+          The GraphQL company enterprises build on.<span
+            aria-hidden="true"
+            class="ml-[.13em] inline-block h-[.82em] w-[.09em] animate-blink bg-[var(--green)] align-[-.04em] motion-reduce:animate-none"
+          ></span>
+        </h1>
+        <div
+          class="max-w-[880px] text-pretty text-lg leading-[1.68] text-[var(--hero-copy)] [&_strong]:font-semibold [&_strong]:text-[var(--strong)]"
+        >
+          The Guild is the engine behind open-source GraphQL. <strong
+            >Profitable and bootstrapped</strong
+          > for over 10 years.
+          <br /><br />
+          We build <a
+            class="font-semibold text-[var(--hive)] hover:text-[var(--strong)]"
+            href="https://the-guild.dev/graphql/hive">Hive</a
+          >, the open-source GraphQL Federation platform — schema registry, router, and
+          observability — and <a
+            class="font-semibold text-[var(--stellate)] hover:text-[var(--strong)]"
+            href="https://stellate.co">Stellate</a
+          >, the CDN and cache for GraphQL. <a
+            class="text-[var(--green)] hover:text-[var(--strong)]"
+            href="#why">Learn more →</a
+          >
+        </div>
+        <div class="mt-[30px] flex flex-wrap gap-2.5">
+          <CommandLink href="#platform" primary>explore platform</CommandLink>
+          <CommandLink href="#contact" data-contact-open>talk to an engineer</CommandLink>
+        </div>
+        <div
+          class="mt-9 border-t border-[var(--line)] pt-4 font-mono text-[13px] leading-[1.9] text-[var(--muted)] [&_a]:text-[var(--text)] [&_a]:underline [&_a]:decoration-[var(--line-strong)] [&_a]:underline-offset-2 [&_a]:transition-colors hover:[&_a]:text-[var(--strong)] hover:[&_a]:decoration-current"
+        >
+          Running in production at <a href="#proof">Fortune 500 scale</a>
+          <span class="mx-1.5 text-[var(--faint)]">·</span> Acquired <a
+            href={stellateAcquisitionHref}>Stellate (2024)</a
+          > and <a href={grafbaseAcquisitionHref}>Grafbase (2026)</a>
+        </div>
+      </div>
+    </div>
+
+    <section
+      id="why"
+      class="scroll-mt-[54px] border-b border-[var(--line)] py-[68px] sm:py-[100px]"
+    >
+      <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
+        <SectionHeader
+          path="~/the-guild/why"
+          title="Built for trust, structured for the long term — and you can verify all of it."
+        >
+          Most infrastructure vendors ask you to trust their intentions. We've structured the whole
+          company from the beginning so you don't have to: the license, the finances, and the track
+          record each remove a category of risk on their own.
+        </SectionHeader>
+        <div class="grid grid-cols-1 gap-x-9 gap-y-11 md:grid-cols-2 lg:grid-cols-3">
+          <Cell
+            title="MIT, all the way down"
+            evidence="learn more ↗"
+            evidenceHref="https://github.com/graphql-hive"
+            ><p>
+              Cloud and self-hosted are the <b>same code</b>. No open-core bait, no features clawed
+              back into an enterprise tier. If we disappeared tomorrow, you'd keep running.
+            </p></Cell
+          >
+          <Cell
+            title="Profitable, bootstrapped"
+            evidence="learn more ↗"
+            evidenceHref={grafbaseAcquisitionHref}
+            ><p>
+              Stable finances, zero venture capital. Profitable enough to acquire <a
+                class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
+                href={stellateAcquisitionHref}>Stellate (2024)</a
+              > and <a
+                class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
+                href={grafbaseAcquisitionHref}>Grafbase (2026)</a
+              > from cash flow — not from a raise.
+            </p></Cell
+          >
+          <Cell
+            title="Adopt one piece — or the whole platform"
+            evidence="learn more ↗"
+            evidenceHref="https://the-guild.dev/graphql/hive/docs/other-integrations/apollo-router"
+            ><p>
+              The opposite of lock-in: <b>Hive Console</b> and <b>Hive Router</b> each work standalone.
+              Run just the schema registry with the gateway you already have, or just the router with
+              your existing registry — and migrate the rest gradually, only what you want, when you want.
+            </p></Cell
+          >
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="track-record"
+      class="scroll-mt-[54px] border-b border-[var(--line)] py-[68px] sm:py-[100px]"
+    >
+      <div
+        class="mx-auto grid w-[calc(100%-24px)] max-w-shell grid-cols-1 gap-[42px] sm:w-[calc(100%-40px)] lg:grid-cols-[minmax(260px,.8fr)_minmax(0,1.2fr)] lg:gap-[72px]"
+      >
+        <div>
+          <div class="mb-3.5 font-mono text-[12px] lowercase tracking-[.075em] text-[var(--muted)]">
+            ~/the-guild/history
+          </div>
+          <h2
+            class="mb-3.5 text-balance font-mono text-[clamp(28px,4vw,48px)] font-semibold leading-[1.12] tracking-[-.045em] text-[var(--strong)]"
+          >
+            With GraphQL from day one. Still here. Still shipping.
+          </h2>
+          <div class="text-[var(--muted)] [&_strong]:text-[var(--text)]">
+            Vendors show you roadmaps; we'd rather show you history. The pattern to notice: when
+            others left the ecosystem, <strong>we stayed and took over the maintenance</strong> — four
+            times now.
+          </div>
+        </div>
+        <div class="border-l border-[var(--line-strong)]">
+          {
+            history.map(event => (
+              <div class="relative grid grid-cols-[62px_1fr] gap-[22px] pb-8 pl-[26px] before:absolute before:left-[-3.5px] before:top-[9px] before:size-1.5 before:bg-[var(--green)] before:shadow-[0_0_0_3px_var(--bg)] before:content-[''] sm:grid-cols-[88px_1fr]">
+                <div class="pt-0.5 font-mono text-[13px] tabular-nums text-[var(--green)]">
+                  {event.year}
+                </div>
+                <div>
+                  <h3 class="mb-1 font-mono text-base font-semibold text-[var(--strong)]">
+                    {event.href ? (
+                      <a class="hover:underline" href={event.href}>
+                        {event.title}
+                      </a>
+                    ) : (
+                      event.title
+                    )}
+                    {event.badge && (
+                      <span class="ml-2 inline-block rounded-sm border border-[var(--badge-line)] px-1.5 py-px align-middle font-mono text-[11px] font-normal tracking-[.02em] text-[var(--green)] before:mr-[5px] before:inline-block before:size-1 before:rounded-full before:bg-current before:align-[1px] before:content-['']">
+                        {event.badge}
+                      </span>
+                    )}
+                  </h3>
+                  <p class="max-w-[760px] text-[15px] text-[var(--muted)]">{event.copy}</p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="platform"
+      class="scroll-mt-[54px] border-b border-[var(--line)] py-[68px] sm:py-[100px]"
+    >
+      <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
+        <SectionHeader
+          path="~/the-guild/platform"
+          title="Hive runs your federation. Stellate makes it fast everywhere."
+        >
+          One open-source platform for the whole GraphQL lifecycle — schema registry, gateway, and
+          observability — with a global edge in front of it. Adopt each piece independently; they're
+          better together.
+        </SectionHeader>
+        <div class="grid grid-cols-1 gap-16 lg:grid-cols-2">
+          <article
+            class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
+          >
+            <a
+              class="mb-[3px] inline-flex items-center gap-2.5 font-mono text-[28px] font-semibold text-[var(--hive)] hover:underline"
+              href="https://the-guild.dev/graphql/hive"
+              ><svg
+                aria-hidden="true"
+                class="size-6 shrink-0"
+                fill="currentColor"
+                viewBox={productLogos.Hive.viewBox}
+                xmlns="http://www.w3.org/2000/svg"
+                set:html={productLogos.Hive.markup}
+              />Hive</a
+            >
+            <div class="mb-5 font-mono text-[12px] text-[var(--muted)]">
+              open-source GraphQL federation platform
+            </div>
+            <p class="text-[var(--muted)]">
+              Schema registry, gateway, and observability in one MIT-licensed platform. Prevent
+              breaking changes before they ship, watch every operation in production, and serve the
+              supergraph from your clusters or ours.
+            </p>
+            <ul class="mt-6">
+              <li
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
+              >
+                <b class="font-semibold text-[var(--text)]">Schema registry</b> — composition checks
+                against live traffic and persisted operations, so a breaking change is caught in CI,
+                not by a customer.
+              </li>
+              <li
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
+              >
+                <a
+                  class="font-mono font-semibold text-[var(--text)] hover:underline"
+                  href="https://github.com/graphql-hive/router">Hive Router</a
+                > — open-source (MIT) federation router built in Rust; the fastest gateway in <a
+                  class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
+                  href={benchmarksHref}>public benchmarks</a
+                >, verified by a <a
+                  class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
+                  href={federationAuditHref}>reproducible federation audit</a
+                >.
+              </li>
+              <li
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
+              >
+                <b class="font-semibold text-[var(--text)]">Observability</b> — per-operation, per-client
+                usage analytics; know exactly who depends on every field before you touch it.
+              </li>
+              <li
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
+              >
+                <b class="font-semibold text-[var(--text)]">Enterprise controls</b> — SSO, RBAC, audit
+                logs, self-hosting, schema policies.
+              </li>
+            </ul>
+          </article>
+          <article
+            class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
+          >
+            <a
+              class="mb-[3px] inline-flex items-center gap-2.5 font-mono text-[28px] font-semibold text-[var(--stellate)] hover:underline"
+              href="https://stellate.co"
+            >
+              <svg
+                aria-hidden="true"
+                class="size-6 shrink-0"
+                fill="currentColor"
+                viewBox={productLogos.Stellate.viewBox}
+                xmlns="http://www.w3.org/2000/svg"
+                set:html={productLogos.Stellate.markup}
+              />
+              Stellate
+            </a>
+            <div class="mb-5 font-mono text-[12px] text-[var(--muted)]">the CDN for GraphQL</div>
+            <p class="text-[var(--muted)]">
+              GraphQL-aware edge caching and protection, in front of any GraphQL API — including the
+              ones Hive doesn't run. <a
+                class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
+                href={stellateAcquisitionHref}>Acquired by The Guild in 2024</a
+              >, actively developed since.
+            </p>
+            <ul class="mt-6">
+              <li
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
+              >
+                <b class="font-semibold text-[var(--text)]">Edge caching</b> — GraphQL-aware invalidation
+                at the CDN layer; serve reads from the edge, pass mutations through and invalidate precisely.
+              </li>
+              <li
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
+              >
+                <b class="font-semibold text-[var(--text)]">Protection</b> — rate limiting, query-depth
+                and complexity limits, and persisted-operation enforcement at the perimeter.
+              </li>
+              <li
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
+              >
+                <b class="font-semibold text-[var(--text)]">Insight</b> — see cache hit rates and origin
+                load per operation, per client.
+              </li>
+              <li
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
+              >
+                <b class="font-semibold text-[var(--text)]">Independent</b> — works with Apollo, Yoga,
+                Hive, or any spec-compliant GraphQL server.
+              </li>
+            </ul>
+          </article>
+        </div>
+        <div class="mt-12 border-t border-[var(--line)] pt-7">
+          <div class="mb-5 font-mono text-[12px] tracking-[.075em] text-[var(--muted)]">
+            Also part of our GraphQL ecosystem:
+          </div>
+          <div
+            class="flex gap-9 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            aria-label="The Guild ecosystem"
+          >
+            {
+              packages.map(([name, description, href]) => (
+                <a class="group min-w-28 shrink-0 pr-0.5" href={href}>
+                  <span class="block whitespace-nowrap font-mono text-[13px] font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--strong)] group-hover:underline">
+                    {name}
+                  </span>
+                  <span class="mt-1 block whitespace-nowrap font-mono text-[11px] leading-[1.35] text-[var(--faint)]">
+                    {description}
+                  </span>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="proof"
+      class="scroll-mt-[54px] border-b border-[var(--line)] py-[68px] sm:py-[100px]"
+    >
+      <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
+        <SectionHeader path="~/the-guild/proof" title="In production, at scale, on the record.">
+          Public case studies with named companies — not anonymized "a leading enterprise" slides.
+        </SectionHeader>
+        <div class="grid grid-cols-1 gap-16 lg:grid-cols-2">
+          <blockquote
+            class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
+          >
+            <p class="mb-[18px] font-mono text-[17px] leading-[1.55]">
+              Hemnet moved from Apollo Router to Hive Gateway expecting a performance cost — and
+              measured it running at <b class="text-[var(--amber)]"
+                >less than 30% of Apollo Router's resource usage</b
+              >.
+            </p>
+            <footer class="text-xs text-[var(--muted)]">
+              Hemnet — Sweden's largest property platform
+            </footer>
+          </blockquote>
+          <blockquote
+            class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
+          >
+            <p class="mb-[18px] font-mono text-[17px] leading-[1.55]">
+              "Hive empowers us to <b class="text-[var(--amber)]">confidently evolve our schemas</b>
+              — ensuring seamless API updates, detecting potential breaking changes, and guiding developers."
+            </p>
+            <footer class="text-xs text-[var(--muted)]">
+              Wealthsimple — one of Canada's fastest-growing financial institutions
+            </footer>
+          </blockquote>
+        </div>
+        <div class="mt-12 border-t border-[var(--line)] pt-7">
+          <h3
+            class="mb-7 flex items-center gap-2.5 font-mono text-[20px] font-semibold tracking-[-.03em] text-[var(--strong)]"
+          >
+            <svg
+              aria-hidden="true"
+              class="size-5 shrink-0 text-[var(--hive)]"
+              fill="currentColor"
+              viewBox={productLogos.Hive.viewBox}
+              xmlns="http://www.w3.org/2000/svg"
+              set:html={productLogos.Hive.markup}
+            />
+            Running on Hive
+          </h3>
+          <div class="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-5">
+            {
+              caseStudies.map(study => (
+                <a
+                  class="group border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]"
+                  href={study.href}
+                >
+                  <div class="flex items-center gap-2 font-mono text-[16px] font-semibold text-[var(--strong)]">
+                    {caseStudyLogos[study.company] && (
+                      <svg
+                        aria-hidden="true"
+                        class="size-4 shrink-0 text-[var(--faint)] transition-colors group-hover:text-[var(--text)]"
+                        fill="currentColor"
+                        viewBox={caseStudyLogos[study.company].viewBox}
+                        xmlns="http://www.w3.org/2000/svg"
+                        set:html={caseStudyLogos[study.company].markup}
+                      />
+                    )}
+                    {study.company}
+                  </div>
+                  <div class="mb-3 mt-1 font-mono text-[11px] uppercase text-[var(--faint)]">
+                    {study.industry}
+                  </div>
+                  <p class="text-[15px] text-[var(--muted)]">
+                    {study.copy}
+                    <span
+                      aria-hidden="true"
+                      class="ml-1 inline-block font-mono text-[12px] text-[var(--hive)] transition-transform group-hover:translate-x-0.5"
+                    >
+                      ↗
+                    </span>
+                  </p>
+                </a>
+              ))
+            }
+          </div>
+          <a
+            class="group mt-8 inline-flex items-center gap-1.5 font-mono text-[12px] text-[var(--green)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
+            href="https://the-guild.dev/graphql/hive/case-studies"
+          >
+            Read more Hive case studies
+          </a>
+        </div>
+        <div class="mt-12 border-t border-[var(--line)] pt-7">
+          <h3
+            class="mb-7 flex items-center gap-2.5 font-mono text-[20px] font-semibold tracking-[-.03em] text-[var(--strong)]"
+          >
+            <svg
+              aria-hidden="true"
+              class="size-5 shrink-0 text-[var(--stellate)]"
+              fill="currentColor"
+              viewBox={productLogos.Stellate.viewBox}
+              xmlns="http://www.w3.org/2000/svg"
+              set:html={productLogos.Stellate.markup}
+            />
+            On Stellate's edge
+          </h3>
+          <div class="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-5">
+            {
+              stellateCaseStudies.map(study => (
+                <a
+                  class="group border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]"
+                  href={study.href}
+                >
+                  <div class="flex items-center gap-2 font-mono text-[16px] font-semibold text-[var(--strong)]">
+                    {stellateCaseStudyLogos[study.company] && (
+                      <svg
+                        aria-hidden="true"
+                        class="size-4 shrink-0 text-[var(--faint)] transition-colors group-hover:text-[var(--text)]"
+                        fill="currentColor"
+                        viewBox={stellateCaseStudyLogos[study.company].viewBox}
+                        xmlns="http://www.w3.org/2000/svg"
+                        set:html={stellateCaseStudyLogos[study.company].markup}
+                      />
+                    )}
+                    {study.company}
+                  </div>
+                  <div class="mb-3 mt-1 font-mono text-[11px] uppercase text-[var(--faint)]">
+                    {study.industry}
+                  </div>
+                  <p class="text-[15px] text-[var(--muted)]">
+                    {study.copy}
+                    <span
+                      aria-hidden="true"
+                      class="ml-1 inline-block font-mono text-[12px] text-[var(--stellate)] transition-transform group-hover:translate-x-0.5"
+                    >
+                      ↗
+                    </span>
+                  </p>
+                </a>
+              ))
+            }
+          </div>
+          <a
+            class="group mt-8 inline-flex items-center gap-1.5 font-mono text-[12px] text-[var(--green)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
+            href="https://stellate.co/use-cases/industry/ecommerce"
+          >
+            Read more Stellate case studies
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="assurance"
+      class="scroll-mt-[54px] border-b border-[var(--line)] py-[68px] sm:py-[100px]"
+    >
+      <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
+        <SectionHeader path="~/the-guild/security" title="Your security review, pre-answered.">
+          For procurement and security reviewers: the attestations, controls, and deployment options
+          you'll ask about — each with a public source you can check before the first call.
+        </SectionHeader>
+        <div class="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+          <Cell
+            title="Audited, continuously"
+            evidence="learn more ↗"
+            evidenceHref="https://security.graphql-hive.com"
+            ><div
+              slot="metric"
+              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
+            >
+              SOC 2 Type II
+            </div><p>
+              <b>SOC 2 Type II</b> attested and listed in the <b>Cloud Security Alliance STAR</b>
+              registry. Reports, policies, and subprocessors are published in the trust center — no NDA
+              required to read them.
+            </p></Cell
+          >
+          <Cell
+            title="Managed or self-hosted"
+            evidence="learn more ↗"
+            evidenceHref="https://the-guild.dev/graphql/hive/docs/self-hosting"
+            ><div
+              slot="metric"
+              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
+            >
+              air-gap
+            </div><p>
+              Use the managed cloud, or run the entire platform on your own infrastructure — in your
+              VPC or fully <b>air-gapped</b>. Same MIT-licensed code either way, not a stripped
+              "enterprise edition."
+            </p></Cell
+          >
+          <Cell
+            title="SSO · SCIM"
+            evidence="learn more ↗"
+            evidenceHref="https://the-guild.dev/graphql/hive/docs/management/sso-oidc-provider"
+            ><div
+              slot="metric"
+              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
+            >
+              Enterprise-ready
+            </div><p>
+              SAML/OIDC <b>single sign-on</b>, SCIM provisioning, custom <a
+                class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
+                href="https://the-guild.dev/graphql/hive/docs/schema-registry/management/members-roles-permissions"
+                >roles and permissions</a
+              >, and exportable <a
+                class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
+                href="https://the-guild.dev/graphql/hive/docs/schema-registry/management/audit-logs"
+                >audit logs</a
+              > — the controls your review checklist actually names.
+            </p></Cell
+          >
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="agents"
+      class="scroll-mt-[54px] border-b border-[var(--line)] py-[68px] sm:py-[100px]"
+    >
+      <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
+        <div class="max-w-[900px] font-mono text-[var(--muted)] [&_strong]:text-[var(--text)]">
+          <strong>Also: AI agents, when you're ready.</strong> The same supergraph that governs your
+          GraphQL consumers extends to agents — skills declared in the schema, exposed over MCP, governed
+          by the same checks. No new platform, no replatforming. It's there when you want it, and invisible
+          until you do. <a
+            class="text-[var(--green)] transition-colors hover:text-[var(--strong)]"
+            href="https://www.npmjs.com/package/@graphql-hive/plugin-mcp">learn more ↗</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="contact"
+      class="scroll-mt-[54px] border-b border-[var(--line)] py-[68px] sm:py-[110px] sm:pb-[120px]"
+    >
+      <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
+        <h2
+          class="mb-3.5 max-w-[900px] text-balance font-mono text-[clamp(28px,4vw,48px)] font-semibold leading-[1.12] tracking-[-.045em] text-[var(--strong)]"
+        >
+          Get in touch.
+        </h2>
+        <p class="mb-7 max-w-[700px] text-[var(--muted)]">
+          Looking to work with The Guild, learn more about our products, or just validate your API
+          strategy with us? We'll be happy to speak with you and learn about your efforts — for
+          free. You'll be talking to the engineers who maintain the tools you already run, not an
+          SDR.
+        </p>
+        <div class="flex flex-wrap gap-2.5">
+          <CommandLink href="#contact" primary data-contact-open>talk to an engineer</CommandLink>
+          <CommandLink href="https://the-guild.dev/graphql/hive">start with hive</CommandLink>
+          <CommandLink href="https://stellate.co">cache with stellate</CommandLink>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <ContactDialog />
+
+  <Footer />
+
+  <script>
+    const navLinks = Array.from(document.querySelectorAll('nav a[href^="#"]'));
+    const sections = navLinks.flatMap(link => {
+      const section = document.querySelector(link.getAttribute('href')!);
+      return section ? [{ link, section }] : [];
+    });
+
+    function updateActiveSection() {
+      if (!sections.length) return;
+      const offset = 78;
+      let active = sections[0];
+      for (const item of sections) {
+        if (item.section.getBoundingClientRect().top <= offset) active = item;
+      }
+      for (const { link } of sections) link.removeAttribute('aria-current');
+      active.link.setAttribute('aria-current', 'true');
+    }
+
+    let ticking = false;
+    function requestNavUpdate() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        updateActiveSection();
+        ticking = false;
+      });
+    }
+
+    window.addEventListener('scroll', requestNavUpdate, { passive: true });
+    window.addEventListener('resize', requestNavUpdate);
+    updateActiveSection();
+  </script>
+</Layout>

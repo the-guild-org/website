@@ -1,0 +1,32 @@
+---
+interface Props {
+  title: string;
+  evidence?: string;
+  evidenceHref?: string;
+}
+
+const { title, evidence, evidenceHref } = Astro.props;
+---
+
+<article
+  class="min-h-full border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]"
+>
+  <slot name="metric" />
+  <h3 class="mb-2.5 font-mono text-[16px] font-semibold text-[var(--strong)]">{title}</h3>
+  <div class="text-[15px] text-[var(--muted)] [&_b]:font-semibold [&_b]:text-[var(--text)]">
+    <slot />
+  </div>
+  {
+    evidence &&
+      (evidenceHref ? (
+        <a
+          href={evidenceHref}
+          class="mt-4 inline-block font-mono text-[12px] leading-[1.45] text-[var(--green)] transition-colors hover:text-[var(--strong)]"
+        >
+          {evidence}
+        </a>
+      ) : (
+        <div class="mt-4 font-mono text-[12px] leading-[1.45] text-[var(--faint)]">{evidence}</div>
+      ))
+  }
+</article>

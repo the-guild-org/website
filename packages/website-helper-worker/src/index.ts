@@ -43,7 +43,7 @@ export default {
       });
 
       if (request.method === 'POST' && url.pathname === '/api/heltin/signup') {
-        return new Response(JSON.stringify({ error: "todo" }), { status: 500 });
+        return new Response(JSON.stringify({ error: 'todo' }), { status: 500 });
       }
 
       if (request.method === 'POST' && url.pathname === '/api/contact-us') {

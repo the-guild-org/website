@@ -1,0 +1,21 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'a'> {
+  href: string;
+  primary?: boolean;
+}
+
+const { href, primary = false, ...rest } = Astro.props;
+---
+
+<a
+  href={href}
+  {...rest}
+  class:list={[
+    'inline-flex cursor-pointer items-center whitespace-nowrap rounded-sm px-0.5 py-1.5 font-mono text-[13px] leading-tight transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-["["] after:ml-[.7ch] after:text-[var(--faint)] after:content-["]"] hover:text-[var(--strong)] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]',
+    primary ? 'text-[var(--strong)]' : 'text-[var(--muted)]',
+  ]}
+>
+  <slot />
+</a>
