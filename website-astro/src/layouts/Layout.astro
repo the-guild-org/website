@@ -4,9 +4,20 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description: string;
+  /** Absolute or site-relative social-preview image */
+  image?: string;
+  /** og:type — 'article' for blog posts, defaults to 'website' */
+  type?: 'website' | 'article';
+  publishedTime?: Date;
 }
 
-const { title, description } = Astro.props;
+const { title, description, image, type = 'website', publishedTime } = Astro.props;
+
+// With `build.format: 'file'`, pathnames carry the emitted .html suffix —
+// strip it so canonical URLs match the slashless public URLs.
+const path = Astro.url.pathname.replace(/\.html$/, '').replace(/^\/index$/, '/');
+const canonical = new URL(path, Astro.site);
+const imageUrl = image ? new URL(image, Astro.site).href : undefined;
 ---
 
 <!doctype html>
@@ -20,7 +31,24 @@ const { title, description } = Astro.props;
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png" />
     <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="alternate" type="application/rss+xml" title="The Guild Blog" href="/feed.xml" />
     <title>{title}</title>
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:site_name" content="The Guild" />
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    {
+      type === 'article' && publishedTime && (
+        <meta property="article:published_time" content={publishedTime.toISOString()} />
+      )
+    }
+    <meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:site" content="@TheGuildDev" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
     <script is:inline>
       try {
         const saved = localStorage.getItem('guild-theme');

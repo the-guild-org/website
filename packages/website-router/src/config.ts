@@ -154,6 +154,23 @@ export const jsonConfig = {
       sitemap: false, // TODO: change to true when we have docs
     },
     // Redirects
+    // Pages removed in the 2026 redesign
+    '/about-us': {
+      redirect: 'https://the-guild.dev',
+    },
+    '/blog/tag': {
+      redirect: 'https://the-guild.dev/blog',
+    },
+    // Blog posts that moved to the Hive blog
+    '/blog/graphql-eslint-3.14': {
+      redirect: 'https://the-guild.dev/graphql/hive/blog/graphql-eslint-3.14',
+    },
+    '/blog/state-of-graphql-gateways-in-2023': {
+      redirect: 'https://the-guild.dev/graphql/hive/blog/state-of-graphql-gateways-in-2023',
+    },
+    '/blog/supercharge-your-subgraph-with-hive': {
+      redirect: 'https://the-guild.dev/graphql/hive/blog/supercharge-your-subgraph-with-hive',
+    },
     '/bob': {
       redirect: 'https://github.com/kamilkisiela/bob',
       status: 302,

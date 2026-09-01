@@ -31,7 +31,13 @@ const formatDate = (date: Date) =>
   date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
-<Layout title={`${post.data.title} — The Guild Blog`} description={post.data.description}>
+<Layout
+  title={`${post.data.title} — The Guild Blog`}
+  description={post.data.description}
+  image={post.data.image}
+  type="article"
+  publishedTime={post.data.date}
+>
   <header
     class="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--nav-bg)] backdrop-blur-[10px]"
   >
