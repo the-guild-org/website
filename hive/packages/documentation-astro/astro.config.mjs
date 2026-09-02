@@ -5,7 +5,7 @@ import { defineConfig } from "astro/config";
 import {
   rehypeCode,
   rehypeCodeDefaultOptions,
-} from "fumadocs-core/mdx-plugins";
+} from "./src/markdown/rehype-code.mjs";
 import { fileURLToPath } from "node:url";
 
 import {
@@ -45,15 +45,15 @@ export default defineConfig({
   integrations: [
     mdx({
       processor: unified({
-        // Keep this in sync with the Fumadocs pipeline so code-block metadata,
-        // including filenames, has identical semantics in both sites.
+        // Local shiki pipeline (src/markdown/rehype-code.mjs), ported from the
+        // previous fumadocs-based setup so code-block metadata semantics are
+        // unchanged.
         rehypePlugins: [
           mermaidRehypePlugin,
           [
             rehypeCode,
             {
               langs: [...DOCS_CODE_LANGS],
-              tab: false,
               themes: DOCS_CODE_THEMES,
               transformers: rehypeCodeDefaultOptions.transformers,
             },
@@ -124,9 +124,9 @@ export default defineConfig({
           "@hive/design-system/hive-components/comparison",
           "./src/mdx-shims/comparison.ts",
         ),
-        alias("fumadocs-ui/components/steps", "./src/mdx-shims/steps.ts"),
-        alias("fumadocs-ui/components/files", "./src/mdx-shims/files.ts"),
-        alias("fumadocs-ui/components/callout", "./src/mdx-shims/callout.ts"),
+        alias("#mdx-shims/steps", "./src/mdx-shims/steps.ts"),
+        alias("#mdx-shims/files", "./src/mdx-shims/files.ts"),
+        alias("#mdx-shims/callout", "./src/mdx-shims/callout.ts"),
         alias(
           "#components/otel-metrics/metrics-section",
           "./src/mdx-shims/metrics-section.ts",

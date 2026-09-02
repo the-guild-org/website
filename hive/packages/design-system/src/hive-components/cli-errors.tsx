@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-// TODO: Callout and Code are from nextra/components - need fumadocs equivalents
+// TODO: Callout and Code are from nextra/components - need local equivalents
 // For now using simple HTML equivalents
 // import { Callout, Code } from 'nextra/components';
 const Code = ({ children }: { children: React.ReactNode }) => (
