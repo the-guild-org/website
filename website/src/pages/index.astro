@@ -230,7 +230,7 @@ const stellateCaseStudies = [
           class="mt-9 border-t border-[var(--line)] pt-4 font-mono text-[13px] leading-[1.9] text-[var(--muted)] [&_a]:text-[var(--text)] [&_a]:underline [&_a]:decoration-[var(--line-strong)] [&_a]:underline-offset-2 [&_a]:transition-colors hover:[&_a]:text-[var(--strong)] hover:[&_a]:decoration-current"
         >
           Running in production at <a href="#proof">Fortune 500 scale</a>
-          <span class="mx-1.5 text-[var(--faint)]">·</span> Acquired <a
+          {' '}<span class="mx-1.5 text-[var(--faint)]">·</span> Acquired <a
             href={stellateAcquisitionHref}>Stellate (2024)</a
           > and <a href={grafbaseAcquisitionHref}>Grafbase (2026)</a>
         </div>
@@ -326,9 +326,10 @@ const stellateCaseStudies = [
                     ) : (
                       event.title
                     )}
+                    {event.badge && ' '}
                     {event.badge && (
-                      <span class="ml-2 inline-block rounded-sm border border-[var(--badge-line)] px-1.5 py-px align-middle font-mono text-[11px] font-normal tracking-[.02em] text-[var(--green)] before:mr-[5px] before:inline-block before:size-1 before:rounded-full before:bg-current before:align-[1px] before:content-['']">
-                        {event.badge}
+                      <span class="ml-2 inline-block rounded-xs border border-[var(--badge-line)] px-1.5 py-px align-middle font-mono text-[11px] font-normal leading-6 tracking-[.02em] text-[var(--green)] before:mr-[5px] before:inline-block before:size-1 before:rounded-full before:bg-current before:align-[1px] before:content-['']">
+                        {` ${event.badge} `}
                       </span>
                     )}
                   </h3>
@@ -522,7 +523,8 @@ const stellateCaseStudies = [
           >
             <p class="mb-[18px] font-mono text-[17px] leading-[1.55]">
               "Hive empowers us to <b class="text-[var(--amber)]">confidently evolve our schemas</b>
-              by ensuring seamless API updates, detecting potential breaking changes, and guiding developers."
+              {' '}by ensuring seamless API updates, detecting potential breaking changes, and
+              guiding developers."
             </p>
             <footer class="text-xs text-[var(--muted)]">
               Wealthsimple, one of Canada's fastest-growing financial institutions
@@ -567,7 +569,7 @@ const stellateCaseStudies = [
                     {study.industry}
                   </div>
                   <p class="text-[15px] text-[var(--muted)]">
-                    {study.copy}
+                    {study.copy}{' '}
                     <span
                       aria-hidden="true"
                       class="ml-1 inline-block font-mono text-[12px] text-[var(--hive)] transition-transform group-hover:translate-x-0.5"
@@ -624,7 +626,7 @@ const stellateCaseStudies = [
                     {study.industry}
                   </div>
                   <p class="text-[15px] text-[var(--muted)]">
-                    {study.copy}
+                    {study.copy}{' '}
                     <span
                       aria-hidden="true"
                       class="ml-1 inline-block font-mono text-[12px] text-[var(--stellate)] transition-transform group-hover:translate-x-0.5"
@@ -667,8 +669,8 @@ const stellateCaseStudies = [
               SOC 2 Type II
             </div><p>
               <b>SOC 2 Type II</b> attested and listed in the <b>Cloud Security Alliance STAR</b>
-              registry. Reports, policies, and subprocessors are published in the trust center, no NDA
-              required to read them.
+              {' '}registry. Reports, policies, and subprocessors are published in the trust center,
+              no NDA required to read them.
             </p></Cell
           >
           <Cell

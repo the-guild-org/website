@@ -15,4 +15,50 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+// --- Hive documentation site (served under /graphql/hive) ---
+
+const hiveContentRoot = './src/hive/documentation/content';
+
+/**
+ * The default glob-loader ID generation slugifies path segments, which strips
+ * dots ("accounts.js-1.0-rc" becomes "accountsjs-10-rc") and lowercases. The
+ * old site uses raw directory names in URLs, so preserve them verbatim to
+ * keep every existing URL working — only the file extension is dropped.
+ */
+function generateHiveId({ entry }: { entry: string }) {
+  return entry.replace(/\.(md|mdx)$/, '');
+}
+
+const docs = defineCollection({
+  loader: glob({
+    base: `${hiveContentRoot}/docs`,
+    generateId: generateHiveId,
+    pattern: '**/*.{md,mdx}',
+  }),
+});
+
+const productUpdates = defineCollection({
+  loader: glob({
+    base: `${hiveContentRoot}/product-updates`,
+    generateId: generateHiveId,
+    pattern: '**/*.{md,mdx}',
+  }),
+});
+
+const caseStudies = defineCollection({
+  loader: glob({
+    base: `${hiveContentRoot}/case-studies`,
+    generateId: generateHiveId,
+    pattern: '**/*.{md,mdx}',
+  }),
+});
+
+const hiveBlog = defineCollection({
+  loader: glob({
+    base: `${hiveContentRoot}/blog`,
+    generateId: generateHiveId,
+    pattern: '**/*.{md,mdx}',
+  }),
+});
+
+export const collections = { blog, caseStudies, docs, hiveBlog, productUpdates };

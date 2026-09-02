@@ -1,0 +1,31 @@
+---
+import {
+  renderLogo,
+  type LogoName,
+} from "../../documentation/src/components/company-logos";
+
+const logos = {
+  aligent: "AligentLogo",
+  hemnet: "HemnetLogo",
+  karrot: "KarrotLogo",
+  linktree: "LinktreeLogo",
+  meetup: "MeetupLogo",
+  nacelle: "NacelleLogo",
+  prodigy: "ProdigyLogo",
+  "sound-xyz": "SoundYXZLogo",
+  trivago: "TrivagoLogo",
+  wealthsimple: "WealthsimpleLogo",
+} as const satisfies Record<string, LogoName>;
+
+interface Props {
+  class?: string;
+  height?: number;
+  slug: keyof typeof logos;
+  title?: string;
+}
+
+const { class: className, height = 32, slug, title } = Astro.props;
+const markup = renderLogo(logos[slug], { className, height, title });
+---
+
+<Fragment set:html={markup} />
