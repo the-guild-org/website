@@ -15,7 +15,8 @@ export default {
           'monospace',
         ],
         sans: [
-          'Inter',
+          'Instrument Sans Variable',
+          'Instrument Sans',
           'ui-sans-serif',
           '-apple-system',
           'BlinkMacSystemFont',
