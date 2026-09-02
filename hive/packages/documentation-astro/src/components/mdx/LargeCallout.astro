@@ -1,0 +1,90 @@
+---
+import { withBase } from "../../lib/base-path";
+interface Props {
+  className?: string;
+  cta?: unknown;
+  heading?: string;
+  icon?: unknown;
+  variant: "primary" | "secondary";
+  [key: string]: unknown;
+}
+
+const {
+  className,
+  cta,
+  heading,
+  icon,
+  variant,
+  ...props
+} = Astro.props as Props;
+const ctaNode = cta as { props?: Record<string, unknown> } | undefined;
+const ctaProps = ctaNode?.props ?? {};
+const ctaHref =
+  typeof ctaProps.href === "string"
+    ? ctaProps.href
+    : "https://the-guild.dev/contact";
+const ctaVariant =
+  typeof ctaProps.variant === "string"
+    ? ctaProps.variant
+    : "secondary-inverted";
+const textContent = (node: unknown): string => {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(textContent).join("");
+  if (node && typeof node === "object") {
+    return textContent((node as { props?: { children?: unknown } }).props?.children);
+  }
+  return "";
+};
+const ctaLabel = textContent(ctaProps.children) || "Contact Us";
+const ctaClasses: Record<string, string> = {
+  "secondary-inverted":
+    "bg-green-800 text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 dark:text-white",
+  tertiary:
+    "bg-transparent text-green-1000 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800",
+};
+const external = ctaHref.startsWith("http") && ctaHref !== "https://the-guild.dev/contact";
+---
+
+<article
+  {...props}
+  class:list={[
+    "not-prose mt-10 flex gap-6 rounded-2xl border p-4 sm:p-8 max-sm:flex-col sm:items-start sm:gap-12",
+    variant === "primary" &&
+      "border-transparent bg-primary dark:bg-primary/1 dark:border-primary/5",
+    variant === "secondary" &&
+      "border-green-400 bg-white dark:border-neutral-700 dark:bg-neutral-900",
+    className,
+  ]}
+>
+  <div>
+    <header class="flex gap-2 items-center mb-6">
+      {
+        icon && (
+          <svg fill="currentColor" height="25" viewBox="0 0 24 25" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 18.375H6a1 1 0 000 2h15v2H6a3 3 0 01-3-3v-15a2 2 0 012-2h16v16zm-16-1.95c.162-.033.329-.05.5-.05H19v-12H5v12.05zm11-7.05H8v-2h8v2z"></path>
+          </svg>
+        )
+      }
+      <h3 class="font-medium">{heading}</h3>
+    </header>
+    <slot />
+  </div>
+  {
+    cta && (
+      <a
+        class:list={[
+          ctaHref !== "https://the-guild.dev/contact" && "outline-hidden focus-visible:ring-3",
+          "relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 focus-visible:outline focus-visible:ring-0 focus-visible:ring-offset-0 sm:w-fit dark:text-neutral-200 [&:hover>:first-child]:-inset-px [&:hover>:first-child]:rounded-[9px]",
+          ctaClasses[ctaVariant],
+        ]}
+        href={withBase(ctaHref)}
+        data-case-study-contact={ctaHref === "https://the-guild.dev/contact" ? "" : undefined}
+        rel={external ? "noreferrer" : undefined}
+        target={external ? "_blank" : undefined}
+      >
+        <span class="absolute inset-0 rounded-lg border border-green-800 dark:border-neutral-200"></span>
+        {ctaLabel}
+      </a>
+    )
+  }
+</article>

@@ -1,0 +1,62 @@
+<div class="docs-table">
+  <table {...Astro.props}>
+    <slot />
+  </table>
+</div>
+
+<style>
+  .docs-table {
+    width: 100%;
+    margin: 0 0 1.5rem;
+    overflow-x: auto;
+  }
+
+  .docs-table table {
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-fd-border);
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 0.5rem;
+    background: var(--color-fd-card);
+    font-size: 0.875rem;
+    line-height: 1.71429;
+  }
+
+  .docs-table :global(:where(th, td)) {
+    padding: 0.625rem;
+    text-align: start;
+    vertical-align: middle;
+  }
+
+  .docs-table :global(:where(th, td)):not(:last-child) {
+    border-right: 1px solid var(--color-fd-border);
+  }
+
+  .docs-table :global(thead > tr > th),
+  .docs-table :global(tbody > tr:not(:last-child) > td) {
+    border-bottom: 1px solid var(--color-fd-border);
+  }
+
+  .docs-table :global(th) {
+    background: var(--color-neutral-100);
+    font-weight: 600;
+  }
+
+  .docs-table :global(strong) {
+    font-weight: 500;
+  }
+
+  :global(.docs-content) .docs-table :global(code) {
+    padding: 0.1875rem;
+    border-radius: 0.3125rem;
+    background: var(--color-neutral-100);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.71429;
+  }
+
+  :global(.dark .docs-content) .docs-table :global(:where(th, code)) {
+    background: rgb(33 33 33);
+  }
+</style>

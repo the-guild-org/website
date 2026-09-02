@@ -1,0 +1,45 @@
+---
+interface Props {
+  meaning: string;
+  name: string;
+  notes?: string;
+  typicalValues: string[];
+}
+
+const { meaning, name, notes, typicalValues } = Astro.props;
+---
+
+<div>
+  <div class="mb-3 flex items-start gap-3">
+    <div class="shrink-0 rounded-md border border-gray-200 bg-gray-100 p-1.5 dark:border-neutral-700 dark:bg-neutral-800">
+      <svg class="size-4 text-gray-600 dark:text-slate-100" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle></svg>
+    </div>
+    <div class="min-w-0 flex-1">
+      <code class="break-all text-sm font-semibold text-gray-900 dark:text-slate-100">{name}</code>
+      <p class="mt-1 text-sm/relaxed text-gray-600 dark:text-slate-100">{meaning}</p>
+    </div>
+  </div>
+
+  <div class="mt-4 space-y-3">
+    <div>
+      <div class="mb-2 flex items-center gap-1.5">
+        <svg class="size-3.5 text-gray-500 dark:text-slate-400" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+        <span class="text-xs font-semibold uppercase text-gray-700 dark:text-slate-100">Typical Values</span>
+      </div>
+      <div class="flex flex-wrap gap-1.5">
+        {typicalValues.map((value) => (
+          <code class="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-slate-200">{value}</code>
+        ))}
+      </div>
+    </div>
+
+    {notes && (
+      <div class="pt-1">
+        <div class="flex items-start gap-2">
+          <svg class="mt-0.5 size-3.5 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+          <p class="text-sm/relaxed text-gray-600 dark:text-slate-100">{notes}</p>
+        </div>
+      </div>
+    )}
+  </div>
+</div>

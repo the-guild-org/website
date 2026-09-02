@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src/**/*.ts", "src/**/*.tsx", "redirects.ts"],
+  "compilerOptions": {
+    "types": ["vite/client", "bun"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@hive/design-system": ["../design-system/src/index.ts"],
+      "@hive/design-system/*": ["../design-system/src/*"],
+      "fumadocs-mdx:collections/*": ["./.source/*"]
+    },
+    "jsx": "react-jsx"
+  }
+}

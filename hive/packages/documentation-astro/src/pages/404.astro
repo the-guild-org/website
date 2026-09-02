@@ -1,0 +1,40 @@
+---
+import { withBase } from "../lib/base-path";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteNavigation from "../components/SiteNavigation.astro";
+import BaseHead from "../components/BaseHead.astro";
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex" />
+    <BaseHead
+      description="The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
+      title="Page Not Found | Hive"
+    />
+  </head>
+  <body class="text-green-1000 min-h-screen antialiased dark:text-neutral-200">
+    <SiteNavigation />
+    <main class="flex flex-1 items-center justify-center px-4 py-32 text-center">
+      <div class="flex flex-col items-center gap-4">
+        <h1 class="text-6xl font-bold text-green-800 dark:text-neutral-400">404</h1>
+        <h2 class="text-2xl font-semibold">Page Not Found</h2>
+        <p class="max-w-md text-green-800 dark:text-neutral-400">
+          The page you are looking for might have been removed, had its name
+          changed, or is temporarily unavailable.
+        </p>
+        <a
+          class="bg-primary text-green-1000 mt-4 rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90"
+          href={withBase("/")}
+        >
+          Back to Home
+        </a>
+      </div>
+    </main>
+    <SiteFooter />
+  </body>
+</html>

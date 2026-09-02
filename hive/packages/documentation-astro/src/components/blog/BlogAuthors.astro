@@ -1,0 +1,67 @@
+---
+import { withBase } from "../../lib/base-path";
+import { resolveAuthor } from "../../lib/authors";
+
+interface Props {
+  align?: "center" | "start";
+  authors: string[];
+  class?: string;
+  date: string;
+}
+
+const { align = "center", authors: rawAuthors, class: className, date } = Astro.props;
+
+const dateFormat = new Intl.DateTimeFormat("en-US", {
+  day: "numeric",
+  month: "short",
+  weekday: "long",
+  year: "numeric",
+});
+
+const dateObj = new Date(date);
+const resolved = rawAuthors.map(resolveAuthor);
+const dateLabel = dateFormat.format(dateObj);
+const singleAuthor = resolved.length === 1 ? resolved[0] : undefined;
+---
+
+{
+  singleAuthor ? (
+    <div
+      class:list={[
+        "my-4 -mb-1 flex flex-row items-center w-fit rounded-sm py-1 pl-1 pr-3",
+        "has-[a:hover]:bg-beige-900/5 dark:has-[a:hover]:bg-neutral-50/5",
+        className,
+      ]}
+    >
+      <a href={withBase(singleAuthor.link)} title={singleAuthor.name}>
+        <img alt={singleAuthor.name} class="size-10 rounded-full" loading="lazy" src={`https://github.com/${singleAuthor.github}.png?size=80`} />
+      </a>
+      <div class="ml-2.5 flex flex-col">
+        <a class="text-green-1000 font-semibold dark:text-neutral-200" href={withBase(singleAuthor.link)} title={singleAuthor.name}>
+          {singleAuthor.name}
+        </a>
+        <time class="text-green-1000 text-xs dark:text-neutral-200" datetime={dateObj.toISOString()} title={`Posted ${dateLabel}`}>
+          {dateLabel}
+        </time>
+      </div>
+    </div>
+  ) : (
+    <>
+      <time
+        class:list={["mt-5 block text-xs text-[#777]", align === "center" ? "text-center" : "text-left"]}
+        datetime={dateObj.toISOString()}
+        title={`Posted ${dateLabel}`}
+      >
+        {dateLabel}
+      </time>
+      <div class:list={["my-5 flex flex-wrap gap-5", align === "center" ? "justify-center" : "justify-start"]}>
+        {resolved.map((author) => (
+          <a class="text-green-1000 flex items-center font-semibold dark:text-neutral-200" href={withBase(author.link)} title={author.name}>
+            <img alt={author.name} class="size-10 rounded-full" loading="lazy" src={`https://github.com/${author.github}.png?size=80`} />
+            <span class="ml-2.5 text-sm">{author.name}</span>
+          </a>
+        ))}
+      </div>
+    </>
+  )
+}

@@ -1,0 +1,107 @@
+---
+title: "laboratory"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+The `laboratory` configuration object allows you to control the Hive Laboratory interface (the
+in-browser GraphQL IDE served by the router), and lets you pre-populate it with default headers,
+operations, and collections.
+
+## Options
+
+### `enabled`
+
+- **Type:** `boolean`
+- **Default:** `true`
+- **Environment Variable:** `LABORATORY_ENABLED`
+
+The `enabled` property controls whether the Hive Laboratory interface is enabled or disabled.
+
+```yaml title="router.config.yaml"
+laboratory:
+  enabled: true
+```
+
+### `global_headers`
+
+- **Type:** `object` (map of header name to value)
+
+Headers sent on every request the Laboratory makes to the router.
+
+```yaml title="router.config.yaml"
+laboratory:
+  global_headers:
+    X-Env: staging
+```
+
+### `operations`
+
+- **Type:** `object[]`
+
+Operations to pre-populate the Laboratory with. Each operation opens in its own tab the first time a
+browser sees it. Operations the user creates themselves are preserved, and if a user closes a seeded
+tab it stays closed. The content of a seeded operation is refreshed from this configuration on every
+page load, so edits a user makes to a seeded operation are not kept.
+
+Each entry supports:
+
+- **`name`**: `string` - Tab title. Must be unique across all seeded operations.
+- **`query`**: `string` - The GraphQL document.
+- **`variables`**: `object` - The operation's variables. Values can be nested objects, arrays,
+  numbers, booleans, or strings, and support `{{name}}` references to the Laboratory's environment
+  variables (a templated value resolves to a string).
+- **`headers`**: `object` - Headers sent with this operation only, as a map of header name to value.
+  Values support `{{name}}` environment variable references.
+- **`extensions`**: `object` - The operation's GraphQL extensions. Values support `{{name}}`
+  environment variable references.
+
+```yaml title="router.config.yaml"
+laboratory:
+  operations:
+    - name: GetHello
+      query: |
+        query GetHello {
+          hello
+        }
+      variables:
+        limit: 10
+      headers:
+        X-Env: staging
+```
+
+### `collections`
+
+- **Type:** `object[]`
+
+Collections to pre-populate the Laboratory with. A collection is a named, reusable group of
+operations shown in the Laboratory's sidebar, letting you hand users a labelled set of standard
+queries they can browse and run. Seeded collections are refreshed from this configuration on every
+page load; collections a user creates themselves are never touched.
+
+Each entry supports:
+
+- **`name`**: `string` - Sidebar label. Must be unique across all seeded collections.
+- **`operations`**: `object[]` - Operations in the collection (same shape as
+  [`operations`](#operations) above). Must contain at least one operation, and names must be unique
+  within the collection.
+
+```yaml title="router.config.yaml"
+laboratory:
+  collections:
+    - name: Onboarding
+      operations:
+        - name: GetHello
+          query: |
+            query GetHello {
+              hello
+            }
+          headers:
+            X-Env: staging
+```
+
+<Callout type="warning">
+  `global_headers`, `operations`, and `collections` are embedded in the HTML
+  page served to every browser that opens the Laboratory, and are visible via
+  "view source". Do not put secrets in any of them.
+</Callout>

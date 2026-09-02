@@ -1,0 +1,95 @@
+---
+title: TLS, mTLS and HTTP/2 Support in Hive Router
+description:
+  Hive Router has the first-class TLS and mTLS support for both inbound and outbound connections, alongside
+  end-to-end HTTP/2 with optional h2c for subgraph traffic.
+date: 2026-04-30
+authors: [arda]
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+[Hive Router](/docs/router) is now available with the first-class **TLS / mTLS** support and full
+**HTTP/2** coverage on both directions in the router from clients all the way down to subgraphs
+including [HTTP/2 cleartext (h2c)](https://datatracker.ietf.org/doc/html/rfc7540).
+
+## TLS and mTLS, end-to-end
+
+TLS can be configured independently on each connection segment, and mTLS is supported in both
+directions. The router can terminate TLS for inbound API consumers and act as a TLS client for
+outbound subgraph traffic by using its own client certificate when subgraphs require mutual
+authentication.
+
+```
+Client ──[TLS / mTLS]──► Router ──[TLS / mTLS]──► Subgraph(s)
+              inbound                outbound
+```
+
+### Inbound (Client -> Router)
+
+Enable HTTPS on the router itself by pointing it at a certificate and key. The same TLS port also
+upgrades secure WebSocket (`wss://`) connections automatically, so subscriptions work over TLS
+without any extra configuration.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  router:
+    tls:
+      cert_file: /etc/router/tls/server.crt
+      key_file: /etc/router/tls/server.key
+```
+
+For mTLS, add a `client_auth` section with the trusted client CA so only clients presenting a
+valid certificate can reach the router.
+
+### Outbound (Router -> Subgraphs)
+
+Configure subgraph TLS globally under `all`, or override it per subgraph. Both directions of
+mutual authentication are supported so that the router can verify subgraph certificates and present
+its own identity when subgraphs require it.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    tls:
+      cert_file: /etc/router/tls/subgraph-ca.crt
+      client_auth:
+        cert_file: /etc/router/tls/router-client.crt
+        key_file: /etc/router/tls/router-client.key
+  subgraphs:
+    products:
+      tls:
+        cert_file: /etc/router/tls/products-ca.crt
+```
+
+## End-to-end HTTP/2
+
+Hive Router now negotiates HTTP/2 transparently for both inbound and outbound TLS connections,
+and exposes a new outbound option to enforce HTTP/2 even on plain HTTP using
+[HTTP/2 cleartext (h2c)](https://datatracker.ietf.org/doc/html/rfc7540).
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    allow_only_http2: true
+```
+
+When `allow_only_http2` is enabled:
+
+- Plain HTTP subgraph connections use **h2c** with HTTP/2 prior knowledge.
+- HTTPS subgraph connections require HTTP/2 and **do not** fall back to HTTP/1.1.
+
+Like other outbound options, `allow_only_http2` can be set globally under `all` or overridden per
+subgraph, so you can enable HTTP/2 only where it makes sense.
+
+<Callout type="info">
+
+Both features are covered by the router's E2E test suite, including HTTPS, mTLS in both
+directions, and HTTP/2 between the router and subgraphs.
+
+</Callout>
+
+---
+
+- [TLS & mTLS guide](/docs/router/security/tls)
+- [`traffic_shaping` configuration reference](/docs/router/configuration/traffic_shaping)

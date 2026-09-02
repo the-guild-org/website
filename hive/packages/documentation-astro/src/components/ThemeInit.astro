@@ -1,0 +1,18 @@
+<script is:inline>
+  (() => {
+    const media = matchMedia("(prefers-color-scheme: dark)");
+    const apply = () => {
+      const preference = localStorage.getItem("theme") || "system";
+      const dark = preference === "dark" || (preference === "system" && media.matches);
+      document.documentElement.classList.toggle("dark", dark);
+      document.documentElement.classList.toggle("light", !dark);
+      document.documentElement.dataset.theme = preference;
+      // pagefind's built-in dark styles (result skeletons included) are
+      // scoped to [data-pf-theme="dark"] — keep it in sync with our theme.
+      document.documentElement.dataset.pfTheme = dark ? "dark" : "light";
+      document.documentElement.style.colorScheme = dark ? "dark" : "light";
+    };
+    apply();
+    media.addEventListener("change", apply);
+  })();
+</script>

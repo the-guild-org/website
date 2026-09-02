@@ -1,0 +1,106 @@
+---
+title: Demand Control in Hive Router
+description:
+  Hive Router now protects your federated graph from expensive operations with cost-based demand
+  control, enforcing per-operation and per-subgraph budgets before execution.
+date: 2026-06-15
+authors: [dotan]
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+[Hive Router](/docs/router) now includes **Demand Control**, a cost-based protection layer for your
+federated GraphQL API. A single request can fan out into thousands of resolver calls and entity
+fetches across subgraphs, so "requests per second" is a poor proxy for load — one request can be
+orders of magnitude more expensive than another.
+
+Demand Control assigns a numeric **cost** to each operation and lets the router reject (or just
+measure) operations that exceed a configured budget. It implements the
+[IBM GraphQL Cost Specification](https://ibm.github.io/graphql-specs/cost-spec.html) (`@cost` and
+`@listSize`), with federation-aware accounting on top.
+
+<Callout type="info">
+  Demand Control complements [Operation
+  Complexity](/docs/router/security/operation-complexity) limits. Complexity
+  limits stop structurally complex queries (deep nesting, many fields); Demand
+  Control stops computationally expensive ones — such as a query that requests a
+  massive list — regardless of their shape.
+</Callout>
+
+## Estimate Cost Before Execution
+
+The router estimates the cost of an operation from its shape and the request's variables **before**
+any subgraph is contacted. In `enforce` mode, over-budget operations are rejected with zero backend
+traffic. The cost formula is compiled once per operation shape and cached, so repeated and persisted
+operations pay the compilation cost only once.
+
+```yaml title="router.config.yaml"
+demand_control:
+  enabled: true
+  operation_cost:
+    max: 1000 # supergraph-wide budget
+    mode: enforce # or `measure` to observe without rejecting
+  subgraphs_budget:
+    mode: enforce
+  default_list_size:
+    all: 10 # default list size for fields without @listSize
+```
+
+Use `@cost` and `@listSize` directives to model the real cost of your schema:
+
+```graphql
+type Query {
+  expensiveSearch(query: String!): [Book!]! @cost(weight: 50)
+  books(limit: Int!): [Book!]! @listSize(slicingArguments: ["limit"])
+}
+```
+
+## Per-Subgraph Budgets
+
+Beyond the supergraph-wide limit, you can give individual subgraphs their own, tighter budgets, with
+their own enforcement mode. When a subgraph's portion of the plan is too expensive, only that fetch
+is skipped — the rest of the plan still runs and the response comes back partial.
+
+```yaml title="router.config.yaml"
+demand_control:
+  enabled: true
+  operation_cost:
+    max: 5000
+    mode: enforce
+  subgraphs_budget:
+    mode: enforce
+    all: 1000
+    subgraphs:
+      search: 200 # search is expensive — stricter limit
+```
+
+## Built for Observability
+
+Demand Control is meant to be tuned with data. Roll it out in `measure` mode to watch your real cost
+distribution before enforcing anything. The router emits three histograms per operation —
+`cost.estimated`, `cost.actual`, and `cost.delta` — labelled by result code and operation name, plus
+matching span attributes for tracing.
+
+You can also expose cost back to clients as opt-in HTTP response headers:
+
+```yaml title="router.config.yaml"
+demand_control:
+  enabled: true
+  operation_cost:
+    max: 1000
+    mode: measure
+    expose_headers:
+      estimated: true # X-Cost-Estimated
+      actual: true # X-Cost-Actual
+  subgraphs_budget:
+    mode: measure
+```
+
+Actual cost is computed after execution for observability only — it is never enforced, so a request
+is never rejected after it has run. The gap between estimated and actual cost (the _delta_) is the
+signal you use to tune your `@cost` weights and `@listSize` assumptions.
+
+---
+
+- [Demand Control guide](/docs/router/security/demand-control)
+- [`demand_control` configuration reference](/docs/router/configuration/demand_control)

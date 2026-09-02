@@ -1,0 +1,109 @@
+---
+import { withBase } from "../../lib/base-path";
+interface Props {
+  class?: string;
+  className?: string;
+  description?: unknown;
+  href: string;
+  icon?: unknown;
+  title: string;
+  [key: string]: unknown;
+}
+
+const {
+  class: classNameProp,
+  className,
+  description,
+  href,
+  icon,
+  title,
+  ...props
+} = Astro.props;
+const external = href.startsWith("http");
+
+const attributeNames: Record<string, string> = {
+  className: "class",
+  clipRule: "clip-rule",
+  fillRule: "fill-rule",
+  strokeLinecap: "stroke-linecap",
+  strokeLinejoin: "stroke-linejoin",
+  strokeWidth: "stroke-width",
+};
+const escapeHtml = (value: unknown) =>
+  String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+const renderMdxNode = (node: unknown): string => {
+  if (node == null || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") {
+    return escapeHtml(node);
+  }
+  if (Array.isArray(node)) return node.map(renderMdxNode).join("");
+  if (typeof node !== "object") return "";
+
+  const element = node as {
+    props?: Record<string, unknown>;
+    type?: string | symbol;
+  };
+  if (typeof element.type === "symbol") {
+    return renderMdxNode(element.props?.children);
+  }
+  if (typeof element.type !== "string") return "";
+
+  const attributes = Object.entries(element.props ?? {})
+    .filter(
+      ([name, value]) =>
+        name !== "children" &&
+        !name.startsWith("on") &&
+        value != null &&
+        value !== false,
+    )
+    .map(([name, value]) => {
+      const attribute = attributeNames[name] ?? name;
+      return value === true
+        ? attribute
+        : `${attribute}="${escapeHtml(value)}"`;
+    })
+    .join(" ");
+  const children = renderMdxNode(element.props?.children);
+  return `<${element.type}${attributes ? ` ${attributes}` : ""}>${children}</${element.type}>`;
+};
+const iconHtml = renderMdxNode(icon);
+const descriptionHtml = renderMdxNode(description);
+---
+
+<a
+  {...props}
+  class:list={[
+    "outline-hidden focus-visible:ring-3 hive-card group flex flex-col justify-start overflow-hidden rounded-lg border ring-beige-200 no-underline bg-white dark:bg-transparent shadow-sm transition-all duration-200 hover:shadow-md dark:ring-neutral-800 dark:shadow-none dark:hover:ring-neutral-700 dark:hover:bg-neutral-900",
+    classNameProp,
+    className,
+  ]}
+  href={withBase(href)}
+  rel={external ? "noreferrer" : undefined}
+  target={external ? "_blank" : undefined}
+>
+  <slot />
+  <span
+    class="flex items-center gap-2 p-4 font-semibold text-gray-700 hover:text-gray-900 dark:text-neutral-200 dark:hover:text-neutral-50"
+    title={title}
+  >
+    {iconHtml && <Fragment set:html={iconHtml} />}
+    <span class="truncate">{title}</span>
+    <span
+      aria-hidden="true"
+      class="transition-transform duration-75 group-hover:translate-x-0.5"
+    >
+      →
+    </span>
+  </span>
+  {
+    descriptionHtml && (
+      <p class="px-4 pb-4 text-sm text-gray-500 dark:text-neutral-400">
+        <Fragment set:html={descriptionHtml} />
+      </p>
+    )
+  }
+</a>

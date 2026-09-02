@@ -1,0 +1,66 @@
+---
+title: Hive Console Adds Native @oneOf Support
+description: Hive adds oneOf directive support added natively to Hive schema composition. No composeDirective required!
+date: 2026-07-20
+authors: [jdolle]
+---
+
+We launched [Hive Native Composition](/blog/open-source-apollo-federation) back in 2023 and we've not stopped improving it since.
+
+In our latest release ([v0.23.1](https://github.com/graphql-hive/federation-composition/releases/tag/v0.23.1)), support has been added for GraphQL's `@oneOf` directive, which was added to the [GraphQL spec in September 2025](https://spec.graphql.org/September2025/#sec--oneOf) and added to [graphqljs in 16.9.0](https://github.com/graphql/graphql-js/releases/tag/v16.9.0).
+
+Previously, composition would require `@composeDirective` to include the `@oneOf` directive in the composed graphs. This would mean some extra cruft:
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.9"
+    import: ["@composeDirective"]
+  )
+  @link(
+    url: "https://github.com/graphql/graphql-spec/pull/825/v0.1"
+    import: ["@oneOf"]
+  )
+  @composeDirective(name: "@oneOf")
+
+directive @oneOf on INPUT_OBJECT
+
+input UserBy @oneOf {
+  id: ID
+  email: String
+}
+
+type Query {
+  user(by: UserBy!): User
+}
+```
+
+Since this change, assuming you're using a version of graphql with `@oneOf` support, you can skip right to the good part!
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.9")\
+
+input UserBy @oneOf {
+  id: ID
+  email: String
+}
+
+type Query {
+  user(by: UserBy!): User
+}
+```
+
+This change is automatically applied in the next native schema composition run. So if you see a change in your next schema check, don't be alarmed. This just means that your schema is using `@oneOf` but it wasn't using `@composeDirective` to force this directive to be included.
+
+The output supergraph and API schemas will include the directive definition. In supporting runtimes, this isn't required, but we've added this defintion to ensure backwards compatibility with all runtimes.
+
+We hope you find this feature useful. To learn more about `@oneOf` and schema composition, see the links below.
+
+---
+
+- [Spec announcement for @oneOf](https://graphql.org/blog/2025-09-04-multioption-inputs-with-oneof/)
+- [Hive native composition library source](https://github.com/graphql-hive/federation-composition)
+- [external composition reference](/docs/schema-registry/external-schema-composition)

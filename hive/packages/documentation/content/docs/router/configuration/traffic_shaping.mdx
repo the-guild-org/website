@@ -1,0 +1,620 @@
+---
+title: "traffic_shaping"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+import { Tabs } from "@hive/design-system/tabs";
+
+The `traffic_shaping` configuration object provides control over how the Hive Router manages
+connections and executes requests to your subgraph services.
+
+These settings are crucial for ensuring the router operates efficiently under load and for
+protecting your downstream subgraphs from being overwhelmed. For a detailed guide on how to tune
+these settings, see the [Performance Tuning & Traffic Shaping Guide](/docs/router/guides/performance-tuning).
+
+## `max_connections_per_host`
+
+- **Type:** `integer`
+- **Default:** `100`
+
+Limits the maximum number of concurrent HTTP connections the router will open to a single subgraph
+host. This acts as a safeguard to prevent overwhelming a subgraph with too many simultaneous
+requests.
+
+## Inbound Options
+
+The following options are set under `traffic_shaping.router` and control behaviour of the router
+itself (i.e. how it handles incoming client requests).
+
+### `router.dedupe`
+
+Configures inbound in-flight request deduplication. When enabled, identical concurrent
+incoming GraphQL `query` requests are coalesced into a single execution, with the result shared
+among all waiting clients. Subscriptions are also deduplicated: N clients subscribing to the same
+operation with the same variables result in exactly one upstream subgraph connection, with events
+fanned out to all connected clients via a broadcast channel.
+
+This is distinct from the outbound `dedupe_enabled`, which deduplicates the requests the router
+sends to subgraphs.
+
+For a detailed explanation and tuning guidance see the
+[Request Deduplication section](/docs/router/guides/performance-tuning#request-deduplication) of
+the Performance Tuning guide.
+
+<Callout type="info">
+  When the built-in header allowlist below isn't enough, a custom plugin can
+  contribute its own partition to the dedupe fingerprint via
+  `add_inbound_dedupe_partition` - see the
+  [`on_http_request`](/docs/router/customizations/plugin-system/hooks#on_http_request)
+  and
+  [`on_graphql_params`](/docs/router/customizations/plugin-system/hooks#on_graphql_params)
+  hooks.
+</Callout>
+
+#### `router.dedupe.enabled`
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+Enables or disables inbound in-flight request deduplication.
+
+```yaml
+traffic_shaping:
+  router:
+    dedupe:
+      enabled: true
+```
+
+#### `router.dedupe.headers`
+
+- **Type:** `string | object`
+- **Default:** `"all"`
+
+Controls which request headers are factored into the deduplication fingerprint. Header names are
+case-insensitive and validated as standard HTTP header names.
+
+| Value                | Behaviour                                                                       |
+| -------------------- | ------------------------------------------------------------------------------- |
+| `all`                | All headers are included in the fingerprint (default).                          |
+| `none`               | No headers are included — requests from different users may share an execution. |
+| `{ include: [...] }` | Only the listed header names are included.                                      |
+
+<Tabs items={["All (default)", "None", "Include"]}>
+
+<Tabs.Tab>
+
+```yaml
+traffic_shaping:
+  router:
+    dedupe:
+      enabled: true
+      headers: all
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+```yaml
+traffic_shaping:
+  router:
+    dedupe:
+      enabled: true
+      headers: none
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+```yaml
+traffic_shaping:
+  router:
+    dedupe:
+      enabled: true
+      headers:
+        include:
+          - authorization
+          - cookie
+```
+
+</Tabs.Tab>
+
+</Tabs>
+
+### `router.max_long_lived_clients`
+
+- **Type:** `integer`
+- **Default:** `128`
+
+```yaml
+traffic_shaping:
+  router:
+    max_long_lived_clients: 256
+```
+
+Limits the maximum number of concurrent long-lived client connections: WebSocket connections and
+HTTP streaming responses (SSE, Incremental Delivery, Multipart HTTP). When the limit is reached,
+new long-lived connection attempts are rejected with `503 Service Unavailable` and a
+`Retry-After: 5` response header. Regular HTTP requests (queries and mutations) are not affected.
+
+This limit only activates when at least one of WebSocket or Subscriptions is enabled. Setting it
+to `0` disables the limit entirely.
+
+### `router.request_timeout`
+
+- **Type:** `string`
+- **Default:** `60s`
+
+Maximum time the router will spend handling a single incoming client request, in duration string
+format (e.g. `60s` for 60 seconds, `1m` for 1 minute). The clock starts the moment the request is received and covers the entire pipeline — HTTP body recieving, parsing, validation, query planning, and execution —
+until a response is sent back to the client.
+
+If a request exceeds this duration, it is aborted and the client receives a `504 Gateway Timeout` response with a `GATEWAY_TIMEOUT` error.
+
+```yaml
+traffic_shaping:
+  router:
+    request_timeout: 60s
+```
+
+> This is distinct from the outbound [`request_timeout`](#request_timeout), which bounds how long the router waits for an individual subgraph response.
+
+### `router.keep_alive`
+
+- **Type:** `string`
+- **Default:** `5s`
+- **Environment Variable:** `ROUTER_HTTP_KEEP_ALIVE`
+
+How long the router's HTTP server waits for a follow-up request on an idle keep-alive connection
+before closing it, in duration string format (e.g. `80s`, `1m`). Applies to both the main server and
+the dedicated subscription callback server.
+
+Set this above the idle timeout of any reverse proxy sitting in front of the router, so the proxy
+closes an idle connection first rather than reusing a socket the router has already dropped.
+
+```yaml
+traffic_shaping:
+  router:
+    keep_alive: 80s
+```
+
+Setting it to `0s` disables keep-alive entirely.
+
+### `router.tls` (Client ↔ Router)
+
+Use this configuration field to make the router serve HTTPS traffic (TLS) and optionally require client certificates (mTLS).
+For a conceptual overview and step-by-step setup, see [TLS & mTLS](/docs/router/security/tls).
+
+- `cert_file` (**required**): Router server certificate file path, or a list of certificate file
+  paths.
+- `key_file` (**required**): Router server private key file path.
+- `client_auth.cert_file` (optional): Trusted client CA certificate file path, or a list of
+  certificate file paths.
+- `client_auth.required` (optional, default `true`): Whether client certificates are required when
+  `client_auth` is set.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  router:
+    tls:
+      cert_file: /etc/router/tls/server.crt
+      key_file: /etc/router/tls/server.key
+```
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  router:
+    tls:
+      cert_file:
+        - /etc/router/tls/server.crt
+        - /etc/router/tls/intermediate.crt
+      key_file: /etc/router/tls/server.key
+      client_auth:
+        cert_file: /etc/router/tls/client-ca.crt
+        required: true
+```
+
+## Outbound Options
+
+The following options (`allow_only_http2`, `circuit_breaker`, `dedupe_enabled`,
+`forward_operation_name`, `pool_idle_timeout`, `request_timeout`, `tls`, and `websocket`) can be set
+globally for all subgraphs or overridden on a per-subgraph basis by nesting them under the
+subgraph's name within the `traffic_shaping` map.
+
+For example, the following example shows how to set global defaults and override them for a specific
+subgraph named `products`:
+
+```yaml
+traffic_shaping:
+  max_connections_per_host: 150
+  all:
+    pool_idle_timeout: 60s
+  subgraphs:
+    products:
+      dedupe_enabled: false
+      pool_idle_timeout: 120s
+```
+
+### `allow_only_http2`
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+Forces HTTP/2 for requests to subgraphs. When enabled:
+
+- For plain HTTP connections, it will use [HTTP/2 cleartext (h2c)](https://datatracker.ietf.org/doc/html/rfc7540).
+- For HTTPS connections, it also requires HTTP/2.
+
+This means subgraph requests will **never** fall back to HTTP/1.1, and the router will fail to
+connect if the subgraph does not support HTTP/2.
+
+```yaml
+traffic_shaping:
+  all:
+    allow_only_http2: true
+```
+
+### `circuit_breaker`
+
+- **Type:** `object | null`
+- **Default:** `null` (disabled)
+
+The circuit breaker is disabled unless a `circuit_breaker` block is configured with
+`enabled: true`. When active, it monitors subgraph request failures and opens once the configured
+threshold is exceeded. While open, requests are immediately rejected with a
+`SUBGRAPH_CIRCUIT_BREAKER_REJECTED` error instead of waiting for the subgraph. After
+`reset_timeout` elapses, the circuit enters a half-open state and allows probe requests through. If
+those probes stay below the configured error threshold, the circuit closes again; otherwise, it
+returns to the open state.
+
+For a detailed explanation and tuning guidance see the
+[Circuit Breaker section](/docs/router/guides/performance-tuning#circuit-breaker) of the Performance
+Tuning guide.
+
+#### `circuit_breaker.enabled`
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+Enables or disables the circuit breaker for the subgraph(s). When omitted in a per-subgraph
+`circuit_breaker` block, the value inherits from the global `traffic_shaping.all.circuit_breaker`
+configuration.
+
+#### `circuit_breaker.error_threshold`
+
+- **Type:** `string`
+- **Default:** `50%`
+
+The error rate (as a percentage string) above which the circuit breaker opens. For example, `50%`
+means the circuit trips when 50% or more of requests in the evaluation window fail. When omitted in
+a per-subgraph override, the value falls back to the global configuration.
+
+#### `circuit_breaker.volume_threshold`
+
+- **Type:** `integer`
+- **Default:** `5`
+
+Size of the rolling window the breaker uses to track call outcomes. The first `volume_threshold`
+calls fill the window; from then on, every subsequent call triggers an error-rate check over the
+most recent `volume_threshold` outcomes. This prevents the circuit from tripping due to a handful
+of failures during low-traffic periods. When omitted in a per-subgraph override, the value falls
+back to the global configuration.
+
+#### `circuit_breaker.reset_timeout`
+
+- **Type:** `string`
+- **Default:** `30s`
+
+The duration the circuit breaker stays open before transitioning to a half-open state and allowing
+probe calls through to test whether the subgraph has recovered. Accepts a duration string (e.g.
+`30s`, `1m`). When omitted in a per-subgraph override, the value falls back to the global
+configuration.
+
+#### `circuit_breaker.half_open_attempts`
+
+- **Type:** `integer`
+- **Default:** `10`
+
+Size of the rolling sample of probe requests collected while the breaker is in the half-open state
+after `reset_timeout` has elapsed. The breaker fills this sample first; the next probe after the
+sample is full is the one whose result is evaluated against `error_threshold` to decide whether
+to transition back to **closed** (resuming normal traffic) or back to **open** (waiting for
+another `reset_timeout` window). In practice the breaker needs at least `half_open_attempts + 1`
+probe calls before it can transition out of half-open.
+
+Lower values make recovery faster but more aggressive; higher values gather more samples before
+re-closing the circuit. When omitted in a per-subgraph override, the value falls back to the
+global configuration.
+
+#### `circuit_breaker.error_status_codes`
+
+- **Type:** `(integer | string)[]`
+- **Default:** `[500, 502, 503, 504]`
+
+The list of HTTP status codes returned by the subgraph that should be counted as failures by the
+circuit breaker. Only responses whose status code matches an entry in this list are recorded as
+failures. Responses with any other status code (including other 4xx/5xx codes) are treated as
+successes from the circuit breaker's perspective. When omitted in a per-subgraph override, the
+value falls back to the global configuration.
+
+Each entry may be either:
+
+- **An exact HTTP status code**, given as an integer or its string form: `500`, `503`, `"503"`.
+- **A wildcard pattern**, given as a string. Two pattern forms are accepted (case-insensitive):
+  - `"5xx"` (or any `[1-5]xx`) matches every status in the corresponding 100-code range. For
+    example, `"5xx"` matches `500`–`599`.
+  - `"50x"` (or any `[1-5][0-9]x`) matches every status in the corresponding 10-code range. For
+    example, `"50x"` matches `500`–`509`, `"52x"` matches `520`–`529`.
+
+Exact codes and wildcards can be mixed freely in the same list:
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    circuit_breaker:
+      enabled: true
+      error_status_codes: [501, "5xx", "52x"]
+```
+
+<Callout type="info">
+  When a subgraph response matches one of the configured `error_status_codes`,
+  the original response from the subgraph (status, body, and headers) is still
+  surfaced to the client. The breaker counts it as a failure for trip-evaluation
+  purposes only, it does not alter the response. This preserves the pre-existing
+  behavior of the router for subgraphs that legitimately return error status
+  codes.
+</Callout>
+
+**Example: global circuit breaker with a per-subgraph override**
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    circuit_breaker:
+      enabled: true
+      error_threshold: 50%
+      volume_threshold: 5
+      reset_timeout: 30s
+  subgraphs:
+    payments:
+      circuit_breaker:
+        volume_threshold: 3 # more sensitive for the payments subgraph; other settings inherit from global
+```
+
+### `dedupe_enabled`
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+Enables or disables in-flight request deduplication. When `true`, identical, concurrent requests to
+a subgraph are coalesced into a single request, with the response being shared among all clients.
+
+### `forward_operation_name`
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+When enabled, the client's operation name is forwarded to subgraphs. The name is injected into both
+the subgraph query document and the `operationName` JSON field, formatted as
+`<client_operation_name>__<fetch_node_id>`.
+
+This is opt-in and disabled by default. A per-subgraph setting takes precedence over the value set
+under `all`.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    # Forward the operation name to every subgraph
+    forward_operation_name: true
+  subgraphs:
+    products:
+      # Override the global setting for a specific subgraph
+      forward_operation_name: false
+```
+
+<Callout type="info">
+  The forwarded name is generated at execution time rather than during query
+  planning. This keeps query plans anonymous so they can be cached and shared
+  across instances, without leaking client operation names between them.
+</Callout>
+
+### `pool_idle_timeout`
+
+- **Type:** `string`
+- **Default:** `50s`
+
+Controls the timeout in duration string format (e.g. `1m` for 1 minute, `30s` for 30 seconds) for
+idle keep-alive connections in the router's connection pool. Connections that are unused for this
+duration will be closed.
+
+This example configuration increases the connection limit for a high-capacity subgraph and sets a
+longer idle timeout.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  subgraphs:
+    high_capacity_subgraph:
+      pool_idle_timeout: 90s
+```
+
+### `request_timeout`
+
+- **Default:** `30s`
+
+Request timeout in duration string format (e.g. `30s` for 30 seconds, `1m` for 1 minute). This
+setting specifies the maximum time the router will wait for a response from a subgraph before timing
+out the request. By default, the router will wait up to 30 seconds for a subgraph to respond.
+
+The value for `request_timeout` must be a valid duration string or a VRL expression that evaluates
+to a duration string.
+
+#### Static
+
+- **Type:** `string`
+
+When a static duration string is provided, it sets a fixed timeout for all requests to subgraphs.
+
+```yaml
+traffic_shaping:
+  all:
+    request_timeout: 30s
+```
+
+#### Dynamic
+
+- **Type:** `object`
+
+When an `object` is provided, it must contain a VRL `expression` that evaluates to a duration
+string. The expression is evaluated for each request, allowing for dynamic timeout values based on
+request characteristics.
+
+- `expression`: **(string, required)** A VRL expression that computes the request timeout duration.
+
+Within the `expression`, you have access to the following context:
+
+- `.request`: The incoming HTTP request object, including its headers.
+- `.default`: The default timeout value set at the global level (available for subgraph overrides).
+
+```yaml
+traffic_shaping:
+  all:
+    request_timeout:
+      expression: |
+        if .request.headers."X-Priority" == "high" {
+          "10s"
+        } else {
+          "60s"
+        }
+  subgraphs:
+    product:
+      request_timeout:
+        expression: |
+          if .request.headers."X-Region" == "Europe" {
+            "10s"
+          } else {
+            .default
+          }
+```
+
+This example sets a shorter timeout for high-priority requests based on a custom header, and
+configures the `product` subgraph to have a different timeout for requests originating from Europe.
+
+### `websocket` (Router ↔ Subgraphs)
+
+Controls whether WebSocket-enabled subgraphs (configured under
+[`subscriptions.websocket`](/docs/router/configuration/subscriptions#websocket)) reuse pooled
+connections and whether queries and mutations can also be sent over WebSocket instead of always
+using HTTP.
+
+For a walkthrough of the resulting routing behavior, see [Connection reuse and execution mode](/docs/router/subscriptions/websockets#connection-reuse-and-execution-mode).
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    pool_idle_timeout: 50s # default
+    websocket:
+      reuse_connections: true
+      execute_mode: reuse_existing
+  subgraphs:
+    payments:
+      pool_idle_timeout: 5s
+      websocket:
+        reuse_connections: false
+        execute_mode: websocket
+```
+
+#### `websocket.reuse_connections`
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+When `true`, WebSocket operations that share the same subgraph, resolved WebSocket endpoint, and
+connection fingerprint (see below) multiplex over one pooled, initialized connection instead of each
+opening a dedicated socket. When `false`, every WebSocket operation opens and owns its own
+connection, and nothing is inserted into the shared pool.
+
+#### `websocket.execute_mode`
+
+- **Type:** `"http" | "reuse_existing" | "websocket"`
+- **Default:** `"http"`
+
+Controls how **queries and mutations** are transported for WebSocket-enabled subgraphs. This has no
+effect on subscriptions, which always use WebSocket.
+
+- **`http`** - queries and mutations always use HTTP, even when a matching WebSocket connection is
+  open. Subscriptions still pool their connection when `reuse_connections` is `true`.
+- **`reuse_existing`** - queries and mutations use an already-initialized matching pooled WebSocket
+  connection when one is available, and use HTTP in case there is none available. This never opens or waits for a new
+  WebSocket connection, so a request is never delayed by a handshake.
+- **`websocket`** - queries and mutations always use WebSocket, initializing or joining a pooled
+  connection when `reuse_connections` is `true`, or opening a dedicated connection when it's `false`.
+  The first operation for a given identity initializes the connection; concurrent operations join
+  that initialization instead of opening duplicate connections.
+
+Once an operation is sent over WebSocket, transport failures and timeouts are returned to the client
+without retrying over HTTP - this avoids executing a mutation twice after an uncertain send.
+
+Pooled WebSocket connections use the effective `pool_idle_timeout` for the same subgraph and close after being idle for that duration. Active
+operations keep the connection open regardless of the timeout.
+
+#### Connection fingerprint
+
+The dedupe/pooling fingerprint is built from the headers selected by
+[`router.dedupe.headers`](#routerdedupeheaders), even when inbound request deduplication itself is
+disabled. If you use a custom header selection, make sure it includes every header that affects
+connection-scoped authentication, authorization, cookies, or tenant identity - for example:
+
+```yaml
+traffic_shaping:
+  router:
+    dedupe:
+      headers:
+        include: [authorization, cookie, x-tenant]
+```
+
+Operations with different identities (different fingerprints) never share a pooled connection, even
+for the same subgraph and endpoint.
+
+### `tls` (Router ↔ Subgraphs)
+
+Use these configuration fields to configure TLS for outbound requests from the router to subgraphs. For a
+conceptual overview and step-by-step setup, see [TLS & mTLS](/docs/router/security/tls).
+
+- `all.tls`: global default TLS config for all subgraphs.
+- `subgraphs.<name>.tls`: per-subgraph override.
+
+Supported fields:
+
+- `cert_file` (optional): Trusted subgraph CA certificate file path, or a list of certificate file
+  paths.
+- `client_auth.cert_file` + `client_auth.key_file` (optional): Router client certificate and key
+  for mTLS to subgraphs.
+- `insecure_skip_ca_verification` (optional, default `false`): Disables server certificate
+  verification.
+
+When both `all.tls` and `subgraphs.<name>.tls` are set, the subgraph config overrides the matching
+global fields. Fields not set in the subgraph config fall back to `all.tls`.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    tls:
+      cert_file: /etc/router/tls/subgraph-ca.crt
+  subgraphs:
+    payments:
+      tls:
+        cert_file: /etc/router/tls/payments-ca.crt
+    accounts:
+      tls:
+        cert_file: /etc/router/tls/accounts-ca.crt
+        client_auth:
+          cert_file: /etc/router/tls/router-client.crt
+          key_file: /etc/router/tls/router-client.key
+```
+
+<Callout type="warning">
+  `insecure_skip_ca_verification: true` should only be used for local
+  development or controlled testing. It disables verification of subgraph server
+  certificates.
+</Callout>

@@ -1,0 +1,141 @@
+---
+import { withBase } from "../lib/base-path";
+import FrequentlyAskedQuestions from "../components/FrequentlyAskedQuestions.astro";
+import GetYourAPIGameRightSection from "../components/GetYourAPIGameRightSection.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteNavigation from "../components/SiteNavigation.astro";
+import BaseHead from "../components/BaseHead.astro";
+import "../styles/global.css";
+
+import ogImage from "../../../documentation/src/routes/_landing/_light-only/partners.opengraph-image.png";
+
+const partnersFaqs = [
+  [
+    "How to become a partner?",
+    "Connect with us on chat or <a class=\"hive-focus underline decoration-blue-500 underline-offset-2\" href=\"mailto:contact@the-guild.dev\">email us</a>.",
+  ],
+  [
+    "What are the benefits of being a Hive partner?",
+    "When you become a Hive partner, you get a variety of benefits including Technical Access, Support, Marketing initiatives, Sales enablement.",
+  ],
+] as const;
+
+const partners = [
+  {
+    class: "brightness-0 grayscale hover:brightness-100",
+    href: "https://the-guild.dev",
+    logo: "/the-guild-logo.svg",
+    name: "The Guild",
+  },
+  {
+    class: "",
+    href: "https://teamduality.dev",
+    logo: "/duality-logo.svg",
+    name: "Duality",
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <BaseHead
+      description="Accelerate GraphQL Federation adoption with the Hive Partner Network. Access enterprise-grade tools and expertise to build scalable, unified APIs across distributed systems. Join our network of federation experts."
+      image={ogImage}
+      imageAlt="Hive Partner Network"
+      title="Partnerships | Hive"
+    />
+  </head>
+  <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
+    <SiteNavigation />
+    <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
+      <!-- Hero -->
+      <div class="bg-green-1000 relative isolate flex max-w-360 flex-col gap-6 overflow-hidden rounded-3xl px-4 py-6 sm:pb-28 sm:pt-12 md:gap-8 lg:pb-[168px] lg:pt-24 mx-4 h-[22%] max-sm:mt-2 md:mx-6 lg:py-24">
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <svg class="pointer-events-none absolute left-[-46px] top-[-20px] size-[200px] rotate-180 md:left-[-186px] md:top-[-76px] md:size-auto" height="432" preserveAspectRatio="xMidYMid meet" viewBox="0 0 432 432" width="432" xmlns="http://www.w3.org/2000/svg">
+            <path d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z" fill="url(#partners-hero-arch-a)" stroke="url(#partners-hero-arch-b)" stroke-width=".5"></path>
+          </svg>
+          <svg class="pointer-events-none absolute bottom-0 right-[-53px] size-[200px] md:-bottom-32 md:size-auto lg:bottom-0 lg:right-[-72px]" height="432" preserveAspectRatio="xMidYMid meet" viewBox="0 0 432 432" width="432" xmlns="http://www.w3.org/2000/svg">
+            <path d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z" fill="url(#partners-hero-arch-a)" stroke="url(#partners-hero-arch-b)" stroke-width=".5"></path>
+          </svg>
+          <svg class="absolute -z-10" height="432" viewBox="0 0 432 432" width="432">
+            <defs>
+              <linearGradient gradientUnits="userSpaceOnUse" id="partners-hero-arch-a" x1="48.5" x2="302.5" y1="53.5" y2="341"><stop stop-color="#fff" stop-opacity=".1"></stop><stop offset="1" stop-color="#fff" stop-opacity=".3"></stop></linearGradient>
+              <linearGradient gradientUnits="userSpaceOnUse" id="partners-hero-arch-b" x1="1" x2="431" y1="1" y2="431"><stop stop-color="#fff" stop-opacity=".1"></stop><stop offset="1" stop-color="#fff" stop-opacity=".4"></stop></linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <h1 class="group text-4xl leading-[1.2] md:text-[4rem] md:leading-[1.1875] tracking-[-0.64px] mx-auto max-w-3xl text-balance text-center text-white">
+          Accelerate Your Federation Journey
+        </h1>
+        <p class="mx-auto w-[512px] max-w-[80%] text-center leading-6 text-white/80">
+          The Hive Partner Network accelerates your <a class="hive-focus underline decoration-white/30 underline-offset-2 hover:decoration-white/80" href={withBase("/federation")} title="Visit our guide to learn more about GraphQL federation">federation</a> journey, delivering expert solutions and best-in-class technology for faster value realization.
+        </p>
+        <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
+          <a class="relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 bg-primary hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40 sm:w-fit" data-contact-link href="https://the-guild.dev/contact">
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            Talk to an expert
+          </a>
+          <a class="relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 bg-green-300 hover:bg-green-200 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-300/40 sm:w-fit" data-contact-link href="https://the-guild.dev/contact">
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            Become a partner
+          </a>
+        </div>
+
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <svg class="pointer-events-none absolute right-0 top-[-22px] overflow-visible firefox-highlight-fix" fill="#86B6C1" height="674" viewBox="0 0 895 674" width="895" xmlns="http://www.w3.org/2000/svg">
+            <g filter="url(#partners-hero-highlight-blur)"><path d="M350 280.534C350 296.208 356.24 311.261 367.33 322.351L453.447 408.468L463.532 418.553L549.649 504.67C560.739 515.76 575.792 522 591.466 522L894 522L894 408.468L552.251 408.468C503.249 408.468 463.532 368.751 463.532 319.749L463.532 -22L350 -22L350 280.534Z"></path></g>
+            <defs><filter color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" height="1244" id="partners-hero-highlight-blur" width="1244" x="-3.05176e-05" y="-372"><feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood><feBlend in="SourceGraphic" in2="BackgroundImageFix" mode="normal" result="shape"></feBlend><feGaussianBlur result="effect1_foregroundBlur" stdDeviation="175"></feGaussianBlur></filter></defs>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Why partner with us -->
+      <section class="p-6 sm:py-20 md:py-24 xl:px-[120px]">
+        <h2 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] text-center">Why partner with us?</h2>
+        <ul class="mt-6 flex flex-row flex-wrap justify-center gap-2 md:mt-16 md:gap-6">
+          <li class="flex-1 rounded-2xl md:rounded-3xl bg-beige-100 p-6 md:p-12">
+            <div class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"><svg fill="none" height="15" viewBox="0 0 15 15" width="15" xmlns="http://www.w3.org/2000/svg"><path d="M6.85357 3.85355L7.65355 3.05353C8.2981 2.40901 9.42858 1.96172 10.552 1.80125C11.1056 1.72217 11.6291 1.71725 12.0564 1.78124C12.4987 1.84748 12.7698 1.97696 12.8965 2.10357C13.0231 2.23018 13.1526 2.50125 13.2188 2.94357C13.2828 3.37086 13.2779 3.89439 13.1988 4.44801C13.0383 5.57139 12.591 6.70188 11.9464 7.34645L7.49999 11.7929L6.35354 10.6465C6.15827 10.4512 5.84169 10.4512 5.64643 10.6465C5.45117 10.8417 5.45117 11.1583 5.64643 11.3536L7.14644 12.8536C7.34171 13.0488 7.65829 13.0488 7.85355 12.8536L8.40073 12.3064L9.57124 14.2572C9.65046 14.3893 9.78608 14.4774 9.9389 14.4963C10.0917 14.5151 10.2447 14.4624 10.3535 14.3536L12.3535 12.3536C12.4648 12.2423 12.5172 12.0851 12.495 11.9293L12.0303 8.67679L12.6536 8.05355C13.509 7.19808 14.0117 5.82855 14.1887 4.58943C14.2784 3.9618 14.2891 3.33847 14.2078 2.79546C14.1287 2.26748 13.9519 1.74482 13.6035 1.39645C13.2552 1.04809 12.7325 0.871332 12.2045 0.792264C11.6615 0.710945 11.0382 0.721644 10.4105 0.8113C9.17143 0.988306 7.80189 1.491 6.94644 2.34642L6.32322 2.96968L3.07071 2.50504C2.91492 2.48278 2.75773 2.53517 2.64645 2.64646L0.646451 4.64645C0.537579 4.75533 0.484938 4.90829 0.50375 5.0611C0.522563 5.21391 0.61073 5.34954 0.742757 5.42876L2.69364 6.59928L2.14646 7.14645C2.0527 7.24022 2.00002 7.3674 2.00002 7.50001C2.00002 7.63261 2.0527 7.75979 2.14646 7.85356L3.64647 9.35356C3.84173 9.54883 4.15831 9.54883 4.35357 9.35356C4.54884 9.1583 4.54884 8.84172 4.35357 8.64646L3.20712 7.50001L3.85357 6.85356L6.85357 3.85355ZM10.0993 13.1936L9.12959 11.5775L11.1464 9.56067L11.4697 11.8232L10.0993 13.1936ZM3.42251 5.87041L5.43935 3.85356L3.17678 3.53034L1.80638 4.90074L3.42251 5.87041ZM2.35356 10.3535C2.54882 10.1583 2.54882 9.8417 2.35356 9.64644C2.1583 9.45118 1.84171 9.45118 1.64645 9.64644L0.646451 10.6464C0.451188 10.8417 0.451188 11.1583 0.646451 11.3535C0.841713 11.5488 1.1583 11.5488 1.35356 11.3535L2.35356 10.3535ZM3.85358 11.8536C4.04884 11.6583 4.04885 11.3417 3.85359 11.1465C3.65833 10.9512 3.34175 10.9512 3.14648 11.1465L1.14645 13.1464C0.95119 13.3417 0.951187 13.6583 1.14645 13.8535C1.34171 14.0488 1.65829 14.0488 1.85355 13.8536L3.85358 11.8536ZM5.35356 13.3535C5.54882 13.1583 5.54882 12.8417 5.35356 12.6464C5.1583 12.4512 4.84171 12.4512 4.64645 12.6464L3.64645 13.6464C3.45119 13.8417 3.45119 14.1583 3.64645 14.3535C3.84171 14.5488 4.1583 14.5488 4.35356 14.3535L5.35356 13.3535ZM9.49997 6.74881C10.1897 6.74881 10.7488 6.1897 10.7488 5.5C10.7488 4.8103 10.1897 4.25118 9.49997 4.25118C8.81026 4.25118 8.25115 4.8103 8.25115 5.5C8.25115 6.1897 8.81026 6.74881 9.49997 6.74881Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg></div>
+            <h3 class="mt-4 text-xl font-medium leading-[1.4] text-green-1000 md:mt-6">Scale with Open Source</h3>
+            <div class="mt-2 space-y-2 text-green-800 md:mt-4">Join the open-source revolution and grow your business by integrating with a platform that puts flexibility and community first. Build solutions that respect your customers' freedom to innovate.</div>
+          </li>
+          <li class="flex-1 basis-full rounded-2xl md:basis-0 md:rounded-3xl bg-beige-100 p-6 md:p-12">
+            <div class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"><svg fill="none" height="15" viewBox="0 0 15 15" width="15" xmlns="http://www.w3.org/2000/svg"><path d="M9 3.63601C9 2.76044 9.24207 2.11211 9.64154 1.68623C10.0366 1.26502 10.6432 1 11.5014 1C12.4485 1 13.0839 1.30552 13.4722 1.80636C13.8031 2.23312 14 2.84313 14 3.63325H15C15 2.68242 14.7626 1.83856 14.2625 1.19361C13.6389 0.38943 12.6743 0 11.5014 0C10.4294 0 9.53523 0.337871 8.91218 1.0021C8.29351 1.66167 8 2.58135 8 3.63601V6H1C0.447715 6 0 6.44772 0 7V13C0 13.5523 0.447715 14 1 14H10C10.5523 14 11 13.5523 11 13V7C11 6.44772 10.5523 6 10 6H9V3.63601ZM1 7H10V13H1V7Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg></div>
+            <h3 class="mt-4 text-xl font-medium leading-[1.4] text-green-1000 md:mt-6">Enhance Your Enterprise Appeal</h3>
+            <div class="mt-2 space-y-2 text-green-800 md:mt-4">Reach organizations seeking vendor-independent solutions. As a Hive partner, you'll connect with companies prioritizing open-source infrastructure and full ownership of their GraphQL stack.</div>
+          </li>
+          <li class="flex-1 basis-full rounded-2xl md:rounded-3xl lg:basis-0 bg-beige-100 p-6 md:p-12">
+            <div class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"><svg fill="none" height="15" viewBox="0 0 15 15" width="15" xmlns="http://www.w3.org/2000/svg"><path d="M9.96424 2.68571C10.0668 2.42931 9.94209 2.13833 9.6857 2.03577C9.4293 1.93322 9.13832 2.05792 9.03576 2.31432L5.03576 12.3143C4.9332 12.5707 5.05791 12.8617 5.3143 12.9642C5.5707 13.0668 5.86168 12.9421 5.96424 12.6857L9.96424 2.68571ZM3.85355 5.14646C4.04882 5.34172 4.04882 5.6583 3.85355 5.85356L2.20711 7.50001L3.85355 9.14646C4.04882 9.34172 4.04882 9.6583 3.85355 9.85356C3.65829 10.0488 3.34171 10.0488 3.14645 9.85356L1.14645 7.85356C0.951184 7.6583 0.951184 7.34172 1.14645 7.14646L3.14645 5.14646C3.34171 4.9512 3.65829 4.9512 3.85355 5.14646ZM11.1464 5.14646C11.3417 4.9512 11.6583 4.9512 11.8536 5.14646L13.8536 7.14646C14.0488 7.34172 14.0488 7.6583 13.8536 7.85356L11.8536 9.85356C11.6583 10.0488 11.3417 10.0488 11.1464 9.85356C10.9512 9.6583 10.9512 9.34172 11.1464 9.14646L12.7929 7.50001L11.1464 5.85356C10.9512 5.6583 10.9512 5.34172 11.1464 5.14646Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg></div>
+            <h3 class="mt-4 text-xl font-medium leading-[1.4] text-green-1000 md:mt-6">Drive Technical Excellence</h3>
+            <div class="mt-2 space-y-2 text-green-800 md:mt-4">Enable your customers to build more reliable and observable GraphQL APIs through our comprehensive schema registry, <a class="hive-focus underline decoration-slate-400 hover:decoration-slate-700" href={withBase("/federation")} title="Visit our guide to learn more about GraphQL federation">federation</a> support, and performance monitoring tools.</div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Solution partners -->
+      <section class="bg-beige-100 text-green-1000 rounded-3xl p-6 sm:py-20 md:py-24 xl:px-[120px] mx-4 max-sm:mt-2 md:mx-6">
+        <h2 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] text-center">Solution Partners</h2>
+        <p class="mx-auto mt-4 max-w-3xl text-center">Our solution partners are experts in their field, providing a range of services to help you get the most out of the Hive platform. From consulting to implementation, our partners are here to help you succeed.</p>
+        <ul class="mt-10 grid grid-cols-1 place-items-center gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {partners.map((partner) => (
+            <a href={withBase(`${partner.href}?utm_source=hive&utm_medium=website&utm_campaign=partners`)} rel="noreferrer" target="_blank">
+              <li class:list={["flex h-32 w-56 cursor-pointer flex-col items-center justify-center rounded-3xl border border-black hover:bg-slate-300", partner.class]}>
+                <img alt={partner.name} class="h-10 w-auto" src={withBase(partner.logo)} />
+              </li>
+            </a>
+          ))}
+        </ul>
+      </section>
+
+      <!-- Frequently Asked Questions -->
+      <FrequentlyAskedQuestions faqs={partnersFaqs} />
+
+      <GetYourAPIGameRightSection class="mx-4 mt-6 overflow-visible! sm:mb-6 md:mx-6 md:mt-16" />
+    </main>
+
+    <SiteFooter />
+  </body>
+</html>

@@ -1,0 +1,441 @@
+@import "tailwindcss";
+@import "@hive/design-system/style.css";
+@import "../../../documentation/src/fonts/fonts.css";
+
+@source "../**/*.{astro,ts,tsx,md,mdx}";
+@source "../../../design-system/src/**/*.tsx";
+
+@custom-variant dark (&:where(.dark, .dark *):not(:where(.light, .light *)));
+
+@utility blockquote-* {
+  position: relative;
+  quotes: "" " " "" "'" "'";
+  --blockquote-color: --value(--color-*, [color]);
+
+  &::before,
+  &::after {
+    position: relative;
+    display: inline-block;
+    width: 0;
+    color: var(--blockquote-color);
+    font-size: 2.25em;
+    line-height: 0;
+    vertical-align: middle;
+  }
+
+  &::before {
+    left: -0.375em;
+    content: open-quote;
+  }
+
+  &::after {
+    content: close-quote;
+  }
+}
+
+@theme {
+  --color-blueish-green: #003834;
+  --color-fd-accent: var(--color-beige-300);
+  --color-fd-accent-foreground: var(--color-green-1000);
+  --color-fd-background: var(--color-white);
+  --color-fd-border: var(--color-beige-400);
+  --color-fd-card: var(--color-white);
+  --color-fd-foreground: var(--color-green-1000);
+  --color-fd-muted: var(--color-beige-200);
+  --color-fd-muted-foreground: var(--color-green-700);
+  --color-fd-primary: var(--color-green-1000);
+  --color-fd-secondary: var(--color-beige-300);
+  --color-fd-secondary-foreground: var(--color-green-1000);
+  --color-fd-sidebar-active: var(--color-blue-900);
+  --color-fd-sidebar-active-bg: color-mix(
+    in oklab,
+    var(--color-blue-400) 20%,
+    transparent
+  );
+}
+
+@keyframes pop-up {
+  from {
+    opacity: 0;
+    transform: translateY(3px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@utility animate-pop-up {
+  animation: pop-up 400ms var(--hive-ease-overshoot-far) forwards;
+}
+
+:root {
+  color-scheme: light;
+  --nextra-bg: 255 255 255;
+  --background: var(--color-white);
+  --surface: var(--color-beige-100);
+  --surface-raised: var(--color-beige-200);
+  --border: var(--color-beige-400);
+  --text: var(--color-green-1000);
+  --muted: var(--color-green-700);
+  --accent: var(--color-primary);
+  --link: var(--color-green-800);
+  --header-height: 4rem;
+  --pf-background: var(--color-white);
+  --pf-border: var(--color-beige-400);
+  --pf-border-focus: var(--color-green-500);
+  --pf-border-radius: 0.5rem;
+  --pf-font: var(--font-sans);
+  --pf-hover: var(--color-beige-200);
+  --pf-input-height: 3rem;
+  --pf-mark: var(--color-blue-700);
+  --pf-modal-backdrop: rgb(0 56 52 / 35%);
+  --pf-modal-max-width: 42rem;
+  --pf-outline-focus: var(--color-green-500);
+  --pf-shadow-lg: 0 16px 48px rgb(14 18 27 / 20%);
+  --pf-text: var(--color-green-1000);
+  --pf-text-muted: var(--color-green-700);
+  --pf-text-secondary: var(--color-green-800);
+}
+
+.dark {
+  color-scheme: dark;
+  --nextra-bg: 17 17 17;
+  --background: #111;
+  --surface: var(--color-neutral-900);
+  --surface-raised: var(--color-neutral-800);
+  --border: var(--color-neutral-700);
+  --text: var(--color-neutral-200);
+  --muted: var(--color-neutral-400);
+  --link: var(--color-blue-300);
+  --color-fd-background: hsl(0 0% 7.04%);
+  --color-fd-border: var(--color-neutral-700);
+  --color-fd-card: var(--color-neutral-900);
+  --color-fd-foreground: hsl(0 0% 92%);
+  --color-fd-primary: var(--color-neutral-100);
+  --color-fd-secondary: var(--color-neutral-800);
+  --color-fd-secondary-foreground: hsl(0 0% 92%);
+  --color-fd-muted: var(--color-neutral-900);
+  --color-fd-muted-foreground: var(--color-beige-800);
+  --color-fd-accent: var(--color-neutral-800);
+  --color-fd-accent-foreground: var(--color-neutral-100);
+  --color-fd-sidebar-active: var(--color-primary);
+  --color-fd-sidebar-active-bg: color-mix(
+    in oklab,
+    hsl(0 0% 100% / 5%),
+    var(--color-primary) 4.5%
+  );
+  --pf-background: var(--color-neutral-900);
+  --pf-border: var(--color-neutral-700);
+  --pf-hover: var(--color-neutral-800);
+  --pf-text: var(--color-neutral-100);
+  --pf-text-muted: var(--color-neutral-400);
+  --pf-text-secondary: var(--color-neutral-300);
+}
+
+.dark
+  body[data-theme-enabled]
+  .docs-content
+  :where(p, ul, ol):not(.hive-card *, .not-prose *) {
+  color: color-mix(in oklab, var(--color-neutral-200) 90%, transparent);
+}
+
+.dark body[data-theme-enabled] .docs-content li::marker {
+  color: var(--color-neutral-500);
+}
+
+.dark
+  body[data-theme-enabled]
+  .docs-content
+  a:not(.hive-card, .not-prose, .not-prose *) {
+  color: var(--color-neutral-200);
+  text-decoration-color: var(--color-primary);
+}
+
+.dark
+  body[data-theme-enabled]
+  .docs-content
+  a:not(.hive-card, .not-prose, .not-prose *):hover {
+  color: var(--color-primary);
+}
+
+.dark #hive-navigation .menu-content [class*="text-green-1000"] {
+  color: var(--color-neutral-200);
+}
+
+.dark #hive-navigation .menu-content [class*="text-green-900"] {
+  color: var(--color-neutral-200);
+}
+
+.dark #hive-navigation .menu-content [class*="text-green-800"] {
+  color: var(--color-neutral-400);
+}
+
+.dark #hive-navigation .menu-content [class*="text-green-700"] {
+  color: var(--color-neutral-300);
+}
+
+.dark #hive-navigation .menu-content [class*="bg-beige-200"] {
+  background-color: hsl(0 0% 100% / 5%);
+}
+
+.dark #hive-navigation .menu-content > div > .w-px {
+  background-color: var(--color-neutral-800);
+}
+
+.dark
+  body[data-theme-enabled]
+  :is(
+    .flowchart,
+    .statediagram,
+    .sequenceDiagram,
+    [aria-roledescription="sequence"]
+  ) {
+  --mermaid-fg: var(--color-neutral-200);
+  --mermaid-fg-dim: var(--color-neutral-400);
+  --mermaid-node-fill: var(--color-neutral-800);
+  --mermaid-node-stroke: var(--color-neutral-600);
+  --mermaid-arrow: var(--color-neutral-300);
+  --mermaid-cluster-fill: var(--color-neutral-900);
+  --mermaid-cluster-stroke: var(--color-neutral-700);
+  --mermaid-edge-label-bg: var(--color-neutral-900);
+  --mermaid-note-fill: var(--color-neutral-800);
+  --mermaid-note-stroke: var(--color-neutral-600);
+  --mermaid-note-fg: var(--color-neutral-200);
+}
+
+:is(
+  .flowchart,
+  .statediagram,
+  .sequenceDiagram,
+  [aria-roledescription="sequence"]
+) {
+  --mermaid-fg: var(--color-green-1000);
+  --mermaid-fg-dim: var(--color-green-700);
+  --mermaid-node-fill: var(--color-blue-200);
+  --mermaid-node-stroke: var(--color-blue-400);
+  --mermaid-arrow: var(--color-green-900);
+  --mermaid-cluster-fill: var(--color-beige-100);
+  --mermaid-cluster-stroke: var(--color-beige-400);
+  --mermaid-edge-label-bg: var(--color-white);
+  --mermaid-note-fill: var(--color-beige-200);
+  --mermaid-note-stroke: var(--color-beige-400);
+  --mermaid-note-fg: var(--color-green-1000);
+
+  margin: 1.5rem auto 0 auto;
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-fd-border, currentColor);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--background);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+body[data-docs] {
+  background: var(--color-beige-100);
+}
+
+.dark body[data-docs] {
+  background: rgb(var(--nextra-bg));
+}
+
+code,
+pre {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  scroll-margin-top: calc(var(--header-height) + 2rem);
+}
+
+.docs-content {
+  min-width: 0;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.docs-content h2,
+.docs-content h3,
+.docs-content h4 {
+  font-weight: 600;
+}
+
+.docs-content h2 {
+  margin: 3rem 0 1.5rem;
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.docs-content h3 {
+  margin: 2rem 0 0.75rem;
+  font-size: 1.25rem;
+  line-height: 2rem;
+}
+
+.docs-content h4 {
+  margin: 1.5rem 0 0.5rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.docs-content :where(p, ul, ol):not(.hive-card *, .not-prose *) {
+  color: var(--color-green-800);
+}
+
+.docs-content p:not(:first-child, .not-prose *) {
+  margin: 1rem 0;
+}
+
+.docs-content ul,
+.docs-content ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.docs-content ul:not(.hive-card *) {
+  list-style: disc;
+}
+
+.docs-content ol:not(.hive-card *) {
+  list-style: decimal;
+}
+
+.docs-content li {
+  margin: 0.4rem 0;
+}
+
+.docs-content li > p {
+  margin: 0.4rem 0;
+}
+
+.docs-content li::marker {
+  color: var(--color-beige-800);
+}
+
+.docs-content a:not(.hive-card, .not-prose, .not-prose *) {
+  margin: -0.125rem -0.25rem;
+  padding: 0.125rem 0.25rem;
+  color: currentColor;
+  border-radius: 0.125rem;
+  text-decoration-color: var(--color-blue-700);
+  text-decoration-line: underline;
+  text-underline-offset: 0.125rem;
+}
+
+.docs-content a:not(.hive-card, .not-prose, .not-prose *):hover {
+  color: var(--color-blue-700);
+  text-decoration: none;
+}
+
+.docs-content img,
+.docs-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.6rem;
+}
+
+.docs-content pre {
+  max-width: 100%;
+}
+
+.shiki code span {
+  color: var(--shiki-light);
+}
+
+.dark .shiki code span {
+  color: var(--shiki-dark);
+}
+
+.docs-content :not(pre) > code {
+  padding: 0.15em 0.35em;
+  border: 1px solid var(--border);
+  border-radius: 0.3rem;
+  background: var(--surface);
+  font-size: 0.88em;
+}
+
+.toc-link code,
+[data-toc-popover] code {
+  padding: 0.1em 0.3em;
+  border: 1px solid var(--border);
+  border-radius: 0.3rem;
+  background: var(--surface);
+  font-size: 0.85em;
+}
+
+.docs-content blockquote {
+  margin: 1.5rem 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--border);
+}
+
+/* The section filter dropdown opens below the modal header; the dialog clips
+   overflow for its rounded corners, which cut the menu off when the result
+   list is short. Let the menu escape — inner containers keep their own
+   scrolling. */
+/* !important: pagefind's own stylesheet loads after the bundled CSS and sets
+   overflow: hidden at the same specificity. */
+dialog.pf-modal {
+  overflow: visible !important;
+}
+
+/* Composed search modal layout: the header element re-parents its children
+   into .pf-modal-header-content (portaled into a top-level dialog), which stacked the input and the section
+   dropdown with no spacing — the dropdown border sat on the input's focus
+   ring. Stack them with a real gap. */
+/* !important: pagefind's stylesheet inflates specificity with an
+   :is(*, #\#) hack (three ID-level selectors) on these containers. */
+.pf-modal .pf-modal-header-content {
+  display: flex !important;
+  flex: 1 !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 0.75rem !important;
+}
+
+.pf-modal .pf-modal-header-content pagefind-input,
+.pf-modal .pf-modal-header-content pagefind-filter-dropdown {
+  display: block;
+}
+
+/* Loading skeletons in our brand colors for both themes. html.dark outranks
+   pagefind's [data-pf-theme="dark"] defaults, which load later at equal
+   specificity and would otherwise override the brand palette. */
+:root {
+  --pf-skeleton: var(--color-beige-200);
+  --pf-skeleton-shine: var(--color-beige-100);
+}
+
+html.dark {
+  --pf-background: var(--color-neutral-900);
+  --pf-border: var(--color-neutral-700);
+  --pf-hover: var(--color-neutral-800);
+  --pf-skeleton: var(--color-neutral-800);
+  --pf-skeleton-shine: var(--color-neutral-700);
+  --pf-text: var(--color-neutral-100);
+  --pf-text-muted: var(--color-neutral-400);
+  --pf-text-secondary: var(--color-neutral-300);
+}

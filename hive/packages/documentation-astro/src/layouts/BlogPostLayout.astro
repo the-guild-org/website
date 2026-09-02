@@ -1,0 +1,332 @@
+---
+import "../styles/global.css";
+
+import type { BlogPost } from "../lib/get-blog-posts";
+
+import BlogPostHeader from "../components/blog/BlogPostHeader.astro";
+import HeadingPermalinks from "../components/HeadingPermalinks.astro";
+import SimilarPosts from "../components/blog/SimilarPosts.astro";
+import GetYourAPIGameRightSection from "../components/GetYourAPIGameRightSection.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteNavigation from "../components/SiteNavigation.astro";
+import BaseHead from "../components/BaseHead.astro";
+import TocAsideContent from "../components/TocAsideContent.astro";
+import TocPopoverContent from "../components/TocPopoverContent.astro";
+import { filterToc, type TocHeading } from "../lib/toc";
+
+interface Props {
+  allPosts: BlogPost[];
+  authors: string[];
+  canonical?: string;
+  date: string;
+  description: string;
+  image?: string;
+  headings: TocHeading[];
+  mobileImage?: string;
+  socialImage?: string;
+  tags: string[];
+  title: string;
+}
+
+const { allPosts, authors, canonical, date, description, image, headings, mobileImage, socialImage, tags, title } = Astro.props;
+const tableOfContents = filterToc(headings);
+// Titles that carry their own "|" branding are kept as-is, like the old site.
+const pageTitle = title.includes("|") ? title : `${title} | Hive`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <BaseHead breadcrumbs={[{ name: "Blog", path: "/blog" }]} canonical={canonical} description={description} image={socialImage} imageAlt={title} title={pageTitle} type="article" />
+    <link rel="alternate" type="application/rss+xml" title="Hive Blog" href="https://the-guild.dev/graphql/hive/blog/feed.xml" />
+  </head>
+  <body class="min-h-screen antialiased">
+    <SiteNavigation />
+
+    <div class="text-green-1000 mx-auto w-360 max-w-full overflow-x-clip dark:text-white" data-heading-permalinks>
+      <BlogPostHeader authors={authors} class="mx-auto" date={date} image={image} mobileImage={mobileImage} tags={tags} title={title} />
+
+      <div class="blog-prose-shell mx-auto grid w-full max-w-[1436px] grid-cols-1 px-4 md:px-12 xl:grid-cols-[268px_minmax(0,900px)_268px] xl:px-0">
+        {
+          tableOfContents.length > 0 && (
+            <details class="group sticky top-(--header-height) z-10 h-10 xl:hidden" data-toc-popover>
+              <TocPopoverContent headings={tableOfContents} />
+            </details>
+          )
+        }
+
+        <article class="prose dark:prose-invert min-w-0 w-(--article-max-width) max-w-full mx-auto xl:col-start-2" data-blog-prose>
+          <slot />
+        </article>
+
+        <aside class="sticky top-(--header-height) col-start-3 row-start-1 hidden h-[calc(100vh-var(--header-height))] w-68 flex-col pb-2 pt-12 pe-4 xl:flex" id="nd-toc">
+          {tableOfContents.length > 0 && <TocAsideContent headings={tableOfContents} />}
+        </aside>
+      </div>
+
+      <SimilarPosts allPosts={allPosts} class="mx-4 md:mx-6" currentTags={tags} currentTitle={title} />
+      <GetYourAPIGameRightSection class="light text-green-1000 dark:bg-primary/95 mx-4 sm:mb-6 md:mx-6" />
+    </div>
+
+    <SiteFooter />
+    <HeadingPermalinks />
+  </body>
+</html>
+
+<style>
+  .blog-prose-shell {
+    --article-max-width: 640px;
+  }
+
+  @media (max-width: 768px) {
+    .blog-prose-shell {
+      --article-max-width: calc(100vw - 2rem);
+    }
+  }
+</style>
+
+<style is:global>
+  [data-blog-prose] {
+    color: var(--color-green-1000);
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  [data-blog-prose] > :is(h2, h3, h4, h5, h6, p, ol, ul, figure, hr, iframe):not(.hive-bleed) {
+    max-width: var(--article-max-width);
+    margin-inline: auto;
+  }
+
+  [data-blog-prose] > p:first-of-type {
+    font-size: 1.25rem;
+    line-height: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    [data-blog-prose] > p:first-of-type {
+      font-size: 1.5rem;
+    }
+  }
+
+  [data-blog-prose] :is(h2, h3, h4, h5, h6):not(:where(.not-prose *)) {
+    margin-top: 2em;
+    margin-bottom: 1em;
+    color: var(--color-green-1000);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  [data-blog-prose] h2:not(:where(.not-prose *)) {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  [data-blog-prose] h3:not(:where(.not-prose *)) {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+    line-height: 2rem;
+  }
+
+  [data-blog-prose] :is(h2, h3) + :is(h3, p) {
+    margin-top: 0;
+  }
+
+  [data-blog-prose] p:not(:where(.not-prose *)) {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+  }
+
+  [data-blog-prose] .hive-lede > p:first-child {
+    margin-top: 0;
+  }
+
+  [data-blog-prose] ul,
+  [data-blog-prose] ol {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    padding-left: 1rem;
+  }
+
+  [data-blog-prose] ul {
+    list-style: disc;
+  }
+
+  [data-blog-prose] ol {
+    list-style: decimal;
+  }
+
+  [data-blog-prose] li {
+    margin-block: 0.5em;
+  }
+
+  [data-blog-prose] blockquote {
+    margin-block: 1.6em;
+    padding-left: 1rem;
+    border-left: 4px solid var(--color-beige-400);
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  [data-blog-prose] blockquote p:first-of-type::before {
+    content: open-quote;
+  }
+
+  [data-blog-prose] blockquote p:last-of-type::after {
+    content: close-quote;
+  }
+
+  [data-blog-prose] li > p {
+    margin-top: 0.5rem;
+  }
+
+  [data-blog-prose] a:not(:where(.not-prose, .not-prose *)) {
+    margin: -2px -4px;
+    padding: 2px 4px;
+    border-radius: 0.25rem;
+    color: currentColor;
+    font-weight: 500;
+    text-decoration-color: var(--color-blue-700);
+    text-decoration-line: underline;
+    text-underline-offset: 0.125rem;
+  }
+
+  [data-blog-prose] a:not(:where(.not-prose, .not-prose *)):hover {
+    color: var(--color-blue-700);
+    text-decoration: none;
+  }
+
+  [data-blog-prose] :not(pre) > code {
+    padding: 0.1875rem;
+    overflow-wrap: break-word;
+    border: 1px solid var(--color-fd-border);
+    border-radius: 0.3125rem;
+    background: var(--color-neutral-100);
+    font-size: 0.8125rem;
+    line-height: inherit;
+  }
+
+  [data-blog-prose] :is(h2, h3, h4, h5, h6) code {
+    font-size: 0.875em;
+  }
+
+  :global(.dark) [data-blog-prose] :not(pre) > code {
+    background: var(--color-neutral-800);
+  }
+
+  [data-blog-prose] img {
+    max-width: 100%;
+    height: auto;
+    margin-block: 2em;
+    border-radius: 1rem;
+  }
+
+  [data-blog-prose] table {
+    display: table;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-fd-border);
+    border-radius: 0.5rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--color-fd-card);
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+  }
+
+  [data-blog-prose] th,
+  [data-blog-prose] td {
+    padding: 0.625rem;
+    border-bottom: 1px solid var(--color-beige-400);
+    text-align: left;
+  }
+
+  [data-blog-prose] th {
+    background: var(--color-neutral-100);
+    font-weight: 600;
+  }
+
+  [data-blog-prose] tr:last-child td {
+    border-bottom: 0;
+  }
+
+  :global(.dark) [data-blog-prose] th {
+    background: var(--color-neutral-800);
+  }
+
+  [data-blog-prose] div:has(> blockquote) {
+    margin-top: 2.5rem;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background: var(--color-beige-100);
+  }
+
+  [data-blog-prose] div:has(> blockquote) blockquote {
+    display: flex;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: var(--color-green-1000);
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  @media (min-width: 640px) {
+    [data-blog-prose] div:has(> blockquote) blockquote {
+      font-size: 1.25rem;
+      line-height: 1.75rem;
+    }
+  }
+
+  [data-blog-prose] div:has(> blockquote) blockquote::before {
+    display: flex;
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0.5rem;
+    border-radius: 1rem;
+    background: var(--color-primary);
+    content: url("../styles/quotemark.svg");
+  }
+
+  [data-blog-prose] div:has(> blockquote) blockquote > p {
+    margin: 0;
+  }
+
+  [data-blog-prose] div:has(> blockquote) blockquote p:first-of-type::before,
+  [data-blog-prose] div:has(> blockquote) blockquote p:last-of-type::after {
+    content: none;
+  }
+
+  [data-blog-prose] div:has(> blockquote) cite {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    font-style: normal;
+  }
+
+  [data-blog-prose] div:has(> blockquote) cite p {
+    margin-top: 0;
+  }
+
+  [data-blog-prose] div:has(> blockquote) cite :nth-child(2) {
+    font-weight: 500;
+  }
+
+  [data-blog-prose] div:has(> blockquote) cite img {
+    margin-block: 0;
+  }
+
+  @media (max-width: 639px) {
+    [data-blog-prose] div:has(> blockquote) blockquote {
+      flex-direction: column;
+    }
+  }
+</style>

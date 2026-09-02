@@ -1,0 +1,13 @@
+diff --git a/wrangler-dist/cli.js b/wrangler-dist/cli.js
+index a09a94b3e2d2c9688e36bcba101caa023a3c1b9f..a127f0077af2f41dfb9da85495f7805e9ee39404 100644
+--- a/wrangler-dist/cli.js
++++ b/wrangler-dist/cli.js
+@@ -292818,7 +292818,7 @@ var init_BundlerController = __esm({
+           }
+         });
+         if (config.assets?.directory) {
+-          this.#assetsWatcher = watch(config.assets.directory, {
++          this.#assetsWatcher = process.env.TSS_PRERENDERING === "true" ? void 0 : watch(config.assets.directory, {
+             persistent: true,
+             ignoreInitial: true
+           }).on("all", async (eventName, filePath) => {

@@ -1,0 +1,211 @@
+---
+title: "subscriptions"
+---
+
+The `subscriptions` configuration controls how the router handles GraphQL subscriptions to subgraphs.
+Subscriptions are disabled by default. Three transport protocols are supported: HTTP streaming, WebSocket, and HTTP Callback.
+
+For a conceptual overview of how subscriptions work in the router, see **[Subscriptions](/docs/router/subscriptions)**.
+
+## Basic Options
+
+### `enabled`
+
+- **Type:** `boolean`
+- **Default:** `false`
+- **Environment variable:** `SUBSCRIPTIONS_ENABLED`
+
+Enables or disables subscriptions.
+
+### `broadcast_capacity`
+
+- **Type:** `integer`
+- **Default:** `32`
+
+The size of the broadcast channel buffer used to fan out subscription events to all active listeners.
+Each active subscription has its own broadcast channel. If a slow consumer falls behind and the buffer
+fills up, it will skip missed messages and continue from the latest available event.
+
+Increase this if you expect bursts of events or have slow consumers that need more headroom.
+
+### `subgraph_buffer_capacity`
+
+- **Type:** `integer`
+- **Default:** `1024`
+
+The size of the per-subscription buffer between a subgraph and the router's processing pipeline.
+When the buffer is full, the oldest unprocessed event is dropped and logged instead of slowing down
+or tearing down the subgraph connection.
+
+Increase this for bursty subgraphs. Decrease it when only the latest event matters and you want
+to keep memory usage low.
+
+## HTTP Streaming
+
+When neither `callback` nor `websocket` is configured for a subgraph, the router uses HTTP streaming
+by default. The following protocols are negotiated automatically based on what the subgraph supports:
+
+- **Server-Sent Events (SSE)** - distinct connection mode per the [GraphQL over SSE spec](https://github.com/graphql/graphql-over-http/blob/main/rfcs/GraphQLOverSSE.md#distinct-connections-mode).
+- **Apollo Multipart HTTP** - Apollo's [Multipart HTTP protocol](https://www.apollographql.com/docs/graphos/routing/operations/subscriptions/multipart-protocol).
+- **GraphQL Incremental Delivery** - the official [GraphQL Incremental Delivery spec](https://github.com/graphql/graphql-over-http/blob/main/rfcs/IncrementalDelivery.md).
+
+No extra configuration is required.
+
+## `callback`
+
+Configuration for subgraphs using the [HTTP Callback protocol](https://www.apollographql.com/docs/graphos/routing/operations/subscriptions/callback-protocol).
+In this mode, subgraphs push events to the router via HTTP callbacks rather than keeping a long-lived connection open.
+
+### `callback.public_url`
+
+- **Type:** `string` or expression
+- **Required:** Yes
+
+The public URL that subgraphs will use to send callback messages to the router. Must be reachable
+from all subgraphs configured to use the callback protocol.
+
+The value must match the router's server address combined with the configured `callback.path`.
+For example, if the router is at `http://localhost:4000` and `path` is `/callback`, then
+`public_url` must be `http://localhost:4000/callback`.
+
+Can be a static string or a [VRL expression](./expressions), which is useful in horizontally scaled
+deployments where the URL comes from an environment variable:
+
+```yaml
+subscriptions:
+  enabled: true
+  callback:
+    public_url:
+      expression: 'env("ROUTER_PUBLIC_URL")'
+    subgraphs:
+      - products
+```
+
+### `callback.path`
+
+- **Type:** `string`
+- **Default:** `/callback`
+
+The path of the router's callback endpoint. Must be an absolute path starting with `/`.
+
+### `callback.heartbeat_interval`
+
+- **Type:** `string` (duration, e.g. `5s`, `30s`)
+- **Default:** `5s`
+
+The interval at which subgraphs must send heartbeat messages to keep the subscription alive.
+Set to `0s` to disable heartbeats.
+
+### `callback.listen`
+
+- **Type:** `string` (socket address, e.g. `0.0.0.0:4001`)
+- **Default:** not set
+
+When set, the router starts a dedicated HTTP server bound to this address for receiving callback
+messages from subgraphs, separate from the main GraphQL server. When not set, the callback handler
+is registered on the main server.
+
+### `callback.subgraphs`
+
+- **Type:** `string[]`
+- **Default:** `[]`
+
+The list of subgraph names that use the HTTP Callback protocol.
+
+## `websocket`
+
+Configuration for subgraphs using the WebSocket protocol (`graphql-transport-ws` subprotocol).
+
+### `websocket.all`
+
+- **Type:** `object`
+
+Default WebSocket configuration applied to all subgraphs not claimed by `callback`. When set, all
+unclaimed subgraphs will use the WebSocket protocol.
+
+See [`WebSocketSubgraphConfig`](#websocket-subgraph-config) for available fields.
+
+### `websocket.subgraphs`
+
+- **Type:** `Record<string, object>`
+- **Default:** `{}`
+
+Per-subgraph WebSocket configuration that overrides `websocket.all` for specific subgraphs.
+Each key is a subgraph name and the value is a [`WebSocketSubgraphConfig`](#websocket-subgraph-config).
+
+### WebSocket subgraph config
+
+Both `websocket.all` and entries in `websocket.subgraphs` accept the following fields:
+
+#### `path`
+
+- **Type:** `string` (absolute path, e.g. `/ws`)
+- **Default:** not set
+
+The URL path to use for the WebSocket subscription endpoint. The resulting URL will be
+`ws://<subgraph-url><path>`. If not set, the default subgraph URL is used with the scheme
+adjusted to `ws`.
+
+For example, if the subgraph URL is `http://example.com/graphql` and `path` is `/ws`, the
+WebSocket URL will be `ws://example.com/ws`.
+
+## Examples
+
+**HTTP streaming (default):**
+
+```yaml title="router.config.yaml"
+subscriptions:
+  enabled: true
+```
+
+**HTTP Callback:**
+
+```yaml title="router.config.yaml"
+subscriptions:
+  enabled: true
+  callback:
+    public_url: "http://my-router.internal/callback"
+    path: /callback
+    heartbeat_interval: 5s
+    subgraphs:
+      - products
+      - inventory
+```
+
+**WebSocket for all subgraphs:**
+
+```yaml title="router.config.yaml"
+subscriptions:
+  enabled: true
+  websocket:
+    all:
+      path: /ws
+```
+
+**WebSocket with per-subgraph override:**
+
+```yaml title="router.config.yaml"
+subscriptions:
+  enabled: true
+  websocket:
+    all:
+      path: /ws
+    subgraphs:
+      products:
+        path: /subscriptions
+```
+
+**Mixed protocols (callback for some, WebSocket for others):**
+
+```yaml title="router.config.yaml"
+subscriptions:
+  enabled: true
+  callback:
+    public_url: "http://my-router.internal/callback"
+    subgraphs:
+      - inventory
+  websocket:
+    subgraphs:
+      products:
+        path: /ws
+```

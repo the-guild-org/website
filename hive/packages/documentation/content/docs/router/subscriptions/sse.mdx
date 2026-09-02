@@ -1,0 +1,133 @@
+---
+title: Server-Sent Events (SSE)
+description: Use Server-Sent Events (SSE) for GraphQL subscriptions with Hive Router, for both client-to-router and router-to-subgraph communication.
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+## Subgraphs
+
+Subgraphs don't require any special configuration to use SSE. When the router connects to a subgraph for a subscription, it will automatically negotiate SSE if the subgraph supports it. The router prefers multipart first, then falls back to SSE.
+
+## Clients
+
+<Callout type="tip">
+
+SSE is not a mode you activate or configure on the router. Once [subscriptions are enabled](/docs/router/subscriptions#configuration), SSE, Incremental Delivery, and Multipart HTTP are all available simultaneously. The router negotiates the protocol per request based on the client's `Accept` header - see [Protocol Negotiation](/docs/router/subscriptions#protocol-negotiation).
+
+</Callout>
+
+To use SSE, send requests with the following `Accept` header:
+
+```text
+Accept: text/event-stream
+```
+
+The router will respond with a stream of events implementing [the "distinct connections mode" of the GraphQL over SSE spec](https://github.com/enisdenjo/graphql-sse/blob/master/PROTOCOL.md#distinct-connections-mode).
+
+The router sends a heartbeat event every 10 seconds to keep the connection alive.
+
+If an error occurs, the router emits an error event and completes the stream. If the requested subscription transport is not supported, the router returns `406 Not Acceptable`.
+
+### Try It
+
+```bash
+curl 'http://localhost:4000/graphql' \
+  -H 'accept: text/event-stream' \
+  --json '{
+    "query": "subscription {
+      reviewAdded {
+        body
+        rating
+        product {
+          name
+        }
+        author {
+          name
+        }
+      }
+    }"
+  }'
+```
+
+This command creates an SSE connection and keeps it open to receive new subscription data as server-sent events:
+
+```text
+event: next
+data: {"data":{"reviewAdded":{"body":"Great product!","rating":5,"product":{"name":"Croissant"},"author":{"name":"Alice"}}}}
+
+event: next
+data: {"data":{"reviewAdded":{"body":"Could be better","rating":3,"product":{"name":"Baguette"},"author":{"name":"Bob"}}}}
+
+event: next
+data: {"data":{"reviewAdded":{"body":"Excellent quality","rating":5,"product":{"name":"Croissant"},"author":{"name":"Charlie"}}}}
+
+event: complete
+```
+
+This example subscription emits three `next` events and then sends a `complete` event to signal the
+end of the stream. Notice how the `product` and `author` fields are automatically resolved from
+their respective subgraphs.
+
+### EventSource
+
+You can easily subscribe over SSE using the
+[browser native `EventSource` interface](https://developer.mozilla.org/en-US/docs/Web/API/EventSource).
+It's as simple as:
+
+```ts
+const url = new URL("http://localhost:4000/graphql");
+url.searchParams.append(
+  "query",
+  `subscription {
+    reviewAdded {
+      body
+      rating
+      product {
+        name
+      }
+      author {
+        name
+      }
+    }
+  }`,
+);
+
+const source = new EventSource(url);
+
+source.addEventListener("next", ({ data }) => {
+  console.log(data);
+});
+
+source.addEventListener("error", (e) => {
+  console.error(e);
+});
+
+source.addEventListener("complete", () => {
+  source.close();
+});
+```
+
+### graphql-sse
+
+We highly recommend using [`graphql-sse`](https://the-guild.dev/graphql/sse), the zero-dependency, HTTP/1 safe, simple, GraphQL over Server-Sent Events spec client library.
+
+It offers reliable handling of connection management, message parsing, and error handling, as well as silent retries and exponential backoff for improved resilience.
+
+#### Apollo Client
+
+Please advise the [Apollo Client integration recipe](https://the-guild.dev/graphql/sse/recipes#with-apollo).
+
+#### Relay
+
+Please advise the [Relay integration recipe](https://the-guild.dev/graphql/sse/recipes#with-relay).
+
+#### urql
+
+Please advise the [urql integration recipe](https://the-guild.dev/graphql/sse/recipes#with-urql).
+
+<Callout type="tip">
+
+urql also supports SSE out of the box! Just make sure to [enable subscriptions over fetch](https://nearform.com/open-source/urql/docs/advanced/subscriptions/#using-fetch-for-subscriptions).
+
+</Callout>

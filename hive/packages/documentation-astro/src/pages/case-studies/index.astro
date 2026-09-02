@@ -1,0 +1,126 @@
+---
+import { withBase } from "../../lib/base-path";
+import { getCollection } from "astro:content";
+
+import CaseStudyCard from "../../components/case-studies/CaseStudyCard.astro";
+import CaseStudyCta from "../../components/case-studies/CaseStudyCta.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteNavigation from "../../components/SiteNavigation.astro";
+import BaseHead from "../../components/BaseHead.astro";
+import "../../styles/global.css";
+
+const caseStudies = (await getCollection("caseStudies"))
+  .map((entry) => {
+    const data = entry.data as {
+      category: string;
+      date: Date | string;
+      excerpt: string;
+    };
+    const date =
+      data.date instanceof Date
+        ? data.date.toISOString().slice(0, 10)
+        : String(data.date);
+
+    return {
+      category: data.category,
+      date,
+      excerpt: data.excerpt,
+      href: `/case-studies/${entry.id.replace(/\/index$/, "").replace(/\.(md|mdx)$/, "")}`,
+      slug: entry.id.replace(/\/index$/, "").replace(/\.(md|mdx)$/, ""),
+    };
+  })
+  .sort((a, b) => (a.date < b.date ? 1 : -1));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <BaseHead
+      description="See the results our customers achieved by switching to Hive."
+      title="Case Studies | Hive"
+    />
+  </head>
+  <body class="min-h-screen antialiased">
+    <SiteNavigation />
+
+    <div class="mx-auto max-w-360 overflow-hidden px-4">
+      <header class="bg-primary dark:bg-primary/1 dark:border-primary/5 relative isolate flex flex-col gap-6 overflow-hidden rounded-3xl px-4 py-6 max-sm:mt-2 sm:py-12 md:gap-8 lg:py-24">
+        <h1 class="group text-4xl leading-[1.2] md:text-[4rem] md:leading-[1.1875] tracking-[-0.64px] relative z-10 mx-auto max-w-3xl text-balance text-center max-md:text-5xl">
+          Best teams. Hive‑powered.
+        </h1>
+        <p class="relative z-10 text-pretty text-center text-green-800 dark:text-white/80">
+          See the results our Customers achieved by switching to Hive.
+        </p>
+        <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
+          <a
+            class="relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 focus-visible:outline focus-visible:ring-0 focus-visible:ring-offset-0 sm:w-fit dark:text-neutral-200 [&:hover>:first-child]:-inset-px [&:hover>:first-child]:rounded-[9px] bg-green-800 text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 dark:text-white"
+            data-case-study-contact
+            href="https://the-guild.dev/contact"
+          >
+            <span class="absolute inset-0 rounded-lg border border-green-800 dark:border-neutral-200"></span>
+            Talk to us
+          </a>
+          <a
+            class="outline-hidden focus-visible:ring-3 relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 focus-visible:outline focus-visible:ring-0 focus-visible:ring-offset-0 sm:w-fit dark:text-neutral-200 [&:hover>:first-child]:-inset-px [&:hover>:first-child]:rounded-[9px] bg-transparent text-green-1000 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800"
+            href={withBase("/pricing")}
+          >
+            <span class="absolute inset-0 rounded-lg border border-green-800 dark:border-neutral-200"></span>
+            Explore Pricing
+          </a>
+        </div>
+        <div class="pointer-events-none absolute inset-0 overflow-hidden max-sm:opacity-75 dark:opacity-10">
+          <svg class="absolute size-0" fill="none" height="220" viewBox="0 0 385 220" width="385" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient gradientUnits="userSpaceOnUse" id="case-studies-hero-gradient" x1="71.4243" x2="184.877" y1="25.186" y2="282.363">
+                <stop stop-color="white" stop-opacity="0.3"></stop>
+                <stop offset="1" stop-color="white"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+          <svg class="absolute left-[-180px] top-0 rotate-180 max-md:h-[155px] sm:left-[-100px] xl:left-0" fill="none" height="220" viewBox="0 0 385 220" width="385" xmlns="http://www.w3.org/2000/svg"><path d="M8.34295e-06 190.864C7.8014e-06 178.475 4.93233 166.577 13.6983 157.811L81.769 89.7401L89.7401 81.769L157.811 13.6983C166.577 4.93231 178.475 -7.8014e-06 190.864 -8.34295e-06L585 -1.87959e-05L585 89.7401L159.868 89.7401C121.134 89.7401 89.7401 121.134 89.7401 159.868L89.7402 228L1.87959e-05 228L8.34295e-06 190.864Z" fill="url(#case-studies-hero-gradient)"></path></svg>
+          <svg class="absolute bottom-0 right-[-180px] max-md:h-[155px] sm:right-[-100px] xl:right-0" fill="none" height="220" viewBox="0 0 385 220" width="385" xmlns="http://www.w3.org/2000/svg"><path d="M8.34295e-06 190.864C7.8014e-06 178.475 4.93233 166.577 13.6983 157.811L81.769 89.7401L89.7401 81.769L157.811 13.6983C166.577 4.93231 178.475 -7.8014e-06 190.864 -8.34295e-06L585 -1.87959e-05L585 89.7401L159.868 89.7401C121.134 89.7401 89.7401 121.134 89.7401 159.868L89.7402 228L1.87959e-05 228L8.34295e-06 190.864Z" fill="url(#case-studies-hero-gradient)"></path></svg>
+        </div>
+      </header>
+
+      <section class="py-6 sm:pt-24">
+        <h2 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] text-center" id="explore-customer-stories">
+          Explore customer stories
+        </h2>
+        <ul class="mt-6 flex gap-4 max-lg:flex-col sm:mt-16 sm:gap-6">
+          {
+            caseStudies.map((story) => (
+              <li class="relative basis-1/3">
+                <CaseStudyCard
+                  category={story.category}
+                  class="h-full"
+                  excerpt={story.excerpt}
+                  href={withBase(story.href)}
+                  slug={story.slug}
+                />
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <CaseStudyCta />
+    </div>
+
+    <SiteFooter />
+    <script>
+      document.querySelectorAll<HTMLAnchorElement>("[data-case-study-contact]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          const crisp = (globalThis as typeof globalThis & {
+            $crisp?: { push(args: unknown[]): void };
+          }).$crisp;
+          if (crisp) {
+            crisp.push(["do", "chat:open"]);
+            event.preventDefault();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

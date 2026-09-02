@@ -1,0 +1,85 @@
+---
+import { basePath } from "../lib/base-path";
+
+interface Props {
+  /** Product section of the current page — search defaults to it. */
+  section?: "Console" | "Gateway" | "Router";
+}
+
+const { section } = Astro.props;
+---
+
+<pagefind-config
+  base-url={`${basePath}/`}
+  bundle-path={`${basePath}/pagefind/`}
+  excerpt-length="24"
+  show-sub-results="true"
+></pagefind-config>
+<pagefind-modal reset-on-close data-current-section={section}>
+  <pagefind-modal-header>
+    <pagefind-input autofocus placeholder="Search documentation"></pagefind-input>
+    <pagefind-filter-dropdown filter="section" single-select></pagefind-filter-dropdown>
+  </pagefind-modal-header>
+  <pagefind-modal-body>
+    <pagefind-summary></pagefind-summary>
+    <pagefind-results show-sub-results="true" max-sub-results="3"></pagefind-results>
+  </pagefind-modal-body>
+  <pagefind-modal-footer>
+    <pagefind-keyboard-hints></pagefind-keyboard-hints>
+  </pagefind-modal-footer>
+</pagefind-modal>
+
+<script>
+  type PagefindModal = HTMLElement & { open: () => void };
+
+  const modal = document.querySelector<PagefindModal>("pagefind-modal");
+  const currentSection = modal?.dataset.currentSection;
+
+  // Default the section filter to the section being browsed — searching from
+  // a Router page should surface Router results first. The dropdown in the
+  // modal header lets people widen back to all sections, and reset-on-close
+  // clears the search state, so the default is reapplied on every open.
+  const applySectionFilter = () => {
+    if (!currentSection) return;
+    try {
+      const components = (
+        globalThis as typeof globalThis & {
+          PagefindComponents?: {
+            getInstanceManager?: () => {
+              getInstance?: (name?: string) => {
+                triggerFilters?: (filters: Record<string, string[]>) => void;
+              };
+            };
+          };
+        }
+      ).PagefindComponents;
+      const instance = components?.getInstanceManager?.()?.getInstance?.("default");
+      instance?.triggerFilters?.({ section: [currentSection] });
+    } catch {
+      // Search stays usable without the contextual default.
+    }
+  };
+
+  const openSearch = async () => {
+    await customElements.whenDefined("pagefind-modal");
+    modal?.open();
+    applySectionFilter();
+  };
+
+  document.querySelectorAll<HTMLButtonElement>(".docs-search-trigger").forEach((trigger) => {
+    trigger.addEventListener("click", openSearch);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key.toLowerCase() !== "k" || !(event.metaKey || event.ctrlKey)) return;
+    if (event.target instanceof HTMLElement && event.target.matches("input, textarea, [contenteditable=true]")) return;
+    event.preventDefault();
+    openSearch();
+  });
+
+  if (navigator.platform.includes("Win")) {
+    document.querySelectorAll<HTMLElement>(".docs-search-shortcut").forEach((shortcut) => {
+      shortcut.textContent = "Ctrl K";
+    });
+  }
+</script>

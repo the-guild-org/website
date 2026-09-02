@@ -1,0 +1,21 @@
+---
+import { withBase } from "../lib/base-path";
+import type { TocHeading } from "../lib/toc";
+
+interface Props {
+  headings: TocHeading[];
+}
+
+const { headings } = Astro.props;
+---
+
+<summary class="flex h-10 w-full cursor-pointer list-none items-center gap-2.5 border-b bg-beige-100/80 px-4 py-2.5 text-start text-sm text-fd-muted-foreground backdrop-blur-sm focus-visible:outline-none md:px-6 dark:bg-neutral-900/80">
+  <svg class="size-4 shrink-0" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" /></svg>
+  <span class="flex-1 truncate">On this page</span>
+  <svg class="size-4 shrink-0 transition-transform group-open:rotate-180" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6" /></svg>
+</summary>
+<nav class="flex max-h-[50vh] flex-col overflow-auto border-b bg-beige-100 px-4 pb-4 shadow-sm md:px-6 dark:bg-neutral-900">
+  {headings.map((heading) => (
+    <a class="py-1.5 text-sm text-fd-muted-foreground transition-colors wrap-anywhere hover:text-fd-primary" href={withBase(`#${heading.slug}`)} set:html={heading.html} />
+  ))}
+</nav>

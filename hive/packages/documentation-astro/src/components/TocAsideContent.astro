@@ -1,0 +1,50 @@
+---
+import { withBase } from "../lib/base-path";
+import type { TocHeading } from "../lib/toc";
+
+interface Props {
+  headings: TocHeading[];
+}
+
+const { headings } = Astro.props;
+---
+
+<h2 class="inline-flex items-center gap-1.5 text-sm text-fd-muted-foreground">
+  <svg class="size-4" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" /></svg>
+  On this page
+</h2>
+<div class="relative ms-px min-h-0 overflow-auto py-3 text-sm [mask-image:linear-gradient(to_bottom,transparent,white_16px,white_calc(100%-16px),transparent)] [scrollbar-width:none]">
+  <div class="toc-thumb absolute top-(--fd-top) h-(--fd-height) w-0.5 rounded-e-sm bg-fd-primary transition-[top,height] ease-linear"></div>
+  <nav class="flex flex-col border-s border-fd-foreground/10">
+    {headings.map((heading) => (
+      <a
+        class:list={[
+          "toc-link py-1.5 text-sm text-fd-muted-foreground transition-colors wrap-anywhere first:pt-0 last:pb-0 data-[active=true]:text-fd-primary",
+          heading.depth <= 2 ? "ps-3" : heading.depth === 3 ? "ps-6" : "ps-8",
+        ]}
+        data-toc-anchor={heading.slug}
+        href={withBase(`#${heading.slug}`)}
+        set:html={heading.html}
+      />
+    ))}
+  </nav>
+</div>
+
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>(".toc-link")];
+  const thumb = document.querySelector<HTMLElement>(".toc-thumb");
+  const updateToc = () => {
+    if (links.length === 0) return;
+    const active = [...links].reverse().find((link) => {
+      const id = link.dataset.tocAnchor;
+      return id && document.getElementById(id)?.getBoundingClientRect().top! <= 140;
+    }) ?? links[0];
+    links.forEach((link) => link.dataset.active = String(link === active));
+    if (thumb) {
+      thumb.style.setProperty("--fd-top", `${active.offsetTop}px`);
+      thumb.style.setProperty("--fd-height", `${active.offsetHeight}px`);
+    }
+  };
+  updateToc();
+  addEventListener("scroll", updateToc, { passive: true });
+</script>

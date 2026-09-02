@@ -9,7 +9,7 @@
   },
   "scripts": {
     "ci:lint": "pnpm lint --output-file eslint_report.json --format json",
-    "lint": "eslint --cache --ignore-path .gitignore .",
+    "lint": "eslint --cache --ignore-path .gitignore --ignore-pattern 'hive/**' .",
     "prettier": "pnpm prettier:check --write",
     "prettier:check": "prettier --cache --check ."
   },
@@ -36,7 +36,13 @@
   "pnpm": {
     "overrides": {
       "hast-util-to-estree": "^3.0.0",
-      "eslint-plugin-unicorn": "55.0.0"
+      "eslint-plugin-unicorn": "55.0.0",
+      "mermaid-isomorphic": "3.0.4"
+    },
+    "patchedDependencies": {
+      "mermaid-isomorphic@3.0.4": "hive/patches/mermaid-isomorphic@3.0.4.patch",
+      "wrangler@4.72.0": "hive/patches/wrangler@4.72.0.patch",
+      "fumadocs-core@16.4.7": "hive/patches/fumadocs-core@16.4.7.patch"
     }
   }
 }

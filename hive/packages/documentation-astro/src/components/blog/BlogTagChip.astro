@@ -1,0 +1,37 @@
+---
+import { withBase } from "../../lib/base-path";
+import { prettyPrintTag } from "../../lib/pretty-print-tag";
+
+interface Props {
+  colorScheme: "default" | "featured";
+  inert?: boolean;
+  tag: string;
+}
+
+const { colorScheme, inert, tag } = Astro.props;
+
+const chipClasses = [
+  colorScheme === "featured"
+    ? "bg-green-800 dark:bg-primary/90 dark:text-neutral-900"
+    : "bg-beige-800 dark:bg-beige-800/40",
+  !inert &&
+    (colorScheme === "featured"
+      ? "hover:bg-green-900 dark:hover:bg-primary"
+      : "hover:bg-beige-900 dark:hover:bg-beige-900/40"),
+];
+---
+
+{
+  inert ? (
+    <span class:list={["outline-none focus-visible:ring rounded-full px-3 py-1 text-white text-sm", chipClasses]}>
+      {prettyPrintTag(tag)}
+    </span>
+  ) : (
+    <a
+      class:list={["outline-hidden focus-visible:ring-3 rounded-full px-3 py-1 text-white text-sm", chipClasses]}
+      href={withBase(`/blog/tag/${tag}`)}
+    >
+      {prettyPrintTag(tag)}
+    </a>
+  )
+}

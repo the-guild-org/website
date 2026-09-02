@@ -1,0 +1,377 @@
+---
+import { withBase } from "../lib/base-path";
+import csaStarRaw from "../../../design-system/src/icons/csa-star-level-one.svg?raw";
+import linkedInRaw from "../../../design-system/src/icons/linkedin.svg?raw";
+import youTubeRaw from "../../../design-system/src/icons/youtube.svg?raw";
+import hiveCombinationMarkRaw from "../../../design-system/src/logos/hive-combination-mark.svg?raw";
+import soc2Badge from "../../../design-system/src/hive-footer/soc2-badge.webp?url";
+import CookiesConsent from "./CookiesConsent.astro";
+
+interface LinkItem {
+  children: string;
+  href: string;
+  title?: string;
+}
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const currentYear = new Date().getFullYear();
+const externalProps = (href: string) =>
+  href.startsWith("http")
+    ? { rel: "noreferrer", target: "_blank" }
+    : {};
+const withClass = (svg: string, svgClass: string) =>
+  svg.replace("<svg", `<svg class="${svgClass}"`);
+
+const productLinks: LinkItem[] = [
+  {
+    children: "Hive",
+    href: "https://the-guild.dev/graphql/hive",
+    title:
+      "Open Source GraphQL Federation Platform (Schema Registry, Gateway, Analytics)",
+  },
+  {
+    children: "Hive Gateway",
+    href: "https://the-guild.dev/graphql/hive/gateway",
+    title:
+      "GraphQL Gateway (Router) for federated GraphQL with Subscriptions support and built-in security features",
+  },
+  {
+    children: "Hive Router",
+    href: "https://github.com/graphql-hive/router",
+    title:
+      "Open-source (MIT) GraphQL Federation Router. Built with Rust for maximum performance and robustness.",
+  },
+  {
+    children: "Yoga",
+    href: "https://the-guild.dev/graphql/yoga-server",
+    title: "A fully-featured, simple to set up, performant and extendable server",
+  },
+  {
+    children: "Mesh",
+    href: "https://the-guild.dev/graphql/mesh",
+    title: "A fully-featured GraphQL federation framework",
+  },
+  {
+    children: "Codegen",
+    href: "https://the-guild.dev/graphql/codegen",
+    title:
+      "Generation of typed queries, mutations, subscriptions and typed GraphQL resolvers",
+  },
+  {
+    children: "Inspector",
+    href: "https://the-guild.dev/graphql/inspector",
+    title: "Schema management tool",
+  },
+  {
+    children: "Envelop",
+    href: "https://the-guild.dev/graphql/envelop",
+    title:
+      "Develop and share plugins that are usable with any GraphQL server framework or schema",
+  },
+  {
+    children: "SOFA",
+    href: "https://the-guild.dev/graphql/sofa-api",
+    title: "Generate RESTful APIs from your GraphQL server",
+  },
+  {
+    children: "Scalars",
+    href: "https://the-guild.dev/graphql/scalars",
+    title: "Common custom GraphQL Scalars for precise type-safe GraphQL schemas",
+  },
+  {
+    children: "GraphQL ESLint",
+    href: "https://the-guild.dev/graphql/eslint",
+    title: "Customizable ESLint parser, plugin, and rule set for GraphQL",
+  },
+];
+
+const developerLinks: LinkItem[] = [
+  { children: "Documentation", href: "/docs", title: "Read the docs" },
+  {
+    children: "Hive Status",
+    href: "https://status.graphql-hive.com/",
+    title: "Check Hive status",
+  },
+  {
+    children: "Hive Updates",
+    href: "/product-updates",
+    title: "Read most recent developments from Hive",
+  },
+  { children: "Blog", href: "/blog", title: "Read our blog" },
+];
+
+const resourceLinks: LinkItem[] = [
+  {
+    children: "Privacy Policy",
+    href: "https://the-guild.dev/graphql/hive/privacy-policy",
+    title: "Privacy Policy",
+  },
+  {
+    children: "Terms of Use",
+    href: "https://the-guild.dev/graphql/hive/terms-of-use.pdf",
+    title: "Terms of Use",
+  },
+  { children: "Partners", href: "/partners", title: "Partners" },
+];
+
+const companyLinks: LinkItem[] = [
+  {
+    children: "About",
+    href: "https://the-guild.dev/about-us",
+    title: "Learn more about us",
+  },
+  {
+    children: "Brand Assets",
+    href: "https://the-guild.dev/logos",
+    title: "Brand Assets",
+  },
+  {
+    children: "Newsletter",
+    href: "https://the-guild.dev/newsletter",
+    title: "Newsletter",
+  },
+];
+
+const standaloneLinks: LinkItem[] = [
+  { children: "OSS Friends", href: "/oss-friends" },
+  { children: "Pricing", href: "/pricing" },
+];
+---
+
+<footer
+  class:list={[
+    "relative flex justify-center px-4 pb-6 pt-18 xl:px-30",
+    className,
+  ]}
+>
+  <div class="grid w-full grid-cols-1 gap-x-6 text-green-800 max-lg:gap-y-16 sm:grid-cols-4 lg:gap-x-8 xl:gap-x-10 dark:text-neutral-400 max-w-360">
+    <div class="max-lg:col-span-full">
+      <a
+        class="outline-hidden focus-visible:ring-3 hive-focus -m-1.5 flex rounded-sm p-1.5 text-green-1000 dark:text-white"
+        href="https://the-guild.dev/"
+        rel="noreferrer"
+        target="_blank"
+      >
+        <Fragment set:html={withClass(hiveCombinationMarkRaw, "h-8 w-auto")} />
+      </a>
+      <p class="mt-6 lg:mt-8">Open-source GraphQL management platform</p>
+    </div>
+
+    <div class="col-span-full grid grid-flow-row grid-cols-2 justify-stretch gap-6 text-sm sm:col-span-4 sm:grid-cols-3 lg:col-span-3 lg:pb-12 lg:text-base">
+      <div class="flex flex-col gap-y-3 text-nowrap lg:gap-y-4">
+        <h3 class="font-medium dark:text-white">Products</h3>
+        <ul class="contents">
+          {
+            productLinks.map((link) => (
+              <li>
+                <a
+                  {...externalProps(link.href)}
+                  class="outline-hidden focus-visible:ring-3 hive-focus -m-2 block rounded-sm p-2 hover:text-blue-700 hover:underline dark:hover:text-blue-100"
+                  href={withBase(link.href)}
+                  title={link.title}
+                >
+                  {link.children}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="flex flex-col gap-[inherit]">
+        <div class="flex flex-col gap-y-3 text-nowrap lg:gap-y-4">
+          <h3 class="font-medium dark:text-white">Developer</h3>
+          <ul class="contents">
+            {
+              developerLinks.map((link) => (
+                <li>
+                  <a
+                    {...externalProps(link.href)}
+                    class="outline-hidden focus-visible:ring-3 hive-focus -m-2 block rounded-sm p-2 hover:text-blue-700 hover:underline dark:hover:text-blue-100"
+                    href={withBase(link.href)}
+                    title={link.title}
+                  >
+                    {link.children}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="flex flex-col gap-y-3 text-nowrap lg:gap-y-4">
+          <h3 class="font-medium dark:text-white">Resources</h3>
+          <ul class="contents">
+            {
+              resourceLinks.map((link) => (
+                <li>
+                  <a
+                    {...externalProps(link.href)}
+                    class="outline-hidden focus-visible:ring-3 hive-focus -m-2 block rounded-sm p-2 hover:text-blue-700 hover:underline dark:hover:text-blue-100"
+                    href={withBase(link.href)}
+                    title={link.title}
+                  >
+                    {link.children}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-[inherit]">
+        <div class="flex flex-col gap-y-3 text-nowrap lg:gap-y-4">
+          <h3 class="font-medium dark:text-white">Company</h3>
+          <ul class="contents">
+            {
+              companyLinks.map((link) => (
+                <li>
+                  <a
+                    {...externalProps(link.href)}
+                    class="outline-hidden focus-visible:ring-3 hive-focus -m-2 block rounded-sm p-2 hover:text-blue-700 hover:underline dark:hover:text-blue-100"
+                    href={withBase(link.href)}
+                    title={link.title}
+                  >
+                    {link.children}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        {
+          standaloneLinks.map((link) => (
+            <a
+              class="outline-hidden focus-visible:ring-3 hive-focus -m-2 rounded-sm p-2 font-medium hover:text-blue-700 hover:underline dark:hover:text-blue-100"
+              href={withBase(link.href)}
+            >
+              {link.children}
+            </a>
+          ))
+        }
+        <a
+          class="hive-focus -m-2 rounded-sm p-2 font-medium hover:text-blue-700 hover:underline dark:hover:text-blue-100"
+          data-contact-link
+          href="https://the-guild.dev/contact"
+        >
+          Contact Us
+        </a>
+      </div>
+
+      <div class="sm:-col-start-1 lg:-col-start-2">
+        <div class="flex flex-wrap gap-4 max-lg:flex-col">
+          <a
+            class="hive-focus size-fit rounded-full p-1 hover:bg-blue-200 focus-visible:outline-hidden focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--nextra-bg))] dark:hover:bg-white/20 dark:hover:*:opacity-100"
+            href="https://cloudsecurityalliance.org/star/registry/software-products-guild-ltd-the-guild/services/graphql-hive"
+            rel="noreferrer noopener"
+            target="_blank"
+          >
+            <Fragment set:html={withClass(csaStarRaw, "size-22 dark:opacity-95")} />
+          </a>
+          <a
+            class="hive-focus size-fit rounded-full p-1 hover:bg-blue-200 focus-visible:outline-hidden focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--nextra-bg))] dark:hover:bg-white/20 dark:hover:*:opacity-100"
+            href="https://security.graphql-hive.com/"
+            rel="noreferrer noopener"
+            target="_blank"
+          >
+            <img
+              alt="AICPA SOC 2"
+              class="size-22 dark:opacity-95"
+              loading="lazy"
+              src={soc2Badge}
+            />
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-span-full flex flex-wrap justify-between gap-x-[inherit] gap-y-8 lg:w-full lg:pb-2 lg:pt-8">
+      <div class="flex gap-6 lg:order-1">
+        <a
+          class="outline-hidden focus-visible:ring-3 hive-focus -m-1 rounded-md p-1 hover:text-blue-700 dark:hover:text-blue-100"
+          href="https://github.com/the-guild-org"
+          rel="noreferrer"
+          target="_blank"
+          title="Check our GitHub account"
+        >
+          <svg class="h-5 w-auto" fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" /></svg>
+        </a>
+        <a
+          class="outline-hidden focus-visible:ring-3 hive-focus -m-1 rounded-md p-1 hover:text-blue-700 dark:hover:text-blue-100"
+          href="https://twitter.com/TheGuildDev"
+          rel="noreferrer"
+          target="_blank"
+          title="Visit our Twitter"
+        >
+          <svg class="h-5 w-auto" fill="currentColor" height="24" viewBox="0 0 1200 1227" width="24"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" /></svg>
+        </a>
+        <a
+          class="outline-hidden focus-visible:ring-3 hive-focus -m-1 rounded-md p-1 hover:text-blue-700 dark:hover:text-blue-100"
+          href="https://linkedin.com/company/the-guild-software"
+          rel="noreferrer"
+          target="_blank"
+          title="Visit our LinkedIn"
+        >
+          <Fragment set:html={withClass(linkedInRaw, "h-5 w-auto")} />
+        </a>
+        <a
+          class="outline-hidden focus-visible:ring-3 hive-focus -m-1 rounded-md p-1 hover:text-blue-700 dark:hover:text-blue-100"
+          href="https://discord.com/invite/xud7bH9"
+          rel="noreferrer"
+          target="_blank"
+          title="Reach us on Discord"
+        >
+          <svg class="h-5 w-auto" fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" /></svg>
+        </a>
+        <a
+          class="outline-hidden focus-visible:ring-3 hive-focus -m-1 rounded-md p-1 hover:text-blue-700 dark:hover:text-blue-100"
+          href="https://youtube.com/watch?v=d_GBgH-L5c4&list=PLhCf3AUOg4PgQoY_A6xWDQ70yaNtPYtZd"
+          rel="noreferrer"
+          target="_blank"
+          title="Watch Our Videos"
+        >
+          <Fragment set:html={withClass(youTubeRaw, "h-5 w-auto")} />
+        </a>
+      </div>
+      <p class="text-sm">© {currentYear} The Guild</p>
+    </div>
+  </div>
+
+  <svg
+    class="pointer-events-none absolute bottom-0 left-0 hidden mix-blend-multiply lg:block dark:opacity-5 dark:mix-blend-normal"
+    fill="none"
+    height="360"
+    viewBox="0 0 360 360"
+    width="360"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M360 159.793a39.152 39.152 0 00-11.468-27.672l-56.99-56.99-6.673-6.673-56.99-56.99A39.153 39.153 0 00200.207 0H0v75.131h226.157c32.428 0 58.712 26.284 58.712 58.712V360H360V159.793z" fill="url(#paint0_linear_711_2541)" />
+    <defs>
+      <linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_711_2541" x1="180" x2="180" y1="-0.00000786805" y2="360">
+        <stop stop-color="#C1D3D7"></stop>
+        <stop offset="1" stop-color="#86B6C1"></stop>
+      </linearGradient>
+    </defs>
+  </svg>
+</footer>
+
+<CookiesConsent />
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>("[data-contact-link]").forEach((link) => {
+    link.addEventListener("click", (event) => {
+      const crisp = (globalThis as typeof globalThis & {
+        $crisp?: { push(args: unknown[]): void };
+      }).$crisp;
+      if (crisp) {
+        crisp.push(["do", "chat:open"]);
+        event.preventDefault();
+      }
+    });
+  });
+</script>

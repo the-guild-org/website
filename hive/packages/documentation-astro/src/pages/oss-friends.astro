@@ -1,0 +1,113 @@
+---
+import { withBase } from "../lib/base-path";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteNavigation from "../components/SiteNavigation.astro";
+import BaseHead from "../components/BaseHead.astro";
+import "../styles/global.css";
+
+interface OSSFriend {
+  description: string;
+  href: string;
+  name: string;
+}
+
+let friends: OSSFriend[] = [];
+try {
+  const response = await fetch("https://formbricks.com/api/oss-friends");
+  if (response.ok) {
+    const json = (await response.json()) as { data: OSSFriend[] };
+    friends = json.data;
+  }
+} catch {
+  // Keep the page buildable even if the third-party API is unreachable at build time.
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <BaseHead
+      description="We love open source. Meet our friends who share the same passion."
+      title="Our Open Source Friends | Hive"
+    />
+  </head>
+  <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
+    <SiteNavigation />
+    <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
+      <!-- Hero -->
+      <div class="bg-beige-100 relative isolate mx-4 flex flex-col gap-6 overflow-hidden rounded-3xl px-4 py-6 max-sm:mt-2 sm:py-12 md:mx-6 md:gap-8 lg:py-24">
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <svg class="pointer-events-none absolute -top-5 left-[-46px] size-[200px] rotate-180 md:left-[-60px] md:top-[-188px] md:size-auto" height="432" preserveAspectRatio="xMidYMid meet" viewBox="0 0 432 432" width="432" xmlns="http://www.w3.org/2000/svg">
+            <path d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z" fill="url(#oss-friends-arch-a)" stroke="url(#oss-friends-arch-b)" stroke-width=".5"></path>
+          </svg>
+          <svg class="pointer-events-none absolute bottom-0 right-[-53px] size-[200px] md:-bottom-32 md:size-auto lg:bottom-[-188px] lg:right-0" height="432" preserveAspectRatio="xMidYMid meet" viewBox="0 0 432 432" width="432" xmlns="http://www.w3.org/2000/svg">
+            <path d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z" fill="url(#oss-friends-arch-a)" stroke="url(#oss-friends-arch-b)" stroke-width=".5"></path>
+          </svg>
+          <svg aria-hidden="true" class="absolute -z-10" height="432" viewBox="0 0 432 432" width="432">
+            <defs>
+              <linearGradient gradientUnits="userSpaceOnUse" id="oss-friends-arch-a" x1="48.5" x2="302.5" y1="53.5" y2="341"><stop stop-color="#fff" stop-opacity="0.3"></stop><stop offset="1" stop-color="#fff" stop-opacity="1"></stop></linearGradient>
+              <linearGradient gradientUnits="userSpaceOnUse" id="oss-friends-arch-b" x1="1" x2="431" y1="1" y2="431"><stop stop-color="#fff" stop-opacity="0.1"></stop><stop offset="1" stop-color="#fff" stop-opacity="0.4"></stop></linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h1 class="group text-4xl leading-[1.2] md:text-[4rem] md:leading-[1.1875] tracking-[-0.64px] text-green-1000 z-0 mx-auto max-w-3xl text-center">Open Source Friends</h1>
+        <p class="z-0 mx-auto max-w-[80%] text-center leading-6 text-green-800">We love open source. Meet our friends who share the same passion.</p>
+      </div>
+
+      <!-- Friends grid -->
+      <div class="relative mt-6 sm:mt-[-72px]">
+        <section class="border-beige-400 isolate mx-auto w-[1200px] max-w-full rounded-3xl bg-white sm:max-w-[calc(100%-4rem)] sm:border sm:p-6">
+          <div class="relative mx-auto flex w-[1392px] max-w-full flex-col gap-x-4 gap-y-6 md:gap-y-12 lg:flex-row [@media(min-width:1400px)]:gap-x-[120px]">
+            <div class="flex grow flex-col gap-12 px-4 md:px-0 lg:w-[650px]">
+              <div class="mx-auto leading-6 text-green-800">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {friends.map((friend) => (
+                    <a class="hover:bg-beige-200 bg-beige-100 relative block rounded-lg p-4 shadow-xs" href={withBase(friend.href)} target="_blank" rel="noreferrer">
+                      <dt class="text-green-1000 font-medium">{friend.name}</dt>
+                      <dd class="mt-2 text-sm/5 text-green-800">{friend.description}</dd>
+                      <svg aria-hidden="true" class="absolute bottom-2 right-2 size-6 rotate-135 opacity-20" fill="currentColor" height="200px" stroke="currentColor" stroke-width="0" viewBox="0 0 512 512" width="200px" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M427 234.625H167.296l119.702-119.702L256 85 85 256l171 171 29.922-29.924-118.626-119.701H427v-42.75z"></path>
+                      </svg>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Open Source GraphQL Platform CTA -->
+      <section class="bg-blueish-green relative mx-4 mt-12 overflow-hidden rounded-3xl p-12 text-center sm:p-24 md:mx-6">
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <svg class="absolute -left-1/2 -top-1/2 rotate-180 sm:-left-1/4 md:left-[-105px] md:top-[-109px]" height="432" preserveAspectRatio="xMidYMid meet" viewBox="0 0 432 432" width="432" xmlns="http://www.w3.org/2000/svg">
+            <path d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z" fill="none" stroke="url(#oss-friends-cta-arch)"></path>
+          </svg>
+          <svg class="absolute -z-10 size-0"><defs><linearGradient gradientUnits="userSpaceOnUse" id="oss-friends-cta-arch" x1="1" x2="431" y1="1" y2="431"><stop stop-color="#fff" stop-opacity=".1"></stop><stop offset="1" stop-color="#fff" stop-opacity=".4"></stop></linearGradient></defs></svg>
+          <svg class="absolute -left-1 -top-16 size-[600px] -scale-x-100 overflow-visible firefox-highlight-fix" fill="#86B6C1" height="674" viewBox="0 0 895 674" width="895" xmlns="http://www.w3.org/2000/svg">
+            <g filter="url(#oss-friends-cta-highlight-blur)"><path d="M350 280.534C350 296.208 356.24 311.261 367.33 322.351L453.447 408.468L463.532 418.553L549.649 504.67C560.739 515.76 575.792 522 591.466 522L894 522L894 408.468L552.251 408.468C503.249 408.468 463.532 368.751 463.532 319.749L463.532 -22L350 -22L350 280.534Z"></path></g>
+            <defs><filter color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" height="1244" id="oss-friends-cta-highlight-blur" width="1244" x="-3.05176e-05" y="-372"><feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood><feBlend in="SourceGraphic" in2="BackgroundImageFix" mode="normal" result="shape"></feBlend><feGaussianBlur result="effect1_foregroundBlur" stdDeviation="175"></feGaussianBlur></filter></defs>
+          </svg>
+          <svg class="absolute bottom-0 right-8 hidden lg:block" fill="none" height="217" viewBox="0 0 305 217" width="305" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#oss-friends-hive-clip)"><mask fill="#fff" id="oss-friends-hive-mask"><path clip-rule="evenodd" d="M91.485 0h122.03L305 91.485v122.03L213.515 305H91.485L0 213.515V91.485L91.485 0zm77.641 285.534l116.396-116.397c9.186-9.186 9.186-24.076 0-33.263L169.126 19.478c-9.187-9.186-24.077-9.186-33.263 0L19.478 135.874c-9.186 9.187-9.186 24.077 0 33.263l116.385 116.397c9.186 9.186 24.076 9.186 33.263 0zm-48.561-133.04l31.928-31.929 31.929 31.929-31.929 31.929-31.928-31.929z" fill-rule="evenodd"></path></mask>
+            <path clip-rule="evenodd" d="M91.485 0h122.03L305 91.485v122.03L213.515 305H91.485L0 213.515V91.485L91.485 0zm77.641 285.534l116.396-116.397c9.186-9.186 9.186-24.076 0-33.263L169.126 19.478c-9.187-9.186-24.077-9.186-33.263 0L19.478 135.874c-9.186 9.187-9.186 24.077 0 33.263l116.385 116.397c9.186 9.186 24.076 9.186 33.263 0zm-48.561-133.04l31.928-31.929 31.929 31.929-31.929 31.929-31.928-31.929z" fill="url(#oss-friends-hive-p0)" fill-rule="evenodd"></path></g>
+            <defs>
+              <linearGradient gradientUnits="userSpaceOnUse" id="oss-friends-hive-p0" x1="0" x2="305" y1="0" y2="305"><stop stop-color="#004540" stop-opacity="0.4"></stop><stop offset="1" stop-color="#004540"></stop></linearGradient>
+              <clipPath id="oss-friends-hive-clip"><path d="M0 0H305V305H0z" fill="#fff"></path></clipPath>
+            </defs>
+          </svg>
+        </div>
+        <h3 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] text-white">Open Source GraphQL Platform</h3>
+        <p class="relative mt-4 text-white/80">Start building your federated GraphQL API today, by following our guide, that will walk you through the basics of Apollo Federation.</p>
+        <a class="mx-auto mt-8 relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 bg-primary hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40 sm:w-fit" href={withBase("/docs/schema-registry/get-started/apollo-federation")}>
+          <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+          Start building now
+        </a>
+      </section>
+    </main>
+
+    <SiteFooter />
+  </body>
+</html>

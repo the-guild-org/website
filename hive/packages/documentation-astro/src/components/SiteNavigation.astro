@@ -1,0 +1,370 @@
+---
+import { withBase } from "../lib/base-path";
+import graphQLConfImage from "../../../documentation/src/components/graphql-conf-image.webp";
+
+import type { DocsNavNode, DocsNavPage } from "../lib/docs-nav";
+import DocsNavigationTree from "./DocsNavigationTree.astro";
+import DocsSearchTrigger from "./DocsSearchTrigger.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+
+import accountBoxRaw from "../../../design-system/src/icons/account-box.svg?raw";
+import appsRaw from "../../../design-system/src/icons/apps.svg?raw";
+import arrowRaw from "../../../design-system/src/icons/arrow-icon.svg?raw";
+import codegenRaw from "../../../design-system/src/icons/codegen.svg?raw";
+import groupRaw from "../../../design-system/src/icons/group.svg?raw";
+import hiveGatewayRaw from "../../../design-system/src/icons/hive-gateway.svg?raw";
+import hiveRaw from "../../../design-system/src/icons/hive.svg?raw";
+import meshRaw from "../../../design-system/src/icons/mesh.svg?raw";
+import paperRaw from "../../../design-system/src/icons/paper.svg?raw";
+import pencilRaw from "../../../design-system/src/icons/pencil.svg?raw";
+import rightCornerRaw from "../../../design-system/src/icons/right-corner.svg?raw";
+import targetRaw from "../../../design-system/src/icons/target.svg?raw";
+import yogaRaw from "../../../design-system/src/icons/yoga.svg?raw";
+import graphQLFoundationRaw from "../../../design-system/src/logos/graphql-foundation.svg?raw";
+import guildRaw from "../../../design-system/src/logos/guild.svg?raw";
+import hiveCombinationMarkRaw from "../../../design-system/src/logos/hive-combination-mark.svg?raw";
+import theGuildRaw from "../../../design-system/src/logos/the-guild.svg?raw";
+
+interface Props {
+  docsNavigation?: DocsNavPage[];
+  docsNavigationTree?: DocsNavNode[];
+}
+
+const { docsNavigation = [], docsNavigationTree = [] } = Astro.props;
+const pathname = Astro.url.pathname;
+const hiveHref = pathname === "/" ? "/docs" : "/";
+
+const withClass = (svg: string, className: string) =>
+  svg.replace("<svg", `<svg class="${className}"`);
+
+const arrow = withClass(arrowRaw, "ml-auto size-6 shrink-0 opacity-0 transition-all");
+const inlineArrow = withClass(arrowRaw, "size-6");
+
+const stackProducts = [
+  {
+    description: "GraphQL Federation Gateway",
+    href: "https://the-guild.dev/graphql/hive/gateway",
+    icon: hiveGatewayRaw,
+    name: "Hive Gateway",
+  },
+  {
+    description: "Anything to GraphQL",
+    href: "https://the-guild.dev/graphql/mesh",
+    icon: meshRaw,
+    name: "Mesh",
+  },
+  {
+    description: "GraphQL Server & Subgraph",
+    href: "https://the-guild.dev/graphql/yoga-server",
+    icon: yogaRaw,
+    name: "Yoga",
+  },
+];
+
+const libraries = [
+  { href: "https://the-guild.dev/graphql/codegen", icon: codegenRaw, name: "Codegen" },
+  { href: "https://the-guild.dev/graphql/inspector", mark: "INS", name: "Inspector" },
+  { href: "https://the-guild.dev/graphql/envelop", mark: "ENV", name: "Envelop" },
+  { href: "https://the-guild.dev/graphql/sofa-api", mark: "SOF", name: "SOFA" },
+  { href: "https://the-guild.dev/graphql/scalars", mark: "SCL", name: "Scalars" },
+  { href: "https://the-guild.dev/graphql/eslint", mark: "ESL", name: "ESLint" },
+];
+
+const developerLinks = [
+  { href: "/docs", icon: paperRaw, name: "Documentation" },
+  { href: "https://status.graphql-hive.com/", icon: targetRaw, name: "Status" },
+  { href: "/product-updates", icon: rightCornerRaw, name: "Product Updates" },
+  { href: "/case-studies", icon: accountBoxRaw, name: "Case Studies" },
+  { href: "/blog", icon: pencilRaw, name: "Blog" },
+  { href: "https://github.com/graphql-hive/console", icon: "github", name: "GitHub" },
+];
+
+const navigationLinkClass =
+  'hive-focus data-[active="true"]:text-green-1000 rounded-sm p-3 leading-normal text-green-800 transition-colors hover:bg-beige-100 hover:text-green-1000 dark:text-neutral-300 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-100';
+const columnLinkClass = `${navigationLinkClass} flex items-center gap-3 text-nowrap px-4 py-2 [&:hover>svg]:opacity-100 [&>svg]:size-6 [&>svg]:shrink-0`;
+const externalProps = (href: string) =>
+  href.startsWith("http") ? { rel: "noopener noreferrer", target: "_blank" } : {};
+---
+
+<header
+  class:list={["sticky top-0 z-20 row-1 border-b border-beige-400/(--border-opacity) bg-[rgb(var(--nextra-bg))] text-green-1000 [--border-opacity:0%] [grid-area:nav] dark:border-neutral-700/(--border-opacity) dark:text-neutral-200", pathname.startsWith("/docs") ? "" : "transition-[border-color] duration-500" ]}
+  data-docs-navigation={docsNavigation.length > 0}
+  id="hive-navigation"
+  style={docsNavigation.length > 0 ? "--border-opacity: 100%" : undefined}
+>
+  <div class:list={["flex items-center justify-between p-4 md:hidden", pathname.startsWith("/docs") && "w-full bg-beige-100 dark:bg-[rgb(var(--nextra-bg))]"]}>
+    <a class="hive-focus -m-2 flex items-center rounded-md p-2" href={withBase("/")} aria-label="Hive home">
+      <Fragment set:html={withClass(hiveCombinationMarkRaw, "text-green-1000 dark:text-neutral-200 max-sm:h-6 max-sm:w-auto")} />
+    </a>
+    <div class="flex items-center gap-2">
+      {docsNavigation.length > 0 && <><ThemeToggle /><DocsSearchTrigger compact /></>}
+      <button
+        class="mobile-menu-trigger -m-1 rounded-lg bg-transparent p-1 text-green-1000 focus-visible:outline-hidden focus-visible:ring-3 active:bg-beige-200 md:hidden dark:text-neutral-200 dark:active:bg-neutral-800"
+        type="button"
+        aria-controls="mobile-navigation-panel"
+        aria-expanded="false"
+        aria-label="Open navigation"
+      >
+        <svg aria-hidden="true" class="size-6 stroke-current [&_path]:[stroke-linecap:square]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24">
+          <path class="origin-center transition-transform in-[.open]:translate-y-1.25 in-[.open]:rotate-45" d="M4 7h16"></path>
+          <path class="transition-opacity in-[.open]:opacity-0" d="M4 12h16"></path>
+          <path class="origin-center transition-transform in-[.open]:-translate-y-1.25 in-[.open]:-rotate-45" d="M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-navigation-panel absolute inset-x-0 top-full hidden max-h-[calc(100vh-65px)] overflow-y-auto border-y border-beige-400 bg-white p-4 shadow-[0px_16px_32px_-12px_rgba(14,18,27,0.10)] md:hidden dark:border-neutral-700 dark:bg-neutral-900" id="mobile-navigation-panel">
+    <nav class="grid gap-1" aria-label="Mobile navigation">
+      {
+        docsNavigation.length > 0 ? (
+          <details class="group" open>
+            <summary class="flex w-full cursor-pointer list-none items-center gap-2 py-2 font-medium text-fd-muted-foreground transition-colors hover:text-fd-foreground">
+              Documentation
+              <svg class="ms-auto size-4 transition-transform group-open:rotate-180" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6" /></svg>
+            </summary>
+            <div class="grid gap-0.5 pb-2 ps-3">
+              <DocsNavigationTree currentPath={pathname} nodes={docsNavigationTree} />
+            </div>
+          </details>
+        ) : (
+          <a class={`${navigationLinkClass} font-medium`} href={withBase("/docs")}>Documentation</a>
+        )
+      }
+      <a class={`${navigationLinkClass} font-medium`} href={withBase("/product-updates")}>Product Updates</a>
+      <a class={`${navigationLinkClass} font-medium`} href={withBase("/case-studies")}>Case Studies</a>
+      <a class={`${navigationLinkClass} font-medium`} href={withBase("/pricing")}>Pricing</a>
+      <a class={`${navigationLinkClass} font-medium`} href="https://the-guild.dev/contact" target="_blank" rel="noopener noreferrer">Contact us</a>
+      <a class="relative mt-2 flex items-center justify-center gap-2 text-nowrap rounded-lg bg-primary px-6 py-3 font-medium leading-6 text-green-1000 hover:bg-green-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800" href="https://app.graphql-hive.com/">
+        <span class="absolute inset-0 rounded-lg border border-green-800"></span>Sign in
+      </a>
+    </nav>
+  </div>
+
+  <nav class:list={["relative z-10 mx-auto hidden max-w-full flex-1 items-center px-6 py-4 md:flex", pathname.startsWith("/docs") ? "w-full bg-beige-100 dark:bg-[rgb(var(--nextra-bg))]" : "w-360"]} id="h-navmenu-container" aria-label="Navigation Menu">
+    <a class="hive-focus -m-2 flex items-center rounded-md p-2" href={withBase("/")} aria-label="Hive home">
+      <Fragment set:html={withClass(hiveCombinationMarkRaw, "text-green-1000 dark:text-neutral-200 max-sm:h-6 max-sm:w-auto")} />
+    </a>
+
+    <ul class="group ml-4 flex flex-none list-none items-center rounded-lg bg-white px-1.5 [@media(min-width:1180px)]:ml-16 lg:border lg:border-beige-200 lg:px-3 dark:border-neutral-700 dark:bg-transparent">
+      {[
+        ["Products", "products"],
+        ["Developer", "developer"],
+        ["Company", "company"],
+      ].map(([label, menu]) => (
+        <li>
+          <button class="menu-trigger hive-focus cursor-default rounded-sm p-3 font-medium leading-normal text-green-800 aria-expanded:text-green-1000 dark:text-neutral-300 dark:aria-expanded:text-neutral-100" type="button" aria-expanded="false" data-menu-trigger={menu}>{label}</button>
+        </li>
+      ))}
+      <li class="flex">
+        <a class={`${navigationLinkClass} font-medium`} href={withBase("/pricing")}>Pricing</a>
+      </li>
+    </ul>
+
+    <div class="flex-1"></div>
+    {docsNavigation.length > 0 && <DocsSearchTrigger />}
+
+    <a class="relative ml-4 hidden items-center justify-center gap-2 text-nowrap rounded-lg bg-transparent px-6 py-3 font-medium leading-6 text-green-1000 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 lg:flex dark:text-neutral-200" href="https://the-guild.dev/contact" rel="noopener noreferrer" target="_blank">
+      <span class="absolute inset-0 rounded-lg border border-green-800 dark:border-neutral-500"></span>
+      Contact <span class="hidden xl:contents">us</span>
+    </a>
+    <a class="relative ml-4 flex items-center justify-center gap-2 text-nowrap rounded-lg bg-primary px-6 py-3 font-medium leading-6 text-green-1000 hover:bg-green-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 sm:w-fit" href="https://app.graphql-hive.com/">
+      <span class="absolute inset-0 rounded-lg border border-green-800"></span>Sign in
+    </a>
+
+    <div class="pointer-events-none absolute top-full left-0 flex [perspective:2000px]" id="h-navmenu-viewport">
+      <div class="navigation-viewport pointer-events-auto relative mt-1.5 min-w-0 origin-top overflow-hidden rounded-xl border border-beige-200 bg-white opacity-0 shadow-[0px_16px_32px_-12px_rgba(14,18,27,0.10)] transition-[width,height,transform,opacity,scale] duration-250 ease-out scale-95 pointer-events-none dark:border-neutral-700 dark:bg-neutral-900">
+        <section class="menu-content hidden w-max bg-white p-6 dark:bg-neutral-900" data-menu-content="products">
+          <div class="flex gap-x-6 *:flex *:flex-col *:gap-4">
+            <div class="w-55">
+              <p class="px-4 text-sm/5 text-green-700">Platform</p>
+              <a class={`${navigationLinkClass} p-4`} href={withBase(hiveHref)}>
+                <div class="w-fit rounded-lg bg-green-800 p-3">
+                  <Fragment set:html={withClass(hiveRaw, "size-10 text-white")} />
+                </div>
+                <p class="mt-4 text-base/normal font-medium text-green-1000">Hive</p>
+                <p class="mt-1 text-sm/5 text-green-800">GraphQL Federation Platform with Schema Registry and Analytics</p>
+              </a>
+              <a class="hive-focus -my-2 ml-2 flex items-center gap-2 rounded-lg p-2 font-medium text-green-800 transition-colors hover:bg-beige-100 hover:text-green-1000" href="https://app.graphql-hive.com/" target="_blank" rel="noreferrer" title="Discover the Hive platform"><span>Get started</span><Fragment set:html={inlineArrow} /></a>
+            </div>
+            <div class="w-px bg-beige-200"></div>
+            <div class="w-68 xl:w-70.25">
+              <p class="px-4 text-sm/5 text-green-700">The GraphQL Stack</p>
+              <ul>
+                {stackProducts.map((product) => (
+                  <li>
+                    <a class={`${navigationLinkClass} flex items-center gap-4 p-4`} href={withBase(product.href)} {...externalProps(product.href)}>
+                      <div class="size-12 rounded-lg bg-blue-400 p-2.5"><Fragment set:html={withClass(product.icon, "size-7 text-green-1000")} /></div>
+                      <div><p class="text-base/normal font-medium text-green-1000">{product.name}</p><p class="col-start-2 mt-1 text-sm/5 text-green-800">{product.description}</p></div>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div class="w-px bg-beige-200"></div>
+            <div class="w-91">
+              <p class="px-4 text-sm/5 text-green-700">Libraries</p>
+              <ul class="grid grid-cols-2 gap-x-4">
+                {libraries.map((library) => (
+                  <li>
+                    <a class={`${navigationLinkClass} flex items-center gap-3 px-4 py-2`} href={withBase(library.href)} {...externalProps(library.href)}>
+                      <div class="flex size-8 items-center justify-center rounded-sm bg-beige-200 p-1.25">
+                        {library.icon ? <Fragment set:html={withClass(library.icon, "size-8 text-green-1000")} /> : <span role="img" class="inline-flex items-center justify-center text-xs font-medium">{library.mark}</span>}
+                      </div>
+                      <p class="text-base/normal font-medium text-green-1000">{library.name}</p>
+                      <Fragment set:html={arrow} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <a class="hive-focus -my-2 ml-2 flex items-center gap-2 rounded-lg p-2 font-medium text-green-800 transition-colors hover:bg-beige-100 hover:text-green-1000" href={withBase("/ecosystem")}><span>Explore all libraries</span><Fragment set:html={inlineArrow} /></a>
+            </div>
+          </div>
+        </section>
+
+        <section class="menu-content hidden w-max bg-white p-6 dark:bg-neutral-900" data-menu-content="developer">
+          <div class="flex gap-x-6 *:flex *:flex-col *:gap-4">
+            <div>
+              <p class="px-4 text-sm/5 text-green-700">Developer</p>
+              <ul>
+                {developerLinks.map((link) => (
+                  <li>
+                    <a class={columnLinkClass} href={withBase(link.href)} {...externalProps(link.href)}>
+                      {link.icon === "github" ? (
+                        <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg>
+                      ) : <Fragment set:html={link.icon} />}
+                      <p class="text-base/normal font-medium text-green-1000">{link.name}</p><Fragment set:html={arrow} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div class="w-px bg-beige-200"></div>
+            <div>
+              <p class="px-4 text-sm/5 text-green-700">Community</p>
+              <ul>
+                <li><a class={columnLinkClass} href="https://www.youtube.com/watch?v=d_GBgH-L5c4&list=PLhCf3AUOg4PgQoY_A6xWDQ70yaNtPYtZd" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="M20.5887 7.04819C21 8.65199 21 12 21 12C21 12 21 15.348 20.5887 16.9518C20.3601 17.8383 19.6914 18.5358 18.8445 18.7716C17.3064 19.2 12 19.2 12 19.2C12 19.2 6.6963 19.2 5.1555 18.7716C4.305 18.5322 3.6372 17.8356 3.4113 16.9518C3 15.348 3 12 3 12C3 12 3 8.65199 3.4113 7.04819C3.6399 6.16169 4.3086 5.46419 5.1555 5.22839C6.6963 4.79999 12 4.79999 12 4.79999C12 4.79999 17.3064 4.79999 18.8445 5.22839C19.695 5.46779 20.3628 6.16439 20.5887 7.04819ZM10.2 15.15L15.6 12L10.2 8.84999V15.15Z"></path></svg><p class="text-base/normal font-medium text-green-1000">YouTube</p><Fragment set:html={arrow} /></a></li>
+                <li><a class={columnLinkClass} href="https://x.com/theguilddev" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="M16.6536 4.6875H19.1346L13.7144 10.8825L20.0909 19.3125H15.0981L11.1876 14.1997L6.71313 19.3125H4.23063L10.0281 12.6862L3.91113 4.6875H9.03063L12.5654 9.36075L16.6536 4.6875ZM15.7829 17.8275H17.1576L8.28363 6.0945H6.80838L15.7829 17.8275Z"></path></svg><p class="text-base/normal font-medium text-green-1000">X</p><Fragment set:html={arrow} /></a></li>
+                <li><a class={columnLinkClass} href="https://www.linkedin.com/company/the-guild-software/" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="M17.7015 17.7051H15.303V13.9458C15.303 13.0494 15.285 11.8956 14.052 11.8956C12.8019 11.8956 12.6111 12.8712 12.6111 13.8801V17.7051H10.2117V9.97499H12.5157V11.028H12.5472C12.8694 10.4214 13.6524 9.77969 14.8224 9.77969C17.2524 9.77969 17.7024 11.3799 17.7024 13.4616V17.7051H17.7015ZM7.50272 8.91749C7.31962 8.91773 7.13828 8.88183 6.96908 8.81184C6.79988 8.74185 6.64617 8.63916 6.51674 8.50965C6.38731 8.38013 6.28471 8.22635 6.21483 8.05711C6.14496 7.88786 6.10917 7.70649 6.10952 7.52339C6.1097 7.24785 6.19159 6.97854 6.34482 6.74953C6.49806 6.52051 6.71576 6.34208 6.9704 6.2368C7.22504 6.13152 7.50519 6.10411 7.77541 6.15804C8.04563 6.21197 8.29378 6.34482 8.4885 6.53979C8.68322 6.73476 8.81575 6.98309 8.86933 7.25338C8.92291 7.52367 8.89514 7.80377 8.78953 8.05828C8.68392 8.31279 8.50521 8.53026 8.276 8.6832C8.04679 8.83614 7.77737 8.91767 7.50182 8.91749H7.50272ZM8.70512 17.7051H6.29942V9.97499H8.70602V17.7051H8.70512ZM18.903 3.89999H5.09612C4.43372 3.89999 3.90002 4.42199 3.90002 5.06729V18.9327C3.90002 19.578 4.43462 20.1 5.09522 20.1H18.8994C19.56 20.1 20.1 19.578 20.1 18.9327V5.06729C20.1 4.42199 19.56 3.89999 18.8994 3.89999H18.9021H18.903Z"></path></svg><p class="text-base/normal font-medium text-green-1000">LinkedIn</p><Fragment set:html={arrow} /></a></li>
+                <li><a class={columnLinkClass} href="https://discord.com/invite/xud7bH9" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="M10.2684 11.1C10.8084 11.1 11.2458 11.505 11.2359 12C11.2359 12.495 10.8093 12.9 10.2684 12.9C9.73742 12.9 9.30002 12.495 9.30002 12C9.30002 11.505 9.72752 11.1 10.2684 11.1ZM13.7316 11.1C14.2725 11.1 14.7 11.505 14.7 12C14.7 12.495 14.2725 12.9 13.7316 12.9C13.2006 12.9 12.7641 12.495 12.7641 12C12.7641 11.505 13.1907 11.1 13.7316 11.1ZM18.2019 3C19.2486 3 20.1 3.8694 20.1 4.9467V21.9L18.1101 20.1045L16.9896 19.0461L15.8043 17.9211L16.2957 19.6698H5.79812C4.75142 19.6698 3.90002 18.8004 3.90002 17.7231V4.9467C3.90002 3.8694 4.75142 3 5.79812 3H18.201H18.2019ZM14.6289 15.3417C16.6746 15.276 17.4621 13.9053 17.4621 13.9053C17.4621 10.8624 16.1283 8.3955 16.1283 8.3955C14.7963 7.3758 13.5273 7.4037 13.5273 7.4037L13.3977 7.5549C14.9718 8.0463 15.7026 8.7555 15.7026 8.7555C14.8432 8.27129 13.896 7.9629 12.9162 7.8483C12.2947 7.7781 11.667 7.78415 11.0469 7.8663C10.9911 7.8663 10.9443 7.8762 10.8894 7.8852C10.5654 7.914 9.77792 8.0364 8.78792 8.481C8.44592 8.6412 8.24162 8.7555 8.24162 8.7555C8.24162 8.7555 9.01022 8.0085 10.6761 7.5171L10.5834 7.4037C10.5834 7.4037 9.31532 7.3758 7.98242 8.3964C7.98242 8.3964 6.64952 10.8624 6.64952 13.9053C6.64952 13.9053 7.42712 15.2751 9.47283 15.3417C9.47283 15.3417 9.81482 14.9169 10.0938 14.5578C8.91752 14.1978 8.47382 13.4418 8.47382 13.4418C8.47382 13.4418 8.56563 13.5084 8.73212 13.6029C8.74113 13.6119 8.75012 13.6218 8.76902 13.6308C8.79692 13.6506 8.82482 13.6596 8.85273 13.6785C9.08402 13.8108 9.31532 13.9143 9.52772 13.9998C9.90753 14.151 10.3611 14.3022 10.8894 14.4066C11.6808 14.5617 12.4945 14.5648 13.287 14.4156C13.7487 14.3332 14.199 14.197 14.6289 14.0097C14.9529 13.8864 15.3138 13.7064 15.6936 13.4517C15.6936 13.4517 15.231 14.2266 14.0178 14.5767C14.2959 14.9358 14.6298 15.3417 14.6298 15.3417H14.6289Z"></path></svg><p class="text-base/normal font-medium text-green-1000">Discord</p><Fragment set:html={arrow} /></a></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="menu-content hidden w-max bg-white p-6 dark:bg-neutral-900" data-menu-content="company">
+          <div class="flex gap-x-6 *:flex *:flex-col *:gap-4">
+            <div>
+              <p class="px-4 text-sm/5 text-green-700">Company</p>
+              <ul>
+                <li><a class={columnLinkClass} href="https://the-guild.dev/about-us" target="_blank" rel="noopener noreferrer"><Fragment set:html={groupRaw} /><p class="text-base/normal font-medium text-green-1000">About Us</p><Fragment set:html={arrow} /></a></li>
+                <li><a class={columnLinkClass} href="https://the-guild.dev/logos" target="_blank" rel="noopener noreferrer"><Fragment set:html={appsRaw} /><p class="text-base/normal font-medium text-green-1000">Brand Assets</p><Fragment set:html={arrow} /></a></li>
+              </ul>
+              <p class="px-4 text-sm/5 text-green-700">Proudly made by</p>
+              <a class={`${navigationLinkClass} flex items-center px-4 py-2`} href="https://the-guild.dev/" target="_blank" rel="noopener noreferrer"><Fragment set:html={withClass(guildRaw, "-my-2 size-10")} /><Fragment set:html={withClass(theGuildRaw, "h-8")} /><Fragment set:html={arrow} /></a>
+              <p class="px-4 text-sm/5 text-green-700">Part of</p>
+              <a class={`${navigationLinkClass} flex items-center px-4 py-2 text-blue-800 hover:text-blue-1000`} href="https://graphql.org/community/foundation/" target="_blank" rel="noopener noreferrer"><Fragment set:html={graphQLFoundationRaw} /><Fragment set:html={arrow} /></a>
+            </div>
+            <div class="w-px bg-beige-200"></div>
+            <a class={`${navigationLinkClass} group w-[358px]`} href="https://youtube.com/playlist?list=PL43V96KpNj7MKvDbnyOUrRv0k1gCODtjW&si=nOiETn8J21mYA9pm" target="_blank" rel="noopener noreferrer">
+              <img src={graphQLConfImage.src} width="358" height="200" alt="" />
+              <strong class="mt-6 block text-xl/7 font-medium text-green-1000">GraphQLConf 2025</strong>
+              <p class="mt-4 text-sm/5 font-medium text-green-800">September 08-10 | Amsterdam, NL</p>
+              <p class="mt-2 text-sm/5 font-normal text-green-800">The official GraphQL conference hosted by GraphQL Foundation.</p>
+              <span class="mt-6 flex items-center gap-2 rounded-lg font-medium text-green-800 transition-colors group-hover:text-green-1000">Watch The Guild at GraphQLConf 2025 <Fragment set:html={inlineArrow} /></span>
+            </a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const navigation = document.querySelector<HTMLElement>("#hive-navigation");
+  const container = document.querySelector<HTMLElement>("#h-navmenu-container");
+  const viewport = document.querySelector<HTMLElement>(".navigation-viewport");
+  const triggers = [...document.querySelectorAll<HTMLButtonElement>("[data-menu-trigger]")];
+  const contents = [...document.querySelectorAll<HTMLElement>("[data-menu-content]")];
+  let activeMenu: string | undefined;
+  let closeTimeout: number | undefined;
+
+  const closeMenu = () => {
+    window.clearTimeout(closeTimeout);
+    closeTimeout = undefined;
+    activeMenu = undefined;
+    triggers.forEach((trigger) => trigger.setAttribute("aria-expanded", "false"));
+    viewport?.classList.add("pointer-events-none", "opacity-0", "scale-95");
+    contents.forEach((content) => content.classList.add("hidden"));
+  };
+
+  const openMenu = (trigger: HTMLButtonElement) => {
+    window.clearTimeout(closeTimeout);
+    closeTimeout = undefined;
+    const menu = trigger.dataset.menuTrigger;
+    const content = contents.find((item) => item.dataset.menuContent === menu);
+    if (!menu || !content || !viewport || !container) return;
+    activeMenu = menu;
+    triggers.forEach((item) => item.setAttribute("aria-expanded", String(item === trigger)));
+    contents.forEach((item) => item.classList.toggle("hidden", item !== content));
+    viewport.classList.remove("pointer-events-none", "opacity-0", "scale-95");
+    const borderWidth = viewport.offsetWidth - viewport.clientWidth;
+    const borderHeight = viewport.offsetHeight - viewport.clientHeight;
+    viewport.style.width = `${content.offsetWidth + borderWidth}px`;
+    viewport.style.height = `${content.offsetHeight + borderHeight}px`;
+    const left = trigger.getBoundingClientRect().left - container.getBoundingClientRect().left - 32;
+    const maxLeft = window.innerWidth - viewport.offsetWidth - container.getBoundingClientRect().left - 32;
+    viewport.parentElement!.style.transform = `translateX(${Math.min(left, maxLeft)}px)`;
+  };
+
+  triggers.forEach((trigger) => {
+    trigger.addEventListener("pointerenter", () => openMenu(trigger));
+    trigger.addEventListener("focus", () => openMenu(trigger));
+    trigger.addEventListener("click", () => activeMenu === trigger.dataset.menuTrigger ? closeMenu() : openMenu(trigger));
+  });
+  navigation?.addEventListener("pointerenter", () => window.clearTimeout(closeTimeout));
+  navigation?.addEventListener("pointerleave", (event) => {
+    if (!(event.relatedTarget instanceof Node) || !navigation.contains(event.relatedTarget)) {
+      window.clearTimeout(closeTimeout);
+      closeTimeout = window.setTimeout(closeMenu, 150);
+    }
+  });
+  // Hovering anything in the header that is not a menu trigger or the open
+  // menu itself (e.g. the Pricing link) closes the menu, like Radix
+  // NavigationMenu does on the React site.
+  navigation?.addEventListener("pointerover", (event) => {
+    if (!activeMenu || !(event.target instanceof Element)) return;
+    if (
+      event.target.closest("[data-menu-trigger]") ||
+      event.target.closest("#h-navmenu-viewport")
+    ) {
+      window.clearTimeout(closeTimeout);
+      closeTimeout = undefined;
+      return;
+    }
+    window.clearTimeout(closeTimeout);
+    closeTimeout = window.setTimeout(closeMenu, 150);
+  });
+  document.addEventListener("click", (event) => {
+    if (event.target instanceof Node && !navigation?.contains(event.target)) closeMenu();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMenu();
+  });
+
+  const mobileTrigger = document.querySelector<HTMLButtonElement>(".mobile-menu-trigger");
+  const mobilePanel = document.querySelector<HTMLElement>(".mobile-navigation-panel");
+  mobileTrigger?.addEventListener("click", () => {
+    const open = mobileTrigger.getAttribute("aria-expanded") !== "true";
+    mobileTrigger.setAttribute("aria-expanded", String(open));
+    mobileTrigger.classList.toggle("open", open);
+    mobilePanel?.classList.toggle("hidden", !open);
+  });
+
+  const updateBorder = () => navigation?.style.setProperty(
+    "--border-opacity",
+    navigation.dataset.docsNavigation === "true" || scrollY > 1 ? "100%" : "0%",
+  );
+  updateBorder();
+  addEventListener("scroll", updateBorder, { passive: true });
+</script>

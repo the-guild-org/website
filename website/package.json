@@ -4,7 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "astro check && astro build",
+    "build": "astro check && astro build && pnpm run build:hive && node scripts/merge-hive.mjs",
+    "build:hive": "ASTRO_BASE_PATH=/graphql/hive pnpm --filter documentation-astro build",
     "check": "astro check",
     "dev": "astro dev",
     "preview": "astro preview"

@@ -1,0 +1,54 @@
+---
+interface Props {
+  alt?: string;
+  autoplay?: boolean;
+  className?: string;
+  controls?: boolean;
+  loop?: boolean;
+  muted?: boolean;
+  poster?: string;
+  src: string;
+}
+
+const {
+  alt,
+  autoplay = false,
+  className,
+  controls = true,
+  loop = false,
+  muted = false,
+  poster,
+  src,
+} = Astro.props;
+---
+
+<figure class:list={["video-frame", className]}>
+  <video
+    aria-label={alt}
+    autoplay={autoplay}
+    controls={controls}
+    loop={loop}
+    muted={muted}
+    playsinline
+    poster={poster}
+    src={src}
+  >
+    {alt}
+  </video>
+</figure>
+
+<style>
+  .video-frame {
+    margin: 1.5rem 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    background: #000;
+  }
+
+  video {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

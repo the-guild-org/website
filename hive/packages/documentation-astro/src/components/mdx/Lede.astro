@@ -1,0 +1,13 @@
+---
+const { className, ...props } = Astro.props;
+---
+
+<div
+  {...props}
+  class:list={[
+    "hive-lede sm:*:text-xl/8 md:*:text-2xl/8 [&>p:first-child]:mt-0",
+    className,
+  ]}
+>
+  <slot />
+</div>

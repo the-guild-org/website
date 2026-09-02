@@ -1,0 +1,213 @@
+---
+title: Contributing to Hive Console
+---
+
+Hive Console is a fully open-source project, and we welcome contributions from the community.
+To ensure long-term maintainability and alignment with our goals, all contributions should follow the guidelines outlined below.
+
+These rules help us maintain quality, avoid duplicated effort, and keep the project moving in a coherent direction.
+
+## Scope of Changes
+
+### Small Changes
+
+The following contributions are appreciated and can be submitted directly via pull request:
+
+- Typo fixes
+- Bug fixes
+- Documentation improvements
+- Small quality-of-life enhancements
+- Minor refactoring that does not change behavior
+
+> These should be focused, minimal, and clearly described.
+
+### Larger Changes
+
+The following types of contributions **must be discussed before implementation**:
+
+- New features
+- Changes to core functionality
+- Architectural changes
+- Anything that may impact existing users or APIs
+
+The Process:
+
+- Open an issue or discussion (and look for existing issues)
+- Describe the proposal, including:
+  - Problem statement
+  - Proposed solution
+  - Alternatives considered
+  - Expected impact
+- Please wait for feedback and alignment before starting implementation
+
+> Pull requests submitted without prior discussion for large changes may be rejected.
+
+## Testing Requirements
+
+We expect all contributions to include appropriate test coverage.
+
+Refer to our [testing document](https://github.com/graphql-hive/console/blob/main/docs/TESTING.md?plain=1) for running both unit and integration tests locally.
+
+### Hive Console Platform
+
+- Must include integration and/or end-to-end tests
+
+### Hive Console SDKs
+
+- Must include unit tests
+- Integration tests are strongly recommended where applicable
+
+> Contributions without sufficient testing will not be merged or rejected.
+
+## Pull Request Standards
+
+### Quality Expectations
+
+- Code should follow existing project conventions
+- Keep pull requests focused and minimal in scope
+- Avoid unrelated changes in a single PR
+- Ensure all tests pass before submission
+- The code was previously self-reviewed
+  - does not contain any todos
+  - use a spell checker to find typos
+  - run prettier, eslint and other tooling and no pending issues on CI (tests should be passing)
+  - contains comments where reading the code is not straight-forward
+
+> Think about the reviewer, what information does he need in order to efficiently judge the functionality and implementation? Help him to avoid having to spend his time trying to understand what is going on here.
+
+### AI-Generated Contributions
+
+We recognize the use of AI tools, but we enforce strict quality standards:
+
+- Low-effort AI-generated pull requests will be rejected
+- AI-assisted code must be:
+  - Reviewed
+  - Understood
+  - Tested by the contributor
+
+### Pull Request Descriptions
+
+- Pull request descriptions **must be written by a human**
+- Clearly explain:
+  - What was changed
+  - Why it was changed
+  - Any relevant context or trade-offs (include links to prior issues or discussions)
+- For UI changes
+  - A short overview, either images or better a short video describing these changes
+- Include testing details
+  - instructions for reviewers to setup a scenario for testing the change (so they do not have to figure it themselves or needs to wait for you to be available; e.g. if a complex flow/setup is required)
+
+> PRs with auto-generated or vague descriptions may be rejected.
+
+### General Principles
+
+- Prioritize clarity over cleverness
+- Prefer small, incremental improvements
+- Align with the project’s long-term goals and roadmap
+- When in doubt, ask before building
+
+### Data & Reliability Requirements
+
+Changes to existing database models must be **backwards-compatible**.
+
+When modifying schemas or data structures:
+
+- Existing data must continue to work without manual intervention
+- Missing or newly introduced fields must:
+  - Provide safe default values, or
+  - Be handled gracefully in application logic
+- Avoid introducing runtime exceptions due to:
+  - Missing fields
+  - Schema mismatches
+  - Partial migrations
+- If a migration is required:
+  - Ensure it is safe to run incrementally
+  - Consider rollout and rollback scenarios
+  - Document any assumptions clearly in the PR
+
+### High Availability & Critical Path Changes
+
+If your contribution affects components on the **critical path** (e.g. the customer gateway instance or similar), it must comply with our high-availability standards.
+
+- Design changes must follow [our high-availability and resilience principles](https://the-guild.dev/graphql/hive/docs/schema-registry/high-availability-resilience)
+
+Key expectations include:
+
+- No single points of failure
+- Graceful degradation under partial outages
+- Safe retry and timeout handling
+- Performance considerations under load
+- Performance considerations at scale
+
+> Changes that negatively impact reliability or resilience will not be accepted.
+
+### Documentation
+
+If new functionality is added we highly recommend to also create a corresponding pull request within our documentation repository [`graphql-hive/docs`](https://github.com/graphql-hive/docs).
+
+This includes both:
+
+- Hive Console end-user facing changes
+- Hive Console self-hoster facing changes
+
+If new service configuration options were introduced via environment variables, these should be documented within the services `README.md` files.
+
+### Versioning
+
+We use [`changesets`](https://github.com/changesets/changesets) for semantic versioning of Hive Console and Hive Console SDKs.
+
+If you are adding functionality or provide a fix for a bug, please create a changeset using the `pnpm changeset` command for the affected services.
+
+```
+➜  graphql-hive ✗ pnpm changeset
+🦋  Which packages would you like to include?
+◯ unchanged packages
+  ◯ hive
+  ◯ @graphql-hive/apollo
+  ◯ @graphql-hive/cli
+  ◯ @graphql-hive/core
+  ◯ @graphql-hive/envelop
+  ◯ @graphql-hive/external-composition
+  ◯ @graphql-hive/laboratory
+  ◯ @graphql-hive/render-laboratory
+  ◯ @graphql-hive/yoga
+```
+
+For all changes that affect Hive Console services, select `hive` as the changed package. We version all Hive Console services together instead of individually.
+
+For all changes that affect specific SDKs, select the corresponding packages.
+
+Select **major** for changes that introduce breaking changes, some examples include:
+
+- Self-hosters need to manually perform a database migration
+- Self-hosters need to provide new environment variables
+- Functionality was removed
+
+Select **minor** for changes that introduce new functionality in a backwards-compatible way, some examples include:
+
+- Improve the search experience
+- Improve database query performance
+- Improve the user-facing UI
+- New option environment variables for services
+
+Select **patch** for all changes that fix bugs or other minor inconveniences:
+
+- Fix a typo
+- Fix a color UI issues
+- etc.
+
+A good changeset describes the change from a user-facing perspective. E.g. for the self-hoster it is useful to know what changed, not what exact source code file was altered. A changeset should answer what was changed and why it was changed and if appliable, include an example on how to use the new functionality or instructions for handling disrupting changes (major versions).
+
+## Getting Started
+
+If you're unsure where to begin:
+
+- Look for issues labeled [good first](https://github.com/graphql-hive/console/issues?q=state%3Aopen%20label%3A%22good%20first%20issue%22) issue or [help wanted](https://github.com/graphql-hive/console/issues?q=state%3Aopen%20label%3A%22help%20wanted%22)
+- Ask questions in discussions
+- Start with small improvements to get familiar with the codebase
+
+For setting up Hive Console locally please refer to our [development guide](https://github.com/graphql-hive/console/blob/main/docs/DEVELOPMENT.md).
+
+---
+
+We appreciate your time and effort in contributing to Hive Console! 🚀

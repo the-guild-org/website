@@ -1,0 +1,105 @@
+---
+title: HTTP Callback
+description: Use the HTTP Callback protocol for GraphQL subscriptions with Hive Router, for router-to-subgraph communication.
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+<Callout type="info">
+
+HTTP Callback is a **subgraph-only** protocol. It controls how Hive Router communicates with subgraphs - not how clients connect to the router. Clients always use [SSE](/docs/router/subscriptions/sse), [Incremental Delivery](/docs/router/subscriptions/incremental-delivery), [Multipart HTTP](/docs/router/subscriptions/multipart-http), or [WebSockets](/docs/router/subscriptions/websockets).
+
+</Callout>
+
+## Subgraphs
+
+Instead of keeping a long-lived connection open to the subgraph, the router registers a subscription with the subgraph over HTTP and provides a callback URL. The subgraph then pushes new events to that URL whenever data is available. This makes HTTP Callback a better fit than WebSockets or HTTP streams when you have many simultaneous open subscriptions, since it avoids the overhead of maintaining persistent connections.
+
+The full protocol is described in the [Apollo HTTP Callback Protocol spec](https://www.apollographql.com/docs/graphos/routing/operations/subscriptions/callback-protocol).
+
+### Configuration
+
+To enable HTTP Callback for subgraphs, configure the `subscriptions.callback` section and list which subgraphs use this protocol:
+
+```yaml
+subscriptions:
+  enabled: true
+  callback:
+    public_url: https://router.example.com/callback
+    subgraphs:
+      - reviews
+      - products
+```
+
+#### `public_url`
+
+**Required.** The URL that subgraphs will POST subscription events to. This must be reachable by your subgraphs - it's the address your router exposes for the subgraphs.
+
+If you're running the router behind a proxy, you might need to set `public_url` to the external URL that the proxy exposes, and `path` to the internal path that the router listens on; therefore, the path portion of this URL may or may not match the `path` option (defaults to `/callback`).
+
+`public_url` accepts either a static URL string or a VRL expression. The expression form is useful in horizontally scaled deployments where the public callback URL is not known at build time and must be resolved at runtime - for example, when an orchestrator sets a different URL per instance via environment variables.
+
+```yaml
+# static URL
+public_url: "https://my-router.example.com/callback"
+```
+
+```yaml
+# VRL expression - resolved at runtime
+public_url:
+  expression: 'env("ROUTER_CALLBACK_PUBLIC_URL")'
+```
+
+#### `path`
+
+The URL path the router listens on for incoming callback messages. Defaults to `/callback`. Must be absolute, i.e. start with `/`.
+
+#### `subgraphs`
+
+The list of subgraph names (as defined in your supergraph schema) that use the HTTP Callback protocol. Subgraphs not listed here fall back to the default protocol negotiation (multipart, then SSE), or WebSockets if `subscriptions.websocket` is configured, when subscriptions are enabled.
+
+#### `heartbeat_interval`
+
+How often the subgraph must send a heartbeat to the callback endpoint to keep the subscription alive. Defaults to `5s`. Set to `0` to disable heartbeats entirely.
+
+### Dedicated Listener
+
+By default, the callback endpoint is registered on the same HTTP server as your main GraphQL endpoint. In production, it's recommended to bind the callback endpoint to a separate port so that subgraph traffic is completely isolated from client traffic.
+
+To do this, set the `listen` option:
+
+```yaml
+subscriptions:
+  enabled: true
+  callback:
+    public_url: https://router.example.com:4001/callback
+    listen: 0.0.0.0:4001
+    subgraphs:
+      - reviews
+      - products
+```
+
+The `listen` value is an `<host>:<port>` address. When set, the router starts a dedicated HTTP server on that address exclusively for handling callback messages. Your `public_url` should reflect the address and port subgraphs will reach.
+
+<Callout type="tip">
+
+Using a dedicated listener also lets you put different network policies on the callback port - for example, only allowing traffic from your internal network where subgraphs live, while keeping the main GraphQL port open to the public.
+
+</Callout>
+
+### Example
+
+The router starts a dedicated callback server on port `4001`, separate from the main GraphQL server. Subgraphs reach it at `https://router.internal:4001/callback` - an internal address not exposed to public clients. The `reviews` and `products` subgraphs use HTTP Callback, while any other subgraphs fall back to the default protocol. Heartbeats are sent every 5 seconds to confirm active subscriptions are still alive.
+
+```yaml
+subscriptions:
+  enabled: true
+  callback:
+    public_url: https://router.internal:4001/callback
+    listen: 0.0.0.0:4001
+    path: /callback
+    heartbeat_interval: 5s
+    subgraphs:
+      - reviews
+      - products
+```

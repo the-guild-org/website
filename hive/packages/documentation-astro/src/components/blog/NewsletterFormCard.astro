@@ -1,0 +1,177 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<article
+  class:list={[
+    "bg-primary dark:bg-primary/95 light @container/card text-green-1000 relative overflow-hidden rounded-2xl",
+    className,
+  ]}
+  data-newsletter-card
+>
+  <div class="p-6 pb-0">
+    <h3 class="group text-[32px]/[1.25] tracking-[-0.16px] @[354px]/card:text-5xl/[56px] @[354px]/card:tracking-[-0.48px]">
+      Stay in the loop
+    </h3>
+    <p class="relative mt-4">
+      Get the latest insights and best practices on GraphQL API management delivered straight to your inbox.
+    </p>
+  </div>
+  <form class="relative z-10 p-6" data-newsletter-form>
+    <div
+      class="rounded-[9px] border border-blue-400 bg-white outline-offset-2 focus-within:outline-2 focus-visible:outline-green-800/40 dark:border-neutral-400 dark:bg-neutral-800 [&:focus-within:has([aria-invalid])]:outline-critical-dark [&:has([aria-invalid])]:border-critical-dark/50"
+      data-newsletter-input-wrapper
+    >
+      <input
+        aria-invalid="false"
+        class="w-full rounded-lg bg-white py-3 indent-4 font-medium transition-[background-color,padding] placeholder:text-green-800 placeholder-shown:bg-blue-100 hover:bg-white focus:bg-white focus-visible:outline-hidden focus-visible:ring-0 dark:bg-neutral-800 dark:text-white dark:placeholder:text-neutral-300 dark:placeholder-shown:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+        name="email"
+        placeholder="E-mail"
+        type="email"
+        data-newsletter-email
+      />
+      <div
+        class="overflow-hidden rounded-b-lg pl-4 pr-1 text-sm transition-all bg-blue-100 dark:bg-neutral-800"
+        data-newsletter-message-wrapper
+        style="height: 0px"
+      >
+        <p class="py-0.5 text-sm text-green-800" data-newsletter-message></p>
+      </div>
+    </div>
+    <button
+      class="relative flex w-full! items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-white bg-green-800 hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 dark:text-white mt-2 [&:hover>:first-child]:-inset-px [&:hover>:first-child]:rounded-[9px]"
+      data-newsletter-submit
+      type="submit"
+    >
+      <span class="absolute inset-0 rounded-lg border border-green-800 dark:border-neutral-200"></span>
+      <span data-newsletter-label>Subscribe</span>
+    </button>
+  </form>
+  <svg class="pointer-events-none absolute bottom-0 right-0" fill="none" height="200" viewBox="0 0 200 200" width="200">
+    <path
+      d="M6.72485 73.754C2.74132 77.7375 0.499999 83.1445 0.499999 88.7742L0.499998 199.5L41.2396 199.5L41.2396 74.3572C41.2396 56.0653 56.0652 41.2396 74.3571 41.2396L199.5 41.2396L199.5 0.500033L88.7741 0.500032C83.1444 0.500032 77.7374 2.74135 73.7539 6.72488L42.0931 38.3857L38.3856 42.0932L6.72485 73.754Z"
+      stroke="url(#newsletter-arch-decoration)"
+    ></path>
+    <defs>
+      <linearGradient gradientUnits="userSpaceOnUse" id="newsletter-arch-decoration" x1="100" x2="6.24999" y1="104.605" y2="3.28952">
+        <stop stop-color="#A2C1C4" stop-opacity="0"></stop>
+        <stop offset="1" stop-color="#A2C1C4" stop-opacity="0.8"></stop>
+      </linearGradient>
+    </defs>
+  </svg>
+</article>
+
+<script>
+  type State =
+    | { message: string; status: "error" }
+    | { message: string | undefined; status: "pending" }
+    | { message: string; status: "success" }
+    | undefined;
+
+  document
+    .querySelectorAll<HTMLElement>("[data-newsletter-card]")
+    .forEach((card) => {
+      const form = card.querySelector<HTMLFormElement>("[data-newsletter-form]");
+      const emailInput = card.querySelector<HTMLInputElement>("[data-newsletter-email]");
+      const wrapper = card.querySelector<HTMLElement>("[data-newsletter-input-wrapper]");
+      const messageWrapper = card.querySelector<HTMLElement>("[data-newsletter-message-wrapper]");
+      const messageEl = card.querySelector<HTMLElement>("[data-newsletter-message]");
+      const submitButton = card.querySelector<HTMLButtonElement>("[data-newsletter-submit]");
+      const label = card.querySelector<HTMLElement>("[data-newsletter-label]");
+      if (!form || !emailInput || !wrapper || !messageWrapper || !messageEl || !submitButton || !label) return;
+
+      function render(state: State) {
+        emailInput!.setAttribute("aria-invalid", state?.status === "error" ? "true" : "false");
+
+        wrapper!.classList.remove(
+          "border-critical-dark/50",
+          "outline-critical-dark",
+          "border-warning-bright/50",
+          "outline-warning-bright",
+          "border-positive-dark/50",
+          "outline-positive-dark",
+        );
+        messageWrapper!.classList.remove(
+          "bg-blue-100",
+          "dark:bg-neutral-800",
+          "bg-critical-dark/10",
+          "dark:bg-critical-bright/20",
+          "bg-positive-dark/10",
+        );
+        messageEl!.classList.remove("text-green-800", "text-critical-dark", "dark:text-white", "text-positive-dark");
+
+        if (state?.status === "error") {
+          wrapper!.classList.add("border-critical-dark/50", "outline-critical-dark");
+          messageWrapper!.classList.add("bg-critical-dark/10", "dark:bg-critical-bright/20");
+          messageEl!.classList.add("text-critical-dark", "dark:text-white");
+        } else if (state?.status === "success") {
+          wrapper!.classList.add("border-positive-dark/50", "outline-positive-dark");
+          messageWrapper!.classList.add("bg-positive-dark/10");
+          messageEl!.classList.add("text-positive-dark");
+        } else {
+          messageWrapper!.classList.add("bg-blue-100", "dark:bg-neutral-800");
+          messageEl!.classList.add("text-green-800");
+        }
+
+        messageEl!.textContent = state?.message ?? "";
+        messageWrapper!.style.height = state?.message ? "25px" : "0px";
+
+        submitButton!.disabled = state?.status === "pending";
+        submitButton!.type = state?.status === "success" ? "reset" : "submit";
+        label!.textContent =
+          state?.status === "pending"
+            ? "Subscribing..."
+            : state?.status === "success"
+              ? "Subscribed"
+              : "Subscribe";
+      }
+
+      form.addEventListener("reset", () => render(undefined));
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const email = emailInput!.value;
+
+        if (!email.includes("@")) {
+          render({ message: "Please enter a valid email address.", status: "error" });
+          return;
+        }
+
+        render({ message: undefined, status: "pending" });
+
+        try {
+          const response = await fetch("https://utils.the-guild.dev/api/newsletter-subscribe", {
+            body: JSON.stringify({ email }),
+            headers: { "Content-Type": "application/json" },
+            method: "POST",
+          });
+          const json = await response.json();
+
+          if (json.status === "success") {
+            render({ message: "Please check your email to confirm.", status: "success" });
+          } else {
+            render({ message: json.message, status: "error" });
+          }
+        } catch (error: unknown) {
+          if (!navigator.onLine) {
+            render({
+              message: "Please check your internet connection and try again.",
+              status: "error",
+            });
+            return;
+          }
+
+          if (error instanceof Error && error.message !== "Failed to fetch") {
+            render({ message: error.message, status: "error" });
+            return;
+          }
+
+          render({ message: "Something went wrong. Please let us know.", status: "error" });
+        }
+      });
+    });
+</script>

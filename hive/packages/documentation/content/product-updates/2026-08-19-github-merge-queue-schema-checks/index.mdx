@@ -1,0 +1,45 @@
+---
+title: Improved Schema Checks in GitHub Merge Queues
+description:
+  Hive schema checks can now compare a merge queue entry against its base commit, isolating the
+  schema changes introduced by the current pull request.
+date: 2026-08-19
+authors: [laurin]
+---
+
+Hive Console now supports reliable schema checks for repositories that use
+[GitHub Merge Queue](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue).
+
+Merge queues test groups of pull requests together. A check for the second pull request in a group,
+for example, also includes the changes from the first pull request. Comparing that accumulated
+schema directly with the latest schema in the registry can report a breaking change that was
+introduced and approved in an earlier pull request for a second time.
+
+## Compare the merge queue entry
+
+The Hive CLI's new `--baseline` option accepts a base schema as either a local file or a file from Git
+history using `<revision>:<path>`. Hive composes that base version and the proposed version with the
+other services in the registry, then compares the resulting schemas. The check therefore evaluates
+only the changes introduced between the merge group's base and head commits. This option is
+available in the latest Hive CLI release, version `0.62.0`.
+
+```bash
+hive schema:check "services/products/schema.graphql" \
+  --service products \
+  --target "the-guild/hive-console/development" \
+  --baseline "$MERGE_GROUP_BASE_SHA:services/products/schema.graphql"
+```
+
+Composition errors and newly applicable conditional breaking changes are still detected in the
+accumulated merge group. For Federation projects, contract checks also use the composed base schema.
+When you use `--github`, the CLI automatically associates the check and any breaking-change
+approvals with the pull request at the head of the merge group.
+
+When using the Git revision syntax, `--baseline` requires one schema file path and your CI checkout must
+contain the referenced commit in its Git history.
+
+---
+
+- [Hive CI/CD guide for GitHub merge queues](/docs/other-integrations/ci-cd#github-merge-queue)
+- [Hive CLI `0.62.0` Release Notes](https://github.com/graphql-hive/console/releases#release-@graphql-hive/cli@0.62.0)
+- [GitHub merge queue documentation](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue)

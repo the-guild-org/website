@@ -1,0 +1,63 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+
+import Callout from "../../components/mdx/Callout.astro";
+import Card from "../../components/mdx/Card.astro";
+import Cards from "../../components/mdx/Cards.astro";
+import CodeBlock from "../../components/mdx/CodeBlock.astro";
+import Image from "../../components/mdx/Image.astro";
+import PackageManagerTabs from "../../components/mdx/PackageManagerTabs.astro";
+import PackageManagerTab from "../../components/mdx/Tab.astro";
+import Table from "../../components/mdx/Table.astro";
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import { getDocsSlug, getHeadingHtmlBySlug } from "../../lib/docs-markdown";
+import { getDocsNav } from "../../lib/docs-nav";
+
+type DocsEntry = CollectionEntry<"docs">;
+
+export async function getStaticPaths() {
+  const entries = await getCollection("docs");
+
+  return entries.map((entry) => ({
+    params: {
+      slug:
+        entry.id.replace(/(^|\/)index$/, "").replace(/\.(md|mdx)$/, "") ||
+        undefined,
+    },
+    props: { entry },
+  }));
+}
+
+function titleFromEntry(entry: DocsEntry) {
+  const data = entry.data as { sidebarTitle?: string; title?: string };
+  return data.sidebarTitle ?? data.title ?? entry.id.split("/").at(-1) ?? entry.id;
+}
+
+const { entry } = Astro.props as { entry: DocsEntry };
+const { Content, headings: renderedHeadings } = await render(entry);
+const headingHtmlBySlug = getHeadingHtmlBySlug(entry.body ?? "", renderedHeadings);
+const headings = renderedHeadings.map((heading) => ({
+  ...heading,
+  html: headingHtmlBySlug.get(heading.slug) ?? heading.text,
+}));
+const slug = getDocsSlug(entry);
+const currentPath = `/docs${slug ? `/${slug}` : ""}`;
+const data = entry.data as { description?: string; title?: string };
+const sourceExtension = entry.filePath?.match(/\.mdx?$/)?.[0];
+if (!sourceExtension) throw new Error(`Cannot determine source file for docs entry: ${entry.id}`);
+const githubUrl = `https://github.com/graphql-hive/docs/blob/main/packages/documentation/content/docs/${entry.id}${sourceExtension}`;
+const { items: navItems, tree: navTree } = await getDocsNav();
+---
+
+<DocsLayout
+  currentPath={currentPath}
+  description={data.description}
+  githubUrl={githubUrl}
+  headings={headings}
+  markdownUrl={`${currentPath}.md`}
+  navItems={navItems}
+  navTree={navTree}
+  title={data.title ?? titleFromEntry(entry)}
+>
+  <Content components={{ Callout, Card, Cards, Image, MdxImage: Image, PackageManagerTab, PackageManagerTabs, pre: CodeBlock, table: Table }} />
+</DocsLayout>

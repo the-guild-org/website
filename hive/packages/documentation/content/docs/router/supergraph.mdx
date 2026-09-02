@@ -1,0 +1,254 @@
+---
+title: "Supergraph"
+---
+
+The Supergraph is the architectural backbone of Federation, it's an artifact produced by the
+composition process, and intended to be the recipe, or control-plane, for running your GraphQL
+router.
+
+To run Hive Router, you'll need a Supergraph and the subgraphs running (see
+[Probes](./observability/probes) page for additional information about Router health state and the
+relation to the Supergraph).
+
+The Router will read the Supergraph and will use it for query planning and response construction.
+
+## Loading the Supergraph
+
+### From Hive Console
+
+To load the Supergraph from [Hive Console](/docs/schema-registry), the official Hive Router
+schema-registry, start by [creating a project](/docs/schema-registry/get-started/first-steps), and
+[follow with pushing subgraph schema](/docs/schema-registry/get-started/apollo-federation) and have a
+valid composition artifact (Supergraph) published to
+[Hive CDN](/docs/schema-registry/high-availability-cdn).
+
+Once you have a valid Supergraph published to Hive CDN, gather the following information from Hive
+Console's dashboard:
+
+- [_Hive CDN Endpoint_](/docs/schema-registry/get-started/apollo-federation#cdn-access): under your
+  target's page, click on `Connect to CDN` button to grab your endpoint.
+- [_Hive CDN API Key_](/docs/schema-registry/management/targets#creating-a-cdn-access-token): a secret
+  that allow you to access Hive CDN and fetch your API key.
+
+Once you have both, configure Hive Router to use the `supergraph` configuration with `source: hive`
+field:
+
+```yaml {2-4}title="router.config.yaml"
+supergraph:
+  source: hive
+  endpoint: https://cdn.graphql-hive.com/artifacts/v1/... # Use your Hive CDN endpoint here
+  key: hvABCD # Use your Hive CDN API key here
+```
+
+By default, Hive Router will reload the Supergraph from Hive Console CDN every `10s`. You can change
+this behaviour by adding `poll_interval` field:
+
+```yaml {5}title="router.config.yaml"
+supergraph:
+  source: hive
+  endpoint: https://cdn.graphql-hive.com/artifacts/v1/... # Use your Hive CDN endpoint here
+  key: hvABCD # Use your Hive CDN API key here
+  poll_interval: 60s
+```
+
+You can also provide fallback endpoints from `cdn-mirror-graphql-hive.com` in case of a possible
+unavailability of the main CDN endpoints, as shown below:
+
+```yaml {3-5}title="router.config.yaml"
+supergraph:
+  source: hive
+  endpoint:
+    - https://cdn.graphql-hive.com/artifacts/v1/... # Use your Hive CDN endpoint here
+    - https://cdn-mirror.graphql-hive.com/artifacts/v1/... # Use your Hive CDN mirror endpoint here
+  key: hvABCD # Use your Hive CDN API key here
+  poll_interval: 60s
+```
+
+For additional configuration options, refer to the
+[`supergraph` API reference page](./configuration/supergraph).
+
+### From Apollo GraphOS
+
+If your supergraph is already published to [Apollo GraphOS](https://www.apollographql.com/docs/graphos/platform)'s
+managed federation, you can point Hive Router at the same Uplink endpoint Apollo Router uses, with
+`source: apollo_graphos`.
+
+Gather the following from Apollo Studio:
+
+- **Graph ref**: shown at the top of your graph's Schema Reference page, in the
+  `<GRAPH_ID>@<VARIANT>` format.
+- **API key**: create one with at least the `service:read` permission.
+
+```yaml {2-4}title="router.config.yaml"
+supergraph:
+  source: apollo_graphos
+  graph_ref: my-graph@production # Use your graph ref here
+  key: service:my-graph:xxxxxxxxxx # Use your Apollo API key here
+```
+
+For additional configuration options, refer to the
+[`supergraph` API reference page](./configuration/supergraph#apollo-graphos).
+
+### From the file-system
+
+If you wish to load the Supergraph from the file-system, use the `supergraph` configuration with
+`source: file` field:
+
+```yaml {2-3}title="router.config.yaml"
+supergraph:
+  source: file
+  path: ./supergraph.graphql # point to your local supergraph file
+```
+
+If you wish the router to reload the supergraph from the file-system periodically, add
+`poll_interval` field:
+
+```yaml {4}title="router.config.yaml"
+supergraph:
+  source: file
+  path: ./supergraph.graphql # point to your local supergraph file
+  poll_interval: 5s # reload the supergraph every 5 seconds
+```
+
+> Hive Router will use the file-system's metadata (modified-at attribute) to detect changes and
+> reload the supergraph.
+
+### From object storage
+
+You can load the supergraph from a named [storage backend](./configuration/storages) such as
+Amazon S3 or any S3-compatible service (Cloudflare R2, MinIO, LocalStack, DigitalOcean Spaces,
+Backblaze B2, Tigris, etc.).
+
+This is a good fit when your CI pipeline publishes the supergraph artifact to object storage and you
+want the router to pick up new versions without redeploying.
+
+Declare the backend once under top-level `storages`, then point `supergraph.source: storage` at the
+object you want to load:
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts:
+    type: s3
+    bucket: my-router-artifacts
+    region: eu-west-1
+
+supergraph:
+  source: storage
+  storage_id: artifacts
+  location: supergraph/current.graphql
+  poll_interval: 30s
+```
+
+- `storage_id` references an entry in `storages`. Startup fails if the ID is not declared.
+- `location` is the object key (path within the bucket).
+- `poll_interval` is optional — when omitted, the router loads the supergraph once at startup.
+
+When polling is enabled, the router uses conditional `If-None-Match` requests against the object's
+`ETag` and only reloads when storage reports the content has changed.
+
+> For provider-specific configuration (AWS S3 with IRSA, Cloudflare R2, MinIO, LocalStack), and for
+> loading bucket names/credentials from environment variables via expressions, see the
+> [`storages` reference](./configuration/storages).
+
+### From a custom plugin
+
+A plugin can select a supergraph for each request in `on_http_request`. This supports two models:
+
+- Override a configured file, Hive Console, or storage supergraph for selected requests.
+- Use `supergraph.source: plugin` with no configured fallback.
+
+```yaml title="router.config.yaml"
+supergraph:
+  source: plugin
+```
+
+The plugin constructs and retains an `Arc<Supergraph>` once, then selects it per request with
+`set_supergraph`:
+
+```rust
+use std::sync::Arc;
+
+use hive_router::plugins::hooks::on_supergraph_load::{Supergraph, SupergraphOptions};
+
+let supergraph = Arc::new(Supergraph::from_sdl(
+    include_str!("supergraph.graphql"),
+    SupergraphOptions::default(),
+)?);
+
+// later, in on_http_request
+payload.set_supergraph(supergraph.clone());
+payload.proceed()
+```
+
+A selection is request-local. It does not replace the configured supergraph or become a default for
+other requests. The router pins the selected schema, its `SupergraphOptions`, and its router runtime
+together, so validation, introspection, planning, authorization, execution, usage reporting,
+coprocessors, and request deduplication all use the same supergraph instance and configuration
+generation.
+
+#### Supergraph-bound configuration
+
+Every `Supergraph` carries an immutable `SupergraphOptions` value alongside its schema. This is what
+makes a selected supergraph fully self-contained: a request can never combine the schema from one
+variant with settings that belong to another.
+
+`SupergraphOptions` bundles every setting whose meaning depends on a specific schema generation:
+
+| Configuration                     | Why it is supergraph-bound                                          |
+| --------------------------------- | ------------------------------------------------------------------- |
+| `query_planner`                   | Changes construction of that supergraph's planner                   |
+| `traffic_shaping` (executor-side) | Builds clients and policies for that schema's named subgraphs       |
+| `override_subgraph_urls`          | Replaces endpoints belonging to the selected schema                 |
+| `headers`                         | Names subgraphs from the selected schema                            |
+| `override_labels`                 | Refers to labels in the selected schema and changes plan execution  |
+| `demand_control`                  | Combines graph-specific cost formulas with that schema              |
+| `subscriptions` (subgraph-facing) | Selects transports for the selected graph's executors               |
+| `error_masking`                   | Applied to errors produced while executing the selected graph       |
+| `persisted_documents`             | Selects the manifest and ID policy belonging to one API schema      |
+| `hive_target`                     | Attributes usage and traces to the target owning the selected graph |
+
+Configured supergraphs (loaded from Hive Console, Apollo GraphOS, the file-system, or object storage)
+derive `SupergraphOptions` automatically from the router's YAML — no configuration changes are
+needed.
+
+A plugin-owned variant must build a complete `SupergraphOptions` value itself; any field left
+at its default does **not** fall back to the router's configured settings.
+
+```rust
+use hive_router::plugins::hooks::on_supergraph_load::{Supergraph, SupergraphOptions};
+
+let mut options = SupergraphOptions::default();
+options.traffic_shaping.all.forward_operation_name = true;
+options.error_masking.redacted_error_message = "Basic variant error".to_string();
+options.hive_target = Some("organization/project/basic".to_string());
+
+let supergraph = Arc::new(Supergraph::from_sdl(sdl, options)?);
+```
+
+See [Selecting a supergraph in `on_http_request`](./customizations/plugin-system/hooks#select-a-supergraph-for-the-request),
+the
+[`replace_schema`](https://github.com/graphql-hive/router/tree/main/plugin_examples/replace_schema)
+example for overriding a configured default, and the
+[`feature_flags`](https://github.com/graphql-hive/router/tree/main/plugin_examples/feature_flags)
+example for a plugin-only source.
+
+In custom plugin mode, every GraphQL and readiness request must receive a selection. Missing selection
+returns HTTP `503` with `NO_SUPERGRAPH_AVAILABLE`. A WebSocket connection is accepted and then
+closed with an error, allowing browser clients to observe the failure reason/code.
+
+#### Reloading and retiring a Supergraph
+
+When a configured supergraph changes, in-flight requests continue with the exact schema and runtime
+they selected when the request began. New requests use the newly published supergraph.
+
+Schema-aware validation, normalization, query-plan, and demand-control caches belong to a specific
+supergraph runtime. Replacing one configured supergraph does not clear caches belonging to unrelated
+plugin-selected supergraphs. Old caches remain alive only while requests or streams still use their
+old runtime. The shared parse cache is unaffected because parsing an operation is schema-independent.
+
+Subscriptions close with `SUBSCRIPTION_SCHEMA_RELOAD` only when their selected supergraph retires.
+Configured replacement retires the previous configured generation. For plugin-selected
+supergraphs, retirement occurs when the plugin drops the final owning `Arc<Supergraph>`.
+
+If configured schema or runtime construction fails, Hive Router continues serving the previous
+configured version (see [Probes](./observability/probes) for its effect on router health).

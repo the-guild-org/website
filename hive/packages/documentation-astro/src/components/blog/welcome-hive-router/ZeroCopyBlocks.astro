@@ -1,0 +1,60 @@
+---
+import { finalJson, getAdata, idMapperFinal, sliceLookup, subgraphA } from "./zero-copy-data";
+import { renderByteBuffer, renderJsonBlock } from "./zero-copy-render";
+
+const adata = getAdata();
+
+const subgraphBlockHtml = renderJsonBlock(subgraphA, "Subgraph response as JSON", {
+  idPrefix: "A:",
+  pretty: false,
+  sliceLookup,
+});
+const byteBufferHtml = renderByteBuffer(adata.entries, adata.json, "Subgraph response is stored as bytes", "A:");
+const finalBlockHtml = renderJsonBlock(finalJson, "Final Response (reuses the bytes from subgraph response)", {
+  idMapper: idMapperFinal,
+  pretty: true,
+  sliceLookup,
+});
+---
+
+<div class="zero-copy-blocks w-full p-4 text-neutral-100">
+  <div class="space-y-4">
+    <section>
+      <div class="space-y-2">
+        <Fragment set:html={subgraphBlockHtml} />
+        <Fragment set:html={byteBufferHtml} />
+      </div>
+    </section>
+
+    <section>
+      <Fragment set:html={finalBlockHtml} />
+    </section>
+  </div>
+</div>
+
+<style>
+  .zero-copy-blocks :global([data-gid].is-hovered) {
+    background: var(--zc-bg-hover) !important;
+    border-color: var(--zc-border-hover) !important;
+  }
+
+  .zero-copy-blocks :global(rect[data-gid].is-hovered) {
+    fill: var(--zc-fill-hover) !important;
+    stroke-width: 2;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".zero-copy-blocks").forEach((root) => {
+    root.querySelectorAll<HTMLElement | SVGElement>("[data-gid]").forEach((el) => {
+      const gid = el.getAttribute("data-gid");
+      if (!gid) return;
+      el.addEventListener("mouseenter", () => {
+        root.querySelectorAll(`[data-gid="${CSS.escape(gid)}"]`).forEach((match) => match.classList.add("is-hovered"));
+      });
+      el.addEventListener("mouseleave", () => {
+        root.querySelectorAll(`[data-gid="${CSS.escape(gid)}"]`).forEach((match) => match.classList.remove("is-hovered"));
+      });
+    });
+  });
+</script>

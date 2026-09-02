@@ -1,0 +1,85 @@
+---
+interface Props {
+  markdownUrl: string;
+}
+
+const { markdownUrl } = Astro.props;
+---
+
+<button
+  class="inline-flex cursor-pointer items-center gap-2 border-0 bg-transparent text-sm text-fd-muted-foreground transition-colors hover:text-fd-primary focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500/50 disabled:pointer-events-none disabled:opacity-50"
+  data-copy-markdown
+  data-markdown-url={markdownUrl}
+  type="button"
+>
+  <span class="relative size-3.5">
+    <svg class="absolute inset-0 size-3.5" data-copy-icon aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+    </svg>
+    <svg class="absolute inset-0 hidden size-3.5" data-check-icon aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path d="m20 6-11 11-5-5"></path>
+    </svg>
+  </span>
+  <span data-copy-label>Copy Markdown</span>
+</button>
+
+<script>
+  const markdownCache = new Map<string, string>();
+
+  document.querySelectorAll<HTMLButtonElement>("[data-copy-markdown]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const markdownUrl = button.dataset.markdownUrl;
+      const label = button.querySelector<HTMLElement>("[data-copy-label]");
+      if (!markdownUrl || !label) return;
+
+      button.disabled = true;
+      const getMarkdown = async () => {
+        const cached = markdownCache.get(markdownUrl);
+        if (cached) return cached;
+
+        const response = await fetch(markdownUrl);
+        if (!response.ok) throw new Error(`Failed to fetch ${markdownUrl}`);
+
+        const markdown = await response.text();
+        markdownCache.set(markdownUrl, markdown);
+        return markdown;
+      };
+
+      try {
+        if (typeof ClipboardItem === "undefined") {
+          await navigator.clipboard.writeText(await getMarkdown());
+        } else {
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              "text/plain": getMarkdown(),
+            }),
+          ]);
+        }
+
+        button.dataset.copied = "";
+        label.textContent = "Copied Markdown";
+        window.setTimeout(() => {
+          delete button.dataset.copied;
+          label.textContent = "Copy Markdown";
+        }, 1500);
+      } catch (error) {
+        console.error(error);
+        label.textContent = "Copy failed";
+        window.setTimeout(() => (label.textContent = "Copy Markdown"), 1500);
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
+</script>
+
+<style>
+  button[data-copied] [data-copy-icon] {
+    display: none;
+  }
+
+  button[data-copied] [data-check-icon] {
+    display: block;
+  }
+</style>
