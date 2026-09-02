@@ -1,30 +1,46 @@
 # [`the-guild.dev`](https://the-guild.dev)
 
-This project contains the main source code for `the-guild.dev` website and it's sub-components.
+The source code for The Guild's website and its edge infrastructure.
 
-## Installing Dependencies
+## Repository Layout
 
-Run `pnpm i` from the root directory to get all the dependencies installed.
+- [`website/`](./website) — the website, built with [Astro](https://astro.build). Deployed to
+  Cloudflare Pages on every push to `master` (pull requests get preview deployments).
+- [`packages/website-router/`](./packages/website-router) — the Cloudflare Worker that serves
+  `the-guild.dev`: it routes product-site paths (such as `/graphql/hive`) to their own deployments,
+  handles redirects, and merges the product sitemaps into one.
+- [`packages/website-helper-worker/`](./packages/website-helper-worker) — the Worker behind
+  `utils.the-guild.dev` (contact form, newsletter subscription).
 
-## Running the Website (Development Mode)
+## Development
 
-Run `cd website && pnpm dev` to start the server locally.
+```sh
+pnpm install # from the repository root
+cd website
+pnpm dev # http://localhost:4321
+```
 
-## Build and Run the Website (Production)
+`pnpm build` in `website/` runs `astro check` and builds the static site into `dist/`.
 
-Run `pnpm build` followed by `pnpm export` to build and export a static version of the website in
-production mode.
+## Contributing to the Blog
 
-## Contributing to Our Blog
+Posts live in [`website/src/content/blog/`](./website/src/content/blog) as MDX files:
 
-We use [MDX](https://mdxjs.com) (Markdown with JSX) for our blog posts. To add a new blog post:
+- Add a new `.mdx` file (or a folder with an `index.mdx` for posts with colocated assets), following
+  the frontmatter of the existing posts: `title`, `tags`, `authors`, `date`, `description`, and
+  optionally `image` for the social preview.
+- Larger assets go in `website/public/blog-assets/<your-post-slug>/`.
+- First-time authors: add yourself to
+  [`website/src/components/blog-authors.ts`](./website/src/components/blog-authors.ts).
+- Open a pull request; the preview deployment lets you review the rendered post.
 
-- Create a new MDX file in `website/pages/blog` directory with the same template as other blog posts
-- Update the meta object with all the information regarding the blog post including title,
-  thumbnails, author name, etc.
-- Any assets related to the blog can be placed in `website/public/blog-assets` directory within its
-  own folder
-- If you are contributing for the first time, make sure that you add your details in `ui/authors.ts`
-  file with a new entry to the `authors` object
-- Once you send us a PR, we will review the same, provide the feedback as necessary and merge it if
-  everything looks good
+The blog index also pulls in the [Hive blog](https://the-guild.dev/graphql/hive/blog) feed at build
+time, and a snapshot of the Stellate blog from `website/src/lib/stellate-blog.json`.
+
+## Linting and Formatting
+
+```sh
+pnpm lint     # eslint (includes MDX)
+pnpm prettier # format everything
+pnpm prettier:check
+```
