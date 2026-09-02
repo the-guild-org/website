@@ -1,5 +1,36 @@
 {
-  extends: ['github>the-guild-org/shared-config:renovate'],
-  // ignore Nextra to avoid conflicts with @theguild/components
-  ignoreDeps: ['nextra'],
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: ['config:best-practices', ':preserveSemverRanges', 'schedule:weekly', 'group:monorepos'],
+  labels: ['dependencies'],
+  // One rebased PR at a time keeps the preview-deploy queue sane.
+  prConcurrentLimit: 5,
+  lockFileMaintenance: { enabled: true, schedule: ['before 6am on monday'] },
+  packageRules: [
+    {
+      description: 'Auto-merge safe dev tooling patches and minors',
+      matchDepTypes: ['devDependencies'],
+      matchUpdateTypes: ['minor', 'patch'],
+      automerge: true,
+    },
+    {
+      description: 'Astro ecosystem moves together',
+      groupName: 'astro',
+      matchPackageNames: ['astro', '@astrojs/**'],
+    },
+    {
+      description: 'Tailwind + its vite plugin move together',
+      groupName: 'tailwind',
+      matchPackageNames: ['tailwindcss', '@tailwindcss/**', 'prettier-plugin-tailwindcss'],
+    },
+    {
+      description: 'Shiki packages move together (hive code-block pipeline)',
+      groupName: 'shiki',
+      matchPackageNames: ['shiki', '@shikijs/**'],
+    },
+    {
+      description: 'Node is pinned exactly; bump via engines + .node-version + workflows together',
+      matchPackageNames: ['node'],
+      enabled: false,
+    },
+  ],
 }

@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 import { createMimeMessage } from 'mimetext';
 import { buildResponseCorsHeaders } from './cors';
 import { CrispClient } from './crisp-client';
@@ -49,8 +49,6 @@ export async function handleContactUs(options: {
     }
 
     console.log(`Crisp user: `, crispUser);
-    const crispContactLink = `https://app.crisp.chat/website/${options.crisp.websiteId}/contacts/profile/${crispUser.people_id}/`;
-
     await options.crisp.addCrispUserEvent(crispUser.people_id, {
       text: 'contact:website',
       data: {

@@ -117,11 +117,13 @@ export default defineConfig({
    * here as well.
    */
   markdown: {
-    remarkPlugins: [
-      hiveOnly(remarkRelativeLinks),
-      hiveOnly(remarkBasePath),
-      hiveOnly(remarkTocMarkers),
-    ],
+    processor: unified({
+      remarkPlugins: [
+        hiveOnly(remarkRelativeLinks),
+        hiveOnly(remarkBasePath),
+        hiveOnly(remarkTocMarkers),
+      ],
+    }),
   },
   integrations: [
     pagefindDevServer(),
