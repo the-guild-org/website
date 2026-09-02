@@ -48,6 +48,10 @@ const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => 
   // Modify response and add client side caching headers
   result = new Response(result.body, result);
   result.headers.append('Cache-Control', `s-maxage=${clientToWorkerMaxAge}`);
+  // Everything is served over HTTPS behind Cloudflare; instruct browsers to
+  // never downgrade. Scoped to this hostname only (no includeSubDomains) so
+  // unrelated subdomains are unaffected.
+  result.headers.set('Strict-Transport-Security', 'max-age=31536000');
 
   return result;
 };
