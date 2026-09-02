@@ -9,7 +9,7 @@
  * so their rules are rewritten onto /graphql/hive/... and installed at the
  * dist root (Pages only reads root-level _redirects/_headers).
  */
-import { cpSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const PREFIX = '/graphql/hive';
@@ -65,5 +65,12 @@ if (existsSync(headersFile)) {
 
 // Pages serves the root 404.html for the whole deployment.
 rmSync(`${target}/404.html`, { force: true });
+
+// The Hive build's root page is index.html (Astro keeps the site root as
+// index.html even with file-format output). Left at graphql/hive/index.html,
+// Pages would 308 /graphql/hive to /graphql/hive/ while the router strips
+// trailing slashes - an infinite loop. Hoist it to graphql/hive.html so the
+// slashless URL is served directly, like every other page.
+renameSync(`${target}/index.html`, `${websiteDist}${PREFIX}.html`);
 
 console.log(`Merged Hive site into ${target}`);
