@@ -56,12 +56,15 @@ function stripBase(path: string) {
 // agree with the generated sitemap (which lists slash-less URLs).
 const currentPath = stripBase(Astro.url.pathname).replace(/\/$/, "");
 const canonicalUrl = canonical ?? `${SITE_URL}${currentPath}`;
-// Astro bakes the base into imported asset paths, so it must be stripped
-// before joining with the public site URL — or the prefix appears twice.
+// Bundled assets are emitted at the shared /_astro root of the unified
+// site, so they join with the origin; anything else is a Hive-relative
+// path and joins with the mounted site URL.
 const imagePath = stripBase(typeof image === "string" ? image : image.src);
 const imageUrl = /^https?:\/\//.test(imagePath)
   ? imagePath
-  : `${SITE_URL}/${imagePath.replace(/^\//, "")}`;
+  : imagePath.startsWith("/_astro/")
+    ? `${SITE_ORIGIN}${imagePath}`
+    : `${SITE_URL}/${imagePath.replace(/^\//, "")}`;
 const imageWidth = typeof image === "string" ? undefined : image.width;
 const imageHeight = typeof image === "string" ? undefined : image.height;
 

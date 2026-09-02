@@ -40,6 +40,11 @@ for (const file of globSync("**/*.html", { cwd: hiveDistDirectory })) {
   if (content.includes(`${base}${base}/`)) {
     report(file, `${base}${base}/… (double prefix)`);
   }
+  // Bundled assets live at the shared /_astro root — an absolute URL
+  // placing them under the mount prefix (e.g. og:image) points nowhere.
+  if (content.includes(`${base}/_astro/`)) {
+    report(file, `${base}/_astro/… (assets are not under the mount prefix)`);
+  }
   for (const match of content.matchAll(SRCSET_PATTERN)) {
     for (const candidate of match[1]!.split(",")) {
       const url = candidate.trim().split(/\s+/)[0];
