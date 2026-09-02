@@ -40,7 +40,6 @@ async function handleErrorResponse(options: {
 
     if (options.request.headers.has('cf-connecting-ip')) {
       options.sentry.setUser({
-         
         ip_address: options.request.headers.get('cf-connecting-ip')!,
       });
     }

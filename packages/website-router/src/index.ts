@@ -230,7 +230,6 @@ export default {
 
         if (request.headers.has('cf-connecting-ip')) {
           sentry.setUser({
-             
             ip_address: request.headers.get('cf-connecting-ip')!,
           });
         }

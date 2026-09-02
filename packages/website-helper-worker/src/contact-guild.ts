@@ -1,4 +1,3 @@
- 
 import { createMimeMessage } from 'mimetext';
 import { buildResponseCorsHeaders } from './cors';
 import { CrispClient } from './crisp-client';
