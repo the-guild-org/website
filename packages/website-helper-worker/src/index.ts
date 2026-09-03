@@ -37,10 +37,6 @@ export default {
 
       sentry.setExtra('Body', maybeBody);
 
-      if (request.method === 'POST' && url.pathname === '/api/heltin/signup') {
-        return new Response(JSON.stringify({ error: 'todo' }), { status: 500 });
-      }
-
       if (request.method === 'POST' && url.pathname === '/api/contact-us') {
         return await handleContactUs({
           email: env.EMAIL_SENDER,
