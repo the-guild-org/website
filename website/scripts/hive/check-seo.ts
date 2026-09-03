@@ -91,8 +91,12 @@ const issues = [];
 let scanned = 0;
 
 for await (const filePath of walk(OUTPUT_DIR)) {
-  if (!filePath.endsWith("index.html")) continue;
-  if (path.basename(filePath) === "_shell.html") continue;
+  // build.format "file": every page is <name>.html (the old directory
+  // format's index.html filter silently reduced this check to zero pages).
+  if (!filePath.endsWith(".html")) continue;
+  if (path.basename(filePath) === "404.html") continue;
+  // Static legal page copied verbatim from public/, not a rendered page.
+  if (path.basename(filePath) === "privacy-policy.html") continue;
 
   scanned += 1;
   const html = await readFile(filePath, "utf8");
