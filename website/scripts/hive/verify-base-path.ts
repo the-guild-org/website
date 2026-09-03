@@ -54,9 +54,10 @@ for (const file of globSync("**/*.html", { cwd: hiveDistDirectory })) {
   }
 }
 
-// Hive rules in the root-level _redirects must carry the mount prefix — an
-// un-prefixed source or destination would act on the main site instead.
-// Rules from the main site's own website/public/_redirects are exempt.
+// Redirect destinations that point into Hive content must carry the mount
+// prefix — an un-prefixed one would 404. Sources are legitimately
+// un-prefixed (legacy URLs redirecting INTO Hive); main-site rules from
+// website/public/_redirects are exempt entirely.
 const mainSiteRedirects = new Set(
   (existsSync(`${projectDirectory}/public/_redirects`)
     ? readFileSync(`${projectDirectory}/public/_redirects`, "utf8").split("\n")
@@ -67,10 +68,13 @@ if (existsSync(`${distDirectory}/_redirects`)) {
   for (const line of readFileSync(`${distDirectory}/_redirects`, "utf8").split("\n")) {
     if (!line.trim() || line.startsWith("#")) continue;
     if (mainSiteRedirects.has(line.trim())) continue;
-    for (const path of line.trim().split(/\s+/).slice(0, 2)) {
-      if (path.startsWith("/") && path !== base && !path.startsWith(`${base}/`)) {
-        report("_redirects", path);
-      }
+    const destination = line.trim().split(/\s+/)[1];
+    if (
+      destination?.startsWith("/") &&
+      destination !== base &&
+      !destination.startsWith(`${base}/`)
+    ) {
+      report("_redirects", destination);
     }
   }
 }
