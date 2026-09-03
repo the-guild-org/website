@@ -120,9 +120,15 @@ jobs:
       - name: build
         run: pnpm --filter website build
 
+      # lhci runs directly (no third-party action; the org's Actions policy
+      # only allows selected creators). autorun = collect + assert.
       - name: lighthouse budgets
-        uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # v12
+        run: npx --yes @lhci/cli@0.15.x autorun --config=.lighthouserc.json
+
+      - name: upload lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          configPath: .lighthouserc.json
-          uploadArtifacts: true
-          temporaryPublicStorage: false
+          name: lighthouse-reports
+          path: .lighthouseci
+          retention-days: 14
