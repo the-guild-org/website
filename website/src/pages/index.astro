@@ -9,6 +9,26 @@ import SectionHeader from '../components/SectionHeader.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import Layout from '../layouts/Layout.astro';
 
+// Entity data for search engines: ties the-guild.dev to every property
+// The Guild owns. See the SEO audit — the entity ranks #12 for its own name.
+const organizationJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'The Guild',
+  url: 'https://the-guild.dev/',
+  logo: 'https://the-guild.dev/android-chrome-512x512.png',
+  sameAs: [
+    'https://github.com/the-guild-org',
+    'https://github.com/graphql-hive',
+    'https://twitter.com/TheGuildDev',
+    'https://www.linkedin.com/company/the-guild-software/',
+    'https://discord.com/invite/xud7bH9',
+    'https://graphql-hive.com',
+    'https://stellate.co',
+    'https://grafbase.com',
+  ],
+});
+
 const stellateAcquisitionHref = '/graphql/hive/blog/stellate-acquisition';
 const grafbaseAcquisitionHref = '/graphql/hive/blog/acquired-grafbase';
 const benchmarksHref = '/graphql/hive/federation-gateway-performance';
@@ -145,6 +165,7 @@ const stellateCaseStudies = [
   title="The Guild: GraphQL infrastructure for teams that ship"
   description="Open-source GraphQL infrastructure for enterprises, built and maintained by The Guild."
 >
+  <script is:inline slot="head" type="application/ld+json" set:html={organizationJsonLd} />
   <header
     class="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--nav-bg)] backdrop-blur-[10px]"
   >

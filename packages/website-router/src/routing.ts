@@ -228,3 +228,11 @@ export async function handleRewrite(options: {
 
   return response;
 }
+
+/**
+ * Old build bugs leaked route templates into public URLs (/_landing/...,
+ * literal $-segments). Google still recrawls them; they deserve a 410.
+ */
+export function isLeakedRouteTemplate(pathname: string) {
+  return pathname.includes('/_landing/') || /(^|\/)\$(\/|$)/.test(pathname);
+}

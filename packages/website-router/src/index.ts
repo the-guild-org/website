@@ -9,7 +9,7 @@ import { BannerHandler } from './html-handlers/banner';
 import { CrispHandler } from './html-handlers/crisp';
 import { GoogleAnalyticsHandler } from './html-handlers/ga';
 import { handleRobotsTxt, shouldHandleRobotsTxt } from './robots/handler';
-import { handleRewrite, ManipulateResponseFn, redirect } from './routing';
+import { handleRewrite, isLeakedRouteTemplate, ManipulateResponseFn, redirect } from './routing';
 import { handleSitemap, shouldHandleSitemap } from './sitemap/handler';
 
 const {
@@ -53,6 +53,14 @@ const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => 
 
 async function handleEvent(request: Request, sentry: Toucan): Promise<Response> {
   const parsedUrl = new URL(request.url);
+
+  // Old build bugs leaked route templates into public URLs; Google recrawls
+  // ~250 of them (SEO audit, SEO-03). 410 tells it they are gone for good -
+  // Pages _redirects cannot emit 410.
+  if (isLeakedRouteTemplate(parsedUrl.pathname)) {
+    return new Response('Gone', { status: 410 });
+  }
+
   sentry.addBreadcrumb({
     type: 'debug',
     data: {
