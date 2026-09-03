@@ -7,7 +7,7 @@ const verbose =
   process.env["VERBOSE"] === "true" || process.argv.includes("--verbose");
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const OUTPUT_DIR = path.resolve(__dirname, "../../dist/graphql/hive");
+const OUTPUT_DIR = path.resolve(__dirname, "../../dist");
 const REQUIRED_TAGS = [
   "title",
   "link:canonical",
@@ -118,12 +118,16 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   }
 
   for (const tag of REQUIRED_TAGS) {
+    if (tag === "application/ld+json") continue;
     if (!parsed[tag]) {
       issues.push(`${relativePath}: missing ${tag}`);
     }
   }
 
-  if (jsonldCount < 1) {
+  // Structured data is required across the Hive tree (every layout emits
+  // BreadcrumbList); on the main site it lives where it is meaningful
+  // (Organization on the homepage, BlogPosting on posts).
+  if (relativePath.startsWith("graphql/hive") && jsonldCount === 0) {
     issues.push(`${relativePath}: missing application/ld+json`);
   }
 }
