@@ -139,12 +139,17 @@
     });
   }
 
-  // /contact 301s to /#talk-to-an-engineer (see public/_redirects). The
-  // hash matches no element on purpose: the page stays at the top and only
-  // the dialog opens. In-page openers call preventDefault, so this only
-  // fires for external entrances.
-  if (location.hash === '#talk-to-an-engineer') {
+  // /contact redirects to /#talk-to-an-engineer (see public/_redirects),
+  // which matches no element so the page stays at the top with the dialog
+  // open. #contact is handled the same way: browsers permanently cached the
+  // first deploy's 301 to it, and it is the contact section's id — so the
+  // anchor scroll is undone and the hash cleaned. In-page openers call
+  // preventDefault, so none of this fires for in-page clicks.
+  if (location.hash === '#talk-to-an-engineer' || location.hash === '#contact') {
+    history.replaceState(null, '', location.pathname + location.search);
     openDialog();
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
   }
 
   for (const closer of dialog.querySelectorAll('[data-contact-close]')) {
