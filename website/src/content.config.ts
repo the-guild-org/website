@@ -9,13 +9,15 @@ const blog = defineCollection({
     title: z.string(),
     tags: z.array(z.string()),
     authors: z
-      .array(
-        z.string().refine(
-          id => id in AUTHORS,
-          id => ({ message: `Unknown blog author "${id.input}"` }),
-        ),
-      )
-      .nonempty(),
+      .array(z.string())
+      .nonempty()
+      .superRefine((ids, ctx) => {
+        for (const id of ids) {
+          if (!(id in AUTHORS)) {
+            ctx.addIssue({ code: 'custom', message: `Unknown blog author "${id}"` });
+          }
+        }
+      }),
     date: z.coerce.date(),
     updateDate: z.coerce.date().optional(),
     description: z.string(),

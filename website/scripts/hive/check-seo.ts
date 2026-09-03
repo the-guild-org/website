@@ -84,9 +84,14 @@ function getAttributes(attrs: string): Record<string, string | undefined> {
   );
 }
 
-function parseHead(
-  html: string,
-): { jsonldCount: number; parsed: Record<string, string | undefined> } | null {
+interface ParsedHead {
+  jsonldCount: number;
+  jsonldInvalid: boolean;
+  jsonldTypes: string[];
+  parsed: Record<string, string | undefined>;
+}
+
+function parseHead(html: string): ParsedHead | null {
   const headMatch = html.match(/<head[^>]*>(.*?)<\/head>/is);
   if (!headMatch) return null;
 
@@ -199,9 +204,14 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   scanned += 1;
   const html = await readFile(filePath, "utf8");
 
-  const { jsonldCount, jsonldInvalid, jsonldTypes, parsed } = parseHead(
-    html,
-  ) ?? { jsonldCount: 0, jsonldInvalid: false, jsonldTypes: [], parsed: {} };
+  const fallback: ParsedHead = {
+    jsonldCount: 0,
+    jsonldInvalid: false,
+    jsonldTypes: [],
+    parsed: {},
+  };
+  const { jsonldCount, jsonldInvalid, jsonldTypes, parsed } =
+    parseHead(html) ?? fallback;
 
   if (verbose) {
     console.log(filePath, { jsonldCount }, parsed);
