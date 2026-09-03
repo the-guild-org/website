@@ -111,6 +111,9 @@ function pagefindDevServer() {
 
 export default defineConfig({
   site: 'https://the-guild.dev',
+  // Prefetch pages on link hover: navigation across the docs feels instant
+  // and the fetch is only triggered by intent (no blanket preloading).
+  prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   /**
    * Plain .md content (all of it on the Hive side) is rendered by Astro's
    * built-in markdown pipeline, so the Hive link plugins must be registered

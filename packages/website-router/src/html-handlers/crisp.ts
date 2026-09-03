@@ -12,12 +12,20 @@ export class CrispHandler implements HTMLRewriterElementContentHandlers {
         `<script>
           window.$crisp = [];
           window.CRISP_WEBSITE_ID = '${this.crispWebsiteId}';
+          // Chat is not critical-path: load it when the browser is idle
+          // (the $crisp command queue works before the script arrives).
           (function () {
-            d = document;
-            s = d.createElement('script');
-            s.src = 'https://client.crisp.chat/l.js';
-            s.async = 1;
-            d.getElementsByTagName('head')[0].appendChild(s);
+            var load = function () {
+              var s = document.createElement('script');
+              s.src = 'https://client.crisp.chat/l.js';
+              s.async = 1;
+              document.getElementsByTagName('head')[0].appendChild(s);
+            };
+            if ('requestIdleCallback' in window) {
+              requestIdleCallback(load, { timeout: 5000 });
+            } else {
+              setTimeout(load, 3000);
+            }
           })();
           ${
             this.websiteRecord.crisp.segments.length > 0
