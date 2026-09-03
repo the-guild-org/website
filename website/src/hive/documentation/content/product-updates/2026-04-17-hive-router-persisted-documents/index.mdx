@@ -1,0 +1,75 @@
+---
+title: Persisted Documents in Hive Router
+description:
+  Persisted documents in Hive Router with configurable ID selectors, file and Hive CDN storage, and
+  allowlist enforcement options.
+date: 2026-04-17
+authors: [kamil]
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+[Hive Router](/docs/router) includes support for **Persisted Documents**. Clients send a document ID, and the router resolves the GraphQL document from configured storage. This pattern is also commonly referred to as trusted documents, persisted operations, or persisted queries.
+
+Regardless of the name, the idea behind Persisted Documents is to reduce request payload size, limit arbitrary operation execution, and support migration toward allowlisted traffic. This approach is especially useful for GraphQL APIs used by first-party web and mobile clients, where arbitrary third-party queries are not expected.
+
+<Callout type="info">
+
+Hive Router supports [App Deployments](/docs/schema-registry/app-deployments) out of the box.
+
+When you run a schema check that detects breaking changes, Hive automatically identifies which active app deployments would be affected by those changes. This helps you understand the real-world impact of schema changes before deploying them.
+
+</Callout>
+
+## Accept Document IDs from Multiple Sources
+
+Router can extract document IDs from multiple request locations using ordered selectors, and uses the first successful match.
+
+| Selector          | Use case                                                     |
+| ----------------- | ------------------------------------------------------------ |
+| `json_path`       | Read IDs from custom JSON payload fields                     |
+| `url_query_param` | Read IDs from query-string parameters                        |
+| `url_path_param`  | Read IDs from URL path segments (for example `/graphql/:id`) |
+
+By default, Hive Router checks:
+
+1. `documentId`
+2. `extensions.persistedQuery.sha256Hash` (Apollo format)
+
+In practice, this means Router first looks for a top-level `documentId` in the request (for example,
+`POST {"documentId":"123456"}` or `GET /graphql?documentId=123456`). If it is missing, Router
+falls back to Apollo's persisted query format in `extensions.persistedQuery.sha256Hash`.
+
+You can customize selector order and extraction paths in `router.config.yaml`:
+
+```yaml title="router.config.yaml"
+persisted_documents:
+  enabled: true
+  selectors:
+    - type: url_path_param
+      template: /docs/:id # GET /graphql/docs/123456
+    - type: url_query_param
+      name: id # GET /graphql?id=123456
+    - type: json_path
+      path: doc_id # POST {"doc_id":"123456"}
+  storage:
+    type: file
+    path: ./persisted-documents.json
+```
+
+Hive Router evaluates selectors from top to bottom and uses the first
+successful match.
+
+## Resolve Documents from File or Hive CDN
+
+Hive Router can load persisted documents from two sources:
+
+- **File storage** - loads manifest entries into memory and supports both key-value (Relay) and Apollo Persisted Queries manifest formats
+- **Hive CDN storage** - resolves IDs from Hive CDN with configurable retries, timeouts, circuit breaker, and negative cache
+
+File storage enables watch mode (`watch: true`) by default, so manifest updates can be reloaded automatically in local workflows. This is especially useful when working with Relay Compiler in watch mode.
+
+---
+
+- [Persisted Documents guide](/docs/router/security/persisted-documents)
+- [`persisted_documents` configuration reference](/docs/router/configuration/persisted_documents)

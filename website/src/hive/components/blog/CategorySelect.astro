@@ -1,0 +1,23 @@
+---
+import CategoryFilterLink from "./CategoryFilterLink.astro";
+
+interface Props {
+  categories: string[];
+  tag: string | null;
+}
+
+const { categories, tag: currentTag } = Astro.props;
+---
+
+<ul class="flex flex-wrap items-center justify-center gap-2 px-4 py-6">
+  <li>
+    <CategoryFilterLink category={null} currentCategory={currentTag} />
+  </li>
+  {
+    categories.map((category) => (
+      <li>
+        <CategoryFilterLink category={category} currentCategory={currentTag} />
+      </li>
+    ))
+  }
+</ul>

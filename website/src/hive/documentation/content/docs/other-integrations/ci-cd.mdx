@@ -1,0 +1,199 @@
+---
+title: CI/CD and Hive CLI
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+This guide is a collection of features and capabilities you can configure with Hive, to integrate it
+with Continuous Integration (CI) Continuous Deployment (CD) setups.
+
+## Overview
+
+The [Hive CLI](/docs/api-reference/cli) can be installed on any environment, including CI/CD
+environments.
+
+If you are using a JavaScript/NodeJS project, you should install the
+[Hive CLI](/docs/api-reference/cli#installation) under `devDependencies` of your project, and use it
+directly with your preferred package manager (for example: `yarn hive ...` or `pnpm hive ...`).
+
+If you are using a different runtime environment for your project, you should install the
+[Hive CLI binary](/docs/api-reference/cli#installation) and use it directly as a binary (`hive ...`).
+
+## GitHub Check Suites
+
+If you are using GitHub Actions, you can specify an additional flag to the Hive CLI: `--github`.
+
+If [GitHub Integration](/docs/schema-registry/management/organizations#github) is enabled for your organization, and
+the
+[GitHub repository has access to the GitHub repository the action is running from](/docs/schema-registry/management/projects#github-repository)
+is active, you may specify an additional `--github` flag to report the results back to GitHub as
+Check Suite (for `schema:check` and `schema:publish` commands):
+
+```bash
+hive schema:publish \
+  --target "org/project/target" \
+  path/to/schema.graphql \
+  --github
+```
+
+```bash
+hive schema:check \
+  --target "org/project/target" \
+  path/to/schema.graphql \
+  --github
+```
+
+### GitHub Workflow for CI
+
+The following workflow runs the check for every pull request and associates the results with the
+pull request.
+
+```yaml title=".github/workflows/ci.yml"
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: schema check
+        env:
+          # If you self-host your hive server:
+          HIVE_ENDPOINT: ${{ secrets.HIVE_ENDPOINT }}
+        run: |
+          curl -sSL https://graphql-hive.com/install.sh | sh
+          hive schema:check "path/to/schema.graphql" \
+            --registry.accessToken "${{ secrets.HIVE_TOKEN }}" \
+            --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>" \
+            --github
+```
+
+<Callout type="warning">
+
+We recommend using a fixed CLI version for your workflows. Please refer to our CLI documentation for
+[installing a specific version using the install script](/docs/api-reference/cli#specific-version).
+
+</Callout>
+
+### GitHub Merge Queue
+
+GitHub Merge Queue tests the accumulated changes from multiple pull requests. If a schema check
+compares the complete merge group against the latest schema in the registry, it can report breaking
+changes introduced and approved by an earlier pull request again.
+
+Pass `--baseline` with a `<revision>:<path>` value to compare the checked-out
+service schema against a schema file at the merge group's base commit. Hive composes both versions
+with the other services currently stored in the registry and evaluates only the difference between
+those compositions. Composition errors, conditional breaking changes, and contract checks are still
+evaluated.
+
+```yaml title=".github/workflows/merge-queue.yml"
+on:
+  merge_group:
+    types: [checks_requested]
+jobs:
+  check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # --base loads the schema from Git history.
+          fetch-depth: 0
+      - name: schema check
+        env:
+          # If you self-host your Hive server:
+          # HIVE_ENDPOINT: ${{ secrets.HIVE_ENDPOINT }}
+          MERGE_GROUP_BASE_SHA: ${{ github.event.merge_group.base_sha }}
+        run: |
+          curl -sSL https://graphql-hive.com/install.sh | sh
+          hive schema:check "path/to/schema.graphql" \
+            --registry.accessToken "${{ secrets.HIVE_TOKEN }}" \
+            --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>" \
+            --service "<YOUR_SERVICE_NAME>" \
+            --baseline "$MERGE_GROUP_BASE_SHA:path/to/schema.graphql" \
+            --github
+```
+
+For a `merge_group` event, the Hive CLI automatically extracts the pull request number and merge
+group head commit. The `--github` flag reports the result on that commit and uses the same context as
+the pull request workflow, so approved breaking changes remain associated with the pull request.
+
+The `--baseline` option also accepts a local schema file. When using the Git revision syntax shown above,
+the value must reference one file and the checkout must contain the referenced commit.
+
+<Callout type="warning">
+
+We recommend using a fixed CLI version for your workflows. Please refer to our CLI documentation for
+[installing a specific version using the install script](/docs/api-reference/cli#specific-version).
+
+</Callout>
+
+### GitHub Workflow for CD
+
+The following workflow will run the publish the latest schema to the schema registry for every push
+to `main` branch.
+
+```yaml title=".github/workflows/cd.yml"
+on:
+  push:
+    branches: [main]
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: schema publish
+        env:
+          # If you self-host your hive server:
+          HIVE_ENDPOINT: ${{ secrets.HIVE_ENDPOINT }}
+        run: |
+          curl -sSL https://graphql-hive.com/install.sh | sh
+          hive schema:publish "path/to/schema.graphql" \
+            --registry.accessToken "${{ secrets.HIVE_TOKEN }}" \
+            --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>" \
+            --github
+```
+
+<Callout type="warning">
+
+We recommend using a fixed CLI version for your workflows. Please refer to our CLI documentation for
+[installing a specific version using the install script](/docs/api-reference/cli#specific-version).
+
+</Callout>
+
+## Multi Environment Best Practices
+
+By default each project has three targets: `development`, `staging`, and `production`. You can
+utilize these environments (or even add more), to model a multi environment/stage depployment
+process.
+
+For CI, run `hive schema:check`, and for CD, run `hive schema:publish` on the respective target for
+that environment. Each target can be configured to use the usage data from other targets for
+[conditional breaking changes](/docs/schema-registry/management/targets#conditional-breaking-changes) based on usage
+data.
+
+### Example
+
+Three branches:
+
+| Git Branch | Hive Target |
+| ---------- | ----------- |
+| main       | development |
+| staging    | staging     |
+| production | production  |
+
+New features are developed on a branch that targets the `main` branch. The `hive schema:check`
+command is run against the `development` target. conditional breaking changes are configured on
+`staging` and `production` targets.
+
+When the feature is ready for QA, the branch is merged into `main`. The `hive schema:publish`
+command is triggered by CD workflow, and the schema is published to the `development` target.
+
+When the feature is ready for staging, the `main` branch is merged into `staging`. The
+`hive schema:publish` command is triggered by the CD workflow, and the schema is published to the
+`staging` target.
+
+When the feature is ready for production, the `staging` branch is merged into `production`. The
+`hive schema:publish` command is triggered by the CD workflow, and the schema published to the
+`production` target.

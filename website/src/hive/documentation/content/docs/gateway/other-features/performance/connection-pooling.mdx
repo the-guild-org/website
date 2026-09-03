@@ -1,0 +1,167 @@
+---
+title: Connection Pooling
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+By default, Node.js creates a new TCP connection for every outgoing HTTP request, or reuses
+connections from an unbounded pool. Under high load this can exhaust file descriptors or overwhelm
+upstream subgraphs with too many simultaneous connections.
+
+Providing a custom `http.Agent` (or `https.Agent`) via the `customAgent` option lets you tune every
+aspect of the connection pool — capping concurrency, reusing keep-alive connections, controlling
+idle socket lifetime, and more — giving you explicit control over how Hive Gateway interacts with
+your subgraphs at the network level.
+
+Hive Gateway passes the agent to the underlying `fetch` call, so it works in both Node.js and Bun.
+
+## Limiting Concurrent Connections
+
+`maxSockets` caps the number of concurrent TCP connections Hive Gateway will open to each upstream
+origin. Requests that exceed this limit are queued internally and sent as connections become
+available, which protects downstream services from being flooded during traffic spikes.
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+import http from "http";
+
+const agent = new http.Agent({
+  maxSockets: 10, // max sockets per origin (active + queued)
+});
+
+export const gatewayConfig = defineConfig({
+  customAgent: () => agent,
+});
+```
+
+## Keep-Alive Connections
+
+By default Node.js closes connections after each request. Enabling `keepAlive` reuses open TCP
+sockets for subsequent requests, eliminating the TCP handshake and (for HTTPS) TLS negotiation
+overhead on every call.
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+import http from "http";
+
+const agent = new http.Agent({
+  keepAlive: true, // reuse sockets between requests
+  keepAliveMsecs: 1000, // send TCP keep-alive probes every 1 s
+  maxSockets: 50, // max concurrent connections per origin
+  maxFreeSockets: 10, // max idle keep-alive sockets to keep open per origin
+});
+
+export const gatewayConfig = defineConfig({
+  customAgent: () => agent,
+});
+```
+
+| Option           | Description                                                                            |
+| ---------------- | -------------------------------------------------------------------------------------- |
+| `keepAlive`      | Reuse connections for multiple requests. Defaults to `false`.                          |
+| `keepAliveMsecs` | Milliseconds between keep-alive probes when `keepAlive` is `true`. Defaults to `1000`. |
+| `maxSockets`     | Maximum concurrent sockets per origin. Defaults to `Infinity`.                         |
+| `maxFreeSockets` | Maximum idle keep-alive sockets to retain per origin. Defaults to `256`.               |
+
+## Socket Timeout
+
+Use `timeout` to set a socket-level inactivity timeout (in milliseconds). Internally this calls
+`socket.setTimeout()`, which emits a `'timeout'` event on the socket after the specified duration of
+inactivity — it does **not** automatically close the connection. This is useful for detecting
+unresponsive subgraphs early, but your application is responsible for handling the event (e.g. by
+destroying the socket).
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+import http from "http";
+
+const agent = new http.Agent({
+  keepAlive: true,
+  maxSockets: 50,
+  timeout: 5000, // call socket.setTimeout(5000) — fires a 'timeout' event after 5 s of inactivity
+});
+
+export const gatewayConfig = defineConfig({
+  customAgent: () => agent,
+});
+```
+
+<Callout>
+  This is a low-level socket-inactivity timeout. Hive Gateway also provides
+  higher-level timeout options such as `upstreamTimeout`, `requestTimeout`,
+  `requestDeadline`, and `keepAliveTimeout` — see the [Upstream
+  Reliability](/docs/gateway/other-features/upstream-reliability) page and the
+  [Config Reference](/docs/api-reference/gateway-config) for details.
+</Callout>
+
+## Request Scheduling
+
+The `scheduling` option controls which idle keep-alive socket is picked for each new request:
+
+- `"fifo"` (default) — picks the socket that has been idle the longest, spreading load evenly.
+- `"lifo"` — picks the most recently used socket, which keeps fewer sockets warm and is more
+  cache-friendly under lower concurrency.
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+import http from "http";
+
+const agent = new http.Agent({
+  keepAlive: true,
+  maxSockets: 50,
+  scheduling: "lifo",
+});
+
+export const gatewayConfig = defineConfig({
+  customAgent: () => agent,
+});
+```
+
+## Using HTTPS
+
+For subgraphs served over HTTPS, use `https.Agent` instead. It accepts all of the same options as
+`http.Agent` plus TLS-specific ones:
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+import https from "https";
+
+const agent = new https.Agent({
+  keepAlive: true,
+  maxSockets: 50,
+  maxFreeSockets: 10,
+  timeout: 5000,
+});
+
+export const gatewayConfig = defineConfig({
+  customAgent: () => agent,
+});
+```
+
+<Callout>
+  For `https.Agent` options related to self-signed certificates or mutual TLS,
+  see the [Secure HTTP Connection
+  (HTTPS)](/docs/gateway/other-features/security/https) page.
+</Callout>
+
+## Per-Origin Agents
+
+The `customAgent` callback receives the target `url`, so you can apply different tuning to
+different upstream origins:
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+import https from "https";
+
+// High-throughput agent for a critical subgraph
+const criticalAgent = new https.Agent({ keepAlive: true, maxSockets: 100 });
+// Conservative agent for everything else
+const defaultAgent = new https.Agent({ keepAlive: true, maxSockets: 10 });
+
+export const gatewayConfig = defineConfig({
+  customAgent: ({ url }) =>
+    url.startsWith("https://critical-subgraph.internal")
+      ? criticalAgent
+      : defaultAgent,
+});
+```

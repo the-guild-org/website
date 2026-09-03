@@ -1,0 +1,134 @@
+---
+title: "log"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+The `log` configuration object controls the router's logging behavior: verbosity, output format,
+correlation identifiers, and whether logs from internal crates are emitted.
+
+For a conceptual overview of how logging works (access logs, performance impact, and request
+correlation), see the [Logging guide](/docs/router/observability/logging).
+
+## Options
+
+### `level`
+
+- **Type:** `string`
+- **Default:** `info`
+- **Environment Variable:** `LOG_LEVEL`
+
+Controls the verbosity of the logs. At the default `info` level the router is mostly silent,
+emitting a single [request summary](/docs/router/observability/logging#access-logs) per request
+plus warnings and errors.
+
+The available levels, from least to most verbose, are:
+
+- `error`: Router/internal errors only.
+- `warn`: Warnings (including user-facing errors such as validation and parsing failures) and above.
+- `info` (Default): The per-request summary, warnings, and errors.
+- `debug`: Detailed router workflow and pipeline events, useful for tracking the flow of a request.
+
+<Callout type="warning">
+  Higher verbosity has a real performance cost. Keep `info` (or lower) in
+  production and only raise the level temporarily when debugging. See [log level
+  and
+  performance](/docs/router/observability/logging#log-level-and-performance).
+</Callout>
+
+### `format`
+
+- **Type:** `"text" | "json"`
+- **Default:** `json`
+- **Environment Variable:** `LOG_FORMAT`
+
+Determines the structure of the log output.
+
+- `json` (Default): Structured, single-line JSON. This is the **recommended format for production**,
+  as it is easily parsed and ingested by log management systems (e.g. Datadog, Splunk, ELK, Loki).
+- `text`: A compact, single-line, human-readable format intended for local development.
+
+### `filter`
+
+- **Type:** `string`
+- **Environment Variable:** `LOG_FILTER`
+
+Advanced, fine-grained control over which log messages are emitted, based on their
+[target](/docs/router/observability/logging#log-targets) and level. Use it to reduce noise or focus
+on a particular subsystem without changing the global `level`.
+
+The syntax is a comma-separated list of `target=level` directives, where `level` is one of `error`,
+`warn`, `info`, `debug`, or `off`. For example, `router::executor=debug,router::coprocessor=debug`
+raises verbosity for two subsystems.
+
+Use the `off` level to **mute** a specific target while keeping the global level unchanged. For
+example, `router::request=off` silences the per-request access log, and `router::http_client=off`
+drops HTTP client noise. See
+[muting a target](/docs/router/observability/logging#muting-a-target).
+
+For most use cases, adjusting the global `level` is sufficient.
+
+### `correlation`
+
+Configures how the router derives the `request_id` and `trace_id` that are attached to every log
+line. See [request correlation](/docs/router/observability/logging#request-correlation).
+
+#### `correlation.id_header`
+
+- **Type:** `string`
+- **Default:** `x-request-id`
+
+The incoming request header the router reads the request ID from. When the header is absent, the
+router generates a unique ID for the request.
+
+#### `correlation.trace_propagation`
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+When enabled, the router extracts the trace ID from the incoming W3C `traceparent` context and
+attaches it to every log line as `trace_id`, letting you correlate logs with
+[traces](/docs/router/observability/tracing).
+
+### `log_internals`
+
+- **Type:** `boolean`
+- **Default:** `false`
+- **Environment Variable:** `LOG_INTERNALS`
+
+Whether to emit logs from internal crates the router depends on (e.g. the `ntex` HTTP server and
+`hyper` clients). These are suppressed by default to keep output focused on the router itself. Enable
+it only for deep debugging of the runtime; it is noisy and should stay disabled in production.
+
+## Examples
+
+### Production logging
+
+The default configuration: informational logs (the per-request summary) in machine-readable JSON.
+
+```yaml title="router.config.yaml"
+log:
+  level: "info"
+  format: "json"
+```
+
+### Development logging
+
+More verbose output in a human-readable format for local development.
+
+```yaml title="router.config.yaml"
+log:
+  level: "debug"
+  format: "text"
+```
+
+### Custom correlation header
+
+Read the request ID from a custom header and disable trace correlation.
+
+```yaml title="router.config.yaml"
+log:
+  correlation:
+    id_header: "x-correlation-id"
+    trace_propagation: false
+```

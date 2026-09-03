@@ -1,0 +1,164 @@
+---
+title: Federated GraphQL Subscriptions in Hive Router
+description:
+  Hive Router now supports federated GraphQL subscriptions with full protocol coverage - SSE,
+  WebSockets, Multipart HTTP, Incremental Delivery, and HTTP Callback.
+date: 2026-04-14
+authors: [enisdenjo]
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+[Hive Router](/docs/router) now supports **federated GraphQL subscriptions** out of the box. Real-time
+data across multiple subgraphs, with automatic entity resolution, full protocol coverage, and zero
+special configuration required on the client side.
+
+This is the most complete GraphQL subscriptions implementation available - covering every major
+protocol, transport, and delivery model in the ecosystem. It was built by Denis, the maintainer of
+[graphql-ws](https://github.com/enisdenjo/graphql-ws), [graphql-sse](https://github.com/enisdenjo/graphql-sse),
+and [graphql-http](https://github.com/graphql/graphql-http) - the libraries that power subscriptions
+across most of the GraphQL ecosystem today.
+
+<Callout type="info">
+
+This also means that the [Rust Query Planner in Hive Gateway](/docs/gateway/other-features/rust-query-planner)
+now supports subscriptions as well!
+
+</Callout>
+
+## All Protocols, One Router
+
+Hive Router covers the entire subscriptions protocol landscape - both for client-to-router and
+router-to-subgraph communication:
+
+| Protocol                                                                | Direction         | Notes                                                        |
+| ----------------------------------------------------------------------- | ----------------- | ------------------------------------------------------------ |
+| [Server-Sent Events (SSE)](/docs/router/subscriptions/sse)              | Client & Subgraph | Browser-native `EventSource`, plain HTTP                     |
+| [Incremental Delivery](/docs/router/subscriptions/incremental-delivery) | Client & Subgraph | Official GraphQL over HTTP spec RFC, `multipart/mixed`       |
+| [Multipart HTTP](/docs/router/subscriptions/multipart-http)             | Client & Subgraph | Apollo-compatible, preferred router-to-subgraph protocol     |
+| [WebSockets](/docs/router/subscriptions/websockets)                     | Client & Subgraph | Full-duplex, multiplexed operations over one connection      |
+| [HTTP Callback](/docs/router/subscriptions/http-callback)               | Subgraph only     | No persistent connections, best for high subscription counts |
+
+The three HTTP-based protocols (SSE, Incremental Delivery, Multipart HTTP) are all active
+simultaneously once subscriptions are enabled. No per-protocol configuration needed - the router
+negotiates which one to use per request based on the client's `Accept` header.
+
+## Federated Entity Resolution
+
+Subscription events can span multiple subgraphs. When a subscription field comes from one subgraph
+and the response includes entity fields owned by others, Hive Router resolves them automatically
+on every event - no special setup needed.
+
+```graphql
+subscription {
+  reviewAdded {
+    # From the reviews subgraph
+    id
+    body
+    rating
+    # Resolved from the products subgraph
+    product {
+      name
+      price
+    }
+    # Resolved from the users subgraph
+    author {
+      name
+      email
+    }
+  }
+}
+```
+
+## WebSockets via Synthetic HTTP Requests
+
+Every operation sent over a WebSocket connection - queries, mutations, and subscriptions - is
+converted into a **synthetic HTTP request** internally. This means the operation goes through
+exactly the same processing pipeline as a regular HTTP request: the same routing, the same
+authorization checks, the same header propagation rules. No special cases for WebSocket traffic.
+
+Because WebSocket connections don't carry HTTP headers beyond the initial upgrade handshake, the
+router needs to know where to read headers from. The `headers.source` option controls this:
+
+- **`connection`** - Headers come from the `connection_init` message payload. Recommended default
+  for most clients.
+- **`operation`** - Headers come from the `headers` field inside each operation's `extensions`.
+  Allows per-operation overrides.
+- **`both`** - Headers accepted from both sources. Operation extensions take precedence.
+- **`none`** - No headers accepted from inside the WebSocket messages.
+
+The `headers.persist` flag only applies when `source` is `both`. When `true`, headers received
+from operation extensions are stored and reused for all subsequent operations on that connection.
+This handles token refresh without requiring a reconnect: the client sends an updated
+`Authorization` header in one operation's extensions, and the router carries it forward
+automatically from that point on.
+
+```yaml
+websocket:
+  enabled: true
+  headers:
+    source: both
+    persist: true
+```
+
+## HTTP Callback for Scale
+
+[HTTP Callback](/docs/router/subscriptions/http-callback) is a subgraph-only protocol where
+the router registers a callback URL with the subgraph instead of holding a persistent connection
+open. The subgraph pushes events to that URL as they arrive. This makes it significantly more
+efficient at high subscription counts.
+
+The callback endpoint can be bound to a dedicated port to isolate subgraph traffic from client
+traffic:
+
+```yaml
+subscriptions:
+  enabled: true
+  callback:
+    public_url: https://router.internal:4001/callback
+    listen: 0.0.0.0:4001
+    subgraphs:
+      - reviews
+      - products
+```
+
+## Deduplication and Schema Reload
+
+Subscriptions participate in [inbound deduplication](/docs/router/guides/performance-tuning#inbound-deduplication).
+Multiple clients subscribing to the same operation share a single upstream subgraph connection -
+the router broadcasts events to all of them via an internal channel.
+
+When a new supergraph schema loads, all active subscriptions are closed with a
+`SUBSCRIPTION_SCHEMA_RELOAD` error code. Clients reconnect and re-subscribe against the new schema.
+
+## Get Started
+
+Make sure you're running [Hive Router `0.0.49`](https://github.com/graphql-hive/router/releases/tag/hive-router%2Fv0.0.49) or above, then enable subscriptions with a single config option:
+
+```yaml
+subscriptions:
+  enabled: true
+```
+
+and/or WebSocket support:
+
+```yaml
+websocket:
+  enabled: true
+```
+
+---
+
+Also worth noting if you haven't seen them yet - the [Hive Router plugin system](/product-updates/2026-03-05-hive-router-plugin-system)
+lets you extend and customize the router with native Rust plugins, the [new Laboratory](/product-updates/2026-01-28-new-laboratory)
+brings a redesigned, editor-driven GraphQL IDE experience, and [OpenTelemetry tracing and Prometheus metrics](/product-updates/2026-04-15-hive-router-opentelemetry-tracing-metrics)
+are now production-ready in Hive Router.
+
+---
+
+- [Subscriptions overview](/docs/router/subscriptions)
+- [Server-Sent Events](/docs/router/subscriptions/sse)
+- [Incremental Delivery over HTTP](/docs/router/subscriptions/incremental-delivery)
+- [Multipart HTTP](/docs/router/subscriptions/multipart-http)
+- [WebSockets](/docs/router/subscriptions/websockets)
+- [HTTP Callback](/docs/router/subscriptions/http-callback)

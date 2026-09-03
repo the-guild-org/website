@@ -1,0 +1,67 @@
+---
+title: "Probes"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+## Liveness (health) check
+
+Liveness (health) of Hive Router is available at `/health` endpoint, and represents the HTTP health
+status of the router.
+
+A request to this endpoint returns `200 OK` if the router's HTTP layer is healthy. Health requests
+pass through plugin `on_http_request` hooks and their `on_end` callbacks, so a plugin can explicitly
+change or end the response. Coprocessors do not run for health requests.
+
+If a container fails its liveness probe repeatedly, the runtime environment should restart or
+replace the container with a new one.
+
+To manually check your router's health status, you can send an HTTP GET request to the `/health`
+endpoint. For example, using `curl`:
+
+```bash
+
+curl -I http://localhost:4000/health
+```
+
+<Callout className="mb-4" type="warning">
+
+The Liveness/health check only represents the validity of the router's HTTP layer.
+
+See **Readiness check** below for a more comprehensive health check that represents the ability of
+the router to process and execute GraphQL requests.
+
+</Callout>
+
+## Readiness check
+
+Readiness of Hive Router is available at `/readiness` endpoint, and represents the readiness status
+and ability to process GraphQL requests.
+
+The readiness request passes through plugin `on_http_request` hooks and their `on_end` callbacks.
+The router first uses a supergraph selected by a plugin for that request, then falls back to the
+configured supergraph. It returns `200 OK` only when the selected supergraph has not retired and its
+router runtime is usable. Missing selection or runtime construction failure returns
+`503 Service Unavailable`. Coprocessors do not run for readiness requests.
+
+With [`supergraph.source: plugin`](/docs/router/configuration/supergraph#plugin), there is no
+configured fallback. The plugin must call `set_supergraph` during every readiness request. This
+selection is request-local and does not configure a default for later requests.
+
+With a configured source, a router that has not loaded its first supergraph returns `503 Service
+Unavailable`. If the initial supergraph loaded successfully but a later reload fails, the previous
+usable generation remains selected and readiness continues to report `200 OK`. This prevents the
+runtime from replacing a working instance because a new generation failed to load.
+
+To manually check your router's readiness status, you can send an HTTP GET request to the
+`/readiness` endpoint. For example, using `curl`:
+
+```bash
+# Replace the URL with your Router's host and port
+curl -I http://localhost:4000/readiness
+```
+
+## Prometheus endpoint
+
+Prometheus requests continue to bypass both plugins and coprocessors. Unlike health and readiness,
+a plugin cannot select a request-local supergraph or change the Prometheus response.

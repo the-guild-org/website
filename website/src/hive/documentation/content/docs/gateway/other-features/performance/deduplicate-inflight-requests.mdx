@@ -1,0 +1,145 @@
+---
+title: Deduplicate Inflight Requests
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+Most of the time, your Hive Gateway will receive multiple requests for the same data. This can
+happen when multiple clients request the same data, or when a single client sends multiple requests
+for the same data.
+
+To reduce the load on your downstream services, you can deduplicate the requests. This means that if
+multiple requests for the same data are received at the same time, only one request will be sent to
+the downstream service, and the responses will be shared among the clients.
+
+Hive Gateway supports two levels of inflight request deduplication to reduce unnecessary work:
+
+- **Outbound deduplication** – when the gateway sends identical requests to downstream subgraph
+  services
+- **Inbound deduplication** – when multiple identical client requests arrive at the gateway
+  simultaneously
+
+## Outbound Request Deduplication
+
+When multiple identical requests to the same downstream subgraph service are inflight at the same
+time, the gateway can deduplicate them so only one request is forwarded to the downstream service.
+The single response is then shared among all waiting requests.
+
+This feature is **enabled by default**. To disable it:
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+import { HTTPTransportOptions } from "@graphql-tools/executor-http";
+
+export const gatewayConfig = defineConfig({
+  transportEntries: {
+    "*.http": {
+      options: {
+        deduplicateInflightRequests: false,
+      } as HTTPTransportOptions,
+    },
+  },
+});
+```
+
+## Inbound Request Deduplication
+
+Gateway-level deduplication handles identical requests arriving from clients. When multiple
+identical GraphQL requests are received by the gateway while the first one is still being processed,
+only the first request is executed and the rest wait for its result, which is then shared among all
+identical requests.
+
+This is useful for reducing the load on the gateway and subgraphs under high traffic when many
+clients send the same query simultaneously (e.g. popular dashboard queries or trending content).
+
+This feature is **disabled by default**. To enable it:
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  inboundInflightRequestDeduplication: true,
+});
+```
+
+### Deduplication Key
+
+By default, the deduplication key is composed of:
+
+- HTTP Request Method (e.g. `GET`, `POST`)
+- Request URL
+- All request headers
+- GraphQL Operation document
+- GraphQL Operation name
+- GraphQL Variable values
+
+### Filtering Headers
+
+By default, all request headers are included in the deduplication key. You can restrict which
+headers are considered by providing a `shouldIncludeHeader` function:
+
+<Callout type="warning">
+  Narrowing the deduplication key means requests that differ only by the
+  excluded headers will be treated as identical. If your responses vary per
+  user, session, or tenant (e.g. based on `Authorization`, cookies, locale, or
+  feature-flag headers), make sure to keep those headers in the key to avoid
+  sharing responses across different users and leaking data.
+</Callout>
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  inboundInflightRequestDeduplication: {
+    // Only include the "authorization" header in the deduplication key
+    shouldIncludeHeader: (headerName) => headerName === "authorization",
+  },
+});
+```
+
+### Custom Deduplication Keys
+
+For full control over the deduplication key, use `getDeduplicationKeys`:
+
+<Callout type="warning">
+  When building a custom key, ensure it includes all factors that distinguish
+  user- or session-specific responses (e.g. tenant ID, authorization context).
+  An overly broad key can cause the gateway to share responses across different
+  users, leading to data leakage.
+</Callout>
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  inboundInflightRequestDeduplication: {
+    getDeduplicationKeys: (_args, request) => {
+      // Deduplicate per tenant based on a custom header
+      const tenantId = request.headers.get("x-tenant-id");
+      return tenantId ? [`tenant:${tenantId}`] : [];
+    },
+  },
+});
+```
+
+### Conditional Enabling
+
+You can enable or disable deduplication on a per-request basis using the `enabled` function:
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  inboundInflightRequestDeduplication: {
+    enabled: (_args, request) =>
+      request.headers.get("x-enable-dedupe") === "true",
+  },
+});
+```
+
+### Limitations
+
+- **Only `query` operations are deduplicated.** Mutations and subscriptions are never deduplicated
+  since they may have side effects.
+- **Queries using `@defer` or `@stream` are not deduplicated**, since these directives produce
+  multiple incremental responses.

@@ -1,0 +1,107 @@
+---
+title: "response_extensions"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+A GraphQL response can carry a top-level `extensions` object, a free-form JSON object used to attach
+metadata (cache hints, tracing, warnings, timing, and other custom data) alongside `data` and `errors` keys.
+
+By default, the router does **not** forward `extensions` returned by your subgraphs - they are
+dropped. The `response_extensions` configuration lets you opt in and propagate them to the final
+client response, with full control over which keys are forwarded and how values from multiple
+subgraph responses are merged together.
+
+## Configuration Structure
+
+```yaml title="router.config.yaml"
+response_extensions:
+  propagate:
+    algorithm: last # first | last | append. default: last
+    allow: # optional key whitelist. omit to forward all keys
+      - foo
+      - bar
+```
+
+Propagation is only active when `response_extensions.propagate` is present. Without it, behavior is
+unchanged and nothing is forwarded.
+
+| Key         | Type       | Description                                                                                      |
+| :---------- | :--------- | :----------------------------------------------------------------------------------------------- |
+| `algorithm` | `string`   | How to merge an extension key seen across multiple subgraph responses. Default: `last`.          |
+| `allow`     | `string[]` | Optional whitelist of top-level extension keys to forward. When omitted, all keys are forwarded. |
+
+## Merge Algorithms
+
+Because a single GraphQL operation can fan out to multiple subgraphs, the same extension key can
+appear in several responses. The `algorithm` setting decides what the client sees and how merging is performed:
+
+- `last` **(default)** - the last subgraph to respond wins. Good for scalar metadata where any value
+  is equally valid.
+- `first` - the first subgraph to respond wins. Useful when you want a stable value and don't want
+  later subgraphs to overwrite it.
+- `append` - every value is collected into an array, **always an array even when only one subgraph
+  contributed**. Use this when you want to keep all values (e.g. cache hints, tracing spans, or
+  warnings from multiple services).
+
+### Example
+
+Two subgraphs both return an `extensions.foo` key, with subgraph `a` responding before `b`:
+
+```json
+// subgraph a
+{ "extensions": { "foo": { "some": ["array"] } } }
+
+// subgraph b
+{ "extensions": { "foo": { "some": "object" } } }
+```
+
+| `algorithm` | client sees                                                                  |
+| :---------- | :--------------------------------------------------------------------------- |
+| `first`     | `{ "extensions": { "foo": { "some": ["array"] } } }`                         |
+| `last`      | `{ "extensions": { "foo": { "some": "object" } } }`                          |
+| `append`    | `{ "extensions": { "foo": [{ "some": ["array"] }, { "some": "object" }] } }` |
+
+With `append`, even a single contributing subgraph produces an array, so clients can consume it
+without special-casing:
+
+```json
+{ "extensions": { "foo": [{ "some": ["array"] }] } }
+```
+
+## Key Whitelist
+
+The optional `allow` list restricts propagation to specific top-level extension keys. When omitted,
+all keys from all subgraphs are forwarded. Keys not in the list are silently dropped.
+
+```yaml title="router.config.yaml"
+response_extensions:
+  propagate:
+    algorithm: last
+    allow:
+      - cacheControl
+      - warnings
+```
+
+With the config above, only `cacheControl` and `warnings` reach the client; any other key a subgraph
+sends is ignored.
+
+## Precedence
+
+Extension keys set by the router itself or by [plugins](/docs/router/customizations/plugin-system) always
+take precedence over subgraph-propagated values. If a plugin sets `extensions.foo` and a subgraph
+also returns `extensions.foo`, the plugin's value wins.
+
+<Callout type="warning">
+  The `queryPlan` key is permanently reserved by the router and is never
+  propagated from subgraphs, regardless of your config - even if you add it to
+  the `allow` list.
+</Callout>
+
+## Ordering and Determinism
+
+`first` and `last` are relative to subgraph **response order**, not plan order. For sequential plan
+nodes the order is deterministic. For parallel fetches it depends on which subgraph responds first -
+the same non-determinism that already applies to
+[response header propagation](/docs/router/configuration/headers). If you need stable output under
+parallel fetches, use `append` and sort on the client.

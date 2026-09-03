@@ -1,0 +1,98 @@
+---
+import { withBase } from "../../lib/base-path";
+interface Props {
+  class?: string;
+  decoration?: string;
+  href: string;
+  icon: string;
+  isHive?: boolean;
+  name: string;
+  title?: string;
+  variant: "ancillary" | "main";
+}
+
+const { class: className, decoration, href, icon, isHive, name, title, variant } = Astro.props;
+
+const blurId = `eco-pc-blur-${name.toLowerCase().replace(/\s+/g, "-")}`;
+---
+
+{
+  variant === "main" ? (
+    <li
+      class:list={[
+        "hive-focus-within group relative flex-1 shrink-0 basis-[283.5px] overflow-hidden rounded-2xl h-[222px] max-md:min-w-[283.5px] max-md:w-auto",
+        isHive ? "bg-green-1000 text-white" : "bg-blue-400 text-green-1000",
+        className,
+      ]}
+    >
+      <a
+        class="outline-hidden focus-visible:ring-3 relative z-10 flex h-full flex-1 flex-col justify-between p-8 focus-visible:outline-hidden"
+        href={withBase(href)}
+      >
+        <p class="relative z-10 font-medium">{name}</p>
+        <div class="relative z-0 mt-8 size-12" set:html={icon} />
+        <svg class="absolute bottom-8 right-8 z-10" fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
+          <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
+        </svg>
+        <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div
+            class="pointer-events-none absolute bottom-0 right-0 h-full opacity-0 transition-opacity duration-500 group-focus-within:opacity-100 group-hover:opacity-100 md:translate-x-12"
+            set:html={decoration}
+          />
+          <svg
+            class="firefox-highlight-fix pointer-events-none absolute left-0 top-[-15%] h-[150%] w-full opacity-0 transition-opacity duration-1000 group-focus-within:opacity-100 group-hover:opacity-100"
+            fill="#86B6C1"
+            height="674"
+            viewBox="0 0 895 674"
+            width="895"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g filter={`url(#${blurId})`}>
+              <path d="M350 280.534C350 296.208 356.24 311.261 367.33 322.351L453.447 408.468L463.532 418.553L549.649 504.67C560.739 515.76 575.792 522 591.466 522L894 522L894 408.468L552.251 408.468C503.249 408.468 463.532 368.751 463.532 319.749L463.532 -22L350 -22L350 280.534Z" />
+            </g>
+            <defs>
+              <filter
+                color-interpolation-filters="sRGB"
+                filterUnits="userSpaceOnUse"
+                height="1244"
+                id={blurId}
+                width="1244"
+                x="-3.05176e-05"
+                y="-372"
+              >
+                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feBlend in="SourceGraphic" in2="BackgroundImageFix" mode="normal" result="shape" />
+                <feGaussianBlur result="effect1_foregroundBlur" stdDeviation="175" />
+              </filter>
+            </defs>
+          </svg>
+        </div>
+      </a>
+    </li>
+  ) : (
+    <li
+      class:list={[
+        "hive-focus-within h-[222px] shrink-0 basis-[283.5px] rounded-2xl bg-beige-200 text-green-1000 transition-colors duration-500 hover:bg-beige-400 max-md:min-w-[283.5px] max-md:w-auto",
+        className,
+      ]}
+    >
+      <a
+        class="outline-hidden focus-visible:ring-3 relative flex h-full flex-col justify-between rounded-[inherit] p-8 focus:outline-hidden focus-visible:outline-hidden"
+        href={withBase(href)}
+      >
+        <div>
+          <p class="font-medium">{name}</p>
+          <p class="mt-2 text-sm text-green-800">{title}</p>
+        </div>
+        <div
+          class="mt-8 flex size-8 items-center justify-center rounded-sm bg-green-1000 p-1.25 text-sm/5 font-medium text-white"
+          role="presentation"
+          set:html={icon}
+        />
+        <svg class="absolute bottom-8 right-8" fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
+          <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
+        </svg>
+      </a>
+    </li>
+  )
+}

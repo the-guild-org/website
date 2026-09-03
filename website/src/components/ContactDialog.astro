@@ -11,13 +11,13 @@
 >
   <div class="p-7 sm:p-9">
     <div class="mb-3.5 flex items-baseline justify-between">
-      <div class="font-mono text-[12px] lowercase tracking-[.075em] text-[var(--muted)]">
+      <div class="font-mono text-[12px] tracking-[.075em] text-[var(--muted)] lowercase">
         ~/the-guild/contact
       </div>
       <button
         type="button"
         data-contact-close
-        class="rounded-sm px-1 font-mono text-[13px] text-[var(--muted)] transition-colors hover:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+        class="rounded-xs px-1 font-mono text-[13px] text-[var(--muted)] transition-colors hover:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
         aria-label="Close contact form">[ esc ]</button
       >
     </div>
@@ -34,7 +34,7 @@
         <div class="flex flex-col gap-5">
           <label class="block">
             <span
-              class="mb-1.5 block font-mono text-[12px] lowercase tracking-[.075em] text-[var(--muted)]"
+              class="mb-1.5 block font-mono text-[12px] tracking-[.075em] text-[var(--muted)] lowercase"
               >name *</span
             >
             <input
@@ -48,7 +48,7 @@
           </label>
           <label class="block">
             <span
-              class="mb-1.5 block font-mono text-[12px] lowercase tracking-[.075em] text-[var(--muted)]"
+              class="mb-1.5 block font-mono text-[12px] tracking-[.075em] text-[var(--muted)] lowercase"
               >email *</span
             >
             <input
@@ -62,7 +62,7 @@
           </label>
           <label class="block">
             <span
-              class="mb-1.5 block font-mono text-[12px] lowercase tracking-[.075em] text-[var(--muted)]"
+              class="mb-1.5 block font-mono text-[12px] tracking-[.075em] text-[var(--muted)] lowercase"
               >message *</span
             >
             <textarea
@@ -86,13 +86,13 @@
           <button
             type="submit"
             data-contact-submit
-            class="inline-flex cursor-pointer items-center whitespace-nowrap rounded-sm px-0.5 py-1.5 font-mono text-[13px] leading-tight text-[var(--strong)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)] disabled:cursor-wait disabled:opacity-60"
+            class="inline-flex cursor-pointer items-center rounded-xs px-0.5 py-1.5 font-mono text-[13px] leading-tight whitespace-nowrap text-[var(--strong)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)] disabled:cursor-wait disabled:opacity-60"
             >send message</button
           >
           <button
             type="button"
             data-contact-close
-            class="inline-flex cursor-pointer items-center whitespace-nowrap rounded-sm px-0.5 py-1.5 font-mono text-[13px] leading-tight text-[var(--muted)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:text-[var(--strong)] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+            class="inline-flex cursor-pointer items-center rounded-xs px-0.5 py-1.5 font-mono text-[13px] leading-tight whitespace-nowrap text-[var(--muted)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:text-[var(--strong)] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
             >cancel</button
           >
         </div>
@@ -107,7 +107,7 @@
       <button
         type="button"
         data-contact-close
-        class="inline-flex cursor-pointer items-center whitespace-nowrap rounded-sm px-0.5 py-1.5 font-mono text-[13px] leading-tight text-[var(--strong)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+        class="inline-flex cursor-pointer items-center rounded-xs px-0.5 py-1.5 font-mono text-[13px] leading-tight whitespace-nowrap text-[var(--strong)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
         >close</button
       >
     </div>
@@ -137,6 +137,19 @@
       event.preventDefault();
       openDialog();
     });
+  }
+
+  // /contact redirects to /#talk-to-an-engineer (see public/_redirects),
+  // which matches no element so the page stays at the top with the dialog
+  // open. #contact is handled the same way: browsers permanently cached the
+  // first deploy's 301 to it, and it is the contact section's id — so the
+  // anchor scroll is undone and the hash cleaned. In-page openers call
+  // preventDefault, so none of this fires for in-page clicks.
+  if (location.hash === '#talk-to-an-engineer' || location.hash === '#contact') {
+    history.replaceState(null, '', location.pathname + location.search);
+    openDialog();
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
   }
 
   for (const closer of dialog.querySelectorAll('[data-contact-close]')) {

@@ -1,0 +1,121 @@
+---
+title: Multipart HTTP
+description: Use Apollo's Multipart HTTP protocol for GraphQL subscriptions with Hive Router, for both client-to-router and router-to-subgraph communication.
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+## Subgraphs
+
+Subgraphs don't require any special configuration to use multipart HTTP. When the router connects to a subgraph for a subscription, it will automatically negotiate multipart HTTP if the subgraph supports it, as it's the preferred protocol.
+
+## Clients
+
+<Callout type="tip">
+
+Multipart HTTP is not a mode you activate or configure on the router. Once [subscriptions are enabled](/docs/router/subscriptions#configuration), SSE, Incremental Delivery, and Multipart HTTP are all available simultaneously. The router negotiates the protocol per request based on the client's `Accept` header - see [Protocol Negotiation](/docs/router/subscriptions#protocol-negotiation).
+
+</Callout>
+
+To use Multipart HTTP, send requests with the following `Accept` header:
+
+```text
+Accept: multipart/mixed;subscriptionSpec=1.0
+```
+
+The router will respond with multipart HTTP responses conforming to [Apollo's Multipart HTTP protocol](https://www.apollographql.com/docs/graphos/routing/operations/subscriptions/multipart-protocol).
+
+The router sends a heartbeat chunk every 10 seconds to keep the connection alive.
+
+If an error occurs, the router emits an error event and completes the stream. If the requested subscription transport is not supported, the router returns `406 Not Acceptable`.
+
+### Try It
+
+```bash
+curl 'http://localhost:4000/graphql' \
+  -H 'accept: multipart/mixed;subscriptionSpec=1.0' \
+  --json '{
+    "query": "subscription {
+      reviewAdded {
+        body
+        rating
+        product {
+          name
+        }
+        author {
+          name
+        }
+      }
+    }"
+  }'
+```
+
+This command creates an HTTP multipart request and keeps an open connection that receives new subscription data in response "chunks":
+
+```text
+--graphql
+content-type: application/json
+
+{}
+--graphql
+content-type: application/json
+
+{"payload":{"data":{"reviewAdded":{"body":"Great product!","rating":5,"product":{"name":"Croissant"},"author":{"name":"Alice"}}}}}
+--graphql
+content-type: application/json
+
+{"payload":{"data":{"reviewAdded":{"body":"Could be better","rating":3,"product":{"name":"Baguette"},"author":{"name":"Bob"}}}}}
+--graphql
+content-type: application/json
+
+{"payload":{"data":{"reviewAdded":{"body":"Excellent quality","rating":5,"product":{"name":"Croissant"},"author":{"name":"Charlie"}}}}}
+--graphql--
+```
+
+This example subscription emits three events and then closes the connection. Notice how the `product` and `author` fields are automatically resolved from their respective subgraphs.
+
+### Apollo Client
+
+The required headers are automatically added by Apollo Client. [Multipart subscriptions are supported out-of-the-box.](https://www.apollographql.com/docs/react/data/subscriptions#subscriptions-via-multipart-http)
+
+```sh npm2yarn
+npm install @apollo/client graphql rxjs
+```
+
+```ts
+import { ApolloClient, gql, HttpLink, InMemoryCache } from "@apollo/client";
+
+const client = new ApolloClient({
+  link: new HttpLink({ uri: "http://localhost:4000/graphql" }),
+  cache: new InMemoryCache(),
+});
+
+client
+  .subscribe({
+    query: gql`
+      subscription {
+        reviewAdded {
+          body
+          rating
+          product {
+            name
+          }
+          author {
+            name
+          }
+        }
+      }
+    `,
+  })
+  .forEach((data) => {
+    console.log(data);
+  });
+```
+
+### Relay
+
+We recommend using [Incremental Delivery over HTTP with Relay instead](/docs/router/subscriptions/incremental-delivery#relay).
+
+### urql
+
+We recommend using [Incremental Delivery over HTTP with urql instead](/docs/router/subscriptions/incremental-delivery#urql).

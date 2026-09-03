@@ -1,0 +1,99 @@
+---
+title: "http"
+---
+
+The `http` configuration object allows you to customize the network interface and port that the Hive
+Router listens on for incoming GraphQL requests.
+
+## Options
+
+### `host`
+
+- **Type:** `string`
+- **Default:** `"0.0.0.0"`
+- **Environment Variable:** `HOST`
+
+The `host` property specifies the IP address to which the router's HTTP server will bind.
+
+- `"0.0.0.0"`: Binds to all available network interfaces. This is the standard for services running
+  inside containers.
+- `"127.0.0.1"` or `"localhost"`: Binds only to the local loopback interface, meaning the router
+  will only be accessible from the same machine.
+
+### `port`
+
+- **Type:** `integer`
+- **Default:** `4000`
+- **Environment Variable:** `PORT`
+
+The `port` property specifies the network port that the router will listen on. Ensure this port is
+not already in use by another service on the same host. When running in a container, this is the
+port you will need to expose.
+
+### `workers`
+
+- **Type:** `integer`
+- **Default:** Number of physical CPU cores
+- **Environment Variable:** `ROUTER_HTTP_WORKERS`
+
+The `workers` property controls the number of HTTP server worker threads.
+
+In containerized environments (for example, Kubernetes), the number of physical CPU cores reported
+by the host can be higher than the CPU limit assigned to your container. Set `workers` to match your
+container CPU limit to avoid oversubscribed worker threads.
+
+### `graphql_endpoint`
+
+- **Type:** `string`
+- **Default:** `/graphql`
+
+The `graphql_endpoint` property specifies the URL path at which the router will expose its GraphQL
+API.
+
+You may also use `/graphql/{wildcard}` if you wish to capture nested paths within the same request,
+or `/graphql/{tail}*` to capture any remaining path segments.
+
+Any named path parameters captured by the pattern (for example, `tenant` in
+`graphql_endpoint: /{tenant}/graphql`) are exposed to [expressions](./expressions) as
+`.request.path_params`, and to plugins through `RouterHttpRequest.match_info`. See
+[Dynamic Subgraph Routing](/docs/router/guides/dynamic-subgraph-routing#multi-tenant-routing-with-path-parameters)
+for an example.
+
+### `shutdown_timeout`
+
+- **Type:** `string`
+- **Default:** `30s`
+- **Environment Variable:** `ROUTER_HTTP_SHUTDOWN_TIMEOUT`
+
+How long the HTTP server waits for in-flight requests to finish after receiving `SIGTERM`, before
+remaining connections are force-dropped, in duration string format (e.g. `90s`, `1m30s`). Applies to
+both the main server and the dedicated subscription callback server.
+
+Set this above
+[`traffic_shaping.router.request_timeout`](./traffic_shaping#routerrequest_timeout) so the longest
+request the router accepts can still finish during a drain. When running under an orchestrator, the
+platform's own grace period (for example Kubernetes' `terminationGracePeriodSeconds`) must in turn
+exceed `shutdown_timeout`, otherwise the process is killed before the drain completes.
+
+```yaml title="router.config.yaml"
+http:
+  shutdown_timeout: 90s
+
+traffic_shaping:
+  router:
+    request_timeout: 85s
+```
+
+## Example
+
+This example configures the router to listen only on the localhost interface on port `8080`, use `4`
+HTTP workers, and expose GraphQL on path `/my_graphql_router`, so it will accept GraphQL requests on
+`http://127.0.0.1:8080/my_graphql_router`.
+
+```yaml title="router.config.yaml"
+http:
+  host: "127.0.0.1"
+  port: 8080
+  workers: 4
+  graphql_endpoint: /my_graphql_router
+```

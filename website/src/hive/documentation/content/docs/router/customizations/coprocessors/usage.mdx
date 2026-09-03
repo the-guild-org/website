@@ -1,0 +1,252 @@
+---
+title: "Writing a Coprocessor"
+sidebarTitle: "Usage"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+import { Step, Steps } from "#mdx-shims/steps";
+
+This guide walks you through creating your first coprocessor service and connecting it to Hive
+Router.
+
+At the end, you will have a working setup where Hive Router calls your external service during
+request processing, and your service can either continue the request or stop it early with a custom
+response.
+
+## Before you start
+
+You need three things:
+
+- a running Hive Router
+- a valid `supergraph.graphql`
+- a small HTTP service that accepts and returns JSON
+
+If you do not have a supergraph yet, you can use a test supergraph:
+
+```bash
+curl -sSL https://federation-demo.theguild.workers.dev/supergraph.graphql > supergraph.graphql
+```
+
+## Build your first coprocessor
+
+<Steps>
+<Step>
+
+### Create a local service
+
+Hive Router sends a JSON payload with fields like `version`, `stage`, `control`, and optional
+request data. Your service should return JSON with at least:
+
+```json title="Minimal required response"
+{
+  "version": 1,
+  "control": "continue"
+}
+```
+
+This tells the router to continue processing.
+
+<Callout title="Strict contract" type="note">
+  Return `OK 200` with valid JSON. Invalid responses are treated as coprocessor
+  failures.
+</Callout>
+
+Let's start by creating a small service in any language. It must expose one HTTP endpoint, for example
+`POST /coprocessor`.
+
+For local testing, run it on `http://127.0.0.1:8081/coprocessor`.
+
+```go title="Example coprocessor service written in Go"
+package main
+
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+)
+
+type CoprocessorRequest struct {
+	Version int                    `json:"version"`
+	Stage   string                 `json:"stage"`
+	Headers map[string]string      `json:"headers,omitempty"`
+	Context map[string]interface{} `json:"context,omitempty"`
+}
+
+type CoprocessorResponse struct {
+	Version int                    `json:"version"`
+	Control interface{}            `json:"control"`
+	Headers map[string]string      `json:"headers,omitempty"`
+	Body    interface{}            `json:"body,omitempty"`
+	Context map[string]interface{} `json:"context,omitempty"`
+}
+
+func main() {
+	http.HandleFunc("/coprocessor", handleCoprocessor)
+
+	log.Println("Coprocessor running on http://127.0.0.1:8081/coprocessor")
+	log.Fatal(http.ListenAndServe("127.0.0.1:8081", nil))
+}
+
+func handleCoprocessor(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.NotFound(w, r)
+		return
+	}
+
+	var payload CoprocessorRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		writeJSON(w, CoprocessorResponse{
+			Version: 1,
+			Control: "continue",
+		})
+		return
+	}
+
+	log.Printf("Received coprocessor stage: %s", payload.Stage)
+
+	writeJSON(w, CoprocessorResponse{
+		Version: 1,
+		Control: "continue",
+	})
+}
+
+func writeJSON(w http.ResponseWriter, response CoprocessorResponse) {
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Printf("failed to write response: %v", err)
+	}
+}
+```
+
+The example coprocessor handles the `router.request` stage. It checks whether the incoming request (inbound request to Hive Router instance) includes an `Authorization` header. If the header is present, it adds `"auth.checked": true` to the `context`. If not, it stops the request early with a `401 Unauthorized` response.
+
+</Step>
+<Step>
+
+### Configure Hive Router to call your service
+
+Right now, Hive Router is not configured to send anything to the coprocessor.
+Next step is to add `coprocessor` to the config file:
+
+```yaml title="router.config.yaml"
+supergraph:
+  source: file
+  path: ./supergraph.graphql
+
+coprocessor:
+  url: http://127.0.0.1:8081/coprocessor
+  protocol: http1
+  timeout: 1s
+  stages:
+    router:
+      request:
+        include:
+          headers: true
+```
+
+This enables one stage (`router.request`) and sends `headers` to your service.
+
+<Callout type="tip">
+  To modify `context`, you don't have to set `context: true` in `include`. The
+  same applies to `headers` or `body`.
+</Callout>
+
+</Step>
+<Step>
+
+### Run Router and validate the call path
+
+Start Hive Router and send any GraphQL request.
+
+If everything is connected, your coprocessor service should receive one JSON payload for each
+request that reaches `router.request`.
+
+</Step>
+<Step>
+
+### Add an early auth gate with `control.break`
+
+Now implement a simple policy in your service:
+
+- if `authorization` header exists, return `continue` and add `"auth.checked": true` to the context.
+- if it is missing, return `break`
+
+Example break response:
+
+```json title="Example response"
+{
+  "version": 1,
+  "control": { "break": 401 },
+  "headers": {
+    "content-type": "application/json"
+  },
+  "body": {
+    "errors": [{ "message": "Unauthorized" }]
+  }
+}
+```
+
+```go title="Example coprocessor service written in Go"
+func handleCoprocessor(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.NotFound(w, r)
+		return
+	}
+
+	var payload CoprocessorRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		writeJSON(w, CoprocessorResponse{
+			Version: 1,
+			Control: "continue",
+		})
+		return
+	}
+
+	log.Printf("Received coprocessor stage: %s", payload.Stage)
+
+	// Short-circuit with 401 Unauthorized when "Authorization" header is not set. 	// [!code ++]
+	if payload.Headers["authorization"] == "" { 																		// [!code ++]
+		writeJSON(w, CoprocessorResponse{ 																						// [!code ++]
+			Version: 1, 																																// [!code ++]
+			Control: map[string]int{ 																										// [!code ++]
+				"break": http.StatusUnauthorized, 																				// [!code ++]
+			}, 																																					// [!code ++]
+			Headers: map[string]string{ 																								// [!code ++]
+				"content-type": "application/json", 																			// [!code ++]
+			}, 																																					// [!code ++]
+			Body: map[string]interface{}{ 																							// [!code ++]
+				"errors": []map[string]string{ 																						// [!code ++]
+					{"message": "Unauthorized"}, 																						// [!code ++]
+				}, 																																				// [!code ++]
+			}, 																																					// [!code ++]
+		}) 																																						// [!code ++]
+		return 																																				// [!code ++]
+	} 																																							// [!code ++]
+
+	// Otherwise insert `"auth.checked": true` to context.													// [!code ++]
+	writeJSON(w, CoprocessorResponse{
+		Version: 1,
+		Control: "continue",
+		Context: map[string]interface{}{																							// [!code ++]
+			"auth.checked": true,																												// [!code ++]
+		},																																						// [!code ++]
+	})
+}
+```
+
+This stops the pipeline and returns your response to the client immediately.
+
+</Step>
+</Steps>
+
+## Operate it safely in production
+
+Because coprocessors are in the request path, treat them like any critical service:
+
+- set a strict timeout
+- monitor request rate, latency, and error rate per stage
+- use traces and structured logs to debug failures quickly

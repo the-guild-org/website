@@ -1,10 +1,28 @@
-/* Instrument Sans (OFL), self-hosted variable weights 400-700 */
-@import '@fontsource-variable/instrument-sans';
-@import '@fontsource-variable/instrument-sans/wght-italic.css';
+/* The Hive site (src/hive + src/pages/graphql/hive) has its own stylesheet
+   and theme; keep its sources out of this one. */
+@import 'tailwindcss' source('../..');
+@source not '../hive';
+@source not '../pages/graphql/hive';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
+  --font-sans: 'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --container-shell: 1180px;
+  --animate-blink: blink 1.35s steps(1, end) infinite;
+
+  @keyframes blink {
+    0%,
+    44% {
+      opacity: 0.9;
+    }
+    45%,
+    100% {
+      opacity: 0;
+    }
+  }
+}
 
 :root {
   color-scheme: light;
@@ -56,7 +74,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: theme('fontFamily.sans');
+  font-family: var(--font-sans);
   line-height: 1.6;
   letter-spacing: -0.006em;
   -webkit-font-smoothing: antialiased;

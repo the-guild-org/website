@@ -1,0 +1,62 @@
+---
+title: Subgraph Error Masking in Hive Router
+description:
+  Hive Router now masks subgraph errors by default, preventing internal details from leaking to
+  clients while keeping the original errors in your logs and traces.
+date: 2026-07-26
+authors: [dotan]
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+[Hive Router](/docs/router) now includes **Subgraph Error Masking**. Subgraphs are internal
+services, so their errors often carry detail that is useful for debugging but unsafe to expose:
+stack traces, internal hostnames, database messages, or upstream HTTP bodies. The router now
+rewrites these errors into a safe, generic form before they reach clients.
+
+Because the router masks on their behalf, your subgraphs no longer need to sanitize their own errors
+
+- they can return rich, detailed errors, and trust the router to redact them at the edge.
+
+<Callout type="info">
+  Masking runs **last** in the pipeline - after metrics, tracing, and logging.
+  Your observability tools always see the original, unmasked error; only the
+  client-facing response is redacted.
+</Callout>
+
+## Enabled by Default
+
+Out of the box, every subgraph error message is replaced with `"Unexpected error"`. No configuration
+is required, and no internal message reaches clients unless you opt out.
+
+```yaml title="router.config.yaml"
+error_masking:
+  enabled: true # on by default
+  redacted_error_message: "Unexpected error" # customize the message
+```
+
+## Redact Extensions and Override Per Subgraph
+
+Beyond the message, you can control which `extensions` keys reach clients with an `allow`/`deny`
+list, and override any setting for individual subgraphs - inheriting whatever you don't set.
+
+```yaml title="router.config.yaml"
+error_masking:
+  all:
+    enabled: true
+    extensions:
+      mode: allow # keep only these keys
+      keys:
+        - code
+  subgraphs:
+    products:
+      enabled: false # trust this internal subgraph's messages
+```
+
+To disable masking during local debugging without editing config, set
+`DISABLE_SUBGRAPH_ERROR_MASKING=true`.
+
+---
+
+- [Error Masking guide](/docs/router/security/error-masking)
+- [`error_masking` configuration reference](/docs/router/configuration/error_masking)

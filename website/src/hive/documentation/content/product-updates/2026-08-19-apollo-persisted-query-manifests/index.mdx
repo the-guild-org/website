@@ -1,0 +1,58 @@
+---
+title: Apollo Persisted Query Manifests in Hive CLI
+description:
+  Create Hive App Deployments directly from Apollo persisted query manifest files without converting
+  them to another format.
+date: 2026-08-19
+authors: [laurin]
+---
+
+The Hive CLI now accepts [Apollo persisted query manifest](https://www.apollographql.com/docs/react/data/persisted-queries#1-generate-operation-manifests) files when pushing persisted documents to an [App Deployment](/docs/schema-registry/app-deployments).
+
+## Why Persisted Documents/Queries?
+
+Persisted documents let clients send a compact operation ID instead of the full GraphQL document.
+With Hive App Deployments, you can publish those documents to the Hive CDN, restrict your GraphQL Gateway/API to
+known operations, track operations by app version, and include active app deployments in breaking
+change checks.
+
+## Publishing Apollo Persisted Query Manifests
+
+If your build already generates an Apollo manifest, upload it as an App Deployment and publish it
+before releasing your app to make the persisted documents available to your gateway or server.
+
+Pass the generated manifest directly to `hive app:create`:
+
+```bash
+hive app:create \
+  --registry.accessToken "<ACCESS_TOKEN>" \
+  --target "<ORGANIZATION>/<PROJECT>/<TARGET>" \
+  --name "my-app" \
+  --version "1.0.0" \
+  persisted-query-manifest.json
+```
+
+Hive reads each operation's `id` and `body` from version 1 of the
+`apollo-persisted-query-manifest` format. Existing operation IDs are preserved, so no intermediate
+conversion to the GraphQL Code Generator or Relay manifest format is required.
+
+```json title="persisted-query-manifest.json"
+{
+  "format": "apollo-persisted-query-manifest",
+  "version": 1,
+  "operations": [
+    {
+      "id": "e50da5010bca3f3ea824008ff6d885e7a877936c5834705e55c7fd0f1e0be47b",
+      "body": "query GetProduct { product { id name } }",
+      "name": "GetProduct",
+      "type": "query"
+    }
+  ]
+}
+```
+
+---
+
+- [App Deployments documentation](/docs/schema-registry/app-deployments)
+- [Hive CLI `0.62.0` Release Notes](https://github.com/graphql-hive/console/releases#release-@graphql-hive/cli@0.62.0)
+- [Hive CLI documentation](/docs/api-reference/cli)

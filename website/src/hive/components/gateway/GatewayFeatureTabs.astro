@@ -1,0 +1,151 @@
+---
+import { withBase } from "../../lib/base-path";
+import GatewayMarqueeRows from "./GatewayMarqueeRows.astro";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+const tabs = [
+  {
+    documentationLink: "/docs/gateway/monitoring-tracing",
+    documentationText: "Learn more",
+    highlights: [
+      {
+        description:
+          "Equip your teams with comprehensive tools for monitoring API health, performance, and usage patterns, crucial for maintaining operational excellence.",
+        title: "Open Telemetry & Prometheus Integration",
+      },
+      {
+        description:
+          "Enhances response times and reduces load on backend services by intelligently caching frequent requests.",
+        title: "Response Caching",
+      },
+      {
+        description:
+          "Protects your API from overload and abuse, ensuring consistent and reliable service performance.",
+        title: "Rate Limiting",
+      },
+      {
+        description:
+          "Navigate and analyze the connections within your GraphQL schema using Schema Explorer.",
+        title: "Schema Explorer",
+      },
+    ],
+    title: "Observability & Performance Monitoring",
+  },
+  {
+    documentationLink: "/docs/gateway/other-features/custom-plugins",
+    documentationText: "Learn more about plugins",
+    highlights: [
+      {
+        description:
+          "Provides secure user identification and role-based access control, crucial for protecting sensitive data and operations.",
+        title: "JWT Authentication & Authorization",
+      },
+      {
+        description:
+          "Allows only pre-registered GraphQL operations to be executed, safeguarding against arbitrary and potentially harmful requests.",
+        title: "Persisted Operations",
+      },
+      {
+        description:
+          "Prevents unauthorized access with powerful, centralized policies at the gateway level, reducing the risk of security breaches.",
+        title: "Fine-grained Access Control",
+      },
+      {
+        description:
+          "Shields against common web security vulnerabilities, securing your applications from unauthorized inter-domain interactions.",
+        title: "CORS and CSRF Prevention",
+      },
+    ],
+    title: "Security & Access Control",
+  },
+] as const;
+---
+
+<section
+  class:list={[
+    "border-beige-400 isolate mx-auto w-312 max-w-full rounded-3xl bg-white [--tab-bg-dark:var(--color-blue-300)] [--tab-bg:var(--color-blue-200)] sm:max-w-[calc(100%-4rem)] sm:border md:p-6",
+    className,
+  ]}
+>
+  <div
+    class="feature-tablist group relative z-10 mx-4 my-6 flex flex-col overflow-hidden focus-within:overflow-visible max-sm:h-14.5 max-sm:focus-within:pointer-events-none max-sm:focus-within:rounded-b-none max-sm:focus-within:has-[>:nth-child(2)[aria-selected=true]]:-translate-y-full sm:flex-row sm:rounded-2xl sm:bg-(--tab-bg) md:mx-0 md:mb-12 md:mt-0"
+    role="tablist"
+  >
+    {tabs.map((tab, i) => (
+      <button
+        class="hive-focus aria-selected:text-green-1000 aria-selected:border-(--tab-bg-dark) aria-selected:bg-white max-sm:aria-[selected=false]:hidden group-focus-within:aria-[selected=false]:flex max-sm:aria-[selected=false]:rounded-none max-sm:group-focus-within:aria-[selected=false]:border-y-(--tab-bg) max-sm:aria-[selected=false]:pointer-events-none max-sm:aria-[selected=false]:group-focus-within:pointer-events-auto z-10 flex flex-1 items-center justify-center gap-2.5 rounded-lg border-transparent p-4 text-base/6 font-medium text-green-800 max-sm:border max-sm:border-(--tab-bg-dark) max-sm:bg-(--tab-bg) max-sm:group-focus-within:aria-selected:z-20 max-sm:group-focus-within:aria-selected:ring-4 sm:rounded-[15px] sm:border sm:text-xs sm:max-lg:p-3 sm:max-[721px]:p-2 md:text-sm lg:text-base [&>svg]:shrink-0"
+        data-feature-tab={tab.title}
+        role="tab"
+        type="button"
+        aria-selected={i === 0 ? "true" : "false"}
+      >
+        {i === 0 && (
+          <svg fill="currentColor" height="24" width="24"><path d="M5 3v16h16v2H3V3h2Zm15.293 3.293 1.414 1.414L16 13.414l-3-2.999-4.293 4.292-1.414-1.414L13 7.586l3 2.999 4.293-4.292Z" /></svg>
+        )}
+        {i === 1 && (
+          <svg fill="currentColor" height="24" width="25"><path d="m12.5 1 8.217 1.826c.2221.04936.4207.17297.563.3504.1424.17744.22.39812.22.6256v9.987c-.0001.9877-.244 1.9602-.7101 2.831-.4661.8708-1.14 1.6131-1.9619 2.161L12.5 23l-6.328-4.219c-.82173-.5478-1.49554-1.2899-1.96165-2.1605-.46611-.8707-.71011-1.8429-.71035-2.8305V3.802c.00004-.22748.07764-.44816.21999-.6256.14235-.17743.34095-.30104.56301-.3504L12.5 1Zm0 2.049-7 1.555v9.185c.00001.6585.16257 1.3067.47326 1.8873.31069.5805.75989 1.0754 1.30774 1.4407l5.219 3.48 5.219-3.48c.5477-.3652.9968-.8599 1.3075-1.4403.3107-.5803.4733-1.2284.4735-1.8867V4.604l-7-1.555ZM12.5 7c.4403-.0002.8684.14492 1.2179.41286.3494.26794.6007.64371.7147 1.06901.1141.42531.0846.87637-.0838 1.28322-.1685.40681-.4665.74671-.8478.96691L13.5 15h-2v-4.268c-.3813-.2201-.6792-.5599-.8477-.96668-.1685-.40675-.198-.85771-.0841-1.28296.114-.42526.3651-.80103.7143-1.06904.3493-.26802.7772-.4133 1.2175-.41332Z" /></svg>
+        )}
+        {i === 0 ? (
+          <span>Observability & Performance <span class="[@media(width<420px)]:hidden">Monitoring</span></span>
+        ) : (
+          <span>{tab.title}</span>
+        )}
+        <svg class="ml-auto size-6 text-green-800 transition group-focus-within:rotate-90 sm:hidden" fill="none" height="15" viewBox="0 0 15 15" width="15" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path clip-rule="evenodd" d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" />
+        </svg>
+      </button>
+    ))}
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2">
+    {tabs.map((tab, i) => (
+      <div class="feature-panel data-hidden:hidden" data-feature-panel={tab.title} data-hidden={i === 0 ? undefined : "true"} tabindex={-1}>
+        <div class="flex flex-col gap-6 px-4 pb-4 md:gap-12 md:px-8 md:pb-12">
+          <header class="flex flex-wrap items-center gap-4 md:flex-col md:items-start md:gap-6">
+            <h2 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] text-green-1000 max-sm:text-2xl/8">{tab.title}</h2>
+          </header>
+          <dl class="grid grid-cols-2 gap-4 md:gap-12">
+            {tab.highlights.map((highlight) => (
+              <div class="hover:bg-beige-100 -m-2 rounded-lg p-2 md:-m-4 md:rounded-xl md:p-4">
+                <dt class="text-green-1000 font-medium">{highlight.title}</dt>
+                <dd class="mt-2 text-sm/5 text-green-800">{highlight.description}</dd>
+              </div>
+            ))}
+          </dl>
+          <a
+            class="relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 focus-visible:outline focus-visible:ring-0 focus-visible:ring-offset-0 sm:w-fit bg-primary hover:bg-green-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800"
+            href={withBase(tab.documentationLink)}
+          >
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            {tab.documentationText}
+            <span class="sr-only">about {tab.title}</span>
+            <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z"></path></svg>
+          </a>
+        </div>
+      </div>
+    ))}
+
+    <GatewayMarqueeRows class="[--pill-bg-hover:#fff] [--pill-bg:#fff] [--pill-text-hover:var(--color-blue-600)] [--pill-text:var(--color-blue-400)] max-lg:hidden" />
+  </div>
+</section>
+
+<script>
+  const tabButtons = document.querySelectorAll<HTMLButtonElement>("[data-feature-tab]");
+  const panels = document.querySelectorAll<HTMLElement>("[data-feature-panel]");
+
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const tab = button.dataset.featureTab;
+      tabButtons.forEach((item) => item.setAttribute("aria-selected", String(item === button)));
+      panels.forEach((panel) => {
+        if (panel.dataset.featurePanel === tab) delete panel.dataset.hidden;
+        else panel.dataset.hidden = "true";
+      });
+    });
+  });
+</script>

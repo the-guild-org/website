@@ -1,0 +1,23 @@
+---
+interface Props {
+  class?: string;
+  image: string;
+  mobileImage?: string;
+}
+
+const { class: className, image, mobileImage } = Astro.props;
+const isVideo = image.endsWith(".webm") || image.endsWith(".mp4");
+---
+
+{
+  isVideo ? (
+    <video autoplay class:list={["h-[324px] overflow-hidden object-cover sm:rounded-2xl", className]} loop muted playsinline src={image} />
+  ) : mobileImage ? (
+    <picture class:list={["h-[324px] overflow-hidden object-cover sm:rounded-2xl", className]}>
+      <source media="(max-width: 640px)" srcset={mobileImage} />
+      <img alt="" class:list={["h-[324px] overflow-hidden object-cover sm:rounded-2xl", className]} height="324" loading="eager" src={image} width="1392" />
+    </picture>
+  ) : (
+    <img alt="" class:list={["h-[324px] overflow-hidden object-cover sm:rounded-2xl", className]} height="324" loading="eager" src={image} width="1392" />
+  )
+}

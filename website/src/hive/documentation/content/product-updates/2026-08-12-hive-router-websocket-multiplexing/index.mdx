@@ -1,0 +1,87 @@
+---
+title: WebSocket Connection Multiplexing in Hive Router
+description:
+  Hive Router now multiplexes subscriptions over shared, pooled WebSocket connections to
+  subgraphs instead of opening one connection per subscription, and can optionally route queries
+  and mutations over that same pool.
+date: 2026-08-13
+authors: [denis]
+---
+
+[Hive Router](/docs/router) now multiplexes GraphQL operations over shared `graphql-transport-ws`
+subgraph connections. Subscriptions with the same subgraph, resolved WebSocket endpoint, and
+inbound connection identity reuse **one initialized connection** instead of each opening a
+dedicated WebSocket, while still keeping independent GraphQL operation streams.
+
+This was previously the biggest gap in our WebSocket support: a client with 10 active
+subscriptions to the same subgraph produced 10 separate physical connections to that subgraph,
+even when every subscription came from the same user session.
+
+## Connection reuse is on by default
+
+Subscriptions to the same [WebSocket-enabled subgraph](/docs/router/subscriptions/websockets)
+multiplex automatically - no configuration is required:
+
+```yaml title="router.config.yaml"
+subscriptions:
+  enabled: true
+  websocket:
+    subgraphs:
+      reviews:
+        path: /reviews/ws
+```
+
+With this alone, matching subscriptions to `reviews` now share one pooled connection instead of
+opening a new one per subscription. Set `reuse_connections: false` under
+`traffic_shaping.all.websocket` (or per subgraph) if you need to restore the previous
+one-connection-per-subscription behavior.
+
+## Queries and mutations can join the pool too
+
+Beyond GraphQL `subscription`s, `execute_mode` controls whether queries and mutations can also use a pooled
+WebSocket connection instead of always going over HTTP:
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    websocket:
+      reuse_connections: true # default
+      execute_mode: reuse_existing # default is "http"
+```
+
+- **`http`** (default) - queries and mutations always use HTTP. Nothing changes for them; only
+  subscriptions pool their connections.
+- **`reuse_existing`** - queries and mutations use an already-initialized matching WebSocket
+  connection when one exists, and fall back to HTTP otherwise. This never opens a new connection
+  or waits for a handshake, so a request is never delayed by WebSocket setup.
+- **`websocket`** - queries and mutations always use WebSocket, initializing or joining a pooled
+  connection when reuse is enabled. The first operation for an identity initializes the
+  connection; concurrent operations join that initialization instead of racing to open duplicate
+  connections.
+
+Once an operation is sent over WebSocket, transport failures and timeouts are returned to the
+client without retrying over HTTP - this avoids executing a mutation twice after an uncertain
+send.
+
+Settings can be overridden per subgraph, inheriting anything omitted from the global default:
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    pool_idle_timeout: 50s
+    websocket:
+      reuse_connections: true
+      execute_mode: reuse_existing
+  subgraphs:
+    payments:
+      pool_idle_timeout: 5s
+      websocket:
+        reuse_connections: false
+        execute_mode: websocket
+```
+
+---
+
+- [WebSockets guide](/docs/router/subscriptions/websockets#connection-reuse-and-execution-mode)
+- [`traffic_shaping.websocket` configuration reference](/docs/router/configuration/traffic_shaping#websocket-router--subgraphs)
+- [WebSocket pool metrics reference](/docs/router/observability/metrics#websocket-connection-pool)

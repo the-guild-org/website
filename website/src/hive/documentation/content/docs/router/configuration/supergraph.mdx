@@ -1,0 +1,407 @@
+---
+title: "supergraph"
+---
+
+The `supergraph` configuration tells the router where to find your federated supergraph schema. This
+schema is the blueprint of your entire federated graph - it contains information about all your
+subgraphs and how they connect together.
+
+> For additional information about the supergraph loading and reloading process in Hive Router, see
+> [Supergraph page](/docs/router/supergraph).
+
+## Hive Console
+
+### `source`
+
+- **Type:** `string`
+- **Value:** `"hive"`
+
+Load the Supergraph schema from [Hive Console](/docs/schema-registry) CDN.
+
+### `endpoint`
+
+- **Type:** `string` or `string[]`
+- **Required:** Yes
+- **Environment Variable:** `HIVE_CDN_ENDPOINT`
+
+The [_Hive CDN Endpoint_](/docs/schema-registry/get-started/apollo-federation#cdn-access) of your
+target.
+
+```yaml {3}title="router.config.yaml"
+supergraph:
+  source: hive
+  endpoint: https://cdn.graphql-hive.com/artifacts/v1/...
+  # ...
+```
+
+#### Multiple endpoints
+
+You can provide multiple endpoints as an array of strings. This allows the router to use fallback
+endpoints in case of a possible unavailability of the main CDN endpoint. The order matters; the
+router will always try to fetch the supergraph from the first endpoint, and if it fails, it will
+move on to the next one.
+
+```yaml {3}title="router.config.yaml"
+supergraph:
+  source: hive
+  endpoint:
+    - https://cdn.graphql-hive.com/artifacts/v1/... # Main CDN endpoint
+    - https://cdn-mirror.graphql-hive.com/artifacts/v1/... # Fallback CDN endpoint
+  # ...
+```
+
+If you provide the endpoints using `HIVE_CDN_ENDPOINT` environment variable, separate them with a
+comma:
+
+```bash
+HIVE_CDN_ENDPOINT=https://cdn.graphql-hive.com/artifacts/v1/...,https://cdn-mirror.graphql-hive.com/artifacts/v1/...
+```
+
+> Learn more about
+> [CDN Mirrors in Hive Console](/docs/schema-registry/high-availability-cdn#cdn-mirrors).
+
+### `key`
+
+- **Type:** `string`
+- **Required:** Yes
+- **Environment Variable:** `HIVE_CDN_KEY`
+
+The [_Hive CDN key/token_](/docs/schema-registry/management/targets#creating-a-cdn-access-token) of
+your target.
+
+```yaml {4}title="router.config.yaml"
+supergraph:
+  source: hive
+  # ...
+  key: hvABCD
+```
+
+### `poll_interval`
+
+- **Type:** `string`
+- **Required:** No
+- **Default:** `10s`
+- **Environment Variable:** `HIVE_CDN_POLL_INTERVAL`
+
+A human-readable string representing the interval at which the router should poll Hive CDN for
+changes.
+
+```yaml {4}title="router.config.yaml"
+supergraph:
+  source: hive
+  # ...
+  poll_interval: 10s
+```
+
+### `request_timeout`
+
+- **Type:** `string`
+- **Required:** No
+- **Default:** `60s`
+
+A human-readable string representing the request timeout for Hive CDN requests.
+
+```yaml {4}title="router.config.yaml"
+supergraph:
+  source: hive
+  # ...
+  request_timeout: 60s
+```
+
+### `connect_timeout`
+
+- **Type:** `string`
+- **Required:** No
+- **Default:** `10s`
+
+A human-readable string representing the connection timeout for Hive CDN requests.
+
+```yaml {4}title="router.config.yaml"
+supergraph:
+  source: hive
+  # ...
+  connect_timeout: 10s
+```
+
+### `retry_policy`
+
+- **Type:** `{ max_retries: number }`
+- **Required:** No
+- **Default:** `{ max_retries: 10 }`
+
+Max retries amount for Hive CDN requests. Exponential backoff is used to calculate the delay between
+retries.
+
+```yaml {4-5}title="router.config.yaml"
+supergraph:
+  source: hive
+  # ...
+  retry_policy:
+    max_retries: 10
+```
+
+### `accept_invalid_certs`
+
+- **Type:** `boolean`
+- **Required:** No
+- **Default:** `false`
+
+If set to `true`, allows accepting invalid TLS certificates when connecting to Hive CDN. Useful for
+development or testing environments.
+
+```yaml {4}title="router.config.yaml"
+supergraph:
+  source: hive
+  # ...
+  accept_invalid_certs: false
+```
+
+## Apollo GraphOS
+
+Load the Supergraph schema from [Apollo GraphOS](https://www.apollographql.com/docs/graphos/platform)'s
+managed federation Uplink. Useful when your supergraph is already published to Apollo GraphOS and
+you want to run Hive Router in place of Apollo Router without changing how you publish schemas.
+
+### `source`
+
+- **Type:** `string`
+- **Value:** `"apollo_graphos"`
+
+Load the Supergraph schema from Apollo GraphOS's managed federation Uplink.
+
+### `graph_ref`
+
+- **Type:** `string`
+- **Required:** Yes
+- **Environment Variable:** `APOLLO_GRAPH_REF`
+
+The graph ref of your managed federation graph, in the `<GRAPH_ID>@<VARIANT>` format (for example
+`my-graph@production`).
+
+```yaml {3}title="router.config.yaml"
+supergraph:
+  source: apollo_graphos
+  graph_ref: my-graph@production
+  # ...
+```
+
+### `key`
+
+- **Type:** `string`
+- **Required:** Yes
+- **Environment Variable:** `APOLLO_KEY`
+
+Your Apollo API key, with at least the `service:read` permission.
+
+```yaml {4}title="router.config.yaml"
+supergraph:
+  source: apollo_graphos
+  graph_ref: my-graph@production
+  key: service:my-graph:xxxxxxxxxx
+```
+
+### `endpoint`
+
+- **Type:** `string` or `string[]`
+- **Required:** No
+- **Default:** Apollo's GCP and AWS Uplink endpoints, in that order
+- **Environment Variable:** `APOLLO_UPLINK_ENDPOINTS`
+
+The Apollo Uplink endpoint(s) to poll. The order matters: the router always tries the first
+endpoint, and only moves on to the next one if that attempt fails - matching Apollo Router's own
+behavior.
+
+```yaml {4-6}title="router.config.yaml"
+supergraph:
+  source: apollo_graphos
+  graph_ref: my-graph@production
+  endpoint:
+    - https://uplink.api.apollographql.com/
+    - https://aws.uplink.api.apollographql.com/
+```
+
+If you provide the endpoints using the `APOLLO_UPLINK_ENDPOINTS` environment variable, separate
+them with a comma.
+
+### `timeout`
+
+- **Type:** `string`
+- **Required:** No
+- **Default:** `30s`
+
+A human-readable string representing the request timeout for a single call to Apollo Uplink.
+
+```yaml {4}title="router.config.yaml"
+supergraph:
+  source: apollo_graphos
+  # ...
+  timeout: 30s
+```
+
+### `accept_invalid_certs`
+
+- **Type:** `boolean`
+- **Required:** No
+- **Default:** `false`
+
+If set to `true`, allows accepting invalid TLS certificates when connecting to Apollo Uplink.
+Useful for development or testing environments.
+
+```yaml {4}title="router.config.yaml"
+supergraph:
+  source: apollo_graphos
+  # ...
+  accept_invalid_certs: false
+```
+
+### Polling behavior
+
+Unlike the other network sources, there is no `poll_interval` option to set. Apollo Uplink tells
+the router how long to wait before polling again on every response, and the router honors that
+value - this matches how Apollo Router itself polls Uplink. Before the first successful response,
+the router polls every `10s`.
+
+## Plugin
+
+Use a router plugin as the source of every request's supergraph. This mode creates no configured
+loader or fallback supergraph.
+
+```yaml title="router.config.yaml"
+supergraph:
+  source: plugin
+```
+
+### `source`
+
+- **Type:** `string`
+- **Value:** `"plugin"`
+
+The plugin must call `OnHttpRequestHookPayload::set_supergraph` for every GraphQL request that needs
+one. The same applies to readiness requests, which pass through `on_http_request`. Health checks
+remain process-liveness checks and do not require a supergraph.
+
+Without a selected supergraph:
+
+- GraphQL requests return HTTP `503` with the `NO_SUPERGRAPH_AVAILABLE` error code.
+- Readiness returns HTTP `503`.
+- WebSocket upgrades are accepted, then closed with `No supergraph available yet` so browser clients
+  can observe the reason.
+
+See [Selecting a supergraph in `on_http_request`](/docs/router/customizations/plugin-system/hooks#select-a-supergraph-for-the-request-toc)
+and the
+[`feature_flags`](https://github.com/graphql-hive/router/tree/main/plugin_examples/feature_flags)
+example for a complete plugin-only setup.
+
+## Filesystem
+
+The most straightforward way to provide your supergraph schema is as a local file. This works well
+for development and production deployments where you manage the schema file directly.
+
+### `source`
+
+- **Type:** `string`
+- **Value:** `"file"`
+
+Load the schema from a local file.
+
+### `path`
+
+- **Type:** `string`
+- **Required:** Yes
+- **Environment Variable:** `SUPERGRAPH_FILE_PATH`
+
+Path to your supergraph schema file. Can be absolute or relative to where you're running the router.
+
+```yaml {3}title="router.config.yaml"
+supergraph:
+  source: file
+  path: ./supergraph.graphql
+```
+
+This loads the schema from a file called `supergraph.graphql` in the same directory as your config
+file.
+
+### `poll_interval`
+
+- **Type:** `string`
+- **Required:** No
+- **Default:** disabled
+
+A human-readable string representing the interval at which the router should poll the file for
+changes.
+
+The reloading process depends on the file system's ability to detect changes based on the
+file-system metadata (modified-at attribute).
+
+```yaml {4}title="router.config.yaml"
+supergraph:
+  source: file
+  path: ./supergraph.graphql
+  poll_interval: 10s
+```
+
+## Storage
+
+Load the supergraph schema from a named [storage backend](/docs/router/configuration/storages) such
+as Amazon S3 or any S3-compatible service (Cloudflare R2, MinIO, LocalStack, etc.).
+
+This is useful when you publish supergraphs as artifacts in object storage from your CI pipeline and
+want the router to pick up new versions without redeploying.
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts:
+    type: s3
+    bucket: my-router-artifacts
+    region: eu-west-1
+
+supergraph:
+  source: storage
+  storage_id: artifacts
+  location: supergraph/current.graphql
+  poll_interval: 30s
+```
+
+### `source`
+
+- **Type:** `string`
+- **Value:** `"storage"`
+
+### `storage_id`
+
+- **Type:** `string`
+- **Required:** Yes
+
+ID of a backend declared under the top-level
+[`storages`](/docs/router/configuration/storages) map. If the ID does not exist in `storages`, the
+router fails to start.
+
+### `location`
+
+- **Type:** `string` or `{ expression: string }`
+- **Required:** Yes
+
+Object key (path within the bucket) of the supergraph file.
+
+Both static strings and [expressions](/docs/router/configuration/expressions) are accepted, so the
+location can be loaded from an environment variable or computed dynamically at startup:
+
+```yaml title="router.config.yaml"
+supergraph:
+  source: storage
+  storage_id: artifacts
+  location:
+    expression: env("SUPERGRAPH_OBJECT_KEY", "supergraph/current.graphql")
+```
+
+### `poll_interval`
+
+- **Type:** `string`
+- **Required:** No
+- **Default:** disabled (one-shot load at startup)
+
+[Human-readable](https://docs.rs/humantime/latest/humantime/) interval for polling the storage
+backend for updates (e.g. `30s`, `5m`).
+
+When polling is enabled, the router uses conditional requests (HTTP `If-None-Match` against the
+object's `ETag`) and only re-parses the supergraph when storage reports the content has changed.

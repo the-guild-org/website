@@ -18,12 +18,10 @@ async function handleErrorResponse(options: {
     !shouldSkipErrorReporting(requestedEndpoint, options.request.headers.get('user-agent'));
 
   if (shouldReport) {
-    options.sentry.configureScope(scope => {
-      scope.setFingerprint([
-        requestedEndpoint.replace('https://www.', 'https://'),
-        String(options.response.status),
-      ]);
-    });
+    options.sentry.setFingerprint([
+      requestedEndpoint.replace('https://www.', 'https://'),
+      String(options.response.status),
+    ]);
 
     // clone to allow the original response to be reused
     const clonedBody = await options.response.clone().text();
@@ -42,7 +40,6 @@ async function handleErrorResponse(options: {
 
     if (options.request.headers.has('cf-connecting-ip')) {
       options.sentry.setUser({
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         ip_address: options.request.headers.get('cf-connecting-ip')!,
       });
     }

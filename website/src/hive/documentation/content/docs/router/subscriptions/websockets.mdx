@@ -1,0 +1,215 @@
+---
+title: WebSockets
+description: Use the GraphQL over WebSocket protocol with Hive Router for real-time subscriptions, for both client-to-router and router-to-subgraph communication.
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+The router supports the [GraphQL over WebSocket protocol](https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md) for both client-to-router and router-to-subgraph communication, covering everything from simple queries and mutations to long-lived subscriptions over a single connection.
+
+<Callout type="info">
+
+Hive Router does not support the deprecated [`subscriptions-transport-ws`](https://github.com/apollographql/subscriptions-transport-ws) protocol. It has been largely unmaintained since 2018, officially deprecated in 2023, and carries various known issues. If you're still on it, it's time to upgrade. Make sure your clients implement the [GraphQL over WebSocket protocol](https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md).
+
+</Callout>
+
+## Subgraphs
+
+To forward subscriptions to subgraphs over WebSockets, configure the `subscriptions.websocket` section. Subgraphs must implement the [GraphQL over WebSocket protocol](https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md) for the router to connect to them over WebSockets. By default, subscriptions that share the same subgraph, resolved WebSocket endpoint, and inbound connection identity **multiplex over one pooled WebSocket connection** to the subgraph instead of each opening a dedicated socket. See [Connection reuse and execution mode](#connection-reuse-and-execution-mode) below to control or disable this.
+
+Headers are forwarded to the subgraph WebSocket connection according to your [header propagation configuration](/docs/router/configuration/headers). The same rules that apply to regular HTTP requests apply here, so authorization headers, tracing headers, and any other propagated headers are carried through to the subgraph.
+
+### Configuration
+
+You can configure a default for all subgraphs and optionally override it per-subgraph:
+
+```yaml
+subscriptions:
+  enabled: true
+  websocket:
+    # default config applied to all subgraphs
+    all:
+      path: /ws
+    # per-subgraph overrides
+    subgraphs:
+      reviews:
+        path: /subscriptions
+```
+
+The `path` option controls the URL path used for the WebSocket connection to the subgraph. If not set, the subgraph's default URL path is used with the scheme changed to `ws` (or `wss` for HTTPS). For example, if the subgraph URL is `http://example.com/graphql` and `path` is `/ws`, the router will connect to `ws://example.com/ws`.
+
+<Callout>
+
+Setting `subscriptions.websocket.all` opts all subgraphs (not claimed by the HTTP Callback protocol) into WebSocket mode. Use `subscriptions.websocket.subgraphs` to target specific subgraphs instead.
+
+</Callout>
+
+### Connection reuse and execution mode
+
+Reuse and transport selection are controlled separately from the endpoint path, under
+[`traffic_shaping.all.websocket`](/docs/router/configuration/traffic_shaping#websocket-router--subgraphs)
+(or per-subgraph under `traffic_shaping.subgraphs.<name>.websocket`):
+
+```yaml
+subscriptions:
+  enabled: true
+  websocket:
+    subgraphs:
+      reviews:
+        path: /reviews/ws
+
+traffic_shaping:
+  all:
+    websocket:
+      reuse_connections: true # default
+      execute_mode: http # default
+```
+
+See [`traffic_shaping.<>.websocket.websocketexecute_mode`](/docs/router/configuration/traffic_shaping#websocketexecute_mode) configuration flag for additional information and options.
+
+## Clients
+
+Client WebSocket support is configured at the root level under `websocket` - it is completely separate from the `subscriptions` configuration. A client can connect to the router over WebSockets and execute only queries and mutations without subscriptions ever being involved.
+
+### Synthetic HTTP Requests
+
+Each WebSocket connection from a client is long-lived and can carry multiple GraphQL operations. For every operation sent over the connection - including single-shot operations like queries and mutations - the router creates a **synthetic HTTP request**. This means every operation goes through the full [plugin system](/docs/router/customizations/plugin-system) exactly as if it were a regular HTTP request. Authorization, header manipulation, rate limiting, and all other plugins apply uniformly regardless of whether the client connected over HTTP or WebSocket.
+
+Because operations are processed as synthetic HTTP requests, they share the same fingerprint space as regular HTTP requests. A query sent over WebSocket can deduplicate with the same query sent over HTTP, and a WebSocket subscription can deduplicate with the same subscription started over SSE (when the `Accept` header is excluded from the fingerprint). See [Inbound Deduplication](/docs/router/guides/performance-tuning#inbound-deduplication) for details.
+
+### Configuration
+
+```yaml
+websocket:
+  enabled: true
+  path: /ws
+  headers:
+    source: connection
+    persist: false
+```
+
+#### TLS and `wss://`
+
+When the router has [inbound TLS enabled](/docs/router/security/tls), WebSocket clients must use `wss://` instead of `ws://`. The router accepts secure WebSocket upgrades on the same port as HTTPS.
+
+```ts
+import { createClient } from "graphql-ws";
+
+const client = createClient({
+  url: "wss://your-router.example.com/ws",
+  // ...
+});
+```
+
+#### `enabled`
+
+Enables or disables WebSocket support for clients. Defaults to `false`. Can also be set via the `WEBSOCKET_ENABLED` environment variable.
+
+#### `path`
+
+The URL path the router listens on for WebSocket connections. Defaults to the same path as the GraphQL endpoint (i.e. `/graphql`). Must be an absolute path starting with `/`.
+
+#### `headers.source`
+
+WebSocket connections don't carry HTTP headers beyond the initial upgrade handshake, so the router needs to know where to read headers from. The `source` option controls this:
+
+- **`connection`** (default) - Headers are read from the `connection_init` message payload. After the WebSocket connection is established, the client sends a `connection_init` message and all fields in its payload are treated as headers. This is the recommended approach for browser clients, which cannot set arbitrary headers on WebSocket connections.
+
+  ```json
+  {
+    "type": "connection_init",
+    "payload": { "Authorization": "Bearer token123" }
+  }
+  ```
+
+  These headers are then validated against JWT rules and forwarded to subgraphs according to your header propagation configuration.
+
+- **`operation`** - Headers are read from the `headers` field inside each GraphQL operation's `extensions`. This allows per-operation header overrides.
+
+  ```json
+  {
+    "query": "{ topProducts { name } }",
+    "extensions": { "headers": { "Authorization": "Bearer token123" } }
+  }
+  ```
+
+- **`both`** - Headers are accepted from both the `connection_init` payload and each operation's extensions. Headers from operation extensions take precedence over those from `connection_init` when both are present. This is useful when the connection-level token needs to be overridable per-operation.
+
+- **`none`** - No headers are accepted from inside the WebSocket connection. Use this when you don't need to pass any auth or context headers through WebSocket messages.
+
+#### `headers.persist`
+
+Only has effect when `source` is `both`.
+
+When `persist` is `true`, headers received from operation extensions are stored and reused for all subsequent operations on the same connection. When `false` (the default), each operation only uses its own extensions headers merged with the original `connection_init` headers - extensions headers from a previous operation are discarded.
+
+This is particularly useful for handling tokens that expire during a long-lived connection. For example:
+
+1. The client connects and sends a `connection_init` with an `Authorization` header containing a short-lived token.
+2. The token expires. The client obtains a new token and sends the next operation with the updated `Authorization` header in its extensions.
+3. With `persist: true`, the router stores the updated token and uses it for all subsequent operations on that connection, so the client doesn't need to reconnect or repeat the token on every single operation.
+
+```yaml
+websocket:
+  enabled: true
+  headers:
+    source: both
+    persist: true
+```
+
+### graphql-ws
+
+We recommend using [`graphql-ws`](https://the-guild.dev/graphql/ws) on the client side. It handles all connection management, message framing, and reconnection logic automatically.
+
+```sh npm2yarn
+npm install graphql-ws
+```
+
+```ts
+import { createClient } from "graphql-ws";
+
+const client = createClient({
+  url: "ws://localhost:4000/graphql",
+  connectionParams: {
+    // passed as the connection_init payload, picked up by source: connection
+    Authorization: "Bearer token123",
+  },
+});
+
+const unsubscribe = client.subscribe(
+  {
+    query: `subscription {
+      reviewAdded {
+        body
+        rating
+        product {
+          name
+        }
+        author {
+          name
+        }
+      }
+    }`,
+  },
+  {
+    next: (data) => console.log(data),
+    error: (err) => console.error(err),
+    complete: () => console.log("done"),
+  },
+);
+
+// later, to stop the subscription
+unsubscribe();
+```
+
+#### Apollo Client
+
+Please refer to the [Apollo Client WebSocket integration](https://www.apollographql.com/docs/react/data/subscriptions#websocket-subscriptions).
+
+#### Relay
+
+Please refer to the [graphql-ws Relay integration recipe](https://the-guild.dev/graphql/ws/recipes#with-relay).
+
+#### urql
+
+Please refer to the [graphql-ws urql integration recipe](https://the-guild.dev/graphql/ws/recipes#with-urql).

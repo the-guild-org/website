@@ -1,0 +1,136 @@
+---
+const packageManagers = ["npm", "yarn", "pnpm", "bun"];
+---
+
+<div class="package-manager-tabs" data-package-manager-tabs>
+  <div class="package-manager-tabs-list" role="tablist" aria-label="Package manager">
+    {
+      packageManagers.map((manager, index) => (
+        <button
+          aria-selected={index === 0}
+          data-package-manager={manager}
+          role="tab"
+          tabindex={index === 0 ? 0 : -1}
+          type="button"
+        >
+          {manager}
+        </button>
+      ))
+    }
+  </div>
+  <div class="package-manager-tab-panels"><slot /></div>
+</div>
+
+<style>
+  .package-manager-tabs {
+    margin: 1rem 0;
+    overflow: hidden;
+    border: 1px solid var(--color-fd-border);
+    border-radius: 0.75rem;
+    background: var(--color-fd-card);
+  }
+
+  .package-manager-tabs-list {
+    display: flex;
+    overflow-x: auto;
+  }
+
+  button {
+    margin-bottom: -1px;
+    padding: 0.65rem 0.9rem;
+    cursor: pointer;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--color-fd-muted-foreground);
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  button:hover {
+    color: var(--color-fd-foreground);
+  }
+
+  button[aria-selected="true"] {
+    border-bottom-color: var(--color-blue-500);
+    color: var(--color-fd-foreground);
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--color-blue-500);
+    outline-offset: -3px;
+  }
+
+  :global(.package-manager-tab-panels > .tab-panel > .code-block) {
+    margin: 0 -1px -1px;
+    border-radius: 0 0 0.75rem 0.75rem;
+    background: var(--color-fd-card);
+    box-shadow: none;
+  }
+
+  :global(.dark .package-manager-tab-panels > .tab-panel > .code-block) {
+    background: var(--color-fd-secondary);
+  }
+</style>
+
+<script>
+  const storageKey = "hive-package-manager";
+
+  function initializePackageManagerTabs(root: HTMLElement) {
+    if (root.dataset.initialized) return;
+    root.dataset.initialized = "true";
+
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>(":scope > [role=tablist] > [role=tab]")];
+    const panels = [...root.querySelectorAll<HTMLElement>(":scope > .package-manager-tab-panels > .tab-panel")];
+
+    tabs.forEach((tab, index) => {
+      const id = `package-manager-tab-${packageManagerTabId++}`;
+      const panel = panels[index];
+      tab.id = id;
+      tab.setAttribute("aria-controls", `${id}-panel`);
+      if (panel) {
+        panel.id = `${id}-panel`;
+        panel.setAttribute("aria-labelledby", id);
+      }
+    });
+
+    const show = (manager: string) => {
+      const selectedIndex = Math.max(0, tabs.findIndex((tab) => tab.dataset.packageManager === manager));
+      tabs.forEach((tab, index) => {
+        const selected = index === selectedIndex;
+        tab.ariaSelected = String(selected);
+        tab.tabIndex = selected ? 0 : -1;
+      });
+      panels.forEach((panel, index) => (panel.hidden = index !== selectedIndex));
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => {
+        const manager = tab.dataset.packageManager || "npm";
+        localStorage.setItem(storageKey, manager);
+        document.querySelectorAll<HTMLElement>("[data-package-manager-tabs]").forEach((tabsRoot) => {
+          tabsRoot.dispatchEvent(new CustomEvent("package-manager-change", { detail: manager }));
+        });
+      });
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const nextIndex = event.key === "Home"
+          ? 0
+          : event.key === "End"
+            ? tabs.length - 1
+            : (index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+        tabs[nextIndex]?.click();
+        tabs[nextIndex]?.focus();
+      });
+    });
+    root.addEventListener("package-manager-change", (event) => {
+      show((event as CustomEvent<string>).detail);
+    });
+    show(localStorage.getItem(storageKey) || "npm");
+  }
+
+  let packageManagerTabId = 0;
+  document.querySelectorAll<HTMLElement>("[data-package-manager-tabs]").forEach(initializePackageManagerTabs);
+</script>

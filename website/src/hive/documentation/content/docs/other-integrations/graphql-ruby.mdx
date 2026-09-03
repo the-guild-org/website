@@ -1,0 +1,48 @@
+---
+title: GraphQL-Ruby
+---
+
+[GraphQL Ruby Hive](https://github.com/wealthsimple-community/graphql-ruby-hive) is a graphql-ruby integration for Hive Console.
+
+It provides all the tools to get visibility of your GraphQL architecture at all stages, from standalone APIs to composed schemas (Federation, Stitching):
+
+- _Schema Registry_ with custom breaking changes detection
+- _Monitoring_ of RPM, latency, error rate, and more
+- _Integrations_ with your favorite tools (Slack, Github Actions, and more)
+
+## Installation
+
+```bash
+gem install graphql-hive
+```
+
+## Integration Guide
+
+Add GraphQL::Hive at the end of your schema definition:
+
+```ruby
+class Schema < GraphQL::Schema
+  query QueryType
+
+  use(
+      GraphQL::Hive,
+      {
+        token: '<YOUR_TOKEN>',
+        # target is only needed if you're using an organization level token
+        target: 'your-org/your-project/production', # or target UUID
+        reporting: {
+          author: ENV['GITHUB_USER'],
+          commit: ENV['GITHUB_COMMIT']
+        },
+      }
+  )
+end
+```
+
+The reporting configuration is required to push your GraphQL Schema to the Hive registry. Doing so will help better detect breaking changes and more upcoming features. If you only want to use the operations monitoring, replace the reporting option with the following report_schema: false.
+
+Follow the [configuration guide here](https://github.com/wealthsimple-community/graphql-ruby-hive#configuration) for more advanced setups or configuration options.
+
+## Additional Resources
+
+- [graphql-ruby.org](https://graphql-ruby.org)

@@ -1,0 +1,38 @@
+---
+title: OpenTelemetry Tracing and Prometheus Metrics in Hive Router
+description:
+  Hive Router now supports production-ready OpenTelemetry tracing and metrics, including OTLP
+  export and Prometheus scraping.
+date: 2026-04-15
+authors: [kamil]
+---
+
+[Hive Router](/docs/router) now includes first-class observability with OpenTelemetry: distributed
+tracing, configurable metrics, OTLP exporters, and a Prometheus scrape endpoint.
+
+## Tracing with OpenTelemetry
+
+Hive Router can emit traces to [Hive Console Tracing](/docs/router/observability/tracing#send-traces-to-hive-console) and any OTLP-compatible backend over HTTP or gRPC.
+
+Tracing includes GraphQL-specific spans as well as router and subgraph lifecycle spans, with configurable propagation for `trace_context`, `baggage`, `b3`, and `jaeger`.
+
+## Metrics with OTLP and Prometheus
+
+Hive Router emits OpenTelemetry metrics covering inbound and outbound HTTP traffic, GraphQL errors and execution, supergraph polling and processing, and internal cache activity.
+
+Metrics can be exported to OTLP-compatible backends, exposed for Prometheus scraping, or both. For Prometheus, you can expose metrics on the router's HTTP server or a dedicated port, with a configurable path (default `/metrics`).
+
+## Highly customizable
+
+Tracing and metrics can be dialed in to balance cost and throughput:
+
+- **Sampling and batching** - supports head-based and parent-based sampling, with configurable batch processing and export settings
+- **Metric instrument overrides** - disable selected instruments or drop high-cardinality labels
+- **Histogram aggregation controls** - supports `explicit` and `exponential` aggregations, with dedicated buckets for time and size units
+
+This gives you the flexibility to keep observability lightweight at the start, and scale it up as your traffic and requirements evolve.
+
+---
+
+- [OpenTelemetry Tracing](/docs/router/observability/tracing)
+- [OpenTelemetry Metrics](/docs/router/observability/metrics)

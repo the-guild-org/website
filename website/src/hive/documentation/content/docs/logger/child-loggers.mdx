@@ -1,0 +1,57 @@
+---
+title: Child Loggers
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+Child loggers in Hive Logger allow you to create new logger instances that inherit configuration
+(such as log level, writers, and attributes) from their parent logger. This is useful for
+associating contextual information (like request IDs or component names) with all logs from a
+specific part of your application.
+
+When you create a child logger using the child method, you can:
+
+- Add a prefix to all log messages from the child logger.
+- Add attributes that will be included in every log entry from the child logger.
+- Inherit the log level and writers from the parent logger, unless explicitly changed on the child.
+
+This makes it easy to organize and structure logs in complex applications, ensuring that related
+logs carry consistent context.
+
+<Callout>
+  In a child logger, attributes provided in individual log calls will overwrite
+  any attributes inherited from the parent logger if they share the same keys.
+  This allows you to override or add context-specific attributes for each log
+  entry.
+</Callout>
+
+For example, running this:
+
+```ts
+import { Logger } from "@graphql-hive/logger";
+
+const log = new Logger();
+
+const child = log.child({ requestId: "123-456" }, "[child] ");
+
+child.info("Hello World!");
+child.info({ requestId: "overwritten attribute" });
+
+const nestedChild = child.child({ traceId: "789-012" }, "[nestedChild] ");
+
+nestedChild.info("Hello Deep Down!");
+```
+
+Will output:
+
+{/* prettier-ignore-start */}
+```sh
+2025-04-10T14:00:00.000Z INF [child] Hello World!
+  requestId: "123-456"
+2025-04-10T14:00:00.000Z INF [child]
+  requestId: "overwritten attribute"
+2025-04-20T18:39:30.291Z INF [child] [nestedChild] Hello Deep Down!
+  requestId: "123-456"
+  traceId: "789-012"
+```
+{/* prettier-ignore-end */}

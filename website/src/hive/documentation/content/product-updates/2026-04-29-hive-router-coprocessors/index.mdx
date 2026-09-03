@@ -1,0 +1,102 @@
+---
+title: Coprocessors in Hive Router
+description:
+  Coprocessors are now available in Hive Router - external HTTP services that can inspect, mutate, and
+  short-circuit requests at multiple router and GraphQL lifecycle stages.
+date: 2026-05-05
+authors: [kamil]
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+[Hive Router](/docs/router) introduces [**coprocessors**](/docs/router/customizations/coprocessors) as a first-class mechanism for extending and customizing behavior.
+
+A coprocessor is an external service called by the router at selected lifecycle stages. It can
+inspect request data, apply controlled mutations, and decide whether to continue or short-circuit
+processing with an immediate response.
+
+This gives teams a way to implement policy and request logic in any language, without building a
+custom router binary.
+
+## Common use cases
+
+Teams can use coprocessors to implement:
+
+- **Authentication and authorization**  
+  Validate tokens early in `router.request` and reject unauthorized requests before execution.
+
+- **Multi-tenant routing and feature flags**  
+  Extract tenant's id from inbound request headers and enable features dynamically in `graphql.analysis`.
+
+- **Centralized platform policy**  
+  Move shared logic (billing, rate limiting, entitlements) into a single external service used by many router instances.
+
+## Stage-Based Customization
+
+Each stage runs at a different point in the pipeline, so each stage is best for a different kind of logic.
+
+| Stage name         | Description                                                                                                                                                                       |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `router.request`   | Runs when the HTTP request enters Hive Router.<br />Use this stage for early traffic checks such as auth header checks and fast request rejection.                                |
+| `graphql.request`  | Runs when GraphQL request payload is available and we know it's a GraphQL request.<br />Use this stage for request shaping, variable normalization, and request-level guardrails. |
+| `graphql.analysis` | Runs after GraphQL parsing and validation, but before query planning and execution.<br />This is the stage can be used to control the progressive override feature                |
+| `graphql.response` | Runs after GraphQL execution returns a GraphQL response.<br />Use this stage for response normalization, error shaping, and redaction before final HTTP response handling.        |
+| `router.response`  | Runs at the very end, right before the response is sent to the client.                                                                                                            |
+
+## Control Flow
+
+When Hive Router talks to a coprocessor it expects a decision, whether to `continue` or `break` the processing pipeline.
+
+```json tab="Continue"
+{
+  "version": 1,
+  "control": "continue"
+}
+```
+
+```json tab="Break"
+{
+  "version": 1,
+  "control": { "break": 401 },
+  "headers": {
+    "content-type": "application/json"
+  },
+  "body": {
+    "errors": [{ "message": "Unauthorized" }]
+  }
+}
+```
+
+## Network: HTTP and UDS
+
+In order to ask the coprocessor for a decision, they need to communicate somehow. Coprocessor calls support both:
+
+- `http://` endpoints (remote/shared services)
+- `unix://` endpoints (local sidecar via Unix Domain Socket)
+
+<Callout type="tip">
+  For low-latency deployments, running the coprocessor close to the router and
+  using UDS reduces network's cost (DNS lookups etc) and improves performance.
+</Callout>
+
+## Observability
+
+Coprocessor services become a critical part of your production setup, so Hive Router provides metrics and traces to help you monitor performance and diagnose issues.
+
+Metrics:
+
+- `hive.router.coprocessor.requests_total`
+- `hive.router.coprocessor.duration`
+- `hive.router.coprocessor.errors_total`
+
+All three are labeled by `coprocessor.stage`.
+
+Tracing also includes a `coprocessor` span per stage call (with `coprocessor.stage`, `coprocessor.id` attributes)
+and nested `http.client` spans for outbound coprocessor calls.
+
+---
+
+- [Coprocessors overview](/docs/router/customizations/coprocessors)
+- [Writing a coprocessor](/docs/router/customizations/coprocessors/usage)
+- [Stages and protocol](/docs/router/customizations/coprocessors/stages-and-protocol)
+- [`coprocessor` configuration reference](/docs/router/configuration/coprocessor)

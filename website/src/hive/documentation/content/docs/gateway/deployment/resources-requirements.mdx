@@ -1,0 +1,52 @@
+---
+title: Resources Requirements
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+<Callout>
+  Before sizing your deployment, read [Concurrency &
+  Scaling](/docs/gateway/concurrency-and-scaling) first. The CPU and memory
+  numbers below depend directly on how many workers you run - understanding
+  forking and its memory implications will make this guide much more actionable.
+</Callout>
+
+Defining the right amount of resources for your GraphQL gateway is crucial for maintaining
+performance and reliability. This guide will help you understand how to allocate resources
+effectively.
+
+## CPU and Memory
+
+The primary resources you need to allocate for your gateway are CPU and memory. These resources
+ensure that your gateway runs efficiently.
+
+For most applications, you can start with the following default values:
+
+- **CPU: 1**
+- **Memory: 1GB**
+
+These values are suitable for most applications. However, you may need to adjust them based on your
+application's specific requirements. For instance, if your application experiences high traffic, you
+may need to increase the CPU and memory allocations.
+
+For production environments with high traffic, we recommend the following values:
+
+- **CPU: 2**
+- **Memory: 2-4GB**
+
+## Environment Variables
+
+Set `NODE_ENV` to `production` to ensure your gateway runs in production mode. This setting also
+enables [parallelism optimizations](https://nodejs.org/api/cluster.html) that can enhance
+performance.
+
+By default, the gateway runs as a single process with no forking. You can set the `FORK` environment
+variable to specify the number of workers to spawn. For example, to spawn 4 workers, set `FORK=4`.
+Each worker is an independent Node.js process with its own memory heap, so your total memory
+requirement scales linearly with the fork count.
+
+See [Concurrency & Scaling](/docs/gateway/concurrency-and-scaling) for a full explanation of how
+forking works, how to choose the right fork count, and how to plan memory accordingly.
+
+Consider unsetting the `DEBUG` env variable if you don't need debug logs. This can have significant
+impact on CPU usage.

@@ -1,0 +1,126 @@
+---
+title: "Subgraph Error Masking"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+Error Masking prevents internal subgraph errors from leaking to clients. Subgraphs are internal
+services — the router sits between them and the outside world, so subgraph errors are rewritten into
+a safe, generic form before they reach clients.
+
+Because the router masks on their behalf, your subgraphs don't need to sanitize their own errors:
+they can return rich, detailed errors for observability, and trust the router to redact them at the
+edge.
+
+<Callout title="Enabled by default" type="info">
+  Error masking is **on by default**. Out of the box, every subgraph error
+  message is replaced with `"Unexpected error"`, so no internal message reaches
+  clients unless you opt out.
+</Callout>
+
+## Why mask subgraph errors?
+
+GraphQL errors from subgraphs frequently carry information that is useful internally but dangerous to
+expose publicly:
+
+- **Sensitive detail leakage** — database errors, stack traces, internal hostnames, or upstream HTTP
+  response bodies embedded in an error message or its `extensions`.
+- **Implementation disclosure** — error codes and service names reveal your internal topology and
+  the technologies each subgraph uses, giving attackers a map of your system.
+- **Inconsistent client contract** — different subgraphs phrase and structure errors differently.
+  Masking gives clients a single, predictable error shape.
+
+## How it works
+
+An error is treated as a subgraph error when it carries an `extensions.service` field. This covers
+two sources:
+
+1. **Subgraph-returned errors** — errors a subgraph includes in its GraphQL response.
+2. **Router-synthesized errors** — errors the router generates when a subgraph call fails at the
+   network or HTTP layer (for example `SUBREQUEST_HTTP_ERROR` or `DOWNSTREAM_SERVICE_ERROR`).
+
+Errors produced by the router itself that are unrelated to a subgraph — such as a
+`GRAPHQL_PARSE_FAILED` validation error — are **never** masked, since they carry no `service` field.
+
+When masking applies, the router can:
+
+- Replace the error `message` with a fixed, safe string (default `"Unexpected error"`).
+- Redact the error `extensions` via an allowlist or denylist of keys.
+
+Both are independent and configurable globally or per subgraph.
+
+<Callout title="Observability is unaffected" type="info">
+  Masking runs **last** in the response pipeline — after metrics, tracing, and
+  logging. Your telemetry always records the original, unmasked error; only the
+  client-facing response is redacted.
+</Callout>
+
+## What is masked by default
+
+| Part         | Default behavior                        |
+| :----------- | :-------------------------------------- |
+| `message`    | Replaced with `"Unexpected error"`.     |
+| `extensions` | **Not** touched — passed through as-is. |
+
+<Callout type="warning">
+  By default only the **message** is masked. Anything sensitive in `extensions`
+  still reaches the client. If your subgraphs put internal detail in
+  `extensions`, configure `extensions` masking as well — see the [configuration
+  reference](/docs/router/configuration/error_masking#allextensions).
+</Callout>
+
+## Configuration
+
+All settings live under the [`error_masking`](/docs/router/configuration/error_masking) key. A few
+common setups:
+
+**Strictest — hide message and all extensions:**
+
+```yaml title="router.config.yaml"
+error_masking:
+  all:
+    enabled: true
+    extensions:
+      mode: allow
+      keys: [] # allow none
+```
+
+**Keep only the error code for client-side handling:**
+
+```yaml title="router.config.yaml"
+error_masking:
+  all:
+    enabled: true
+    extensions:
+      mode: allow
+      keys:
+        - code
+```
+
+**Disable masking entirely (e.g. during development):**
+
+```yaml title="router.config.yaml"
+error_masking:
+  enabled: false
+```
+
+Or via environment variable, without editing the config:
+
+```bash
+DISABLE_SUBGRAPH_ERROR_MASKING=true
+```
+
+See the [`error_masking` configuration reference](/docs/router/configuration/error_masking) for the
+full set of options, per-subgraph overrides, and more examples.
+
+## Internal router errors
+
+The masking above only covers **subgraph** errors. Errors that originate in the router itself -
+not from a subgraph - are handled separately and are **not** configurable:
+
+- Errors caused by the client's own request (invalid queries, failed validation, bad variables)
+  still return their real message, since it only ever describes the client's own mistake.
+- Any other internal error (storage/network failures, unexpected failures, misconfiguration) always returns a
+  generic `"Internal server error"` message, never the underlying error. The real error is still
+  logged for debugging. This prevents details such as subgraph URLs or backend internals from
+  leaking to clients through router-side errors.

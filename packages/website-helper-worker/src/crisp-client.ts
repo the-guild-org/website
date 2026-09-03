@@ -7,16 +7,7 @@ export interface CrispUser {
 }
 
 export type CrispEventColor =
-  | 'red'
-  | 'orange'
-  | 'yellow'
-  | 'green'
-  | 'blue'
-  | 'purple'
-  | 'pink'
-  | 'brown'
-  | 'grey'
-  | 'black';
+  'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple' | 'pink' | 'brown' | 'grey' | 'black';
 
 export function createCrispClient(options: { token: string; websiteId: string }) {
   const crispHeaders = {

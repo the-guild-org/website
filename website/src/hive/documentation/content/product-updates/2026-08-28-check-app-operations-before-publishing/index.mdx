@@ -1,0 +1,57 @@
+---
+title: Check App Deployments Persisted Document Manifests Before Publishing
+description:
+  Validate persisted operations against your latest schema in pull-request CI without creating an
+  App Deployment.
+date: 2026-08-28
+authors: [laurin]
+---
+
+The Hive CLI can now validate persisted documents before you publish them as an
+[App Deployment](/docs/schema-registry/app-deployments).
+
+The new `hive app:check` command checks every operation against the target's latest valid schema
+without creating or publishing a deployment, giving you the right tools for hardening your continuous
+integration workflows.
+
+## Catch Invalid Operations in Pull Requests
+
+Run `app:check` after generating your persisted documents manifest in your pull-request CI (continious integration) workflow:
+
+```bash
+hive app:check persisted-documents.json \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<ORGANIZATION>/<PROJECT>/<TARGET>"
+```
+
+Previously this was only possible by creating an app deployment.
+
+Because the new check command does not create a pending App Deployment, failed and superseded pull-request builds
+no longer add deployments that need to be cleaned up.
+
+## Publish Only During Deployment
+
+After the pull request is merged and the application is ready to deploy, create and publish its App
+Deployment from your CD (continuous deployment) pipeline:
+
+```bash
+hive app:create persisted-documents.json \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<ORGANIZATION>/<PROJECT>/<TARGET>" \
+  --name "my-app" \
+  --version "$APP_VERSION" \
+  --publish
+```
+
+Creating the app deployment will still fail if the operations are no longer valid against the latest
+schema version used within the target.
+
+Publishing the operations before deploying the application ensures that its persisted document IDs
+are already available to your gateway or GraphQL server through the Hive CDN.
+
+We updated the App Deployments guide with best practices.
+
+---
+
+- [App Deployments CI/CD guide and GitHub Actions example](/docs/schema-registry/app-deployments#continuous-integration-and-deployment)
+- [Hive CLI documentation](/docs/api-reference/cli)

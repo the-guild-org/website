@@ -1,0 +1,57 @@
+---
+import LabelCard from "./LabelCard.astro";
+import MetricCard from "./MetricCard.astro";
+
+interface Metric {
+  description?: string;
+  labels?: string[];
+  name: string;
+  type: "Counter" | "Gauge" | "Histogram" | "UpDownCounter";
+  unit?: string;
+}
+
+interface Label {
+  meaning: string;
+  name: string;
+  notes?: string;
+  typicalValues: string[];
+}
+
+const { labels = [], metrics = [] } = Astro.props as {
+  labels?: Label[];
+  metrics?: Metric[];
+};
+---
+
+<div class="space-y-6">
+  {
+    metrics.length > 0 && (
+      <div class="space-y-4">
+        <h4 class="mt-8 text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Metrics</h4>
+        <div class="grid gap-4">
+          {metrics.map((metric) => (
+            <MetricCard description={metric.description} labels={metric.labels} name={metric.name} type={metric.type} unit={metric.unit} />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  {
+    labels.length > 0 && (
+      <details class="group overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+        <summary class="hive-focus flex cursor-pointer list-none items-center justify-between px-5 py-4 text-left text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+          <span>Labels Reference</span>
+          <svg class="size-5 shrink-0 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+        <div class="divide-y divide-gray-100 border-t border-gray-100 px-5 pb-5 pt-2 dark:divide-neutral-800 dark:border-neutral-800">
+          {labels.map((label) => (
+            <div class="py-6">
+              <LabelCard meaning={label.meaning} name={label.name} notes={label.notes} typicalValues={label.typicalValues} />
+            </div>
+          ))}
+        </div>
+      </details>
+    )
+  }
+</div>

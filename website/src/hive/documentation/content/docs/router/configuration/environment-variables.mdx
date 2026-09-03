@@ -1,0 +1,97 @@
+---
+title: "Environment Variables"
+---
+
+To configure Hive Router using environment variables, you use the pre-defined environment variables listed below, or hook any configuration field to an environment variable.
+
+## Pre-defined Environment Variables
+
+The following environment variables are accepted by the router, and they override other
+configurations that can be set in the router's configuration file (`router.config.yaml`):
+
+| Name                              | Accepted Values                                      | Overrides (YAML)                                                          |
+| --------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------- |
+| `LOG_LEVEL`                       | `trace` / `debug` / `info` / `warn` / `error`        | [`log.level`](./log#level)                                                |
+| `LOG_FORMAT`                      | `json` / `pretty-tree` / `pretty-compact`            | [`log.format`](./log#format)                                              |
+| `LOG_FILTER`                      | `string`                                             | [`log.filter`](./log#filter)                                              |
+| `LABORATORY_ENABLED`              | `true` / `false`                                     | [`laboratory.enabled`](./laboratory#enabled)                              |
+| `PORT`                            | `number` (port number)                               | [`http.port`](./http#port)                                                |
+| `HOST`                            | `string` (host name or IP address)                   | [`http.host`](./http#host)                                                |
+| `ROUTER_HTTP_WORKERS`             | `number` (worker thread count)                       | [`http.workers`](./http#workers)                                          |
+| `ROUTER_HTTP_SHUTDOWN_TIMEOUT`    | `string` (human-readable, for example: `90s`)        | [`http.shutdown_timeout`](./http#shutdown_timeout)                        |
+| `ROUTER_HTTP_KEEP_ALIVE`          | `string` (human-readable, for example: `80s`)        | [`traffic_shaping.router.keep_alive`](./traffic_shaping#routerkeep_alive) |
+| `SUPERGRAPH_FILE_PATH`            | `string` (relative or absolute path to a local file) | [`supergraph[file].path`](./supergraph#path)                              |
+| `HIVE_CDN_ENDPOINT`               | `string` (full url to Hive CDN supergraph artifact)  | [`supergraph[hive].endpoint`](./supergraph#endpoint)                      |
+| `HIVE_CDN_KEY`                    | `string` (Hive CDN key)                              | [`supergraph[hive].key`](./supergraph#key)                                |
+| `HIVE_CDN_POLL_INTERVAL`          | `string` (human-readable, for example: `10s`)        | [`supergraph[hive].poll_interval`](./supergraph#poll_interval)            |
+| `APOLLO_GRAPH_REF`                | `string` (`<GRAPH_ID>@<VARIANT>`)                    | [`supergraph[apollo_graphos].graph_ref`](./supergraph#graph_ref)          |
+| `APOLLO_KEY`                      | `string` (Apollo API key)                            | [`supergraph[apollo_graphos].key`](./supergraph#apollo-graphos)           |
+| `APOLLO_UPLINK_ENDPOINTS`         | `string` (comma-separated list of Uplink URLs)       | [`supergraph[apollo_graphos].endpoint`](./supergraph#apollo-graphos)      |
+| `SUBSCRIPTIONS_ENABLED`           | `true` / `false`                                     | [`subscriptions.enabled`](../subscriptions#configuration)                 |
+| `WEBSOCKET_ENABLED`               | `true` / `false`                                     | [`websocket.enabled`](../subscriptions/websockets#enabled)                |
+| `TELEMETRY_TRACING_SAMPLING_RATE` | `number` (between `0.0` and `1.0`)                   | [`telemetry.tracing.collect.sampling`](./telemetry#tracing)               |
+| `DISABLE_SUBGRAPH_ERROR_MASKING`  | `true` / `false`                                     | [`error_masking.enabled`](./error_masking#enabled)                        |
+
+> In cases where a configuration file (`router.config.yaml`) is used with environment variables at
+> the same time, environment variables will only override the specific configuration values.
+
+> In cases where the pre-defined environment variables are used, along with `from_env`, the pre-defined environment variable will be used
+> as they are considered preferred over the configuration file values.
+
+## Setting Any Config Value from an Environment Variable
+
+Beyond the fixed overrides above, any primitive field anywhere in the configuration file — strings,
+numbers, booleans — can be set from an environment variable using `from_env`, instead of a literal value:
+
+```yaml title="router.config.yaml"
+http:
+  port:
+    from_env: PORT
+```
+
+If the referenced environment variable is not set, the field falls back to its own default (or fails
+validation as usual if the field is required). You can also supply an inline fallback with `default`,
+which is used instead of the field's own default when the environment variable is unset:
+
+```yaml title="router.config.yaml"
+http:
+  port:
+    from_env: PORT
+    default: 4000
+```
+
+If you are using the plugin system, `from_env` also works inside a plugin's own `config` block, since it's resolved before the
+configuration is split up and handed to each plugin.
+
+When a configuration field is a list, the `from_env.default` field and the environment variable's value is split on `,` into one
+item per entry (each item is trimmed of surrounding whitespace) instead of being treated as a single
+literal string:
+
+```yaml title="router.config.yaml"
+cors:
+  policies:
+    - origins:
+        from_env: CORS_ALLOWED_ORIGINS
+        default:
+          - http://localhost:3000
+          - http://localhost:4000
+```
+
+Given `CORS_ALLOWED_ORIGINS=https://a.example.com, https://b.example.com`, `origins` resolves to
+`["https://a.example.com", "https://b.example.com"]`.
+
+## Accessing Environment Variables in Expressions
+
+Beyond using environment variables to override configuration values at startup, you can also access
+environment variables dynamically within [expressions](./expressions) using the `env()` function.
+
+For detailed documentation on the `env()` function and its parameters, see the
+[expressions guide](./expressions#env).
+
+## Additional Variables
+
+In addition, you may specify the following environment variables:
+
+| Name                      | Accepted Values                                      | Description                                          |
+| ------------------------- | ---------------------------------------------------- | ---------------------------------------------------- |
+| `ROUTER_CONFIG_FILE_PATH` | `string` (relative or absolute path to a local file) | Overrides the path to the router configuration file. |
