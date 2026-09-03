@@ -139,6 +139,13 @@
     });
   }
 
+  // /contact 301s to /#contact (see public/_redirects) — arriving with the
+  // hash opens the dialog over the contact section. In-page openers call
+  // preventDefault, so this only fires for external entrances.
+  if (location.hash === '#contact') {
+    openDialog();
+  }
+
   for (const closer of dialog.querySelectorAll('[data-contact-close]')) {
     closer.addEventListener('click', () => dialog.close());
   }

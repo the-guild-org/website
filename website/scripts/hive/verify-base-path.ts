@@ -10,6 +10,7 @@ import { existsSync, globSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const base = "/graphql/hive";
+const projectDirectory = fileURLToPath(new URL("../..", import.meta.url));
 const distDirectory = fileURLToPath(new URL("../../dist", import.meta.url));
 const hiveDistDirectory = `${distDirectory}/graphql/hive`;
 
@@ -53,12 +54,19 @@ for (const file of globSync("**/*.html", { cwd: hiveDistDirectory })) {
   }
 }
 
-// The root-level _redirects only holds Hive rules, written with the mount
-// prefix by generate-redirects.ts — an un-prefixed source or destination
-// would act on the main site instead.
+// Hive rules in the root-level _redirects must carry the mount prefix — an
+// un-prefixed source or destination would act on the main site instead.
+// Rules from the main site's own website/public/_redirects are exempt.
+const mainSiteRedirects = new Set(
+  (existsSync(`${projectDirectory}/public/_redirects`)
+    ? readFileSync(`${projectDirectory}/public/_redirects`, "utf8").split("\n")
+    : []
+  ).map((line) => line.trim()),
+);
 if (existsSync(`${distDirectory}/_redirects`)) {
   for (const line of readFileSync(`${distDirectory}/_redirects`, "utf8").split("\n")) {
     if (!line.trim() || line.startsWith("#")) continue;
+    if (mainSiteRedirects.has(line.trim())) continue;
     for (const path of line.trim().split(/\s+/).slice(0, 2)) {
       if (path.startsWith("/") && path !== base && !path.startsWith(`${base}/`)) {
         report("_redirects", path);

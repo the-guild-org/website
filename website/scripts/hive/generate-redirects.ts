@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 import { routeRules } from "../../src/hive/documentation/redirects.ts";
@@ -47,13 +47,23 @@ const redirects = [
   (a, b) => Number(a.source.endsWith("/*")) - Number(b.source.endsWith("/*")),
 );
 
-const contents = [
-  "# Generated from website/src/hive/documentation/redirects.ts. Do not edit manually.",
+const MARKER =
+  "# Generated from website/src/hive/documentation/redirects.ts. Do not edit manually.";
+
+const hiveBlock = [
+  MARKER,
   ...redirects.map(
     ({ source, destination, status }) => `${source} ${destination} ${status}`,
   ),
   "",
 ].join("\n");
+
+// astro build copies website/public/_redirects (main-site rules) into dist;
+// keep it and append the Hive block after it. Stripping from the marker
+// makes re-runs idempotent.
+const existing = await readFile(outputFile, "utf8").catch(() => "");
+const mainSiteRules = existing.split(MARKER)[0]!.replace(/\n+$/, "");
+const contents = mainSiteRules ? `${mainSiteRules}\n\n${hiveBlock}` : hiveBlock;
 
 await mkdir(outputDirectory, { recursive: true });
 await writeFile(outputFile, contents);
