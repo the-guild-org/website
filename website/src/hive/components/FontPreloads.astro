@@ -1,0 +1,14 @@
+---
+/**
+ * Preloads the primary text fonts so first paint doesn't flash the fallback
+ * font: the woff2 files are otherwise only discovered after the stylesheet
+ * downloads and parses. Regular and Medium cover body text and headings;
+ * SemiBold is left to load normally. Font preloads require crossorigin even
+ * for same-origin files.
+ */
+import mediumWoff2 from "../documentation/src/fonts/PPNeueMontreal-Medium.woff2?url";
+import regularWoff2 from "../documentation/src/fonts/PPNeueMontreal-Regular.woff2?url";
+---
+
+<link rel="preload" href={regularWoff2} as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={mediumWoff2} as="font" type="font/woff2" crossorigin />

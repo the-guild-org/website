@@ -1,0 +1,254 @@
+---
+title: "coprocessor"
+---
+
+The `coprocessor` configuration enables external request hooks in Hive Router.
+
+For docs and usage guidance, see
+**[Coprocessors](/docs/router/customizations/coprocessors)**.
+
+## Top-level options
+
+### `url`
+
+- **Type:** `string`
+- **Required:** Yes
+
+Endpoint of the external coprocessor service.
+
+Supported formats:
+
+- `http://host[:port][/path]`
+- `unix:///absolute/path/to/socket.sock`
+- `unix:///absolute/path/to/socket.sock?path=/request/path`
+
+### `protocol`
+
+- **Type:** `string`
+- **Required:** Yes
+- **Allowed values:** `http1`, `h2c`, `http2`
+
+Transport protocol used to call the coprocessor endpoint.
+
+- `http1` = HTTP/1.1 over TCP
+- `h2c` = HTTP/2 cleartext over TCP
+- `http2` is currently unsupported at runtime and rejected
+
+### `timeout`
+
+- **Type:** `string`
+- **Default:** `1s`
+
+Timeout for a single coprocessor call.
+
+Examples: `100ms`, `1s`, `2s`.
+
+### `stages`
+
+- **Type:** `object`
+- **Default:** `{}`
+
+Stage-specific configuration.
+
+Top-level keys:
+
+- `router`
+- `graphql`
+
+## Stage structure
+
+```yaml title="router.config.yaml"
+coprocessor:
+  url: http://127.0.0.1:8081/coprocessor
+  protocol: http1
+  timeout: 1s
+  stages:
+    router:
+      request: {}
+      response: {}
+    graphql:
+      request: {}
+      analysis: {}
+      response: {}
+```
+
+All stages are optional. A stage runs only if its object is configured.
+
+---
+
+## Stage options
+
+Each stage supports two keys:
+
+- `condition`
+- `include`
+
+### `condition`
+
+- **Type:** `boolean | expression`
+- **Default:** `true`
+
+If set, the stage runs only when the condition evaluates to `true`.
+
+Example:
+
+```yaml
+stages:
+  router:
+    request:
+      condition:
+        expression: .request.method == "POST"
+```
+
+### `include`
+
+- **Type:** stage-specific object
+- **Default:** all include fields disabled
+
+Selects which fields Hive Router sends to your coprocessor for that stage.
+
+Important: `include` controls what is sent to the coprocessor. It does not define all mutation
+permissions on returned data.
+
+## `router` stage options
+
+### `router.request`
+
+```yaml
+include:
+  body: true
+  headers: true
+  method: true
+  path: true
+  context: true # false or a list of keys
+```
+
+### `router.response`
+
+```yaml
+include:
+  body: true
+  headers: true
+  status_code: true
+  context: true # false or a list of keys
+```
+
+## `graphql` stage options
+
+### `graphql.request`
+
+```yaml
+include:
+  body: true # false or a list ["query", "operationName", "variables", "extensions"]
+  headers: true
+  method: true
+  path: true
+  sdl: true
+  context: true # false or a list of keys
+```
+
+### `graphql.analysis`
+
+```yaml
+include:
+  body: true # false or a list ["query", "operationName", "variables", "extensions"]
+  headers: true
+  method: true
+  path: true
+  sdl: true
+  context: true # false or a list of keys
+```
+
+### `graphql.response`
+
+```yaml
+include:
+  body: true # false
+  headers: true
+  status_code: true
+  sdl: true
+  context: true # false or a list ["key1", "key2"]
+```
+
+## Selection formats
+
+### `context` selection
+
+`context` supports three forms:
+
+- `false` - include no context
+- `true` - include full context
+- list of keys - include selected keys only
+
+```yaml
+context: false
+# or
+context: true
+# or
+context:
+  - hive::progressive_override::labels_to_override
+  - hive::operation::name
+```
+
+### GraphQL `body` selection
+
+For `graphql.request.include.body` and `graphql.analysis.include.body`:
+
+- `false` - include no body fields
+- `true` - include all body fields
+- list - include selected body fields
+
+Allowed list values:
+
+- `query`
+- `operationName`
+- `variables`
+- `extensions`
+
+```yaml
+body: false
+# or
+body: true
+# or
+body: [query, variables, operationName]
+```
+
+## Full example
+
+```yaml title="router.config.yaml"
+coprocessor:
+  url: unix:///tmp/hive-coprocessor.sock?path=/coprocessor
+  protocol: h2c
+  timeout: 1s
+  stages:
+    router:
+      request:
+        condition:
+          expression: .request.method == "POST"
+        include:
+          headers: true
+          method: true
+          path: true
+          context:
+            - hive::operation::name
+      response:
+        include:
+          headers: true
+          status_code: true
+    graphql:
+      request:
+        include:
+          body: [query, operationName, variables, extensions]
+          headers: true
+          context: true
+      analysis:
+        include:
+          body: [query]
+          context:
+            - your.custom_key
+      response:
+        include:
+          body: true
+          headers: true
+          status_code: true
+```

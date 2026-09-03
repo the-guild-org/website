@@ -1,3 +1,23 @@
 packages:
   - packages/*
   - website
+
+# Settings migrated from .npmrc (pnpm reads them here since v10).
+autoInstallPeers: false
+strictPeerDependencies: false
+
+# pnpm 11's supply-chain delay (minimumReleaseAge) stays on; rolldown is
+# vite/astro's bundler whose exact version the framework pins, so waiting on
+# its binary re-releases only breaks installs.
+minimumReleaseAgeExclude:
+  - rolldown
+  - '@rolldown/*'
+  - '@cloudflare/workers-types@5.20260902.1'
+
+# Dependencies allowed to run their install scripts (natives); core-js-pure's
+# script is only a funding banner.
+allowBuilds:
+  core-js-pure: false
+  esbuild: true
+  sharp: true
+  workerd: true

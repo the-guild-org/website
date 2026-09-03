@@ -1,0 +1,46 @@
+---
+title: Propagate Subgraph Extensions in Hive Router
+description:
+  Hive Router can now forward the `extensions` returned by your subgraphs to the final client
+  response, with control over which keys propagate and how values from multiple subgraphs are merged.
+date: 2026-06-30
+authors: [denis]
+---
+
+A GraphQL response can carry a top-level `extensions` object - a free-form map where services attach
+metadata like cache hints, tracing spans, or warnings alongside `data` and `errors`. Until now,
+[Hive Router](/docs/router) dropped the `extensions` returned by your subgraphs.
+
+You can now opt in and propagate them to the client, configured with the new top-level
+`response_extensions` block:
+
+```yaml title="router.config.yaml"
+response_extensions:
+  propagate:
+    algorithm: last # first | last | append. default: last
+    allow: # optional key whitelist. omit to forward all keys
+      - cacheControl
+      - warnings
+```
+
+Without this config, behavior is unchanged and nothing is forwarded.
+
+## Merging Across Subgraphs
+
+Because a single operation can fan out to multiple subgraphs, the same extension key can show up in
+several responses. The `algorithm` setting decides what the client sees:
+
+- `last` **(default)** - the last subgraph to respond wins.
+- `first` - the first subgraph to respond wins.
+- `append` - every value is collected into an array, always an array even for a single value.
+
+For example, if subgraph `a` and `b` both return `extensions.foo`, `append` gives the client every
+contribution:
+
+```json
+{ "extensions": { "foo": [{ "some": ["array"] }, { "some": "object" }] } }
+```
+
+---
+
+- [`response_extensions` configuration reference](/docs/router/configuration/response_extensions)

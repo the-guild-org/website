@@ -1,0 +1,44 @@
+---
+title: "Configuration reference"
+---
+
+You can configure Hive Router using a YAML, JSON, or TOML file (by default, `router.config.yaml`).
+We'll use YAML for all examples in this documentation since it's the most readable.
+
+Some configuration variables can be overridden at runtime using
+[environment variables](./environment-variables).
+
+This page covers all the main configuration options available. Each option links to a detailed page
+that explains how to use that feature.
+
+- [`authorization`](./authorization): Define field-level access control using
+  directives.
+- [`cors`](./cors): Control cross-origin requests to your API.
+- [`csrf`](./csrf): Protect against cross-site request forgery attacks.
+- [`headers`](./headers): Modify HTTP headers between clients and subgraphs.
+- [`http`](./http): Set the host and port for your router.
+- [`jwt`](./jwt): Add JWT-based authentication to secure your endpoint.
+- [`log`](./log): Control what the router logs and how it formats log messages.
+- [`override_subgraph_urls`](./override_subgraph_urls): Route requests to different
+  subgraph URLs dynamically.
+- [`persisted_documents`](./persisted_documents): Extract and resolve persisted
+  document IDs from file, Hive Console, or a named object storage backend.
+- [`storages`](./storages): Define reusable object storage backends (Amazon S3
+  and S3-compatible services such as Cloudflare R2, MinIO, LocalStack) that
+  other features (supergraph, persisted documents) can load artifacts from.
+- [`override_labels`](./override_labels): Dynamically activate or deactivate
+  progressive override labels.
+- [`query_planner`](./query_planner): Add safety limits and debugging for query
+  planning.
+- [`response_extensions`](./response_extensions): Propagate the GraphQL `extensions`
+  returned by subgraphs to the client response.
+- [`supergraph`](./supergraph): Tell the router where to find your supergraph schema.
+- [`traffic_shaping`](./traffic_shaping): Manage connection pooling and request
+  handling to subgraphs.
+- [`telemetry`](./telemetry): Configure tracing and usage reporting to Hive Console.
+- [`introspection`](./introspection): Enable and disable introspection queries for
+  added security.
+- [`limits`](./limits): Set limits on operation cost, depth, and other factors to
+  protect your API.
+- [`subscriptions`](./subscriptions): Enable GraphQL subscriptions and configure the
+  transport protocol (HTTP streaming, WebSocket, or HTTP Callback) per subgraph.

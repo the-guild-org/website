@@ -1,0 +1,49 @@
+---
+title: "Compatibility"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+This page describes which [Federation](/federation) features are supported by Hive Router,
+along with the current implementation status of each.
+
+Hive Router targets the **Federation v2** specification. Federation features are shipped over time as
+part of the [Federation specification versions](https://www.apollographql.com/docs/graphos/schema-design/federated-schemas/reference/versions),
+so each feature below is mapped to the version that introduced it.
+
+<Callout title="Federation v1" type="warning">
+  Hive Router supports **Federation v2 only**. Federation v1 supergraphs are not
+  supported - compose your subgraphs with Federation v2 composition tools, or a
+  schema registry, before running them through the router.
+</Callout>
+
+## Status Legend
+
+| Icon | Meaning               |
+| ---- | --------------------- |
+| ✅   | Fully supported       |
+| ⏳   | Planned / In progress |
+
+## Feature Support
+
+| Feature                                                                                          | Status | Notes                                                                                | Federation Version  |
+| ------------------------------------------------------------------------------------------------ | :----: | ------------------------------------------------------------------------------------ | ------------------- |
+| **Federation v2 base** (`@key`, `@external`, `@requires`, `@provides`, `@shareable` foundations) |   ✅   | Base specification supported by Hive Router                                          | v2.0                |
+| **Custom directives** (`@composeDirective`)                                                      |   ✅   | Fully supported                                                                      | v2.1                |
+| **`@shareable`**                                                                                 |   ✅   | Fully supported                                                                      | v2.2                |
+| **`@interfaceObject`**                                                                           |   ✅   | Fully supported                                                                      | v2.3                |
+| **Subscriptions**                                                                                |   ✅   | Fully supported. See [Subscriptions](/docs/router/subscriptions).                    | v2.4                |
+| **Authentication directives** (`@authenticated`, `@requiresScopes`, JWT)                         |   ✅   | Fully supported. See [JWT Authentication](/docs/router/security/jwt-authentication). | v2.5                |
+| **Authorization** (`@policy`)                                                                    |   ✅   | Fully supported. See [Custom Authorization Policies](/docs/router/security/policy).  | v2.6                |
+| **Progressive `@override`**                                                                      |   ✅   | Fully supported                                                                      | v2.7                |
+| **Contextual arguments** (`@context` / `@fromContext`)                                           |   ⏳   | Planned                                                                              | v2.8                |
+| **Demand control** (`@cost` / `@listSize`)                                                       |   ✅   | Fully supported. See [Demand Control](/docs/router/security/demand-control).         | v2.9                |
+| **Apollo Connectors** (REST connectors)                                                          |   ⏳   | Not supported at the moment                                                          | v2.10, v2.11, v2.13 |
+| **Response caching** (`@cacheTag`)                                                               |   ⏳   | Not supported yet                                                                    | v2.12               |
+
+<Callout type="info">
+  We continuously run the [Federation Gateway
+  Audit](https://the-guild.dev/graphql/hive/federation-gateway-audit) to verify
+  Hive Router's compliance with the federation ecosystem, including every day
+  use-cases and edge-cases that our users encounter.
+</Callout>

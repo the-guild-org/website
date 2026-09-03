@@ -22,7 +22,6 @@ const {
   cacheStorageId,
   fallbackRoute,
   defaultBanner,
-  koaliaPk,
 } = jsonConfig;
 
 function isRewriteRecord(record: WebsiteRecord): record is RewriteRecord {
@@ -206,7 +205,6 @@ async function handleEvent(request: Request, sentry: Toucan): Promise<Response> 
   });
 }
 
-// eslint-disable-next-line import/no-default-export
 export default {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async fetch(request: Request, env: Env, context: EventContext<Env, any, any>): Promise<Response> {
@@ -232,7 +230,6 @@ export default {
 
         if (request.headers.has('cf-connecting-ip')) {
           sentry.setUser({
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             ip_address: request.headers.get('cf-connecting-ip')!,
           });
         }

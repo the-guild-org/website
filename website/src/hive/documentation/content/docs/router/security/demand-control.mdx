@@ -1,0 +1,774 @@
+---
+title: "Demand Control"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+Demand Control protects your federated GraphQL API from expensive operations by estimating their
+computational cost before execution and enforcing configurable budgets. It works at **two
+independent layers**: the **incoming operation** as a whole, and **each subgraph call** the
+operation fans out into.
+
+Unlike structural limits (operation depth, field count), Demand Control prevents operations that are
+computationally expensive regardless of their shape, such as queries that retrieve massive lists or
+resolve costly datasources multiple times.
+
+<Callout title="Complementary to Operation Complexity" type="info">
+  Demand Control complements [Operation
+  Complexity](/docs/router/security/operation-complexity) limits. While
+  complexity limits prevent structurally complex queries (deeply nested or with
+  many fields), Demand Control prevents computationally expensive operations
+  regardless of their structure. Use both together for comprehensive protection.
+</Callout>
+
+## Use cases
+
+Demand Control is essential for:
+
+- **Preventing denial-of-service attacks**: Attackers can craft queries that request large lists or
+  expensive computations without exceeding field-depth or token limits.
+- **Protecting expensive subgraphs**: Limit expensive services (search engines, payment processors,
+  analytics databases) from being overwhelmed by cost-intensive queries.
+- **Fair resource allocation**: Ensure queries don't monopolize infrastructure by enforcing
+  per-operation budgets and tracking actual vs. estimated costs.
+- **Cost tracking and chargeback**: Monitor operational cost to charge clients fairly or allocate
+  infrastructure costs by usage.
+
+## How it works
+
+When enabled, Hive Router compiles a cost formula for each unique operation shape (normalized by
+operation structure, not variable values). During request processing:
+
+1. **Estimation phase**: Cost formula is evaluated using request variables to estimate total cost
+   before sending requests to subgraphs.
+2. **Limit checking**: If estimated cost exceeds configured limits (`operation_cost.max` globally or
+   a per-subgraph budget in `subgraphs_budget`), the router can reject the operation or skip
+   over-budget subgraphs while continuing others.
+3. **Actual cost calculation**: After execution, the router always calculates actual cost and
+   compares it with estimated cost. `actual_cost_mode` only controls the calculation method.
+
+## Two layers of cost control
+
+Demand Control applies the **same cost model** at **two independent layers**. They are configured
+separately, each has its own budget and its own `enforce`/`measure` mode, and you can use either or
+both:
+
+|                               | **Operation cost** (`operation_cost`)                        | **Subgraph budget** (`subgraphs_budget`)                                                                                       |
+| ----------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| **What it limits**            | The total estimated cost of the **whole incoming operation** | The estimated cost of the part of the plan sent to **each individual subgraph**                                                |
+| **When it acts**              | Before execution — before any subgraph is contacted          | Per subgraph fetch, during execution                                                                                           |
+| **When exceeded** (`enforce`) | The **entire request is rejected**                           | Only the **over-budget subgraph's fetch is skipped**; the rest of the plan still runs                                          |
+| **Client sees**               | A single `COST_ESTIMATED_TOO_EXPENSIVE` error, no `data`     | A **partial response** — `data` for everything else, plus a `SUBGRAPH_COST_ESTIMATED_TOO_EXPENSIVE` error for the skipped part |
+| **Config**                    | `operation_cost.max` + `operation_cost.mode`                 | `subgraphs_budget.all` / `subgraphs_budget.subgraphs.<name>` + `subgraphs_budget.mode`                                         |
+
+Both layers estimate cost the same way (see [Cost model](#cost-model-and-calculation)) and both
+decide _before_ the work happens. The difference is **scope** — the whole operation vs. one
+subgraph's share — and the **blast radius** when a budget is exceeded: reject everything, or drop a
+single subgraph and degrade gracefully.
+
+A good rule of thumb: use the **operation budget** as a hard ceiling against pathological requests,
+and **per-subgraph budgets** to shield specific fragile or expensive backends while still serving
+the rest of the response.
+
+The sections below — [the cost model](#cost-model-and-calculation),
+[configuration modes](#configuration-modes), and [error codes](#error-codes-and-result-states) —
+apply to both layers. [Subgraph-level protection](#subgraph-level-protection) covers the second
+layer specifically.
+
+## Cost model and calculation
+
+This is the shared engine behind **both** layers — the operation budget scores the whole operation,
+while a subgraph budget scores only the slice of the plan sent to that subgraph, using the exact
+same rules.
+
+Demand Control calculates operation cost as the sum of:
+
+- Operation base cost (0 for queries/subscriptions, 10 for mutations)
+- All field costs in the selection set (0 for leaf types, 1 for composite types)
+- Any `@cost` directive overrides
+- Multipliers from list fields based on `@listSize` configurations
+
+### Operation type base cost
+
+- **Queries**: 0
+- **Subscriptions**: 0
+- **Mutations**: 10 (mutations are assumed more expensive as they modify state)
+
+Each operation incurs this base cost once.
+
+### Field and type costs
+
+For each field in the selection set:
+
+- **Leaf fields** (Scalar, Enum): cost of 0
+- **Composite fields** (Object, Interface, Union): cost of 1
+
+These costs are summed recursively through the entire selection set.
+
+### Directive-based customization
+
+Use the `@cost` directive to override default field/type costs for expensive or cheap operations:
+
+```graphql
+type Query {
+  expensiveSearch(query: String!): [Book!]! @cost(weight: 50)
+}
+
+type Author {
+  email: String! @cost(weight: 5) # Email requires database lookup
+}
+```
+
+### List magnification with @listSize
+
+List fields multiply costs based on their size. Without `@listSize`, the router falls back to the
+global `list_size` configuration (default: 0).
+
+#### Static list size
+
+```graphql
+type Query {
+  bestsellers: [Book!]! @listSize(assumedSize: 5)
+}
+```
+
+For this field, the router assumes the list will always contain ~5 items. All fields nested under
+`bestsellers` are multiplied by 5.
+
+#### Dynamic list size from arguments
+
+```graphql
+type Query {
+  books(limit: Int!): [Book!]! @listSize(slicingArguments: ["limit"])
+}
+```
+
+The router extracts the `limit` argument value to determine list size dynamically per request.
+
+#### Nested argument paths
+
+```graphql
+input PaginationInput {
+  first: Int
+  after: String
+}
+
+input SearchInput {
+  pagination: PaginationInput!
+  query: String!
+}
+
+type Query {
+  search(input: SearchInput!): [Book!]!
+    @listSize(slicingArguments: ["input.pagination.first"])
+}
+
+query {
+  search(input: { pagination: { first: 50 }, query: "fiction" })
+}
+```
+
+The router resolves nested paths (supporting dot notation) to extract the list size.
+
+#### Multiple slicing arguments
+
+```graphql
+type Query {
+  allBooks(first: Int, last: Int): [Book!]!
+    @listSize(
+      slicingArguments: ["first", "last"]
+      requireOneSlicingArgument: false
+    )
+}
+
+query {
+  allBooks(first: 20, last: 30) # Router uses max(20, 30) = 30
+}
+```
+
+When `requireOneSlicingArgument: false`, the router uses the highest value among provided arguments.
+
+#### Cursor-based pagination with sizedFields
+
+```graphql
+type Query {
+  cursor(first: Int!): CursorResult!
+    @listSize(slicingArguments: ["first"], sizedFields: ["edges"])
+}
+
+type CursorResult {
+  edges: [Edge!]!
+  pageInfo: PageInfo!
+}
+
+type Edge {
+  node: Book!
+  cursor: String!
+}
+
+query {
+  cursor(first: 10) {
+    edges {
+      node {
+        title
+        author {
+          name
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+    }
+  }
+}
+```
+
+The `sizedFields` config tells the router which nested paths should use the calculated list size.
+`pageInfo` is not multiplied since it's not in `sizedFields`, but `edges` is multiplied by 10.
+
+### Complete cost calculation example
+
+Given this schema:
+
+```graphql
+type Query {
+  books(limit: Int!): [Book!]! @listSize(slicingArguments: ["limit"])
+}
+
+type Book {
+  title: String!
+  author: Author!
+  price: Float!
+}
+
+type Author {
+  name: String!
+  email: String! @cost(weight: 2)
+}
+```
+
+And this query:
+
+```graphql
+query GetBooks($limit: Int!) {
+  books(limit: $limit) {
+    title
+    author {
+      name
+      email
+    }
+    price
+  }
+}
+
+# Executed with variables: { limit: 5 }
+```
+
+Cost breakdown:
+
+- Query base cost: **0**
+- `books` field (composite): **1**
+- Books list multiplier: **5**
+  - Within each book:
+    - `title` (leaf): **0**
+    - `author` (composite): **1** × 5 = **5**
+      - Within each author:
+        - `name` (leaf): **0**
+        - `email` (leaf with `@cost(2)`): **2** × 5 = **10**
+    - `price` (leaf): **0**
+
+**Total: 0 + 1 + 5 + (1×5) + (2×5) = 0 + 1 + 5 + 5 + 10 = 21**
+
+## Configuration modes
+
+Demand Control is enforced at **two independent levels**, each with its own `enforce`/`measure`
+mode: `operation_cost.mode` governs the whole-operation budget, and `subgraphs_budget.mode` governs
+per-subgraph budgets. You can mix them — e.g. measure the operation budget while enforcing
+per-subgraph budgets.
+
+For the full configuration API reference, see
+[`demand_control` configuration](/docs/router/configuration/demand_control).
+
+### Measure mode (observation)
+
+Collect cost metrics without rejecting operations:
+
+```yaml title="router.config.yaml"
+demand_control:
+  enabled: true
+  operation_cost:
+    max: 1000
+    mode: measure
+  subgraphs_budget:
+    mode: measure
+  default_list_size:
+    all: 10
+```
+
+Use this during initial rollout to:
+
+- Observe distribution of operation costs
+- Identify expensive operations without impact
+- Set baselines before enforcement
+
+Costs are recorded in metrics regardless of `max`, and can be inspected per response via
+[`expose_headers`](#exposing-cost-to-clients).
+
+### Enforce mode (protection)
+
+Reject operations that exceed configured limits:
+
+```yaml title="router.config.yaml"
+demand_control:
+  enabled: true
+  operation_cost:
+    max: 500 # Global limit
+    mode: enforce
+  subgraphs_budget:
+    mode: enforce
+  default_list_size:
+    all: 10
+```
+
+Operations exceeding `operation_cost.max` are rejected before any subgraph is contacted,
+with the cost numbers carried in the error's `extensions`:
+
+```json
+{
+  "errors": [
+    {
+      "message": "Operation estimated cost 650 exceeds configured max cost 500",
+      "extensions": {
+        "code": "COST_ESTIMATED_TOO_EXPENSIVE",
+        "cost": {
+          "estimated": 650,
+          "max": 500
+        }
+      }
+    }
+  ]
+}
+```
+
+## Schema directives
+
+Hive Router supports IBM GraphQL cost directives in your supergraph schema.
+
+### Importing directives in Federation subgraphs
+
+Both `@cost` and `@listSize` are part of the Federation v2.9+ specification. Import them in each
+subgraph using `extend schema @link`, alongside your other Federation directives:
+
+```graphql
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.9"
+    import: ["@key", "@external", "@requires", "@cost", "@listSize"]
+  )
+
+type Query {
+  books(limit: Int!): [Book!]! @listSize(slicingArguments: ["limit"])
+  analyticsReport(year: Int!): Report! @cost(weight: 100)
+  bestsellers: [Book!]! @listSize(assumedSize: 5)
+}
+
+type Book @key(fields: "id") {
+  id: ID!
+  title: String!
+  author: Author! @cost(weight: 5) # Requires a separate DB lookup
+}
+
+type Report @cost(weight: 50) {
+  summary: String!
+  rows: [ReportRow!]! @listSize(slicingArguments: ["limit"])
+}
+```
+
+Directives are preserved through composition into the supergraph. The subgraph SDL is the source of
+truth for all cost weights and list-size annotations, and the router reads them from the composed
+supergraph at startup.
+
+### @cost directive
+
+Override default or estimated costs for fields/types:
+
+```graphql
+directive @cost(
+  weight: Int!
+) on ARGUMENT_DEFINITION | ENUM | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | OBJECT | SCALAR
+```
+
+Examples:
+
+```graphql
+type Query {
+  # Expensive aggregation operation
+  analyticsReport(year: Int!): Report! @cost(weight: 100)
+}
+
+type Author {
+  # Email requires separate database query
+  email: String! @cost(weight: 5)
+}
+
+type Review {
+  # Complex ML-based sentiment analysis
+  sentiment: String! @cost(weight: 50)
+}
+```
+
+### @listSize directive
+
+Configure how the router estimates the size of list fields:
+
+```graphql
+directive @listSize(
+  assumedSize: Int
+  slicingArguments: [String!]
+  sizedFields: [String!]
+  requireOneSlicingArgument: Boolean = true
+) on FIELD_DEFINITION
+```
+
+**Parameters:**
+
+- `assumedSize`: Static list size estimate (e.g., "bestsellers always returns ~5 items")
+- `slicingArguments`: GraphQL argument names that control list size, supporting dot-notation paths
+- `sizedFields`: Which nested fields should use the calculated list size (for complex pagination patterns)
+- `requireOneSlicingArgument`: If `true` (default), all slicing arguments must be provided. If `false`,
+  router uses the maximum value among provided arguments.
+
+**Common patterns:**
+
+```graphql
+# Hard-coded size
+type Query {
+  hotDeals: [Product!]! @listSize(assumedSize: 20)
+}
+
+# Single pagination argument
+type Query {
+  productsByPage(pageSize: Int!): [Product!]!
+    @listSize(slicingArguments: ["pageSize"])
+}
+
+# Multiple pagination (use highest)
+type Query {
+  allProducts(first: Int, last: Int): [Product!]!
+    @listSize(
+      slicingArguments: ["first", "last"]
+      requireOneSlicingArgument: false
+    )
+}
+
+# Nested pagination argument
+type Query {
+  search(input: SearchInput!): [Product!]!
+    @listSize(slicingArguments: ["input.pagination.limit"])
+}
+
+# Cursor-based pagination
+type Query {
+  productConnection(first: Int!): ProductConnection!
+    @listSize(slicingArguments: ["first"], sizedFields: ["edges"])
+}
+
+type ProductConnection {
+  edges: [ProductEdge!]!
+  pageInfo: PageInfo!
+}
+
+type ProductEdge {
+  node: Product!
+  cursor: String!
+}
+```
+
+## Subgraph-level protection
+
+This is the **second layer** ([`subgraphs_budget`](#two-layers-of-cost-control)). Where the
+operation budget gates the request as a whole, a subgraph budget gates the cost of the plan sent to
+**one individual subgraph** — so an over-budget subgraph is skipped while the rest of the operation
+still runs.
+
+Different subgraphs have different performance characteristics and resource constraints. Enforce
+per-subgraph cost limits in addition to (or instead of) the operation-wide limit to protect
+expensive or resource-constrained backends:
+
+```yaml title="router.config.yaml"
+demand_control:
+  enabled: true
+  operation_cost:
+    max: 5000 # Global limit - entire operation
+    mode: enforce
+  subgraphs_budget:
+    mode: enforce
+    all: 1000 # Any subgraph can use up to 1000 cost by default
+    subgraphs:
+      search_engine: 200 # Search is expensive, stricter limit
+      analytics: 500 # Analytics can handle more
+  default_list_size:
+    all: 10 # Default for unlisted fields
+    subgraphs:
+      search_engine: 5
+      users: 50 # Users service handles large lists well
+```
+
+**Behavior when subgraph limit is exceeded:**
+
+- The router **skips** that subgraph (returns `null` for its fields)
+- **Other subgraphs continue** executing normally
+- Response includes `SUBGRAPH_COST_ESTIMATED_TOO_EXPENSIVE` error for that subgraph only
+- Global operation still succeeds (partial response)
+
+**Example response when search subgraph is over-budget:**
+
+```jsonc
+{
+  "data": {
+    "user": {
+      "id": "123",
+      "name": "Alice",
+      "search": null, // Search subgraph skipped
+    },
+  },
+  "errors": [
+    {
+      "message": "Skipped subgraph execution because the estimated cost (250) exceeds the maximum allowed cost (200).",
+      "extensions": {
+        "code": "SUBGRAPH_COST_ESTIMATED_TOO_EXPENSIVE",
+        "serviceName": "search_engine",
+        "cost": {
+          "estimated": 250,
+          "max": 200,
+        },
+      },
+    },
+  ],
+}
+```
+
+## Monitoring and observability
+
+### Exposing cost to clients
+
+The router can return the cost of an operation to the client as HTTP response headers. This is
+opt-in and off by default. Cost is **not** added to the GraphQL `extensions` of successful
+responses (only rejection errors carry cost, in their `extensions` — see
+[Error codes](#error-codes-and-result-states)).
+
+Each header is enabled independently, with either the default name (`true`) or a custom name:
+
+```yaml title="router.config.yaml"
+demand_control:
+  enabled: true
+  operation_cost:
+    max: 500
+    mode: enforce
+    expose_headers:
+      estimated: true # X-Cost-Estimated
+      actual: true # X-Cost-Actual
+      max: true # X-Cost-Max
+  subgraphs_budget:
+    mode: enforce
+```
+
+A response then carries, for example:
+
+```http
+X-Cost-Estimated: 150
+X-Cost-Actual: 145
+X-Cost-Max: 500
+```
+
+- `X-Cost-Estimated`: pre-execution cost estimate (what enforcement uses).
+- `X-Cost-Actual`: post-execution cost (observability only; the calculation method follows
+  `actual_cost_mode`).
+- `X-Cost-Max`: the configured supergraph `max`.
+
+### Telemetry and metrics
+
+**Metrics emitted by the router** — three histograms, one per operation, using the `{cost}` unit
+and cost-shaped bucket boundaries (a count, not a duration or byte size):
+
+- `cost.estimated` — the pre-execution estimate.
+- `cost.actual` — the post-execution cost.
+- `cost.delta` — `actual - estimated`. This can be negative, so it is a float histogram. A
+  persistently large delta is the signal to tune your `@cost` weights and `@listSize` assumptions.
+
+**Metric labels/attributes:**
+
+- `cost.result` (`COST_OK`, `COST_ESTIMATED_TOO_EXPENSIVE`, `COST_ACTUAL_TOO_EXPENSIVE`,
+  `SUBGRAPH_COST_ESTIMATED_TOO_EXPENSIVE`). Note `COST_ACTUAL_TOO_EXPENSIVE` is a result label
+  only — actual cost is never enforced, so it never appears as a client-facing error.
+- `graphql.operation.name` (when available). This is the highest-cardinality dimension; it can be
+  dropped via `telemetry.metrics.instrumentation.instruments` when cardinality is a concern.
+
+**Span attributes on `graphql.operation`:**
+
+- `cost.estimated`
+- `cost.actual`
+- `cost.delta`
+- `cost.result`
+
+Use these built-in metrics and span attributes to create dashboards/alerts in your existing telemetry stack
+(OTLP/Prometheus/etc.).
+
+## Actual cost calculation
+
+Beyond pre-execution estimation, the router always calculates the **actual cost** after execution,
+from the real data that came back (real list sizes). Actual cost is **observability only** — it is
+recorded in metrics and can be exposed via `expose_headers`, but it is **never enforced**: an
+operation is never rejected after it has run (you can't un-execute a request). This is useful for:
+
+- Validating estimate accuracy (the delta, `actual - estimated`)
+- Tuning the cost model — `@cost` weights and `@listSize` assumptions — via delta analysis
+- Cost tracking and chargeback based on real resource usage
+
+### Calculation modes
+
+`actual_cost_mode` only controls how the actual cost is computed; the cost is always calculated
+either way.
+
+**`by_subgraph`** (default)
+
+Sums the cost of each subgraph response independently:
+
+- Reflects total work done across the federation
+- Accounts for intermediate fetches and entity lookups not in the final response
+- Recommended for cost allocation and chargebacks
+
+**`by_response_shape`**
+
+Calculates cost only from fields present in the final merged response:
+
+- Ignores intermediate work (federation boundaries, lookups)
+- Lighter computation
+
+<Callout type="note">
+  Delta analysis is valuable: consistently large deltas indicate your `@cost`
+  weight assignments need tuning. For example, if actual costs are always 50%
+  higher than estimated, your weights are too low.
+</Callout>
+
+## Error codes and result states
+
+When Demand Control rejects an operation, it returns a structured GraphQL error with a stable
+`code` in its `extensions`, alongside the relevant cost numbers (`estimated` and `max`) so a client
+can correlate the rejection with the configured limit. The HTTP status follows the request's
+content negotiation, like other GraphQL-level errors.
+
+| Code                                    | Phase         | Meaning                                                               | Response                                                |
+| --------------------------------------- | ------------- | --------------------------------------------------------------------- | ------------------------------------------------------- |
+| `COST_ESTIMATED_TOO_EXPENSIVE`          | Pre-execution | Estimated cost exceeds the global `max`                               | Request rejected, no subgraph calls made                |
+| `SUBGRAPH_COST_ESTIMATED_TOO_EXPENSIVE` | Pre-execution | A specific subgraph exceeded its budget                               | That subgraph skipped, others execute, partial response |
+| `COST_INVALID_SLICING_ARGUMENTS`        | Pre-execution | A `@listSize` field requires exactly one slicing argument; got 0 / 2+ | Request rejected                                        |
+
+`COST_OK` and `COST_ACTUAL_TOO_EXPENSIVE` are **result codes** used in telemetry (the `cost.result`
+label), not client-facing errors. Actual cost is never enforced, so `COST_ACTUAL_TOO_EXPENSIVE`
+never appears in a response — it only flags, in your metrics, operations whose actual cost exceeded
+`max`.
+
+## Best practices and patterns
+
+### 1. Gradual rollout strategy
+
+**Phase 1: Measurement**
+
+- Enable Demand Control with both modes set to `measure`
+- Optionally enable `expose_headers` to inspect per-response costs while validating
+- Collect cost metrics on all production traffic
+- Use telemetry to build histograms of operation costs
+
+```yaml
+demand_control:
+  enabled: true
+  operation_cost:
+    max: 1000
+    mode: measure
+    expose_headers:
+      estimated: true
+      actual: true
+  subgraphs_budget:
+    mode: measure
+  default_list_size:
+    all: 10
+```
+
+**Phase 2: Baseline setting**
+
+- Analyze metrics to understand cost distribution
+- Set `operation_cost.max` to the 99th percentile of observed costs
+- This allows all current traffic through while catching obvious abuse
+
+```yaml
+demand_control:
+  enabled: true
+  operation_cost:
+    max: 1000 # 99th percentile from Phase 1
+    mode: enforce
+  subgraphs_budget:
+    mode: enforce
+  default_list_size:
+    all: 10
+```
+
+**Phase 3: Gradual tightening (ongoing)**
+
+- Monitor rejection rate (target: less than 0.1%)
+- Gradually lower `operation_cost.max` as developers optimize queries
+- Enforce subgraph-level limits for expensive services
+
+**Phase 4: Enforcement with telemetry (production)**
+
+- Full enforcement active
+- Metrics and alerts on rejected operations
+- Customer communication about cost model
+- Regular delta analysis for cost model tuning
+
+### 2. Setting accurate @cost weights
+
+**Start conservative:**
+
+- Default to lower weights initially
+- Use delta analysis (actual - estimated) to identify underestimates
+- Gradually increase weights where deltas consistently positive
+
+**Use profiling data:**
+
+- Measure actual database query time for expensive fields
+- Measure API call latency for external services
+- Map relative latency to cost weights
+
+**Example:**
+
+```graphql
+# Expensive fields based on actual measurements
+type User {
+  email: String! @cost(weight: 10) # 2ms - slow database lookup
+  purchaseHistory: [Order!]! @cost(weight: 50) # 10ms - complex aggregation
+  recommendations: [Product!]! @cost(weight: 100) # 20ms+ - ML inference
+}
+
+# Cheap fields
+type Order {
+  id: ID! # No additional cost
+  total: Float! # In-memory calculation
+}
+```
+
+### 3. Tuning @listSize estimates
+
+**If actual cost consistently exceeds estimates:**
+
+- List assumptions too low
+- Increase `assumedSize` or `slicingArguments` values
+- Use delta analysis to calibrate
+
+**If actual cost consistently below estimates:**
+
+- List assumptions too high
+- Decrease `assumedSize`
+- Risk: attacker might exceed actual limit with large list requests
+
+**Monitor:** Track delta per operation type to identify systemic estimation errors.

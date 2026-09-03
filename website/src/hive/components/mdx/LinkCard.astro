@@ -1,0 +1,37 @@
+---
+import { withBase } from "../../lib/base-path";
+interface Props {
+  alt?: string;
+  class?: string;
+  description?: string;
+  href: string;
+  src: string | { src: string };
+  title?: string;
+}
+
+const { alt, class: className, description, href, src, title } = Astro.props;
+const imgSrc = typeof src === "string" ? src : src.src;
+const hasCaption = Boolean(title || description);
+const external = href.startsWith("http");
+---
+
+{
+  hasCaption ? (
+    <a class:list={["bg-beige-100 mt-6 flex gap-2 overflow-hidden rounded-2xl dark:bg-neutral-900", className]} href={withBase(href)}>
+      <span class="flex flex-col gap-1 p-6">
+        <strong>{title}</strong>
+        <p class="text-sm">{description}</p>
+      </span>
+      <img alt={alt || ""} class="rounded-none" height="160" role="presentation" src={imgSrc} width="286" />
+    </a>
+  ) : (
+    <a
+      class="outline-hidden focus-visible:ring-3 border-beige-200 mt-6 block overflow-hidden rounded-2xl border dark:border-neutral-800"
+      href={withBase(href)}
+      rel={external ? "noreferrer" : undefined}
+      target={external ? "_blank" : undefined}
+    >
+      <img alt={alt || ""} class="w-full h-auto" src={imgSrc} />
+    </a>
+  )
+}

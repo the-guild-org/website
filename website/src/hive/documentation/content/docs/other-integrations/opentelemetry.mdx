@@ -1,0 +1,306 @@
+---
+title: OpenTelemetry with GraphQL Yoga and Hive Gateway
+sidebarTitle: OpenTelemetry
+description: Set up OpenTelemetry tracing for GraphQL Yoga or Hive Gateway and send traces to Hive Console.
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+import { Tabs } from "@hive/design-system/tabs";
+
+<Callout type="warning">
+  OpenTelemetry tracing in Hive Console is currently in preview. Submit a
+  support ticket to enable it for your organization.
+</Callout>
+
+The `@graphql-hive/plugin-opentelemetry` package instruments incoming HTTP requests, the GraphQL
+execution lifecycle, and outgoing subgraph requests. You can use it with GraphQL Yoga or a
+programmatic Hive Gateway deployment.
+
+This guide configures the plugin in a Node.js application. You can send traces only to Hive Console
+or add Hive Console as a second destination alongside Datadog, Grafana, Honeycomb, or another
+existing OpenTelemetry backend. For more configuration options, see the Hive Gateway
+[Monitoring and Tracing guide](/docs/gateway/monitoring-tracing#opentelemetry-setup).
+
+## Prerequisites
+
+Create [an access token](/docs/schema-registry/management/access-tokens) with permission to send
+traces and find your [target](/docs/schema-registry/management/targets) reference. The target can be
+a slug in the format `$organizationSlug/$projectSlug/$targetSlug` or a target UUID.
+
+Make both values available to your application:
+
+```sh
+HIVE_TARGET="my-organization/my-project/production"
+HIVE_TRACING_ACCESS_TOKEN="your-access-token"
+```
+
+## Installation
+
+```sh npm2yarn
+npm i @graphql-hive/plugin-opentelemetry @opentelemetry/context-async-hooks
+```
+
+## Initialize OpenTelemetry
+
+Create a module that registers the OpenTelemetry context manager, trace provider, and Hive exporter:
+
+```ts title="telemetry.ts"
+import { hiveTracingSetup } from "@graphql-hive/plugin-opentelemetry/setup";
+import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
+
+hiveTracingSetup({
+  contextManager: new AsyncLocalStorageContextManager(),
+  target: process.env["HIVE_TARGET"]!,
+  accessToken: process.env["HIVE_TRACING_ACCESS_TOKEN"]!,
+  resource: {
+    serviceName: "my-graphql-service",
+  },
+  // Optional for self-hosted Hive:
+  // endpoint: process.env["HIVE_TRACING_ENDPOINT"],
+});
+```
+
+Import this module before importing and creating Yoga or Hive Gateway. Call `hiveTracingSetup` only
+once in each process because it registers global OpenTelemetry APIs.
+
+<Callout type="info">
+  `hiveTracingSetup` configures where spans are exported. `useOpenTelemetry`
+  instruments requests and creates the spans. Both steps are required unless
+  your application already initializes an OpenTelemetry SDK and exporter.
+</Callout>
+
+## Keep your existing OpenTelemetry backend
+
+Probably your applications already send traces to an observability provider like DataDog. You do not need to replace that
+setup to try Hive Console. Use one OpenTelemetry provider and configure it with a span processor for
+each destination.
+
+Do not call `hiveTracingSetup` or register a second provider in this case. Add
+`HiveTracingSpanProcessor` to your existing SDK configuration before starting the provider:
+
+```sh npm2yarn
+npm i @opentelemetry/exporter-trace-otlp-http @opentelemetry/sdk-node
+```
+
+```ts title="telemetry.ts"
+import { HiveTracingSpanProcessor } from "@graphql-hive/plugin-opentelemetry/setup";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
+import { NodeSDK, tracing } from "@opentelemetry/sdk-node";
+
+const sdk = new NodeSDK({
+  // Keep your existing resource, instrumentations, and other SDK options here.
+  spanProcessors: [
+    // Your existing backend. This exporter can also use the standard OTEL_EXPORTER_* variables.
+    new tracing.BatchSpanProcessor(
+      new OTLPTraceExporter({
+        url: process.env["EXISTING_OTLP_TRACES_ENDPOINT"],
+      }),
+    ),
+    // HiveTracingSpanProcessor batches and exports a copy of each Hive trace to Hive Console.
+    new HiveTracingSpanProcessor({
+      endpoint:
+        process.env["HIVE_TRACING_ENDPOINT"] ??
+        "https://api.graphql-hive.com/otel/v1/traces",
+      target: process.env["HIVE_TARGET"]!,
+      accessToken: process.env["HIVE_TRACING_ACCESS_TOKEN"]!,
+    }),
+  ],
+});
+
+sdk.start();
+```
+
+Your existing backend continues receiving all spans. The Hive processor selects and transforms Hive
+request traces before sending them to Hive Console. Use this same `telemetry.ts` as the first import
+in the Yoga or Gateway examples below.
+
+## Add the plugin
+
+<Tabs items={["GraphQL Yoga", "Hive Gateway config", "Programmatic Hive Gateway"]}>
+
+<Tabs.Tab>
+
+Import the setup module first, then add `useOpenTelemetry` to Yoga's plugins:
+
+```ts title="server.ts"
+import "./telemetry";
+import { createServer } from "node:http";
+import { useOpenTelemetry } from "@graphql-hive/plugin-opentelemetry";
+import { createYoga } from "graphql-yoga";
+import { schema } from "./schema";
+
+const yoga = createYoga({
+  schema,
+  plugins: [
+    useOpenTelemetry({
+      traces: true,
+    }),
+  ],
+});
+
+createServer(yoga).listen(4000);
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+When running Hive Gateway from a configuration file, use its `openTelemetry` option. Gateway adds
+`useOpenTelemetry` internally and supplies its runtime context to the plugin:
+
+```ts title="gateway.config.ts"
+import "./telemetry";
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  openTelemetry: {
+    traces: true,
+  },
+});
+```
+
+The Gateway package also re-exports the setup utility from
+`@graphql-hive/gateway/opentelemetry/setup`. The direct plugin import used in this guide works for
+both Yoga and programmatic Gateway applications.
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+When creating the Gateway runtime programmatically, add the plugin directly. Spread the runtime
+context into the options so the plugin can instrument Gateway-specific operations and use the
+Gateway logger:
+
+```ts title="gateway.ts"
+import "./telemetry";
+import { createGatewayRuntime } from "@graphql-hive/gateway-runtime";
+import { useOpenTelemetry } from "@graphql-hive/plugin-opentelemetry";
+
+export const gateway = createGatewayRuntime({
+  plugins: (context) => [
+    useOpenTelemetry({
+      ...context,
+      traces: true,
+    }),
+  ],
+});
+```
+
+</Tabs.Tab>
+
+</Tabs>
+
+## Verify the setup
+
+Start the server and send a GraphQL operation through its HTTP endpoint. Open the target's **Traces**
+view in Hive Console and select a recent operation. The trace should contain the HTTP and GraphQL
+lifecycle spans. Gateway traces also contain spans for subgraph requests.
+
+If no traces appear, verify that:
+
+- `telemetry.ts` is imported before the server or Gateway is created.
+- The access token can send traces to the configured target.
+- `HIVE_TARGET` points to the same target you opened in Hive Console.
+- A self-hosted `HIVE_TRACING_ENDPOINT` is reachable from the application.
+- `OTEL_SDK_DISABLED` is not set to `true`.
+
+For sampling, custom exporters, context propagation, span filters, and custom attributes, see the
+[OpenTelemetry Traces reference](/docs/gateway/monitoring-tracing#opentelemetry-traces).
+
+## Send traces without the JavaScript plugin
+
+Servers and routers written in other languages can send OTLP over HTTP directly to Hive Console:
+
+```text
+POST https://api.graphql-hive.com/otel/v1/traces
+Authorization: Bearer <HIVE_TRACING_ACCESS_TOKEN>
+X-Hive-Target-Ref: <ORGANIZATION>/<PROJECT>/<TARGET>
+```
+
+Use the normal OTLP protobuf or JSON request format. The target header also accepts a target UUID.
+
+### Operation root span
+
+Hive Console treats a parentless span with a truthy `hive.graphql` attribute as a GraphQL operation
+root. This marker is the only attribute required for ingestion, but the supporting attributes below
+are needed for useful labels, filters, error status, and federation views.
+
+Emit one operation root for every executed GraphQL operation with this minimum shape:
+
+```text
+parent span ID: empty
+span name: graphql.operation
+attributes:
+  hive.graphql: true
+  graphql.operation.type: query
+  graphql.operation.name: GetProducts
+  graphql.document: query GetProducts { products { id name } }
+  http.status_code: 200
+```
+
+If your instrumentation creates an HTTP server span above the operation, either export the operation
+as the parentless Hive trace root or reproduce the transformation performed by
+`HiveTracingSpanProcessor`: remove the operation's parent, copy the HTTP attributes to it, and use the
+HTTP request's start and end times. This makes the operation discoverable while preserving the full
+request duration.
+
+### Hive attributes
+
+Use native OTLP booleans, integers, strings, and string arrays rather than encoding values as JSON
+strings.
+
+| Attribute                               | Type       | Span                 | Description                                                                                               |
+| --------------------------------------- | ---------- | -------------------- | --------------------------------------------------------------------------------------------------------- |
+| `hive.graphql`                          | `boolean`  | Operation root       | Required marker for a GraphQL operation trace. Set it to `true`.                                          |
+| `hive.graphql.operation.hash`           | `string`   | Operation root       | Stable identity of the normalized operation. Used to correlate and filter repeated operations.            |
+| `hive.graphql.error.count`              | `integer`  | Operation root       | Total GraphQL parse, validation, and execution errors. Omit it or set it to `0` when there are no errors. |
+| `hive.graphql.error.codes`              | `string[]` | Operation root       | Values of `error.extensions.code` for GraphQL errors that provide a code.                                 |
+| `hive.client.name`                      | `string`   | Operation root       | Client application name, commonly read from `graphql-client-name` or `x-graphql-client-name`.             |
+| `hive.client.version`                   | `string`   | Operation root       | Client version, commonly read from `graphql-client-version` or `x-graphql-client-version`.                |
+| `hive.request.id`                       | `string`   | Operation root       | Application request ID for correlation with logs and other telemetry.                                     |
+| `hive.gateway.operation.subgraph.names` | `string[]` | Operation root       | Names of all subgraphs contacted while executing a federated operation.                                   |
+| `hive.gateway.upstream.subgraph.name`   | `string`   | Subgraph client span | Name of the subgraph represented by this span.                                                            |
+| `hive.upstream`                         | `boolean`  | Subgraph client span | Marks a logical subgraph execution. Set it to `true`.                                                     |
+| `hive.request`                          | `boolean`  | HTTP server span     | Marks the plugin's HTTP request span for processing. Not needed when emitting the final operation root.   |
+
+The JavaScript plugin's operation hash is a lowercase MD5 digest of the normalized operation body,
+selected operation name, and sorted unique schema coordinates. Its normalization removes aliases,
+normalizes literal values, and sorts definitions, selections, arguments, directives, and variables.
+Other implementations may provide their own stable hash, but matching this algorithm keeps operation
+identities consistent across services using the JavaScript plugin.
+
+For a federated trace, make each logical subgraph execution a child client span of the operation.
+Set both `hive.upstream` and `hive.gateway.upstream.subgraph.name` on that span, then make the
+outgoing HTTP request span its child. Also add the complete list of contacted subgraphs to
+`hive.gateway.operation.subgraph.names` on the operation root.
+
+### GraphQL attributes
+
+These attributes are not in the `hive.*` namespace, but Hive Console uses them as first-class
+operation metadata:
+
+| Attribute                | Type     | Description                                                       |
+| ------------------------ | -------- | ----------------------------------------------------------------- |
+| `graphql.document`       | `string` | Printed GraphQL document. Also enables the operation source view. |
+| `graphql.operation.name` | `string` | Selected operation name. Omit it for an anonymous operation.      |
+| `graphql.operation.type` | `string` | One of `query`, `mutation`, or `subscription`.                    |
+
+### HTTP attributes
+
+Copy these HTTP server span attributes to the operation root. Hive Console currently uses these
+exact attribute names for trace filters and success classification:
+
+| Attribute          | Type      | Description                |
+| ------------------ | --------- | -------------------------- |
+| `http.status_code` | `integer` | HTTP response status code. |
+| `http.method`      | `string`  | HTTP request method.       |
+| `http.host`        | `string`  | Request host.              |
+| `http.route`       | `string`  | Matched server route.      |
+| `http.url`         | `string`  | Full request URL.          |
+
+Set the standard OpenTelemetry span status to `ERROR` for failures. You can also record standard
+`exception` events with `exception.type`, `exception.message`, and `exception.stacktrace`; Hive
+Console renders these in the span details.
+
+Set `service.name` and `service.version` as standard OpenTelemetry resource attributes. All other
+resource attributes, span attributes, links, and events remain available in the detailed trace view.

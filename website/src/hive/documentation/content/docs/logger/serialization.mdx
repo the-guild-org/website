@@ -1,0 +1,76 @@
+---
+title: Advanced Serialization
+---
+
+Hive Logger uses advanced serialization to ensure that all attributes are logged safely and
+readably, even when they contain complex or circular data structures. This means you can log rich,
+nested objects or errors as attributes without worrying about serialization failures or unreadable
+logs.
+
+For example, the logger will serialize the error object, including its message and stack, in a safe
+and readable way. This advanced serialization is applied automatically to all attributes passed to
+log methods, child loggers, and writers.
+
+```ts
+import { Logger } from "@graphql-hive/logger";
+
+const log = new Logger();
+
+class DatabaseError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "DatabaseError";
+  }
+}
+const dbErr = new DatabaseError("Connection failed");
+const userErr = new Error("Updating user failed", { cause: dbErr });
+const errs = new AggregateError([dbErr, userErr], "Failed to update user");
+
+log.error(errs);
+```
+
+{/* prettier-ignore-start */}
+```sh
+2025-04-10T14:00:00.000Z ERR
+  stack: "AggregateError: Failed to update user
+      at <anonymous> (/project/example.js:13:14)
+      at ModuleJob.run (node:internal/modules/esm/module_job:274:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:644:26)
+      at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:98:5)"
+  message: "Failed to update user"
+  errors: [
+    {
+      stack: "DatabaseError: Connection failed
+          at <anonymous> (/project/example.js:11:15)
+          at ModuleJob.run (node:internal/modules/esm/module_job:274:25)
+          at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:644:26)
+          at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:98:5)"
+      message: "Database connection failed"
+      name: "DatabaseError"
+      class: "DatabaseError"
+    }
+    {
+      stack: "Error: Updating user failed
+          at <anonymous> (/project/example.js:12:17)
+          at ModuleJob.run (node:internal/modules/esm/module_job:274:25)
+          at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:644:26)
+          at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:98:5)"
+      message: "Updating user failed"
+      cause: {
+        stack: "DatabaseError: Connection failed
+            at <anonymous> (/project/example.js:11:15)
+            at ModuleJob.run (node:internal/modules/esm/module_job:274:25)
+            at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:644:26)
+            at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:98:5)"
+        message: "Database connection failed"
+        name: "DatabaseError"
+        class: "DatabaseError"
+      }
+      name: "Error"
+      class: "Error"
+    }
+  ]
+  name: "AggregateError"
+  class: "AggregateError"
+```
+{/* prettier-ignore-end */}

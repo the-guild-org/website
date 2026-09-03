@@ -5,7 +5,6 @@ import { createCrispClient } from './crisp-client';
 import { Env } from './env';
 import { handleSubscribeToNewsletter } from './newsletter-subscribe';
 
-// eslint-disable-next-line import/no-default-export
 export default {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async fetch(request: Request, env: Env, context: any): Promise<Response> {
@@ -18,10 +17,8 @@ export default {
       sendDefaultPii: true,
     });
 
-    sentry.configureScope(scope => {
-      scope.setExtra('Url', request.url);
-      scope.setExtra('Method', request.method);
-    });
+    sentry.setExtra('Url', request.url);
+    sentry.setExtra('Method', request.method);
 
     try {
       const url = new URL(request.url);
@@ -38,9 +35,7 @@ export default {
 
       const maybeBody = request.body ? await request.text() : null;
 
-      sentry.configureScope(scope => {
-        scope.setExtra('Body', maybeBody);
-      });
+      sentry.setExtra('Body', maybeBody);
 
       if (request.method === 'POST' && url.pathname === '/api/heltin/signup') {
         return new Response(JSON.stringify({ error: 'todo' }), { status: 500 });

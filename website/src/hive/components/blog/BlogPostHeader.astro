@@ -1,0 +1,49 @@
+---
+import { withBase } from "../../lib/base-path";
+import ArrowIcon from "./ArrowIcon.astro";
+import BlogAuthors from "./BlogAuthors.astro";
+import BlogPostPicture from "./BlogPostPicture.astro";
+import BlogTagChip from "./BlogTagChip.astro";
+
+interface Props {
+  authors: string[];
+  class?: string;
+  date: string;
+  image?: string;
+  mobileImage?: string;
+  tags: string[];
+  title: string;
+}
+
+const { authors, class: className, date, image, mobileImage, tags, title } = Astro.props;
+const tag = tags[0];
+const titleId = title.replaceAll(/[\s.,]+/g, "-").toLowerCase();
+---
+
+{image && <BlogPostPicture image={image} mobileImage={mobileImage} />}
+<header
+  class:list={[
+    "relative flex flex-col px-2 pb-6 pt-4 sm:items-center md:px-12 md:pb-16 md:pt-12 xl:w-[888px]",
+    image && "-mt-10 sm:-mt-16 max-sm:mx-6 rounded-3xl bg-white dark:bg-[rgb(var(--nextra-bg))] items-center",
+    className,
+  ]}
+>
+  <div class="flex items-center gap-2">
+    <a class="outline-hidden focus-visible:ring-3 flex items-center gap-2 text-sm font-medium" href={withBase("/blog")}>
+      <ArrowIcon class="text-beige-1000 mr-1 size-4 rotate-180" />
+      <span class="text-beige-800">Blog</span>
+      {tag && <span class="text-beige-800"> /</span>}
+    </a>
+    {tag && <BlogTagChip colorScheme="default" tag={tag} />}
+  </div>
+  <h1
+    class:list={[
+      "group mb-0 mt-4 w-(--article-max-width) text-pretty text-4xl leading-[1.2] sm:text-center md:text-5xl md:leading-[1.16667] tracking-[-0.48px]",
+      !!image && "text-center",
+    ]}
+    id={titleId}
+  >
+    {title}
+  </h1>
+  <BlogAuthors authors={authors} class:list={["mt-4", !image && "max-sm:justify-start"]} date={date} />
+</header>

@@ -55,7 +55,7 @@ const formatDate = (date: Date) =>
     >
       <a
         href="/"
-        class="inline-flex items-center gap-2 whitespace-nowrap font-bold tracking-[-.02em] text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+        class="inline-flex items-center gap-2 font-bold tracking-[-.02em] whitespace-nowrap text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
         ><svg
           aria-hidden="true"
           class="size-[18px] shrink-0"
@@ -67,7 +67,7 @@ const formatDate = (date: Date) =>
       >
       <span class="text-[var(--muted)]">/ blog</span>
       <div class="ml-auto flex items-center gap-2.5">
-        <CommandLink href="https://the-guild.dev/graphql/hive/blog">hive blog</CommandLink>
+        <CommandLink href="/graphql/hive/blog">hive blog</CommandLink>
         <ThemeToggle />
       </div>
     </div>
@@ -76,11 +76,11 @@ const formatDate = (date: Date) =>
   <main>
     <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
       <div class="max-w-[820px] py-[64px] sm:py-[88px]">
-        <div class="mb-3.5 font-mono text-[12px] lowercase tracking-[.075em] text-[var(--muted)]">
+        <div class="mb-3.5 font-mono text-[12px] tracking-[.075em] text-[var(--muted)] lowercase">
           ~/the-guild/blog
         </div>
         <h1
-          class="mb-3.5 text-balance font-mono text-[clamp(30px,4.5vw,52px)] font-semibold leading-[1.1] tracking-[-.045em] text-[var(--strong)]"
+          class="mb-3.5 font-mono text-[clamp(30px,4.5vw,52px)] leading-[1.1] font-semibold tracking-[-.045em] text-balance text-[var(--strong)]"
         >
           The Guild blog.
         </h1>
@@ -88,7 +88,7 @@ const formatDate = (date: Date) =>
           Writing on open source, GraphQL, and the craft of long-term software. Product posts live
           on the <a
             class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
-            href="https://the-guild.dev/graphql/hive/blog">Hive blog</a
+            href="/graphql/hive/blog">Hive blog</a
           >.
         </p>
       </div>
@@ -100,12 +100,13 @@ const formatDate = (date: Date) =>
               class="group grid grid-cols-1 gap-x-8 border-b border-[var(--line)] py-6 transition-colors hover:border-[var(--line-strong)] sm:grid-cols-[130px_1fr]"
               href={post.href}
             >
-              <div class="pt-0.5 font-mono text-[13px] tabular-nums text-[var(--green)]">
+              <div class="pt-0.5 font-mono text-[13px] text-[var(--green)] tabular-nums">
                 {formatDate(post.date)}
               </div>
               <div>
                 <h2 class="font-mono text-[18px] font-semibold text-[var(--strong)] transition-colors group-hover:underline">
                   {post.title}
+                  {post.external && ' '}
                   {post.external && (
                     <span
                       aria-hidden="true"

@@ -1,0 +1,346 @@
+---
+title: "storages"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+The top-level `storages` section defines reusable, named storage backends that other parts of the
+router can load artifacts from.
+
+Once a backend is declared in `storages`, you can reference it by ID from features such as
+[`supergraph.source: storage`](./supergraph#storage) and
+[`persisted_documents.storage.type: storage`](./persisted_documents#storagetype-storage), so the
+same credentials and endpoint configuration can be reused across multiple loaders.
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts: # storage id, used by other parts of the config
+    type: s3
+    bucket: my-router-artifacts
+    region: eu-west-1
+
+supergraph:
+  source: storage
+  storage_id: artifacts
+  location: supergraph/current.graphql
+```
+
+`storages` is a map keyed by storage ID. The ID is an arbitrary string you choose — pick something
+short and descriptive, since it is what you will type when referencing the backend elsewhere.
+
+If another part of the configuration references a `storage_id` that is not declared here, the router
+fails at startup.
+
+## `type: s3`
+
+Object storage backend for [Amazon S3](https://aws.amazon.com/s3/) and S3-compatible services. Under
+the hood, Hive Router uses the [`object_store`](https://docs.rs/object_store/) Rust crate, so any
+service that implements the S3 API (Cloudflare R2, MinIO, Google Cloud Storage S3 interop, Tigris,
+Backblaze B2, DigitalOcean Spaces, LocalStack, etc.) can be configured here.
+
+### Connection
+
+| Field                  | Type                      | Default | Required | Notes                                                                                                                                                   |
+| ---------------------- | ------------------------- | ------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bucket`               | `string` \| `expression`  | -       | yes      | Bucket (or container) name to read from.                                                                                                                |
+| `region`               | `string` \| `expression`  | -       | no       | AWS region (e.g. `us-east-1`, `eu-west-1`). For non-AWS S3 services, use the value the provider expects (commonly `us-east-1` or `auto` for R2).        |
+| `endpoint`             | `string` \| `expression`  | -       | no       | Custom S3 API endpoint for S3-compatible services (e.g. `https://<account>.r2.cloudflarestorage.com`, `http://minio:9000`).                             |
+| `virtual_hosted_style` | `boolean`                 | `false` | no       | Use [virtual-hosted-style requests](https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html) (`<bucket>.<host>/key`) over path-style. |
+| `allow_http`           | `boolean` \| `expression` | `false` | no       | Allow plain `http://` endpoints. Required for local services (MinIO, LocalStack) on HTTP. **Not for production traffic.**                               |
+
+<Callout type="warning">
+  `allow_http: true` disables the TLS requirement on the endpoint. Requests and
+  credentials cross the network unencrypted. Only use it for local development
+  or fully trusted private networks.
+</Callout>
+
+### Credentials
+
+The `credentials` block selects how the router authenticates with S3. When omitted entirely, the
+client falls back to [EC2 Instance Metadata Service (IMDSv2)](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html),
+which works on EC2 instances with an attached IAM role and is the right default for AWS-hosted
+deployments.
+
+| `credentials.type`  | When to use                                                                                                                                                                                                 |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `static`            | Long-lived IAM user keys, temporary session credentials, or any provider that gives you `access_key_id`/`secret_access_key`.                                                                                |
+| `web_identity`      | [IAM Roles for Service Accounts (IRSA)](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) on EKS, or any OIDC-based token exchange via STS `AssumeRoleWithWebIdentity`. |
+| `ecs_task`          | [ECS task IAM roles](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html), credentials fetched from the ECS metadata endpoint.                                                  |
+| `eks_pod_identity`  | [EKS Pod Identity](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html), the newer alternative to IRSA.                                                                                    |
+| `instance_metadata` | Explicit IMDSv2 configuration (tuning fallback behavior or overriding the metadata endpoint).                                                                                                               |
+
+#### `credentials.type: static`
+
+| Field               | Type                     | Required | Notes                                                                                                                                 |
+| ------------------- | ------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `access_key_id`     | `string` \| `expression` | yes      | Access key ID (e.g. `AKIAIOSFODNN7EXAMPLE`).                                                                                          |
+| `secret_access_key` | `string` \| `expression` | yes      | Secret access key matching `access_key_id`.                                                                                           |
+| `token`             | `string` \| `expression` | no       | Session token for temporary credentials from [`AssumeRole`](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html). |
+
+```yaml
+credentials:
+  type: static
+  access_key_id:
+    expression: env("S3_ACCESS_KEY_ID")
+  secret_access_key:
+    expression: env("S3_SECRET_ACCESS_KEY")
+```
+
+#### `credentials.type: web_identity`
+
+| Field          | Type                     | Required | Notes                                                                                                      |
+| -------------- | ------------------------ | -------- | ---------------------------------------------------------------------------------------------------------- |
+| `token_file`   | `string` \| `expression` | yes      | Path to the OIDC web identity token file (e.g. `/var/run/secrets/eks.amazonaws.com/serviceaccount/token`). |
+| `role_arn`     | `string` \| `expression` | yes      | ARN of the IAM role to assume.                                                                             |
+| `session_name` | `string` \| `expression` | no       | Name for the assumed-role session (appears in CloudTrail). Defaults to `WebIdentitySession`.               |
+| `sts_endpoint` | `string` \| `expression` | no       | Override the STS endpoint. Defaults to `https://sts.<region>.amazonaws.com`.                               |
+
+On EKS, the values for `token_file` and `role_arn` are typically injected by the
+[pod identity webhook](https://docs.aws.amazon.com/eks/latest/userguide/pod-id-association.html) via
+the `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` environment variables.
+
+```yaml
+credentials:
+  type: web_identity
+  token_file:
+    expression: env("AWS_WEB_IDENTITY_TOKEN_FILE")
+  role_arn:
+    expression: env("AWS_ROLE_ARN")
+```
+
+#### `credentials.type: ecs_task`
+
+| Field          | Type                     | Required | Notes                                                                                                              |
+| -------------- | ------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------ |
+| `relative_uri` | `string` \| `expression` | yes      | Path component of the ECS credential endpoint (e.g. `/v2/credentials/abc123`). Appended to `http://169.254.170.2`. |
+
+ECS sets the relative URI on the `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` environment variable
+inside the task.
+
+```yaml
+credentials:
+  type: ecs_task
+  relative_uri:
+    expression: env("AWS_CONTAINER_CREDENTIALS_RELATIVE_URI")
+```
+
+#### `credentials.type: eks_pod_identity`
+
+| Field        | Type                     | Required | Notes                                                                       |
+| ------------ | ------------------------ | -------- | --------------------------------------------------------------------------- |
+| `full_uri`   | `string` \| `expression` | yes      | Full URL of the container credential endpoint.                              |
+| `token_file` | `string` \| `expression` | yes      | Path to the bearer token used to authenticate with the credential endpoint. |
+
+Both values are injected by the EKS Pod Identity agent via `AWS_CONTAINER_CREDENTIALS_FULL_URI` and
+`AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE`.
+
+```yaml
+credentials:
+  type: eks_pod_identity
+  full_uri:
+    expression: env("AWS_CONTAINER_CREDENTIALS_FULL_URI")
+  token_file:
+    expression: env("AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE")
+```
+
+#### `credentials.type: instance_metadata`
+
+| Field               | Type                      | Default                  | Required | Notes                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------- | ------------------------- | ------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `imdsv1_fallback`   | `boolean` \| `expression` | `false`                  | no       | Fall back to [IMDSv1](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html) when IMDSv2 returns 403. IMDSv1 is vulnerable to [SSRF attacks](https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/); only enable for legacy environments. |
+| `metadata_endpoint` | `string` \| `expression`  | `http://169.254.169.254` | no       | Override the IMDS endpoint. Use `http://fd00:ec2::254` for dual-stack IPv6 instances.                                                                                                                                                                                                                                                                                  |
+
+You only need to set `credentials.type: instance_metadata` explicitly when overriding one of these
+fields. Omitting `credentials` entirely already uses IMDSv2 with defaults.
+
+### Behavior flags
+
+| Field              | Type      | Default | Notes                                                                                                                                                                                                                 |
+| ------------------ | --------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `skip_signature`   | `boolean` | `false` | Send requests unsigned (no credentials). Required for [anonymous reads of public buckets](https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html) that reject signed requests. |
+| `request_payer`    | `boolean` | `false` | Include `x-amz-request-payer` for [Requester Pays buckets](https://docs.aws.amazon.com/AmazonS3/latest/userguide/RequesterPaysBuckets.html).                                                                          |
+| `disable_tagging`  | `boolean` | `false` | Suppress tagging headers on PUT requests. Some S3-compatible services (older MinIO, certain CDN gateways) do not implement the tagging API.                                                                           |
+| `unsigned_payload` | `boolean` | `false` | Use the [`UNSIGNED-PAYLOAD`](https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html) literal in SigV4 signing. Skips body checksumming.                                                        |
+| `s3_express`       | `boolean` | `false` | Enable [S3 Express One Zone](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-express-one-zone.html) directory buckets. Bucket name must follow the `--use1-az4--x-s3` convention.                            |
+
+## Loading values from environment variables
+
+Most of the S3 string and boolean fields support **[expressions](./expressions)** in addition to
+plain values. Use an `expression` object with the `env()` function to read a value from an
+environment variable at startup:
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts:
+    type: s3
+    bucket:
+      expression: env("S3_BUCKET")
+    region:
+      expression: env("AWS_REGION", "us-east-1") # second arg is a fallback
+    endpoint:
+      expression: env("S3_ENDPOINT")
+    credentials:
+      type: static
+      access_key_id:
+        expression: env("S3_ACCESS_KEY_ID")
+      secret_access_key:
+        expression: env("S3_SECRET_ACCESS_KEY")
+```
+
+Expressions can do more than read environment variables — they are full
+[VRL expressions](./expressions), so you can compose values, fall back to defaults, or branch on
+other env vars. For example, switching credential modes between local development and production by
+toggling an env var is usually simpler with two separate config files, but the `env()` fallback form
+is useful for optional knobs:
+
+```yaml
+endpoint:
+  expression: env("S3_ENDPOINT", "")
+```
+
+<Callout type="info">
+  When you use `expression` for a field, the value is resolved once at router
+  startup. Storage configuration is not re-evaluated per-request — these values
+  are not dynamic in the way that header or routing expressions are.
+</Callout>
+
+For simple cases (no fallback logic beyond a single default), the more general
+[`from_env`](./environment-variables#setting-any-config-value-from-an-environment-variable) shorthand
+works here too, and on any other primitive field in the config:
+
+```yaml
+bucket:
+  from_env: S3_BUCKET
+```
+
+## Provider examples
+
+### Amazon S3 (production, EKS via IRSA)
+
+The recommended setup for AWS-hosted routers — no static credentials, no env vars to leak.
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts:
+    type: s3
+    bucket: my-router-artifacts
+    region: eu-west-1
+    credentials:
+      type: web_identity
+      token_file:
+        expression: env("AWS_WEB_IDENTITY_TOKEN_FILE")
+      role_arn:
+        expression: env("AWS_ROLE_ARN")
+```
+
+### Amazon S3 (EC2 instance role)
+
+If the router runs directly on an EC2 instance with an attached IAM role, omit `credentials`
+entirely:
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts:
+    type: s3
+    bucket: my-router-artifacts
+    region: eu-west-1
+```
+
+### Cloudflare R2
+
+[Cloudflare R2](https://developers.cloudflare.com/r2/) is S3-compatible and uses an account-scoped
+endpoint. Set `region` to `auto` and supply an
+[R2 API token](https://developers.cloudflare.com/r2/api/tokens/) as static credentials:
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts:
+    type: s3
+    bucket: my-router-artifacts
+    region: auto
+    endpoint:
+      expression: env("R2_ENDPOINT") # https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+    credentials:
+      type: static
+      access_key_id:
+        expression: env("R2_ACCESS_KEY_ID")
+      secret_access_key:
+        expression: env("R2_SECRET_ACCESS_KEY")
+```
+
+### MinIO
+
+[MinIO](https://min.io) deployed in your own cluster. Use the HTTPS endpoint your ingress exposes;
+fall back to `allow_http: true` only when talking to MinIO inside a trusted private network.
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts:
+    type: s3
+    bucket: router-artifacts
+    region: us-east-1
+    endpoint: https://minio.internal.example.com
+    credentials:
+      type: static
+      access_key_id:
+        expression: env("MINIO_ACCESS_KEY")
+      secret_access_key:
+        expression: env("MINIO_SECRET_KEY")
+```
+
+### LocalStack (local development)
+
+For [LocalStack](https://www.localstack.cloud/) on a developer machine, point at the local endpoint
+and enable `allow_http`. The default LocalStack credentials are `test` / `test`.
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts:
+    type: s3
+    bucket: router-artifacts
+    region: us-east-1
+    endpoint: http://localhost:4566
+    allow_http: true
+    credentials:
+      type: static
+      access_key_id: test
+      secret_access_key: test
+```
+
+### Local MinIO via Docker Compose
+
+Same idea as LocalStack — running MinIO locally over plain HTTP needs `allow_http: true`:
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts:
+    type: s3
+    bucket: router-artifacts
+    region: us-east-1
+    endpoint: http://minio:9000
+    allow_http: true
+    credentials:
+      type: static
+      access_key_id: minioadmin
+      secret_access_key: minioadmin
+```
+
+### Public bucket (no credentials)
+
+For an anonymous, world-readable bucket, skip signing entirely:
+
+```yaml title="router.config.yaml"
+storages:
+  public-artifacts:
+    type: s3
+    bucket: my-public-artifacts
+    region: us-east-1
+    skip_signature: true
+```
+
+## See also
+
+- [`supergraph.source: storage`](./supergraph#storage) — load the supergraph schema from a storage backend.
+- [`persisted_documents.storage.type: storage`](./persisted_documents#storagetype-storage) — load the persisted documents manifest from a storage backend.
+- [Expressions](./expressions) — full reference for the `expression` syntax and the `env()` function.
+- [Environment variables](./environment-variables) — how to wire env vars into the router config.

@@ -1,0 +1,85 @@
+---
+import { withBase } from "../../lib/base-path";
+import saihajPhoto from "../../documentation/src/components/saihaj.webp";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+const teamMembers = [
+  { github: "enisdenjo", link: "https://github.com/enisdenjo", name: "Denis Badurina" },
+  { github: "dotansimha", link: "https://github.com/dotansimha", name: "Dotan Simha" },
+  { github: "gilgardosh", link: "https://github.com/gilgardosh", name: "Gil Gardosh" },
+  { github: "kamilkisiela", link: "https://x.com/kamilkisiela", name: "Kamil Kisiela" },
+  { github: "n1ru4l", link: "https://twitter.com/n1rual", name: "Laurin Quast" },
+  { avatar: saihajPhoto, github: "saihaj", link: "https://github.com/saihaj", name: "Saihajpreet Singh" },
+  { github: "TuvalSimha", link: "https://github.com/tuvalsimha", name: "Tuval Simha" },
+  { github: "Urigo", link: "https://github.com/Urigo", name: "Uri Goldshtein" },
+  { github: "jdolle", link: "https://github.com/jdolle", name: "Jeff Dolle" },
+  { github: "jonathanawesome", link: "https://github.com/jonathanawesome", name: "Jonathan Brennan" },
+] as const;
+---
+
+<section
+  class:list={[
+    "isolate max-w-full rounded-3xl bg-blue-400 px-4 py-6 lg:px-8 lg:py-16 xl:px-16 xl:py-[120px] [@media(min-width:1358px)]:px-24",
+    className,
+  ]}
+>
+  <div class="mx-auto flex max-w-full flex-col flex-wrap justify-center gap-x-2 lg:max-xl:w-max xl:h-[476px]">
+    <h3 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] text-green-1000 max-w-full text-balance xl:w-[468px]">
+      Built by The Guild. Industry Veterans.
+    </h3>
+
+    <p class="mt-4 w-[468px] max-w-full text-green-800 lg:mt-6">
+      Contrary to most, we believe in long-term sight, not temporary growth. We believe in extreme quality, not scrappy pivots. We believe in open, not locked. We fight for a world where software liberates, not confines — ensuring technology serves, not subjugates.
+    </p>
+
+    <a
+      class="max-xl:order-1 max-md:w-full xl:mt-12 relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-white bg-green-800 hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit"
+      href="https://the-guild.dev/"
+      rel="noreferrer"
+      target="_blank"
+    >
+      <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+      Visit The Guild
+      <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z"></path></svg>
+    </a>
+
+    <ul
+      class="team-gallery nextra-scrollbar flex shrink-0 grid-cols-5 flex-row items-stretch justify-items-stretch gap-2 [scrollbar-color:#00000029_transparent] [scrollbar-width:auto] max-lg:overflow-auto lg:flex-wrap lg:gap-6 lg:max-xl:grid grid-cols-6 xl:[&>:nth-child(8n-7)]:ml-[calc(var(--size)/2)] max-xl:-mx-4 max-xl:max-w-[calc(100%-1rem)] max-xl:px-4 max-xl:py-6 max-lg:max-w-[calc(100%+2rem)] xl:ml-auto xl:w-[628px]"
+    >
+      {teamMembers.map((member) => (
+        <li>
+          <a
+            class="group relative flex flex-col focus-visible:outline-hidden focus-visible:ring-transparent focus-visible:ring-offset-transparent"
+            href={withBase(member.link)}
+            rel="noreferrer"
+            target="_blank"
+          >
+            <div class="relative aspect-square min-h-(--size) w-auto min-w-(--size) flex-1 overflow-hidden rounded-2xl mix-blend-multiply ring-blue-500/0 ring-offset-2 transition-all hover:ring-4 hover:ring-blue-500/15 group-focus:ring-blue-500/40 group-focus-visible:ring-4 xl:w-(--size)">
+              <div class="firefox:hidden absolute inset-0 size-full bg-blue-100"></div>
+              <img
+                alt=""
+                class="rounded-2xl bg-black brightness-100 grayscale transition-all duration-500 group-hover:scale-[1.03] group-hover:brightness-110"
+                height="180"
+                src={"avatar" in member ? member.avatar.src : `https://avatars.githubusercontent.com/${member.github}?v=4&s=180`}
+                width="180"
+              />
+              <div class="absolute inset-0 size-full bg-blue-500 opacity-10 transition-all group-hover:opacity-20"></div>
+            </div>
+            <span class="text-green-1000 mt-2 block text-sm/5 font-medium lg:max-xl:block lg:max-xl:text-base">{member.name}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .team-gallery {
+    --size: 120px;
+  }
+</style>

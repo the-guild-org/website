@@ -1,0 +1,18 @@
+---
+interface Props {
+  file?: string;
+  stackBlitzId: string;
+}
+
+const { file, stackBlitzId } = Astro.props;
+const src = `https://stackblitz.com/edit/${stackBlitzId}?ctl=1&embed=1${file ? `&file=${file}` : ""}`;
+---
+
+<iframe
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  class="mt-6"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts"
+  src={src}
+  style="border: 0; border-radius: 4px; height: 500px; overflow: hidden; width: 100%;"
+  title={`stackBlitz-${stackBlitzId}`}
+></iframe>

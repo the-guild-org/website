@@ -1,0 +1,202 @@
+---
+title: "Custom Authorization Policies"
+sidebarTitle: "@policy"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+The `@policy` directive lets you enforce authorization rules that the router cannot evaluate on its
+own, such as resource ownership, tenant isolation, or any business rule that lives in your own
+systems. Instead of hard-coding that logic in every subgraph, you declare a policy name in your
+schema and let a [coprocessor](/docs/router/customizations/coprocessors/stages-and-protocol) decide
+whether the current request satisfies it.
+
+`@policy` complements [`@authenticated` and `@requiresScopes`](/docs/router/security/authorization),
+which are described in the general [Authorization guide](/docs/router/security/authorization). Use
+`@policy` when the decision cannot be derived from a JWT scopes alone.
+
+For the complete configuration reference, see
+[`authorization` configuration](/docs/router/configuration/authorization).
+
+## How It Works
+
+1. **Collect** - before calling the `graphql.analysis` coprocessor stage, the router walks the
+   requested operation and publishes every `@policy` policy it depends on to the
+   `hive::authorization::required_policies` request context key, mapped to `null`.
+2. **Decide** - your coprocessor (or a [plugin](/docs/router/customizations/plugin-system)) looks at
+   the request and overwrites each entry with `true` or `false`.
+3. **Enforce** - after the stage returns, the router applies the decisions. Any policy left `null`,
+   or missing from the answer entirely, is treated as **denied**. Unauthorized fields are then
+   handled exactly like `@authenticated`/`@requiresScopes` violations, following your configured
+   [`authorization.directives.unauthorized.mode`](/docs/router/configuration/authorization#unauthorizedmode).
+
+## Defining Policies in Your Schema
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@policy"])
+
+type Query {
+  users: [User] @policy(policies: [["admin"], ["read_users", "internal"]])
+}
+
+type Product {
+  upc: String!
+  # Requires the "read_inventory" policy to be granted
+  inStock: Boolean @policy(policies: [["read_inventory"]])
+}
+```
+
+Just like `@requiresScopes`, `policies` is a list of lists: an **OR** of **AND** groups.
+
+- **Single list** (AND logic): every policy in the list must be granted.
+- **Multiple lists** (OR logic): at least one full list must be granted.
+
+In the example above, `users` is allowed if the `admin` policy is granted, **or** if both
+`read_users` and `internal` are granted.
+
+<Callout type="tip">
+  The router publishes every policy referenced by an operation, including
+  policies that belong to an OR group that ultimately won't be needed. Your
+  coprocessor doesn't need to know which combination is enough - deciding that
+  is the router's job.
+</Callout>
+
+When multiple directives protect the same field, all of them must be satisfied - `@policy` is
+combined with `@authenticated`/`@requiresScopes` using `AND`, the same way multiple auth directives
+on one field already compose in the [Authorization guide](/docs/router/security/authorization#directives-on-types-and-fields).
+
+## Wiring Up a Coprocessor
+
+Enable the `graphql.analysis` stage and include the request `context`, so your coprocessor can read
+`hive::authorization::required_policies` and reply with its decisions:
+
+```yaml title="router.config.yaml"
+coprocessor:
+  url: http://127.0.0.1:8081/coprocessor
+  protocol: http1
+  stages:
+    graphql:
+      analysis:
+        include:
+          context: true
+
+authorization:
+  directives:
+    enabled: true
+    unauthorized:
+      mode: filter # Or 'reject'
+```
+
+### Coprocessor Input
+
+For an operation that selects `Query.users`, the `graphql.analysis` stage payload includes the
+policies the router needs a decision on, each initialized to `null`:
+
+```json title="graphql.analysis request payload"
+{
+  "version": 1,
+  "stage": "graphql.analysis",
+  "control": "continue",
+  "id": "...",
+  "context": {
+    "hive::authorization::required_policies": {
+      "admin": null,
+      "read_users": null,
+      "internal": null
+    }
+  }
+}
+```
+
+### Coprocessor Output
+
+Your coprocessor looks up the current user (from headers, a session store, an internal service -
+whatever your business logic requires) and answers by overwriting the relevant entries:
+
+```json title="graphql.analysis response"
+{
+  "version": 1,
+  "control": "continue",
+  "context": {
+    "hive::authorization::required_policies": {
+      "admin": false,
+      "read_users": true,
+      "internal": true
+    }
+  }
+}
+```
+
+Given this answer, the `read_users` **AND** `internal` group is fully satisfied, so `users` is
+authorized even though `admin` was denied.
+
+<Callout title="Fail closed" type="warning">
+  If your coprocessor omits a policy from its response, or explicitly answers
+  with `null`, the router treats it as denied. There is no way to leave a policy
+  undecided and still access the field it protects.
+</Callout>
+
+## Deciding Policies from a Plugin
+
+A [plugin](/docs/router/customizations/plugin-system) can decide `@policy` grants too, using the
+exact same mechanism as a coprocessor: its `on_graphql_analysis` hook runs before enforcement, reads
+`required_policies` off the request context, and writes back a `true`/`false` decision for each:
+
+```rust
+async fn on_graphql_analysis<'exec>(
+    &'exec self,
+    payload: &mut OnGraphqlAnalysisHookPayload<'exec>,
+) -> OnGraphqlAnalysisHookResult {
+    let required_policies: Vec<String> = payload
+        .request_context
+        .read()
+        .ok()
+        .and_then(|read| read.authorization().required_policies().cloned())
+        .map(|policies| policies.into_keys().collect())
+        .unwrap_or_default();
+
+    if let Ok(mut write) = payload.request_context.write() {
+        let mut authorization = write.authorization();
+        for policy in required_policies {
+            let granted = self.user_has_policy(&payload.client_request_details, &policy);
+            authorization.set_policy_decision(policy, granted);
+        }
+    }
+
+    OnGraphqlAnalysisHookResult::Proceed
+}
+```
+
+Reach for a plugin instead of a coprocessor when the router binary itself is already the right place
+to own the decision - no network hop, no separate service to run. Reach for a coprocessor when the
+logic is shared across services or owned by a different team.
+
+See the [`custom_policy`](https://github.com/graphql-hive/router/tree/main/plugin_examples/custom_policy)
+plugin example, and the [`on_graphql_analysis` hook reference](/docs/router/customizations/plugin-system/hooks#on_graphql_analysis)
+for the full API.
+
+## Handling Denied Policies
+
+A denied policy is handled exactly like any other unauthorized field access - the field is filtered
+out (or the whole request is rejected in `reject` mode) and an error is returned:
+
+```json title="GraphQL response, 'filter' mode"
+{
+  "data": {
+    "users": null
+  },
+  "errors": [
+    {
+      "message": "Unauthorized field or type",
+      "extensions": {
+        "code": "UNAUTHORIZED_FIELD_OR_TYPE",
+        "affectedPath": "users"
+      }
+    }
+  ]
+}
+```
+
+See [Handling Authorization Errors](/docs/router/security/authorization#handling-authorization-errors)
+for the full behavior of `filter` and `reject` modes.

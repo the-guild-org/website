@@ -1,0 +1,256 @@
+---
+title: "error_masking"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+The `error_masking` configuration controls how errors originating from your subgraphs are rewritten
+before they are returned to clients. It lets you redact error messages and strip sensitive
+`extensions` fields, globally or per subgraph.
+
+For conceptual guidance and rollout strategy, see
+[Error Masking](/docs/router/security/error-masking).
+
+<Callout type="info">
+  Error masking only applies to **subgraph** errors — any error carrying an
+  `extensions.service` field, whether it was returned by the subgraph or
+  synthesized by the router for a network/HTTP failure. Errors produced by the
+  router itself (for example `GRAPHQL_PARSE_FAILED`) are never masked.
+</Callout>
+
+## Configuration Structure
+
+```yaml title="router.config.yaml"
+error_masking:
+  enabled: true # master switch for the whole feature
+  redacted_error_message: "Unexpected error" # message used when a subgraph error is masked
+  all:
+    enabled: true # mask the error message for every subgraph
+    extensions: # optional — omit to leave extensions untouched
+      mode: allow # allow | deny
+      keys:
+        - code
+  subgraphs: # optional per-subgraph overrides
+    products:
+      enabled: false
+      extensions:
+        mode: deny
+        keys: []
+```
+
+Error masking is **enabled by default**. Even with no `error_masking` block, subgraph error messages
+are replaced with `"Unexpected error"`.
+
+## Options
+
+### `enabled`
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+Master switch for the entire feature. When `false`, no masking is applied at all — both messages and
+`extensions` pass through untouched, and every setting below is ignored. This can also be forced off
+with the [`DISABLE_SUBGRAPH_ERROR_MASKING`](#disabling-via-environment-variable) environment variable.
+
+### `redacted_error_message`
+
+- **Type:** `string`
+- **Default:** `"Unexpected error"`
+
+The message that replaces a subgraph error's original message whenever masking is applied.
+
+### `all`
+
+- **Type:** `object`
+- **Default:** `{ enabled: true }`
+
+The default masking rules applied to every subgraph. Individual subgraphs can override these under
+[`subgraphs`](#subgraphs).
+
+#### `all.enabled`
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+Whether to replace the error `message` with [`redacted_error_message`](#redacted_error_message).
+Set to `false` to pass the original subgraph message through to clients.
+
+#### `all.extensions`
+
+- **Type:** `object`
+- **Default:** unset (extensions are **not** masked)
+
+Controls which keys of the error `extensions` object are kept or removed. When omitted, the router
+leaves `extensions` untouched — only the message is masked.
+
+<Callout type="warning">
+  Masking the message alone does **not** redact `extensions`. Sensitive detail
+  is often carried in `extensions` (stack hints, internal codes, upstream HTTP
+  bodies), so configure `extensions` explicitly when the default message-only
+  masking is not enough.
+</Callout>
+
+##### `all.extensions.mode`
+
+- **Type:** `string`
+- **Allowed values:** `allow`, `deny`
+- **Required:** yes (when `extensions` is set)
+
+- `allow`: an allowlist — only the keys in [`keys`](#allextensionskeys) are kept, everything else is
+  removed. `keys: []` removes **all** extensions.
+- `deny`: a denylist — only the keys in `keys` are removed, everything else is kept. `keys: []`
+  removes **nothing**.
+
+##### `all.extensions.keys`
+
+- **Type:** `string[]`
+- **Required:** yes (when `extensions` is set)
+
+The list of `extensions` keys the `mode` operates on. Only **root-level** keys are supported.
+
+The router's well-known extension keys are:
+
+| Key            | Description                                           |
+| :------------- | :---------------------------------------------------- |
+| `code`         | The error code (for example `SUBREQUEST_HTTP_ERROR`). |
+| `service`      | The subgraph the error originated from.               |
+| `affectedPath` | The response path affected by the error.              |
+
+Any other key a subgraph puts under `extensions` (for example `http`) is matched by its exact name.
+
+### `subgraphs`
+
+- **Type:** `object` (map of subgraph name → config)
+- **Default:** unset
+
+Per-subgraph overrides. A subgraph listed here overrides the matching field from [`all`](#all).
+
+#### `subgraphs.<name>.enabled`
+
+- **Type:** `boolean`
+- **Default:** inherits [`all.enabled`](#allenabled)
+
+Overrides message masking for this subgraph only. When omitted, the value from `all` is used.
+
+#### `subgraphs.<name>.extensions`
+
+- **Type:** `object`
+- **Default:** unset
+
+Overrides extensions masking for this subgraph only, using the same `mode`/`keys` shape as
+[`all.extensions`](#allextensions). When omitted, the subgraph inherits [`all.extensions`](#allextensions).
+
+<Callout type="info">
+  Each field is inherited independently. A subgraph that sets only `enabled`
+  still uses `all.extensions`, and vice versa — you only override the fields you
+  specify.
+</Callout>
+
+## Disabling via environment variable
+
+Setting `DISABLE_SUBGRAPH_ERROR_MASKING=true` forces [`enabled`](#enabled) to `false`, overriding
+the config file. It is a convenient escape hatch for local debugging.
+
+| Name                             | Accepted Values  | Overrides (YAML)                    |
+| :------------------------------- | :--------------- | :---------------------------------- |
+| `DISABLE_SUBGRAPH_ERROR_MASKING` | `true` / `false` | [`error_masking.enabled`](#enabled) |
+
+<Callout type="info">
+  This disables the **entire** feature — both message and `extensions` masking,
+  including per-subgraph overrides — exactly like setting `enabled: false`.
+</Callout>
+
+## Behavior
+
+- Masking is the **last** step of the response pipeline, applied after metrics, tracing, and logging.
+  Your observability tools always see the original, unmasked error — only the client-facing response
+  is redacted.
+- Only errors with an `extensions.service` field are considered subgraph errors and are eligible for
+  masking. This includes both errors returned by the subgraph and errors the router synthesizes for
+  network/HTTP failures (`SUBREQUEST_HTTP_ERROR`, `DOWNSTREAM_SERVICE_ERROR`).
+- Message masking and extensions masking are independent: you can redact the message while keeping
+  some extensions, or keep the message while stripping extensions.
+- Masking applies to subscription errors too, including errors emitted mid-stream (for example
+  `SUBGRAPH_SUBSCRIPTION_SSE_STREAM_ERROR`).
+
+## Examples
+
+### Fully disable masking
+
+```yaml title="router.config.yaml"
+error_masking:
+  enabled: false
+```
+
+### Keep messages but mask nothing else
+
+Pass original subgraph messages through while masking is otherwise active:
+
+```yaml title="router.config.yaml"
+error_masking:
+  all:
+    enabled: false
+```
+
+### Custom redaction message
+
+```yaml title="router.config.yaml"
+error_masking:
+  redacted_error_message: "Something went wrong"
+```
+
+### Mask the message and strip all extensions
+
+```yaml title="router.config.yaml"
+error_masking:
+  all:
+    enabled: true
+    extensions:
+      mode: allow
+      keys: [] # allow none — remove every extension
+```
+
+### Keep only the error code
+
+```yaml title="router.config.yaml"
+error_masking:
+  all:
+    enabled: true
+    extensions:
+      mode: allow
+      keys:
+        - code
+```
+
+### Remove specific sensitive keys
+
+```yaml title="router.config.yaml"
+error_masking:
+  all:
+    enabled: true
+    extensions:
+      mode: deny
+      keys:
+        - code
+        - service
+```
+
+### Per-subgraph override
+
+Mask everything globally, but trust the internal `products` subgraph enough to pass its original
+messages and extensions through unmasked:
+
+```yaml title="router.config.yaml"
+error_masking:
+  all:
+    enabled: true
+    extensions:
+      mode: allow
+      keys: [] # allow none
+  subgraphs:
+    products:
+      enabled: false
+      extensions:
+        mode: deny
+        keys: [] # deny none — keep every extension
+```

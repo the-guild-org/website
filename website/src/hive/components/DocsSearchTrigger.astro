@@ -1,0 +1,42 @@
+---
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<button
+  aria-label="Search documentation"
+  class:list={[
+    "docs-search-trigger cursor-pointer items-center justify-center rounded-lg text-sm text-green-700 transition-none focus:outline-hidden focus:ring-2 focus:ring-green-500/50 dark:text-neutral-300",
+    compact
+      ? "flex size-8 bg-transparent"
+      : "ml-3 hidden h-12 w-64 justify-start border border-green-200 bg-white px-4 hover:border-green-300 md:flex dark:border-neutral-800 dark:bg-neutral-900",
+  ]}
+  type="button"
+>
+  <svg
+    aria-hidden="true"
+    class:list={["size-4.5", !compact && "hidden"]}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    stroke-width="2"
+  >
+    <circle cx="11" cy="11" r="7"></circle>
+    <path d="m20 20-4-4"></path>
+  </svg>
+  {
+    !compact && (
+      <>
+        <span class="text-green-700/70 dark:text-neutral-400">
+          Search<span class="max-lg:hidden"> documentation</span>...
+        </span>
+        <kbd class="docs-search-shortcut ml-auto rounded-sm border-none bg-green-200 px-1.5 py-0.5 text-xs font-medium text-green-800 dark:bg-neutral-700 dark:text-neutral-300">
+          ⌘K
+        </kbd>
+      </>
+    )
+  }
+</button>

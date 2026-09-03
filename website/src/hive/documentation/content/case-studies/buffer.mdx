@@ -1,0 +1,117 @@
+---
+title: "How Buffer Built Its Public GraphQL API on Top of Its Internal Schema"
+excerpt:
+  "Buffer is a social media workspace that lets you plan, publish, and analyze posts and comments
+  across 10+ social networks. After closing its public REST API back in 2019, Buffer has been
+  rebuilding its public offering on GraphQL."
+category: Social Media
+date: 2026-07-22
+authors:
+  - name: Joe Birch
+    position: Staff Engineer & API Lead
+    avatar: https://avatars.githubusercontent.com/u/3879281?v=4
+---
+
+import { ContactButton } from "@hive/design-system/contact-us";
+
+import { DocsIcon, LargeCallout } from "#components/large-callout";
+import { Lede } from "#components/lede";
+
+<Lede>
+  [Buffer](https://buffer.com/) is a social media workspace that lets you plan,
+  publish, and analyze posts and comments across 10+ social networks including
+  LinkedIn, Facebook, Instagram, Bluesky, and several others. The company used
+  to have a public REST API, but closed it back in 2019, and has since been deep
+  in migrating everything internally to GraphQL, and the [Public
+  API](https://buffer.com/api) has been the next step on that journey. After
+  over 45K API clients and 3.6M posts being created through it, Buffer is
+  continuing to build on its Public API to position its API as the product.
+</Lede>
+
+[![How to Build on Buffer's New API](./buffer_youtube_thumbnail.jpg)](https://www.youtube.com/watch?v=lgB0HMkbx34)
+
+Buffer wasn't building this from scratch, as there was already an established internal GraphQL API powering its own apps. The work was really about getting that existing API ready to safely expose to the public, and a lot of the decisions that followed came from opening up something that had only ever been built with an internal audience in mind, without it becoming a separate thing to maintain.
+
+## Exposing part of a schema without splitting it in two
+
+In the long term Buffer wants the API to be public by default, but the team were not in a position to open everything up on day one. So to start with, they needed to expose a smaller subset of the schema while rolling out API usage and getting a feel for how it was being used in practice. The harder constraint was that they didn't want to maintain separate schemas for public and internal use, as keeping two in sync would have been a constant source of synchronization and rework. This meant that the public API needed to be a view onto the existing schema rather than a copy of it.
+
+Buffer uses a single schema for its API, and while each domain lives in its own GraphQL files internally, these are merged together so that clients can access everything in one place. To decide what gets exposed, the team created their own custom directive, `@public`, which controls what external clients are able to access and also determines what shows up in Buffer's external tooling. So rather than keeping a separate list of what's public somewhere, the schema itself is the source of truth and anything without `@public` simply stays internal. This gives the team flexibility in what they expose, so they can open up a whole type or only certain fields within it.
+
+While Hive offers [schema contracts](https://the-guild.dev/graphql/hive/docs/schema-registry/contracts) for this kind of public and internal split, contracts are currently supported for federated projects only. Buffer runs a single, non-federated schema, so they weren't a fit here. On top of that, Buffer needed more than filtering a schema into subsets, as the same mechanism also had to carry required scopes, which the custom directive handles in one place. It's an area the team would happily revisit if contracts grow to cover non-federated graphs.
+
+## Granting the right access to the right clients
+
+There are two different types of API access Buffer needed to support: personal access, where someone uses the API to interact with their own Buffer account, and third-party integrations that perform actions on behalf of other people's Buffer accounts. Supporting both meant being clear about how access is granted and scoped, so that an integration acting for other people works differently to someone using the API against their own account.
+
+Because of this, `@public` also requires scopes to be defined, which means that when an integration wants to perform an action it can request only the scopes it needs for what it's actually trying to do, keeping access tied closely to intent. Tying scopes to the same directive that decides what's public keeps the two concerns together, so exposing something and defining how it can be accessed happen in the same place rather than drifting apart over time.
+
+## Shipping to the API while features are still moving
+
+Changing something internally is very different from changing something that's been exposed externally, because internally a change is Buffer's to make and they can update everything that depends on it, but once something is public and developers are building on it, it can't be changed as freely, and there isn't the same line of communication with consumers that the team has internally. The risk was that a strict public contract would slow down shipping, or that features would land in the product long before they reached the API.
+
+To handle this, Buffer uses `@experimental`, `@preview` and `@stable` directives to signal how far along each part of the API is, which lets the team expose new operations early and build in public, so developers can start working with something while it's still evolving and Buffer can be clear about how stable it is and what they can rely on. This means functionality can go out through the API alongside features landing in the product, while the team keeps room to iterate without a strict contract locked in from day one. Since opening the API they've already added new operations around features such as Ideas and Insights, with more coming soon.
+
+## Building the developer portal and tooling
+
+A public API needs somewhere for developers to explore it and keep up with how it changes. Buffer looked at existing solutions first, but couldn't find anything customizable that also worked well with GraphQL, so the developer portal was built from scratch.
+
+The most complex part was building Buffer's own documentation and changelog generator. With a schema contract defined, GraphQL opens up a lot of possibilities for automating change management, and the team wanted to lean into that as much as possible, so whenever the schema changes an updated [GraphiQL explorer](https://developers.buffer.com/explorer.html), [documentation](https://developers.buffer.com/reference.html), and [changelog](https://developers.buffer.com/changelog.html) are automatically published to the [Developer Portal](https://developers.buffer.com), and the schema is published to Hive's registry too. The schema being the contract is what makes all of that automation possible, so the more you can lean on it, the less change management you end up doing by hand. Joe Birch went into more detail on this in a [talk at GraphQL Conf 2025](https://graphql.org/conf/2025/schedule/e6262da79f7c90fd01a2a13570d6b6bc/).
+
+## Protecting an open GraphQL endpoint
+
+Opening up GraphQL introduces a lot of new attack vectors to account for, because queries can be expensive or malicious in ways an internal-only API never really has to worry about, so Buffer wanted to understand that surface and put the right protections in place before letting anyone in.
+
+On the security side, Buffer guards the API through a combination of complexity scoring, depth limiting, alias limiting, token limiting, and pagination limiting, which together keep queries within reasonable bounds and protect against both accidental and malicious load. Alongside this, rate limiting takes a tier-based approach that depends on the account's plan, along with a trusted partner status for integrations the team has verified, which lets them apply limits appropriate for different types of access rather than putting a single blanket limit on everyone.
+
+## Understanding who uses what
+
+With a public API, the hard part is knowing how it's actually being used, and without that, decisions like changing or removing a field come down to guesswork. Buffer needed to see usage down to the field level, not just overall traffic.
+
+Buffer uses Hive for this, all the way down to the field level, which means the team can see exactly which parts of the schema are being used and by which clients. The Schema Explorer is easy to navigate, and being able to see precisely who is using what, and how often, has been genuinely useful. It's changed the kind of decisions the team can make quickly and with less friction:
+
+- While the API was in beta, the team needed to migrate the structure of some input types before the stable release, and were able to do this without affecting clients. Using Hive, Buffer identified which clients were using these fields and then automated an email prompting them to migrate.
+- The team has been refactoring internal operations so they're ready for public consumption, and using Hive to know which internal clients are calling these, along with what they're using, is what enabled Buffer to ship extended Ideas support so soon after the initial release of the Public API.
+- Buffer identified an internal operation that was silently failing over 90% of the time, because it was being called too early in the app start-up, and was able to spot this in Hive and ship a fix.
+
+## Telling internal and external traffic apart
+
+When Buffer started ingesting internal traffic alongside external, it became difficult to tell what Hive traffic was split between the two. Getting an external-only view meant manually selecting each internal client in the filter, which isn't ideal, and there was no easy way to save those filters for later use.
+
+Buffer shared this feedback with The Guild, and one of their designers hopped on a call, arriving with a prototype that already solved the problem. A few days later it shipped to production, and it now lets the team easily switch between internal and external traffic, as well as filter between internal web and mobile traffic. It's a good example of how the two teams work together, where a specific bit of friction on Buffer's side turned into a shipped feature quickly, and it's worth noting the insights filters improvement came directly out of that conversation.
+
+## Migrating to Yoga
+
+Buffer had been using Apollo Server since it first adopted GraphQL, but had always heard about the benefits of the alternatives. [Yoga stood out on performance alone](https://the-guild.dev/graphql/yoga-server/docs/comparison#graphql-yoga-and-apollo-server), and having access to the improvements available in Hive through the use of Yoga made the switch even more appealing. Having access to OpenTelemetry data and improved insights will allow Buffer to make even more informed decisions for their API, as well as debug issues for users as they arise.
+
+In the near future, Buffer will be exploring GraphQL Subscriptions for internal real-time functionality, which Yoga makes even simpler as it ships with built-in support.
+
+## Where the gaps are
+
+Beyond the Explorer, having API access to Hive has been essential. Buffer is currently building its own deprecation triaging system to stay on top of [deprecations for internal clients](https://github.com/graphql-hive/console/issues/8245), which would have been very difficult without an API.
+
+Buffer is also [missing alerts and proactive monitoring(https://github.com/graphql-hive/console/issues/253), so right now the team has to check Hive manually when they'd rather get notifications when certain events occur, such as error rate or performance changes. Custom policies would help too, as Buffer has specific standards defined for its GraphQL schema with custom ESLint checks written for them, and without a way to express those in Hive, the team is keeping all its checks in one place for now.
+
+Buffer limits requests using complexity scoring, but there's [no way to see the complexity score for requests in Hive](https://github.com/graphql-hive/console/issues/7803), so it would be great to be able to configure complexity values and then view that data in Hive alongside everything else. Right now the team tracks this using their own internal solutions, which puts API observability data in more than one place.
+
+Hive has already improved Buffer's experience when it comes to identifying clients, but the team has run into some limits with how little data there is for each client beyond its name and version. Being able to add extra data or tags to clients, and filter by them, would make the observability even more flexible.
+
+There are a couple of oppourtunities for Buffer to utilise Hive features. One is schema checks in Hive, which would mean the team could move away from their own implementation of breaking-change checks in GitHub Actions. The other is building Buffer's own MCP server on top of Hive's API, so that folks inside Buffer can easily get at data about the API through Claude.
+
+## Looking Ahead
+
+The longer-term goal for Buffer is to bridge the gap between the in-app experience and the Public API, so that no matter where you interact with Buffer, the same experience and functionality are available, and users can choose where they want to use Buffer. A lot of this is about feature parity, as there's plenty of existing functionality the team hasn't exposed through the API yet, and the aim is to expose new features by default going forward.
+
+As the surface of the Public API expands, Buffer plans to invest further in developer tooling and experience, while continuing to build on functionality based on feedback from the community. If you're interested in building with Buffer on its Public API, [sign up](https://buffer.com/) today!
+
+<LargeCallout
+  cta={<ContactButton variant="secondary-inverted" />}
+  heading="Elevate Your GraphQL Journey"
+  icon={<DocsIcon />}
+  variant="primary"
+>
+  Open up your GraphQL API with confidence like Buffer. Whether you're exposing
+  an internal schema to the public, tracking field-level usage across clients,
+  or evolving your API without breaking consumers, Hive gives you the visibility
+  and tooling to do it safely.
+</LargeCallout>

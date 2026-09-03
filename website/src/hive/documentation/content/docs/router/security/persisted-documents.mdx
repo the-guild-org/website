@@ -1,0 +1,169 @@
+---
+title: "Persisted Documents"
+---
+
+Persisted documents let clients run pre-registered GraphQL operations by ID, without sending the
+full query text on every request.
+
+This reduces payload size, limits arbitrary query execution, and helps you move to queryless
+clients.
+
+For the complete configuration reference, see
+[`persisted_documents` configuration](/docs/router/configuration/persisted_documents).
+
+## Terminology
+
+Different ecosystems use different names for the same pattern, including **Persisted Queries**,
+**Trusted Documents**, or **Operation allowlisting**. In Hive Router docs, we use **Persisted Documents**
+as the canonical term.
+
+## Why use persisted documents
+
+When persisted documents are enabled, clients send a document ID. Hive Router then loads the query
+text from configured storage. This reduces request payloads, blocks unregistered operations when
+`require_id: true`, and gives you a clear migration path from text queries to an allowlist model.
+
+## How document ID selection works
+
+Router applies selectors in order and uses the first matching ID.
+
+If you do not set `selectors`, Router first checks `documentId` (request body for POST, query
+parameter for GET), then `extensions.persistedQuery.sha256Hash` (Apollo format). You can customize
+this order and use
+`json_path` for custom JSON fields, `url_query_param` for query strings such as `?id=...`, or
+`url_path_param` for URL path segments such as `/graphql/:id`.
+
+```yaml title="router.config.yaml"
+persisted_documents:
+  enabled: true
+  require_id: true
+  selectors:
+    - type: url_path_param
+      template: /:id # relative to the graphql endpoint, so effectively /graphql/:id
+    - type: url_query_param
+      name: id
+  storage:
+    type: file
+    path: ./persisted-documents.json
+```
+
+## Storage
+
+Hive Router supports three persisted document storage types. For the full field reference, see
+[`persisted_documents.storage`](/docs/router/configuration/persisted_documents#storage).
+
+### File storage
+
+File storage reads a local manifest and resolves IDs from memory. It supports both simple key-value
+manifests (`{ "id": "query" }`) and Apollo manifest format. File **watch mode** is enabled by
+default (`watch: true`), so changes are reloaded automatically, which works well with workflows
+like `relay-compiler --watch`.
+
+### Storage-backed manifest (S3 / S3-compatible)
+
+You can also load the manifest from a named backend declared under the top-level
+[`storages`](/docs/router/configuration/storages) section (Amazon S3, Cloudflare R2, MinIO,
+LocalStack, or any other S3-compatible service):
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts:
+    type: s3
+    bucket: my-router-artifacts
+    region: eu-west-1
+
+persisted_documents:
+  enabled: true
+  require_id: true
+  storage:
+    type: storage
+    storage_id: artifacts
+    location: persisted/manifest.json
+    poll_interval: 30s
+```
+
+It uses the same manifest format as file storage. Set `poll_interval` to have Router periodically
+re-check the object (via conditional `ETag` requests) and reload it when it changes; omit it to load
+the manifest once at startup only.
+
+### Hive CDN storage
+
+Hive storage resolves documents from Hive CDN.
+
+You can configure Hive credentials in `router.config.yaml` or with the `HIVE_CDN_ENDPOINT` and
+`HIVE_CDN_KEY` environment variables.
+
+```bash
+HIVE_CDN_ENDPOINT="https://cdn.graphql-hive.com/artifacts/v1/<target_id>"
+HIVE_CDN_KEY="<cdn access token>"
+```
+
+Router accepts either full app-qualified IDs (`appName~appVersion~documentId`) or a plain
+`documentId`, in which case app name and version are inferred from [client identification headers](/docs/router/configuration/telemetry#client_identification).
+
+If you use Apollo Client [`clientAwareness`](https://www.apollographql.com/docs/react/api/link/apollo-link-client-awareness#configuring-with-apollo-client) or [Apollo Kotlin client awareness](https://www.apollographql.com/docs/kotlin/advanced/client-awareness), set the name and version headers to Apollo's default header names, then send only a plain document ID:
+
+```yaml title="router.config.yaml"
+# Client identification settings
+telemetry:
+  client_identification:
+    name_header: apollographql-client-name
+    version_header: apollographql-client-version
+```
+
+ID format is validated before requests are sent to CDN, so malformed IDs fail fast with clear errors.
+
+## Rejecting requests without document ID
+
+With `require_id: false` (default), regular GraphQL requests (with `query`) are still allowed.
+With `require_id: true`, incoming requests must provide a persisted document ID.
+During migration, `log_missing_id: true` helps you find requests that still arrive without an ID.
+
+### Conditional enforcement with expressions
+
+In addition to a static boolean, `require_id` accepts an **expression** evaluated per-request.
+The expression can inspect the request headers, method, URL, and environment variables.
+When it returns `true`, the ID is required, otherwise it is not.
+
+```yaml
+persisted_documents:
+  require_id:
+    expression: |
+      is_null(env("BYPASS_SECRET"))
+      || .request.headers."x-bypass-require-id" != env("BYPASS_SECRET")
+```
+
+### Per-request bypass
+
+If you need to skip the `require_id` check on individual requests (for example during a gradual
+migration or for trusted internal clients), set the `hive::persisted_documents::skip_enforcement`
+flag to `true` in the request context.
+
+The flag is writable from:
+
+- `OnHttpRequest` plugin hook
+- `OnGraphqlParams` plugin hook
+- `router.request` coprocessor stage
+
+When `skip_enforcement` is `true`, requests with a full operation string pass through even when
+`persisted_documents.require_id` is enabled.
+
+## Path selector and GraphQL endpoint compatibility
+
+If you use `url_path_param`, do not use root GraphQL endpoint (`http.graphql_endpoint: "/"`).
+
+At the root endpoint, path matching is ambiguous (for example `/health` could be interpreted as a
+document path). Router rejects that configuration on startup.
+
+## Practical patterns
+
+Apollo clients generally work with default selectors by sending
+`extensions.persistedQuery.sha256Hash`. Relay-style clients typically send `documentId` and use a
+key-value manifest. URL-driven systems can use `url_path_param` for path-based IDs (for example
+CDN-like routes) or `url_query_param` for legacy query-string formats.
+
+## Troubleshooting
+
+- `PERSISTED_DOCUMENT_ID_REQUIRED` - no valid ID was extracted - check selector order and where the request sends the ID
+- `PERSISTED_DOCUMENT_NOT_FOUND` - ID was extracted but no matching document exists in storage; verify the ID exists in the manifest or CDN
+- Hive client identity errors - plain `document ID` was provided without both client name and version - set client identification headers or send an app-qualified ID

@@ -1,0 +1,174 @@
+---
+title: Usage Reporting
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+Hive Router can report usage metrics to the Hive schema registry, giving you
+[insights for executed GraphQL operations](/docs/schema-registry/usage-reporting), and
+[field level usage information](/docs/schema-registry/explorer), but also enabling
+[conditional breaking changes](/docs/schema-registry/management/targets#conditional-breaking-changes).
+
+## Getting Started
+
+Before proceeding, make sure you have
+[created a registry token with write permissions on the Hive dashboard](/docs/schema-registry/management/targets#registry-access-tokens).
+
+Next, set both environment variables:
+
+- `HIVE_ACCESS_TOKEN`: Your [Registry Access Token](/docs/schema-registry/management/access-tokens)
+  with write permission.
+- `HIVE_TARGET`: Target reference, either:
+  - slug: `$organizationSlug/$projectSlug/$targetSlug` (for example
+    `the-guild/graphql-hive/staging`)
+  - UUID: `a0f4c605-6541-4350-8cfe-b31f21a4bf80`
+
+To send usage reports, set `telemetry.hive.usage_reporting.enabled: true` in `router.config.yaml`.
+
+Example configuration:
+
+```yaml title="router.config.yaml"
+telemetry:
+  hive:
+    usage_reporting:
+      enabled: true
+      # Optional: override endpoint for self-hosted Hive
+      # endpoint: "https://my-hive/usage"
+```
+
+## Client identification
+
+To identify who's calling your GraphQL API and view traffic distribution and operation volume per
+client in Hive Console, set up client identification in `router.config.yaml`.
+
+```yaml title="router.config.yaml"
+telemetry:
+  client_identification:
+    name_header: "graphql-client-name" # default value
+    version_header: "graphql-client-version" # default value
+```
+
+## Excluding Operations
+
+You can prevent specific operations from being reported to Hive Console using the `exclude` option.
+It supports two formats that can be used interchangeably.
+
+### List of operation names (legacy)
+
+Pass an array of operation names to skip those operations:
+
+```yaml title="router.config.yaml"
+telemetry:
+  hive:
+    usage_reporting:
+      enabled: true
+      exclude:
+        - IntrospectionQuery
+        - HealthCheck
+```
+
+### Dynamic VRL expression
+
+For more fine-grained control, use a [VRL expression](/docs/router/configuration/expressions) that
+evaluates at runtime. Return `true` to exclude the operation or `false` to include it. The
+expression has full access to the request context (`.request`, `.request.headers`,
+`.request.operation.name`, `.request.operation.type`, etc.).
+
+**Exclude by operation name:**
+
+```yaml title="router.config.yaml"
+telemetry:
+  hive:
+    usage_reporting:
+      enabled: true
+      exclude:
+        expression: '.request.operation.name == "IntrospectionQuery"'
+```
+
+**Exclude traffic from a specific client identified via a request header:**
+
+You can check any request header — for example, a custom `graphql-client-name` header sent by your clients:
+
+```yaml title="router.config.yaml"
+telemetry:
+  hive:
+    usage_reporting:
+      enabled: true
+      exclude:
+        expression: '.request.headers."graphql-client-name" == "my-internal-tool"'
+```
+
+**Combine multiple conditions:**
+
+```yaml title="router.config.yaml"
+telemetry:
+  hive:
+    usage_reporting:
+      enabled: true
+      exclude:
+        expression: |
+          .request.operation.name == "IntrospectionQuery" ||
+          .request.operation.name == "HealthCheck" ||
+          .request.headers."graphql-client-name" == "my-internal-tool"
+```
+
+See [Expressions](/docs/router/configuration/expressions) for the full list of available variables
+and functions.
+
+## Sampling
+
+By default, every operation is reported (`100%`). To reduce the volume of usage reports, configure a
+sampling `rate` under `telemetry.hive.usage_reporting.sampling`.
+
+```yaml title="router.config.yaml"
+telemetry:
+  hive:
+    usage_reporting:
+      enabled: true
+      sampling:
+        rate: "10%" # report 10% of operations
+```
+
+### At-least-once sampling
+
+A low sampling `rate` reduces volume, but it can completely miss operations that are rarely executed.
+At-least-once sampling solves this: the **first** request for each unique operation is always
+reported, and later requests for the same operation follow the configured `rate`. This keeps your
+report volume low while making sure every distinct operation is visible in Hive Console at least once.
+
+```yaml title="router.config.yaml"
+telemetry:
+  hive:
+    usage_reporting:
+      enabled: true
+      sampling:
+        rate: "10%"
+        at_least_once:
+          key: # the combination of operation name and body makes a request unique
+            - operation_name
+            - operation_body
+          max_distinct_keys: 12000 # how many keys to track in memory
+```
+
+The `key` defines what makes an operation unique. It accepts one or more of:
+
+- `operation_name` — the name of the GraphQL operation
+- `operation_type` — the operation type (`query`, `mutation`, `subscription`)
+- `operation_body` — the operation body
+
+When you provide multiple values, the router combines them into a single key.
+
+Keys are tracked in memory as 8-byte hashes (~16 bytes per key), up to `max_distinct_keys` (default
+`100000`). When the limit is reached, the oldest keys are evicted, so a previously seen operation may
+be reported as "first seen" again.
+
+<Callout type="info">
+  Exclusion runs **before** sampling. Operations matched by `exclude` are
+  dropped immediately and never count toward sampling or the at-least-once seen
+  keys.
+</Callout>
+
+## Configuration reference
+
+See the [telemetry configuration reference](/docs/router/configuration/telemetry#hive) for all
+options and defaults under `telemetry.hive`.

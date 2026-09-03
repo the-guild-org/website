@@ -4,18 +4,33 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "astro check && astro build",
+    "build": "astro check && astro build && pnpm run postbuild:hive",
     "check": "astro check",
+    "check-seo": "node scripts/hive/check-seo.ts",
     "dev": "astro dev",
-    "preview": "astro preview"
+    "postbuild:hive": "node scripts/hive/generate-sitemap.ts && node scripts/hive/generate-redirects.ts && node scripts/hive/generate-headers.ts && pagefind --site dist/graphql/hive && node scripts/hive/verify-base-path.ts",
+    "postinstall": "playwright install chromium",
+    "preview": "astro preview",
+    "test": "vitest run src"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/mdx": "^4.3.14",
-    "@astrojs/tailwind": "^6.0.2",
-    "astro": "^5.13.0",
-    "sharp": "^0.35.4",
-    "tailwindcss": "^3.4.17",
-    "typescript": "^5.9.2"
+    "@astrojs/check": "0.9.10",
+    "@astrojs/markdown-remark": "7.3.0",
+    "@astrojs/mdx": "8.0.0",
+    "@shikijs/rehype": "4.4.3",
+    "@shikijs/transformers": "4.4.3",
+    "@tailwindcss/vite": "4.3.3",
+    "astro": "7.2.10",
+    "npm-to-yarn": "3.2.0",
+    "playwright": "1.62.1",
+    "rehype-mermaid": "3.0.0",
+    "sharp": "^0.35.3",
+    "shiki": "4.4.3",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3"
+  },
+  "devDependencies": {
+    "pagefind": "1.5.2",
+    "vitest": "^4.0.5"
   }
 }

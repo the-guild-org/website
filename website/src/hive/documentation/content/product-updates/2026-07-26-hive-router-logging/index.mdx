@@ -1,0 +1,79 @@
+---
+title: Logging in Hive Router
+description:
+  Hive Router now emits a single structured summary per request, correlates every log line with a
+  request ID and trace ID, and lets you filter or mute individual subsystems.
+date: 2026-07-26
+authors: [dotan]
+---
+
+Logs are the first thing you reach for when something is wrong in production, and the last thing you
+want eating your throughput when everything is fine. We rewrote logging in
+[Hive Router](/docs/router) around that tension.
+
+## One Summary Line per Request
+
+At the default `info` level, the router no longer prints its internal pipeline. Instead, every
+finished request produces a single structured summary, the router's access log:
+
+```json
+{
+  "timestamp": "2026-07-15T21:23:27.123456Z",
+  "level": "info",
+  "target": "router::request",
+  "request_id": "01J8...",
+  "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+  "operation_name": "GetProduct",
+  "operation_type": "query",
+  "operation_hash": "1a9246e236afb66a7cccaf18c07c38f2",
+  "subgraph_requests": 2,
+  "involved_subgraphs": "products,reviews",
+  "error_count": 0,
+  "partial_response": false,
+  "status_code": 200,
+  "payload_bytes": 842,
+  "duration_ms": 14
+}
+```
+
+One line, flat fields, no nesting, predictable volume under load. Subscriptions and streamed
+responses are covered too: `payload_bytes` accumulates everything sent and `duration_ms` measures
+until the stream terminates.
+
+## Correlation with Traces
+
+Every log line now carries a `request_id` (read from `x-request-id`, or generated) and, when a W3C
+`traceparent` is present, the `trace_id`. Since that is the same trace ID exported to your
+OpenTelemetry backend, you can find a slow request in your access log and jump straight to its
+distributed trace.
+
+```yaml title="router.config.yaml"
+log:
+  correlation:
+    id_header: "x-request-id"
+    trace_propagation: true
+```
+
+## Targeted Filtering
+
+Each log line is tagged with an explicit `router::` target, so you can raise verbosity for one
+subsystem, or mute a chatty one, without touching the global level:
+
+```yaml title="router.config.yaml"
+log:
+  level: "info"
+  filter: "router::executor=debug,router::request=off"
+```
+
+Logs from the crates the router depends on are suppressed by default; enable them with
+`log_internals: true` when you need to debug the runtime itself.
+
+## Simpler Formats
+
+`format` is now `json` (default, for production) or `text` (human-readable, for local development).
+The previous `pretty-tree` and `pretty-compact` values are gone, replace them with `text`.
+
+---
+
+- [Logging guide](/docs/router/observability/logging)
+- [`log` configuration reference](/docs/router/configuration/log)

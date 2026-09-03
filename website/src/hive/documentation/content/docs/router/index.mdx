@@ -1,0 +1,102 @@
+---
+title: "Introduction"
+---
+
+Hive Router is a high-performance [GraphQL Federation](/federation) router built with Rust. It
+serves as the entry point for GraphQL requests in your federated setup, routing them efficiently
+across your subgraph services.
+
+## Why Hive Router?
+
+When you're running a [federated GraphQL architecture](/federation), your router becomes one of the
+most important pieces of your infrastructure. It needs to be fast, reliable, and handle real-world
+production traffic without breaking a sweat. Here's what makes Hive Router a solid choice:
+
+- **Speed matters.** Built with Rust, Hive Router is designed for performance and minimal resource
+  usage. Your API calls won't get bogged down by router overhead.
+- **Production-ready.** Rust's safety guarantees mean you get a router that handles concurrency well
+  and won't crash under heavy load.
+- **Open source, no strings attached.** MIT licensed and fully open source. Use it anywhere, modify
+  it however you need, and avoid vendor lock-in.
+- **Feature-complete.** Get security, traffic management, and modern federation features without
+  hunting for plugins or add-ons.
+- **Built-in observability.** Send traces to Hive Console or OTLP-compatible backends with
+  OpenTelemetry support.
+
+Want to learn more about why we built this? Check out our
+[introductory blog post](/blog/welcome-hive-router).
+
+## Performance Benchmarks
+
+We've put Hive Router through its paces against other federation gateways to see how it performs
+under real-world conditions.
+
+See the full results and testing methodology:
+**[Federation Gateway Performance Comparison](https://the-guild.dev/graphql/hive/federation-gateway-performance)**.
+
+## Federation Compatibility
+
+Hive Router works with the standard GraphQL Federation specification. We run comprehensive tests to
+make sure it plays nicely with the rest of the federation ecosystem.
+
+Check out our compliance testing:
+**[Federation Gateway Audit](https://the-guild.dev/graphql/hive/federation-gateway-audit)**.
+
+## Plugin System
+
+Hive Router supports custom plugins written in Rust, giving you full control over the request
+lifecycle. Plugins can intercept HTTP requests, modify GraphQL operations, hook into the query
+planner, and much more - all with the performance and safety guarantees of Rust.
+
+Learn how to build and integrate your own plugin:
+**[Plugin System](/docs/router/customizations/plugin-system)**.
+
+## Coprocessors
+
+Hive Router also supports coprocessors, an external service interface for request-time
+customization. Coprocessors are language-agnostic and can inspect, mutate, or short-circuit
+requests at defined stages of the router lifecycle.
+
+Learn more: **[Coprocessors](/docs/router/customizations/coprocessors)**.
+
+## Subscriptions
+
+Hive Router supports federated GraphQL subscriptions out of the box. Clients can receive real-time
+data over [Server-Sent Events](/docs/router/subscriptions/sse),
+[WebSockets](/docs/router/subscriptions/websockets), or
+[HTTP streaming](/docs/router/subscriptions/multipart-http) - and the router handles protocol
+negotiation automatically based on the client's `Accept` header. The transport used between the
+router and your subgraphs is independent from the one your clients use, so each side can speak a
+different protocol.
+
+Federated entity resolution works the same way it does for queries - when a subscription event
+arrives, the router queries any additional subgraphs needed to resolve entity fields and delivers
+the complete result to the client.
+
+Learn more: **[Subscriptions](/docs/router/subscriptions)**.
+
+## Observability
+
+In production, you need to see what happens inside your API. Hive Router has built-in observability
+features to help you find problems and keep your GraphQL API stable.
+
+Hive Router supports tracing and metrics. Tracing helps you follow one request across the router and
+subgraphs, so you can find where a request is slow or fails. Metrics help you monitor traffic, error
+rate, latency, cache behavior, and supergraph reloads over time.
+
+You can send tracing and metrics data to Hive Console, to OTLP-compatible backends, or to Prometheus
+(via a scrape endpoint). This lets you use the monitoring tools your team already has.
+
+Learn more: **[OpenTelemetry Tracing](/docs/router/observability/tracing)** and
+**[OpenTelemetry Metrics](/docs/router/observability/metrics)**.
+
+## Getting Started
+
+- **[Getting Started](/docs/router/getting-started)** - Install and run the router in just a few
+  minutes.
+- **[Plugin System](/docs/router/customizations/plugin-system)** - Extend the router with custom plugins written in
+  Rust to add new features, modify behavior, or integrate with external services.
+- **[Subscriptions](/docs/router/subscriptions)** - Enable real-time data updates
+  with Federated GraphQL subscriptions.
+- **[Configuration Reference](/docs/router/configuration)** - Explore all the ways you can customize
+  the router for your needs.

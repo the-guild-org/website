@@ -1,0 +1,43 @@
+---
+title: "csrf"
+---
+
+The `csrf` configuration object enables and configures Cross-Site Request Forgery (CSRF) protection
+for your GraphQL endpoint. This is a critical security measure for any router exposed to web
+browsers.
+
+For detailed explanations of the threat and implementation strategies, see the
+**[CSRF Prevention](/docs/router/security/csrf)**.
+
+## Options
+
+### `enabled`
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+Enables or disables the CSRF prevention middleware.
+
+CSRF prevention is disabled by default because the `csrf` block is absent from the configuration.
+However, the field-level default of `enabled` is `true`, so as soon as you add a `csrf:` block it is
+enabled unless you explicitly set `enabled: false`. It is strongly recommended to keep this enabled
+in production environments.
+
+### `required_headers`
+
+- **Type:** `string[]`
+- **Default:** `[]`
+
+A list of case-insensitive header names. If a request includes at least one of these headers, it
+will be considered safe from CSRF. Your client application must be configured to send one of these
+headers.
+
+## Example
+
+```yaml title="router.config.yaml"
+csrf:
+  enabled: true
+  required_headers:
+    - "X-CSRF-Token"
+    - "apollographql-client-name"
+```

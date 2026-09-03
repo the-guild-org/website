@@ -1,0 +1,355 @@
+@utility hive-focus {
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    @apply ring ring-blue-300 ring-offset-1 ring-offset-blue-400 dark:ring-blue-700 dark:ring-offset-blue-600;
+  }
+}
+
+@utility hive-focus-within {
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-within {
+    @apply ring ring-blue-300 ring-offset-1 ring-offset-blue-400 dark:ring-blue-700 dark:ring-offset-blue-600;
+  }
+}
+
+/* Navigation height for layout consistency */
+:root {
+  --fd-banner-height: 80px;
+  --nextra-primary-hue: 164;
+  --nextra-primary-saturation: 70%;
+  --nextra-primary-lightness: 40%;
+  --nextra-bg: 252 251 250;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --fd-banner-height: 65px;
+  }
+}
+
+/* Custom easing functions */
+:root {
+  --hive-ease-overshoot-far: linear(
+    0 0%,
+    0.5007 7.21%,
+    0.7803 12.29%,
+    0.8883 14.93%,
+    0.9724 17.63%,
+    1.0343 20.44%,
+    1.0754 23.44%,
+    1.0898 25.22%,
+    1.0984 27.11%,
+    1.1014 29.15%,
+    1.0989 31.4%,
+    1.0854 35.23%,
+    1.0196 48.86%,
+    1.0043 54.06%,
+    0.9956 59.6%,
+    0.9925 68.11%,
+    1 100%
+  );
+
+  --hive-ease-overshoot-a-bit: linear(
+    0 0%,
+    0.5007 7.21%,
+    0.7803 12.29%,
+    0.8883 14.93%,
+    0.9724 17.63%,
+    1.011319 20.44%,
+    1.024882 23.44%,
+    1.029634 25.22%,
+    1.032472 27.11%,
+    1.033462 29.15%,
+    1.032637 31.4%,
+    1.028182 35.23%,
+    1.006468 48.86%,
+    1.001419 54.06%,
+    0.9956 59.6%,
+    0.9925 68.11%,
+    1 100%
+  );
+}
+
+@keyframes hive-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: rotate(-0.4deg);
+  }
+  75% {
+    transform: rotate(0.3deg);
+  }
+}
+
+.animate-shake:not(:focus-within) {
+  animation: hive-shake 0.3s ease;
+}
+
+/* Hive design system theme */
+@theme {
+  --font-sans: "PP Neue Montreal", system-ui, sans-serif;
+
+  --color-hive-yellow: #e1ff00;
+  --color-primary: #e1ff00;
+
+  --color-blue-100: #f4f5f5;
+  --color-blue-200: #dce3e4;
+  --color-blue-300: #c1d3d7;
+  --color-blue-400: #a4c4cb;
+  --color-blue-500: #86b6c1;
+  --color-blue-600: #68a8b6;
+  --color-blue-700: #4f96a6;
+  --color-blue-800: #437c89;
+  --color-blue-900: #39616a;
+  --color-blue-1000: #2e474c;
+
+  --color-green-100: #ecf6f3;
+  --color-green-200: #cae4de;
+  --color-green-300: #a7d5ca;
+  --color-green-400: #8cbeb3;
+  --color-green-500: #6aac9e;
+  --color-green-600: #55998d;
+  --color-green-700: #3b736a;
+  --color-green-800: #245850;
+  --color-green-900: #15433c;
+  --color-green-1000: #00342c;
+
+  --color-beige-100: #f8f7f6;
+  --color-beige-200: #f1eee4;
+  --color-beige-300: #e9e5da;
+  --color-beige-400: #dedacf;
+  --color-beige-500: #cfcabf;
+  --color-beige-600: #b9b4a9;
+  --color-beige-700: #a29e93;
+  --color-beige-800: #86827a;
+  --color-beige-900: #6d6a63;
+  --color-beige-1000: #4d4b46;
+
+  --color-critical-bright: #fd3325;
+  --color-critical-dark: #f81202;
+  --color-critical-100: #fff0e8;
+  --color-critical-500: #ffc6bb;
+  --color-critical-800: #932d47;
+
+  --color-warning-bright: #fe8830;
+  --color-warning-100: #fbf8cb;
+  --color-warning-500: #e7de62;
+  --color-warning-800: #7d7204;
+
+  --color-positive-bright: #24d551;
+  --color-positive-dark: #1ba13d;
+  --color-positive-100: #f3fbd7;
+  --color-positive-500: #afd563;
+  --color-positive-800: #406b10;
+
+  --color-info-100: #e7f7ff;
+  --color-info-500: #9fc9dc;
+  --color-info-800: #205b75;
+}
+
+/* Fix font smoothing for Neue Montreal */
+.x\:subpixel-antialiased {
+  -webkit-font-smoothing: unset;
+  -moz-osx-font-smoothing: unset;
+}
+
+/* tailwindcss-animate compatible animations */
+@keyframes enter {
+  from {
+    opacity: var(--tw-enter-opacity, 1);
+    transform: translate3d(
+        var(--tw-enter-translate-x, 0),
+        var(--tw-enter-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--tw-enter-scale, 1),
+        var(--tw-enter-scale, 1),
+        var(--tw-enter-scale, 1)
+      )
+      rotate(var(--tw-enter-rotate, 0));
+  }
+}
+
+@keyframes exit {
+  to {
+    opacity: var(--tw-exit-opacity, 1);
+    transform: translate3d(
+        var(--tw-exit-translate-x, 0),
+        var(--tw-exit-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--tw-exit-scale, 1),
+        var(--tw-exit-scale, 1),
+        var(--tw-exit-scale, 1)
+      )
+      rotate(var(--tw-exit-rotate, 0));
+  }
+}
+
+@utility animate-in {
+  animation-name: enter;
+  animation-duration: var(--tw-animate-duration, 150ms);
+  /* Don't reset variables here — the keyframes already have fallbacks (0/1),
+     and resetting would override slide-in/fade-in/zoom-in values when
+     variant-prefixed utilities sort after this one in the CSS output. */
+}
+
+@utility animate-out {
+  animation-name: exit;
+  animation-duration: var(--tw-animate-duration, 150ms);
+}
+@utility animate-duration-* {
+  --tw-animate-duration: calc(--value(integer) * 1ms);
+}
+
+/* tailwindcss-animate compatibility: duration-* should affect animation-duration too */
+.duration-75.animate-in,
+.duration-75.animate-out {
+  animation-duration: 75ms;
+}
+.duration-100.animate-in,
+.duration-100.animate-out {
+  animation-duration: 100ms;
+}
+.duration-150.animate-in,
+.duration-150.animate-out {
+  animation-duration: 150ms;
+}
+.duration-200.animate-in,
+.duration-200.animate-out {
+  animation-duration: 200ms;
+}
+.duration-300.animate-in,
+.duration-300.animate-out {
+  animation-duration: 300ms;
+}
+.duration-500.animate-in,
+.duration-500.animate-out {
+  animation-duration: 500ms;
+}
+.duration-700.animate-in,
+.duration-700.animate-out {
+  animation-duration: 700ms;
+}
+.duration-1000.animate-in,
+.duration-1000.animate-out {
+  animation-duration: 1000ms;
+}
+
+@utility fade-in-* {
+  --tw-enter-opacity: calc(--value(integer) / 100);
+}
+
+@utility fade-out-* {
+  --tw-exit-opacity: calc(--value(integer) / 100);
+}
+
+@utility slide-in-from-top-* {
+  --tw-enter-translate-y: calc(--value(integer) * -0.25rem);
+}
+
+@utility slide-in-from-bottom-* {
+  --tw-enter-translate-y: calc(--value(integer) * 0.25rem);
+}
+
+@utility slide-in-from-left-* {
+  --tw-enter-translate-x: calc(--value(integer) * -0.25rem);
+}
+
+@utility slide-in-from-right-* {
+  --tw-enter-translate-x: calc(--value(integer) * 0.25rem);
+}
+
+@utility slide-out-to-top-* {
+  --tw-exit-translate-y: calc(--value(integer) * -0.25rem);
+}
+
+@utility slide-out-to-bottom-* {
+  --tw-exit-translate-y: calc(--value(integer) * 0.25rem);
+}
+
+@utility slide-out-to-left-* {
+  --tw-exit-translate-x: calc(--value(integer) * -0.25rem);
+}
+
+@utility slide-out-to-right-* {
+  --tw-exit-translate-x: calc(--value(integer) * 0.25rem);
+}
+
+@utility zoom-in-* {
+  --tw-enter-scale: calc(--value(integer) / 100);
+}
+
+@utility zoom-out-* {
+  --tw-exit-scale: calc(--value(integer) / 100);
+}
+
+@keyframes pop-up {
+  from {
+    opacity: 0;
+    transform: translateY(3px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@utility animate-pop-up {
+  animation: pop-up 400ms var(--hive-ease-overshoot-far) forwards;
+}
+
+@keyframes icon-blur-in {
+  from {
+    opacity: 0;
+    filter: blur(1px);
+    scale: 0.75;
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    scale: 1;
+  }
+}
+
+@keyframes icon-blur-out {
+  from {
+    opacity: 1;
+    filter: blur(0px);
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    filter: blur(1px);
+    scale: 0.75;
+  }
+}
+
+@utility fill-mode-forwards {
+  animation-fill-mode: forwards;
+}
+
+@utility fill-mode-backwards {
+  animation-fill-mode: backwards;
+}
+
+@utility fill-mode-both {
+  animation-fill-mode: both;
+}
+
+/* Firefox variant - targets Firefox browser */
+@custom-variant firefox {
+  @supports (-moz-appearance: none) {
+    @slot;
+  }
+}

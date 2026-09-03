@@ -1,0 +1,139 @@
+---
+title: "override_subgraph_urls"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+The `override_subgraph_urls` configuration allows you to dynamically change the URL for a subgraph
+at runtime, based on the properties of an incoming request.
+
+This is the primary mechanism for implementing advanced routing patterns. For detailed guides and
+use cases, see the [Dynamic Subgraph Routing](/docs/router/guides/dynamic-subgraph-routing) guide.
+
+## Configuration Structure
+
+The `override_subgraph_urls` key is a top-level object in your `router.config.yaml`. It accepts two
+fields:
+
+- `subgraphs`: per-subgraph overrides, keyed by the subgraph name as it appears in your supergraph
+  schema.
+- `all`: a single fallback override that is applied to every subgraph that does not have its own
+  entry under `subgraphs`.
+
+For each override, you must specify a `url` property.
+
+```yaml
+override_subgraph_urls:
+  # Per-subgraph overrides, keyed by the subgraph name
+  subgraphs:
+    products:
+      url: # ... url definition
+    reviews:
+      url: # ... url definition
+  # Optional fallback applied to all other subgraphs
+  all:
+    url: # ... url definition
+```
+
+<Callout type="info">
+  Per-subgraph entries under `subgraphs.<name>` always take precedence over
+  `all`. Use `all` when the override logic is the same for every subgraph, or
+  when it depends on the current subgraph name (available as `.subgraph.name`).
+</Callout>
+
+## Options
+
+### `url`
+
+- **Type:** `string` or `object`
+- **Required:** Yes
+
+The `url` property defines the new URL for the subgraph. It can be provided in two forms: a static
+string or an object for dynamic evaluation.
+
+#### Static URL
+
+When a `string` is provided, all requests to that subgraph will be sent to the new static URL. This
+is useful for permanently redirecting a subgraph without recomposing your supergraph.
+
+```yaml
+override_subgraph_urls:
+  subgraphs:
+    products:
+      url: "https://products.staging.svc.cluster.local/"
+```
+
+#### Dynamic URL with `expression`
+
+When an `object` is provided, it must contain an `expression` that returns a URL string. The
+[expression](./expressions) is evaluated for each request, allowing for request-time routing
+decisions.
+
+- `expression`: **(string, required)** An [expression](./expressions) that computes the new URL.
+
+Within the `expression`, you have access to the following variables:
+
+- `.request`: The incoming HTTP request object, including its headers.
+- `.request.path_params`: Path parameters captured by the configured
+  [`http.graphql_endpoint`](./http#graphql_endpoint) pattern. For example, with
+  `graphql_endpoint: /{tenant}/graphql`, a request to `/acme/graphql` exposes
+  `.request.path_params.tenant` as `"acme"`.
+- `.default`: The original subgraph URL from the supergraph schema, which should be used as a
+  fallback.
+- `.subgraph.name`: The name of the subgraph the URL is being resolved for. This is especially
+  useful inside an `all` override that handles many subgraphs.
+
+```yaml
+override_subgraph_urls:
+  subgraphs:
+    reviews:
+      url:
+        expression: |
+          if .request.headers."x-region" == "eu" {
+            "https://reviews.eu.api/graphql"
+          } else {
+            .default
+          }
+```
+
+## Global fallback with `all`
+
+The `all` override is applied to every subgraph that does not have its own entry under `subgraphs`.
+It is useful when the override logic is the same for all subgraphs, or when it depends on the current subgraph name.
+
+Per-subgraph overrides under `subgraphs.<name>` always take precedence over `all`.
+
+```yaml
+override_subgraph_urls:
+  subgraphs:
+    # `accounts` has an explicit override and ignores `all`
+    accounts:
+      url: "https://accounts.example.com/graphql"
+  all:
+    url:
+      expression: |
+        if .subgraph.name == "reviews" {
+          "https://reviews.example.com/graphql"
+        } else {
+          .default
+        }
+```
+
+### Routing on path parameters
+
+When `http.graphql_endpoint` captures path parameters, an `all` override can use them to route every
+subgraph based on the matched segment. For example, to route per tenant:
+
+```yaml
+http:
+  graphql_endpoint: /{tenant}/graphql
+
+override_subgraph_urls:
+  all:
+    url:
+      expression: |
+        tenant = string!(.request.path_params.tenant)
+        replace(string!(.default), "/api/", "/api/" + tenant + "/")
+```
+
+A request to `/acme/graphql` resolves `tenant` to `"acme"` before the expression runs.

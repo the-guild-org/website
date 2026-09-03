@@ -1,0 +1,163 @@
+---
+title: "TLS & mTLS"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+Transport Layer Security (TLS) encrypts traffic between every participant in your federated graph.
+Mutual TLS (mTLS) goes a step further and authenticates both sides of a connection using
+certificates, so each party can prove who it is, not just that the channel is encrypted.
+
+Hive Router lets you configure TLS independently on two connection segments:
+
+- **Client → Router (inbound):** the router terminates TLS toward API consumers.
+- **Router → Subgraphs (outbound):** the router validates subgraph certificates and optionally
+  presents its own client certificate.
+
+```
+Client ──[TLS]──► Router ──[TLS]──► Subgraph(s)
+         inbound          outbound
+```
+
+For the full configuration reference for every field described on this page, see
+[`traffic_shaping` configuration](/docs/router/configuration/traffic_shaping).
+
+## Inbound TLS (Client → Router)
+
+By default the router listens on plain HTTP. Enable inbound TLS when the router is directly exposed
+to clients and is **not** behind a TLS-terminating load balancer or reverse proxy (e.g. nginx,
+Envoy, AWS ALB).
+
+### Basic HTTPS
+
+Provide a server certificate and its private key:
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  router:
+    tls:
+      cert_file: /etc/router/tls/server.crt
+      key_file: /etc/router/tls/server.key
+```
+
+When inbound TLS is enabled, WebSocket clients must connect using `wss://` instead of `ws://`. The router automatically accepts secure WebSocket upgrades on the same TLS port.
+
+If your certificate is issued by an intermediate CA, supply the full chain by listing every file in
+order (leaf certificate first):
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  router:
+    tls:
+      cert_file:
+        - /etc/router/tls/server.crt
+        - /etc/router/tls/intermediate.crt
+      key_file: /etc/router/tls/server.key
+```
+
+### Mutual TLS (mTLS) for Inbound Connections
+
+mTLS requires clients to present a valid certificate signed by a trusted CA. This is useful in
+zero-trust environments where you need to guarantee that only authorized clients can reach the
+router.
+
+Set `client_auth.cert_file` to the CA certificate that signed your clients' certificates. Set
+`client_auth.required` to `true` (the default when `client_auth` is configured) to reject clients
+that do not present a valid certificate.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  router:
+    tls:
+      cert_file: /etc/router/tls/server.crt
+      key_file: /etc/router/tls/server.key
+      client_auth:
+        cert_file: /etc/router/tls/client-ca.crt
+        required: true
+```
+
+To make client certificates optional (for example, to accept both mTLS and plain TLS clients)
+set `required: false`.
+
+## Outbound TLS (Router → Subgraphs)
+
+When subgraphs are served over HTTPS, the router validates their certificates using the operating
+system's default CA bundle. No additional configuration is needed for subgraphs that use
+publicly-trusted certificates.
+
+### Custom or Self-Signed CA
+
+If your subgraphs use a private CA or self-signed certificates, tell the router where to find the
+trusted CA certificate:
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    tls:
+      cert_file: /etc/router/tls/subgraph-ca.crt
+```
+
+This applies to all subgraphs. To use a different CA for a specific subgraph, override it under
+`subgraphs.<name>`:
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    tls:
+      cert_file: /etc/router/tls/subgraph-ca.crt
+  subgraphs:
+    payments:
+      tls:
+        cert_file: /etc/router/tls/payments-ca.crt
+```
+
+Fields not set in a per-subgraph override fall back to the `all.tls` value.
+
+### Mutual TLS (mTLS) to Subgraphs
+
+Some subgraphs require the router to authenticate itself with a client certificate. Provide the
+router's client certificate and key under `client_auth`:
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    tls:
+      cert_file: /etc/router/tls/subgraph-ca.crt
+  subgraphs:
+    accounts:
+      tls:
+        cert_file: /etc/router/tls/accounts-ca.crt
+        client_auth:
+          cert_file: /etc/router/tls/router-client.crt
+          key_file: /etc/router/tls/router-client.key
+```
+
+### Skipping Certificate Verification
+
+<Callout type="warning">
+  `insecure_skip_ca_verification: true` disables verification of subgraph server
+  certificates. Only use this for local development or controlled testing, never
+  in production.
+</Callout>
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    tls:
+      insecure_skip_ca_verification: true
+```
+
+## Certificate Management Tips
+
+- **Store certificate files outside the config file.** Reference them by path so you can rotate
+  them without editing `router.config.yaml`.
+- **Use a secrets manager or mounted secrets.** In Kubernetes, mount TLS secrets as volumes and
+  reference the resulting file paths in the config.
+- **Rotate certificates by restarting the router.** The router reads certificate files at startup.
+  After replacing a certificate file, perform a rolling restart to pick up the new certificate with
+  zero downtime.
+- **Keep private keys restricted.** Ensure key files are readable only by the user the router
+  process runs as (e.g. `chmod 600`).
+- **Automate renewal.** Tools such as [cert-manager](https://cert-manager.io) (Kubernetes) or
+  [Certbot](https://certbot.eff.org) can renew certificates automatically and trigger a restart when
+  they do.

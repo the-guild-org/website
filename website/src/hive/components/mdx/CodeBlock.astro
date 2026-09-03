@@ -1,0 +1,227 @@
+---
+const { class: className, icon, tabindex: _tabindex, title, ...props } = Astro.props;
+---
+
+<figure {...props} class:list={["code-block", className]} data-code-block dir="ltr" tabindex="-1">
+  {
+    title ? (
+      <div class="code-block-header">
+        {icon && <span class="code-block-icon" aria-hidden="true" set:html={icon} />}
+        <figcaption>{title}</figcaption>
+        <button aria-label="Copy Text" data-copy-code type="button">
+          <svg data-copy-icon aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+          </svg>
+          <svg data-check-icon aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path d="m20 6-11 11-5-5" />
+          </svg>
+        </button>
+      </div>
+    ) : (
+      <button class="floating-copy" aria-label="Copy Text" data-copy-code type="button">
+        <svg data-copy-icon aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+        </svg>
+        <svg data-check-icon aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path d="m20 6-11 11-5-5" />
+        </svg>
+      </button>
+    )
+  }
+  <div class="code-block-viewport" role="region" tabindex="0">
+    <pre><slot /></pre>
+  </div>
+</figure>
+
+<style>
+  .code-block {
+    position: relative;
+    margin: 1rem 0;
+    overflow: hidden;
+    border: 1px solid var(--color-fd-border);
+    border-radius: 0.75rem;
+    background: var(--color-fd-card);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+    font-size: 0.875rem;
+  }
+
+  .code-block :global(pre) {
+    width: max-content;
+    min-width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    font-size: inherit;
+    line-height: 1.42857;
+  }
+
+  .code-block-header {
+    display: flex;
+    height: 2.375rem;
+    padding: 0 1rem;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--color-fd-border);
+    color: var(--color-fd-muted-foreground);
+  }
+
+  figcaption {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .code-block-icon {
+    display: flex;
+    flex: none;
+  }
+
+  .code-block-icon :global(svg) {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .code-block-viewport {
+    max-height: 600px;
+    padding: 0.875rem 0;
+    overflow: auto;
+    font-size: 0.8125rem;
+  }
+
+  .code-block-viewport:focus-visible {
+    outline: 2px solid var(--color-blue-500);
+    outline-offset: -2px;
+  }
+
+  .code-block :global(code) {
+    display: grid;
+    min-width: 100%;
+  }
+
+  .code-block :global(.line) {
+    position: relative;
+    min-height: 1lh;
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+
+  .code-block :global(.line.diff::before) {
+    position: absolute;
+    left: 0.375rem;
+  }
+
+  .code-block :global(.line.diff.remove) {
+    background: rgb(200 10 100 / 12%);
+    opacity: 0.7;
+  }
+
+  .code-block :global(.line.diff.remove::before) {
+    color: rgb(230 10 100);
+    content: "-";
+  }
+
+  .code-block :global(.line.diff.add) {
+    background: rgb(14 180 100 / 10%);
+  }
+
+  .code-block :global(.line.diff.add::before) {
+    color: rgb(10 200 100);
+    content: "+";
+  }
+
+  button {
+    display: grid;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    cursor: pointer;
+    place-items: center;
+    border: 0;
+    border-radius: 0.375rem;
+    background: transparent;
+    color: var(--color-fd-muted-foreground);
+    transition:
+      color 100ms ease,
+      background-color 100ms ease,
+      opacity 100ms ease,
+      transform 100ms ease;
+  }
+
+  .code-block-header button {
+    margin-right: -0.5rem;
+  }
+
+  .floating-copy {
+    position: absolute;
+    z-index: 1;
+    top: 0.75rem;
+    right: 0.5rem;
+    background: color-mix(in srgb, var(--color-fd-card) 70%, transparent);
+    backdrop-filter: blur(12px);
+  }
+
+  button:hover,
+  button:focus-visible,
+  button[data-copied] {
+    background: var(--color-fd-accent);
+    color: var(--color-fd-accent-foreground);
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--color-blue-500);
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  [data-check-icon],
+  button[data-copied] [data-copy-icon] {
+    display: none;
+  }
+
+  button[data-copied] [data-check-icon] {
+    display: block;
+  }
+
+  @media (hover: hover) {
+    .floating-copy:not(:focus-visible, [data-copied]) {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    .code-block:hover .floating-copy {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("click", async (event) => {
+    const button = (event.target as Element).closest<HTMLButtonElement>("[data-copy-code]");
+    if (!button) return;
+
+    const pre = button.closest("[data-code-block]")?.querySelector("pre");
+    if (!pre) return;
+
+    const clone = pre.cloneNode(true) as HTMLPreElement;
+    clone.querySelectorAll(".nd-copy-ignore").forEach((node) => node.replaceWith("\n"));
+
+    await navigator.clipboard.writeText(clone.textContent ?? "");
+    button.dataset.copied = "";
+    button.ariaLabel = "Copied Text";
+    window.setTimeout(() => {
+      delete button.dataset.copied;
+      button.ariaLabel = "Copy Text";
+    }, 1500);
+  });
+</script>

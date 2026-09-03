@@ -1,0 +1,51 @@
+---
+title: Router Customizations
+sidebarTitle: Overview
+---
+
+Hive Router has two main ways to customize behavior: the [Plugins](/docs/router/customizations/plugin-system) and [Coprocessors](/docs/router/customizations/coprocessors).
+
+Both options can intercept requests and responses, apply changes, and integrate with the rest of your architecture.
+The right choice depends on your performance needs, deployment model, and team requirements.
+
+## Plugins
+
+Plugins run inside the router process, are written in Rust and compiled into the router binary.
+
+Use the Plugin System when:
+
+- you need the lowest possible latency
+- you need deep in-process integration with router internals
+- your team is comfortable with Rust build and release workflows
+
+Plugin-based customization is a strong fit for high-throughput environments where every microsecond
+matters and runtime network hops should be minimized.
+
+<Cards>
+  <Card
+    href="/docs/router/customizations/plugin-system"
+    title="Introduction to Plugins"
+  >
+    Understand how plugins work, what they can customize, and when to use them.
+  </Card>
+</Cards>
+
+## Coprocessors
+
+Coprocessors run as an external HTTP service called by Hive Router at configured lifecycle stages.
+
+Use Coprocessors when:
+
+- you want language-agnostic customization
+- you want faster iteration without shipping a custom router binary
+- you want to keep policy and transformation logic in a separate service
+
+<Cards>
+  <Card
+    href="/docs/router/customizations/coprocessors"
+    title="Introduction to Coprocessors"
+  >
+    Learn how coprocessors integrate with Hive Router, what they can control,
+    and where they run.
+  </Card>
+</Cards>

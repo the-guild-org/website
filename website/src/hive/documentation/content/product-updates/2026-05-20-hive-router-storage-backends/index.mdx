@@ -1,0 +1,112 @@
+---
+title: Object Storage Backends in Hive Router
+description:
+  Hive Router can now load the supergraph schema and the persisted documents manifest directly from
+  Amazon S3 or any S3-compatible service (Cloudflare R2, MinIO, LocalStack, and more).
+date: 2026-05-26
+authors: [dotan]
+---
+
+[Hive Router](/docs/router) now supports loading its core artifacts - the **supergraph schema** and
+the **persisted documents manifest** - directly from object storage. Define a backend once under the
+new top-level [`storages`](/docs/router/configuration/storages) section, then reference it from any
+feature that needs to load data from it.
+
+This is the natural fit for teams whose CI pipelines publish supergraphs and persisted documents to
+S3-compatible buckets - the router can now pick up new versions without redeploying and without a
+custom sidecar.
+
+## A reusable `storages` section
+
+Storage backends are declared once and referenced by ID. The same backend can serve the supergraph, the
+persisted documents manifest, and any future loader without re-stating credentials or endpoints:
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts: # storage id, used by other parts of the config
+    type: s3
+    bucket: my-router-artifacts
+    region: eu-west-1
+
+supergraph:
+  source: storage
+  storage_id: artifacts
+  location: supergraph/current.graphql
+  poll_interval: 30s
+
+persisted_documents:
+  enabled: true
+  require_id: true
+  storage:
+    type: storage
+    storage_id: artifacts
+    location: persisted/manifest.json
+    poll_interval: 30s
+```
+
+If a feature references a `storage_id` that is not declared, the router fails at startup - no silent
+misconfiguration.
+
+## Works with any S3-compatible service
+
+Under the hood, the storage layer uses the [`object_store`](https://docs.rs/object_store/) Rust
+crate, so any service that speaks the S3 API works out of the box:
+
+- **Amazon S3**
+- **Cloudflare R2**
+- **MinIO**
+- **Google Cloud Storage** (S3 interop mode)
+- **Tigris**, **Backblaze B2**, **DigitalOcean Spaces**
+- **LocalStack** for local development
+
+## Production-grade credential modes
+
+Static keys are supported, but the recommended setup uses the credential provider that matches your
+runtime - no long-lived secrets in config:
+
+| `credentials.type`  | When to use                                                               |
+| ------------------- | ------------------------------------------------------------------------- |
+| `static`            | Long-lived IAM user keys or temporary session credentials.                |
+| `web_identity`      | IAM Roles for Service Accounts (IRSA) on EKS, or any OIDC token exchange. |
+| `ecs_task`          | ECS task IAM roles via the container credentials endpoint.                |
+| `eks_pod_identity`  | EKS Pod Identity - the newer alternative to IRSA.                         |
+| `instance_metadata` | Explicit IMDSv2 configuration for EC2 (also the default when omitted).    |
+
+Omit `credentials` entirely on EC2 and the router uses IMDSv2 with the attached instance role.
+
+## Polling with conditional requests
+
+When `poll_interval` is set, the router uses HTTP `If-None-Match` against the object's `ETag` and
+only re-parses when storage reports the content has changed. New supergraph or manifest versions
+roll out without redeploying, and unchanged polls are cheap.
+
+## Dynamic values via expressions
+
+Bucket names, endpoints, regions, and credentials all accept
+[expressions](/docs/router/configuration/expressions), so values can be resolved from environment
+variables at startup:
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts:
+    type: s3
+    bucket:
+      expression: env("S3_BUCKET")
+    region:
+      expression: env("AWS_REGION", "us-east-1")
+    credentials:
+      type: static
+      access_key_id:
+        expression: env("S3_ACCESS_KEY_ID")
+      secret_access_key:
+        expression: env("S3_SECRET_ACCESS_KEY")
+```
+
+---
+
+- [`storages` configuration reference](/docs/router/configuration/storages) - full schema, provider
+  examples (AWS S3 with IRSA, Cloudflare R2, MinIO, LocalStack), and credential modes.
+- [`supergraph.source: storage`](/docs/router/configuration/supergraph#storage) - load the
+  supergraph schema from a storage backend.
+- [`persisted_documents.storage.type: storage`](/docs/router/configuration/persisted_documents#storagetype-storage)
+  - load the persisted documents manifest from a storage backend.

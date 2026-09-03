@@ -1,0 +1,70 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+
+import CodeBlock from "../../../../hive/components/mdx/CodeBlock.astro";
+import PackageManagerTabs from "../../../../hive/components/mdx/PackageManagerTabs.astro";
+import PackageManagerTab from "../../../../hive/components/mdx/Tab.astro";
+import CaseStudyLayout from "../../../../hive/layouts/CaseStudyLayout.astro";
+
+type CaseStudy = CollectionEntry<"caseStudies">;
+
+export async function getStaticPaths() {
+  const entries = await getCollection("caseStudies");
+
+  return entries.map((entry) => ({
+    params: {
+      slug: entry.id.replace(/\/index$/, "").replace(/\.(md|mdx)$/, ""),
+    },
+    props: { entry },
+  }));
+}
+
+function slug(id: string) {
+  return id.replace(/\/index$/, "").replace(/\.(md|mdx)$/, "");
+}
+
+const { entry } = Astro.props as { entry: CaseStudy };
+const { Content } = await render(entry);
+const data = entry.data as {
+  authors?: { avatar?: string; name: string; position?: string }[];
+  canonical?: string;
+  category: string;
+  date: Date | string;
+  excerpt: string;
+  title: string;
+};
+const otherStories = (await getCollection("caseStudies"))
+  .filter((item) => item.id !== entry.id)
+  .map((item) => {
+    const story = item.data as {
+      category: string;
+      date: Date | string;
+      excerpt: string;
+      title: string;
+    };
+    const date =
+      story.date instanceof Date ? story.date.toISOString() : String(story.date);
+
+    return {
+      category: story.category,
+      date,
+      excerpt: story.excerpt,
+      href: `/case-studies/${slug(item.id)}`,
+      slug: slug(item.id),
+      title: story.title,
+    };
+  })
+  .sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title))
+  .slice(0, 3);
+---
+
+<CaseStudyLayout
+  authors={data.authors ?? []}
+  canonical={data.canonical}
+  excerpt={data.excerpt}
+  otherStories={otherStories}
+  slug={slug(entry.id)}
+  title={data.title}
+>
+  <Content components={{ PackageManagerTab, PackageManagerTabs, pre: CodeBlock }} />
+</CaseStudyLayout>

@@ -1,0 +1,275 @@
+---
+title: "persisted_documents"
+---
+
+The `persisted_documents` configuration controls how Hive Router reads persisted document IDs and
+maps them to GraphQL operation text.
+
+This is the same concept some tools call **persisted queries** or **trusted documents**.
+
+For usage patterns and migration guidance, see
+[Persisted Documents guide](/docs/router/security/persisted-documents).
+
+## Options
+
+### `enabled`
+
+Enables persisted document extraction and resolution.
+Type is `boolean` and default is `false`.
+
+### `require_id`
+
+Controls whether requests must contain a resolvable persisted document ID. If a request lacks an
+ID and `require_id` is enforced, Router returns `PERSISTED_DOCUMENT_ID_REQUIRED`.
+
+Accepts a static boolean (`true` or `false`, default is `false`) or an **expression** that is
+evaluated per-request. The expression can reference:
+
+| Variable           | Description                          |
+| ------------------ | ------------------------------------ |
+| `.request.headers` | HTTP headers of the incoming request |
+| `.request.method`  | HTTP method (`GET`, `POST`, etc.)    |
+| `.request.url`     | Full request URL                     |
+| `env("VAR")`       | Environment variable at request time |
+
+When the expression returns `true`, the document ID requirement is enforced, but when `false` it is
+skipped for that request.
+
+```yaml
+persisted_documents:
+  require_id:
+    expression: |
+      is_null(env("BYPASS_SECRET"))
+      || .request.headers."x-bypass-require-id" != env("BYPASS_SECRET")
+```
+
+You can also bypass the requirement on a per-request basis at runtime by setting
+`"hive::persisted_documents::skip_enforcement": true` in the request context - see
+[Persisted Documents security guide](/docs/router/security/persisted-documents#per-request-bypass).
+
+### `log_missing_id`
+
+Logs requests that do not provide a resolvable persisted document ID. Type is `boolean` and default
+is `false`.
+
+### `selectors`
+
+Ordered list of selectors. Router applies them top-to-bottom and uses the first successful match.
+Type is `array`. If omitted, router uses built-in defaults.
+
+If omitted, defaults are:
+
+1. `json_path: documentId`
+2. `json_path: extensions.persistedQuery.sha256Hash`
+
+When `enabled: true`, `selectors` cannot be an explicit empty list.
+
+#### `selectors[].type: json_path`
+
+| Field  | Type     | Required | Notes                                                              |
+| ------ | -------- | -------- | ------------------------------------------------------------------ |
+| `path` | `string` | yes      | Dot-path lookup in GraphQL request payload (for example `doc_id`). |
+
+#### `selectors[].type: url_query_param`
+
+| Field  | Type     | Required | Notes                                     |
+| ------ | -------- | -------- | ----------------------------------------- |
+| `name` | `string` | yes      | Query parameter name to read document ID. |
+
+#### `selectors[].type: url_path_param`
+
+| Field      | Type     | Required | Notes                                                                       |
+| ---------- | -------- | -------- | --------------------------------------------------------------------------- |
+| `template` | `string` | yes      | Relative template with exactly one `:id` segment (for example `/docs/:id`). |
+
+Template rules:
+
+- must start with `/`
+- must contain exactly one `:id`
+- supports `*` wildcard segments
+- does not support `**`
+- cannot contain query strings or fragments
+
+## `storage`
+
+Selects where persisted document text is loaded from.
+Type is `object` and it is required when `enabled: true`.
+
+### `storage.type: file`
+
+| Field   | Type      | Default | Required | Notes                            |
+| ------- | --------- | ------- | -------- | -------------------------------- |
+| `path`  | `path`    | -       | yes      | Manifest file path.              |
+| `watch` | `boolean` | `true`  | no       | Reload manifest on file changes. |
+
+### `storage.type: hive`
+
+| Field                  | Type                      | Default | Required | Notes                                                    |
+| ---------------------- | ------------------------- | ------- | -------- | -------------------------------------------------------- |
+| `endpoint`             | `string \| string[]`      | -       | yes      | Hive CDN endpoint(s). Can also use `HIVE_CDN_ENDPOINT`.  |
+| `key`                  | `string`                  | -       | yes      | Hive CDN key. Can also use `HIVE_CDN_KEY`.               |
+| `accept_invalid_certs` | `boolean`                 | `false` | no       | Accept invalid TLS certificates.                         |
+| `connect_timeout`      | `duration`                | `5s`    | no       | Connection timeout for CDN requests.                     |
+| `request_timeout`      | `duration`                | `15s`   | no       | Full request timeout for CDN requests.                   |
+| `retry_policy`         | `object`                  | -       | no       | Retry policy for CDN fetches.                            |
+| `cache_size`           | `integer`                 | `10000` | no       | In-memory persisted document cache size.                 |
+| `circuit_breaker`      | `object`                  | -       | no       | Circuit breaker configuration for CDN requests.          |
+| `negative_cache`       | `false \| true \| object` | `true`  | no       | Cache non-2xx misses to reduce repeated failing lookups. |
+
+You can also configure Hive CDN connection using `HIVE_CDN_ENDPOINT` and `HIVE_CDN_KEY`
+environment variables.
+
+```bash
+HIVE_CDN_ENDPOINT="https://cdn.graphql-hive.com/..."
+HIVE_CDN_KEY="your-cdn-key"
+```
+
+#### `storage.hive.retry_policy`
+
+| Field         | Type      | Default | Notes                        |
+| ------------- | --------- | ------- | ---------------------------- |
+| `max_retries` | `integer` | `3`     | Exponential backoff retries. |
+
+#### `storage.hive.circuit_breaker`
+
+| Field              | Type       | Default | Notes                                            |
+| ------------------ | ---------- | ------- | ------------------------------------------------ |
+| `error_threshold`  | `number`   | `0.5`   | Error ratio to open breaker.                     |
+| `volume_threshold` | `integer`  | `5`     | Minimum request volume before threshold applies. |
+| `reset_timeout`    | `duration` | `10s`   | Time before half-open probe.                     |
+
+#### `storage.hive.negative_cache`
+
+Supports three forms:
+
+`false` disables negative cache, `true` enables it with defaults, and object form enables it with
+custom settings.
+
+| Field | Type       | Default | Notes                          |
+| ----- | ---------- | ------- | ------------------------------ |
+| `ttl` | `duration` | `5s`    | Negative cache entry lifetime. |
+
+### `storage.type: storage`
+
+Loads the persisted documents manifest from a named backend declared in the top-level
+[`storages`](./storages) section (Amazon S3, Cloudflare R2, MinIO, LocalStack, or any other
+S3-compatible service).
+
+| Field           | Type       | Default  | Required | Notes                                                                                                                     |
+| --------------- | ---------- | -------- | -------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `storage_id`    | `string`   | -        | yes      | ID of a backend declared under top-level [`storages`](./storages). Startup fails if the ID is not declared.               |
+| `location`      | `string`   | -        | yes      | Object key (path within the bucket) of the manifest file.                                                                 |
+| `poll_interval` | `duration` | disabled | no       | [Human-readable](https://docs.rs/humantime/latest/humantime/) interval for polling the manifest for updates (e.g. `30s`). |
+
+Storage-loaded manifests use the **same JSON format and parser** as file-based manifests — the only
+difference is where the bytes come from.
+
+When `poll_interval` is set, the router uses conditional requests (HTTP `If-None-Match` against the
+object's `ETag`) and only re-parses the manifest when storage reports the content has changed.
+
+## Endpoint compatibility note
+
+If any extractor uses `url_path_param`, `http.graphql_endpoint` cannot be `"/"`.
+
+Use a non-root endpoint such as `/graphql`.
+
+## Examples
+
+### File storage with default selectors
+
+```yaml title="router.config.yaml"
+persisted_documents:
+  enabled: true
+  require_id: true
+  storage:
+    type: file
+    path: ./persisted-documents.json
+```
+
+### Custom selectors order
+
+```yaml title="router.config.yaml"
+persisted_documents:
+  enabled: true
+  require_id: true
+  selectors:
+    - type: url_path_param
+      template: /docs/:id
+    - type: url_query_param
+      name: id
+    - type: json_path
+      path: doc_id
+  storage:
+    type: file
+    path: ./persisted-documents.json
+```
+
+### Hive storage with custom negative cache TTL
+
+```yaml title="router.config.yaml"
+persisted_documents:
+  enabled: true
+  require_id: true
+  storage:
+    type: hive
+    endpoint: ${HIVE_CDN_ENDPOINT}
+    key: ${HIVE_CDN_KEY}
+    negative_cache:
+      ttl: 10s
+```
+
+### Storage-backed manifest (S3 / S3-compatible)
+
+Declare an [S3-compatible storage backend](./storages#type-s3) once, then point the persisted
+documents loader at the manifest object inside it. The same backend can be reused by other features
+(such as [`supergraph.source: storage`](./supergraph#storage)).
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts:
+    type: s3
+    bucket: my-router-artifacts
+    region: eu-west-1
+
+persisted_documents:
+  enabled: true
+  require_id: true
+  storage:
+    type: storage
+    storage_id: artifacts
+    location: persisted/manifest.json
+    poll_interval: 30s
+```
+
+### Storage-backed manifest with credentials from environment variables
+
+For deployments where the bucket name or credentials are not safe to commit, resolve them at
+startup with [expressions](./expressions) and the `env()` function:
+
+```yaml title="router.config.yaml"
+storages:
+  artifacts:
+    type: s3
+    bucket:
+      expression: env("S3_BUCKET")
+    region:
+      expression: env("AWS_REGION", "us-east-1")
+    credentials:
+      type: static
+      access_key_id:
+        expression: env("S3_ACCESS_KEY_ID")
+      secret_access_key:
+        expression: env("S3_SECRET_ACCESS_KEY")
+
+persisted_documents:
+  enabled: true
+  require_id: true
+  storage:
+    type: storage
+    storage_id: artifacts
+    location: persisted/manifest.json
+    poll_interval: 30s
+```
+
+See the [`storages` reference](./storages) for examples covering AWS S3, Cloudflare R2, MinIO, and
+LocalStack.
