@@ -21,13 +21,15 @@ interface Props {
   description?: string;
   githubUrl: string;
   headings: TocHeading[];
+  /** Very long pages get content-visibility on their heavy blocks. */
+  longPage?: boolean;
   markdownUrl: string;
   navItems: DocsNavPage[];
   navTree: DocsNavNode[];
   title: string;
 }
 
-const { currentPath, description, githubUrl, headings, markdownUrl, navItems, navTree, title } = Astro.props;
+const { currentPath, description, githubUrl, headings, longPage, markdownUrl, navItems, navTree, title } = Astro.props;
 const tableOfContents = filterToc(headings);
 const currentIndex = navItems.findIndex((item) => item.href === currentPath);
 const previous = currentIndex > 0 ? navItems[currentIndex - 1] : undefined;
@@ -137,7 +139,7 @@ const titleId = title.replaceAll(/[\s.,]+/g, "-").toLowerCase();
             comes from the explicit title metadata instead. */}
         <div class="flex flex-1 flex-col gap-4" data-pagefind-body data-pagefind-filter="section[data-search-section]" data-pagefind-meta="section[data-search-section], url[data-search-url], title[data-search-title]" data-search-section={searchSection} data-search-url={withBase(currentPath)} data-search-title={`${title} · ${searchSection}`}>
           {description && <p class="mb-8 text-lg text-fd-muted-foreground">{description}</p>}
-          <div class="docs-content prose relative flex-1"><slot /></div>
+          <div class="docs-content prose relative flex-1" data-cv-auto={longPage ? "" : undefined}><slot /></div>
         </div>
         {
           (previous || next) && (

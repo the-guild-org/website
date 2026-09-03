@@ -8,6 +8,13 @@
 
 @source "../**/*.{astro,ts,tsx,md,mdx,mjs}";
 @source not "../documentation";
+/* The design-system React sources are never rendered (every component import
+   is shimmed); scanning them only inflates the bundle with unused rules.
+   Its style.css above is still imported. The inline list pins the few
+   utilities that content MDX (which is deliberately not scanned) uses and
+   that previously got their rules via the design-system scan. */
+@source not "../design-system";
+@source inline("drop-shadow-md italic max-w-xl");
 @source "../../pages/graphql/hive/**/*.{astro,ts}";
 
 @custom-variant dark (&:where(.dark, .dark *):not(:where(.light, .light *)));
@@ -443,4 +450,16 @@ html.dark {
   --pf-text: var(--color-neutral-100);
   --pf-text-muted: var(--color-neutral-400);
   --pf-text-secondary: var(--color-neutral-300);
+}
+
+/* The largest docs pages exceed a megabyte of markup, mostly highlighted
+   code blocks and prerendered Mermaid diagrams. On those pages (flagged
+   [data-cv-auto] by DocsLayout), skip layout and paint for blocks far from
+   the viewport; `auto` intrinsic sizing keeps their real size once
+   rendered. Kept off regular pages: the containment side-effects (margin
+   collapsing) can nudge layout by a pixel. */
+[data-cv-auto] figure.code-block,
+[data-cv-auto] svg[id^="mermaid-"] {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 20rem;
 }

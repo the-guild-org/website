@@ -87,3 +87,42 @@ jobs:
 
       - name: typecheck
         run: pnpm --filter guild-website-router typecheck
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: cache playwright browsers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: cache astro image optimization
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: website/node_modules/.astro
+          key: ${{ runner.os }}-astro-assets-lh-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-astro-assets-
+
+      - uses: the-guild-org/shared-config/setup@main
+        name: setup env
+        with:
+          nodeVersion: 26.8.1
+          packageManager: pnpm
+          packageManagerVersion: 11.25.0
+
+      - name: build
+        run: pnpm --filter website build
+
+      - name: lighthouse budgets
+        uses: treosh/lighthouse-ci-action@512cc908a55bfb0ad231facca52adf3d3a651df4 # v12
+        with:
+          configPath: .lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: false

@@ -50,6 +50,7 @@ const { items: navItems, tree: navTree } = await getDocsNav();
 ---
 
 <DocsLayout
+  longPage={(entry.body?.length ?? 0) > 60_000 || ((entry.body ?? "").match(/```/g)?.length ?? 0) > 50}
   currentPath={currentPath}
   description={data.description}
   githubUrl={githubUrl}
