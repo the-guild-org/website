@@ -113,13 +113,21 @@ function parseHead(
     }
   }
 
-  return {
-    jsonldCount: [
-      ...(head?.matchAll(/<script[^>]*type=("|')application\/ld\+json\1/gi) ||
-        []),
-    ].length,
-    parsed,
-  };
+  const jsonldTypes: string[] = [];
+  let jsonldInvalid = false;
+  for (const match of head?.matchAll(
+    /<script[^>]*type=("|')application\/ld\+json\1[^>]*>(.*?)<\/script>/gis,
+  ) || []) {
+    try {
+      const data = JSON.parse(match[2] ?? "");
+      const type = data?.["@type"];
+      if (typeof type === "string") jsonldTypes.push(type);
+    } catch {
+      jsonldInvalid = true;
+    }
+  }
+
+  return { jsonldCount: jsonldTypes.length, jsonldInvalid, jsonldTypes, parsed };
 }
 
 /** Public URL path a dist html file serves (build.format: "file"). */
@@ -191,10 +199,9 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   scanned += 1;
   const html = await readFile(filePath, "utf8");
 
-  const { jsonldCount, parsed } = parseHead(html) ?? {
-    jsonldCount: 0,
-    parsed: {},
-  };
+  const { jsonldCount, jsonldInvalid, jsonldTypes, parsed } = parseHead(
+    html,
+  ) ?? { jsonldCount: 0, jsonldInvalid: false, jsonldTypes: [], parsed: {} };
 
   if (verbose) {
     console.log(filePath, { jsonldCount }, parsed);
@@ -214,11 +221,23 @@ for await (const filePath of walk(OUTPUT_DIR)) {
     }
   }
 
-  // Structured data is required across the Hive tree (every layout emits
-  // BreadcrumbList); on the main site it lives where it is meaningful
-  // (Organization on the homepage, BlogPosting on posts).
+  // Structured data is required where it is meaningful, and must parse:
+  // BreadcrumbList across the Hive tree, Organization on the homepage,
+  // BlogPosting on every blog post.
+  if (jsonldInvalid) {
+    issues.push(`${relativePath}: malformed application/ld+json`);
+  }
   if (relativePath.startsWith("graphql/hive") && jsonldCount === 0) {
     issues.push(`${relativePath}: missing application/ld+json`);
+  }
+  if (relativePath === "index.html" && !jsonldTypes.includes("Organization")) {
+    issues.push(`${relativePath}: missing Organization JSON-LD`);
+  }
+  if (
+    /^blog\/[^/]+\.html$/.test(relativePath) &&
+    !jsonldTypes.includes("BlogPosting")
+  ) {
+    issues.push(`${relativePath}: missing BlogPosting JSON-LD`);
   }
 
   const title = parsed["title"];
@@ -281,11 +300,18 @@ for await (const filePath of walk(OUTPUT_DIR)) {
     issues.push(`${relativePath}: canonical and og:url disagree`);
   }
 
-  // Social images must be absolute or previews silently break.
+  // Social images must be absolute or previews silently break — and when
+  // they live on this site, the file has to actually exist.
   for (const tag of ["og:image", "twitter:image"]) {
     const value = parsed[tag];
-    if (value && !value.startsWith("https://")) {
+    if (!value) continue;
+    if (!value.startsWith("https://")) {
       issues.push(`${relativePath}: ${tag} is not an absolute URL: ${value}`);
+    } else if (
+      value.startsWith(`${SITE}/`) &&
+      !existsSync(`${OUTPUT_DIR}${decodeURI(new URL(value).pathname)}`)
+    ) {
+      issues.push(`${relativePath}: ${tag} points at a missing file: ${value}`);
     }
   }
 

@@ -1,13 +1,21 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { AUTHORS } from './components/blog-authors';
 
 const blog = defineCollection({
   loader: glob({ base: './src/content/blog', pattern: ['**/*.mdx', '!**/_*/**'] }),
   schema: z.object({
     title: z.string(),
     tags: z.array(z.string()),
-    authors: z.array(z.string()),
+    authors: z
+      .array(
+        z.string().refine(
+          id => id in AUTHORS,
+          id => ({ message: `Unknown blog author "${id.input}"` }),
+        ),
+      )
+      .nonempty(),
     date: z.coerce.date(),
     updateDate: z.coerce.date().optional(),
     description: z.string(),
