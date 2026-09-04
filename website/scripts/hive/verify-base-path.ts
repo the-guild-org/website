@@ -6,12 +6,10 @@
  * at the shared /_astro root, so they are exempt.
  */
 import { existsSync, globSync, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { basePath as base } from '../../src/hive/lib/base-path.ts';
+import { HIVE_DIST, PROJECT_DIR, readRedirects } from '../lib/build-output.ts';
 
-const projectDirectory = fileURLToPath(new URL('../..', import.meta.url));
-const distDirectory = fileURLToPath(new URL('../../dist', import.meta.url));
-const hiveDistDirectory = `${distDirectory}/graphql/hive`;
+const hiveDistDirectory = HIVE_DIST;
 
 const ATTR_PATTERN = /\s(?:href|src|poster|action|bundle-path|base-url)="(\/[^"]*)"/g;
 const SRCSET_PATTERN = /\ssrcset="([^"]+)"/g;
@@ -57,23 +55,20 @@ for (const file of globSync('**/*.html', { cwd: hiveDistDirectory })) {
 // un-prefixed (legacy URLs redirecting INTO Hive); main-site rules from
 // website/public/_redirects are exempt entirely.
 const mainSiteRedirects = new Set(
-  (existsSync(`${projectDirectory}/public/_redirects`)
-    ? readFileSync(`${projectDirectory}/public/_redirects`, 'utf8').split('\n')
+  (existsSync(`${PROJECT_DIR}/public/_redirects`)
+    ? readFileSync(`${PROJECT_DIR}/public/_redirects`, 'utf8').split('\n')
     : []
   ).map(line => line.trim()),
 );
-if (existsSync(`${distDirectory}/_redirects`)) {
-  for (const line of readFileSync(`${distDirectory}/_redirects`, 'utf8').split('\n')) {
-    if (!line.trim() || line.startsWith('#')) continue;
-    if (mainSiteRedirects.has(line.trim())) continue;
-    const destination = line.trim().split(/\s+/)[1];
-    if (
-      destination?.startsWith('/') &&
-      destination !== base &&
-      !destination.startsWith(`${base}/`)
-    ) {
-      report('_redirects', destination);
-    }
+for (const rule of readRedirects()) {
+  const line = `${rule.source} ${rule.destination}${rule.status ? ` ${rule.status}` : ''}`;
+  if (mainSiteRedirects.has(line)) continue;
+  if (
+    rule.destination.startsWith('/') &&
+    rule.destination !== base &&
+    !rule.destination.startsWith(`${base}/`)
+  ) {
+    report('_redirects', rule.destination);
   }
 }
 

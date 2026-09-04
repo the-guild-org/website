@@ -1,10 +1,13 @@
 name: ci
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
     branches:
       - master
-      - feat-guild-redesign
   push:
     branches:
       - master
@@ -37,12 +40,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-astro-assets-
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: ./.github/actions/setup
         name: setup env
-        with:
-          nodeVersion: 26.8.1
-          packageManager: pnpm
-          packageManagerVersion: 11.25.0
 
       - uses: the-guild-org/shared-config/website-cf@main
         name: build and deploy website
@@ -58,35 +57,51 @@ jobs:
 
   prettier:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: ./.github/actions/setup
         name: setup env
-        with:
-          nodeVersion: 26.8.1
-          packageManager: pnpm
-          packageManagerVersion: 11.25.0
 
       - name: prettier:check
         run: 'pnpm prettier:check'
 
   router-typecheck:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: ./.github/actions/setup
         name: setup env
-        with:
-          nodeVersion: 26.8.1
-          packageManager: pnpm
-          packageManagerVersion: 11.25.0
 
       - name: typecheck
         run: pnpm --filter guild-website-router typecheck
+
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: ./.github/actions/setup
+        name: setup env
+
+      - name: router tests
+        run: pnpm --filter guild-website-router test
+
+      - name: website tests
+        run: pnpm --filter website test
+
+      - name: helper worker typecheck
+        run: pnpm --filter website-helper-worker typecheck
 
   lighthouse:
     runs-on: ubuntu-latest
@@ -114,12 +129,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-astro-assets-
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: ./.github/actions/setup
         name: setup env
-        with:
-          nodeVersion: 26.8.1
-          packageManager: pnpm
-          packageManagerVersion: 11.25.0
 
       - name: build
         run: pnpm --filter website build

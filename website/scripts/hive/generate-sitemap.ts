@@ -1,10 +1,10 @@
 import { spawnSync } from 'node:child_process';
 import { globSync, writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { HIVE_SITE_URL as SITE_URL } from '../../src/hive/lib/base-path.ts';
+import { HIVE_DIST, REPO_ROOT } from '../lib/build-output.ts';
 
-const distDirectory = fileURLToPath(new URL('../../dist/graphql/hive', import.meta.url));
-const repoRoot = fileURLToPath(new URL('../../..', import.meta.url));
+const distDirectory = HIVE_DIST;
+const repoRoot = REPO_ROOT;
 
 /**
  * Last-modified dates per URL, derived from the git history of the content

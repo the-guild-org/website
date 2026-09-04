@@ -1,6 +1,5 @@
 import { globSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
 import { routeRules } from '../../src/hive/documentation/redirects.ts';
 /**
  * The Hive site is mounted at /graphql/hive of the unified deployment, and
@@ -9,9 +8,10 @@ import { routeRules } from '../../src/hive/documentation/redirects.ts';
  * redirects.ts stay un-prefixed (they predate the merge and read naturally).
  */
 import { basePath as PREFIX } from '../../src/hive/lib/base-path.ts';
+import { DIST } from '../lib/build-output.ts';
 
-const outputDirectory = fileURLToPath(new URL('../../dist', import.meta.url));
-const outputFile = fileURLToPath(new URL('../../dist/_redirects', import.meta.url));
+const outputDirectory = DIST;
+const outputFile = `${DIST}/_redirects`;
 
 const prefixPath = (path: string) =>
   path.startsWith('/') && !path.startsWith(PREFIX) ? `${PREFIX}${path}` : path;
