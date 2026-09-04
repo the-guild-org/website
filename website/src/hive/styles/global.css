@@ -2,19 +2,26 @@
    pages, whose sources live in src/hive and src/pages/graphql/hive. Content
    (src/hive/documentation) is intentionally not scanned, matching the
    standalone site's behavior. */
-@import "tailwindcss" source(none);
-@import "../design-system/style.css";
-@import "../documentation/src/fonts/fonts.css";
+@import 'tailwindcss' source(none);
+@import '../design-system/style.css';
+@import '../documentation/src/fonts/fonts.css';
 
-@source "../**/*.{astro,ts,tsx,md,mdx,mjs}";
-@source not "../documentation";
-@source "../../pages/graphql/hive/**/*.{astro,ts}";
+@source '../**/*.{astro,ts,tsx,md,mdx,mjs}';
+@source not '../documentation';
+/* The design-system React sources are never rendered (every component import
+   is shimmed); scanning them only inflates the bundle with unused rules.
+   Its style.css above is still imported. The inline list pins the few
+   utilities that content MDX (which is deliberately not scanned) uses and
+   that previously got their rules via the design-system scan. */
+@source not '../design-system';
+@source inline('drop-shadow-md italic max-w-xl');
+@source '../../pages/graphql/hive/**/*.{astro,ts}';
 
 @custom-variant dark (&:where(.dark, .dark *):not(:where(.light, .light *)));
 
 @utility blockquote-* {
   position: relative;
-  quotes: "" " " "" "'" "'";
+  quotes: '' ' ' '' "'" "'";
   --blockquote-color: --value(--color-*, [color]);
 
   &::before,
@@ -52,11 +59,7 @@
   --color-fd-secondary: var(--color-beige-300);
   --color-fd-secondary-foreground: var(--color-green-1000);
   --color-fd-sidebar-active: var(--color-blue-900);
-  --color-fd-sidebar-active-bg: color-mix(
-    in oklab,
-    var(--color-blue-400) 20%,
-    transparent
-  );
+  --color-fd-sidebar-active-bg: color-mix(in oklab, var(--color-blue-400) 20%, transparent);
 }
 
 @keyframes pop-up {
@@ -125,23 +128,10 @@
   --color-fd-accent: var(--color-neutral-800);
   --color-fd-accent-foreground: var(--color-neutral-100);
   --color-fd-sidebar-active: var(--color-primary);
-  --color-fd-sidebar-active-bg: color-mix(
-    in oklab,
-    hsl(0 0% 100% / 5%),
-    var(--color-primary) 4.5%
-  );
-  --pf-background: var(--color-neutral-900);
-  --pf-border: var(--color-neutral-700);
-  --pf-hover: var(--color-neutral-800);
-  --pf-text: var(--color-neutral-100);
-  --pf-text-muted: var(--color-neutral-400);
-  --pf-text-secondary: var(--color-neutral-300);
+  --color-fd-sidebar-active-bg: color-mix(in oklab, hsl(0 0% 100% / 5%), var(--color-primary) 4.5%);
 }
 
-.dark
-  body[data-theme-enabled]
-  .docs-content
-  :where(p, ul, ol):not(.hive-card *, .not-prose *) {
+.dark body[data-theme-enabled] .docs-content :where(p, ul, ol):not(.hive-card *, .not-prose *) {
   color: color-mix(in oklab, var(--color-neutral-200) 90%, transparent);
 }
 
@@ -149,38 +139,32 @@
   color: var(--color-neutral-500);
 }
 
-.dark
-  body[data-theme-enabled]
-  .docs-content
-  a:not(.hive-card, .not-prose, .not-prose *) {
+.dark body[data-theme-enabled] .docs-content a:not(.hive-card, .not-prose, .not-prose *) {
   color: var(--color-neutral-200);
   text-decoration-color: var(--color-primary);
 }
 
-.dark
-  body[data-theme-enabled]
-  .docs-content
-  a:not(.hive-card, .not-prose, .not-prose *):hover {
+.dark body[data-theme-enabled] .docs-content a:not(.hive-card, .not-prose, .not-prose *):hover {
   color: var(--color-primary);
 }
 
-.dark #hive-navigation .menu-content [class*="text-green-1000"] {
+.dark #hive-navigation .menu-content [class*='text-green-1000'] {
   color: var(--color-neutral-200);
 }
 
-.dark #hive-navigation .menu-content [class*="text-green-900"] {
+.dark #hive-navigation .menu-content [class*='text-green-900'] {
   color: var(--color-neutral-200);
 }
 
-.dark #hive-navigation .menu-content [class*="text-green-800"] {
+.dark #hive-navigation .menu-content [class*='text-green-800'] {
   color: var(--color-neutral-400);
 }
 
-.dark #hive-navigation .menu-content [class*="text-green-700"] {
+.dark #hive-navigation .menu-content [class*='text-green-700'] {
   color: var(--color-neutral-300);
 }
 
-.dark #hive-navigation .menu-content [class*="bg-beige-200"] {
+.dark #hive-navigation .menu-content [class*='bg-beige-200'] {
   background-color: hsl(0 0% 100% / 5%);
 }
 
@@ -190,12 +174,7 @@
 
 .dark
   body[data-theme-enabled]
-  :is(
-    .flowchart,
-    .statediagram,
-    .sequenceDiagram,
-    [aria-roledescription="sequence"]
-  ) {
+  :is(.flowchart, .statediagram, .sequenceDiagram, [aria-roledescription='sequence']) {
   --mermaid-fg: var(--color-neutral-200);
   --mermaid-fg-dim: var(--color-neutral-400);
   --mermaid-node-fill: var(--color-neutral-800);
@@ -209,12 +188,7 @@
   --mermaid-note-fg: var(--color-neutral-200);
 }
 
-:is(
-  .flowchart,
-  .statediagram,
-  .sequenceDiagram,
-  [aria-roledescription="sequence"]
-) {
+:is(.flowchart, .statediagram, .sequenceDiagram, [aria-roledescription='sequence']) {
   --mermaid-fg: var(--color-green-1000);
   --mermaid-fg-dim: var(--color-green-700);
   --mermaid-node-fill: var(--color-blue-200);
@@ -266,7 +240,7 @@ body[data-docs] {
 
 code,
 pre {
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
 }
 
 h1,
@@ -443,4 +417,16 @@ html.dark {
   --pf-text: var(--color-neutral-100);
   --pf-text-muted: var(--color-neutral-400);
   --pf-text-secondary: var(--color-neutral-300);
+}
+
+/* The largest docs pages exceed a megabyte of markup, mostly highlighted
+   code blocks and prerendered Mermaid diagrams. On those pages (flagged
+   [data-cv-auto] by DocsLayout), skip layout and paint for blocks far from
+   the viewport; `auto` intrinsic sizing keeps their real size once
+   rendered. Kept off regular pages: the containment side-effects (margin
+   collapsing) can nudge layout by a pixel. */
+[data-cv-auto] figure.code-block,
+[data-cv-auto] svg[id^='mermaid-'] {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 20rem;
 }

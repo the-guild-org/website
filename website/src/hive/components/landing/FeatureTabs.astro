@@ -1,12 +1,12 @@
 ---
-import { withBase } from "../../lib/base-path";
-import auditImage from "../../documentation/src/components/landing-page-feature-tabs/audit.png";
-import observabilityClientsImage from "../../documentation/src/components/landing-page-feature-tabs/clients.webp";
-import registryExplorerImage from "../../documentation/src/components/landing-page-feature-tabs/explorer.webp";
-import observabilityOperationsImage from "../../documentation/src/components/landing-page-feature-tabs/operations.webp";
-import observabilityOverallImage from "../../documentation/src/components/landing-page-feature-tabs/overall.webp";
-import registrySchemaChecksImage from "../../documentation/src/components/landing-page-feature-tabs/schema-checks.webp";
-import registryVersionControlSystemImage from "../../documentation/src/components/landing-page-feature-tabs/version-control-system.webp";
+import { withBase } from '../../lib/base-path';
+import auditImage from '../../documentation/src/components/landing-page-feature-tabs/audit.png';
+import observabilityClientsImage from '../../documentation/src/components/landing-page-feature-tabs/clients.webp';
+import registryExplorerImage from '../../documentation/src/components/landing-page-feature-tabs/explorer.webp';
+import observabilityOperationsImage from '../../documentation/src/components/landing-page-feature-tabs/operations.webp';
+import observabilityOverallImage from '../../documentation/src/components/landing-page-feature-tabs/overall.webp';
+import registrySchemaChecksImage from '../../documentation/src/components/landing-page-feature-tabs/schema-checks.webp';
+import registryVersionControlSystemImage from '../../documentation/src/components/landing-page-feature-tabs/version-control-system.webp';
 
 interface Props {
   class?: string;
@@ -15,88 +15,94 @@ interface Props {
 const { class: className } = Astro.props;
 
 const highlights = {
-  "Schema Registry": [
+  'Schema Registry': [
     {
-      description: "Track schema modifications across multiple environments from development to production.",
+      description:
+        'Track schema modifications across multiple environments from development to production.',
       image: registryVersionControlSystemImage,
-      title: "Version Control System",
+      title: 'Version Control System',
     },
     {
-      description: "Identify and breaking changes before they reach production. Evolve your API with confidence.",
+      description:
+        'Identify and breaking changes before they reach production. Evolve your API with confidence.',
       image: registrySchemaChecksImage,
-      title: "Schema Checks",
+      title: 'Schema Checks',
     },
     {
-      description: "Avoid runtime errors by validating compatibility of all your subgraphs.",
+      description: 'Avoid runtime errors by validating compatibility of all your subgraphs.',
       image: registrySchemaChecksImage,
-      title: "Composition Error Prevention",
+      title: 'Composition Error Prevention',
     },
     {
-      description: "Navigate through your GraphQL schema and check ownership and usage of types.",
+      description: 'Navigate through your GraphQL schema and check ownership and usage of types.',
       image: registryExplorerImage,
-      title: "Schema Explorer",
+      title: 'Schema Explorer',
     },
   ],
-  "GraphQL Observability": [
+  'GraphQL Observability': [
     {
-      description: "Track GraphQL requests to see how API is utilized and by what applications.",
+      description: 'Track GraphQL requests to see how API is utilized and by what applications.',
       image: observabilityClientsImage,
-      title: "GraphQL consumers",
+      title: 'GraphQL consumers',
     },
     {
-      description: "Observe and analyze performance of your GraphQL API.",
+      description: 'Observe and analyze performance of your GraphQL API.',
       image: observabilityOverallImage,
-      title: "Overall performance",
+      title: 'Overall performance',
     },
     {
-      description: "Identify slow GraphQL operations to pinpoint performance bottlenecks.",
+      description: 'Identify slow GraphQL operations to pinpoint performance bottlenecks.',
       image: observabilityOperationsImage,
-      title: "Query performance",
+      title: 'Query performance',
     },
   ],
-  "GraphQL Gateway": [
+  'GraphQL Gateway': [
     {
-      description: "Best in class support for Apollo Federation. Scores 100% in the Federation audit.",
+      description:
+        'Best in class support for Apollo Federation. Scores 100% in the Federation audit.',
       image: auditImage,
-      link: "https://the-guild.dev/graphql/hive/federation-gateway-audit",
-      title: "Federation v1 and v2",
+      link: 'https://the-guild.dev/graphql/hive/federation-gateway-audit',
+      title: 'Federation v1 and v2',
     },
     {
-      description: "Contribute data from subgraphs to a GraphQL subscription seamlessly.",
+      description: 'Contribute data from subgraphs to a GraphQL subscription seamlessly.',
       image: auditImage,
-      link: "/docs/gateway/subscriptions",
-      title: "Real-time features",
+      link: '/docs/gateway/subscriptions',
+      title: 'Real-time features',
     },
     {
-      description: "Access control with role-based access control (RBAC), JSON Web Tokens (JWT) and Persisted Operations.",
+      description:
+        'Access control with role-based access control (RBAC), JSON Web Tokens (JWT) and Persisted Operations.',
       image: auditImage,
-      link: "/docs/gateway/authorization-authentication",
-      title: "Security and Compliance",
+      link: '/docs/gateway/authorization-authentication',
+      title: 'Security and Compliance',
     },
     {
-      description: "Out-of-the-box support for OpenTelemetry and Prometheus metrics to fit your observability stack.",
+      description:
+        'Out-of-the-box support for OpenTelemetry and Prometheus metrics to fit your observability stack.',
       image: auditImage,
-      link: "/docs/gateway/monitoring-tracing",
-      title: "OTEL & Prometheus",
+      link: '/docs/gateway/monitoring-tracing',
+      title: 'OTEL & Prometheus',
     },
   ],
 } as const;
 
 const tabs = [
   {
-    description: "Publish schemas, compose federated GraphQL api, and detect backward-incompatible changes with ease.",
-    documentationLink: "/docs/schema-registry",
-    title: "Schema Registry",
+    description:
+      'Publish schemas, compose federated GraphQL api, and detect backward-incompatible changes with ease.',
+    documentationLink: '/docs/schema-registry',
+    title: 'Schema Registry',
   },
   {
-    description: "Insights into API usage and user experience metrics.",
-    documentationLink: "/docs/schema-registry/usage-reporting",
-    title: "GraphQL Observability",
+    description: 'Insights into API usage and user experience metrics.',
+    documentationLink: '/docs/schema-registry/usage-reporting',
+    title: 'GraphQL Observability',
   },
   {
-    description: "Entry point to your distributed data graph.",
-    documentationLink: "/docs/gateway",
-    title: "GraphQL Gateway",
+    description: 'Entry point to your distributed data graph.',
+    documentationLink: '/docs/gateway',
+    title: 'GraphQL Gateway',
   },
 ] as const;
 
@@ -105,131 +111,182 @@ const allHighlights = Object.values(highlights).flat();
 
 <section
   class:list={[
-    "border-beige-400 isolate mx-auto w-312 max-w-full rounded-3xl bg-white [--tab-bg-dark:var(--color-beige-600)] [--tab-bg:var(--color-beige-200)] sm:max-w-[calc(100%-4rem)] sm:border md:p-6",
+    'border-beige-400 isolate mx-auto w-312 max-w-full rounded-3xl bg-white [--tab-bg-dark:var(--color-beige-600)] [--tab-bg:var(--color-beige-200)] sm:max-w-[calc(100%-4rem)] sm:border md:p-6',
     className,
   ]}
 >
   <div
-    class="feature-tablist group relative z-10 mx-4 my-6 flex flex-col overflow-hidden focus-within:overflow-visible max-sm:h-14.5 max-sm:focus-within:pointer-events-none max-sm:focus-within:rounded-b-none max-sm:focus-within:has-[>:nth-child(2)[aria-selected=true]]:-translate-y-full max-sm:focus-within:has-[>:nth-child(3)[aria-selected=true]]:translate-y-[-200%] sm:flex-row sm:rounded-2xl sm:bg-(--tab-bg) md:mx-0 md:mb-12 md:mt-0"
+    class="feature-tablist group relative z-10 mx-4 my-6 flex flex-col overflow-hidden focus-within:overflow-visible max-sm:h-14.5 max-sm:focus-within:pointer-events-none max-sm:focus-within:rounded-b-none max-sm:focus-within:has-[>:nth-child(2)[aria-selected=true]]:-translate-y-full max-sm:focus-within:has-[>:nth-child(3)[aria-selected=true]]:translate-y-[-200%] sm:flex-row sm:rounded-2xl sm:bg-(--tab-bg) md:mx-0 md:mt-0 md:mb-12"
     role="tablist"
   >
-    {tabs.map((tab, i) => (
-      <button
-        class="hive-focus aria-selected:text-green-1000 aria-selected:border-(--tab-bg-dark) aria-selected:bg-white max-sm:aria-[selected=false]:hidden group-focus-within:aria-[selected=false]:flex max-sm:aria-[selected=false]:rounded-none max-sm:group-focus-within:aria-[selected=false]:border-y-(--tab-bg) max-sm:group-focus-within:nth-2:aria-selected:rounded-none max-sm:group-focus-within:nth-2:aria-selected:border-y-(--tab-bg) max-sm:group-focus-within:first:aria-selected:border-b-(--tab-bg) max-sm:group-focus-within:first:aria-selected:rounded-b-none max-sm:aria-[selected=false]:pointer-events-none max-sm:aria-[selected=false]:group-focus-within:pointer-events-auto z-10 flex flex-1 items-center justify-center gap-2.5 rounded-lg border-transparent p-4 text-base/6 font-medium text-green-800 max-sm:border max-sm:border-(--tab-bg-dark) max-sm:bg-(--tab-bg) max-sm:group-focus-within:aria-selected:z-20 max-sm:group-focus-within:aria-selected:ring-4 sm:rounded-[15px] sm:border sm:text-xs sm:max-lg:p-3 sm:max-[721px]:p-2 md:text-sm lg:text-base max-sm:group-focus-within:last:border-t-(--tab-bg) max-sm:group-focus-within:nth-3:rounded-t-none [&>svg]:shrink-0 max-sm:group-focus-within:[&:not([aria-selected=true])]:first-child:rounded-t-lg max-sm:group-focus-within:[&:not([aria-selected=true])]:first-child:border-t-(--tab-bg-dark) [&:not([aria-selected=true])>:last-child]:invisible max-sm:group-focus-within:[[aria-selected=true]+&:last-child]:rounded-b-lg max-sm:group-focus-within:[[aria-selected=true]+&:last-child]:border-b-(--tab-bg-dark) max-sm:group-focus-within:[:not([aria-selected=true])+&:last-child:not([aria-selected=true])]:rounded-b-lg max-sm:group-focus-within:[:not([aria-selected=true])+&:last-child:not([aria-selected=true])]:border-b-(--tab-bg-dark) cursor-pointer"
-        data-feature-tab={tab.title}
-        role="tab"
-        type="button"
-        aria-selected={i === 0 ? "true" : "false"}
-      >
-        {tab.title === "Schema Registry" && (
-          <svg fill="currentColor" height="24" width="24"><path d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"></path></svg>
-        )}
-        {tab.title === "GraphQL Observability" && (
-          <svg fill="currentColor" height="24" width="24"><path d="M11.1 19.2v-6.3H9.3v-2.7h5.4v2.7h-1.8v6.3h4.5V21H6.6v-1.8h4.5Zm-.9-16V2.1h3.6v1.1a8.102 8.102 0 0 1 2.694 14.64l-1-1.497a6.3 6.3 0 1 0-6.99 0l-.998 1.497A8.103 8.103 0 0 1 10.2 3.2Z"></path></svg>
-        )}
-        {tab.title === "GraphQL Gateway" && (
-          <svg fill="currentColor" height="24" stroke="currentColor" stroke-width="0" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M176,160a39.89,39.89,0,0,0-28.62,12.09l-46.1-29.63a39.8,39.8,0,0,0,0-28.92l46.1-29.63a40,40,0,1,0-8.66-13.45l-46.1,29.63a40,40,0,1,0,0,55.82l46.1,29.63A40,40,0,1,0,176,160Zm0-128a24,24,0,1,1-24,24A24,24,0,0,1,176,32ZM64,152a24,24,0,1,1,24-24A24,24,0,0,1,64,152Zm112,72a24,24,0,1,1,24-24A24,24,0,0,1,176,224Z"></path></svg>
-        )}
-        {tab.title}
-        <svg class="ml-auto size-6 text-green-800 transition group-focus-within:rotate-90 sm:hidden" fill="none" height="15" viewBox="0 0 15 15" width="15" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path clip-rule="evenodd" d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd"></path>
-        </svg>
-      </button>
-    ))}
+    {
+      tabs.map((tab, i) => (
+        <button
+          class="hive-focus aria-selected:text-green-1000 max-sm:group-focus-within:[&:not([aria-selected=true])]:first-child:rounded-t-lg max-sm:group-focus-within:[&:not([aria-selected=true])]:first-child:border-t-(--tab-bg-dark) z-10 flex flex-1 cursor-pointer items-center justify-center gap-2.5 rounded-lg border-transparent p-4 text-base/6 font-medium text-green-800 aria-selected:border-(--tab-bg-dark) aria-selected:bg-white group-focus-within:aria-[selected=false]:flex max-sm:border max-sm:border-(--tab-bg-dark) max-sm:bg-(--tab-bg) max-sm:group-focus-within:last:border-t-(--tab-bg) max-sm:group-focus-within:aria-selected:z-20 max-sm:group-focus-within:aria-selected:ring-4 max-sm:group-focus-within:first:aria-selected:rounded-b-none max-sm:group-focus-within:first:aria-selected:border-b-(--tab-bg) max-sm:aria-[selected=false]:pointer-events-none max-sm:aria-[selected=false]:hidden max-sm:aria-[selected=false]:rounded-none max-sm:aria-[selected=false]:group-focus-within:pointer-events-auto max-sm:group-focus-within:aria-[selected=false]:border-y-(--tab-bg) max-sm:group-focus-within:nth-2:aria-selected:rounded-none max-sm:group-focus-within:nth-2:aria-selected:border-y-(--tab-bg) max-sm:group-focus-within:nth-3:rounded-t-none sm:rounded-[15px] sm:border sm:text-xs sm:max-[721px]:p-2 sm:max-lg:p-3 md:text-sm lg:text-base [&:not([aria-selected=true])>:last-child]:invisible [&>svg]:shrink-0 max-sm:group-focus-within:[:not([aria-selected=true])+&:last-child:not([aria-selected=true])]:rounded-b-lg max-sm:group-focus-within:[:not([aria-selected=true])+&:last-child:not([aria-selected=true])]:border-b-(--tab-bg-dark) max-sm:group-focus-within:[[aria-selected=true]+&:last-child]:rounded-b-lg max-sm:group-focus-within:[[aria-selected=true]+&:last-child]:border-b-(--tab-bg-dark)"
+          data-feature-tab={tab.title}
+          role="tab"
+          type="button"
+          aria-selected={i === 0 ? 'true' : 'false'}
+        >
+          {tab.title === 'Schema Registry' && (
+            <svg fill="currentColor" height="24" width="24">
+              <path d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z" />
+            </svg>
+          )}
+          {tab.title === 'GraphQL Observability' && (
+            <svg fill="currentColor" height="24" width="24">
+              <path d="M11.1 19.2v-6.3H9.3v-2.7h5.4v2.7h-1.8v6.3h4.5V21H6.6v-1.8h4.5Zm-.9-16V2.1h3.6v1.1a8.102 8.102 0 0 1 2.694 14.64l-1-1.497a6.3 6.3 0 1 0-6.99 0l-.998 1.497A8.103 8.103 0 0 1 10.2 3.2Z" />
+            </svg>
+          )}
+          {tab.title === 'GraphQL Gateway' && (
+            <svg
+              fill="currentColor"
+              height="24"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 256 256"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M176,160a39.89,39.89,0,0,0-28.62,12.09l-46.1-29.63a39.8,39.8,0,0,0,0-28.92l46.1-29.63a40,40,0,1,0-8.66-13.45l-46.1,29.63a40,40,0,1,0,0,55.82l46.1,29.63A40,40,0,1,0,176,160Zm0-128a24,24,0,1,1-24,24A24,24,0,0,1,176,32ZM64,152a24,24,0,1,1,24-24A24,24,0,0,1,64,152Zm112,72a24,24,0,1,1,24-24A24,24,0,0,1,176,224Z" />
+            </svg>
+          )}
+          {tab.title}
+          <svg
+            class="ml-auto size-6 text-green-800 transition group-focus-within:rotate-90 sm:hidden"
+            fill="none"
+            height="15"
+            viewBox="0 0 15 15"
+            width="15"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </button>
+      ))
+    }
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2">
-    {tabs.map((tab, i) => (
-      <div class="feature-panel data-hidden:hidden" data-feature-panel={tab.title} data-hidden={i === 0 ? undefined : "true"} tabindex={-1}>
-        <div class="flex flex-col gap-6 px-4 pb-4 md:gap-12 md:px-8 md:pb-12">
-          <header class="flex flex-wrap items-center gap-4 md:flex-col md:items-start md:gap-6">
-            <h2 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] text-green-1000 max-sm:text-2xl/8">{tab.title}</h2>
-            <p class="basis-full leading-6 text-green-800">{tab.description}</p>
-          </header>
-          <dl class="grid grid-cols-2 gap-4 md:gap-12">
-            {highlights[tab.title].map((highlight) =>
-              "link" in highlight && highlight.link ? (
-                <a
-                  class="hover:bg-beige-100 -m-2 block rounded-lg p-2 md:-m-4 md:rounded-xl md:p-4"
-                  data-highlight-hover={highlight.title}
-                  href={withBase(highlight.link)}
-                  title={`Learn more about ${highlight.title}`}
-                >
-                  <dt class="text-green-1000 font-medium">{highlight.title}</dt>
-                  <dd class="mt-2 text-sm/5 text-green-800">{highlight.description}</dd>
-                </a>
-              ) : (
-                <div class="hover:bg-beige-100 -m-2 rounded-lg p-2 md:-m-4 md:rounded-xl md:p-4" data-highlight-hover={highlight.title}>
-                  <dt class="text-green-1000 font-medium">{highlight.title}</dt>
-                  <dd class="mt-2 text-sm/5 text-green-800">{highlight.description}</dd>
-                </div>
-              ),
-            )}
-          </dl>
-          <a
-            class="relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 focus-visible:outline focus-visible:ring-0 focus-visible:ring-offset-0 sm:w-fit bg-primary hover:bg-green-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800"
-            href={withBase(tab.documentationLink)}
-          >
-            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
-            Learn more
-            <span class="sr-only">about {tab.title}</span>
-            <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z"></path></svg>
-          </a>
-        </div>
-      </div>
-    ))}
-
-    <div class="relative mx-4 h-full flex-1 overflow-hidden rounded-3xl bg-blue-400 max-sm:h-72.5 sm:min-h-100 md:ml-6 md:mr-0">
-      {allHighlights.map((highlight, i) => (
+    {
+      tabs.map((tab, i) => (
         <div
-          class="absolute inset-0 opacity-0 transition delay-150 duration-150 ease-linear data-[current=true]:z-10 data-[current=true]:opacity-100 data-[current=true]:delay-0"
-          data-current={i === 0 ? "true" : "false"}
-          data-highlight-image={highlight.title}
+          class="feature-panel data-hidden:hidden"
+          data-feature-panel={tab.title}
+          data-hidden={i === 0 ? undefined : 'true'}
+          tabindex={-1}
         >
-          <img
-            alt=""
-            class="absolute left-6 top-6 h-[calc(100%-24px)] rounded-tl-3xl object-cover object-left lg:left-13.75 lg:top-27 lg:h-[calc(100%-108px)]"
-            height="578"
-            src={highlight.image.src}
-            width="925"
-          />
+          <div class="flex flex-col gap-6 px-4 pb-4 md:gap-12 md:px-8 md:pb-12">
+            <header class="flex flex-wrap items-center gap-4 md:flex-col md:items-start md:gap-6">
+              <h2 class="group text-green-1000 text-4xl leading-[1.2] tracking-[-0.48px] max-sm:text-2xl/8 md:text-5xl md:leading-[1.16667]">
+                {tab.title}
+              </h2>
+              <p class="basis-full leading-6 text-green-800">{tab.description}</p>
+            </header>
+            <dl class="grid grid-cols-2 gap-4 md:gap-12">
+              {highlights[tab.title].map(highlight =>
+                'link' in highlight && highlight.link ? (
+                  <a
+                    class="hover:bg-beige-100 -m-2 block rounded-lg p-2 md:-m-4 md:rounded-xl md:p-4"
+                    data-highlight-hover={highlight.title}
+                    href={withBase(highlight.link)}
+                    title={`Learn more about ${highlight.title}`}
+                  >
+                    <dt class="text-green-1000 font-medium">{highlight.title}</dt>
+                    <dd class="mt-2 text-sm/5 text-green-800">{highlight.description}</dd>
+                  </a>
+                ) : (
+                  <div
+                    class="hover:bg-beige-100 -m-2 rounded-lg p-2 md:-m-4 md:rounded-xl md:p-4"
+                    data-highlight-hover={highlight.title}
+                  >
+                    <dt class="text-green-1000 font-medium">{highlight.title}</dt>
+                    <dd class="mt-2 text-sm/5 text-green-800">{highlight.description}</dd>
+                  </div>
+                ),
+              )}
+            </dl>
+            <a
+              class="text-green-1000 bg-primary relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-green-800 hover:text-white focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 sm:w-fit"
+              href={withBase(tab.documentationLink)}
+            >
+              <span class="absolute inset-0 rounded-lg border border-green-800" />
+              Learn more
+              <span class="sr-only">about {tab.title}</span>
+              <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
+                <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
+              </svg>
+            </a>
+          </div>
         </div>
-      ))}
+      ))
+    }
+
+    <div
+      class="relative mx-4 h-full flex-1 overflow-hidden rounded-3xl bg-blue-400 max-sm:h-72.5 sm:min-h-100 md:mr-0 md:ml-6"
+    >
+      {
+        allHighlights.map((highlight, i) => (
+          <div
+            class="absolute inset-0 opacity-0 transition delay-150 duration-150 ease-linear data-[current=true]:z-10 data-[current=true]:opacity-100 data-[current=true]:delay-0"
+            data-current={i === 0 ? 'true' : 'false'}
+            data-highlight-image={highlight.title}
+          >
+            <img
+              alt=""
+              class="absolute top-6 left-6 h-[calc(100%-24px)] rounded-tl-3xl object-cover object-left lg:top-27 lg:left-13.75 lg:h-[calc(100%-108px)]"
+              height="578"
+              loading="lazy"
+              decoding="async"
+              src={highlight.image.src}
+              width="925"
+            />
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>
 
 <script>
-  const tabButtons = document.querySelectorAll<HTMLButtonElement>("[data-feature-tab]");
-  const panels = document.querySelectorAll<HTMLElement>("[data-feature-panel]");
-  const highlightImages = document.querySelectorAll<HTMLElement>("[data-highlight-image]");
-  const highlightHovers = document.querySelectorAll<HTMLElement>("[data-highlight-hover]");
+  const tabButtons = document.querySelectorAll<HTMLButtonElement>('[data-feature-tab]');
+  const panels = document.querySelectorAll<HTMLElement>('[data-feature-panel]');
+  const highlightImages = document.querySelectorAll<HTMLElement>('[data-highlight-image]');
+  const highlightHovers = document.querySelectorAll<HTMLElement>('[data-highlight-hover]');
 
   const setActiveHighlight = (title: string | undefined) => {
     if (!title) return;
-    highlightImages.forEach((image) => {
+    highlightImages.forEach(image => {
       image.dataset.current = String(image.dataset.highlightImage === title);
     });
   };
 
   const firstHighlightForTab = (tab: string) => {
     const panel = document.querySelector<HTMLElement>(`[data-feature-panel="${tab}"]`);
-    return panel?.querySelector<HTMLElement>("[data-highlight-hover]")?.dataset.highlightHover;
+    return panel?.querySelector<HTMLElement>('[data-highlight-hover]')?.dataset.highlightHover;
   };
 
-  tabButtons.forEach((button) => {
-    button.addEventListener("click", () => {
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
       const tab = button.dataset.featureTab;
-      tabButtons.forEach((item) => item.setAttribute("aria-selected", String(item === button)));
-      panels.forEach((panel) => {
+      tabButtons.forEach(item => item.setAttribute('aria-selected', String(item === button)));
+      panels.forEach(panel => {
         if (panel.dataset.featurePanel === tab) delete panel.dataset.hidden;
-        else panel.dataset.hidden = "true";
+        else panel.dataset.hidden = 'true';
       });
-      setActiveHighlight(firstHighlightForTab(tab ?? ""));
+      setActiveHighlight(firstHighlightForTab(tab ?? ''));
     });
   });
 
-  highlightHovers.forEach((element) => {
-    element.addEventListener("pointerover", () => setActiveHighlight(element.dataset.highlightHover));
+  highlightHovers.forEach(element => {
+    element.addEventListener('pointerover', () =>
+      setActiveHighlight(element.dataset.highlightHover),
+    );
   });
 </script>

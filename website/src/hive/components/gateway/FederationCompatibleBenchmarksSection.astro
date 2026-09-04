@@ -19,9 +19,7 @@ interface BenchmarkDatum {
 
 let benchmarkData: BenchmarkDatum[] = [];
 try {
-  const res = await fetch(
-    "https://the-guild.dev/graphql/hive/federation-gateway-audit/data.json",
-  );
+  const res = await fetch('https://the-guild.dev/graphql/hive/federation-gateway-audit/data.json');
   if (res.ok) {
     benchmarkData = await res.json();
   }
@@ -32,19 +30,24 @@ try {
 }
 ---
 
-<section class:list={["text-green-1000 px-4 py-6 sm:py-12 md:px-6 lg:py-[120px] xl:px-[120px]", className]}>
-  <header class="md:text-balance md:text-center">
-    <h1 class="group text-4xl leading-[1.2] md:text-[56px] md:leading-[1.14286] tracking-[-0.56px]">Federation-Compatible Gateway Benchmarks</h1>
-    <p class="mb-6 mt-4 text-green-800 md:mb-16">
+<section
+  class:list={['text-green-1000 px-4 py-6 sm:py-12 md:px-6 lg:py-[120px] xl:px-[120px]', className]}
+>
+  <header class="md:text-center md:text-balance">
+    <h2 class="group text-4xl leading-[1.2] tracking-[-0.56px] md:text-[56px] md:leading-[1.14286]">
+      Federation-Compatible Gateway Benchmarks
+    </h2>
+    <p class="mt-4 mb-6 text-green-800 md:mb-16">
       See the results of our open-source audit for Apollo Federation Gateways.
     </p>
   </header>
-  <div class="my-6 flex items-start gap-6 max-md:flex-col md:mb-12 md:mt-16">
-    <p class="text-pretty text-2xl/8 lg:text-[32px]/10">
-      Learn how Hive Gateway performs against other gateways in&nbsp;terms of correctness and compliance with the Apollo Federation specification
+  <div class="my-6 flex items-start gap-6 max-md:flex-col md:mt-16 md:mb-12">
+    <p class="text-2xl/8 text-pretty lg:text-[32px]/10">
+      Learn how Hive Gateway performs against other gateways in&nbsp;terms of correctness and
+      compliance with the Apollo Federation specification
     </p>
     <a
-      class="relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 bg-transparent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 sm:w-fit"
+      class="text-green-1000 relative flex items-center justify-center gap-2 rounded-lg bg-transparent px-6 py-3 leading-6 font-medium text-nowrap focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 sm:w-fit"
       href="https://the-guild.dev/graphql/hive/federation-gateway-audit"
       target="_blank"
       rel="noreferrer"
@@ -53,76 +56,165 @@ try {
       Learn about our audit and methodology
     </a>
   </div>
-  <div class="hive-focus nextra-scrollbar border-beige-400 [&_:is(td,th)]:border-beige-400 overflow-x-auto rounded-2xl border [scrollbar-width:auto] max-sm:-mx-8">
-    <table class="block overflow-x-auto rounded-2xl border border-(--border) [--border:var(--color-green-200)] [--highlight-bg:var(--color-green-100)] table w-full border-none max-sm:rounded-none max-sm:text-sm">
+  <div
+    class="hive-focus nextra-scrollbar border-beige-400 [&_:is(td,th)]:border-beige-400 [scrollbar-width:auto] overflow-x-auto rounded-2xl border max-sm:-mx-8"
+  >
+    <table
+      class="block table w-full overflow-x-auto rounded-2xl border border-none border-(--border) [--border:var(--color-green-200)] [--highlight-bg:var(--color-green-100)] max-sm:rounded-none max-sm:text-sm"
+    >
       <thead>
-        <tr class="*:text-left bg-(--highlight,var(--highlight-bg)) [--highlight:0]">
-          <th class="border border-(--border) p-4 first:sticky first:left-0 first:border-l-0 first:bg-(--highlight,var(--highlight-bg)) last:border-r-0 max-sm:first:drop-shadow-2xl in-[thead]:border-t-0 font-medium whitespace-pre pl-6">
+        <tr class="bg-(--highlight,var(--highlight-bg)) [--highlight:0] *:text-left">
+          <th
+            class="border border-(--border) p-4 pl-6 font-medium whitespace-pre first:sticky first:left-0 first:border-l-0 first:bg-(--highlight,var(--highlight-bg)) last:border-r-0 in-[thead]:border-t-0 max-sm:first:drop-shadow-2xl"
+          >
             Gateway
             <small class="block text-xs/[18px] text-green-800">Name and variant</small>
           </th>
-          <th class="border border-(--border) p-4 first:sticky first:left-0 first:border-l-0 first:bg-(--highlight,var(--highlight-bg)) last:border-r-0 max-sm:first:drop-shadow-2xl in-[thead]:border-t-0 font-medium whitespace-pre sm:w-1/4">
+          <th
+            class="border border-(--border) p-4 font-medium whitespace-pre first:sticky first:left-0 first:border-l-0 first:bg-(--highlight,var(--highlight-bg)) last:border-r-0 in-[thead]:border-t-0 max-sm:first:drop-shadow-2xl sm:w-1/4"
+          >
             Compatibility
             <small class="block text-xs/[18px] text-green-800">Pass rate of test cases</small>
           </th>
-          <th class="border border-(--border) p-4 first:sticky first:left-0 first:border-l-0 first:bg-(--highlight,var(--highlight-bg)) last:border-r-0 max-sm:first:drop-shadow-2xl in-[thead]:border-t-0 font-medium whitespace-pre sm:w-1/4">
+          <th
+            class="border border-(--border) p-4 font-medium whitespace-pre first:sticky first:left-0 first:border-l-0 first:bg-(--highlight,var(--highlight-bg)) last:border-r-0 in-[thead]:border-t-0 max-sm:first:drop-shadow-2xl sm:w-1/4"
+          >
             Test Cases
             <small class="block text-xs/[18px] text-green-800">All available test cases</small>
           </th>
-          <th class="border border-(--border) p-4 first:sticky first:left-0 first:border-l-0 first:bg-(--highlight,var(--highlight-bg)) last:border-r-0 max-sm:first:drop-shadow-2xl in-[thead]:border-t-0 font-medium whitespace-pre sm:w-1/4">
+          <th
+            class="border border-(--border) p-4 font-medium whitespace-pre first:sticky first:left-0 first:border-l-0 first:bg-(--highlight,var(--highlight-bg)) last:border-r-0 in-[thead]:border-t-0 max-sm:first:drop-shadow-2xl sm:w-1/4"
+          >
             Test Suites
             <small class="block text-xs/[18px] text-green-800">Test cases grouped by feature</small>
           </th>
         </tr>
       </thead>
       <tbody>
-        {benchmarkData.map((row) => {
-          const compatibility = (row.cases.passed / (row.cases.passed + row.cases.failed)) * 100;
-          const highlight = row.name === "Hive Gateway";
-          return (
-            <tr class:list={["*:text-left", highlight ? "[--highlight:initial]" : "[--highlight:0]", "bg-(--highlight,var(--highlight-bg))"]}>
-              <td class:list={["border border-(--border) p-4 first:sticky first:left-0 first:border-l-0 first:bg-(--highlight,var(--highlight-bg)) last:border-r-0 max-sm:first:drop-shadow-2xl in-[tbody]:border-b-0", highlight ? "bg-green-100!" : "", "pl-5 max-sm:pr-1.5"]}>
-                <div class="flex items-center gap-2.5 whitespace-nowrap">
-                  <div class:list={["size-3 rounded-full", compatibility > 99 ? "bg-positive-bright" : compatibility > 90 ? "bg-warning-bright" : "bg-critical-bright"]} />
-                  {row.name}
-                </div>
-              </td>
-              <td class="border border-(--border) p-4 last:border-r-0 in-[tbody]:border-b-0 text-sm text-green-800">
-                {compatibility.toFixed(2)}%
-              </td>
-              <td class="border border-(--border) p-4 last:border-r-0 in-[tbody]:border-b-0">
-                <span class="text-positive-dark inline-flex items-center gap-0.5 text-sm">
-                  <svg fill="currentColor" height="16" viewBox="0 0 16 16" width="16" class="size-4"><path d="M6.66668 10.1134L12.7947 3.98608L13.7373 4.92875L6.66668 11.9994L2.42401 7.75675L3.36668 6.81408L6.66668 10.1134Z" /></svg> {row.cases.passed}
-                </span>
-                {row.cases.failed > 0 && (
-                  <span class="text-critical-dark ml-2 inline-flex items-center text-sm">
-                    <svg fill="currentColor" height="16" viewBox="0 0 16 16" width="16" class="size-4"><path d="M7.99999 7.05806L11.3 3.75806L12.2427 4.70072L8.94266 8.00072L12.2427 11.3007L11.2993 12.2434L7.99932 8.94339L4.69999 12.2434L3.75732 11.3001L7.05732 8.00006L3.75732 4.70006L4.69999 3.75872L7.99999 7.05806Z" /></svg> {row.cases.failed}
+        {
+          benchmarkData.map(row => {
+            const compatibility = (row.cases.passed / (row.cases.passed + row.cases.failed)) * 100;
+            const highlight = row.name === 'Hive Gateway';
+            return (
+              <tr
+                class:list={[
+                  '*:text-left',
+                  highlight ? '[--highlight:initial]' : '[--highlight:0]',
+                  'bg-(--highlight,var(--highlight-bg))',
+                ]}
+              >
+                <td
+                  class:list={[
+                    'border border-(--border) p-4 first:sticky first:left-0 first:border-l-0 first:bg-(--highlight,var(--highlight-bg)) last:border-r-0 in-[tbody]:border-b-0 max-sm:first:drop-shadow-2xl',
+                    highlight ? 'bg-green-100!' : '',
+                    'pl-5 max-sm:pr-1.5',
+                  ]}
+                >
+                  <div class="flex items-center gap-2.5 whitespace-nowrap">
+                    <div
+                      class:list={[
+                        'size-3 rounded-full',
+                        compatibility > 99
+                          ? 'bg-positive-bright'
+                          : compatibility > 90
+                            ? 'bg-warning-bright'
+                            : 'bg-critical-bright',
+                      ]}
+                    />
+                    {row.name}
+                  </div>
+                </td>
+                <td class="border border-(--border) p-4 text-sm text-green-800 last:border-r-0 in-[tbody]:border-b-0">
+                  {compatibility.toFixed(2)}%
+                </td>
+                <td class="border border-(--border) p-4 last:border-r-0 in-[tbody]:border-b-0">
+                  <span class="text-positive-dark inline-flex items-center gap-0.5 text-sm">
+                    <svg
+                      fill="currentColor"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      width="16"
+                      class="size-4"
+                    >
+                      <path d="M6.66668 10.1134L12.7947 3.98608L13.7373 4.92875L6.66668 11.9994L2.42401 7.75675L3.36668 6.81408L6.66668 10.1134Z" />
+                    </svg>{' '}
+                    {row.cases.passed}
                   </span>
-                )}
-              </td>
-              <td class="border border-(--border) p-4 last:border-r-0 in-[tbody]:border-b-0">
-                <span class="text-positive-dark inline-flex items-center gap-0.5 text-sm">
-                  <svg fill="currentColor" height="16" viewBox="0 0 16 16" width="16" class="size-4"><path d="M6.66668 10.1134L12.7947 3.98608L13.7373 4.92875L6.66668 11.9994L2.42401 7.75675L3.36668 6.81408L6.66668 10.1134Z" /></svg> {row.suites.passed}
-                </span>
-                {row.suites.failed > 0 && (
-                  <span class="text-critical-dark ml-2 inline-flex items-center text-sm">
-                    <svg fill="currentColor" height="16" viewBox="0 0 16 16" width="16" class="size-4"><path d="M7.99999 7.05806L11.3 3.75806L12.2427 4.70072L8.94266 8.00072L12.2427 11.3007L11.2993 12.2434L7.99932 8.94339L4.69999 12.2434L3.75732 11.3001L7.05732 8.00006L3.75732 4.70006L4.69999 3.75872L7.99999 7.05806Z" /></svg> {row.suites.failed}
+                  {row.cases.failed > 0 && (
+                    <span class="text-critical-dark ml-2 inline-flex items-center text-sm">
+                      <svg
+                        fill="currentColor"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        width="16"
+                        class="size-4"
+                      >
+                        <path d="M7.99999 7.05806L11.3 3.75806L12.2427 4.70072L8.94266 8.00072L12.2427 11.3007L11.2993 12.2434L7.99932 8.94339L4.69999 12.2434L3.75732 11.3001L7.05732 8.00006L3.75732 4.70006L4.69999 3.75872L7.99999 7.05806Z" />
+                      </svg>{' '}
+                      {row.cases.failed}
+                    </span>
+                  )}
+                </td>
+                <td class="border border-(--border) p-4 last:border-r-0 in-[tbody]:border-b-0">
+                  <span class="text-positive-dark inline-flex items-center gap-0.5 text-sm">
+                    <svg
+                      fill="currentColor"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      width="16"
+                      class="size-4"
+                    >
+                      <path d="M6.66668 10.1134L12.7947 3.98608L13.7373 4.92875L6.66668 11.9994L2.42401 7.75675L3.36668 6.81408L6.66668 10.1134Z" />
+                    </svg>{' '}
+                    {row.suites.passed}
                   </span>
-                )}
-              </td>
-            </tr>
-          );
-        })}
+                  {row.suites.failed > 0 && (
+                    <span class="text-critical-dark ml-2 inline-flex items-center text-sm">
+                      <svg
+                        fill="currentColor"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        width="16"
+                        class="size-4"
+                      >
+                        <path d="M7.99999 7.05806L11.3 3.75806L12.2427 4.70072L8.94266 8.00072L12.2427 11.3007L11.2993 12.2434L7.99932 8.94339L4.69999 12.2434L3.75732 11.3001L7.05732 8.00006L3.75732 4.70006L4.69999 3.75872L7.99999 7.05806Z" />
+                      </svg>{' '}
+                      {row.suites.failed}
+                    </span>
+                  )}
+                </td>
+              </tr>
+            );
+          })
+        }
       </tbody>
     </table>
   </div>
-  <div class="mt-6 flex flex-wrap gap-2 whitespace-nowrap text-xs text-green-800 sm:gap-4">
+  <div class="mt-6 flex flex-wrap gap-2 text-xs whitespace-nowrap text-green-800 sm:gap-4">
     <div class="flex gap-2 max-sm:-mx-1 max-sm:w-full sm:contents">
       <div class="flex items-center gap-1">
-        <svg fill="currentColor" height="16" viewBox="0 0 16 16" width="16" class="text-positive-dark size-4"><path d="M6.66668 10.1134L12.7947 3.98608L13.7373 4.92875L6.66668 11.9994L2.42401 7.75675L3.36668 6.81408L6.66668 10.1134Z" /></svg> Passed tests
+        <svg
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          class="text-positive-dark size-4"
+          ><path
+            d="M6.66668 10.1134L12.7947 3.98608L13.7373 4.92875L6.66668 11.9994L2.42401 7.75675L3.36668 6.81408L6.66668 10.1134Z"
+          ></path></svg
+        > Passed tests
       </div>
       <div class="flex items-center gap-1">
-        <svg fill="currentColor" height="16" viewBox="0 0 16 16" width="16" class="text-critical-dark size-4"><path d="M7.99999 7.05806L11.3 3.75806L12.2427 4.70072L8.94266 8.00072L12.2427 11.3007L11.2993 12.2434L7.99932 8.94339L4.69999 12.2434L3.75732 11.3001L7.05732 8.00006L3.75732 4.70006L4.69999 3.75872L7.99999 7.05806Z" /></svg> Failed tests
+        <svg
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          class="text-critical-dark size-4"
+          ><path
+            d="M7.99999 7.05806L11.3 3.75806L12.2427 4.70072L8.94266 8.00072L12.2427 11.3007L11.2993 12.2434L7.99932 8.94339L4.69999 12.2434L3.75732 11.3001L7.05732 8.00006L3.75732 4.70006L4.69999 3.75872L7.99999 7.05806Z"
+          ></path></svg
+        > Failed tests
       </div>
     </div>
     <div class="flex items-center gap-2">

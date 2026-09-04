@@ -1,1 +1,1 @@
-export { default as YoutubeIframe } from "../components/mdx/YoutubeIframe.astro";
+export { default as YoutubeIframe } from '../components/mdx/YoutubeIframe.astro';

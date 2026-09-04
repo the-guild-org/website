@@ -2,7 +2,8 @@ import type { RewriteRecord } from '../config';
 import { FAVICON_FILES } from './transformer';
 
 export function shouldHandleFavicon(url: URL) {
-  if (FAVICON_FILES.some(v => url.pathname.endsWith(v))) {
+  // Anchor on a path segment so /foo-favicon.ico does not match.
+  if (FAVICON_FILES.some(v => url.pathname.endsWith(`/${v}`))) {
     return true;
   }
 

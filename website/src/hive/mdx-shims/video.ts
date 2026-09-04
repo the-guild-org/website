@@ -1,1 +1,1 @@
-export { default as MdxVideo } from "../components/mdx/MdxVideo.astro";
+export { default as MdxVideo } from '../components/mdx/MdxVideo.astro';

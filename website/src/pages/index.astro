@@ -4,10 +4,30 @@ import Cell from '../components/Cell.astro';
 import CommandLink from '../components/CommandLink.astro';
 import ContactDialog from '../components/ContactDialog.astro';
 import Footer from '../components/Footer.astro';
-import { guildMark, productLogos } from '../components/product-logos';
+import { productLogos } from '../components/product-logos';
 import SectionHeader from '../components/SectionHeader.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
+import SiteHeader from '../components/SiteHeader.astro';
 import Layout from '../layouts/Layout.astro';
+
+// Entity data for search engines: ties the-guild.dev to every property
+// The Guild owns. See the SEO audit — the entity ranks #12 for its own name.
+const organizationJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'The Guild',
+  url: 'https://the-guild.dev/',
+  logo: 'https://the-guild.dev/android-chrome-512x512.png',
+  sameAs: [
+    'https://github.com/the-guild-org',
+    'https://github.com/graphql-hive',
+    'https://twitter.com/TheGuildDev',
+    'https://www.linkedin.com/company/the-guild-software/',
+    'https://discord.com/invite/xud7bH9',
+    'https://graphql-hive.com',
+    'https://stellate.co',
+    'https://grafbase.com',
+  ],
+});
 
 const stellateAcquisitionHref = '/graphql/hive/blog/stellate-acquisition';
 const grafbaseAcquisitionHref = '/graphql/hive/blog/acquired-grafbase';
@@ -145,52 +165,34 @@ const stellateCaseStudies = [
   title="The Guild: GraphQL infrastructure for teams that ship"
   description="Open-source GraphQL infrastructure for enterprises, built and maintained by The Guild."
 >
-  <header
-    class="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--nav-bg)] backdrop-blur-[10px]"
-  >
-    <div
-      class="mx-auto flex min-h-[48px] w-[calc(100%-24px)] max-w-shell items-center gap-[26px] font-mono text-[14px] sm:min-h-[54px] sm:w-[calc(100%-40px)]"
-    >
-      <a
-        href="#top"
-        class="inline-flex items-center gap-2 font-bold tracking-[-.02em] whitespace-nowrap text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
-        ><svg
-          aria-hidden="true"
-          class="size-[18px] shrink-0"
-          fill="currentColor"
-          viewBox={guildMark.viewBox}
-          xmlns="http://www.w3.org/2000/svg"
-          set:html={guildMark.markup}
-        />the-guild</a
+  <script is:inline slot="head" type="application/ld+json" set:html={organizationJsonLd} />
+  <SiteHeader logoHref="#top">
+    <nav class="hidden flex-wrap gap-5 text-[var(--muted)] lg:flex" aria-label="Main navigation">
+      {
+        [
+          ['why', '#why'],
+          ['history', '#track-record'],
+          ['platform', '#platform'],
+          ['proof', '#proof'],
+          ['security', '#assurance'],
+          ['blog', '/blog'],
+        ].map(([label, href]) => (
+          <a
+            href={href}
+            class="relative transition-colors after:absolute after:right-0 after:-bottom-2 after:left-0 after:h-px after:origin-left after:scale-x-0 after:bg-[var(--strong)] after:transition-transform after:content-[''] hover:text-[var(--strong)] aria-[current=true]:text-[var(--strong)] aria-[current=true]:after:scale-x-100"
+          >
+            {label}
+          </a>
+        ))
+      }
+    </nav>
+    <Fragment slot="actions">
+      <span class="hidden lg:inline-flex"
+        ><CommandLink href="/graphql/hive">explore platform</CommandLink></span
       >
-      <nav class="hidden flex-wrap gap-5 text-[var(--muted)] lg:flex" aria-label="Main navigation">
-        {
-          [
-            ['why', '#why'],
-            ['history', '#track-record'],
-            ['platform', '#platform'],
-            ['proof', '#proof'],
-            ['security', '#assurance'],
-            ['blog', '/blog'],
-          ].map(([label, href]) => (
-            <a
-              href={href}
-              class="relative transition-colors after:absolute after:right-0 after:-bottom-2 after:left-0 after:h-px after:origin-left after:scale-x-0 after:bg-[var(--strong)] after:transition-transform after:content-[''] hover:text-[var(--strong)] aria-[current=true]:text-[var(--strong)] aria-[current=true]:after:scale-x-100"
-            >
-              {label}
-            </a>
-          ))
-        }
-      </nav>
-      <div class="ml-auto flex items-center gap-2.5">
-        <span class="hidden lg:inline-flex"
-          ><CommandLink href="/graphql/hive">explore platform</CommandLink></span
-        >
-        <CommandLink href="#contact" primary data-contact-open>talk to an engineer</CommandLink>
-        <ThemeToggle />
-      </div>
-    </div>
-  </header>
+      <CommandLink href="#contact" primary data-contact-open>talk to an engineer</CommandLink>
+    </Fragment>
+  </SiteHeader>
 
   <main id="top">
     <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">

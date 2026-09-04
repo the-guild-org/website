@@ -92,7 +92,6 @@ export function redirect(sentry: Toucan, from: string, url: string, code = 301) 
     status: code,
     headers: {
       Location: url,
-      Referer: from,
     },
   });
 }
@@ -124,6 +123,7 @@ export async function handleRewrite(options: {
   manipulateResponse: ManipulateResponseFn;
   match: string | null;
   publicDomain: string;
+  waitUntil: (promise: Promise<unknown>) => void;
 }): Promise<Response> {
   const url = buildUpstreamUrl(options).toString();
   const cacheKey = new Request(url, options.request);
@@ -186,9 +186,11 @@ export async function handleRewrite(options: {
         },
       });
 
+      // Only a 404 can plausibly be a case mismatch; retrying 5xx just
+      // doubles upstream load.
       const containsUppercase = /[A-Z]/.test(options.upstreamPath);
 
-      if (containsUppercase) {
+      if (freshResponse.status === 404 && containsUppercase) {
         const asLower = options.upstreamPath.toLowerCase();
 
         options.sentry.addBreadcrumb({
@@ -221,10 +223,34 @@ export async function handleRewrite(options: {
     response = await options.manipulateResponse(options.record, freshResponse);
 
     if (options.request.method === 'GET') {
-      // Make sure the worker wait behind the scenes, for the Response content.
-      await cache.put(cacheKey, response.clone());
+      // Populate the cache in the background - the response does not wait.
+      options.waitUntil(cache.put(cacheKey, response.clone()));
     }
   }
 
   return response;
+}
+
+/**
+ * Old build bugs leaked route templates into public URLs (/_landing/...,
+ * literal $-segments). Google still recrawls them; they deserve a 410.
+ */
+export function isLeakedRouteTemplate(pathname: string) {
+  return pathname.includes('/_landing/') || /(^|\/)\$(\/|$)/.test(pathname);
+}
+
+/**
+ * The single canonical form of a public URL: no www, no trailing slash
+ * (search preserved). Returns null when the URL is already canonical, so the
+ * caller emits at most one 301 instead of a redirect chain.
+ */
+export function canonicalizeUrl(url: URL): string | null {
+  const canonical = new URL(url);
+  if (canonical.hostname.startsWith('www.')) {
+    canonical.hostname = canonical.hostname.slice(4);
+  }
+  if (canonical.pathname.length > 1 && canonical.pathname.endsWith('/')) {
+    canonical.pathname = canonical.pathname.replace(/\/+$/, '');
+  }
+  return canonical.toString() === url.toString() ? null : canonical.toString();
 }

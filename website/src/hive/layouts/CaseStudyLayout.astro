@@ -1,13 +1,13 @@
 ---
-import { withBase } from "../lib/base-path";
-import "../styles/global.css";
-
-import CaseStudyCard from "../components/case-studies/CaseStudyCard.astro";
-import CaseStudyCta from "../components/case-studies/CaseStudyCta.astro";
-import CompanyLogo from "../components/case-studies/CompanyLogo.astro";
-import SiteFooter from "../components/SiteFooter.astro";
-import SiteNavigation from "../components/SiteNavigation.astro";
-import BaseHead from "../components/BaseHead.astro";
+import { withBase } from '../lib/base-path';
+import '../styles/global.css';
+import BaseHead from '../components/BaseHead.astro';
+import CaseStudyCard from '../components/case-studies/CaseStudyCard.astro';
+import CaseStudyCta from '../components/case-studies/CaseStudyCta.astro';
+import CompanyLogo from '../components/case-studies/CompanyLogo.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteNavigation from '../components/SiteNavigation.astro';
+import ThemeInit from '../components/ThemeInit.astro';
 
 interface Author {
   avatar?: string;
@@ -41,16 +41,28 @@ const pageTitle = `${title} | Hive`;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <BaseHead breadcrumbs={[{ name: "Case Studies", path: "/case-studies" }]} canonical={canonical} description={excerpt} imageAlt={title} title={pageTitle} type="article" />
+    <BaseHead
+      breadcrumbs={[{ name: 'Case Studies', path: '/case-studies' }]}
+      canonical={canonical}
+      description={excerpt}
+      imageAlt={title}
+      title={pageTitle}
+      type="article"
+    />
+    <ThemeInit />
   </head>
   <body class="min-h-screen antialiased">
     <SiteNavigation />
 
-    <div class="hive-prose mx-auto w-full box-content max-w-360 [--content-width:1208px] [--article-max-width:640px]">
-      <header class="mx-auto flex max-w-(--content-width) justify-between gap-4 sm:gap-8 px-4 max-lg:flex-col sm:my-12 md:pl-12 my-6 lg:my-24 lg:pr-2">
+    <div
+      class="hive-prose mx-auto box-content w-full max-w-360 [--article-max-width:640px] [--content-width:1208px]"
+    >
+      <header
+        class="mx-auto my-6 flex max-w-(--content-width) justify-between gap-4 px-4 max-lg:flex-col sm:my-12 sm:gap-8 md:pl-12 lg:my-24 lg:pr-2"
+      >
         <div class="max-w-[640px]">
           <h1
-            class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] max-sm:text-[32px]"
+            class="group text-4xl leading-[1.2] tracking-[-0.48px] max-sm:text-[32px] md:text-5xl md:leading-[1.16667]"
             id={slug}
           >
             {title}
@@ -58,7 +70,7 @@ const pageTitle = `${title} | Hive`;
           {
             authors.length > 0 && (
               <ul class="flex flex-wrap gap-4 text-sm max-lg:my-4 lg:mt-8">
-                {authors.map((author) => (
+                {authors.map(author => (
                   <li class="flex items-center gap-3">
                     {author.avatar && (
                       <img
@@ -78,18 +90,64 @@ const pageTitle = `${title} | Hive`;
           }
         </div>
 
-        <div class="relative flex items-center justify-center h-[224px] w-full max-w-[640px] shrink-0 max-lg:-order-1 max-sm:mb-6 lg:w-[320px] lg:max-xl:h-[180px] lg:max-xl:[&>svg]:w-[140px] lg:max-xl:[&_svg]:h-[120px] xl:w-[400px]">
+        <div
+          class="relative flex h-[224px] w-full max-w-[640px] shrink-0 items-center justify-center max-lg:-order-1 max-sm:mb-6 lg:w-[320px] lg:max-xl:h-[180px] xl:w-[400px] lg:max-xl:[&_svg]:h-[120px] lg:max-xl:[&>svg]:w-[140px]"
+        >
           <CompanyLogo slug={slug} />
           <div class="pointer-events-none absolute inset-0 overflow-hidden">
-            <svg class="absolute right-0 top-0 dark:opacity-10" fill="none" height="161" viewBox="0 0 162 161" width="162" xmlns="http://www.w3.org/2000/svg"><path d="M161.133 160L161.133 160.133L161 160.133L112.877 160.133L112.743 160.133L112.743 160L112.743 85.7294C112.743 65.0319 95.9681 48.2566 75.2706 48.2566L1.00007 48.2566L0.866737 48.2566L0.866737 48.1233L0.866745 -2.79986e-05L0.866745 -0.133361L1.00008 -0.133361L58.6487 -0.133339C65.3279 -0.133338 71.7422 2.5257 76.468 7.25144L112.971 43.7544L117.246 48.029L153.749 84.532C158.474 89.2578 161.133 95.6722 161.133 102.351L161.133 160Z" fill="url(#paint0_linear_2522_12246)" stroke="url(#paint1_linear_2522_12246)" stroke-width="0.266667"></path></svg>
-            <svg class="absolute bottom-0 left-0 rotate-180 dark:opacity-10" fill="none" height="161" viewBox="0 0 162 161" width="162" xmlns="http://www.w3.org/2000/svg"><path d="M161.133 160L161.133 160.133L161 160.133L112.877 160.133L112.743 160.133L112.743 160L112.743 85.7294C112.743 65.0319 95.9681 48.2566 75.2706 48.2566L1.00007 48.2566L0.866737 48.2566L0.866737 48.1233L0.866745 -2.79986e-05L0.866745 -0.133361L1.00008 -0.133361L58.6487 -0.133339C65.3279 -0.133338 71.7422 2.5257 76.468 7.25144L112.971 43.7544L117.246 48.029L153.749 84.532C158.474 89.2578 161.133 95.6722 161.133 102.351L161.133 160Z" fill="url(#paint0_linear_2522_12246)" stroke="url(#paint1_linear_2522_12246)" stroke-width="0.266667"></path></svg>
-            <svg fill="none" height="161" viewBox="0 0 162 161" width="162" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              class="absolute top-0 right-0 dark:opacity-10"
+              fill="none"
+              height="161"
+              viewBox="0 0 162 161"
+              width="162"
+              xmlns="http://www.w3.org/2000/svg"
+              ><path
+                d="M161.133 160L161.133 160.133L161 160.133L112.877 160.133L112.743 160.133L112.743 160L112.743 85.7294C112.743 65.0319 95.9681 48.2566 75.2706 48.2566L1.00007 48.2566L0.866737 48.2566L0.866737 48.1233L0.866745 -2.79986e-05L0.866745 -0.133361L1.00008 -0.133361L58.6487 -0.133339C65.3279 -0.133338 71.7422 2.5257 76.468 7.25144L112.971 43.7544L117.246 48.029L153.749 84.532C158.474 89.2578 161.133 95.6722 161.133 102.351L161.133 160Z"
+                fill="url(#paint0_linear_2522_12246)"
+                stroke="url(#paint1_linear_2522_12246)"
+                stroke-width="0.266667"></path></svg
+            >
+            <svg
+              class="absolute bottom-0 left-0 rotate-180 dark:opacity-10"
+              fill="none"
+              height="161"
+              viewBox="0 0 162 161"
+              width="162"
+              xmlns="http://www.w3.org/2000/svg"
+              ><path
+                d="M161.133 160L161.133 160.133L161 160.133L112.877 160.133L112.743 160.133L112.743 160L112.743 85.7294C112.743 65.0319 95.9681 48.2566 75.2706 48.2566L1.00007 48.2566L0.866737 48.2566L0.866737 48.1233L0.866745 -2.79986e-05L0.866745 -0.133361L1.00008 -0.133361L58.6487 -0.133339C65.3279 -0.133338 71.7422 2.5257 76.468 7.25144L112.971 43.7544L117.246 48.029L153.749 84.532C158.474 89.2578 161.133 95.6722 161.133 102.351L161.133 160Z"
+                fill="url(#paint0_linear_2522_12246)"
+                stroke="url(#paint1_linear_2522_12246)"
+                stroke-width="0.266667"></path></svg
+            >
+            <svg
+              fill="none"
+              height="161"
+              viewBox="0 0 162 161"
+              width="162"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <defs>
-                <linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_2522_12246" x1="143.326" x2="48.814" y1="19.5349" y2="126.512">
+                <linearGradient
+                  gradientUnits="userSpaceOnUse"
+                  id="paint0_linear_2522_12246"
+                  x1="143.326"
+                  x2="48.814"
+                  y1="19.5349"
+                  y2="126.512"
+                >
                   <stop stop-color="#F1EEE4" stop-opacity="0"></stop>
                   <stop offset="1" stop-color="#F1EEE4" stop-opacity="0.8"></stop>
                 </linearGradient>
-                <linearGradient gradientUnits="userSpaceOnUse" id="paint1_linear_2522_12246" x1="161" x2="1" y1="0" y2="160">
+                <linearGradient
+                  gradientUnits="userSpaceOnUse"
+                  id="paint1_linear_2522_12246"
+                  x1="161"
+                  x2="1"
+                  y1="0"
+                  y2="160"
+                >
                   <stop stop-color="white" stop-opacity="0.1"></stop>
                   <stop offset="1" stop-color="white" stop-opacity="0.4"></stop>
                 </linearGradient>
@@ -101,28 +159,60 @@ const pageTitle = `${title} | Hive`;
 
       <div class="mx-auto flex max-w-(--content-width)">
         <div class="ml-0 min-w-0 flex-1 pl-4 max-sm:pr-4 md:pl-12">
-          <article class="prose dark:prose-invert min-w-0 w-(--article-max-width) max-w-full" data-case-study-prose>
+          <article
+            class="prose dark:prose-invert w-(--article-max-width) max-w-full min-w-0"
+            data-case-study-prose
+          >
             <slot />
           </article>
         </div>
 
-        <section class="text-green-1000 light bg-primary dark:bg-primary/95 rounded-2xl p-6 sticky right-2 top-[108px] mb-8 h-min max-lg:hidden lg:w-[320px] xl:w-[400px]">
-          <h3 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px]" id="looking-to-use-hive">
+        <section
+          class="text-green-1000 light bg-primary dark:bg-primary/95 sticky top-[108px] right-2 mb-8 h-min rounded-2xl p-6 max-lg:hidden lg:w-[320px] xl:w-[400px]"
+        >
+          <h3
+            class="group text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]"
+            id="looking-to-use-hive"
+          >
             Looking to use Hive?
           </h3>
           <div class="pointer-events-none absolute inset-0 overflow-hidden">
-            <svg class="absolute bottom-0 right-0" fill="none" height="160" viewBox="0 0 160 160" width="160" xmlns="http://www.w3.org/2000/svg">
-              <path d="M5.45059 59.0739C2.2825 62.242 0.499999 66.5421 0.499999 71.0193L0.499998 159.5L32.8917 159.5L32.8917 59.4857C32.8917 44.797 44.797 32.8917 59.4857 32.8917L159.5 32.8917L159.5 0.500002L71.0193 0.500001C66.5421 0.500001 62.242 2.2825 59.0739 5.45059L33.7452 30.7792L30.7792 33.7452L5.45059 59.0739Z" stroke="url(#paint0_linear_3240_2323)"></path>
-              <defs><linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_3240_2323" x1="80" x2="5.00002" y1="83.6842" y2="2.63157"><stop stop-color="#A2C1C4" stop-opacity="0"></stop><stop offset="1" stop-color="#A2C1C4" stop-opacity="0.8"></stop></linearGradient></defs>
+            <svg
+              class="absolute right-0 bottom-0"
+              fill="none"
+              height="160"
+              viewBox="0 0 160 160"
+              width="160"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5.45059 59.0739C2.2825 62.242 0.499999 66.5421 0.499999 71.0193L0.499998 159.5L32.8917 159.5L32.8917 59.4857C32.8917 44.797 44.797 32.8917 59.4857 32.8917L159.5 32.8917L159.5 0.500002L71.0193 0.500001C66.5421 0.500001 62.242 2.2825 59.0739 5.45059L33.7452 30.7792L30.7792 33.7452L5.45059 59.0739Z"
+                stroke="url(#paint0_linear_3240_2323)"></path>
+              <defs
+                ><linearGradient
+                  gradientUnits="userSpaceOnUse"
+                  id="paint0_linear_3240_2323"
+                  x1="80"
+                  x2="5.00002"
+                  y1="83.6842"
+                  y2="2.63157"
+                  ><stop stop-color="#A2C1C4" stop-opacity="0"></stop><stop
+                    offset="1"
+                    stop-color="#A2C1C4"
+                    stop-opacity="0.8"></stop></linearGradient
+                ></defs
+              >
             </svg>
           </div>
           <a
-            class="relative mt-[72px] dark:[&>div]:border-[#89A09E] flex w-full items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 focus-visible:outline focus-visible:ring-0 focus-visible:ring-offset-0 sm:w-fit dark:text-neutral-200 [&:hover>:first-child]:-inset-px [&:hover>:first-child]:rounded-[9px] bg-green-800 text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 dark:text-white"
+            class="text-green-1000 relative mt-[72px] flex w-full items-center justify-center gap-2 rounded-lg bg-green-800 px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-green-700 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit dark:text-neutral-200 dark:text-white [&:hover>:first-child]:-inset-px [&:hover>:first-child]:rounded-[9px] dark:[&>div]:border-[#89A09E]"
             data-case-study-contact
             href="https://the-guild.dev/contact"
             style="width: 100%"
           >
-            <span class="absolute inset-0 rounded-lg border border-green-800 dark:border-neutral-200"></span>
+            <span
+              class="absolute inset-0 rounded-lg border border-green-800 dark:border-neutral-200"
+            ></span>
             Talk to us
           </a>
         </section>
@@ -130,12 +220,15 @@ const pageTitle = `${title} | Hive`;
 
       {
         otherStories.length > 0 && (
-          <section class="py-6 sm:p-24 mx-4 md:mx-6">
-            <h2 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] text-center" id="more-stories">
+          <section class="mx-4 py-6 sm:p-24 md:mx-6">
+            <h2
+              class="group text-center text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]"
+              id="more-stories"
+            >
               More stories
             </h2>
             <ul class="mt-6 flex flex-wrap gap-4 max-sm:flex-col sm:mt-16 sm:gap-6">
-              {otherStories.map((story) => (
+              {otherStories.map(story => (
                 <li class="relative grow basis-[320px]">
                   <CaseStudyCard
                     category={story.category}
@@ -157,13 +250,15 @@ const pageTitle = `${title} | Hive`;
     <SiteFooter />
 
     <script>
-      document.querySelectorAll<HTMLAnchorElement>("[data-case-study-contact]").forEach((link) => {
-        link.addEventListener("click", (event) => {
-          const crisp = (globalThis as typeof globalThis & {
-            $crisp?: { push(args: unknown[]): void };
-          }).$crisp;
+      document.querySelectorAll<HTMLAnchorElement>('[data-case-study-contact]').forEach(link => {
+        link.addEventListener('click', event => {
+          const crisp = (
+            globalThis as typeof globalThis & {
+              $crisp?: { push(args: unknown[]): void };
+            }
+          ).$crisp;
           if (crisp) {
-            crisp.push(["do", "chat:open"]);
+            crisp.push(['do', 'chat:open']);
             event.preventDefault();
           }
         });
@@ -179,7 +274,8 @@ const pageTitle = `${title} | Hive`;
     line-height: 1.75;
   }
 
-  [data-case-study-prose] > :is(h2, h3, h4, h5, h6, p, ol, ul, figure, hr, iframe):not(.hive-bleed) {
+  [data-case-study-prose]
+    > :is(h2, h3, h4, h5, h6, p, ol, ul, figure, hr, iframe):not(.hive-bleed) {
     max-width: var(--article-max-width);
     margin-inline: auto;
   }
@@ -292,7 +388,9 @@ const pageTitle = `${title} | Hive`;
     border: 1px solid var(--color-beige-400);
     border-radius: 0.75rem;
     box-shadow: var(--shadow-sm);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+      monospace;
     font-size: 0.8125rem;
     line-height: 1.42857;
   }
@@ -332,7 +430,7 @@ const pageTitle = `${title} | Hive`;
     padding-top: 0.5rem;
     border-radius: 1rem;
     background: var(--color-primary);
-    content: url("../styles/quotemark.svg");
+    content: url('../styles/quotemark.svg');
   }
 
   [data-case-study-prose] div:has(> blockquote) blockquote > p {

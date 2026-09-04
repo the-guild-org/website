@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Build-time guard for the Hive site's mount prefix. The Hive pages are
  * served under /graphql/hive of the unified site, and their content links are
@@ -6,21 +5,18 @@
  * an un-prefixed Hive URL slipped through. Bundled assets legitimately live
  * at the shared /_astro root, so they are exempt.
  */
-import { existsSync, globSync, readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { existsSync, globSync, readFileSync } from 'node:fs';
+import { basePath as base } from '../../src/hive/lib/base-path.ts';
+import { HIVE_DIST, PROJECT_DIR, readRedirects } from '../lib/build-output.ts';
 
-const base = "/graphql/hive";
-const projectDirectory = fileURLToPath(new URL("../..", import.meta.url));
-const distDirectory = fileURLToPath(new URL("../../dist", import.meta.url));
-const hiveDistDirectory = `${distDirectory}/graphql/hive`;
+const hiveDistDirectory = HIVE_DIST;
 
-const ATTR_PATTERN =
-  /\s(?:href|src|poster|action|bundle-path|base-url)="(\/[^"]*)"/g;
+const ATTR_PATTERN = /\s(?:href|src|poster|action|bundle-path|base-url)="(\/[^"]*)"/g;
 const SRCSET_PATTERN = /\ssrcset="([^"]+)"/g;
 
 function isUnprefixed(url: string) {
-  if (!url.startsWith("/") || url.startsWith("//")) return false;
-  if (url.startsWith("/_astro/")) return false;
+  if (!url.startsWith('/') || url.startsWith('//')) return false;
+  if (url.startsWith('/_astro/')) return false;
   return url !== base && !url.startsWith(`${base}/`);
 }
 
@@ -30,8 +26,8 @@ function report(file: string, url: string) {
   offenders.get(file)!.add(url);
 }
 
-for (const file of globSync("**/*.html", { cwd: hiveDistDirectory })) {
-  const content = readFileSync(`${hiveDistDirectory}/${file}`, "utf8");
+for (const file of globSync('**/*.html', { cwd: hiveDistDirectory })) {
+  const content = readFileSync(`${hiveDistDirectory}/${file}`, 'utf8');
 
   for (const match of content.matchAll(ATTR_PATTERN)) {
     if (isUnprefixed(match[1]!)) report(file, match[1]!);
@@ -47,38 +43,39 @@ for (const file of globSync("**/*.html", { cwd: hiveDistDirectory })) {
     report(file, `${base}/_astro/… (assets are not under the mount prefix)`);
   }
   for (const match of content.matchAll(SRCSET_PATTERN)) {
-    for (const candidate of match[1]!.split(",")) {
+    for (const candidate of match[1]!.split(',')) {
       const url = candidate.trim().split(/\s+/)[0];
       if (url && isUnprefixed(url)) report(file, url);
     }
   }
 }
 
-// Hive rules in the root-level _redirects must carry the mount prefix — an
-// un-prefixed source or destination would act on the main site instead.
-// Rules from the main site's own website/public/_redirects are exempt.
+// Redirect destinations that point into Hive content must carry the mount
+// prefix — an un-prefixed one would 404. Sources are legitimately
+// un-prefixed (legacy URLs redirecting INTO Hive); main-site rules from
+// website/public/_redirects are exempt entirely.
 const mainSiteRedirects = new Set(
-  (existsSync(`${projectDirectory}/public/_redirects`)
-    ? readFileSync(`${projectDirectory}/public/_redirects`, "utf8").split("\n")
+  (existsSync(`${PROJECT_DIR}/public/_redirects`)
+    ? readFileSync(`${PROJECT_DIR}/public/_redirects`, 'utf8').split('\n')
     : []
-  ).map((line) => line.trim()),
+  ).map(line => line.trim()),
 );
-if (existsSync(`${distDirectory}/_redirects`)) {
-  for (const line of readFileSync(`${distDirectory}/_redirects`, "utf8").split("\n")) {
-    if (!line.trim() || line.startsWith("#")) continue;
-    if (mainSiteRedirects.has(line.trim())) continue;
-    for (const path of line.trim().split(/\s+/).slice(0, 2)) {
-      if (path.startsWith("/") && path !== base && !path.startsWith(`${base}/`)) {
-        report("_redirects", path);
-      }
-    }
+for (const rule of readRedirects()) {
+  const line = `${rule.source} ${rule.destination}${rule.status ? ` ${rule.status}` : ''}`;
+  if (mainSiteRedirects.has(line)) continue;
+  if (
+    rule.destination.startsWith('/') &&
+    rule.destination !== base &&
+    !rule.destination.startsWith(`${base}/`)
+  ) {
+    report('_redirects', rule.destination);
   }
 }
 
 if (offenders.size > 0) {
   console.error(`Found un-prefixed URLs on Hive pages (base: ${base}):`);
   for (const [file, urls] of [...offenders.entries()].slice(0, 40)) {
-    console.error(`  ${file}: ${[...urls].slice(0, 5).join(", ")}`);
+    console.error(`  ${file}: ${[...urls].slice(0, 5).join(', ')}`);
   }
   console.error(`\n${offenders.size} files affected.`);
   process.exit(1);

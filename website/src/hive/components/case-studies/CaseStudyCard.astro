@@ -1,7 +1,7 @@
 ---
-import { withBase } from "../../lib/base-path";
-import arrowRaw from "../../design-system/icons/arrow-icon.svg?raw";
-import CompanyLogo from "./CompanyLogo.astro";
+import arrowRaw from '../../design-system/icons/arrow-icon.svg?raw';
+import { withBase } from '../../lib/base-path';
+import CompanyLogo from './CompanyLogo.astro';
 
 interface Props {
   category?: string;
@@ -16,7 +16,7 @@ const { category, class: className, excerpt, href, slug } = Astro.props;
 
 <a
   class:list={[
-    "outline-hidden focus-visible:ring-3 hive-focus bg-beige-100 hover:bg-beige-200/70 hover:ring-beige-400 flex flex-col gap-6 rounded-2xl p-6 sm:gap-10 dark:bg-neutral-800/70 dark:ring-neutral-600 dark:hover:bg-neutral-800 hover:not-focus:ring-3 dark:hover:not-focus:ring-neutral-600",
+    'hive-focus bg-beige-100 hover:bg-beige-200/70 hover:ring-beige-400 flex flex-col gap-6 rounded-2xl p-6 outline-hidden hover:not-focus:ring-3 focus-visible:ring-3 sm:gap-10 dark:bg-neutral-800/70 dark:ring-neutral-600 dark:hover:bg-neutral-800 dark:hover:not-focus:ring-neutral-600',
     className,
   ]}
   href={withBase(href)}
@@ -24,9 +24,7 @@ const { category, class: className, excerpt, href, slug } = Astro.props;
   <div>
     {
       category && (
-        <div class="text-beige-800 mb-4 text-sm font-medium dark:text-neutral-400">
-          {category}
-        </div>
+        <div class="text-beige-800 mb-4 text-sm font-medium dark:text-neutral-400">{category}</div>
       )
     }
     <CompanyLogo slug={slug} />

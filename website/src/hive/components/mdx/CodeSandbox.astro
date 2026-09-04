@@ -9,21 +9,20 @@ interface Props {
 const { codeSandboxId, embedOptions, readonly, size } = Astro.props;
 
 const allOptions: Record<string, boolean | number | string> = {
-  autoresize: "1",
+  autoresize: '1',
   fontsize: 11,
   ...embedOptions,
 };
 const optionsQueryString = Object.entries(allOptions)
   .map(([k, v]) => `${k}=${v}`)
-  .join("&");
+  .join('&');
 
-const height = size || "500px";
+const height = size || '500px';
 ---
 
 <iframe
   allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr"
   sandbox="allow-forms allow-modals allow-popups allow-presentation allow-scripts"
   src={`https://codesandbox.io/embed/${codeSandboxId}?${optionsQueryString}`}
-  style={`border: 0; border-radius: 4px; height: ${height}; overflow: hidden; pointer-events: ${readonly ? "none" : "auto"}; width: 100%;`}
-  title={`codeSandbox-${codeSandboxId}`}
-></iframe>
+  style={`border: 0; border-radius: 4px; height: ${height}; overflow: hidden; pointer-events: ${readonly ? 'none' : 'auto'}; width: 100%;`}
+  title={`codeSandbox-${codeSandboxId}`}></iframe>

@@ -1,18 +1,66 @@
 <script is:inline>
   (() => {
-    const media = matchMedia("(prefers-color-scheme: dark)");
+    const media = matchMedia('(prefers-color-scheme: dark)');
     const apply = () => {
-      const preference = localStorage.getItem("theme") || "system";
-      const dark = preference === "dark" || (preference === "system" && media.matches);
-      document.documentElement.classList.toggle("dark", dark);
-      document.documentElement.classList.toggle("light", !dark);
+      // One storage key for the whole domain ("theme" is the pre-merge Hive
+      // key, read as a fallback so existing visitors keep their preference).
+      // Anything else in storage counts as unset.
+      const preference =
+        [localStorage.getItem('guild-theme'), localStorage.getItem('theme')].find(
+          value => value === 'dark' || value === 'light' || value === 'system',
+        ) || 'system';
+      const dark = preference === 'dark' || (preference === 'system' && media.matches);
+      document.documentElement.classList.toggle('dark', dark);
+      document.documentElement.classList.toggle('light', !dark);
       document.documentElement.dataset.theme = preference;
       // pagefind's built-in dark styles (result skeletons included) are
       // scoped to [data-pf-theme="dark"] — keep it in sync with our theme.
-      document.documentElement.dataset.pfTheme = dark ? "dark" : "light";
-      document.documentElement.style.colorScheme = dark ? "dark" : "light";
+      document.documentElement.dataset.pfTheme = dark ? 'dark' : 'light';
+      document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
     };
     apply();
-    media.addEventListener("change", apply);
+    media.addEventListener('change', apply);
   })();
+</script>
+
+<script>
+  // Toggle wiring for any page that renders a [data-theme-toggle] control —
+  // previously an inline copy in DocsLayout only, so other pages with a
+  // toggle (or a saved preference) had no way to change it.
+  const themeMedia = matchMedia('(prefers-color-scheme: dark)');
+  const applyTheme = (preference: string) => {
+    const dark = preference === 'dark' || (preference === 'system' && themeMedia.matches);
+    document.documentElement.classList.toggle('dark', dark);
+    document.documentElement.classList.toggle('light', !dark);
+    document.documentElement.dataset.theme = preference;
+    document.documentElement.dataset.pfTheme = dark ? 'dark' : 'light';
+    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+    document
+      .querySelectorAll<HTMLButtonElement>('[data-theme-toggle] [data-theme]')
+      .forEach(button => {
+        const active = button.dataset.theme === preference;
+        button.setAttribute('aria-pressed', String(active));
+        button.classList.toggle('bg-fd-accent', active);
+        button.classList.toggle('text-fd-accent-foreground', active);
+        button.classList.toggle('text-fd-muted-foreground', !active);
+      });
+  };
+  const readSavedTheme = () =>
+    [localStorage.getItem('guild-theme'), localStorage.getItem('theme')].find(
+      value => value === 'dark' || value === 'light' || value === 'system',
+    ) ?? 'system';
+  applyTheme(readSavedTheme());
+  document
+    .querySelectorAll<HTMLButtonElement>('[data-theme-toggle] [data-theme]')
+    .forEach(button => {
+      button.addEventListener('click', () => {
+        const preference = button.dataset.theme;
+        if (!preference) return;
+        localStorage.setItem('guild-theme', preference);
+        applyTheme(preference);
+      });
+    });
+  themeMedia.addEventListener('change', () => {
+    if (readSavedTheme() === 'system') applyTheme('system');
+  });
 </script>

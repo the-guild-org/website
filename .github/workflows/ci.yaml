@@ -1,10 +1,13 @@
 name: ci
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
     branches:
       - master
-      - feat-guild-redesign
   push:
     branches:
       - master
@@ -37,12 +40,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-astro-assets-
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: ./.github/actions/setup
         name: setup env
-        with:
-          nodeVersion: 26.8.1
-          packageManager: pnpm
-          packageManagerVersion: 11.25.0
 
       - uses: the-guild-org/shared-config/website-cf@main
         name: build and deploy website
@@ -58,32 +57,95 @@ jobs:
 
   prettier:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: ./.github/actions/setup
         name: setup env
-        with:
-          nodeVersion: 26.8.1
-          packageManager: pnpm
-          packageManagerVersion: 11.25.0
 
       - name: prettier:check
         run: 'pnpm prettier:check'
 
   router-typecheck:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: ./.github/actions/setup
         name: setup env
-        with:
-          nodeVersion: 26.8.1
-          packageManager: pnpm
-          packageManagerVersion: 11.25.0
 
       - name: typecheck
         run: pnpm --filter guild-website-router typecheck
+
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: ./.github/actions/setup
+        name: setup env
+
+      - name: router tests
+        run: pnpm --filter guild-website-router test
+
+      - name: website tests
+        run: pnpm --filter website test
+
+      - name: helper worker typecheck
+        run: pnpm --filter website-helper-worker typecheck
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: cache playwright browsers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: cache astro image optimization
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: website/node_modules/.astro
+          key: ${{ runner.os }}-astro-assets-lh-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-astro-assets-
+
+      - uses: ./.github/actions/setup
+        name: setup env
+
+      - name: build
+        run: pnpm --filter website build
+
+      # lhci runs directly (no third-party action; the org's Actions policy
+      # only allows selected creators). autorun = collect + assert.
+      - name: lighthouse budgets
+        run: pnpm exec lhci autorun --config=.lighthouserc.json
+
+      - name: upload lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci
+          # dotfolders are excluded by default since upload-artifact v4.4
+          include-hidden-files: true
+          retention-days: 14

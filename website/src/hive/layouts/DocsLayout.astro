@@ -1,42 +1,51 @@
 ---
-import { withBase } from "../lib/base-path";
-import "../styles/global.css";
-
-import CopyMarkdown from "../components/CopyMarkdown.astro";
-import DocsSearchModal from "../components/DocsSearchModal.astro";
-import DocsNavigationTree from "../components/DocsNavigationTree.astro";
-import HeadingPermalinks from "../components/HeadingPermalinks.astro";
-import SiteFooter from "../components/SiteFooter.astro";
-import SiteNavigation from "../components/SiteNavigation.astro";
-import BaseHead from "../components/BaseHead.astro";
-import ThemeToggle from "../components/ThemeToggle.astro";
-import ThemeInit from "../components/ThemeInit.astro";
-import TocAsideContent from "../components/TocAsideContent.astro";
-import TocPopoverContent from "../components/TocPopoverContent.astro";
-import type { DocsNavNode, DocsNavPage } from "../lib/docs-nav";
-import { filterToc, type TocHeading } from "../lib/toc";
+import { withBase } from '../lib/base-path';
+import '../styles/global.css';
+import BaseHead from '../components/BaseHead.astro';
+import CopyMarkdown from '../components/CopyMarkdown.astro';
+import DocsNavigationTree from '../components/DocsNavigationTree.astro';
+import DocsSearchModal from '../components/DocsSearchModal.astro';
+import HeadingPermalinks from '../components/HeadingPermalinks.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteNavigation from '../components/SiteNavigation.astro';
+import ThemeInit from '../components/ThemeInit.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import TocAsideContent from '../components/TocAsideContent.astro';
+import TocPopoverContent from '../components/TocPopoverContent.astro';
+import type { DocsNavNode, DocsNavPage } from '../lib/docs-nav';
+import { filterToc, type TocHeading } from '../lib/toc';
 
 interface Props {
   currentPath: string;
   description?: string;
   githubUrl: string;
   headings: TocHeading[];
+  /** Very long pages get content-visibility on their heavy blocks. */
+  longPage?: boolean;
   markdownUrl: string;
   navItems: DocsNavPage[];
   navTree: DocsNavNode[];
   title: string;
 }
 
-const { currentPath, description, githubUrl, headings, markdownUrl, navItems, navTree, title } = Astro.props;
+const {
+  currentPath,
+  description,
+  githubUrl,
+  headings,
+  longPage,
+  markdownUrl,
+  navItems,
+  navTree,
+  title,
+} = Astro.props;
 const tableOfContents = filterToc(headings);
-const currentIndex = navItems.findIndex((item) => item.href === currentPath);
+const currentIndex = navItems.findIndex(item => item.href === currentPath);
 const previous = currentIndex > 0 ? navItems[currentIndex - 1] : undefined;
 const next = currentIndex >= 0 ? navItems[currentIndex + 1] : undefined;
-function findBreadcrumbTrail(
-  nodes: DocsNavNode[],
-): { href?: string; title: string }[] | undefined {
+function findBreadcrumbTrail(nodes: DocsNavNode[]): { href?: string; title: string }[] | undefined {
   for (const node of nodes) {
-    if (node.type === "page") {
+    if (node.type === 'page') {
       if (node.href === currentPath) return [];
       continue;
     }
@@ -46,37 +55,37 @@ function findBreadcrumbTrail(
   }
 }
 const breadcrumbTrail = findBreadcrumbTrail(navTree) ?? [];
-const breadcrumbs = breadcrumbTrail.map((crumb) => crumb.title);
+const breadcrumbs = breadcrumbTrail.map(crumb => crumb.title);
 // Ancestors for the BreadcrumbList structured data, like the old site's.
 // Categories without a page of their own get their URL from the path
 // segments, matching how the old site built breadcrumb items.
 const pathSegments = currentPath
-  .replace(/^\/docs\/?/, "")
-  .split("/")
+  .replace(/^\/docs\/?/, '')
+  .split('/')
   .filter(Boolean);
 const jsonLdBreadcrumbs = [
-  { name: "Docs", path: "/docs" },
+  { name: 'Docs', path: '/docs' },
   ...breadcrumbTrail.map((crumb, index) => ({
     name: crumb.title,
-    path: crumb.href ?? `/docs/${pathSegments.slice(0, index + 1).join("/")}`,
+    path: crumb.href ?? `/docs/${pathSegments.slice(0, index + 1).join('/')}`,
   })),
 ];
 // Match the old site's title templates: gateway and router docs carry their
 // product name as the suffix, and titles with their own "|" stay untouched.
 const section = /^\/docs\/gateway(\/|$)/.test(currentPath)
-  ? "Hive Gateway"
+  ? 'Hive Gateway'
   : /^\/docs\/router(\/|$)/.test(currentPath)
-    ? "Hive Router"
-    : "Hive";
-const pageTitle = title.includes("|") ? title : `${title} | ${section}`;
+    ? 'Hive Router'
+    : 'Hive';
+const pageTitle = title.includes('|') ? title : `${title} | ${section}`;
 // Search metadata: each docs page is tagged with its product section so the
 // search modal can badge results and default to the section being browsed.
 const searchSection = /^\/docs\/router(\/|$)/.test(currentPath)
-  ? "Router"
+  ? 'Router'
   : /^\/docs\/gateway(\/|$)/.test(currentPath)
-    ? "Gateway"
-    : "Console";
-const titleId = title.replaceAll(/[\s.,]+/g, "-").toLowerCase();
+    ? 'Gateway'
+    : 'Console';
+const titleId = title.replaceAll(/[\s.,]+/g, '-').toLowerCase();
 ---
 
 <!doctype html>
@@ -85,11 +94,20 @@ const titleId = title.replaceAll(/[\s.,]+/g, "-").toLowerCase();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <ThemeInit />
-    <BaseHead breadcrumbs={jsonLdBreadcrumbs} description={description ?? title} imageAlt={title} title={pageTitle} />
-    <link href={withBase("/pagefind/pagefind-component-ui.css")} rel="stylesheet" />
-    <script is:inline src={withBase("/pagefind/pagefind-component-ui.js")} type="module"></script>
+    <BaseHead
+      breadcrumbs={jsonLdBreadcrumbs}
+      description={description ?? title}
+      imageAlt={title}
+      title={pageTitle}
+    />
+    <link href={withBase('/pagefind/pagefind-component-ui.css')} rel="stylesheet" />
+    <script is:inline src={withBase('/pagefind/pagefind-component-ui.js')} type="module"></script>
   </head>
-  <body class="min-h-screen bg-beige-100 font-sans text-green-1000 antialiased dark:bg-[rgb(var(--nextra-bg))] dark:text-neutral-200" data-docs data-theme-enabled>
+  <body
+    class="bg-beige-100 text-green-1000 min-h-screen font-sans antialiased dark:bg-[rgb(var(--nextra-bg))] dark:text-neutral-200"
+    data-docs
+    data-theme-enabled
+  >
     <div
       class="grid min-h-(--fd-docs-height) auto-cols-auto auto-rows-auto overflow-x-clip transition-[grid-template-columns] [--fd-docs-height:100dvh] [--fd-docs-row-1:var(--fd-banner-height,0px)] [--fd-docs-row-2:var(--fd-docs-row-1)] [--fd-docs-row-3:calc(var(--fd-docs-row-2)+var(--fd-toc-popover-height))] [--fd-header-height:0px] [--fd-sidebar-col:var(--fd-sidebar-width)] [--fd-sidebar-width:0px] [--fd-toc-popover-height:0px] [--fd-toc-width:0px] md:[--fd-sidebar-width:268px] xl:[--fd-toc-width:268px]"
       id="nd-docs-layout"
@@ -97,16 +115,24 @@ const titleId = title.replaceAll(/[\s.,]+/g, "-").toLowerCase();
     >
       <SiteNavigation docsNavigation={navItems} docsNavigationTree={navTree} />
 
-      <div class="pointer-events-none sticky top-(--fd-docs-row-1) z-10 h-[calc(var(--fd-docs-height)-var(--fd-docs-row-1))] [grid-area:sidebar] *:pointer-events-auto max-md:hidden">
-        <aside class="absolute inset-y-0 start-0 flex w-full flex-col items-end border-e border-fd-border bg-transparent text-sm *:w-(--fd-sidebar-width)" id="nd-sidebar">
+      <div
+        class="pointer-events-none sticky top-(--fd-docs-row-1) z-10 h-[calc(var(--fd-docs-height)-var(--fd-docs-row-1))] [grid-area:sidebar] *:pointer-events-auto max-md:hidden"
+      >
+        <aside
+          class="border-fd-border absolute inset-y-0 start-0 flex w-full flex-col items-end border-e bg-transparent text-sm *:w-(--fd-sidebar-width)"
+          id="nd-sidebar"
+        >
           <div class="min-h-0 flex-1 overflow-hidden">
-            <nav class="size-full overflow-y-auto p-4 overscroll-contain [mask-image:linear-gradient(to_bottom,transparent,white_12px,white_calc(100%-12px),transparent)]" aria-label="Documentation">
+            <nav
+              class="size-full overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,transparent,white_12px,white_calc(100%-12px),transparent)] p-4"
+              aria-label="Documentation"
+            >
               <div class="[&>*:not(:first-child)]:mt-0.5">
                 <DocsNavigationTree currentPath={currentPath} nodes={navTree} />
               </div>
             </nav>
           </div>
-          <div class="flex-col border-t border-fd-border p-4 pt-2">
+          <div class="border-fd-border flex-col border-t p-4 pt-2">
             <ThemeToggle />
           </div>
         </aside>
@@ -114,91 +140,115 @@ const titleId = title.replaceAll(/[\s.,]+/g, "-").toLowerCase();
 
       {
         tableOfContents.length > 0 && (
-          <details class="group sticky top-(--fd-docs-row-2) z-10 h-(--fd-toc-popover-height) [grid-area:toc-popover] max-xl:[--fd-toc-popover-height:--spacing(10)] xl:hidden" data-toc-popover>
+          <details
+            class="group sticky top-(--fd-docs-row-2) z-10 h-(--fd-toc-popover-height) [grid-area:toc-popover] max-xl:[--fd-toc-popover-height:--spacing(10)] xl:hidden"
+            data-toc-popover
+          >
             <TocPopoverContent headings={tableOfContents} />
           </details>
         )
       }
 
-      <article class="mx-auto flex w-full max-w-[900px] flex-col gap-4 px-4 py-6 [grid-area:main] md:px-6 md:pt-8 xl:px-8 xl:pb-[52px] xl:pt-8" id="nd-page" data-heading-permalinks>
+      <article
+        class="mx-auto flex w-full max-w-[900px] flex-col gap-4 px-4 py-6 [grid-area:main] md:px-6 md:pt-8 xl:px-8 xl:pt-8 xl:pb-[52px]"
+        id="nd-page"
+        data-heading-permalinks
+      >
         {
-          currentPath !== "/docs" && (
-            <nav class="flex items-center gap-1.5 text-sm text-fd-muted-foreground" aria-label="Breadcrumb">
-              <a class="truncate transition-opacity hover:opacity-80" href={withBase("/docs")}>Docs</a>
-              {breadcrumbs.map((breadcrumb) => <><span aria-hidden="true">/</span><span class="truncate">{breadcrumb}</span></>)}
-              <span aria-hidden="true">/</span><span class="truncate font-medium text-fd-primary">{title}</span>
+          currentPath !== '/docs' && (
+            <nav
+              class="text-fd-muted-foreground flex items-center gap-1.5 text-sm"
+              aria-label="Breadcrumb"
+            >
+              <a class="truncate transition-opacity hover:opacity-80" href={withBase('/docs')}>
+                Docs
+              </a>
+              {breadcrumbs.map(breadcrumb => (
+                <>
+                  <span aria-hidden="true">/</span>
+                  <span class="truncate">{breadcrumb}</span>
+                </>
+              ))}
+              <>
+                <span aria-hidden="true">/</span>
+                <span class="text-fd-primary truncate font-medium">{title}</span>
+              </>
             </nav>
           )
         }
         <h1 class="text-[1.75em] font-semibold" id={titleId}>{title}</h1>
-        {/* Search indexing is scoped here: the h1 stays outside so pagefind
+        {
+          /* Search indexing is scoped here: the h1 stays outside so pagefind
             does not emit it as a sub-result duplicating the page result, and
             breadcrumbs / prev-next links stay out of excerpts. The page title
-            comes from the explicit title metadata instead. */}
-        <div class="flex flex-1 flex-col gap-4" data-pagefind-body data-pagefind-filter="section[data-search-section]" data-pagefind-meta="section[data-search-section], url[data-search-url], title[data-search-title]" data-search-section={searchSection} data-search-url={withBase(currentPath)} data-search-title={`${title} · ${searchSection}`}>
-          {description && <p class="mb-8 text-lg text-fd-muted-foreground">{description}</p>}
-          <div class="docs-content prose relative flex-1"><slot /></div>
+            comes from the explicit title metadata instead. */
+        }
+        <div
+          class="flex flex-1 flex-col gap-4"
+          data-pagefind-body
+          data-pagefind-filter="section[data-search-section]"
+          data-pagefind-meta="section[data-search-section], url[data-search-url], title[data-search-title]"
+          data-search-section={searchSection}
+          data-search-url={withBase(currentPath)}
+          data-search-title={`${title} · ${searchSection}`}
+        >
+          {description && <p class="text-fd-muted-foreground mb-8 text-lg">{description}</p>}
+          <div class="docs-content prose relative flex-1" data-cv-auto={longPage ? '' : undefined}>
+            <slot />
+          </div>
         </div>
         {
           (previous || next) && (
             <nav class="grid gap-4 sm:grid-cols-2" aria-label="Documentation pages">
-              {previous ? <a class="flex flex-col gap-2 rounded-lg border p-4 text-sm transition-colors hover:bg-fd-accent/80 hover:text-fd-accent-foreground" href={withBase(previous.href)}><span class="font-medium">← {previous.title}</span></a> : <span />}
-              {next && <a class="flex flex-col gap-2 rounded-lg border p-4 text-end text-sm transition-colors hover:bg-fd-accent/80 hover:text-fd-accent-foreground" href={withBase(next.href)}><span class="font-medium">{next.title} →</span></a>}
+              {previous ? (
+                <a
+                  class="hover:bg-fd-accent/80 hover:text-fd-accent-foreground flex flex-col gap-2 rounded-lg border p-4 text-sm transition-colors"
+                  href={withBase(previous.href)}
+                >
+                  <span class="font-medium">← {previous.title}</span>
+                </a>
+              ) : (
+                <span />
+              )}
+              {next && (
+                <a
+                  class="hover:bg-fd-accent/80 hover:text-fd-accent-foreground flex flex-col gap-2 rounded-lg border p-4 text-end text-sm transition-colors"
+                  href={withBase(next.href)}
+                >
+                  <span class="font-medium">{next.title} →</span>
+                </a>
+              )}
             </nav>
           )
         }
       </article>
 
-      <aside class="sticky top-(--fd-docs-row-1) flex h-[calc(var(--fd-docs-height)-var(--fd-docs-row-1))] w-(--fd-toc-width) flex-col pt-12 pe-4 pb-2 [grid-area:toc] max-xl:hidden" id="nd-toc">
+      <aside
+        class="sticky top-(--fd-docs-row-1) flex h-[calc(var(--fd-docs-height)-var(--fd-docs-row-1))] w-(--fd-toc-width) flex-col pe-4 pt-12 pb-2 [grid-area:toc] max-xl:hidden"
+        id="nd-toc"
+      >
         {tableOfContents.length > 0 && <TocAsideContent headings={tableOfContents} />}
         <div class="flex flex-col items-start gap-2">
           <CopyMarkdown markdownUrl={markdownUrl} />
           <a
-            class="inline-flex items-center gap-2 text-sm text-fd-muted-foreground transition-colors hover:text-fd-primary focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500/50"
+            class="text-fd-muted-foreground hover:text-fd-primary inline-flex items-center gap-2 text-sm transition-colors focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-green-500/50 focus-visible:outline-none"
             href={withBase(githubUrl)}
             rel="noreferrer noopener"
             target="_blank"
           >
-            <svg class="size-3.5" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .7a11.5 11.5 0 0 0-3.64 22.4c.58.1.79-.25.79-.56v-2.02c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.78 1.2 1.78 1.2 1.04 1.77 2.72 1.26 3.38.96.1-.75.4-1.26.74-1.55-2.57-.3-5.27-1.28-5.27-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.16 1.18a10.97 10.97 0 0 1 5.75 0c2.2-1.49 3.16-1.18 3.16-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.28 5.67.42.36.79 1.06.79 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .7Z" /></svg>
+            <svg class="size-3.5" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"
+              ><path
+                d="M12 .7a11.5 11.5 0 0 0-3.64 22.4c.58.1.79-.25.79-.56v-2.02c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.78 1.2 1.78 1.2 1.04 1.77 2.72 1.26 3.38.96.1-.75.4-1.26.74-1.55-2.57-.3-5.27-1.28-5.27-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.16 1.18a10.97 10.97 0 0 1 5.75 0c2.2-1.49 3.16-1.18 3.16-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.28 5.67.42.36.79 1.06.79 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .7Z"
+              ></path></svg
+            >
             View on GitHub
           </a>
         </div>
       </aside>
     </div>
 
-    <SiteFooter class="border-t border-fd-border" />
+    <SiteFooter class="border-fd-border border-t" />
     <DocsSearchModal section={searchSection} />
     <HeadingPermalinks />
-
-    <script>
-      const themeMedia = matchMedia("(prefers-color-scheme: dark)");
-      const applyTheme = (preference: string) => {
-        const dark = preference === "dark" || (preference === "system" && themeMedia.matches);
-        document.documentElement.classList.toggle("dark", dark);
-        document.documentElement.classList.toggle("light", !dark);
-        document.documentElement.dataset.theme = preference;
-        document.documentElement.style.colorScheme = dark ? "dark" : "light";
-        document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle] [data-theme]").forEach((button) => {
-          const active = button.dataset.theme === preference;
-          button.setAttribute("aria-pressed", String(active));
-          button.classList.toggle("bg-fd-accent", active);
-          button.classList.toggle("text-fd-accent-foreground", active);
-          button.classList.toggle("text-fd-muted-foreground", !active);
-        });
-      };
-      const savedTheme = localStorage.getItem("theme") || "system";
-      applyTheme(savedTheme);
-      document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle] [data-theme]").forEach((button) => {
-        button.addEventListener("click", () => {
-          const preference = button.dataset.theme;
-          if (!preference) return;
-          localStorage.setItem("theme", preference);
-          applyTheme(preference);
-        });
-      });
-      themeMedia.addEventListener("change", () => {
-        if ((localStorage.getItem("theme") || "system") === "system") applyTheme("system");
-      });
-    </script>
   </body>
 </html>

@@ -9,15 +9,21 @@ interface Props {
   /** og:type — 'article' for blog posts, defaults to 'website' */
   type?: 'website' | 'article';
   publishedTime?: Date;
+  /** Error pages must not canonicalise themselves (a 404 with a canonical
+   * tells crawlers /404 is the canonical home of every dead URL). */
+  noCanonical?: boolean;
 }
 
-const { title, description, image, type = 'website', publishedTime } = Astro.props;
+const { title, description, image, type = 'website', publishedTime, noCanonical } = Astro.props;
+
+// Every page gets a social card; pages with their own image override it.
+const DEFAULT_OG_IMAGE = '/static/og-image.png';
 
 // With `build.format: 'file'`, pathnames carry the emitted .html suffix —
 // strip it so canonical URLs match the slashless public URLs.
 const path = Astro.url.pathname.replace(/\.html$/, '').replace(/^\/index$/, '/');
 const canonical = new URL(path, Astro.site);
-const imageUrl = image ? new URL(image, Astro.site).href : undefined;
+const imageUrl = new URL(image ?? DEFAULT_OG_IMAGE, Astro.site).href;
 ---
 
 <!doctype html>
@@ -31,29 +37,42 @@ const imageUrl = image ? new URL(image, Astro.site).href : undefined;
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png" />
     <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
-    <link rel="canonical" href={canonical.href} />
+    {!noCanonical && <link rel="canonical" href={canonical.href} />}
     <link rel="alternate" type="application/rss+xml" title="The Guild Blog" href="/feed.xml" />
     <title>{title}</title>
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={type} />
-    <meta property="og:url" content={canonical.href} />
+    {!noCanonical && <meta property="og:url" content={canonical.href} />}
     <meta property="og:site_name" content="The Guild" />
-    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={imageUrl} />
     {
       type === 'article' && publishedTime && (
         <meta property="article:published_time" content={publishedTime.toISOString()} />
       )
     }
-    <meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@TheGuildDev" />
+    <meta name="twitter:creator" content="@TheGuildDev" />
+    <meta name="twitter:image" content={imageUrl} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <slot name="head" />
     <script is:inline>
       try {
-        const saved = localStorage.getItem('guild-theme');
+        // The key is shared with the Hive pages, which also store 'system'
+        // and read the pre-merge 'theme' key as a fallback — mirror that so
+        // returning Hive visitors keep their preference here too.
+        const saved = [localStorage.getItem('guild-theme'), localStorage.getItem('theme')].find(
+          value => value === 'dark' || value === 'light' || value === 'system',
+        );
         document.documentElement.dataset.theme =
-          saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          saved === 'dark' || saved === 'light'
+            ? saved
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
       } catch {
         document.documentElement.dataset.theme = 'dark';
       }

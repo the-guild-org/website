@@ -1,8 +1,8 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
+import { mkdir, writeFile } from 'node:fs/promises';
+import { DIST } from '../lib/build-output.ts';
 
-const outputDirectory = fileURLToPath(new URL("../../dist", import.meta.url));
-const outputFile = fileURLToPath(new URL("../../dist/_headers", import.meta.url));
+const outputDirectory = DIST;
+const outputFile = `${DIST}/_headers`;
 
 /**
  * Cache headers for the Cloudflare Pages deployment. Content-hashed files are

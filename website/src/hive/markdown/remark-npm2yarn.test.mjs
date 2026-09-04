@@ -1,17 +1,16 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test } from 'vitest';
+import { remarkNpm2Yarn } from './remark-npm2yarn.mjs';
 
-import { remarkNpm2Yarn } from "./remark-npm2yarn.mjs";
-
-describe("remarkNpm2Yarn", () => {
-  test("converts npm2yarn code blocks into package manager tabs", () => {
+describe('remarkNpm2Yarn', () => {
+  test('converts npm2yarn code blocks into package manager tabs', () => {
     const tree = {
-      type: "root",
+      type: 'root',
       children: [
         {
-          type: "code",
-          lang: "sh",
+          type: 'code',
+          lang: 'sh',
           meta: 'npm2yarn title="Install dependencies"',
-          value: "npm install -D typescript",
+          value: 'npm install -D typescript',
         },
       ],
     };
@@ -19,37 +18,33 @@ describe("remarkNpm2Yarn", () => {
     remarkNpm2Yarn()(tree);
 
     const tabs = tree.children[0];
-    expect(tabs.name).toBe("PackageManagerTabs");
-    expect(tabs.children.map((tab) => tab.children[0].value)).toEqual([
-      "npm install -D typescript",
-      "yarn add --dev typescript",
-      "pnpm add -D typescript",
-      "bun add --dev typescript",
+    expect(tabs.name).toBe('PackageManagerTabs');
+    expect(tabs.children.map(tab => tab.children[0].value)).toEqual([
+      'npm install -D typescript',
+      'yarn add --dev typescript',
+      'pnpm add -D typescript',
+      'bun add --dev typescript',
     ]);
-    expect(tabs.children.every((tab) => tab.name === "PackageManagerTab")).toBe(
-      true,
-    );
-    expect(tabs.children.map((tab) => tab.attributes)).toEqual([
+    expect(tabs.children.every(tab => tab.name === 'PackageManagerTab')).toBe(true);
+    expect(tabs.children.map(tab => tab.attributes)).toEqual([
       [],
-      [{ type: "mdxJsxAttribute", name: "hidden", value: null }],
-      [{ type: "mdxJsxAttribute", name: "hidden", value: null }],
-      [{ type: "mdxJsxAttribute", name: "hidden", value: null }],
+      [{ type: 'mdxJsxAttribute', name: 'hidden', value: null }],
+      [{ type: 'mdxJsxAttribute', name: 'hidden', value: null }],
+      [{ type: 'mdxJsxAttribute', name: 'hidden', value: null }],
     ]);
     expect(
-      tabs.children.every(
-        (tab) => tab.children[0].meta === 'title="Install dependencies"',
-      ),
+      tabs.children.every(tab => tab.children[0].meta === 'title="Install dependencies"'),
     ).toBe(true);
   });
 
-  test("leaves regular code blocks unchanged", () => {
+  test('leaves regular code blocks unchanged', () => {
     const code = {
-      type: "code",
-      lang: "sh",
+      type: 'code',
+      lang: 'sh',
       meta: 'title="Install dependencies"',
-      value: "npm install typescript",
+      value: 'npm install typescript',
     };
-    const tree = { type: "root", children: [code] };
+    const tree = { type: 'root', children: [code] };
 
     remarkNpm2Yarn()(tree);
 

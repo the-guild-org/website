@@ -1,1 +1,1 @@
-export { default as SmallAvatar } from "../components/mdx/SmallAvatar.astro";
+export { default as SmallAvatar } from '../components/mdx/SmallAvatar.astro';

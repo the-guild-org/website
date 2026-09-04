@@ -12,8 +12,7 @@ import Removed from '../../components/mdx/Removed.astro';
 import Steps from '../../components/mdx/Steps.astro';
 import Tweet from '../../components/mdx/Tweet.astro';
 import Video from '../../components/mdx/Video.astro';
-import { guildMark } from '../../components/product-logos';
-import ThemeToggle from '../../components/ThemeToggle.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
 import Layout from '../../layouts/Layout.astro';
 
 const FileTree = Object.assign(FileTreeBase, { Folder: FileTreeFolder, File: FileTreeFile });
@@ -29,6 +28,18 @@ const { Content } = await render(post);
 const authors = post.data.authors.map(id => AUTHORS[id]).filter(Boolean);
 const formatDate = (date: Date) =>
   date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const postJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.date.toISOString(),
+  ...(post.data.updateDate && { dateModified: post.data.updateDate.toISOString() }),
+  author: authors.map(author => ({ '@type': 'Person', name: author.name })),
+  publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+  mainEntityOfPage: `https://the-guild.dev/blog/${post.id}`,
+});
 ---
 
 <Layout
@@ -38,33 +49,13 @@ const formatDate = (date: Date) =>
   type="article"
   publishedTime={post.data.date}
 >
-  <header
-    class="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--nav-bg)] backdrop-blur-[10px]"
-  >
-    <div
-      class="mx-auto flex min-h-[48px] w-[calc(100%-24px)] max-w-shell items-center gap-[26px] font-mono text-sm sm:min-h-[54px] sm:w-[calc(100%-40px)]"
+  <script is:inline slot="head" type="application/ld+json" set:html={postJsonLd} />
+  <SiteHeader>
+    <a href="/blog" class="text-[var(--muted)] transition-colors hover:text-[var(--strong)]"
+      >/ blog</a
     >
-      <a
-        href="/"
-        class="inline-flex items-center gap-2 font-bold tracking-[-.02em] whitespace-nowrap text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
-        ><svg
-          aria-hidden="true"
-          class="size-[18px] shrink-0"
-          fill="currentColor"
-          viewBox={guildMark.viewBox}
-          xmlns="http://www.w3.org/2000/svg"
-          set:html={guildMark.markup}
-        />the-guild</a
-      >
-      <a href="/blog" class="text-[var(--muted)] transition-colors hover:text-[var(--strong)]"
-        >/ blog</a
-      >
-      <div class="ml-auto flex items-center gap-2.5">
-        <CommandLink href="/blog">all posts</CommandLink>
-        <ThemeToggle />
-      </div>
-    </div>
-  </header>
+    <Fragment slot="actions"><CommandLink href="/blog">all posts</CommandLink></Fragment>
+  </SiteHeader>
 
   <main>
     <article

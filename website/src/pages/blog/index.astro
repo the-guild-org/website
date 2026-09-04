@@ -1,43 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
 import CommandLink from '../../components/CommandLink.astro';
 import Footer from '../../components/Footer.astro';
-import { guildMark } from '../../components/product-logos';
-import ThemeToggle from '../../components/ThemeToggle.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
 import Layout from '../../layouts/Layout.astro';
-import { fetchHiveFeed } from '../../lib/hive-feed';
-import stellatePosts from '../../lib/stellate-blog.json';
+import { getAllPosts } from '../../lib/posts';
 
-const localPosts = (await getCollection('blog')).map(post => ({
-  title: post.data.title,
-  description: post.data.description,
-  href: `/blog/${post.id}`,
-  date: post.data.date,
-  tags: post.data.tags,
-  external: null as 'hive' | 'stellate' | null,
-}));
-
-const hivePosts = (await fetchHiveFeed()).map(item => ({
-  title: item.title,
-  description: item.description,
-  href: item.link,
-  date: item.date,
-  tags: item.tags,
-  external: 'hive' as const,
-}));
-
-const stellateBlogPosts = stellatePosts.map(item => ({
-  title: item.title,
-  description: item.description,
-  href: item.link,
-  date: new Date(item.date),
-  tags: ['stellate'],
-  external: 'stellate' as const,
-}));
-
-const posts = [...localPosts, ...hivePosts, ...stellateBlogPosts].sort(
-  (a, b) => b.date.valueOf() - a.date.valueOf(),
-);
+const posts = await getAllPosts();
 
 const formatDate = (date: Date) =>
   date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -47,31 +15,12 @@ const formatDate = (date: Date) =>
   title="Blog | The Guild"
   description="Writing from The Guild on open source, GraphQL, and the craft of long-term software."
 >
-  <header
-    class="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--nav-bg)] backdrop-blur-[10px]"
-  >
-    <div
-      class="mx-auto flex min-h-[48px] w-[calc(100%-24px)] max-w-shell items-center gap-[26px] font-mono text-sm sm:min-h-[54px] sm:w-[calc(100%-40px)]"
+  <SiteHeader>
+    <span class="text-[var(--muted)]">/ blog</span>
+    <Fragment slot="actions"
+      ><CommandLink href="/graphql/hive/blog">hive blog</CommandLink></Fragment
     >
-      <a
-        href="/"
-        class="inline-flex items-center gap-2 font-bold tracking-[-.02em] whitespace-nowrap text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
-        ><svg
-          aria-hidden="true"
-          class="size-[18px] shrink-0"
-          fill="currentColor"
-          viewBox={guildMark.viewBox}
-          xmlns="http://www.w3.org/2000/svg"
-          set:html={guildMark.markup}
-        />the-guild</a
-      >
-      <span class="text-[var(--muted)]">/ blog</span>
-      <div class="ml-auto flex items-center gap-2.5">
-        <CommandLink href="/graphql/hive/blog">hive blog</CommandLink>
-        <ThemeToggle />
-      </div>
-    </div>
-  </header>
+  </SiteHeader>
 
   <main>
     <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">

@@ -1,1 +1,1 @@
-export { default as Lede } from "../components/mdx/Lede.astro";
+export { default as Lede } from '../components/mdx/Lede.astro';

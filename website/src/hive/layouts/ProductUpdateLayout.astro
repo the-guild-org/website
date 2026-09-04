@@ -1,17 +1,16 @@
 ---
-import { withBase } from "../lib/base-path";
-import "../styles/global.css";
-
-import BlogAuthors from "../components/blog/BlogAuthors.astro";
-import HeadingPermalinks from "../components/HeadingPermalinks.astro";
-import SiteFooter from "../components/SiteFooter.astro";
-import SiteNavigation from "../components/SiteNavigation.astro";
-import BaseHead from "../components/BaseHead.astro";
-import ThemeInit from "../components/ThemeInit.astro";
-import TocAsideContent from "../components/TocAsideContent.astro";
-import TocPopoverContent from "../components/TocPopoverContent.astro";
-import { resolveAuthor } from "../lib/authors";
-import { filterToc, type TocHeading } from "../lib/toc";
+import { withBase } from '../lib/base-path';
+import '../styles/global.css';
+import BaseHead from '../components/BaseHead.astro';
+import BlogAuthors from '../components/blog/BlogAuthors.astro';
+import HeadingPermalinks from '../components/HeadingPermalinks.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteNavigation from '../components/SiteNavigation.astro';
+import ThemeInit from '../components/ThemeInit.astro';
+import TocAsideContent from '../components/TocAsideContent.astro';
+import TocPopoverContent from '../components/TocPopoverContent.astro';
+import { resolveAuthor } from '../lib/authors';
+import { filterToc, type TocHeading } from '../lib/toc';
 
 interface Props {
   authors: (string | { name: string })[];
@@ -23,10 +22,12 @@ interface Props {
 }
 
 const { authors, canonical, date, description, headings, title } = Astro.props;
-const authorIds = authors.map((author) => (typeof author === "string" ? author : resolveAuthor(author).name));
+const authorIds = authors.map(author =>
+  typeof author === 'string' ? author : resolveAuthor(author).name,
+);
 const tableOfContents = filterToc(headings, 2, 3);
 const pageTitle = `${title} | Hive`;
-const titleId = title.replaceAll(/[\s.,]+/g, "-").toLowerCase();
+const titleId = title.replaceAll(/[\s.,]+/g, '-').toLowerCase();
 ---
 
 <!doctype html>
@@ -35,13 +36,30 @@ const titleId = title.replaceAll(/[\s.,]+/g, "-").toLowerCase();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <ThemeInit />
-    <BaseHead breadcrumbs={[{ name: "Product Updates", path: "/product-updates" }]} canonical={canonical} description={description} imageAlt={title} title={pageTitle} type="article" />
-    <link rel="alternate" type="application/rss+xml" title="Hive Changelog" href="https://the-guild.dev/graphql/hive/feed.xml" />
+    <BaseHead
+      breadcrumbs={[{ name: 'Product Updates', path: '/product-updates' }]}
+      canonical={canonical}
+      description={description}
+      imageAlt={title}
+      title={pageTitle}
+      type="article"
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Hive Changelog"
+      href="https://the-guild.dev/graphql/hive/feed.xml"
+    />
   </head>
-  <body class="min-h-screen antialiased dark:bg-[rgb(var(--nextra-bg))] dark:text-neutral-200" data-theme-enabled>
+  <body
+    class="min-h-screen antialiased dark:bg-[rgb(var(--nextra-bg))] dark:text-neutral-200"
+    data-theme-enabled
+  >
     <SiteNavigation />
 
-    <div class="update-shell mx-auto grid w-full grid-cols-1 text-green-1000 xl:grid-cols-[minmax(0,48rem)_268px] dark:text-neutral-200">
+    <div
+      class="update-shell text-green-1000 mx-auto grid w-full grid-cols-1 xl:grid-cols-[minmax(0,48rem)_268px] dark:text-neutral-200"
+    >
       {
         tableOfContents.length > 0 && (
           <details class="group sticky top-(--header-height) z-10 h-10 xl:hidden" data-toc-popover>
@@ -51,13 +69,24 @@ const titleId = title.replaceAll(/[\s.,]+/g, "-").toLowerCase();
       }
 
       <main class="min-w-0" data-heading-permalinks>
-        <a class="hive-focus outline-hidden text-sm text-green-800 dark:text-neutral-400 dark:hover:text-neutral-200" href={withBase("/product-updates")}>← All product updates</a>
-        <h1 class="group text-green-1000 mb-0 mt-4 text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] dark:text-neutral-200" id={titleId}>{title}</h1>
+        <a
+          class="hive-focus text-sm text-green-800 outline-hidden dark:text-neutral-400 dark:hover:text-neutral-200"
+          href={withBase('/product-updates')}>← All product updates</a
+        >
+        <h1
+          class="group text-green-1000 mt-4 mb-0 text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667] dark:text-neutral-200"
+          id={titleId}
+        >
+          {title}
+        </h1>
         <BlogAuthors align="start" authors={authorIds} class="mb-4" date={date} />
         <article class="docs-content"><slot /></article>
       </main>
 
-      <aside class="sticky top-(--header-height) col-start-2 row-start-1 hidden h-[calc(100vh-var(--header-height))] w-full flex-col pb-2 pt-12 pe-4 xl:flex" id="nd-toc">
+      <aside
+        class="sticky top-(--header-height) col-start-2 row-start-1 hidden h-[calc(100vh-var(--header-height))] w-full flex-col pe-4 pt-12 pb-2 xl:flex"
+        id="nd-toc"
+      >
         {tableOfContents.length > 0 && <TocAsideContent headings={tableOfContents} />}
       </aside>
     </div>

@@ -4,12 +4,10 @@
  * BreadcrumbList structured data, feed and llms.txt discovery, font
  * preloads, and the page title. Included by every page's <head>.
  */
-import { basePath, withBase } from "../lib/base-path";
-
-import FontPreloads from "./FontPreloads.astro";
-import type { ImageMetadata } from "astro";
-
-import defaultImage from "../documentation/src/routes/opengraph-image.png";
+import type { ImageMetadata } from 'astro';
+import { basePath, SITE_ORIGIN, HIVE_SITE_URL as SITE_URL, withBase } from '../lib/base-path';
+import FontPreloads from './FontPreloads.astro';
+import defaultImage from '../documentation/src/routes/opengraph-image.png';
 
 interface Breadcrumb {
   name: string;
@@ -24,68 +22,65 @@ interface Props {
   image?: ImageMetadata | string;
   imageAlt?: string;
   title: string;
-  type?: "article" | "website";
+  type?: 'article' | 'website';
 }
 
-const SITE_NAME = "Hive";
-const SITE_ORIGIN = "https://the-guild.dev";
-const SITE_URL = `${SITE_ORIGIN}/graphql/hive`;
-const TWITTER_ACCOUNT = "@TheGuildDev";
+const SITE_NAME = 'Hive';
+
+const TWITTER_ACCOUNT = '@TheGuildDev';
 
 const {
   breadcrumbs = [],
   canonical,
   description,
   image = defaultImage,
-  imageAlt = "GraphQL Hive",
+  imageAlt = 'GraphQL Hive',
   title,
-  type = "website",
+  type = 'website',
 } = Astro.props;
 
 /** Strips the mount prefix — it is not part of logical paths. */
 function stripBase(path: string) {
-  // File-format output puts the landing page at <base>.html rather than
-  // <base>/index.html — normalize so its canonical keeps the old shape.
-  if (path === `${basePath}.html`) return "/index.html";
+  // File-format output puts the landing page at <base>.html.
+  if (path === `${basePath}.html`) return '';
   return basePath && (path === basePath || path.startsWith(`${basePath}/`))
     ? path.slice(basePath.length)
     : path;
 }
 
-// Strip the trailing slash so canonicals keep the old site's URL shape and
-// agree with the generated sitemap (which lists slash-less URLs).
-const currentPath = stripBase(Astro.url.pathname).replace(/\/$/, "");
+// Strip the .html suffix file-format output bakes into pathnames, and the
+// trailing slash, so canonicals match the public URL shape and the
+// generated sitemap (slash-less, no extension).
+const currentPath = stripBase(Astro.url.pathname)
+  .replace(/\.html$/, '')
+  .replace(/\/$/, '');
 const canonicalUrl = canonical ?? `${SITE_URL}${currentPath}`;
 // Bundled assets are emitted at the shared /_astro root of the unified
 // site, so they join with the origin; anything else is a Hive-relative
 // path and joins with the mounted site URL.
-const imagePath = stripBase(typeof image === "string" ? image : image.src);
+const imagePath = stripBase(typeof image === 'string' ? image : image.src);
 const imageUrl = /^https?:\/\//.test(imagePath)
   ? imagePath
-  : imagePath.startsWith("/_astro/")
+  : imagePath.startsWith('/_astro/')
     ? `${SITE_ORIGIN}${imagePath}`
-    : `${SITE_URL}/${imagePath.replace(/^\//, "")}`;
-const imageWidth = typeof image === "string" ? undefined : image.width;
-const imageHeight = typeof image === "string" ? undefined : image.height;
+    : `${SITE_URL}/${imagePath.replace(/^\//, '')}`;
+const imageWidth = typeof image === 'string' ? undefined : image.width;
+const imageHeight = typeof image === 'string' ? undefined : image.height;
 
 // BreadcrumbList structured data, mirroring the old site: provided ancestors
 // followed by the page itself (the bare site root is named after the site).
-const pageCrumbName =
-  currentPath === "" ? SITE_NAME : (title.split("|")[0] ?? title).trim();
+const pageCrumbName = currentPath === '' ? SITE_NAME : (title.split('|')[0] ?? title).trim();
 const breadcrumbJsonLd = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    ...breadcrumbs,
-    { name: pageCrumbName, path: currentPath },
-  ].map((crumb, index) => ({
-    "@type": "ListItem",
-    item: /^https?:\/\//.test(crumb.path)
-      ? crumb.path
-      : `${SITE_URL}${stripBase(crumb.path)}`,
-    name: crumb.name,
-    position: index + 1,
-  })),
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [...breadcrumbs, { name: pageCrumbName, path: currentPath }].map(
+    (crumb, index) => ({
+      '@type': 'ListItem',
+      item: /^https?:\/\//.test(crumb.path) ? crumb.path : `${SITE_URL}${stripBase(crumb.path)}`,
+      name: crumb.name,
+      position: index + 1,
+    }),
+  ),
 });
 ---
 
@@ -93,7 +88,12 @@ const breadcrumbJsonLd = JSON.stringify({
 <FontPreloads />
 <meta name="description" content={description} />
 <link rel="canonical" href={withBase(canonicalUrl)} />
-<link rel="alternate" type="text/markdown" href={withBase(`${SITE_URL}/llms.txt`)} title="Hive documentation for LLMs" />
+<link
+  rel="alternate"
+  type="text/markdown"
+  href={withBase(`${SITE_URL}/llms.txt`)}
+  title="Hive documentation for LLMs"
+/>
 <link rel="sitemap" type="application/xml" href={withBase(`${SITE_URL}/sitemap.xml`)} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
