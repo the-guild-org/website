@@ -1,7 +1,10 @@
-/* Instrument Sans (OFL), self-hosted variable weights 400-700. Must precede
-   the tailwindcss import so the @font-face rules stay unlayered. */
+/* Self-hosted variable fonts (both OFL). These must precede the tailwindcss
+   import so the @font-face rules stay unlayered. JetBrains Mono is imported
+   without its italic faces: nothing in the mono contexts (nav, labels,
+   headings, code) renders emphasis, so they would never be fetched. */
 @import '@fontsource-variable/instrument-sans';
 @import '@fontsource-variable/instrument-sans/wght-italic.css';
+@import '@fontsource-variable/jetbrains-mono';
 
 /* The Hive site (src/hive + src/pages/graphql/hive) has its own stylesheet
    and theme; keep its sources out of this one. */
@@ -11,8 +14,8 @@
 
 @theme {
   --font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
-    monospace;
+    'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
   --font-sans:
     'Instrument Sans Variable', 'Instrument Sans', ui-sans-serif, -apple-system, BlinkMacSystemFont,
     'Segoe UI', sans-serif;
