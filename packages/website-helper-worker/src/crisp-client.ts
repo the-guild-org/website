@@ -16,15 +16,22 @@ export function createCrispClient(options: { token: string; websiteId: string })
     'X-Crisp-Tier': 'plugin',
   };
 
-  async function crispFetch(path: string, caller: string, init?: RequestInit): Promise<Response> {
+  async function crispFetch(
+    path: string,
+    caller: string,
+    init?: RequestInit & { allow404?: boolean },
+  ): Promise<Response> {
+    const { allow404, ...requestInit } = init ?? {};
     const res = await fetch(`${baseUrl}${path}`, {
-      ...init,
+      ...requestInit,
       headers: {
         ...crispHeaders,
         ...(init?.body ? { 'content-type': 'application/json' } : {}),
       },
     });
-    if (!res.ok && res.status !== 404) {
+    // 404 is a meaningful answer only for lookups; a mutation that 404s
+    // did not happen and must not be reported as success.
+    if (!res.ok && !(allow404 && res.status === 404)) {
       throw new Error(`Crisp responded with ${res.status}: ${res.statusText} - from ${caller}`);
     }
     return res;
@@ -57,6 +64,7 @@ export function createCrispClient(options: { token: string; websiteId: string })
     async getCrispUser(peopleIdOrEmail: string): Promise<CrispUser | null> {
       const res = await crispFetch(`/people/profile/${peopleIdOrEmail}`, 'getCrispUser', {
         method: 'GET',
+        allow404: true,
       });
       if (res.status === 404) {
         return null;

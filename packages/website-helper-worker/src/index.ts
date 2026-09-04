@@ -34,9 +34,9 @@ export default {
         });
       }
 
+      // The body carries contact PII (name, email, notes) and must not be
+      // attached to the Sentry scope.
       const maybeBody = request.body ? await request.text() : null;
-
-      sentry.setExtra('Body', maybeBody);
 
       let body: unknown = null;
       if (maybeBody) {

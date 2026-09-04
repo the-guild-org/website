@@ -6,7 +6,8 @@ interface Args {
 }
 
 export async function handleSubscribeToNewsletter({ request, body }: Args, token: string) {
-  const email = (body as { email?: string } | null)?.email;
+  const rawEmail = (body as { email?: unknown } | null)?.email;
+  const email = typeof rawEmail === 'string' ? rawEmail.trim() : '';
 
   if (!email) {
     return jsonResponse({ status: 'error', message: 'Email is required.' }, 400, request.headers);
@@ -30,8 +31,9 @@ export async function handleSubscribeToNewsletter({ request, body }: Args, token
   );
 
   if (!response.ok) {
-    // The upstream error goes to the worker logs via the thrown response
-    // status; the subscriber gets an actionable message.
+    // Visible in `wrangler tail` — otherwise a revoked API key would fail
+    // every subscription without a trace.
+    console.error(`Beehiiv subscription request failed with status ${response.status}`);
     return jsonResponse(
       { status: 'error', message: 'Subscription failed. Please try again later.' },
       200,

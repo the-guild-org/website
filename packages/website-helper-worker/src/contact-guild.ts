@@ -10,12 +10,16 @@ export async function handleContactUs(options: {
   crisp: CrispClient;
 }) {
   const body = options.body as {
-    email?: string;
-    name?: string;
-    notes?: string;
+    email?: unknown;
+    name?: unknown;
+    notes?: unknown;
   } | null;
 
-  if (!body?.email || !body?.name) {
+  const email = typeof body?.email === 'string' ? body.email.trim() : '';
+  const name = typeof body?.name === 'string' ? body.name.trim() : '';
+  const notes = typeof body?.notes === 'string' ? body.notes : '';
+
+  if (!email || !name) {
     return jsonResponse({ error: 'Name and email are required' }, 400, options.request.headers);
   }
 
@@ -23,18 +27,18 @@ export async function handleContactUs(options: {
     options.email,
     'contact@the-guild.dev',
     'contact@the-guild.dev',
-    `Contact Us Form Submission - The Guild (${body.email})`,
-    [`Name: ${body.name}`, `Email: ${body.email}`, `Notes: ${body.notes || ''}`].join('\n'),
-    createMimeMessage().setSender(body.email),
+    `Contact Us Form Submission - The Guild (${email})`,
+    [`Name: ${name}`, `Email: ${email}`, `Notes: ${notes}`].join('\n'),
+    createMimeMessage().setSender(email),
   );
 
-  let crispUser = await options.crisp.getCrispUser(body.email);
+  let crispUser = await options.crisp.getCrispUser(email);
 
   if (!crispUser) {
     crispUser = await options.crisp.addNewCrispUser({
-      email: body.email,
+      email,
       person: {
-        nickname: body.name,
+        nickname: name,
       },
     });
   }
