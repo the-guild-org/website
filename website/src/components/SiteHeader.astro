@@ -1,0 +1,39 @@
+---
+// Sticky top navigation shared by the landing page and blog pages. The
+// breadcrumb / nav area is the default slot; page actions go in the
+// "actions" slot, before the theme toggle.
+import { guildMark } from './product-logos';
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  logoHref?: string;
+}
+
+const { logoHref = '/' } = Astro.props;
+---
+
+<header
+  class="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--nav-bg)] backdrop-blur-[10px]"
+>
+  <div
+    class="mx-auto flex min-h-[48px] w-[calc(100%-24px)] max-w-shell items-center gap-[26px] font-mono text-[14px] sm:min-h-[54px] sm:w-[calc(100%-40px)]"
+  >
+    <a
+      href={logoHref}
+      class="inline-flex items-center gap-2 font-bold tracking-[-.02em] whitespace-nowrap text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+      ><svg
+        aria-hidden="true"
+        class="size-[18px] shrink-0"
+        fill="currentColor"
+        viewBox={guildMark.viewBox}
+        xmlns="http://www.w3.org/2000/svg"
+        set:html={guildMark.markup}
+      />the-guild</a
+    >
+    <slot />
+    <div class="ml-auto flex items-center gap-2.5">
+      <slot name="actions" />
+      <ThemeToggle />
+    </div>
+  </div>
+</header>

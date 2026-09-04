@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
-import { fetchHiveFeed } from '../lib/hive-feed';
+import { getAllPosts } from '../lib/posts';
 
 function escapeXml(value: string): string {
   return value
@@ -11,23 +10,12 @@ function escapeXml(value: string): string {
 }
 
 // Replaces the previous website's rss-generator output at /feed.xml:
-// local blog posts merged with the Hive blog feed, like the blog index.
+// the same merged post list the blog index shows.
 export const GET: APIRoute = async ({ site }) => {
-  const localPosts = (await getCollection('blog')).map(post => ({
-    title: post.data.title,
-    description: post.data.description,
-    link: new URL(`/blog/${post.id}`, site).href,
-    date: post.data.date,
+  const items = (await getAllPosts()).map(post => ({
+    ...post,
+    link: post.href.startsWith('/') ? new URL(post.href, site).href : post.href,
   }));
-
-  const hivePosts = (await fetchHiveFeed()).map(item => ({
-    title: item.title,
-    description: item.description,
-    link: item.link,
-    date: item.date,
-  }));
-
-  const items = [...localPosts, ...hivePosts].sort((a, b) => b.date.valueOf() - a.date.valueOf());
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
