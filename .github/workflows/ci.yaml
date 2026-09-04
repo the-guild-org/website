@@ -11,6 +11,11 @@ on:
   push:
     branches:
       - master
+  # Fired by dotansimha/graphql-code-generator when its docs content
+  # changes — the build fetches that content, so a redeploy picks it up.
+  repository_dispatch:
+    types:
+      - codegen-content-update
 
 jobs:
   build:

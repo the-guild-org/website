@@ -1,0 +1,123 @@
+---
+/**
+ * Plugins marketplace: every plugin with icon, npm package, weekly
+ * downloads, and tags, filterable client-side. Replaces the Nextra
+ * MarketplaceSearch page.
+ */
+import '~hive/styles/global.css';
+import BaseHead from '~hive/components/BaseHead.astro';
+import ThemeInit from '~hive/components/ThemeInit.astro';
+import CodegenFooter from '../../../codegen/components/CodegenFooter.astro';
+import CodegenSiteNavigation from '../../../codegen/components/CodegenSiteNavigation.astro';
+import { withBase } from '../../../codegen/lib/base-path';
+import { getPluginNpmInfo, getPlugins } from '../../../codegen/lib/plugin-data';
+import { CODEGEN_SITE } from '../../../codegen/lib/site';
+
+const formatDownloads = (count: number) =>
+  count >= 1_000_000
+    ? `${(count / 1_000_000).toFixed(1)}M`
+    : count >= 1_000
+      ? `${(count / 1_000).toFixed(0)}k`
+      : String(count);
+
+const plugins = getPlugins()
+  .map(plugin => {
+    const npm = getPluginNpmInfo(plugin.key);
+    return {
+      ...plugin,
+      downloads: npm?.weeklyNPMDownloads ?? 0,
+      description: npm?.description ?? '',
+      iconSrc: plugin.iconFile ? withBase(`/icons/${plugin.iconFile}`) : plugin.icon,
+    };
+  })
+  .sort((a, b) => b.downloads - a.downloads);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <ThemeInit />
+    <BaseHead
+      description="Browse every GraphQL Code Generator plugin and preset: TypeScript, React, Vue, Apollo, urql, Java, C#, Dart and more."
+      image={withBase('/assets/img/gql-codegen-cover.png')}
+      imageAlt="GraphQL Code Generator plugins"
+      site={CODEGEN_SITE}
+      title="Plugins | GraphQL Code Generator"
+    />
+  </head>
+  <body
+    class="bg-beige-100 text-green-1000 grid min-h-screen grid-rows-[auto_1fr_auto] font-sans antialiased [grid-template-areas:'nav'_'main'_'footer'] dark:bg-[rgb(var(--nextra-bg))] dark:text-neutral-200"
+    data-theme-enabled
+  >
+    <CodegenSiteNavigation />
+    <main class="mx-auto w-full max-w-5xl px-6 py-12 [grid-area:main]">
+      <h1 class="text-3xl font-semibold">Plugins</h1>
+      <p class="mt-2 text-green-800 dark:text-neutral-300">
+        {plugins.length} plugins and presets, sorted by weekly npm downloads.
+      </p>
+      <input
+        aria-label="Filter plugins"
+        class="border-beige-400 mt-6 w-full rounded-lg border bg-white px-4 py-3 text-sm focus:ring-2 focus:ring-green-500/50 focus:outline-hidden dark:border-neutral-700 dark:bg-neutral-900"
+        id="plugin-filter"
+        placeholder="Search plugins — name, package, or tag"
+        type="search"
+      />
+      <ul class="mt-8 grid gap-4 sm:grid-cols-2" id="plugin-list">
+        {
+          plugins.map(plugin => (
+            <li
+              data-search={`${plugin.title} ${plugin.npmPackage} ${plugin.tags.join(' ')}`.toLowerCase()}
+            >
+              <a
+                class="border-beige-400 flex h-full gap-4 rounded-xl border bg-white/60 p-5 transition-colors hover:border-green-800 dark:border-neutral-800 dark:bg-neutral-900/60 dark:hover:border-neutral-500"
+                href={withBase(`/plugins/${plugin.category}/${plugin.key}`)}
+              >
+                <img alt="" aria-hidden="true" class="size-10 shrink-0" src={plugin.iconSrc} />
+                <span class="min-w-0">
+                  <span class="flex items-baseline justify-between gap-2">
+                    <span class="font-medium">{plugin.title}</span>
+                    {plugin.downloads > 0 && (
+                      <span class="text-xs whitespace-nowrap text-green-800 dark:text-neutral-400">
+                        {formatDownloads(plugin.downloads)}/week
+                      </span>
+                    )}
+                  </span>
+                  <span class="mt-1 block truncate font-mono text-xs text-green-800 dark:text-neutral-400">
+                    {plugin.npmPackage}
+                  </span>
+                  {plugin.description && (
+                    <span class="mt-2 line-clamp-2 block text-sm text-green-800 dark:text-neutral-300">
+                      {plugin.description}
+                    </span>
+                  )}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-8 hidden text-green-800 dark:text-neutral-300" id="plugin-no-results">
+        No plugins match that filter.
+      </p>
+    </main>
+    <div class="[grid-area:footer]"><CodegenFooter /></div>
+
+    <script>
+      const input = document.querySelector<HTMLInputElement>('#plugin-filter')!;
+      const items = [...document.querySelectorAll<HTMLLIElement>('#plugin-list li')];
+      const empty = document.querySelector<HTMLElement>('#plugin-no-results')!;
+      input.addEventListener('input', () => {
+        const query = input.value.trim().toLowerCase();
+        let visible = 0;
+        for (const item of items) {
+          const match = !query || (item.dataset.search ?? '').includes(query);
+          item.hidden = !match;
+          if (match) visible++;
+        }
+        empty.hidden = visible > 0;
+      });
+    </script>
+  </body>
+</html>

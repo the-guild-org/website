@@ -16,7 +16,9 @@ export function withBase(path: string | undefined): string | undefined {
   if (!path || !basePath || !path.startsWith('/') || path.startsWith('//')) {
     return path;
   }
-  if (path === basePath || path.startsWith(`${basePath}/`)) return path;
+  // Any /graphql/<product> path is already mounted — the Codegen docs reuse
+  // this chrome with pre-based hrefs, which must not be double-prefixed.
+  if (path === '/graphql' || path.startsWith('/graphql/')) return path;
   // The bare site root gets no trailing slash — /graphql/hive/ 301s to
   // /graphql/hive, so emitting the slash would cost a hop on every click.
   if (path === '/') return basePath;

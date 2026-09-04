@@ -1,0 +1,57 @@
+---
+/**
+ * Top navigation for the GraphQL Codegen docs. Fills the same `nav` grid
+ * area as Hive's SiteNavigation inside DocsLayout, but with the Codegen
+ * product identity and a deliberately simpler structure.
+ */
+import DocsSearchTrigger from '../../hive/components/DocsSearchTrigger.astro';
+import ThemeToggle from '../../hive/components/ThemeToggle.astro';
+import { withBase } from '../lib/base-path';
+
+const links = [
+  { href: withBase('/docs'), label: 'Documentation' },
+  { href: withBase('/plugins'), label: 'Plugins' },
+  { href: 'https://github.com/dotansimha/graphql-code-generator', label: 'GitHub' },
+];
+const externalProps = (href: string) =>
+  href.startsWith('http') ? { rel: 'noopener noreferrer', target: '_blank' } : {};
+---
+
+<header
+  class="border-beige-400 text-green-1000 sticky top-0 z-20 row-1 border-b bg-[rgb(var(--nextra-bg))] [grid-area:nav] dark:border-neutral-700 dark:text-neutral-200"
+  data-docs-navigation="true"
+  id="hive-navigation"
+>
+  <div class="flex items-center gap-4 px-4 py-3 md:px-6">
+    <a
+      class="hive-focus -m-2 flex items-center gap-2 rounded-md p-2 font-medium"
+      href={withBase('/')}
+      aria-label="GraphQL Codegen home"
+    >
+      <img
+        alt=""
+        aria-hidden="true"
+        class="size-6"
+        src={withBase('/assets/img/gql-codegen-icon.svg')}
+      />
+      <span class="max-sm:hidden">GraphQL Codegen</span>
+    </a>
+    <nav aria-label="Main" class="flex items-center gap-1 text-sm">
+      {
+        links.map(link => (
+          <a
+            class="hover:text-green-1000 hover:bg-beige-100 rounded-sm p-2 leading-normal text-green-800 transition-colors dark:text-neutral-300 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-100"
+            href={link.href}
+            {...externalProps(link.href)}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    <div class="ml-auto flex items-center gap-2">
+      <ThemeToggle />
+      <DocsSearchTrigger compact />
+    </div>
+  </div>
+</header>

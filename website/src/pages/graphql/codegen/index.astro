@@ -1,0 +1,122 @@
+---
+/**
+ * GraphQL Codegen landing page. The old Nextra homepage was assembled from
+ * @theguild/components marketing blocks; this is a leaner equivalent in the
+ * unified site's docs chrome.
+ */
+import '~hive/styles/global.css';
+import BaseHead from '~hive/components/BaseHead.astro';
+import ThemeInit from '~hive/components/ThemeInit.astro';
+import CodegenFooter from '../../../codegen/components/CodegenFooter.astro';
+import CodegenSiteNavigation from '../../../codegen/components/CodegenSiteNavigation.astro';
+import { withBase } from '../../../codegen/lib/base-path';
+import { getPlugins } from '../../../codegen/lib/plugin-data';
+import { CODEGEN_SITE } from '../../../codegen/lib/site';
+
+const description =
+  'Generate code from your GraphQL schema and operations with a simple CLI. Type-safe clients and servers for TypeScript, Java, C#, Flow, Dart and more.';
+
+const highlights = [
+  {
+    title: 'Type safety end to end',
+    copy: 'Generate typed clients, resolvers, and documents straight from your schema — no hand-written types drifting out of sync.',
+  },
+  {
+    title: 'Watch mode & CLI first',
+    copy: 'One command in dev and CI. Watch mode regenerates on every schema or operation change.',
+  },
+  {
+    title: 'An ecosystem of plugins',
+    copy: 'TypeScript, React, Vue, Apollo, urql, Java, C#, Dart, and dozens more — or write your own plugin in minutes.',
+  },
+];
+
+const popular = getPlugins()
+  .filter(plugin => plugin.category === 'typescript' || plugin.category === 'presets')
+  .slice(0, 6);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <ThemeInit />
+    <BaseHead
+      description={description}
+      image={withBase('/assets/img/gql-codegen-cover.png')}
+      imageAlt="GraphQL Code Generator"
+      site={CODEGEN_SITE}
+      title="GraphQL Code Generator"
+    />
+  </head>
+  <body
+    class="bg-beige-100 text-green-1000 grid min-h-screen grid-rows-[auto_1fr_auto] font-sans antialiased [grid-template-areas:'nav'_'main'_'footer'] dark:bg-[rgb(var(--nextra-bg))] dark:text-neutral-200"
+    data-theme-enabled
+  >
+    <CodegenSiteNavigation />
+    <main class="[grid-area:main]">
+      <section class="mx-auto max-w-4xl px-6 py-20 text-center">
+        <img
+          alt=""
+          aria-hidden="true"
+          class="mx-auto mb-8 h-16 w-auto"
+          src={withBase('/assets/img/gql-codegen-icon.svg')}
+        />
+        <h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+          Generate anything from your GraphQL schema
+        </h1>
+        <p class="mx-auto mt-6 max-w-2xl text-lg text-green-800 dark:text-neutral-300">
+          {description}
+        </p>
+        <div class="mt-10 flex flex-wrap justify-center gap-4">
+          <a
+            class="bg-green-1000 rounded-lg px-6 py-3 font-medium text-white transition-opacity hover:opacity-90 dark:bg-white dark:text-neutral-900"
+            href={withBase('/docs/getting-started')}
+          >
+            Get started
+          </a>
+          <a
+            class="border-beige-400 rounded-lg border px-6 py-3 font-medium transition-colors hover:bg-white/50 dark:border-neutral-700 dark:hover:bg-neutral-800/50"
+            href={withBase('/plugins')}
+          >
+            Browse plugins
+          </a>
+        </div>
+      </section>
+
+      <section class="mx-auto grid max-w-5xl gap-6 px-6 pb-16 sm:grid-cols-3">
+        {
+          highlights.map(item => (
+            <div class="border-beige-400 rounded-xl border bg-white/60 p-6 dark:border-neutral-800 dark:bg-neutral-900/60">
+              <h2 class="mb-2 font-semibold">{item.title}</h2>
+              <p class="text-sm leading-relaxed text-green-800 dark:text-neutral-300">
+                {item.copy}
+              </p>
+            </div>
+          ))
+        }
+      </section>
+
+      <section class="mx-auto max-w-5xl px-6 pb-24">
+        <h2 class="mb-6 text-2xl font-semibold">Popular plugins</h2>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            popular.map(plugin => (
+              <a
+                class="border-beige-400 rounded-xl border bg-white/60 p-5 transition-colors hover:border-green-800 dark:border-neutral-800 dark:bg-neutral-900/60 dark:hover:border-neutral-500"
+                href={withBase(`/plugins/${plugin.category}/${plugin.key}`)}
+              >
+                <h3 class="font-medium">{plugin.title}</h3>
+                <p class="mt-1 font-mono text-xs text-green-800 dark:text-neutral-400">
+                  {plugin.npmPackage}
+                </p>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+    </main>
+    <div class="[grid-area:footer]"><CodegenFooter /></div>
+  </body>
+</html>

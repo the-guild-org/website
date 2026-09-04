@@ -41,6 +41,11 @@ const REQUIRED_TAGS = [
   'twitter:image',
 ];
 
+// Upstream content duplicates, tracked to be fixed in the source repo —
+// the codegen getting-started index and installation page share one
+// description in dotansimha/graphql-code-generator.
+const KNOWN_DUPLICATE_DESCRIPTIONS = new Set(['graphql/codegen/docs/getting-started.html']);
+
 // Paths the website-router rewrites to other targets at the edge.
 const ROUTER_HANDLED_PATHS = new Set([
   '/graphql/hive/federation-gateway-performance',
@@ -52,7 +57,6 @@ const ROUTER_HANDLED_PATHS = new Set([
 // links to them cannot resolve inside this dist.
 // Keep in sync with packages/website-router/src/config.ts mappings.
 const EXTERNAL_DEPLOYMENT_PREFIXES = [
-  '/graphql/codegen',
   '/graphql/yoga-server',
   '/graphql/tools',
   '/graphql/mesh',
@@ -107,7 +111,7 @@ function parseHead(html: string): ParsedHead | null {
   const titleMatch = head?.match(/<title>(.*?)<\/title>/is);
   parsed['title'] = titleMatch?.[1]?.trim();
 
-  for (const match of head?.matchAll(/<link\s+([^>]+?)\s*\/?>/gis) || []) {
+  for (const match of head?.matchAll(/<link\s+((?:[^>"']|"[^"]*"|'[^']*')+?)\s*\/?>/gis) || []) {
     if (!match[1]) continue;
     const attrs = getAttributes(match[1]);
     if (attrs['rel'] && attrs['href']) {
@@ -115,7 +119,7 @@ function parseHead(html: string): ParsedHead | null {
     }
   }
 
-  for (const match of head?.matchAll(/<meta\s+([^>]+?)\s*\/?>/gis) || []) {
+  for (const match of head?.matchAll(/<meta\s+((?:[^>"']|"[^"]*"|'[^']*')+?)\s*\/?>/gis) || []) {
     if (!match[1]) continue;
     const attrs = getAttributes(match[1]);
     const key = attrs['name'] ?? attrs['property'];
@@ -217,8 +221,11 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   }
   if (description) {
     const owner = descriptionOwners.get(description);
-    if (owner) issues.push(`${relativePath}: duplicate description (also on ${owner})`);
-    else descriptionOwners.set(description, relativePath);
+    if (owner && !KNOWN_DUPLICATE_DESCRIPTIONS.has(relativePath)) {
+      issues.push(`${relativePath}: duplicate description (also on ${owner})`);
+    } else if (!owner) {
+      descriptionOwners.set(description, relativePath);
+    }
   }
 
   // Length problems are advisory: Google truncates ~60/~160 characters.
