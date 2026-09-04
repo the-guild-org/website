@@ -66,7 +66,10 @@ for (const rule of readRedirects()) {
   if (
     rule.destination.startsWith('/') &&
     rule.destination !== base &&
-    !rule.destination.startsWith(`${base}/`)
+    !rule.destination.startsWith(`${base}/`) &&
+    // Codegen rules are appended by scripts/codegen/generate-redirects.ts
+    // and are correctly prefixed with their own mount.
+    !rule.destination.startsWith('/graphql/codegen')
   ) {
     report('_redirects', rule.destination);
   }

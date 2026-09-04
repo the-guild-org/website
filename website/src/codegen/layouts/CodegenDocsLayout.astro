@@ -1,0 +1,77 @@
+---
+/**
+ * Codegen docs chrome: Hive's DocsLayout with the Codegen identity, nav
+ * hrefs pre-based on /graphql/codegen, and its own header/footer.
+ */
+import type { DocsNavNode, DocsNavPage } from '../../docs/nav';
+import DocsLayout from '../../hive/layouts/DocsLayout.astro';
+import type { TocHeading } from '../../hive/lib/toc';
+import CodegenFooter from '../components/CodegenFooter.astro';
+import CodegenSiteNavigation from '../components/CodegenSiteNavigation.astro';
+import { basePath, withBase } from '../lib/base-path';
+import { CODEGEN_SITE } from '../lib/site';
+
+interface Props {
+  /** Mount-relative path, e.g. "/docs/getting-started". */
+  currentPath: string;
+  description?: string;
+  githubUrl: string;
+  headings: TocHeading[];
+  longPage?: boolean;
+  /** null: this page has no markdown twin (pure-shim plugin pages). */
+  markdownUrl?: string | null;
+  navItems: DocsNavPage[];
+  navTree: DocsNavNode[];
+  /** "Documentation" | "Plugins" — drives search badges and title suffix. */
+  searchSection: string;
+  title: string;
+}
+
+const {
+  currentPath,
+  description,
+  githubUrl,
+  headings,
+  longPage,
+  markdownUrl,
+  navItems,
+  navTree,
+  searchSection,
+  title,
+} = Astro.props;
+
+const based = (path: string) => withBase(path);
+const baseNode = (node: DocsNavNode): DocsNavNode =>
+  node.type === 'page'
+    ? { ...node, href: based(node.href) }
+    : {
+        ...node,
+        href: node.href ? based(node.href) : undefined,
+        children: node.children.map(baseNode),
+      };
+
+const basedItems = navItems.map(item => ({ ...item, href: based(item.href) }));
+const basedTree = navTree.map(baseNode);
+const docsBase = withBase(currentPath.startsWith('/plugins') ? '/plugins' : '/docs');
+---
+
+<DocsLayout
+  currentPath={withBase(currentPath)}
+  description={description}
+  docsBase={docsBase}
+  githubUrl={githubUrl}
+  headings={headings}
+  longPage={longPage}
+  markdownUrl={markdownUrl === null ? undefined : (markdownUrl ?? `${withBase(currentPath)}.md`)}
+  navItems={basedItems}
+  navTree={basedTree}
+  searchBase={basePath}
+  searchSection={searchSection}
+  section="GraphQL Codegen"
+  site={CODEGEN_SITE}
+  title={title}
+>
+  <CodegenSiteNavigation slot="site-navigation" />
+  <slot />
+  <CodegenFooter slot="site-footer" />
+</DocsLayout>

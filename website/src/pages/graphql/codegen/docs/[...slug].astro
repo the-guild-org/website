@@ -1,0 +1,76 @@
+---
+import Callout from '~hive/components/mdx/Callout.astro';
+import Card from '~hive/components/mdx/Card.astro';
+import CardsBase from '~hive/components/mdx/Cards.astro';
+import CodeBlock from '~hive/components/mdx/CodeBlock.astro';
+import File from '~hive/components/mdx/File.astro';
+import FileTreeBase from '~hive/components/mdx/Files.astro';
+import Folder from '~hive/components/mdx/Folder.astro';
+import PackageManagerTabs from '~hive/components/mdx/PackageManagerTabs.astro';
+import PackageManagerTab from '~hive/components/mdx/Tab.astro';
+import Tab from '~hive/components/mdx/Tab.astro';
+import Table from '~hive/components/mdx/Table.astro';
+import TabsBase from '~hive/components/mdx/Tabs.astro';
+import { getHeadingHtmlBySlug } from '~hive/lib/docs-markdown';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import CodegenDocsLayout from '../../../../codegen/layouts/CodegenDocsLayout.astro';
+import { getCodegenDocsNav } from '../../../../codegen/lib/docs-nav';
+
+type DocsEntry = CollectionEntry<'codegenDocs'>;
+
+export async function getStaticPaths() {
+  const entries = await getCollection('codegenDocs');
+  return entries.map(entry => ({
+    params: {
+      slug: entry.id.replace(/(^|\/)index$/, '').replace(/\.(md|mdx)$/, '') || undefined,
+    },
+    props: { entry },
+  }));
+}
+
+const Tabs = Object.assign(TabsBase, { Tab });
+const Cards = Object.assign(CardsBase, { Card });
+const FileTree = Object.assign(FileTreeBase, { File, Folder });
+
+const { entry } = Astro.props as { entry: DocsEntry };
+const { Content, headings: renderedHeadings } = await render(entry);
+const headingHtmlBySlug = getHeadingHtmlBySlug(entry.body ?? '', renderedHeadings);
+const headings = renderedHeadings.map(heading => ({
+  ...heading,
+  html: headingHtmlBySlug.get(heading.slug) ?? heading.text,
+}));
+const slug = entry.id.replace(/(^|\/)index$/, '').replace(/\.(md|mdx)$/, '');
+const currentPath = `/docs${slug ? `/${slug}` : ''}`;
+const data = entry.data;
+const sourceExtension = entry.filePath?.match(/\.mdx?$/)?.[0] ?? '.mdx';
+const githubUrl = `https://github.com/dotansimha/graphql-code-generator/blob/master/website/src/pages/docs/${entry.id}${sourceExtension}`;
+const { items: navItems, tree: navTree } = await getCodegenDocsNav();
+const title =
+  data.title ?? data.sidebarTitle ?? (entry.id.split('/').at(-1) ?? entry.id).replace(/-/g, ' ');
+---
+
+<CodegenDocsLayout
+  currentPath={currentPath}
+  description={data.description || `${title} — GraphQL Code Generator documentation.`}
+  githubUrl={githubUrl}
+  headings={headings}
+  longPage={(entry.body?.length ?? 0) > 60_000}
+  navItems={navItems}
+  navTree={navTree}
+  searchSection="Documentation"
+  title={title}
+>
+  <Content
+    components={{
+      Callout,
+      Cards,
+      Card,
+      FileTree,
+      PackageManagerTab,
+      PackageManagerTabs,
+      Tabs,
+      pre: CodeBlock,
+      table: Table,
+    }}
+  />
+</CodegenDocsLayout>

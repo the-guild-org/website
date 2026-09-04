@@ -10,15 +10,26 @@ const caseStudiesDirectory = fileURLToPath(
   new URL('../documentation/content/case-studies', import.meta.url),
 );
 
-export function remarkRelativeLinks() {
+const hiveCollections = [
+  { base: '/product-updates', directory: productUpdatesDirectory },
+  { base: '/case-studies', directory: caseStudiesDirectory },
+];
+const hiveFallback = { base: '/docs', directory: docsDirectory };
+
+/**
+ * Options allow other docs products to reuse this plugin: `collections` is
+ * matched by file-path prefix, `fallback` is used when none match (the Hive
+ * defaults preserve the original behavior).
+ */
+export function remarkRelativeLinks({
+  collections = hiveCollections,
+  fallback = hiveFallback,
+} = {}) {
   return (tree, file) => {
     const filePath = file.path ?? file.history?.[0];
     if (!filePath) return;
-    const collection = filePath.startsWith(productUpdatesDirectory)
-      ? { base: '/product-updates', directory: productUpdatesDirectory }
-      : filePath.startsWith(caseStudiesDirectory)
-        ? { base: '/case-studies', directory: caseStudiesDirectory }
-        : { base: '/docs', directory: docsDirectory };
+    const collection =
+      collections.find(candidate => filePath.startsWith(candidate.directory)) ?? fallback;
 
     visit(tree, node => {
       if (node.type !== 'link' || (!node.url?.startsWith('./') && !node.url?.startsWith('../'))) {

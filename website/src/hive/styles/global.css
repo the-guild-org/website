@@ -16,6 +16,11 @@
 @source not '../design-system';
 @source inline('drop-shadow-md italic max-w-xl');
 @source '../../pages/graphql/hive/**/*.{astro,ts}';
+/* The Codegen docs reuse this stylesheet — scan its chrome and pages, but
+   not the fetched content (utility classes there come from MDX components). */
+@source '../../codegen/**/*.{astro,ts}';
+@source not '../../codegen/content';
+@source '../../pages/graphql/codegen/**/*.{astro,ts}';
 
 @custom-variant dark (&:where(.dark, .dark *):not(:where(.light, .light *)));
 
