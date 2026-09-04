@@ -1,12 +1,12 @@
 ---
+import BaseHead from '~hive/components/BaseHead.astro';
+import CaseStudyCard from '~hive/components/case-studies/CaseStudyCard.astro';
+import CaseStudyCta from '~hive/components/case-studies/CaseStudyCta.astro';
+import SiteFooter from '~hive/components/SiteFooter.astro';
+import SiteNavigation from '~hive/components/SiteNavigation.astro';
+import { withBase } from '~hive/lib/base-path';
 import { getCollection } from 'astro:content';
-import BaseHead from '../../../../hive/components/BaseHead.astro';
-import CaseStudyCard from '../../../../hive/components/case-studies/CaseStudyCard.astro';
-import CaseStudyCta from '../../../../hive/components/case-studies/CaseStudyCta.astro';
-import SiteFooter from '../../../../hive/components/SiteFooter.astro';
-import SiteNavigation from '../../../../hive/components/SiteNavigation.astro';
-import { withBase } from '../../../../hive/lib/base-path';
-import '../../../../hive/styles/global.css';
+import '~hive/styles/global.css';
 
 const caseStudies = (await getCollection('caseStudies'))
   .map(entry => {

@@ -2,17 +2,17 @@ import { globSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { routeRules } from '../../src/hive/documentation/redirects.ts';
-
-const outputDirectory = fileURLToPath(new URL('../../dist', import.meta.url));
-const outputFile = fileURLToPath(new URL('../../dist/_redirects', import.meta.url));
-
 /**
  * The Hive site is mounted at /graphql/hive of the unified deployment, and
  * Cloudflare Pages only reads root-level _redirects — so every rule is
  * written with the mount prefix. Redirect sources/destinations in
  * redirects.ts stay un-prefixed (they predate the merge and read naturally).
  */
-const PREFIX = '/graphql/hive';
+import { basePath as PREFIX } from '../../src/hive/lib/base-path.ts';
+
+const outputDirectory = fileURLToPath(new URL('../../dist', import.meta.url));
+const outputFile = fileURLToPath(new URL('../../dist/_redirects', import.meta.url));
+
 const prefixPath = (path: string) =>
   path.startsWith('/') && !path.startsWith(PREFIX) ? `${PREFIX}${path}` : path;
 

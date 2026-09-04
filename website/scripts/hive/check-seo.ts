@@ -10,10 +10,10 @@ import { existsSync, readFileSync } from 'node:fs';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { SITE_ORIGIN as SITE } from '../../src/hive/lib/base-path.ts';
 
 const verbose = process.env['VERBOSE'] === 'true' || process.argv.includes('--verbose');
 
-const SITE = 'https://the-guild.dev';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_DIR = path.resolve(__dirname, '../../dist');
 

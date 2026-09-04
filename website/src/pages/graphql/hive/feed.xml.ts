@@ -1,6 +1,5 @@
+import { HIVE_SITE_URL as SITE_URL } from '~hive/lib/base-path';
 import { getCollection } from 'astro:content';
-
-const SITE_URL = 'https://the-guild.dev/graphql/hive';
 
 function escapeXml(value: string) {
   return value.replace(/[&<>'"]/g, char => {

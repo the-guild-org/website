@@ -5,7 +5,7 @@
  * preloads, and the page title. Included by every page's <head>.
  */
 import type { ImageMetadata } from 'astro';
-import { basePath, withBase } from '../lib/base-path';
+import { basePath, SITE_ORIGIN, HIVE_SITE_URL as SITE_URL, withBase } from '../lib/base-path';
 import FontPreloads from './FontPreloads.astro';
 import defaultImage from '../documentation/src/routes/opengraph-image.png';
 
@@ -26,8 +26,7 @@ interface Props {
 }
 
 const SITE_NAME = 'Hive';
-const SITE_ORIGIN = 'https://the-guild.dev';
-const SITE_URL = `${SITE_ORIGIN}/graphql/hive`;
+
 const TWITTER_ACCOUNT = '@TheGuildDev';
 
 const {

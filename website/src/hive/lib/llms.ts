@@ -1,8 +1,7 @@
+import { HIVE_SITE_URL as SITE_URL } from './base-path';
 import type { DocsEntry } from './docs-markdown';
 import { getDocsSlug } from './docs-markdown';
 import type { DocsNavNode, DocsNavPage } from './docs-nav';
-
-const SITE_URL = 'https://the-guild.dev/graphql/hive';
 
 function flattenPages(node: DocsNavNode): DocsNavPage[] {
   if (node.type === 'page') return [node];

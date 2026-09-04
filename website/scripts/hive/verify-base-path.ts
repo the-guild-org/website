@@ -7,8 +7,8 @@
  */
 import { existsSync, globSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { basePath as base } from '../../src/hive/lib/base-path.ts';
 
-const base = '/graphql/hive';
 const projectDirectory = fileURLToPath(new URL('../..', import.meta.url));
 const distDirectory = fileURLToPath(new URL('../../dist', import.meta.url));
 const hiveDistDirectory = `${distDirectory}/graphql/hive`;

@@ -6,8 +6,8 @@
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { SITE_ORIGIN as SITE } from '../src/hive/lib/base-path.ts';
 
-const SITE = 'https://the-guild.dev';
 const dist = fileURLToPath(new URL('../dist', import.meta.url));
 
 /** Maps a public path to the dist file that serves it (build.format: 'file'). */
