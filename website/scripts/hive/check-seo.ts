@@ -6,16 +6,21 @@
  * resolve to nothing, and indexable pages missing from the sitemaps.
  * Title/description length problems are reported as warnings only.
  */
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { SITE_ORIGIN as SITE } from '../../src/hive/lib/base-path.ts';
+import {
+  DIST,
+  publicPath,
+  readRedirects,
+  readSitemapPaths,
+  resolvesInDist,
+} from '../lib/build-output.ts';
 
 const verbose = process.env['VERBOSE'] === 'true' || process.argv.includes('--verbose');
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const OUTPUT_DIR = path.resolve(__dirname, '../../dist');
+const OUTPUT_DIR = DIST;
 
 const REQUIRED_TAGS = [
   'title',
@@ -136,55 +141,12 @@ function parseHead(html: string): ParsedHead | null {
   return { jsonldCount: jsonldTypes.length, jsonldInvalid, jsonldTypes, parsed };
 }
 
-/** Public URL path a dist html file serves (build.format: "file"). */
-function publicPath(relativePath: string): string {
-  if (relativePath === 'index.html') return '/';
-  return `/${relativePath.replace(/\/index\.html$/, '').replace(/\.html$/, '')}`;
-}
-
-/** Whether an internal path resolves to a file in dist. */
-function resolvesInDist(pathname: string): boolean {
-  const decoded = decodeURI(pathname);
-  return [
-    `${OUTPUT_DIR}${decoded}`,
-    `${OUTPUT_DIR}${decoded}.html`,
-    `${OUTPUT_DIR}${decoded}/index.html`,
-    ...(decoded === '/' ? [`${OUTPUT_DIR}/index.html`] : []),
-  ].some(candidate => existsSync(candidate));
-}
-
-/** Redirect sources from dist/_redirects: exact paths and /* splat prefixes. */
-function loadRedirectSources(): { exact: Set<string>; prefixes: string[] } {
-  const exact = new Set<string>();
-  const prefixes: string[] = [];
-  const file = `${OUTPUT_DIR}/_redirects`;
-  if (!existsSync(file)) return { exact, prefixes };
-  for (const line of readFileSync(file, 'utf8').split('\n')) {
-    if (!line.trim() || line.startsWith('#')) continue;
-    const source = line.trim().split(/\s+/)[0];
-    if (!source?.startsWith('/')) continue;
-    if (source.endsWith('/*')) prefixes.push(source.slice(0, -1));
-    else exact.add(source);
-  }
-  return { exact, prefixes };
-}
-
-function loadSitemapPaths(): Set<string> {
-  const paths = new Set<string>();
-  for (const sitemap of ['/sitemap-0.xml', '/graphql/hive/sitemap.xml']) {
-    const file = `${OUTPUT_DIR}${sitemap}`;
-    if (!existsSync(file)) continue;
-    for (const [, loc] of readFileSync(file, 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)) {
-      if (!loc.startsWith(SITE)) continue;
-      const pathname = decodeURI(loc.slice(SITE.length)) || '/';
-      paths.add(pathname);
-    }
-  }
-  return paths;
-}
-
-const redirectSources = loadRedirectSources();
-const sitemapPaths = loadSitemapPaths();
+const redirectRules = readRedirects();
+const redirectSources = {
+  exact: new Set(redirectRules.filter(r => !r.source.endsWith('/*')).map(r => r.source)),
+  prefixes: redirectRules.filter(r => r.source.endsWith('/*')).map(r => r.source.slice(0, -1)),
+};
+const sitemapPaths = readSitemapPaths();
 
 const issues: string[] = [];
 const warnings: string[] = [];
