@@ -40,7 +40,12 @@ function slug(id: string) {
 }
 
 function findAsset(map: Record<string, { default: { src: string } }>, entrySlug: string) {
-  const match = Object.entries(map).find(([file]) => file.includes(`/${entrySlug}/`));
+  // Exact parent-directory match — a substring test resolves the wrong image
+  // when one post's slug is a path segment of another's, or when a post
+  // keeps assets in nested subdirectories.
+  const match = Object.entries(map).find(([file]) =>
+    file.slice(0, file.lastIndexOf("/")).endsWith(`/content/blog/${entrySlug}`),
+  );
   return match?.[1]?.default?.src;
 }
 

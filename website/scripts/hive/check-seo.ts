@@ -42,10 +42,12 @@ const REQUIRED_TAGS = [
 const ROUTER_HANDLED_PATHS = new Set([
   "/graphql/hive/federation-gateway-performance",
   "/graphql/hive/federation-gateway-audit",
+  "/graphql/hive/federation-playground",
 ]);
 
 // Path prefixes served by other deployments through the website-router —
 // links to them cannot resolve inside this dist.
+// Keep in sync with packages/website-router/src/config.ts mappings.
 const EXTERNAL_DEPLOYMENT_PREFIXES = [
   "/graphql/codegen",
   "/graphql/yoga-server",
@@ -60,6 +62,10 @@ const EXTERNAL_DEPLOYMENT_PREFIXES = [
   "/graphql/eslint",
   "/graphql/config",
   "/graphql/stitching",
+  "/graphql/ws",
+  "/graphql/sse",
+  "/openapi/fets",
+  "/heltin",
 ];
 
 async function* walk(dir: string): AsyncGenerator<string> {
@@ -204,14 +210,12 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   scanned += 1;
   const html = await readFile(filePath, "utf8");
 
-  const fallback: ParsedHead = {
-    jsonldCount: 0,
-    jsonldInvalid: false,
-    jsonldTypes: [],
-    parsed: {},
-  };
-  const { jsonldCount, jsonldInvalid, jsonldTypes, parsed } =
-    parseHead(html) ?? fallback;
+  const parsedHead = parseHead(html);
+  if (!parsedHead) {
+    issues.push(`${path.relative(OUTPUT_DIR, filePath)}: missing <head>`);
+    continue;
+  }
+  const { jsonldCount, jsonldInvalid, jsonldTypes, parsed } = parsedHead;
 
   if (verbose) {
     console.log(filePath, { jsonldCount }, parsed);
@@ -219,11 +223,6 @@ for await (const filePath of walk(OUTPUT_DIR)) {
 
   const relativePath = path.relative(OUTPUT_DIR, filePath);
   const pagePath = publicPath(relativePath);
-
-  if (!parsed) {
-    issues.push(`${relativePath}: missing <head>`);
-    continue;
-  }
 
   for (const tag of REQUIRED_TAGS) {
     if (!parsed[tag]) {

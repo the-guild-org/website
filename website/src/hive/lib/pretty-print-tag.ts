@@ -11,7 +11,7 @@ export function prettyPrintTag(tag = "All") {
   }
   text = text.replace("graphql", "GraphQL");
   text = text.replace(/-js$/, " JS");
-  text = text[0]!.toUpperCase() + text.slice(1);
+  text = text.charAt(0).toUpperCase() + text.slice(1);
   text = text
     .replaceAll("-", " ")
     .replaceAll(/\b\w/g, (char) => char.toUpperCase());
