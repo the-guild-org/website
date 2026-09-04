@@ -13,7 +13,7 @@ const blog = defineCollection({
       .nonempty()
       .superRefine((ids, ctx) => {
         for (const id of ids) {
-          if (!(id in AUTHORS)) {
+          if (!Object.hasOwn(AUTHORS, id)) {
             ctx.addIssue({ code: 'custom', message: `Unknown blog author "${id}"` });
           }
         }
