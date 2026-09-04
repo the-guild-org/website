@@ -181,6 +181,88 @@ traffic_shaping:
 
 Setting it to `0s` disables keep-alive entirely.
 
+### `router.compression` (Client ↔ Router)
+
+Controls HTTP compression between the client and the router: compressing responses sent to the
+client, and decompressing requests received from the client. `gzip`, `deflate`, `br` (Brotli), and
+`zstd` are supported in both directions.
+
+Note: this is unrelated to the outbound [`compression`](#compression-router--subgraphs) option below,
+which controls compression between the router and subgraphs.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  router:
+    compression:
+      response:
+        enabled: true
+        algorithms:
+          - kind: gzip
+          - kind: zstd
+            level: 3
+          - kind: br
+            quality: 5
+          - kind: deflate
+        min_size: 1KiB
+      request:
+        enabled: true
+        algorithms: [gzip, zstd, br, deflate]
+```
+
+#### `router.compression.request.enabled`
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+Enables or disables decompressing requests received from the client. When disabled, a request
+carrying a `Content-Encoding` header is rejected with `415 Unsupported Media Type` instead of
+being decompressed.
+
+#### `router.compression.request.algorithms`
+
+- **Type:** `("gzip" | "deflate" | "br" | "zstd")[]`
+- **Default:** `[gzip, zstd, br, deflate]`
+
+The algorithms the router accepts in a client's `Content-Encoding` header. A request encoded with
+an algorithm not listed here (or stacked, e.g. `gzip, br`) is rejected with
+`415 Unsupported Media Type`.
+
+#### `router.compression.response.enabled`
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+Enables or disables compressing responses sent to the client.
+
+#### `router.compression.response.algorithms`
+
+- **Type:** `array`
+- **Default:** `[{ kind: gzip }, { kind: zstd, level: 3 }, { kind: br, quality: 5 }, { kind: deflate }]`
+
+The list of algorithms the router is allowed to compress responses with, and their tuning. The
+router picks the entry from this list whose `kind` best matches the client's `Accept-Encoding`
+preference; a client asking only for an algorithm that isn't listed here gets an uncompressed
+response instead. The list's order only matters as a tie-breaker when the client's preferences
+don't disambiguate.
+
+Each entry is a `kind` plus, for `br` and `zstd`, inline tuning:
+
+- `{ kind: gzip }`
+- `{ kind: deflate }`
+- `{ kind: br, quality: <0-11> }` — Brotli quality, from `0` (fastest, worst ratio) to `11`
+  (slowest, best ratio). Defaults to `5`.
+- `{ kind: zstd, level: <1-22> }` — Zstandard level, from `1` (fastest, worst ratio) to `22`
+  (slowest, best ratio). Defaults to `3`.
+
+#### `router.compression.response.min_size`
+
+- **Type:** `string`
+- **Default:** `1KiB`
+
+Responses smaller than this size (human-readable, e.g. `1KiB`, `10KB`) are sent uncompressed,
+since compressing small payloads costs more CPU than it saves in bytes transferred. Streamed
+responses (SSE, Incremental Delivery, Multipart HTTP) are never compressed regardless of size.
+
 ### `router.tls` (Client ↔ Router)
 
 Use this configuration field to make the router serve HTTPS traffic (TLS) and optionally require client certificates (mTLS).
@@ -217,7 +299,7 @@ traffic_shaping:
 
 ## Outbound Options
 
-The following options (`allow_only_http2`, `circuit_breaker`, `dedupe_enabled`,
+The following options (`allow_only_http2`, `circuit_breaker`, `compression`, `dedupe_enabled`,
 `forward_operation_name`, `pool_idle_timeout`, `request_timeout`, `tls`, and `websocket`) can be set
 globally for all subgraphs or overridden on a per-subgraph basis by nesting them under the
 subgraph's name within the `traffic_shaping` map.
@@ -381,6 +463,71 @@ traffic_shaping:
       circuit_breaker:
         volume_threshold: 3 # more sensitive for the payments subgraph; other settings inherit from global
 ```
+
+### `compression` (Router ↔ Subgraphs)
+
+Controls compression of request bodies the router sends to subgraphs. `gzip`, `deflate`, `br`
+(Brotli), and `zstd` are supported.
+
+Note: this is unrelated to the inbound [`router.compression`](#routercompression-client--router)
+option above, which controls compression between the client and the router.
+
+<Callout type="info">
+  Decompressing subgraph responses is always on and unconfigured — the router
+  transparently decompresses any subgraph response carrying a recognized
+  `Content-Encoding`, regardless of the outbound `compression` setting. The
+  router also always advertises `Accept-Encoding: gzip, deflate, br, zstd` to
+  every subgraph, independent of whether outbound compression is enabled.
+</Callout>
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    compression:
+      request:
+        enabled: false
+        algorithm:
+          kind: gzip
+  subgraphs:
+    accounts:
+      compression:
+        request:
+          enabled: true
+          algorithm:
+            kind: zstd
+            level: 5
+```
+
+<Callout type="info">
+  A per-subgraph `compression` block fully **replaces** the `all` default
+  rather than merging field-by-field — setting only `request.enabled` for a
+  subgraph also resets `request.algorithm` back to its own default (`gzip`)
+  rather than inheriting the algorithm configured in `all`.
+</Callout>
+
+#### `compression.request.enabled`
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+Enables or disables compressing request bodies sent to the subgraph. This is opt-in and disabled
+by default, since compressing unconditionally could break a subgraph that doesn't decompress.
+
+#### `compression.request.algorithm`
+
+- **Type:** `object`
+- **Default:** `{ kind: gzip }`
+
+The single algorithm to compress with, and its tuning for `br`/`zstd`. Only relevant when
+`compression.request.enabled` is `true`. 
+
+This field is a single choice, not an allow-list: the router doesn't negotiate with the subgraph, it unilaterally picks
+one algorithm and sends it.
+
+- `{ kind: gzip }`
+- `{ kind: deflate }`
+- `{ kind: br, quality: <0-11> }` — defaults to `5`.
+- `{ kind: zstd, level: <1-22> }` — defaults to `3`.
 
 ### `dedupe_enabled`
 
