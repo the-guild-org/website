@@ -61,8 +61,12 @@ const imageUrl = new URL(image ?? DEFAULT_OG_IMAGE, Astro.site).href;
     <slot name="head" />
     <script is:inline>
       try {
-        // The key is shared with the Hive pages, which also store 'system'.
-        const saved = localStorage.getItem('guild-theme');
+        // The key is shared with the Hive pages, which also store 'system'
+        // and read the pre-merge 'theme' key as a fallback — mirror that so
+        // returning Hive visitors keep their preference here too.
+        const saved = [localStorage.getItem('guild-theme'), localStorage.getItem('theme')].find(
+          value => value === 'dark' || value === 'light' || value === 'system',
+        );
         document.documentElement.dataset.theme =
           saved === 'dark' || saved === 'light'
             ? saved

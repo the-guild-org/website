@@ -4,8 +4,11 @@
     const apply = () => {
       // One storage key for the whole domain ("theme" is the pre-merge Hive
       // key, read as a fallback so existing visitors keep their preference).
+      // Anything else in storage counts as unset.
       const preference =
-        localStorage.getItem("guild-theme") || localStorage.getItem("theme") || "system";
+        [localStorage.getItem("guild-theme"), localStorage.getItem("theme")].find(
+          (value) => value === "dark" || value === "light" || value === "system",
+        ) || "system";
       const dark = preference === "dark" || (preference === "system" && media.matches);
       document.documentElement.classList.toggle("dark", dark);
       document.documentElement.classList.toggle("light", !dark);
@@ -40,8 +43,11 @@
       button.classList.toggle("text-fd-muted-foreground", !active);
     });
   };
-  const savedTheme = localStorage.getItem("guild-theme") || localStorage.getItem("theme") || "system";
-  applyTheme(savedTheme);
+  const readSavedTheme = () =>
+    [localStorage.getItem("guild-theme"), localStorage.getItem("theme")].find(
+      (value) => value === "dark" || value === "light" || value === "system",
+    ) ?? "system";
+  applyTheme(readSavedTheme());
   document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle] [data-theme]").forEach((button) => {
     button.addEventListener("click", () => {
       const preference = button.dataset.theme;
@@ -51,7 +57,6 @@
     });
   });
   themeMedia.addEventListener("change", () => {
-    const saved = localStorage.getItem("guild-theme") || localStorage.getItem("theme") || "system";
-    if (saved === "system") applyTheme("system");
+    if (readSavedTheme() === "system") applyTheme("system");
   });
 </script>
