@@ -61,9 +61,14 @@ const imageUrl = new URL(image ?? DEFAULT_OG_IMAGE, Astro.site).href;
     <slot name="head" />
     <script is:inline>
       try {
+        // The key is shared with the Hive pages, which also store 'system'.
         const saved = localStorage.getItem('guild-theme');
         document.documentElement.dataset.theme =
-          saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          saved === 'dark' || saved === 'light'
+            ? saved
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
       } catch {
         document.documentElement.dataset.theme = 'dark';
       }

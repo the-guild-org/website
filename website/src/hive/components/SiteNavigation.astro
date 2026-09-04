@@ -1,5 +1,5 @@
 ---
-import { withBase } from "../lib/base-path";
+import { basePath, withBase } from "../lib/base-path";
 import graphQLConfImage from "../documentation/src/components/graphql-conf-image.webp";
 
 import type { DocsNavNode, DocsNavPage } from "../lib/docs-nav";
@@ -31,8 +31,13 @@ interface Props {
 }
 
 const { docsNavigation = [], docsNavigationTree = [] } = Astro.props;
+// File-format output and the mount prefix mean the landing page's pathname
+// is "<base>.html", never "/" — compare mount-relative so the "on the
+// landing page, link to docs" branch actually fires.
 const pathname = Astro.url.pathname;
-const hiveHref = pathname === "/" ? "/docs" : "/";
+const onLandingPage =
+  pathname === basePath || pathname === `${basePath}.html` || pathname === "/";
+const hiveHref = onLandingPage ? "/docs" : "/";
 
 const withClass = (svg: string, className: string) =>
   svg.replace("<svg", `<svg class="${className}"`);

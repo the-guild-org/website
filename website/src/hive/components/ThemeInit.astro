@@ -2,7 +2,10 @@
   (() => {
     const media = matchMedia("(prefers-color-scheme: dark)");
     const apply = () => {
-      const preference = localStorage.getItem("theme") || "system";
+      // One storage key for the whole domain ("theme" is the pre-merge Hive
+      // key, read as a fallback so existing visitors keep their preference).
+      const preference =
+        localStorage.getItem("guild-theme") || localStorage.getItem("theme") || "system";
       const dark = preference === "dark" || (preference === "system" && media.matches);
       document.documentElement.classList.toggle("dark", dark);
       document.documentElement.classList.toggle("light", !dark);
@@ -15,4 +18,40 @@
     apply();
     media.addEventListener("change", apply);
   })();
+</script>
+
+<script>
+  // Toggle wiring for any page that renders a [data-theme-toggle] control —
+  // previously an inline copy in DocsLayout only, so other pages with a
+  // toggle (or a saved preference) had no way to change it.
+  const themeMedia = matchMedia("(prefers-color-scheme: dark)");
+  const applyTheme = (preference: string) => {
+    const dark = preference === "dark" || (preference === "system" && themeMedia.matches);
+    document.documentElement.classList.toggle("dark", dark);
+    document.documentElement.classList.toggle("light", !dark);
+    document.documentElement.dataset.theme = preference;
+    document.documentElement.dataset.pfTheme = dark ? "dark" : "light";
+    document.documentElement.style.colorScheme = dark ? "dark" : "light";
+    document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle] [data-theme]").forEach((button) => {
+      const active = button.dataset.theme === preference;
+      button.setAttribute("aria-pressed", String(active));
+      button.classList.toggle("bg-fd-accent", active);
+      button.classList.toggle("text-fd-accent-foreground", active);
+      button.classList.toggle("text-fd-muted-foreground", !active);
+    });
+  };
+  const savedTheme = localStorage.getItem("guild-theme") || localStorage.getItem("theme") || "system";
+  applyTheme(savedTheme);
+  document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle] [data-theme]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const preference = button.dataset.theme;
+      if (!preference) return;
+      localStorage.setItem("guild-theme", preference);
+      applyTheme(preference);
+    });
+  });
+  themeMedia.addEventListener("change", () => {
+    const saved = localStorage.getItem("guild-theme") || localStorage.getItem("theme") || "system";
+    if (saved === "system") applyTheme("system");
+  });
 </script>
