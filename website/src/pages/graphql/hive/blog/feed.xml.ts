@@ -1,8 +1,7 @@
+import { resolveAuthor } from '~hive/lib/authors';
+import { HIVE_SITE_URL as SITE_URL } from '~hive/lib/base-path';
+import { getBlogPosts } from '~hive/lib/get-blog-posts';
 import type { APIRoute } from 'astro';
-import { resolveAuthor } from '../../../../hive/lib/authors';
-import { getBlogPosts } from '../../../../hive/lib/get-blog-posts';
-
-const SITE_URL = 'https://the-guild.dev/graphql/hive';
 
 function escapeXml(value: string) {
   return value.replace(/[&<>'"]/g, char => {

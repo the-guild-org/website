@@ -1,7 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-
-const SITE = 'https://the-guild.dev';
+import { SITE_ORIGIN as SITE } from '../hive/lib/base-path';
 
 // Root-level llms.txt: an index of The Guild's ecosystem for agents and
 // crawlers. The Hive docs ship their own, much deeper one under

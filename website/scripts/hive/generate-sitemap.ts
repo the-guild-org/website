@@ -1,8 +1,8 @@
 import { spawnSync } from 'node:child_process';
 import { globSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { HIVE_SITE_URL as SITE_URL } from '../../src/hive/lib/base-path.ts';
 
-const SITE_URL = 'https://the-guild.dev/graphql/hive';
 const distDirectory = fileURLToPath(new URL('../../dist/graphql/hive', import.meta.url));
 const repoRoot = fileURLToPath(new URL('../../..', import.meta.url));
 

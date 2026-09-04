@@ -1,25 +1,25 @@
 ---
+import CodeBlock from '~hive/components/mdx/CodeBlock.astro';
+import Link from '~hive/components/mdx/Link.astro';
+import PackageManagerTabs from '~hive/components/mdx/PackageManagerTabs.astro';
+import PackageManagerTab from '~hive/components/mdx/Tab.astro';
+import BlogPostLayout from '~hive/layouts/BlogPostLayout.astro';
+import { getHeadingHtmlBySlug } from '~hive/lib/docs-markdown';
+import { getBlogPosts } from '~hive/lib/get-blog-posts';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
-import CodeBlock from '../../../../hive/components/mdx/CodeBlock.astro';
-import Link from '../../../../hive/components/mdx/Link.astro';
-import PackageManagerTabs from '../../../../hive/components/mdx/PackageManagerTabs.astro';
-import PackageManagerTab from '../../../../hive/components/mdx/Tab.astro';
-import BlogPostLayout from '../../../../hive/layouts/BlogPostLayout.astro';
-import { getHeadingHtmlBySlug } from '../../../../hive/lib/docs-markdown';
-import { getBlogPosts } from '../../../../hive/lib/get-blog-posts';
 
 type Blog = CollectionEntry<'hiveBlog'>;
 
 const headerImages = import.meta.glob<{ default: { src: string } }>(
-  '../../../../hive/documentation/content/blog/**/header-image.*',
+  '~hive/documentation/content/blog/**/header-image.*',
   { eager: true },
 );
 const mobileImages = import.meta.glob<{ default: { src: string } }>(
-  '../../../../hive/documentation/content/blog/**/mobile-image.*',
+  '~hive/documentation/content/blog/**/mobile-image.*',
   { eager: true },
 );
 const socialImages = import.meta.glob<{ default: { src: string } }>(
-  '../../../../hive/documentation/content/blog/**/opengraph-image.*',
+  '~hive/documentation/content/blog/**/opengraph-image.*',
   { eager: true },
 );
 

@@ -1,5 +1,5 @@
+import { getDocsMarkdown, getDocsSlug } from '~hive/lib/docs-markdown';
 import { getCollection } from 'astro:content';
-import { getDocsMarkdown, getDocsSlug } from '../../../hive/lib/docs-markdown';
 
 /**
  * The full documentation as one Markdown file for LLM consumption.

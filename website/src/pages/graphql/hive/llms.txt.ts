@@ -1,6 +1,6 @@
+import { getDocsNav } from '~hive/lib/docs-nav';
+import { getLlmsText } from '~hive/lib/llms';
 import { getCollection } from 'astro:content';
-import { getDocsNav } from '../../../hive/lib/docs-nav';
-import { getLlmsText } from '../../../hive/lib/llms';
 
 export const prerender = true;
 

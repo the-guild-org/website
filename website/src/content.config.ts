@@ -40,12 +40,35 @@ function generateHiveId({ entry }: { entry: string }) {
   return entry.replace(/\.(md|mdx)$/, '');
 }
 
+/**
+ * Hive frontmatter schemas, derived from the shapes every consumer was
+ * previously asserting with `as` casts. passthrough() keeps unknown legacy
+ * keys instead of stripping them; unions reflect real frontmatter variance
+ * in the 400+ migrated files (string vs array authors, string vs date).
+ */
+const hiveAuthor = z.union([
+  z.string(),
+  z
+    .object({ avatar: z.string().optional(), name: z.string(), position: z.string().optional() })
+    .passthrough(),
+]);
+// String dates must be ISO days — the product-updates page sorts them
+// lexically and parses them with `new Date(`${date}T00:00:00Z`)`.
+const hiveDate = z.union([z.date(), z.string().regex(/^\d{4}-\d{2}-\d{2}$/)]);
+
 const docs = defineCollection({
   loader: glob({
     base: `${hiveContentRoot}/docs`,
     generateId: generateHiveId,
     pattern: '**/*.{md,mdx}',
   }),
+  schema: z
+    .object({
+      title: z.string().optional(),
+      sidebarTitle: z.string().optional(),
+      description: z.string().optional(),
+    })
+    .passthrough(),
 });
 
 const productUpdates = defineCollection({
@@ -54,6 +77,15 @@ const productUpdates = defineCollection({
     generateId: generateHiveId,
     pattern: '**/*.{md,mdx}',
   }),
+  schema: z
+    .object({
+      title: z.string(),
+      description: z.string(),
+      date: hiveDate,
+      authors: z.array(hiveAuthor),
+      canonical: z.string().optional(),
+    })
+    .passthrough(),
 });
 
 const caseStudies = defineCollection({
@@ -62,6 +94,16 @@ const caseStudies = defineCollection({
     generateId: generateHiveId,
     pattern: '**/*.{md,mdx}',
   }),
+  schema: z
+    .object({
+      title: z.string(),
+      excerpt: z.string(),
+      category: z.string(),
+      date: hiveDate,
+      authors: z.array(hiveAuthor).optional(),
+      canonical: z.string().optional(),
+    })
+    .passthrough(),
 });
 
 const hiveBlog = defineCollection({
@@ -70,6 +112,18 @@ const hiveBlog = defineCollection({
     generateId: generateHiveId,
     pattern: '**/*.{md,mdx}',
   }),
+  schema: z
+    .object({
+      title: z.string(),
+      description: z.string().optional(),
+      date: hiveDate,
+      authors: z.union([z.string(), z.array(hiveAuthor)]),
+      tags: z.array(z.string()).default([]),
+      featured: z.boolean().optional(),
+      canonical: z.string().optional(),
+      ogImage: z.string().optional(),
+    })
+    .passthrough(),
 });
 
 export const collections = { blog, caseStudies, docs, hiveBlog, productUpdates };

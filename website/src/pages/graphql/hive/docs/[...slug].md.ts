@@ -1,5 +1,5 @@
+import { getDocsSlug, markdownResponse } from '~hive/lib/docs-markdown';
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { getDocsSlug, markdownResponse } from '../../../../hive/lib/docs-markdown';
 
 type DocsEntry = CollectionEntry<'docs'>;
 
