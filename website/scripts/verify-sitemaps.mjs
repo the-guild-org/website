@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 /**
  * Fails the build if any <loc> in the generated sitemaps does not correspond
  * to a file in dist — the exact defect class from the SEO audit (SEO-01),
