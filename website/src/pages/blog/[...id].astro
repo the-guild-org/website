@@ -29,6 +29,18 @@ const { Content } = await render(post);
 const authors = post.data.authors.map(id => AUTHORS[id]).filter(Boolean);
 const formatDate = (date: Date) =>
   date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const postJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.date.toISOString(),
+  ...(post.data.updateDate && { dateModified: post.data.updateDate.toISOString() }),
+  author: authors.map(author => ({ '@type': 'Person', name: author.name })),
+  publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+  mainEntityOfPage: `https://the-guild.dev/blog/${post.id}`,
+});
 ---
 
 <Layout
@@ -38,6 +50,7 @@ const formatDate = (date: Date) =>
   type="article"
   publishedTime={post.data.date}
 >
+  <script is:inline slot="head" type="application/ld+json" set:html={postJsonLd} />
   <header
     class="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--nav-bg)] backdrop-blur-[10px]"
   >

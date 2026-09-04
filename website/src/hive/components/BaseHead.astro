@@ -44,17 +44,19 @@ const {
 
 /** Strips the mount prefix — it is not part of logical paths. */
 function stripBase(path: string) {
-  // File-format output puts the landing page at <base>.html rather than
-  // <base>/index.html — normalize so its canonical keeps the old shape.
-  if (path === `${basePath}.html`) return "/index.html";
+  // File-format output puts the landing page at <base>.html.
+  if (path === `${basePath}.html`) return "";
   return basePath && (path === basePath || path.startsWith(`${basePath}/`))
     ? path.slice(basePath.length)
     : path;
 }
 
-// Strip the trailing slash so canonicals keep the old site's URL shape and
-// agree with the generated sitemap (which lists slash-less URLs).
-const currentPath = stripBase(Astro.url.pathname).replace(/\/$/, "");
+// Strip the .html suffix file-format output bakes into pathnames, and the
+// trailing slash, so canonicals match the public URL shape and the
+// generated sitemap (slash-less, no extension).
+const currentPath = stripBase(Astro.url.pathname)
+  .replace(/\.html$/, "")
+  .replace(/\/$/, "");
 const canonicalUrl = canonical ?? `${SITE_URL}${currentPath}`;
 // Bundled assets are emitted at the shared /_astro root of the unified
 // site, so they join with the origin; anything else is a Hive-relative
