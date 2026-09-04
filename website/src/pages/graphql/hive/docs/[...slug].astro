@@ -1,28 +1,25 @@
 ---
-import { getCollection, render, type CollectionEntry } from "astro:content";
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Callout from '../../../../hive/components/mdx/Callout.astro';
+import Card from '../../../../hive/components/mdx/Card.astro';
+import Cards from '../../../../hive/components/mdx/Cards.astro';
+import CodeBlock from '../../../../hive/components/mdx/CodeBlock.astro';
+import Image from '../../../../hive/components/mdx/Image.astro';
+import PackageManagerTabs from '../../../../hive/components/mdx/PackageManagerTabs.astro';
+import PackageManagerTab from '../../../../hive/components/mdx/Tab.astro';
+import Table from '../../../../hive/components/mdx/Table.astro';
+import DocsLayout from '../../../../hive/layouts/DocsLayout.astro';
+import { getDocsSlug, getHeadingHtmlBySlug } from '../../../../hive/lib/docs-markdown';
+import { getDocsNav } from '../../../../hive/lib/docs-nav';
 
-import Callout from "../../../../hive/components/mdx/Callout.astro";
-import Card from "../../../../hive/components/mdx/Card.astro";
-import Cards from "../../../../hive/components/mdx/Cards.astro";
-import CodeBlock from "../../../../hive/components/mdx/CodeBlock.astro";
-import Image from "../../../../hive/components/mdx/Image.astro";
-import PackageManagerTabs from "../../../../hive/components/mdx/PackageManagerTabs.astro";
-import PackageManagerTab from "../../../../hive/components/mdx/Tab.astro";
-import Table from "../../../../hive/components/mdx/Table.astro";
-import DocsLayout from "../../../../hive/layouts/DocsLayout.astro";
-import { getDocsSlug, getHeadingHtmlBySlug } from "../../../../hive/lib/docs-markdown";
-import { getDocsNav } from "../../../../hive/lib/docs-nav";
-
-type DocsEntry = CollectionEntry<"docs">;
+type DocsEntry = CollectionEntry<'docs'>;
 
 export async function getStaticPaths() {
-  const entries = await getCollection("docs");
+  const entries = await getCollection('docs');
 
-  return entries.map((entry) => ({
+  return entries.map(entry => ({
     params: {
-      slug:
-        entry.id.replace(/(^|\/)index$/, "").replace(/\.(md|mdx)$/, "") ||
-        undefined,
+      slug: entry.id.replace(/(^|\/)index$/, '').replace(/\.(md|mdx)$/, '') || undefined,
     },
     props: { entry },
   }));
@@ -30,18 +27,18 @@ export async function getStaticPaths() {
 
 function titleFromEntry(entry: DocsEntry) {
   const data = entry.data as { sidebarTitle?: string; title?: string };
-  return data.sidebarTitle ?? data.title ?? entry.id.split("/").at(-1) ?? entry.id;
+  return data.sidebarTitle ?? data.title ?? entry.id.split('/').at(-1) ?? entry.id;
 }
 
 const { entry } = Astro.props as { entry: DocsEntry };
 const { Content, headings: renderedHeadings } = await render(entry);
-const headingHtmlBySlug = getHeadingHtmlBySlug(entry.body ?? "", renderedHeadings);
-const headings = renderedHeadings.map((heading) => ({
+const headingHtmlBySlug = getHeadingHtmlBySlug(entry.body ?? '', renderedHeadings);
+const headings = renderedHeadings.map(heading => ({
   ...heading,
   html: headingHtmlBySlug.get(heading.slug) ?? heading.text,
 }));
 const slug = getDocsSlug(entry);
-const currentPath = `/docs${slug ? `/${slug}` : ""}`;
+const currentPath = `/docs${slug ? `/${slug}` : ''}`;
 const data = entry.data as { description?: string; title?: string };
 const sourceExtension = entry.filePath?.match(/\.mdx?$/)?.[0];
 if (!sourceExtension) throw new Error(`Cannot determine source file for docs entry: ${entry.id}`);
@@ -50,7 +47,8 @@ const { items: navItems, tree: navTree } = await getDocsNav();
 ---
 
 <DocsLayout
-  longPage={(entry.body?.length ?? 0) > 60_000 || ((entry.body ?? "").match(/```/g)?.length ?? 0) > 50}
+  longPage={(entry.body?.length ?? 0) > 60_000 ||
+    ((entry.body ?? '').match(/```/g)?.length ?? 0) > 50}
   currentPath={currentPath}
   description={data.description}
   githubUrl={githubUrl}
@@ -60,5 +58,17 @@ const { items: navItems, tree: navTree } = await getDocsNav();
   navTree={navTree}
   title={data.title ?? titleFromEntry(entry)}
 >
-  <Content components={{ Callout, Card, Cards, Image, MdxImage: Image, PackageManagerTab, PackageManagerTabs, pre: CodeBlock, table: Table }} />
+  <Content
+    components={{
+      Callout,
+      Card,
+      Cards,
+      Image,
+      MdxImage: Image,
+      PackageManagerTab,
+      PackageManagerTabs,
+      pre: CodeBlock,
+      table: Table,
+    }}
+  />
 </DocsLayout>

@@ -1,19 +1,17 @@
 ---
-import "../styles/global.css";
-
-import type { BlogPost } from "../lib/get-blog-posts";
-
-import BlogPostHeader from "../components/blog/BlogPostHeader.astro";
-import HeadingPermalinks from "../components/HeadingPermalinks.astro";
-import SimilarPosts from "../components/blog/SimilarPosts.astro";
-import GetYourAPIGameRightSection from "../components/GetYourAPIGameRightSection.astro";
-import SiteFooter from "../components/SiteFooter.astro";
-import SiteNavigation from "../components/SiteNavigation.astro";
-import BaseHead from "../components/BaseHead.astro";
-import ThemeInit from "../components/ThemeInit.astro";
-import TocAsideContent from "../components/TocAsideContent.astro";
-import TocPopoverContent from "../components/TocPopoverContent.astro";
-import { filterToc, type TocHeading } from "../lib/toc";
+import '../styles/global.css';
+import BaseHead from '../components/BaseHead.astro';
+import BlogPostHeader from '../components/blog/BlogPostHeader.astro';
+import SimilarPosts from '../components/blog/SimilarPosts.astro';
+import GetYourAPIGameRightSection from '../components/GetYourAPIGameRightSection.astro';
+import HeadingPermalinks from '../components/HeadingPermalinks.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteNavigation from '../components/SiteNavigation.astro';
+import ThemeInit from '../components/ThemeInit.astro';
+import TocAsideContent from '../components/TocAsideContent.astro';
+import TocPopoverContent from '../components/TocPopoverContent.astro';
+import type { BlogPost } from '../lib/get-blog-posts';
+import { filterToc, type TocHeading } from '../lib/toc';
 
 interface Props {
   allPosts: BlogPost[];
@@ -29,10 +27,22 @@ interface Props {
   title: string;
 }
 
-const { allPosts, authors, canonical, date, description, image, headings, mobileImage, socialImage, tags, title } = Astro.props;
+const {
+  allPosts,
+  authors,
+  canonical,
+  date,
+  description,
+  image,
+  headings,
+  mobileImage,
+  socialImage,
+  tags,
+  title,
+} = Astro.props;
 const tableOfContents = filterToc(headings);
 // Titles that carry their own "|" branding are kept as-is, like the old site.
-const pageTitle = title.includes("|") ? title : `${title} | Hive`;
+const pageTitle = title.includes('|') ? title : `${title} | Hive`;
 ---
 
 <!doctype html>
@@ -40,36 +50,78 @@ const pageTitle = title.includes("|") ? title : `${title} | Hive`;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <BaseHead breadcrumbs={[{ name: "Blog", path: "/blog" }]} canonical={canonical} description={description} image={socialImage} imageAlt={title} title={pageTitle} type="article" />
+    <BaseHead
+      breadcrumbs={[{ name: 'Blog', path: '/blog' }]}
+      canonical={canonical}
+      description={description}
+      image={socialImage}
+      imageAlt={title}
+      title={pageTitle}
+      type="article"
+    />
     <ThemeInit />
-    <link rel="alternate" type="application/rss+xml" title="Hive Blog" href="https://the-guild.dev/graphql/hive/blog/feed.xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Hive Blog"
+      href="https://the-guild.dev/graphql/hive/blog/feed.xml"
+    />
   </head>
   <body class="min-h-screen antialiased">
     <SiteNavigation />
 
-    <div class="text-green-1000 mx-auto w-360 max-w-full overflow-x-clip dark:text-white" data-heading-permalinks>
-      <BlogPostHeader authors={authors} class="mx-auto" date={date} image={image} mobileImage={mobileImage} tags={tags} title={title} />
+    <div
+      class="text-green-1000 mx-auto w-360 max-w-full overflow-x-clip dark:text-white"
+      data-heading-permalinks
+    >
+      <BlogPostHeader
+        authors={authors}
+        class="mx-auto"
+        date={date}
+        image={image}
+        mobileImage={mobileImage}
+        tags={tags}
+        title={title}
+      />
 
-      <div class="blog-prose-shell mx-auto grid w-full max-w-[1436px] grid-cols-1 px-4 md:px-12 xl:grid-cols-[268px_minmax(0,900px)_268px] xl:px-0">
+      <div
+        class="blog-prose-shell mx-auto grid w-full max-w-[1436px] grid-cols-1 px-4 md:px-12 xl:grid-cols-[268px_minmax(0,900px)_268px] xl:px-0"
+      >
         {
           tableOfContents.length > 0 && (
-            <details class="group sticky top-(--header-height) z-10 h-10 xl:hidden" data-toc-popover>
+            <details
+              class="group sticky top-(--header-height) z-10 h-10 xl:hidden"
+              data-toc-popover
+            >
               <TocPopoverContent headings={tableOfContents} />
             </details>
           )
         }
 
-        <article class="prose dark:prose-invert min-w-0 w-(--article-max-width) max-w-full mx-auto xl:col-start-2" data-blog-prose>
+        <article
+          class="prose dark:prose-invert mx-auto w-(--article-max-width) max-w-full min-w-0 xl:col-start-2"
+          data-blog-prose
+        >
           <slot />
         </article>
 
-        <aside class="sticky top-(--header-height) col-start-3 row-start-1 hidden h-[calc(100vh-var(--header-height))] w-68 flex-col pb-2 pt-12 pe-4 xl:flex" id="nd-toc">
+        <aside
+          class="sticky top-(--header-height) col-start-3 row-start-1 hidden h-[calc(100vh-var(--header-height))] w-68 flex-col pe-4 pt-12 pb-2 xl:flex"
+          id="nd-toc"
+        >
           {tableOfContents.length > 0 && <TocAsideContent headings={tableOfContents} />}
         </aside>
       </div>
 
-      <SimilarPosts allPosts={allPosts} class="mx-4 md:mx-6" currentTags={tags} currentTitle={title} />
-      <GetYourAPIGameRightSection class="light text-green-1000 dark:bg-primary/95 mx-4 sm:mb-6 md:mx-6" />
+      <SimilarPosts
+        allPosts={allPosts}
+        class="mx-4 md:mx-6"
+        currentTags={tags}
+        currentTitle={title}
+      />
+      <GetYourAPIGameRightSection
+        class="light text-green-1000 dark:bg-primary/95 mx-4 sm:mb-6 md:mx-6"
+      />
     </div>
 
     <SiteFooter />
@@ -293,7 +345,7 @@ const pageTitle = title.includes("|") ? title : `${title} | Hive`;
     padding-top: 0.5rem;
     border-radius: 1rem;
     background: var(--color-primary);
-    content: url("../styles/quotemark.svg");
+    content: url('../styles/quotemark.svg');
   }
 
   [data-blog-prose] div:has(> blockquote) blockquote > p {

@@ -1,13 +1,16 @@
 ---
-import NewsletterFormCard from "../../../../hive/components/blog/NewsletterFormCard.astro";
-import PostsByTag from "../../../../hive/components/blog/PostsByTag.astro";
-import BlogPageLayout from "../../../../hive/layouts/BlogPageLayout.astro";
-import { getBlogPosts } from "../../../../hive/lib/get-blog-posts";
+import NewsletterFormCard from '../../../../hive/components/blog/NewsletterFormCard.astro';
+import PostsByTag from '../../../../hive/components/blog/PostsByTag.astro';
+import BlogPageLayout from '../../../../hive/layouts/BlogPageLayout.astro';
+import { getBlogPosts } from '../../../../hive/lib/get-blog-posts';
 
 const posts = await getBlogPosts();
 ---
 
-<BlogPageLayout description="Articles, product updates, and case studies from Hive Console." title="Hive Blog">
+<BlogPageLayout
+  description="Articles, product updates, and case studies from Hive Console."
+  title="Hive Blog"
+>
   <PostsByTag posts={posts}>
     <NewsletterFormCard />
   </PostsByTag>

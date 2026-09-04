@@ -1,42 +1,41 @@
 ---
-import { getCollection, render, type CollectionEntry } from "astro:content";
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import CodeBlock from '../../../../hive/components/mdx/CodeBlock.astro';
+import Link from '../../../../hive/components/mdx/Link.astro';
+import PackageManagerTabs from '../../../../hive/components/mdx/PackageManagerTabs.astro';
+import PackageManagerTab from '../../../../hive/components/mdx/Tab.astro';
+import BlogPostLayout from '../../../../hive/layouts/BlogPostLayout.astro';
+import { getHeadingHtmlBySlug } from '../../../../hive/lib/docs-markdown';
+import { getBlogPosts } from '../../../../hive/lib/get-blog-posts';
 
-import CodeBlock from "../../../../hive/components/mdx/CodeBlock.astro";
-import Link from "../../../../hive/components/mdx/Link.astro";
-import PackageManagerTabs from "../../../../hive/components/mdx/PackageManagerTabs.astro";
-import PackageManagerTab from "../../../../hive/components/mdx/Tab.astro";
-import BlogPostLayout from "../../../../hive/layouts/BlogPostLayout.astro";
-import { getBlogPosts } from "../../../../hive/lib/get-blog-posts";
-import { getHeadingHtmlBySlug } from "../../../../hive/lib/docs-markdown";
-
-type Blog = CollectionEntry<"hiveBlog">;
+type Blog = CollectionEntry<'hiveBlog'>;
 
 const headerImages = import.meta.glob<{ default: { src: string } }>(
-  "../../../../hive/documentation/content/blog/**/header-image.*",
+  '../../../../hive/documentation/content/blog/**/header-image.*',
   { eager: true },
 );
 const mobileImages = import.meta.glob<{ default: { src: string } }>(
-  "../../../../hive/documentation/content/blog/**/mobile-image.*",
+  '../../../../hive/documentation/content/blog/**/mobile-image.*',
   { eager: true },
 );
 const socialImages = import.meta.glob<{ default: { src: string } }>(
-  "../../../../hive/documentation/content/blog/**/opengraph-image.*",
+  '../../../../hive/documentation/content/blog/**/opengraph-image.*',
   { eager: true },
 );
 
 export async function getStaticPaths() {
-  const entries = await getCollection("hiveBlog");
+  const entries = await getCollection('hiveBlog');
 
-  return entries.map((entry) => ({
+  return entries.map(entry => ({
     params: {
-      slug: entry.id.replace(/\/index$/, "").replace(/\.(md|mdx)$/, ""),
+      slug: entry.id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, ''),
     },
     props: { entry },
   }));
 }
 
 function slug(id: string) {
-  return id.replace(/\/index$/, "").replace(/\.(md|mdx)$/, "");
+  return id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
 }
 
 function findAsset(map: Record<string, { default: { src: string } }>, entrySlug: string) {
@@ -44,15 +43,15 @@ function findAsset(map: Record<string, { default: { src: string } }>, entrySlug:
   // when one post's slug is a path segment of another's, or when a post
   // keeps assets in nested subdirectories.
   const match = Object.entries(map).find(([file]) =>
-    file.slice(0, file.lastIndexOf("/")).endsWith(`/content/blog/${entrySlug}`),
+    file.slice(0, file.lastIndexOf('/')).endsWith(`/content/blog/${entrySlug}`),
   );
   return match?.[1]?.default?.src;
 }
 
 const { entry } = Astro.props as { entry: Blog };
 const { Content, headings: renderedHeadings } = await render(entry);
-const headingHtmlBySlug = getHeadingHtmlBySlug(entry.body ?? "", renderedHeadings);
-const headings = renderedHeadings.map((heading) => ({
+const headingHtmlBySlug = getHeadingHtmlBySlug(entry.body ?? '', renderedHeadings);
+const headings = renderedHeadings.map(heading => ({
   ...heading,
   html: headingHtmlBySlug.get(heading.slug) ?? heading.text,
 }));
@@ -68,8 +67,7 @@ const data = entry.data as {
 
 const entrySlug = slug(entry.id);
 const authors = Array.isArray(data.authors) ? data.authors : [data.authors];
-const date =
-  data.date instanceof Date ? data.date.toISOString().slice(0, 10) : String(data.date);
+const date = data.date instanceof Date ? data.date.toISOString().slice(0, 10) : String(data.date);
 
 const allPosts = await getBlogPosts();
 const headerImage = findAsset(headerImages, entrySlug);
@@ -81,7 +79,7 @@ const socialImage = data.ogImage ?? findAsset(socialImages, entrySlug) ?? header
   authors={authors}
   canonical={data.canonical}
   date={date}
-  description={data.description ?? ""}
+  description={data.description ?? ''}
   image={headerImage}
   headings={headings}
   mobileImage={findAsset(mobileImages, entrySlug)}

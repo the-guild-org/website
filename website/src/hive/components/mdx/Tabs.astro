@@ -5,8 +5,8 @@ interface Props {
 }
 
 const { defaultIndex = 0, items = [] } = Astro.props;
-const labels = items.map((item) =>
-  typeof item === "string" || typeof item === "number" ? String(item) : undefined,
+const labels = items.map(item =>
+  typeof item === 'string' || typeof item === 'number' ? String(item) : undefined,
 );
 ---
 
@@ -19,7 +19,7 @@ const labels = items.map((item) =>
       labels.map((label, index) => (
         <button
           aria-selected={index === Number(defaultIndex)}
-          class="fd-tab-trigger -mb-px shrink-0 cursor-pointer whitespace-nowrap rounded-t border-b border-transparent bg-transparent p-2 font-medium leading-5 text-beige-800 transition-colors hover:border-beige-400 hover:text-black focus-visible:outline-2 focus-visible:-outline-offset-2 aria-selected:border-current aria-selected:text-green-900 dark:text-beige-200 dark:hover:border-neutral-800 dark:hover:text-white dark:aria-selected:text-primary"
+          class="fd-tab-trigger text-beige-800 hover:border-beige-400 dark:text-beige-200 dark:aria-selected:text-primary -mb-px shrink-0 cursor-pointer rounded-t border-b border-transparent bg-transparent p-2 leading-5 font-medium whitespace-nowrap transition-colors hover:text-black focus-visible:outline-2 focus-visible:-outline-offset-2 aria-selected:border-current aria-selected:text-green-900 dark:hover:border-neutral-800 dark:hover:text-white"
           data-index={index}
           data-tab-label={label}
           role="tab"
@@ -35,8 +35,8 @@ const labels = items.map((item) =>
 
 <script>
   function initializeTabs(root: HTMLElement) {
-    const tabs = [...root.querySelectorAll<HTMLButtonElement>(":scope > .fd-tabs-list > button")];
-    const panels = [...root.querySelectorAll<HTMLElement>(":scope > .tab-panels > .tab-panel")];
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>(':scope > .fd-tabs-list > button')];
+    const panels = [...root.querySelectorAll<HTMLElement>(':scope > .tab-panels > .tab-panel')];
     const show = (index: number, updateUrl = false) => {
       tabs.forEach((tab, tabIndex) => {
         const selected = tabIndex === index;
@@ -49,17 +49,17 @@ const labels = items.map((item) =>
         const label = tabs[index]?.dataset.tabLabel;
         if (label) {
           const url = new URL(window.location.href);
-          url.searchParams.set("tab", label);
-          window.history.replaceState(window.history.state, "", url);
+          url.searchParams.set('tab', label);
+          window.history.replaceState(window.history.state, '', url);
         }
       }
     };
-    tabs.forEach((tab, index) => tab.addEventListener("click", () => show(index, true)));
+    tabs.forEach((tab, index) => tab.addEventListener('click', () => show(index, true)));
 
-    const tabParam = new URLSearchParams(window.location.search).get("tab");
-    const matchedIndex = tabParam ? tabs.findIndex((tab) => tab.dataset.tabLabel === tabParam) : -1;
+    const tabParam = new URLSearchParams(window.location.search).get('tab');
+    const matchedIndex = tabParam ? tabs.findIndex(tab => tab.dataset.tabLabel === tabParam) : -1;
     show(matchedIndex !== -1 ? matchedIndex : Number(root.dataset.defaultIndex) || 0);
   }
 
-  document.querySelectorAll<HTMLElement>(".fd-tabs").forEach(initializeTabs);
+  document.querySelectorAll<HTMLElement>('.fd-tabs').forEach(initializeTabs);
 </script>

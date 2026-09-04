@@ -1,7 +1,7 @@
 ---
-import { withBase } from "../../lib/base-path";
-import { resolveAuthor } from "../../lib/authors";
-import BlogTagChip from "./BlogTagChip.astro";
+import { resolveAuthor } from '../../lib/authors';
+import { withBase } from '../../lib/base-path';
+import BlogTagChip from './BlogTagChip.astro';
 
 interface Props {
   class?: string;
@@ -13,7 +13,7 @@ interface Props {
     title: string;
   };
   tag?: string | null;
-  variant?: "default" | "featured";
+  variant?: 'default' | 'featured';
 }
 
 const { class: className, post, tag, variant } = Astro.props;
@@ -22,38 +22,45 @@ const date = new Date(post.date);
 
 const firstAuthor = post.authors.map(resolveAuthor).find(Boolean);
 const avatarSrc =
-  firstAuthor?.github &&
-  `https://avatars.githubusercontent.com/${firstAuthor.github}?v=4&s=48`;
+  firstAuthor?.github && `https://avatars.githubusercontent.com/${firstAuthor.github}?v=4&s=48`;
 
-const dateLabel = date.toLocaleDateString("en-US", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
+const dateLabel = date.toLocaleDateString('en-US', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
 });
 ---
 
 <a
   class:list={[
-    "group/card @container/card hive-focus outline-hidden focus-visible:ring-3 hover:ring-beige-400 block rounded-2xl dark:ring-neutral-600 hover:not-focus:ring dark:hover:not-focus:ring-neutral-600",
+    'group/card hive-focus hover:ring-beige-400 @container/card block rounded-2xl outline-hidden hover:not-focus:ring focus-visible:ring-3 dark:ring-neutral-600 dark:hover:not-focus:ring-neutral-600',
     className,
   ]}
   href={withBase(post.route)}
 >
   <article
     class:list={[
-      "text-green-1000 flex h-full flex-col gap-6 rounded-2xl p-6 lg:gap-10 dark:text-white",
-      variant === "featured"
-        ? "bg-beige-200 group-hover/card:bg-beige-300/70 dark:bg-neutral-700/70 dark:hover:bg-neutral-700"
-        : "group-hover/card:bg-beige-200/70 bg-beige-100 dark:bg-neutral-800/70 dark:hover:bg-neutral-800",
+      'text-green-1000 flex h-full flex-col gap-6 rounded-2xl p-6 lg:gap-10 dark:text-white',
+      variant === 'featured'
+        ? 'bg-beige-200 group-hover/card:bg-beige-300/70 dark:bg-neutral-700/70 dark:hover:bg-neutral-700'
+        : 'group-hover/card:bg-beige-200/70 bg-beige-100 dark:bg-neutral-800/70 dark:hover:bg-neutral-800',
     ]}
   >
     <header class="flex items-center justify-between gap-1 text-sm/5 font-medium">
-      <BlogTagChip colorScheme={variant || "default"} inert tag={tag ?? tags[0] ?? ""} />
-      <time class="text-beige-800 whitespace-pre text-sm/5 font-medium" datetime={date.toISOString()}>
+      <BlogTagChip colorScheme={variant || 'default'} inert tag={tag ?? tags[0] ?? ''} />
+      <time
+        class="text-beige-800 text-sm/5 font-medium whitespace-pre"
+        datetime={date.toISOString()}
+      >
         {dateLabel}
       </time>
     </header>
-    <h3 class:list={["text-xl/7 lg:min-h-[120px]", variant === "featured" && "@[288px]/card:text-2xl/8"]}>
+    <h3
+      class:list={[
+        'text-xl/7 lg:min-h-[120px]',
+        variant === 'featured' && '@[288px]/card:text-2xl/8',
+      ]}
+    >
       {title}
     </h3>
     <footer class="mt-auto flex items-center gap-3">
@@ -61,7 +68,14 @@ const dateLabel = date.toLocaleDateString("en-US", {
         avatarSrc && firstAuthor && (
           <>
             <div class="relative size-6">
-              <img alt="" class="rounded-full" height="24" loading="lazy" src={avatarSrc} width="24" />
+              <img
+                alt=""
+                class="rounded-full"
+                height="24"
+                loading="lazy"
+                src={avatarSrc}
+                width="24"
+              />
               <div class="bg-beige-200/70 absolute inset-0 size-full rounded-full opacity-30 mix-blend-hue" />
             </div>
             <span class="text-sm/5 font-medium">{firstAuthor.name}</span>

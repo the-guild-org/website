@@ -1,8 +1,7 @@
 ---
-import type { BlogPost } from "../../lib/get-blog-posts";
-
-import ArrowIcon from "./ArrowIcon.astro";
-import BlogCard from "./BlogCard.astro";
+import type { BlogPost } from '../../lib/get-blog-posts';
+import ArrowIcon from './ArrowIcon.astro';
+import BlogCard from './BlogCard.astro';
 
 interface Props {
   allPosts: BlogPost[];
@@ -19,7 +18,7 @@ const intersectedTags: string[] = [];
 for (let i = 0; i < allPosts.length && postsToShow.length < 2; i++) {
   const post = allPosts[i]!;
   if (post.title !== currentTitle) {
-    const tagsInCommon = post.tags.filter((tag) => currentTags.includes(tag));
+    const tagsInCommon = post.tags.filter(tag => currentTags.includes(tag));
     if (tagsInCommon.length > 0) {
       postsToShow.push(post);
       intersectedTags.push(tagsInCommon[0]!);
@@ -30,7 +29,12 @@ for (let i = 0; i < allPosts.length && postsToShow.length < 2; i++) {
 
 {
   postsToShow.length > 0 && (
-    <section class:list={["flex items-stretch gap-4 py-6 *:flex-1 max-md:flex-col sm:gap-6 lg:p-24", className]}>
+    <section
+      class:list={[
+        'flex items-stretch gap-4 py-6 *:flex-1 max-md:flex-col sm:gap-6 lg:p-24',
+        className,
+      ]}
+    >
       <div class="text-green-1000 md:max-w-[36%] dark:text-neutral-100">
         <header class="flex items-center justify-between max-md:justify-center">
           <h3 class="group text-[32px]/[1.25] tracking-[-0.16px]">Explore</h3>

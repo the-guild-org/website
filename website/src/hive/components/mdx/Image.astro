@@ -1,7 +1,7 @@
 ---
-import organizationImage from "../../documentation/content/docs/schema-registry/get-started/org.png";
-import projectImage from "../../documentation/content/docs/schema-registry/get-started/project.png";
-import signupImage from "../../documentation/content/docs/schema-registry/get-started/signup.png";
+import organizationImage from '../../documentation/content/docs/schema-registry/get-started/org.png';
+import projectImage from '../../documentation/content/docs/schema-registry/get-started/project.png';
+import signupImage from '../../documentation/content/docs/schema-registry/get-started/signup.png';
 
 interface Props {
   alt?: string;
@@ -13,34 +13,26 @@ interface Props {
   [key: string]: unknown;
 }
 
-const {
-  class: className,
-  className: reactClassName,
-  src,
-  width,
-  height,
-  ...props
-} = Astro.props;
+const { class: className, className: reactClassName, src, width, height, ...props } = Astro.props;
 const legacyUrlImages = {
-  "org.png": organizationImage,
-  "project.png": projectImage,
-  "signup.png": signupImage,
+  'org.png': organizationImage,
+  'project.png': projectImage,
+  'signup.png': signupImage,
 };
 const urlMetadata =
   src instanceof URL
-    ? legacyUrlImages[src.pathname.split("/").at(-1) as keyof typeof legacyUrlImages]
+    ? legacyUrlImages[src.pathname.split('/').at(-1) as keyof typeof legacyUrlImages]
     : undefined;
 const metadata =
-  urlMetadata ??
-  (typeof src === "object" && !(src instanceof URL) ? src : undefined);
-const source = typeof src === "string" ? src : metadata?.src;
+  urlMetadata ?? (typeof src === 'object' && !(src instanceof URL) ? src : undefined);
+const source = typeof src === 'string' ? src : metadata?.src;
 const imageWidth = width ?? metadata?.width;
 const imageHeight = height ?? metadata?.height;
 ---
 
 <img
   {...props}
-  class:list={["docs-image", className, reactClassName]}
+  class:list={['docs-image', className, reactClassName]}
   src={source}
   width={imageWidth}
   height={imageHeight}

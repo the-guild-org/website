@@ -1,9 +1,9 @@
 ---
-import { basePath } from "../lib/base-path";
+import { basePath } from '../lib/base-path';
 
 interface Props {
   /** Product section of the current page — search defaults to it. */
-  section?: "Console" | "Gateway" | "Router";
+  section?: 'Console' | 'Gateway' | 'Router';
 }
 
 const { section } = Astro.props;
@@ -13,8 +13,7 @@ const { section } = Astro.props;
   base-url={`${basePath}/`}
   bundle-path={`${basePath}/pagefind/`}
   excerpt-length="24"
-  show-sub-results="true"
-></pagefind-config>
+  show-sub-results="true"></pagefind-config>
 <pagefind-modal reset-on-close data-current-section={section}>
   <pagefind-modal-header>
     <pagefind-input autofocus placeholder="Search documentation"></pagefind-input>
@@ -32,7 +31,7 @@ const { section } = Astro.props;
 <script>
   type PagefindModal = HTMLElement & { open: () => void };
 
-  const modal = document.querySelector<PagefindModal>("pagefind-modal");
+  const modal = document.querySelector<PagefindModal>('pagefind-modal');
   const currentSection = modal?.dataset.currentSection;
 
   // Default the section filter to the section being browsed — searching from
@@ -53,7 +52,7 @@ const { section } = Astro.props;
           };
         }
       ).PagefindComponents;
-      const instance = components?.getInstanceManager?.()?.getInstance?.("default");
+      const instance = components?.getInstanceManager?.()?.getInstance?.('default');
       instance?.triggerFilters?.({ section: [currentSection] });
     } catch {
       // Search stays usable without the contextual default.
@@ -61,25 +60,29 @@ const { section } = Astro.props;
   };
 
   const openSearch = async () => {
-    await customElements.whenDefined("pagefind-modal");
+    await customElements.whenDefined('pagefind-modal');
     modal?.open();
     applySectionFilter();
   };
 
-  document.querySelectorAll<HTMLButtonElement>(".docs-search-trigger").forEach((trigger) => {
-    trigger.addEventListener("click", openSearch);
+  document.querySelectorAll<HTMLButtonElement>('.docs-search-trigger').forEach(trigger => {
+    trigger.addEventListener('click', openSearch);
   });
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key.toLowerCase() !== "k" || !(event.metaKey || event.ctrlKey)) return;
-    if (event.target instanceof HTMLElement && event.target.matches("input, textarea, [contenteditable=true]")) return;
+  document.addEventListener('keydown', event => {
+    if (event.key.toLowerCase() !== 'k' || !(event.metaKey || event.ctrlKey)) return;
+    if (
+      event.target instanceof HTMLElement &&
+      event.target.matches('input, textarea, [contenteditable=true]')
+    )
+      return;
     event.preventDefault();
     openSearch();
   });
 
-  if (navigator.userAgent.includes("Win")) {
-    document.querySelectorAll<HTMLElement>(".docs-search-shortcut").forEach((shortcut) => {
-      shortcut.textContent = "Ctrl K";
+  if (navigator.userAgent.includes('Win')) {
+    document.querySelectorAll<HTMLElement>('.docs-search-shortcut').forEach(shortcut => {
+      shortcut.textContent = 'Ctrl K';
     });
   }
 </script>

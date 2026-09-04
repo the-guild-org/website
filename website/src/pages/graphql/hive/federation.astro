@@ -1,51 +1,50 @@
 ---
-import { withBase } from "../../../hive/lib/base-path";
-import SiteFooter from "../../../hive/components/SiteFooter.astro";
-import SiteNavigation from "../../../hive/components/SiteNavigation.astro";
-import BaseHead from "../../../hive/components/BaseHead.astro";
-import "../../../hive/styles/global.css";
-
-import federationDiagram from "../../../hive/documentation/src/routes/_landing/_light-only/federation/federation-diagram.png";
-import ogImage from "../../../hive/documentation/src/routes/_landing/_light-only/federation/opengraph-image.png";
-import queryImage from "../../../hive/documentation/src/routes/_landing/_light-only/federation/query.png";
-import queryResultImage from "../../../hive/documentation/src/routes/_landing/_light-only/federation/query-result.png";
-import subgraphsProductsImage from "../../../hive/documentation/src/routes/_landing/_light-only/federation/subgraphs-products.png";
-import subgraphsReviewsImage from "../../../hive/documentation/src/routes/_landing/_light-only/federation/subgraphs-reviews.png";
-import supergraphSchemaImage from "../../../hive/documentation/src/routes/_landing/_light-only/federation/supergraph-schema.png";
+import BaseHead from '../../../hive/components/BaseHead.astro';
+import SiteFooter from '../../../hive/components/SiteFooter.astro';
+import SiteNavigation from '../../../hive/components/SiteNavigation.astro';
+import { withBase } from '../../../hive/lib/base-path';
+import '../../../hive/styles/global.css';
+import federationDiagram from '../../../hive/documentation/src/routes/_landing/_light-only/federation/federation-diagram.png';
+import ogImage from '../../../hive/documentation/src/routes/_landing/_light-only/federation/opengraph-image.png';
+import queryResultImage from '../../../hive/documentation/src/routes/_landing/_light-only/federation/query-result.png';
+import queryImage from '../../../hive/documentation/src/routes/_landing/_light-only/federation/query.png';
+import subgraphsProductsImage from '../../../hive/documentation/src/routes/_landing/_light-only/federation/subgraphs-products.png';
+import subgraphsReviewsImage from '../../../hive/documentation/src/routes/_landing/_light-only/federation/subgraphs-reviews.png';
+import supergraphSchemaImage from '../../../hive/documentation/src/routes/_landing/_light-only/federation/supergraph-schema.png';
 
 const faqs: [string, string[]][] = [
   [
-    "What is the difference between schema stitching and federation in GraphQL?",
+    'What is the difference between schema stitching and federation in GraphQL?',
     [
-      "<strong class=\"text-green-1000\">Schema Stitching</strong> manually combines multiple GraphQL schemas through a gateway, requiring explicit definitions for schema merging and data fetching.",
-      "<strong class=\"text-green-1000\">GraphQL federation</strong>, however, is an automated approach where independent services (called subgraphs) define their own schemas and resolvers, which are automatically composed into a unified schema (supergraph) by a process called schema composition, using special directives to manage cross-service references, and a gateway to route queries to the appropriate subgraphs.",
+      '<strong class="text-green-1000">Schema Stitching</strong> manually combines multiple GraphQL schemas through a gateway, requiring explicit definitions for schema merging and data fetching.',
+      '<strong class="text-green-1000">GraphQL federation</strong>, however, is an automated approach where independent services (called subgraphs) define their own schemas and resolvers, which are automatically composed into a unified schema (supergraph) by a process called schema composition, using special directives to manage cross-service references, and a gateway to route queries to the appropriate subgraphs.',
     ],
   ],
   [
-    "What is the difference between BFF and Federation in GraphQL?",
+    'What is the difference between BFF and Federation in GraphQL?',
     [
-      "<strong class=\"text-green-1000\">BFF</strong> (Backend-for-Frontend) creates custom backends for specific frontend clients (like mobile or web), tailoring data and logic to each client's needs.",
-      "In contrast, <strong class=\"text-green-1000\">GraphQL Federation</strong> composes multiple GraphQL services into a single API, allowing teams to manage parts of a schema independently while providing a unified API.",
-      "BFF focuses on client-specific optimization, while Federation is like having puzzle pieces that fit together to create one complete API.",
+      '<strong class="text-green-1000">BFF</strong> (Backend-for-Frontend) creates custom backends for specific frontend clients (like mobile or web), tailoring data and logic to each client\'s needs.',
+      'In contrast, <strong class="text-green-1000">GraphQL Federation</strong> composes multiple GraphQL services into a single API, allowing teams to manage parts of a schema independently while providing a unified API.',
+      'BFF focuses on client-specific optimization, while Federation is like having puzzle pieces that fit together to create one complete API.',
     ],
   ],
   [
-    "Which companies use GraphQL Federation in production?",
+    'Which companies use GraphQL Federation in production?',
     [
-      "Many industry leaders successfully use GraphQL federation at scale. Notable examples include <a class=\"hive-focus underline underline-offset-2\" href=\"https://netflixtechblog.com/how-netflix-scales-its-api-with-graphql-federation-part-1-ae3557c187e2\" target=\"_blank\" rel=\"noreferrer\" title=\"How Netflix Scales its API with GraphQL Federation\"><strong class=\"text-green-1000\">Netlifx</strong></a>, <a class=\"hive-focus underline underline-offset-2\" href=\"https://youtu.be/kpeVT7J6Bsw?si=srGWsoxf3kTmneTu&amp;t=79\" target=\"_blank\" rel=\"noreferrer\" title=\"Schema First, Code First, or Both? Adopting Schema First Development - Dan Adajian, Expedia Group\"><strong class=\"text-green-1000\">Expedia Group</strong></a>, <a class=\"hive-focus underline underline-offset-2\" href=\"https://www.apollographql.com/blog/volvo-cars-drives-into-the-future-of-online-car-shopping-with-the-supergraph\" target=\"_blank\" rel=\"noreferrer\" title=\"Volvo drives into the future of online car shopping with the supergraph\"><strong class=\"text-green-1000\">Volvo</strong></a>, and <a class=\"hive-focus underline underline-offset-2\" href=\"https://youtu.be/2KsP_x50tGk?si=mu-MOG-xZQSDNDjh&amp;t=478\" target=\"_blank\" rel=\"noreferrer\" title=\"Deep Learnings Migrating legacy services to Federated GraphQL - Christian Ernst, Booking.com\"><strong class=\"text-green-1000\">Booking</strong></a>. These companies prove that Federation works reliably for large-scale production applications.",
+      'Many industry leaders successfully use GraphQL federation at scale. Notable examples include <a class="hive-focus underline underline-offset-2" href="https://netflixtechblog.com/how-netflix-scales-its-api-with-graphql-federation-part-1-ae3557c187e2" target="_blank" rel="noreferrer" title="How Netflix Scales its API with GraphQL Federation"><strong class="text-green-1000">Netlifx</strong></a>, <a class="hive-focus underline underline-offset-2" href="https://youtu.be/kpeVT7J6Bsw?si=srGWsoxf3kTmneTu&amp;t=79" target="_blank" rel="noreferrer" title="Schema First, Code First, or Both? Adopting Schema First Development - Dan Adajian, Expedia Group"><strong class="text-green-1000">Expedia Group</strong></a>, <a class="hive-focus underline underline-offset-2" href="https://www.apollographql.com/blog/volvo-cars-drives-into-the-future-of-online-car-shopping-with-the-supergraph" target="_blank" rel="noreferrer" title="Volvo drives into the future of online car shopping with the supergraph"><strong class="text-green-1000">Volvo</strong></a>, and <a class="hive-focus underline underline-offset-2" href="https://youtu.be/2KsP_x50tGk?si=mu-MOG-xZQSDNDjh&amp;t=478" target="_blank" rel="noreferrer" title="Deep Learnings Migrating legacy services to Federated GraphQL - Christian Ernst, Booking.com"><strong class="text-green-1000">Booking</strong></a>. These companies prove that Federation works reliably for large-scale production applications.',
     ],
   ],
   [
-    "How to federate a monolithic GraphQL API?",
+    'How to federate a monolithic GraphQL API?',
     [
-      "Treat your GraphQL API as a single subgraph and use a federation gateway on top. Start decomposition process by identifying clear domain boundaries within your schema and extract them into a separate services. Start with a schema that has minimal dependencies and gradually move to other parts of the schema.",
-      "Learn how <strong class=\"text-green-1000\">Coinbase</strong> transitioned from a monolith GraphQL API to GraphQL Federation in <a class=\"hive-focus underline underline-offset-2\" href=\"https://www.youtube.com/watch?v=OIIIMg7Trc0\" target=\"_blank\" rel=\"noreferrer\" title=\"Coinbase journey to GraphQL Federation\"><strong class=\"text-green-1000\">this conference talk</strong></a>.",
+      'Treat your GraphQL API as a single subgraph and use a federation gateway on top. Start decomposition process by identifying clear domain boundaries within your schema and extract them into a separate services. Start with a schema that has minimal dependencies and gradually move to other parts of the schema.',
+      'Learn how <strong class="text-green-1000">Coinbase</strong> transitioned from a monolith GraphQL API to GraphQL Federation in <a class="hive-focus underline underline-offset-2" href="https://www.youtube.com/watch?v=OIIIMg7Trc0" target="_blank" rel="noreferrer" title="Coinbase journey to GraphQL Federation"><strong class="text-green-1000">this conference talk</strong></a>.',
     ],
   ],
   [
-    "Which GraphQL federation gateway is fastest?",
+    'Which GraphQL federation gateway is fastest?',
     [
-      "The answer depends on many factors. We maintain a reproducible benchmark that compares leading routers under constant and stress tests, reporting RPS, p95/p99.9 latency, CPU, and memory. <a class=\"hive-focus underline underline-offset-2\" href=\"https://the-guild.dev/graphql/hive/federation-gateway-performance\" target=\"_blank\" rel=\"noreferrer\">Check the latest results</a>.",
+      'The answer depends on many factors. We maintain a reproducible benchmark that compares leading routers under constant and stress tests, reporting RPS, p95/p99.9 latency, CPU, and memory. <a class="hive-focus underline underline-offset-2" href="https://the-guild.dev/graphql/hive/federation-gateway-performance" target="_blank" rel="noreferrer">Check the latest results</a>.',
     ],
   ],
 ];
@@ -67,62 +66,174 @@ const faqs: [string, string[]][] = [
     <SiteNavigation />
     <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
       <!-- Hero -->
-      <div class="bg-green-1000 relative isolate flex max-w-360 flex-col gap-6 overflow-hidden rounded-3xl px-4 py-6 sm:pb-28 sm:pt-12 md:gap-8 lg:pb-[168px] lg:pt-24 mx-4 max-sm:mt-2 md:mx-6">
+      <div
+        class="bg-green-1000 relative isolate mx-4 flex max-w-360 flex-col gap-6 overflow-hidden rounded-3xl px-4 py-6 max-sm:mt-2 sm:pt-12 sm:pb-28 md:mx-6 md:gap-8 lg:pt-24 lg:pb-[168px]"
+      >
         <div class="pointer-events-none absolute inset-0 overflow-hidden">
-          <svg class="pointer-events-none absolute left-[-46px] top-[-20px] size-[200px] rotate-180 md:left-[-186px] md:top-[-76px] md:size-auto" height="432" preserveAspectRatio="xMidYMid meet" viewBox="0 0 432 432" width="432" xmlns="http://www.w3.org/2000/svg">
-            <path d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z" fill="url(#federation-hero-arch-a)" stroke="url(#federation-hero-arch-b)" stroke-width=".5"></path>
+          <svg
+            class="pointer-events-none absolute top-[-20px] left-[-46px] size-[200px] rotate-180 md:top-[-76px] md:left-[-186px] md:size-auto"
+            height="432"
+            preserveAspectRatio="xMidYMid meet"
+            viewBox="0 0 432 432"
+            width="432"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z"
+              fill="url(#federation-hero-arch-a)"
+              stroke="url(#federation-hero-arch-b)"
+              stroke-width=".5"></path>
           </svg>
-          <svg class="pointer-events-none absolute bottom-0 right-[-53px] size-[200px] md:-bottom-32 md:size-auto lg:bottom-0 lg:right-[-72px]" height="432" preserveAspectRatio="xMidYMid meet" viewBox="0 0 432 432" width="432" xmlns="http://www.w3.org/2000/svg">
-            <path d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z" fill="url(#federation-hero-arch-a)" stroke="url(#federation-hero-arch-b)" stroke-width=".5"></path>
+          <svg
+            class="pointer-events-none absolute right-[-53px] bottom-0 size-[200px] md:-bottom-32 md:size-auto lg:right-[-72px] lg:bottom-0"
+            height="432"
+            preserveAspectRatio="xMidYMid meet"
+            viewBox="0 0 432 432"
+            width="432"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z"
+              fill="url(#federation-hero-arch-a)"
+              stroke="url(#federation-hero-arch-b)"
+              stroke-width=".5"></path>
           </svg>
           <svg class="absolute -z-10" height="432" viewBox="0 0 432 432" width="432">
             <defs>
-              <linearGradient gradientUnits="userSpaceOnUse" id="federation-hero-arch-a" x1="48.5" x2="302.5" y1="53.5" y2="341"><stop stop-color="#fff" stop-opacity=".1"></stop><stop offset="1" stop-color="#fff" stop-opacity=".3"></stop></linearGradient>
-              <linearGradient gradientUnits="userSpaceOnUse" id="federation-hero-arch-b" x1="1" x2="431" y1="1" y2="431"><stop stop-color="#fff" stop-opacity=".1"></stop><stop offset="1" stop-color="#fff" stop-opacity=".4"></stop></linearGradient>
+              <linearGradient
+                gradientUnits="userSpaceOnUse"
+                id="federation-hero-arch-a"
+                x1="48.5"
+                x2="302.5"
+                y1="53.5"
+                y2="341"
+                ><stop stop-color="#fff" stop-opacity=".1"></stop><stop
+                  offset="1"
+                  stop-color="#fff"
+                  stop-opacity=".3"></stop></linearGradient
+              >
+              <linearGradient
+                gradientUnits="userSpaceOnUse"
+                id="federation-hero-arch-b"
+                x1="1"
+                x2="431"
+                y1="1"
+                y2="431"
+                ><stop stop-color="#fff" stop-opacity=".1"></stop><stop
+                  offset="1"
+                  stop-color="#fff"
+                  stop-opacity=".4"></stop></linearGradient
+              >
             </defs>
           </svg>
         </div>
 
-        <h1 class="group text-4xl leading-[1.2] md:text-[4rem] md:leading-[1.1875] tracking-[-0.64px] mx-auto max-w-3xl text-balance text-center text-white">
+        <h1
+          class="group mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance text-white md:text-[4rem] md:leading-[1.1875]"
+        >
           GraphQL Federation
         </h1>
         <p class="mx-auto w-[512px] max-w-[80%] text-center leading-6 text-white/80">
-          Learn what GraphQL Federation is and how to combine multiple GraphQL APIs called subgraphs into one unified API (supergraph), and serve data from a single endpoint using a GraphQL gateway.
+          Learn what GraphQL Federation is and how to combine multiple GraphQL APIs called subgraphs
+          into one unified API (supergraph), and serve data from a single endpoint using a GraphQL
+          gateway.
         </p>
         <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
-          <a class="relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 bg-primary hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40 sm:w-fit" href={withBase("/")} title="Learn about our Open-Source GraphQL Federation Solution - Hive">
+          <a
+            class="text-green-1000 bg-primary relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40 sm:w-fit"
+            href={withBase('/')}
+            title="Learn about our Open-Source GraphQL Federation Solution - Hive"
+          >
             <span class="absolute inset-0 rounded-lg border border-green-800"></span>
             Try Hive for Federation
           </a>
-          <a class="relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 bg-green-300 hover:bg-green-200 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-300/40 sm:w-fit" data-contact-link href="https://the-guild.dev/contact" title="Contact our experts to learn more about GraphQL Federation">
+          <a
+            class="text-green-1000 relative flex items-center justify-center gap-2 rounded-lg bg-green-300 px-6 py-3 leading-6 font-medium text-nowrap hover:bg-green-200 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-300/40 sm:w-fit"
+            data-contact-link
+            href="https://the-guild.dev/contact"
+            title="Contact our experts to learn more about GraphQL Federation"
+          >
             <span class="absolute inset-0 rounded-lg border border-green-800"></span>
             Contact an Expert
           </a>
         </div>
 
         <div class="pointer-events-none absolute inset-0 overflow-hidden">
-          <svg class="pointer-events-none absolute right-0 top-[-22px] overflow-visible firefox-highlight-fix" fill="#86B6C1" height="674" viewBox="0 0 895 674" width="895" xmlns="http://www.w3.org/2000/svg">
-            <g filter="url(#federation-hero-highlight-blur)"><path d="M350 280.534C350 296.208 356.24 311.261 367.33 322.351L453.447 408.468L463.532 418.553L549.649 504.67C560.739 515.76 575.792 522 591.466 522L894 522L894 408.468L552.251 408.468C503.249 408.468 463.532 368.751 463.532 319.749L463.532 -22L350 -22L350 280.534Z"></path></g>
-            <defs><filter color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" height="1244" id="federation-hero-highlight-blur" width="1244" x="-3.05176e-05" y="-372"><feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood><feBlend in="SourceGraphic" in2="BackgroundImageFix" mode="normal" result="shape"></feBlend><feGaussianBlur result="effect1_foregroundBlur" stdDeviation="175"></feGaussianBlur></filter></defs>
+          <svg
+            class="firefox-highlight-fix pointer-events-none absolute top-[-22px] right-0 overflow-visible"
+            fill="#86B6C1"
+            height="674"
+            viewBox="0 0 895 674"
+            width="895"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g filter="url(#federation-hero-highlight-blur)"
+              ><path
+                d="M350 280.534C350 296.208 356.24 311.261 367.33 322.351L453.447 408.468L463.532 418.553L549.649 504.67C560.739 515.76 575.792 522 591.466 522L894 522L894 408.468L552.251 408.468C503.249 408.468 463.532 368.751 463.532 319.749L463.532 -22L350 -22L350 280.534Z"
+              ></path></g
+            >
+            <defs
+              ><filter
+                color-interpolation-filters="sRGB"
+                filterUnits="userSpaceOnUse"
+                height="1244"
+                id="federation-hero-highlight-blur"
+                width="1244"
+                x="-3.05176e-05"
+                y="-372"
+                ><feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood><feBlend
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  mode="normal"
+                  result="shape"></feBlend><feGaussianBlur
+                  result="effect1_foregroundBlur"
+                  stdDeviation="175"></feGaussianBlur></filter
+              ></defs
+            >
           </svg>
         </div>
       </div>
 
       <!-- Intro -->
       <div class="relative mt-6 sm:mt-[-72px]">
-        <section class="border-beige-400 isolate mx-auto w-[1200px] max-w-full rounded-3xl bg-white sm:max-w-[calc(100%-4rem)] sm:border sm:p-6">
-          <div class="relative mx-auto flex w-[1392px] max-w-full flex-col gap-x-4 gap-y-6 md:gap-y-12 lg:flex-row [@media(min-width:1400px)]:gap-x-[120px]">
+        <section
+          class="border-beige-400 isolate mx-auto w-[1200px] max-w-full rounded-3xl bg-white sm:max-w-[calc(100%-4rem)] sm:border sm:p-6"
+        >
+          <div
+            class="relative mx-auto flex w-[1392px] max-w-full flex-col gap-x-4 gap-y-6 md:gap-y-12 lg:flex-row [@media(min-width:1400px)]:gap-x-[120px]"
+          >
             <div class="flex grow flex-col gap-12 px-4 md:px-0 lg:w-[650px]">
-              <h2 class="group text-[40px] leading-[1.2] tracking-[-0.2px] text-green-1000">What is GraphQL Federation?</h2>
+              <h2 class="group text-green-1000 text-[40px] leading-[1.2] tracking-[-0.2px]">
+                What is GraphQL Federation?
+              </h2>
               <div class="mx-auto space-y-4 leading-6 text-green-800 lg:space-y-6">
-                <p>As GraphQL APIs grow, they become harder to maintain. Teams step on each other's toes, deployments get risky, and making changes becomes slow.</p>
-                <p>GraphQL federation solves these issues by letting you break down your monolithic GraphQL API into smaller parts, called subgraphs. Each team can work on their domain independently and deploy at their own pace.</p>
-                <p>Thanks to the process called schema composition, the integrity of those subgraphs is validated and their schemas are combined into one unified schema, the supergraph.</p>
-                <p>GraphQL clients interact with a single http endpoint served by GraphQL gateway (often called GraphQL router) that resolves data of your federated API.</p>
+                <p>
+                  As GraphQL APIs grow, they become harder to maintain. Teams step on each other's
+                  toes, deployments get risky, and making changes becomes slow.
+                </p>
+                <p>
+                  GraphQL federation solves these issues by letting you break down your monolithic
+                  GraphQL API into smaller parts, called subgraphs. Each team can work on their
+                  domain independently and deploy at their own pace.
+                </p>
+                <p>
+                  Thanks to the process called schema composition, the integrity of those subgraphs
+                  is validated and their schemas are combined into one unified schema, the
+                  supergraph.
+                </p>
+                <p>
+                  GraphQL clients interact with a single http endpoint served by GraphQL gateway
+                  (often called GraphQL router) that resolves data of your federated API.
+                </p>
               </div>
             </div>
-            <div class="relative mx-4 overflow-hidden rounded-3xl bg-blue-400 md:ml-6 md:mr-0">
-              <img alt="GraphQL Federation architecture diagram showing multiple clients (mobile, desktop, and laptop) sending queries through a GraphQL gateway to three subgraphs connected to various data sources" class="mx-auto max-h-[400px] w-auto" role="presentation" src={federationDiagram.src} />
+            <div class="relative mx-4 overflow-hidden rounded-3xl bg-blue-400 md:mr-0 md:ml-6">
+              <img
+                alt="GraphQL Federation architecture diagram showing multiple clients (mobile, desktop, and laptop) sending queries through a GraphQL gateway to three subgraphs connected to various data sources"
+                class="mx-auto max-h-[400px] w-auto"
+                role="presentation"
+                src={federationDiagram.src}
+              />
             </div>
           </div>
         </section>
@@ -130,33 +241,95 @@ const faqs: [string, string[]][] = [
 
       <!-- Why Federation -->
       <section class="p-6 sm:py-20 md:py-24">
-        <h2 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] text-balance text-center">Why GraphQL Federation?</h2>
+        <h2
+          class="group text-center text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]"
+        >
+          Why GraphQL Federation?
+        </h2>
         <div class="relative mx-auto mt-4 space-y-2 text-center lg:max-w-[880px]">
-          <p>Federated architecture is a powerful, yet advanced concept. <br />While it introduces additional complexity, the benefits make it a compelling choice for growing organizations.</p>
+          <p>
+            Federated architecture is a powerful, yet advanced concept. <br />While it introduces
+            additional complexity, the benefits make it a compelling choice for growing
+            organizations.
+          </p>
         </div>
         <ul class="mt-6 flex flex-row flex-wrap justify-center gap-2 md:mt-16 md:gap-6">
-          <li class="flex-1 rounded-2xl md:rounded-3xl bg-beige-100 p-6 md:p-12">
-            <div class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"><svg fill="currentColor" height="24" width="24"><path d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"></path></svg></div>
-            <h3 class="mt-4 text-xl font-medium leading-[1.4] text-green-1000 md:mt-6">Domain-Driven Design</h3>
+          <li class="bg-beige-100 flex-1 rounded-2xl p-6 md:rounded-3xl md:p-12">
+            <div
+              class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"
+            >
+              <svg fill="currentColor" height="24" width="24"
+                ><path
+                  d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"
+                ></path></svg
+              >
+            </div>
+            <h3 class="text-green-1000 mt-4 text-xl leading-[1.4] font-medium md:mt-6">
+              Domain-Driven Design
+            </h3>
             <div class="mt-2 space-y-2 text-green-800 md:mt-4">
-              <p>GraphQL federation is perfect for <strong>domain-driven design</strong> or when you want to write GraphQL APIS in <strong>different languages</strong>. It allows teams to contribute data from their isolated GraphQL APIs (subgraphs) to the shared space called <strong>Supergraph</strong>.</p>
-              <p>This way, each team can focus on their domain and iterate faster, without being blocked by other teams.</p>
+              <p>
+                GraphQL federation is perfect for <strong>domain-driven design</strong> or when you want
+                to write GraphQL APIS in <strong>different languages</strong>. It allows teams to
+                contribute data from their isolated GraphQL APIs (subgraphs) to the shared space
+                called <strong>Supergraph</strong>.
+              </p>
+              <p>
+                This way, each team can focus on their domain and iterate faster, without being
+                blocked by other teams.
+              </p>
             </div>
           </li>
-          <li class="flex-1 basis-full rounded-2xl md:basis-0 md:rounded-3xl bg-beige-100 p-6 md:p-12">
-            <div class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"><svg fill="currentColor" height="24" width="24"><path d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"></path></svg></div>
-            <h3 class="mt-4 text-xl font-medium leading-[1.4] text-green-1000 md:mt-6">Scalability</h3>
+          <li
+            class="bg-beige-100 flex-1 basis-full rounded-2xl p-6 md:basis-0 md:rounded-3xl md:p-12"
+          >
+            <div
+              class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"
+            >
+              <svg fill="currentColor" height="24" width="24"
+                ><path
+                  d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"
+                ></path></svg
+              >
+            </div>
+            <h3 class="text-green-1000 mt-4 text-xl leading-[1.4] font-medium md:mt-6">
+              Scalability
+            </h3>
             <div class="mt-2 space-y-2 text-green-800 md:mt-4">
-              <p>Subgraphs can be scaled independently based on their specific requirements, and deployed on their own schedule.</p>
-              <p>Different parts of the API can evolve at different paces, and making changes in the GraphQL schema no longer requires coordination between teams.</p>
+              <p>
+                Subgraphs can be scaled independently based on their specific requirements, and
+                deployed on their own schedule.
+              </p>
+              <p>
+                Different parts of the API can evolve at different paces, and making changes in the
+                GraphQL schema no longer requires coordination between teams.
+              </p>
             </div>
           </li>
-          <li class="flex-1 basis-full rounded-2xl md:rounded-3xl lg:basis-0 bg-beige-100 p-6 md:p-12">
-            <div class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"><svg fill="currentColor" height="24" width="24"><path d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"></path></svg></div>
-            <h3 class="mt-4 text-xl font-medium leading-[1.4] text-green-1000 md:mt-6">Unified API</h3>
+          <li
+            class="bg-beige-100 flex-1 basis-full rounded-2xl p-6 md:rounded-3xl md:p-12 lg:basis-0"
+          >
+            <div
+              class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"
+            >
+              <svg fill="currentColor" height="24" width="24"
+                ><path
+                  d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"
+                ></path></svg
+              >
+            </div>
+            <h3 class="text-green-1000 mt-4 text-xl leading-[1.4] font-medium md:mt-6">
+              Unified API
+            </h3>
             <div class="mt-2 space-y-2 text-green-800 md:mt-4">
-              <p>Clients interact with a single endpoint, served by a <strong>GraphQL Gateway</strong> (sometimes called Router).</p>
-              <p>The complexity of distributed systems is hidden from the client, and the gateway ensures that every query reaches its destination.</p>
+              <p>
+                Clients interact with a single endpoint, served by a <strong>GraphQL Gateway</strong
+                > (sometimes called Router).
+              </p>
+              <p>
+                The complexity of distributed systems is hidden from the client, and the gateway
+                ensures that every query reaches its destination.
+              </p>
             </div>
           </li>
         </ul>
@@ -165,25 +338,84 @@ const faqs: [string, string[]][] = [
       <!-- How Federation Works -->
       <div class="mx-4 md:mx-6">
         <div>
-          <h2 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] text-center">How GraphQL Federation Works?</h2>
+          <h2
+            class="group text-center text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]"
+          >
+            How GraphQL Federation Works?
+          </h2>
           <div class="relative mx-auto mt-4 space-y-2 text-center lg:max-w-[880px]">
-            <p>GraphQL Federation creates a unified API thanks to three key components: subgraphs (individual service APIs), a composition layer that validates and combines schemas, and a gateway that routes client requests across the distributed system.</p>
+            <p>
+              GraphQL Federation creates a unified API thanks to three key components: subgraphs
+              (individual service APIs), a composition layer that validates and combines schemas,
+              and a gateway that routes client requests across the distributed system.
+            </p>
           </div>
         </div>
         <div class="mt-6 md:mt-16">
           <!-- Subgraphs -->
-          <section class="relative isolate max-w-full rounded-none px-4 py-6 lg:px-8 lg:py-24 xl:px-16 [@media(min-width:1358px)]:px-24 flex flex-col gap-6 lg:flex-row lg:gap-12 bg-beige-100 rounded-3xl rounded-b-none">
+          <section
+            class="bg-beige-100 relative isolate flex max-w-full flex-col gap-6 rounded-3xl rounded-none rounded-b-none px-4 py-6 lg:flex-row lg:gap-12 lg:px-8 lg:py-24 xl:px-16 [@media(min-width:1358px)]:px-24"
+          >
             <div class="mx-auto flex max-w-full shrink flex-col flex-wrap justify-center gap-x-2">
-              <h3 class="group text-[40px] leading-[1.2] tracking-[-0.2px] max-w-full text-balance text-green-1000">Subgraphs</h3>
-              <div class="mt-4 max-w-full space-y-2 lg:mt-6 text-green-800">
-                <p>GraphQL federation revolutionizes API development through subgraphs - standalone GraphQL APIs that form its foundation. In a GraphQL federation architecture, each subgraph can be <strong class="text-green-1000">developed in any language or framework</strong> and <strong class="text-green-1000">deployed independently</strong> from other components, making it a powerful choice for modern applications.</p>
-                <h4 class="pt-2 text-lg font-semibold text-green-1000">Defining Subgraph Schemas</h4>
-                <p>GraphQL federation enables subgraphs to contribute fields to shared types through the <code class="font-mono text-green-1000">@key</code> directive.</p>
-                <p>In the presented example, both subgraphs define the <code class="font-mono text-green-1000">Product</code> type with a shared <code class="font-mono text-green-1000">id</code> field marked by <code class="font-mono text-green-1000">@key(fields: "id")</code>. The "products" subgraph does not own the <code class="font-mono text-green-1000">Product</code> type, it contributes the <code class="font-mono text-green-1000">name</code> and <code class="font-mono text-green-1000">price</code> fields. Meanwhile, the "reviews" subgraph extends this type by contributing the <code class="font-mono text-green-1000">reviews</code> field.</p>
-                <p>This powerful feature allows teams to evolve their portions of the schema independently while maintaining a cohesive API. When a client queries for a<code class="font-mono text-green-1000">Product.reviews</code>, the federation layer automatically combines data from both subgraphs using the <code class="font-mono text-green-1000">id</code> as the joining key.</p>
-                <h4 class="pt-2 text-lg font-semibold text-green-1000">Comparing Federation to Monolithic GraphQL API</h4>
-                <p>Unlike traditional monolithic GraphQL APIs where teams are constrained to a single codebase, language, and tech stack, GraphQL federation offers flexibility. While monolithic approaches do provide benefits through shared knowledge and easier team collaboration, they come with significant limitations that GraphQL federation specifically addresses.</p>
-                <p>The challenges of monolithic GraphQL APIs include slower development cycles due to deployment queues, and reduced reliability where a single change can impact the performance or stability of the entire API. GraphQL federation transforms these pain points by introducing a more modular approach where each team gains control over their portion of the API.</p>
+              <h3
+                class="group text-green-1000 max-w-full text-[40px] leading-[1.2] tracking-[-0.2px] text-balance"
+              >
+                Subgraphs
+              </h3>
+              <div class="mt-4 max-w-full space-y-2 text-green-800 lg:mt-6">
+                <p>
+                  GraphQL federation revolutionizes API development through subgraphs - standalone
+                  GraphQL APIs that form its foundation. In a GraphQL federation architecture, each
+                  subgraph can be <strong class="text-green-1000"
+                    >developed in any language or framework</strong
+                  > and <strong class="text-green-1000">deployed independently</strong> from other components,
+                  making it a powerful choice for modern applications.
+                </p>
+                <h4 class="text-green-1000 pt-2 text-lg font-semibold">
+                  Defining Subgraph Schemas
+                </h4>
+                <p>
+                  GraphQL federation enables subgraphs to contribute fields to shared types through
+                  the <code class="text-green-1000 font-mono">@key</code> directive.
+                </p>
+                <p>
+                  In the presented example, both subgraphs define the <code
+                    class="text-green-1000 font-mono">Product</code
+                  > type with a shared <code class="text-green-1000 font-mono">id</code> field marked
+                  by <code class="text-green-1000 font-mono">@key(fields: "id")</code>. The
+                  "products" subgraph does not own the <code class="text-green-1000 font-mono"
+                    >Product</code
+                  > type, it contributes the <code class="text-green-1000 font-mono">name</code> and <code
+                    class="text-green-1000 font-mono">price</code
+                  > fields. Meanwhile, the "reviews" subgraph extends this type by contributing the <code
+                    class="text-green-1000 font-mono">reviews</code
+                  > field.
+                </p>
+                <p>
+                  This powerful feature allows teams to evolve their portions of the schema
+                  independently while maintaining a cohesive API. When a client queries for a<code
+                    class="text-green-1000 font-mono">Product.reviews</code
+                  >, the federation layer automatically combines data from both subgraphs using the <code
+                    class="text-green-1000 font-mono">id</code
+                  > as the joining key.
+                </p>
+                <h4 class="text-green-1000 pt-2 text-lg font-semibold">
+                  Comparing Federation to Monolithic GraphQL API
+                </h4>
+                <p>
+                  Unlike traditional monolithic GraphQL APIs where teams are constrained to a single
+                  codebase, language, and tech stack, GraphQL federation offers flexibility. While
+                  monolithic approaches do provide benefits through shared knowledge and easier team
+                  collaboration, they come with significant limitations that GraphQL federation
+                  specifically addresses.
+                </p>
+                <p>
+                  The challenges of monolithic GraphQL APIs include slower development cycles due to
+                  deployment queues, and reduced reliability where a single change can impact the
+                  performance or stability of the entire API. GraphQL federation transforms these
+                  pain points by introducing a more modular approach where each team gains control
+                  over their portion of the API.
+                </p>
                 <p>Key advantages of GraphQL federation include:</p>
                 <ul class="list-inside list-disc space-y-2">
                   <li>Teams maintain complete control over their specific GraphQL API domains</li>
@@ -191,62 +423,174 @@ const faqs: [string, string[]][] = [
                   <li>Each subgraph can be updated on its own schedule</li>
                   <li>Resources can be allocated precisely where needed</li>
                 </ul>
-                <p>By implementing GraphQL federation, organizations can break free from monolithic constraints while maintaining the benefits of a unified GraphQL API.</p>
+                <p>
+                  By implementing GraphQL federation, organizations can break free from monolithic
+                  constraints while maintaining the benefits of a unified GraphQL API.
+                </p>
               </div>
-              <a class="relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-white bg-green-800 hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 mt-6 max-xl:order-1 max-md:w-full xl:mt-12" href={withBase("/docs/schema-registry/get-started/apollo-federation#publish-subgraphs")} title="Start by publishing your subgraphs to Hive">
+              <a
+                class="relative mt-6 flex items-center justify-center gap-2 rounded-lg bg-green-800 px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 max-xl:order-1 max-md:w-full xl:mt-12"
+                href={withBase(
+                  '/docs/schema-registry/get-started/apollo-federation#publish-subgraphs',
+                )}
+                title="Start by publishing your subgraphs to Hive"
+              >
                 <span class="absolute inset-0 rounded-lg border border-green-800"></span>
                 How to publish subgraphs
-                <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z"></path></svg>
+                <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"
+                  ><path
+                    d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z"
+                  ></path></svg
+                >
               </a>
             </div>
-            <div class="mx-auto shrink-0 lg:w-[350px] xl:w-[450px] text-green-800">
-              <div class="flex flex-row flex-wrap justify-normal gap-4 lg:flex-col lg:justify-start lg:gap-12">
-                <div class="min-w-[300px] max-w-[450px] shrink">
-                  <img alt="GraphQL schema for a products subgraph showing a Query type that returns an array of Products, and a Product type with id, name, and price fields, marked with a Federation @key directive" class="z-20 block h-auto w-full rounded-xl shadow-xl" role="presentation" src={subgraphsProductsImage.src} />
-                  <p class="mt-4 text-center text-sm">The Products subgraph written in Go language, allows to query for products and their details like name and price.</p>
+            <div class="mx-auto shrink-0 text-green-800 lg:w-[350px] xl:w-[450px]">
+              <div
+                class="flex flex-row flex-wrap justify-normal gap-4 lg:flex-col lg:justify-start lg:gap-12"
+              >
+                <div class="max-w-[450px] min-w-[300px] shrink">
+                  <img
+                    alt="GraphQL schema for a products subgraph showing a Query type that returns an array of Products, and a Product type with id, name, and price fields, marked with a Federation @key directive"
+                    class="z-20 block h-auto w-full rounded-xl shadow-xl"
+                    role="presentation"
+                    src={subgraphsProductsImage.src}
+                  />
+                  <p class="mt-4 text-center text-sm">
+                    The Products subgraph written in Go language, allows to query for products and
+                    their details like name and price.
+                  </p>
                 </div>
-                <div class="min-w-[300px] max-w-[450px] shrink">
-                  <img alt="GraphQL schema for a reviews subgraph showing the Review type with text and rating fields, and a federated Product type with @key directive and reviews field" class="z-20 block h-auto w-full rounded-xl shadow-xl" role="presentation" src={subgraphsReviewsImage.src} />
-                  <p class="mt-4 text-center text-sm">The Reviews subgraph written in a Java, contributes reviews to the Product type (thanks to the @key directive), making it possible to query for products and their reviews.</p>
+                <div class="max-w-[450px] min-w-[300px] shrink">
+                  <img
+                    alt="GraphQL schema for a reviews subgraph showing the Review type with text and rating fields, and a federated Product type with @key directive and reviews field"
+                    class="z-20 block h-auto w-full rounded-xl shadow-xl"
+                    role="presentation"
+                    src={subgraphsReviewsImage.src}
+                  />
+                  <p class="mt-4 text-center text-sm">
+                    The Reviews subgraph written in a Java, contributes reviews to the Product type
+                    (thanks to the @key directive), making it possible to query for products and
+                    their reviews.
+                  </p>
                 </div>
               </div>
             </div>
           </section>
 
           <!-- Schema Composition and Registry -->
-          <section class="relative isolate max-w-full rounded-none px-4 py-6 lg:px-8 lg:py-24 xl:px-16 [@media(min-width:1358px)]:px-24 flex flex-col gap-6 lg:flex-row lg:gap-12 bg-blue-400 before:absolute before:-top-24 before:left-0 before:hidden before:size-24 before:rounded-bl-3xl before:shadow-[0_48px_0_0] before:content-[''] before:lg:block before:bg-beige-100 before:shadow-blue-400 after:absolute after:right-0 after:top-0 after:hidden after:size-24 after:rounded-tr-3xl after:shadow-[0_-48px_0_0] after:content-[''] after:lg:block after:shadow-beige-100 after:bg-blue-400">
+          <section
+            class="before:bg-beige-100 after:shadow-beige-100 relative isolate flex max-w-full flex-col gap-6 rounded-none bg-blue-400 px-4 py-6 before:absolute before:-top-24 before:left-0 before:hidden before:size-24 before:rounded-bl-3xl before:shadow-[0_48px_0_0] before:shadow-blue-400 before:content-[''] after:absolute after:top-0 after:right-0 after:hidden after:size-24 after:rounded-tr-3xl after:bg-blue-400 after:shadow-[0_-48px_0_0] after:content-[''] lg:flex-row lg:gap-12 lg:px-8 lg:py-24 before:lg:block after:lg:block xl:px-16 [@media(min-width:1358px)]:px-24"
+          >
             <div class="mx-auto flex max-w-full shrink flex-col flex-wrap justify-center gap-x-2">
-              <h3 class="group text-[40px] leading-[1.2] tracking-[-0.2px] max-w-full text-balance text-green-1000">Schema Composition and Registry</h3>
-              <div class="mt-4 max-w-full space-y-2 lg:mt-6 text-green-800">
-                <p>Schema composition is the pillar of GraphQL federation, enabling you to build a unified API across multiple services. It merges subgraph schemas into a single schema, called the supergraph schema.</p>
-                <p>The <strong class="text-green-1000">Supergraph represents the complete, combined graph of all your subgraphs</strong>. It acts as a blueprint of your entire federated GraphQL API, showing how different subgraphs connect and interact. Think of the supergraph as your GraphQL API's source of truth - it defines all available types, fields, and their relationships.</p>
-                <p>What makes GraphQL federation unique is its comprehensive schema validation. The composition process analyzes every subgraph schema, verifying that all types and fields work seamlessly together. <strong class="text-green-1000">This deep analysis enables GraphQL federation to catch potential issues before they reach production, setting it apart from alternatives like <a class="hive-focus underline underline-offset-2" href="https://the-guild.dev/graphql/stitching/docs" target="_blank" rel="noreferrer" title="Learn Schema Stitching">Schema Stitching</a>.</strong></p>
-                <p>During composition in GraphQL federation, the <strong class="text-green-1000">Schema Registry validates all possible operations - queries, mutations, and subscriptions - to ensure the GraphQL gateway can properly resolve them.</strong> This proactive validation is crucial for preventing runtime errors.</p>
-                <p>The Schema Registry plays a vital role in GraphQL federation's workflow. As a centralized repository, it manages subgraph registration, schema validation, and supergraph composition. When implementing GraphQL federation, the <a class="hive-focus underline underline-offset-2" href="https://graphql.org/conf/2024/schedule/af55205b1d68ec3b3d1b1663e4bd2adf/?name=In-House%20Schema%20Registry%20-%20the%20Good%2C%20the%20Bad%2C%20and%20the%20Ugly" target="_blank" rel="noreferrer" title="Learn why your federated GraphQL setup needs a Schema Registry and why you shouldn't build your own">Schema Registry becomes an essential tool for maintaining your distributed GraphQL architecture</a> and ensuring successful composition across all subgraphs.</p>
+              <h3
+                class="group text-green-1000 max-w-full text-[40px] leading-[1.2] tracking-[-0.2px] text-balance"
+              >
+                Schema Composition and Registry
+              </h3>
+              <div class="mt-4 max-w-full space-y-2 text-green-800 lg:mt-6">
+                <p>
+                  Schema composition is the pillar of GraphQL federation, enabling you to build a
+                  unified API across multiple services. It merges subgraph schemas into a single
+                  schema, called the supergraph schema.
+                </p>
+                <p>
+                  The <strong class="text-green-1000"
+                    >Supergraph represents the complete, combined graph of all your subgraphs</strong
+                  >. It acts as a blueprint of your entire federated GraphQL API, showing how
+                  different subgraphs connect and interact. Think of the supergraph as your GraphQL
+                  API's source of truth - it defines all available types, fields, and their
+                  relationships.
+                </p>
+                <p>
+                  What makes GraphQL federation unique is its comprehensive schema validation. The
+                  composition process analyzes every subgraph schema, verifying that all types and
+                  fields work seamlessly together. <strong class="text-green-1000"
+                    >This deep analysis enables GraphQL federation to catch potential issues before
+                    they reach production, setting it apart from alternatives like <a
+                      class="hive-focus underline underline-offset-2"
+                      href="https://the-guild.dev/graphql/stitching/docs"
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Learn Schema Stitching">Schema Stitching</a
+                    >.</strong
+                  >
+                </p>
+                <p>
+                  During composition in GraphQL federation, the <strong class="text-green-1000"
+                    >Schema Registry validates all possible operations - queries, mutations, and
+                    subscriptions - to ensure the GraphQL gateway can properly resolve them.</strong
+                  > This proactive validation is crucial for preventing runtime errors.
+                </p>
+                <p>
+                  The Schema Registry plays a vital role in GraphQL federation's workflow. As a
+                  centralized repository, it manages subgraph registration, schema validation, and
+                  supergraph composition. When implementing GraphQL federation, the <a
+                    class="hive-focus underline underline-offset-2"
+                    href="https://graphql.org/conf/2024/schedule/af55205b1d68ec3b3d1b1663e4bd2adf/?name=In-House%20Schema%20Registry%20-%20the%20Good%2C%20the%20Bad%2C%20and%20the%20Ugly"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Learn why your federated GraphQL setup needs a Schema Registry and why you shouldn't build your own"
+                    >Schema Registry becomes an essential tool for maintaining your distributed
+                    GraphQL architecture</a
+                  > and ensuring successful composition across all subgraphs.
+                </p>
               </div>
-              <a class="relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-white bg-green-800 hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 mt-6 max-xl:order-1 max-md:w-full xl:mt-12" href={withBase("/docs/schema-registry")} title="Learn how to use Schema Registry to compose your schema and validate it">
+              <a
+                class="relative mt-6 flex items-center justify-center gap-2 rounded-lg bg-green-800 px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 max-xl:order-1 max-md:w-full xl:mt-12"
+                href={withBase('/docs/schema-registry')}
+                title="Learn how to use Schema Registry to compose your schema and validate it"
+              >
                 <span class="absolute inset-0 rounded-lg border border-green-800"></span>
                 How to use Schema Registry
-                <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z"></path></svg>
+                <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"
+                  ><path
+                    d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z"
+                  ></path></svg
+                >
               </a>
             </div>
-            <div class="mx-auto shrink-0 lg:w-[350px] xl:w-[450px] text-green-800">
-              <div class="min-w-[300px] max-w-[450px] shrink">
-                <img alt="GraphQL federated schema showing merged Product type with fields from multiple subgraphs, including basic product fields (id, name, price) and nested reviews, demonstrating schema composition in GraphQL Federation" class="z-20 block h-auto w-full rounded-xl shadow-xl" role="presentation" src={supergraphSchemaImage.src} />
-                <p class="mt-4 text-center text-sm">The public GraphQL schema that clients interact with is a combination of subgraph schemas.</p>
+            <div class="mx-auto shrink-0 text-green-800 lg:w-[350px] xl:w-[450px]">
+              <div class="max-w-[450px] min-w-[300px] shrink">
+                <img
+                  alt="GraphQL federated schema showing merged Product type with fields from multiple subgraphs, including basic product fields (id, name, price) and nested reviews, demonstrating schema composition in GraphQL Federation"
+                  class="z-20 block h-auto w-full rounded-xl shadow-xl"
+                  role="presentation"
+                  src={supergraphSchemaImage.src}
+                />
+                <p class="mt-4 text-center text-sm">
+                  The public GraphQL schema that clients interact with is a combination of subgraph
+                  schemas.
+                </p>
               </div>
             </div>
           </section>
 
           <!-- GraphQL Gateway (Router) -->
-          <section class="relative isolate max-w-full rounded-none px-4 py-6 lg:px-8 lg:py-24 xl:px-16 [@media(min-width:1358px)]:px-24 flex flex-col gap-6 lg:flex-row lg:gap-12 bg-green-1000 rounded-3xl rounded-t-none before:absolute before:-top-24 before:left-0 before:hidden before:size-24 before:rounded-bl-3xl before:shadow-[0_48px_0_0] before:content-[''] before:lg:block before:shadow-green-1000 before:bg-blue-400 after:absolute after:right-0 after:top-0 after:hidden after:size-24 after:rounded-tr-3xl after:shadow-[0_-48px_0_0] after:content-[''] after:lg:block after:bg-green-1000 after:shadow-blue-400">
+          <section
+            class="bg-green-1000 before:shadow-green-1000 after:bg-green-1000 relative isolate flex max-w-full flex-col gap-6 rounded-3xl rounded-none rounded-t-none px-4 py-6 before:absolute before:-top-24 before:left-0 before:hidden before:size-24 before:rounded-bl-3xl before:bg-blue-400 before:shadow-[0_48px_0_0] before:content-[''] after:absolute after:top-0 after:right-0 after:hidden after:size-24 after:rounded-tr-3xl after:shadow-[0_-48px_0_0] after:shadow-blue-400 after:content-[''] lg:flex-row lg:gap-12 lg:px-8 lg:py-24 before:lg:block after:lg:block xl:px-16 [@media(min-width:1358px)]:px-24"
+          >
             <div class="mx-auto flex max-w-full shrink flex-col flex-wrap justify-center gap-x-2">
-              <h3 class="group text-[40px] leading-[1.2] tracking-[-0.2px] max-w-full text-balance text-white">GraphQL Gateway (Router)</h3>
-              <div class="mt-4 max-w-full space-y-2 lg:mt-6 text-white/80">
-                <p><strong class="text-white">The core promise of GraphQL federation is to have a unified API and serve data from a single endpoint.</strong> GraphQL gateway, also known as a GraphQL router, enables that.</p>
-                <p>In a federated GraphQL setup, the gateway uses a supergraph schema to retrieve information about the type and field definitions, as well as the subgraphs that resolve them.</p>
+              <h3
+                class="group max-w-full text-[40px] leading-[1.2] tracking-[-0.2px] text-balance text-white"
+              >
+                GraphQL Gateway (Router)
+              </h3>
+              <div class="mt-4 max-w-full space-y-2 text-white/80 lg:mt-6">
+                <p>
+                  <strong class="text-white"
+                    >The core promise of GraphQL federation is to have a unified API and serve data
+                    from a single endpoint.</strong
+                  > GraphQL gateway, also known as a GraphQL router, enables that.
+                </p>
+                <p>
+                  In a federated GraphQL setup, the gateway uses a supergraph schema to retrieve
+                  information about the type and field definitions, as well as the subgraphs that
+                  resolve them.
+                </p>
                 <h4 class="pt-2 text-lg font-semibold text-white">Query Planning</h4>
-                <p>The process of resolving GraphQL requests by the gateway is called query planning.</p>
+                <p>
+                  The process of resolving GraphQL requests by the gateway is called query planning.
+                </p>
                 <p>When the gateway receives a request, it:</p>
                 <ul class="list-inside list-disc space-y-2">
                   <li>Analyzes the incoming GraphQL query</li>
@@ -254,30 +598,110 @@ const faqs: [string, string[]][] = [
                   <li>Orchestrates parallel requests to relevant subgraphs</li>
                   <li>Aggregates returned data into a single response</li>
                 </ul>
-                <h4 class="pt-2 text-lg font-semibold text-white">Essential Features of a Federation Gateway</h4>
-                <p>GraphQL gateway is a critical part of your federated GraphQL setup as it's the entry point for all your GraphQL clients. It has to be fast, reliable and secure.</p>
-                <p>A production-ready GraphQL gateway should offer features like authentication with JSON Web Tokens (JWT), role-based access control (RBAC), and a good observability story. It should be able to handle a large amount of requests.</p>
-                <p>The Guild maintains a reproducible <strong class="text-white">performance benchmark of leading GraphQL gateways</strong>- covering throughput (RPS), latency (p95/p99.9), CPU, memory and resilience to failures.<br /><a class="hive-focus underline underline-offset-2" aria-label="Open the GraphQL federation gateway performance benchmark" href="https://the-guild.dev/graphql/hive/federation-gateway-performance" target="_blank" rel="noreferrer" title="GraphQL federation gateway performance benchmark: methodology and results">See results and methodology</a>.</p>
+                <h4 class="pt-2 text-lg font-semibold text-white">
+                  Essential Features of a Federation Gateway
+                </h4>
+                <p>
+                  GraphQL gateway is a critical part of your federated GraphQL setup as it's the
+                  entry point for all your GraphQL clients. It has to be fast, reliable and secure.
+                </p>
+                <p>
+                  A production-ready GraphQL gateway should offer features like authentication with
+                  JSON Web Tokens (JWT), role-based access control (RBAC), and a good observability
+                  story. It should be able to handle a large amount of requests.
+                </p>
+                <p>
+                  The Guild maintains a reproducible <strong class="text-white"
+                    >performance benchmark of leading GraphQL gateways</strong
+                  >- covering throughput (RPS), latency (p95/p99.9), CPU, memory and resilience to
+                  failures.<br /><a
+                    class="hive-focus underline underline-offset-2"
+                    aria-label="Open the GraphQL federation gateway performance benchmark"
+                    href="https://the-guild.dev/graphql/hive/federation-gateway-performance"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="GraphQL federation gateway performance benchmark: methodology and results"
+                    >See results and methodology</a
+                  >.
+                </p>
                 <h4 class="pt-2 text-lg font-semibold text-white">Specification Compliance</h4>
-                <p>A critical yet <strong class="text-white">often overlooked aspect of the GraphQL gateway is its correctness and compliance with the <a class="hive-focus underline underline-offset-2" href="https://www.apollographql.com/docs/graphos/schema-design/federated-schemas/federation" target="_blank" rel="noreferrer" title="Documentation of Apollo Federation">Apollo Federation</a> specification</strong>. The Federation's effectiveness depends on the gateway's ability to correctly resolve queries, mutations and subscriptions.</p>
-                <p>When choosing a federation gateway, verify its compliance with the Apollo Federation specification. This will help you prevent unexpected runtime behavior and data resolution failures.</p>
-                <p>At <a class="hive-focus underline underline-offset-2" href="https://the-guild.dev" target="_blank" rel="noreferrer" title="Company behind Hive">The Guild</a>, we maintain <a class="hive-focus underline underline-offset-2" href="https://the-guild.dev/graphql/hive/federation-gateway-audit" target="_blank" rel="noreferrer" title="Apollo Federation Gateway Audit">an open-source Federation Testing Suite</a> to verify the gateway's specification compliance. This test suite helps ensure your gateway correctly implements federation features beyond basic directive support.</p>
+                <p>
+                  A critical yet <strong class="text-white"
+                    >often overlooked aspect of the GraphQL gateway is its correctness and
+                    compliance with the <a
+                      class="hive-focus underline underline-offset-2"
+                      href="https://www.apollographql.com/docs/graphos/schema-design/federated-schemas/federation"
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Documentation of Apollo Federation">Apollo Federation</a
+                    > specification</strong
+                  >. The Federation's effectiveness depends on the gateway's ability to correctly
+                  resolve queries, mutations and subscriptions.
+                </p>
+                <p>
+                  When choosing a federation gateway, verify its compliance with the Apollo
+                  Federation specification. This will help you prevent unexpected runtime behavior
+                  and data resolution failures.
+                </p>
+                <p>
+                  At <a
+                    class="hive-focus underline underline-offset-2"
+                    href="https://the-guild.dev"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Company behind Hive">The Guild</a
+                  >, we maintain <a
+                    class="hive-focus underline underline-offset-2"
+                    href="https://the-guild.dev/graphql/hive/federation-gateway-audit"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Apollo Federation Gateway Audit"
+                    >an open-source Federation Testing Suite</a
+                  > to verify the gateway's specification compliance. This test suite helps ensure your
+                  gateway correctly implements federation features beyond basic directive support.
+                </p>
               </div>
-              <a class="relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-white bg-green-800 hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 mt-6 max-xl:order-1 max-md:w-full xl:mt-12" href={withBase("/docs/gateway")} title="Learn how to use Hive Gateway to serve your supergraph to clients">
+              <a
+                class="relative mt-6 flex items-center justify-center gap-2 rounded-lg bg-green-800 px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 max-xl:order-1 max-md:w-full xl:mt-12"
+                href={withBase('/docs/gateway')}
+                title="Learn how to use Hive Gateway to serve your supergraph to clients"
+              >
                 <span class="absolute inset-0 rounded-lg border border-green-800"></span>
                 How to use a GraphQL Gateway
-                <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z"></path></svg>
+                <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"
+                  ><path
+                    d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z"
+                  ></path></svg
+                >
               </a>
             </div>
-            <div class="mx-auto shrink-0 lg:w-[350px] xl:w-[450px] text-white/80">
-              <div class="flex flex-row flex-wrap justify-normal gap-4 lg:flex-col lg:justify-start lg:gap-12">
-                <div class="min-w-[300px] max-w-[450px] shrink">
-                  <img alt="A code snippet of a query sent by a client to the GraphQL gateway" class="z-20 block h-auto w-full rounded-xl shadow-xl" role="presentation" src={queryImage.src} title="A code snippet of a query sent by a client to the GraphQL gateway" />
-                  <p class="mt-4 text-center text-sm">The gateway resolves the query by sending parts of it to the right subgraphs.</p>
+            <div class="mx-auto shrink-0 text-white/80 lg:w-[350px] xl:w-[450px]">
+              <div
+                class="flex flex-row flex-wrap justify-normal gap-4 lg:flex-col lg:justify-start lg:gap-12"
+              >
+                <div class="max-w-[450px] min-w-[300px] shrink">
+                  <img
+                    alt="A code snippet of a query sent by a client to the GraphQL gateway"
+                    class="z-20 block h-auto w-full rounded-xl shadow-xl"
+                    role="presentation"
+                    src={queryImage.src}
+                    title="A code snippet of a query sent by a client to the GraphQL gateway"
+                  />
+                  <p class="mt-4 text-center text-sm">
+                    The gateway resolves the query by sending parts of it to the right subgraphs.
+                  </p>
                 </div>
-                <div class="min-w-[300px] max-w-[450px] shrink">
-                  <img alt="A code snippet of response from the gateway to the client" class="z-20 block h-auto w-full rounded-xl shadow-xl" role="presentation" src={queryResultImage.src} title="A code snippet of response from the gateway to the client" />
-                  <p class="mt-4 text-center text-sm">Client receives the data from the gateway in a single response.</p>
+                <div class="max-w-[450px] min-w-[300px] shrink">
+                  <img
+                    alt="A code snippet of response from the gateway to the client"
+                    class="z-20 block h-auto w-full rounded-xl shadow-xl"
+                    role="presentation"
+                    src={queryResultImage.src}
+                    title="A code snippet of response from the gateway to the client"
+                  />
+                  <p class="mt-4 text-center text-sm">
+                    Client receives the data from the gateway in a single response.
+                  </p>
                 </div>
               </div>
             </div>
@@ -286,39 +710,106 @@ const faqs: [string, string[]][] = [
       </div>
 
       <!-- Why Hive -->
-      <section class="bg-beige-100 mt-6 rounded-3xl px-4 pt-6 sm:py-24 md:px-6 md:py-[120px] mx-4 md:mx-6">
-        <h2 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] text-balance sm:px-6 sm:text-center">Why Choose Hive for GraphQL Federation?</h2>
-        <ul class="flex flex-row flex-wrap justify-center divide-y divide-solid divide-gray-200 sm:mt-6 sm:divide-x sm:divide-y-0 md:mt-16 md:px-6 xl:px-16">
-          <li class="flex-1 text-balance px-0 sm:px-8 sm:py-0 md:px-8 md:py-0">
-            <div class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"><svg fill="currentColor" height="24" width="24"><path d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"></path></svg></div>
-            <h3 class="mt-4 text-xl font-medium leading-[1.4] text-green-1000 md:mt-6">Complete Federation Stack</h3>
+      <section
+        class="bg-beige-100 mx-4 mt-6 rounded-3xl px-4 pt-6 sm:py-24 md:mx-6 md:px-6 md:py-[120px]"
+      >
+        <h2
+          class="group text-4xl leading-[1.2] tracking-[-0.48px] text-balance sm:px-6 sm:text-center md:text-5xl md:leading-[1.16667]"
+        >
+          Why Choose Hive for GraphQL Federation?
+        </h2>
+        <ul
+          class="flex flex-row flex-wrap justify-center divide-y divide-solid divide-gray-200 sm:mt-6 sm:divide-x sm:divide-y-0 md:mt-16 md:px-6 xl:px-16"
+        >
+          <li class="flex-1 px-0 text-balance sm:px-8 sm:py-0 md:px-8 md:py-0">
+            <div
+              class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"
+            >
+              <svg fill="currentColor" height="24" width="24"
+                ><path
+                  d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"
+                ></path></svg
+              >
+            </div>
+            <h3 class="text-green-1000 mt-4 text-xl leading-[1.4] font-medium md:mt-6">
+              Complete Federation Stack
+            </h3>
             <div class="mt-2 space-y-2 text-green-800 md:mt-4">
               <ul class="space-y-2">
-                <li><span class="font-semibold">Gateway — </span>efficiently serve data from your federated graph.</li>
-                <li><span class="font-semibold">Schema Registry — </span>ensure consistency and compatibility across your federated graph.</li>
-                <li><span class="font-semibold">Observability — </span>monitor supergraph performance and schema usage.</li>
+                <li>
+                  <span class="font-semibold">Gateway — </span>efficiently serve data from your
+                  federated graph.
+                </li>
+                <li>
+                  <span class="font-semibold">Schema Registry — </span>ensure consistency and
+                  compatibility across your federated graph.
+                </li>
+                <li>
+                  <span class="font-semibold">Observability — </span>monitor supergraph performance
+                  and schema usage.
+                </li>
               </ul>
             </div>
           </li>
-          <li class="flex-1 basis-full text-balance px-0 sm:basis-0 sm:px-8 sm:py-0 md:px-8 md:py-0">
-            <div class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"><svg fill="currentColor" height="24" width="24"><path d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"></path></svg></div>
-            <h3 class="mt-4 text-xl font-medium leading-[1.4] text-green-1000 md:mt-6">True Open Source</h3>
+          <li
+            class="flex-1 basis-full px-0 text-balance sm:basis-0 sm:px-8 sm:py-0 md:px-8 md:py-0"
+          >
+            <div
+              class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"
+            >
+              <svg fill="currentColor" height="24" width="24"
+                ><path
+                  d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"
+                ></path></svg
+              >
+            </div>
+            <h3 class="text-green-1000 mt-4 text-xl leading-[1.4] font-medium md:mt-6">
+              True Open Source
+            </h3>
             <div class="mt-2 space-y-2 text-green-800 md:mt-4">
               <ul class="space-y-2">
-                <li><span class="font-semibold">No Vendor Lock-in — </span>Every component works independently with other vendors (including Apollo GraphOS).</li>
-                <li><span class="font-semibold">MIT License — </span>All components are available under the permissive MIT license.</li>
-                <li><span class="font-semibold">Full Control — </span>Self-host any component or use our cloud offering.</li>
+                <li>
+                  <span class="font-semibold">No Vendor Lock-in — </span>Every component works
+                  independently with other vendors (including Apollo GraphOS).
+                </li>
+                <li>
+                  <span class="font-semibold">MIT License — </span>All components are available
+                  under the permissive MIT license.
+                </li>
+                <li>
+                  <span class="font-semibold">Full Control — </span>Self-host any component or use
+                  our cloud offering.
+                </li>
               </ul>
             </div>
           </li>
-          <li class="flex-1 text-balance px-0 sm:px-8 sm:py-0 md:px-8 md:py-0">
-            <div class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"><svg fill="currentColor" height="24" width="24"><path d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"></path></svg></div>
-            <h3 class="mt-4 text-xl font-medium leading-[1.4] text-green-1000 md:mt-6">Enterprise Tooling for GraphQL</h3>
+          <li class="flex-1 px-0 text-balance sm:px-8 sm:py-0 md:px-8 md:py-0">
+            <div
+              class="w-fit rounded-lg bg-[linear-gradient(135deg,#68A8B6,#3B736A)] p-[9px] text-white"
+            >
+              <svg fill="currentColor" height="24" width="24"
+                ><path
+                  d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"
+                ></path></svg
+              >
+            </div>
+            <h3 class="text-green-1000 mt-4 text-xl leading-[1.4] font-medium md:mt-6">
+              Enterprise Tooling for GraphQL
+            </h3>
             <div class="mt-2 space-y-2 text-green-800 md:mt-4">
               <ul class="space-y-2">
-                <li><span class="font-semibold">Single Sign-On — </span>Integrated with popular providers like Okta, to enable OpenID Connect login for maximum security.</li>
-                <li><span class="font-semibold">Security and Compliance — </span>Access control with role-based access control (RBAC), JSON Web Tokens (JWT) and Persisted Operations.</li>
-                <li><span class="font-semibold">Audit logs — </span>Keep track of all the changes made to your organization.</li>
+                <li>
+                  <span class="font-semibold">Single Sign-On — </span>Integrated with popular
+                  providers like Okta, to enable OpenID Connect login for maximum security.
+                </li>
+                <li>
+                  <span class="font-semibold">Security and Compliance — </span>Access control with
+                  role-based access control (RBAC), JSON Web Tokens (JWT) and Persisted Operations.
+                </li>
+                <li>
+                  <span class="font-semibold">Audit logs — </span>Keep track of all the changes made
+                  to your organization.
+                </li>
               </ul>
             </div>
           </li>
@@ -326,29 +817,57 @@ const faqs: [string, string[]][] = [
       </section>
 
       <!-- Frequently Asked Questions -->
-      <section class="text-green-1000 flex flex-col gap-8 px-4 py-6 md:px-14 lg:flex-row lg:px-[120px] lg:py-24 mx-4 md:mx-6">
-        <h2 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] basis-1/2">Frequently Asked Questions About GraphQL Federation</h2>
+      <section
+        class="text-green-1000 mx-4 flex flex-col gap-8 px-4 py-6 md:mx-6 md:px-14 lg:flex-row lg:px-[120px] lg:py-24"
+      >
+        <h2
+          class="group basis-1/2 text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]"
+        >
+          Frequently Asked Questions About GraphQL Federation
+        </h2>
         <ul class="space-y-8">
-          {faqs.map(([question, answers]) => (
-            <li itemscope itemtype="https://schema.org/Question">
-              <h3 class="pb-2 text-left font-medium" itemprop="name">{question}</h3>
-              <div class="mx-4 overflow-hidden bg-white text-green-800" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
-                <div class="max-w-[700px] space-y-2" itemprop="text">
-                  {answers.map((answer) => (
-                    <p set:html={answer} />
-                  ))}
+          {
+            faqs.map(([question, answers]) => (
+              <li itemscope itemtype="https://schema.org/Question">
+                <h3 class="pb-2 text-left font-medium" itemprop="name">
+                  {question}
+                </h3>
+                <div
+                  class="mx-4 overflow-hidden bg-white text-green-800"
+                  itemprop="acceptedAnswer"
+                  itemscope
+                  itemtype="https://schema.org/Answer"
+                >
+                  <div class="max-w-[700px] space-y-2" itemprop="text">
+                    {answers.map(answer => (
+                      <p set:html={answer} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </li>
-          ))}
+              </li>
+            ))
+          }
         </ul>
       </section>
 
       <!-- Get Started -->
-      <section class="relative overflow-hidden rounded-3xl p-12 text-center sm:p-24 mx-4 md:mx-6">
-        <h2 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px]">Get Started with GraphQL Federation</h2>
-        <p class="relative mx-auto mt-4 max-w-[700px]">Begin your journey with GraphQL Federation through our <strong>step-by-step guide</strong>, which walks you through Apollo Federation fundamentals and helps you <strong>build your first gateway and subgraphs from scratch</strong>.</p>
-        <a class="relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 bg-primary hover:bg-green-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 sm:w-fit mx-auto mt-8" href={withBase("/docs/schema-registry/get-started/apollo-federation")} title="Step by step guide to Apollo Federation">
+      <section class="relative mx-4 overflow-hidden rounded-3xl p-12 text-center sm:p-24 md:mx-6">
+        <h2
+          class="group text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]"
+        >
+          Get Started with GraphQL Federation
+        </h2>
+        <p class="relative mx-auto mt-4 max-w-[700px]">
+          Begin your journey with GraphQL Federation through our <strong>step-by-step guide</strong
+          >, which walks you through Apollo Federation fundamentals and helps you <strong
+            >build your first gateway and subgraphs from scratch</strong
+          >.
+        </p>
+        <a
+          class="text-green-1000 bg-primary relative mx-auto mt-8 flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-green-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 sm:w-fit"
+          href={withBase('/docs/schema-registry/get-started/apollo-federation')}
+          title="Step by step guide to Apollo Federation"
+        >
           <span class="absolute inset-0 rounded-lg border border-green-800"></span>
           Start building now
         </a>
@@ -358,13 +877,15 @@ const faqs: [string, string[]][] = [
     <SiteFooter />
 
     <script>
-      document.querySelectorAll<HTMLAnchorElement>("[data-contact-link]").forEach((link) => {
-        link.addEventListener("click", (event) => {
-          const crisp = (globalThis as typeof globalThis & {
-            $crisp?: { push(args: unknown[]): void };
-          }).$crisp;
+      document.querySelectorAll<HTMLAnchorElement>('[data-contact-link]').forEach(link => {
+        link.addEventListener('click', event => {
+          const crisp = (
+            globalThis as typeof globalThis & {
+              $crisp?: { push(args: unknown[]): void };
+            }
+          ).$crisp;
           if (crisp) {
-            crisp.push(["do", "chat:open"]);
+            crisp.push(['do', 'chat:open']);
             event.preventDefault();
           }
         });

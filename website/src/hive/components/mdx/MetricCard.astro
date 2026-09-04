@@ -3,7 +3,7 @@ interface Props {
   description?: string;
   labels?: string[];
   name: string;
-  type: "Counter" | "Gauge" | "Histogram" | "UpDownCounter";
+  type: 'Counter' | 'Gauge' | 'Histogram' | 'UpDownCounter';
   unit?: string;
 }
 
@@ -11,19 +11,23 @@ const { description, labels, name, type, unit } = Astro.props;
 
 const typeConfig = {
   Counter: {
-    color: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700/50",
+    color:
+      'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700/50',
     icon: `<path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path>`,
   },
   Gauge: {
-    color: "bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800/60 dark:text-slate-100 dark:border-slate-700",
+    color:
+      'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800/60 dark:text-slate-100 dark:border-slate-700',
     icon: `<path d="m12 14 4-4"></path><path d="M3.34 19a10 10 0 1 1 17.32 0"></path>`,
   },
   Histogram: {
-    color: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700/50",
+    color:
+      'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700/50',
     icon: `<path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path>`,
   },
   UpDownCounter: {
-    color: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700/50",
+    color:
+      'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700/50',
     icon: `<path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path>`,
   },
 } as const;
@@ -31,63 +35,90 @@ const typeConfig = {
 const config = typeConfig[type];
 const metricId = `metric-${name
   .toLowerCase()
-  .replaceAll(/[^a-z0-9]+/g, "-")
-  .replaceAll(/(^-|-$)/g, "")}`;
+  .replaceAll(/[^a-z0-9]+/g, '-')
+  .replaceAll(/(^-|-$)/g, '')}`;
 ---
 
-<div class="not-prose group scroll-mt-20 overflow-hidden rounded-lg border border-gray-200 bg-white transition-shadow duration-200 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900 dark:hover:shadow-black/30" id={metricId}>
+<div
+  class="not-prose group scroll-mt-20 overflow-hidden rounded-lg border border-gray-200 bg-white transition-shadow duration-200 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900 dark:hover:shadow-black/30"
+  id={metricId}
+>
   <div class="p-5">
     <div class="mb-3 flex items-center justify-between gap-4">
       <div class="min-w-0 flex-1">
         <div class="flex items-center gap-1.5">
-          <code class="break-all text-sm font-semibold text-gray-900 dark:text-slate-100">{name}</code>
+          <code class="text-sm font-semibold break-all text-gray-900 dark:text-slate-100"
+            >{name}</code
+          >
           <button
             aria-label={`Copy link to ${name}`}
-            class="hive-focus metric-copy-link inline-flex items-center justify-center rounded-sm font-mono text-sm font-semibold leading-none text-gray-500 opacity-0 transition-all duration-200 hover:text-gray-700 focus:text-gray-700 group-focus-within:opacity-100 group-hover:opacity-100 dark:text-slate-500 dark:hover:text-slate-200 dark:focus:text-slate-200"
+            class="hive-focus metric-copy-link inline-flex items-center justify-center rounded-sm font-mono text-sm leading-none font-semibold text-gray-500 opacity-0 transition-all duration-200 group-focus-within:opacity-100 group-hover:opacity-100 hover:text-gray-700 focus:text-gray-700 dark:text-slate-500 dark:hover:text-slate-200 dark:focus:text-slate-200"
             data-metric-id={metricId}
             title="Copy metric link"
-            type="button"
-          >#</button>
+            type="button">#</button
+          >
           <span class="sr-only" data-metric-copy-status aria-live="polite"></span>
         </div>
       </div>
       <div class="flex shrink-0 items-center gap-2">
-        {unit && (
-          <div class="flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-100 px-2.5 py-1 text-xs text-gray-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-slate-200">
-            <span class="font-medium text-gray-500 dark:text-slate-300">Unit:</span>
-            <span class="font-mono">{unit}</span>
-          </div>
-        )}
-        <div class:list={["flex items-center gap-1.5 rounded-md border px-2.5 py-1", config.color]}>
-          <svg class="size-3.5" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={config.icon} />
+        {
+          unit && (
+            <div class="flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-100 px-2.5 py-1 text-xs text-gray-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-slate-200">
+              <span class="font-medium text-gray-500 dark:text-slate-300">Unit:</span>
+              <span class="font-mono">{unit}</span>
+            </div>
+          )
+        }
+        <div class:list={['flex items-center gap-1.5 rounded-md border px-2.5 py-1', config.color]}>
+          <svg
+            class="size-3.5"
+            aria-hidden="true"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            set:html={config.icon}
+          />
           <span class="text-xs font-medium">{type}</span>
         </div>
       </div>
     </div>
 
-    {description && <p class="mb-4 text-sm/relaxed text-gray-600 dark:text-slate-100">{description}</p>}
+    {
+      description && (
+        <p class="mb-4 text-sm/relaxed text-gray-600 dark:text-slate-100">{description}</p>
+      )
+    }
 
-    {labels && labels.length > 0 && (
-      <div class="mt-4 border-t border-gray-100 pt-4 dark:border-neutral-800">
-        <div class="mb-2 flex items-center gap-2">
-          <span class="text-xs font-semibold uppercase text-gray-700 dark:text-slate-100">Labels</span>
+    {
+      labels && labels.length > 0 && (
+        <div class="mt-4 border-t border-gray-100 pt-4 dark:border-neutral-800">
+          <div class="mb-2 flex items-center gap-2">
+            <span class="text-xs font-semibold text-gray-700 uppercase dark:text-slate-100">
+              Labels
+            </span>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            {labels.map(label => (
+              <code class="rounded-sm border border-gray-200 bg-gray-50 px-2 py-1 text-xs text-gray-700 transition-colors hover:border-gray-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-slate-200 dark:hover:border-neutral-600">
+                {label}
+              </code>
+            ))}
+          </div>
         </div>
-        <div class="flex flex-wrap gap-1.5">
-          {labels.map((label) => (
-            <code class="rounded-sm border border-gray-200 bg-gray-50 px-2 py-1 text-xs text-gray-700 transition-colors hover:border-gray-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-slate-200 dark:hover:border-neutral-600">{label}</code>
-          ))}
-        </div>
-      </div>
-    )}
+      )
+    }
   </div>
 </div>
 
 <script>
-  document.querySelectorAll<HTMLButtonElement>(".metric-copy-link").forEach((button) => {
+  document.querySelectorAll<HTMLButtonElement>('.metric-copy-link').forEach(button => {
     if (button.dataset.bound) return;
-    button.dataset.bound = "true";
-    const status = button.parentElement?.querySelector<HTMLElement>("[data-metric-copy-status]");
-    button.addEventListener("click", async () => {
+    button.dataset.bound = 'true';
+    const status = button.parentElement?.querySelector<HTMLElement>('[data-metric-copy-status]');
+    button.addEventListener('click', async () => {
       const id = button.dataset.metricId;
       if (!id) return;
       const url = new URL(location.href);
@@ -97,11 +128,11 @@ const metricId = `metric-${name
       } catch {
         location.hash = id;
       }
-      button.textContent = "✓";
+      button.textContent = '✓';
       if (status) status.textContent = `Copied link to ${id}`;
       setTimeout(() => {
-        button.textContent = "#";
-        if (status) status.textContent = "";
+        button.textContent = '#';
+        if (status) status.textContent = '';
       }, 1200);
     });
   });

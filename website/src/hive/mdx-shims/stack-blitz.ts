@@ -1,1 +1,1 @@
-export { default as StackBlitz } from "../components/mdx/StackBlitz.astro";
+export { default as StackBlitz } from '../components/mdx/StackBlitz.astro';

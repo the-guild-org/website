@@ -1,21 +1,16 @@
 ---
 const { class: classNameProp, className, style, ...props } = Astro.props;
 const gridStyle = [
-  "grid-template-columns: repeat(auto-fill, minmax(max(250px, calc((100% - 1rem * 2) / 3)), 1fr))",
+  'grid-template-columns: repeat(auto-fill, minmax(max(250px, calc((100% - 1rem * 2) / 3)), 1fr))',
   style,
 ]
   .filter(Boolean)
-  .join("; ");
+  .join('; ');
 ---
 
 <div
   {...props}
-  class:list={[
-    "not-prose mt-4 grid gap-4",
-    "hive-cards",
-    classNameProp,
-    className,
-  ]}
+  class:list={['not-prose mt-4 grid gap-4', 'hive-cards', classNameProp, className]}
   style={gridStyle}
 >
   <slot />

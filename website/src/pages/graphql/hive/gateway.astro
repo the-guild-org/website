@@ -1,53 +1,52 @@
 ---
-import { withBase } from "../../../hive/lib/base-path";
-import CloudNativeSection from "../../../hive/components/gateway/CloudNativeSection.astro";
-import FederationCompatibleBenchmarksSection from "../../../hive/components/gateway/FederationCompatibleBenchmarksSection.astro";
-import GatewayFeatureTabs from "../../../hive/components/gateway/GatewayFeatureTabs.astro";
-import LetsGetAdvancedSection from "../../../hive/components/gateway/LetsGetAdvancedSection.astro";
-import OrchestrateYourWay from "../../../hive/components/gateway/OrchestrateYourWay.astro";
-import ExploreMainProductCards from "../../../hive/components/ExploreMainProductCards.astro";
-import FrequentlyAskedQuestions from "../../../hive/components/FrequentlyAskedQuestions.astro";
-import GetYourAPIGameRightList from "../../../hive/components/GetYourAPIGameRightList.astro";
-import SiteFooter from "../../../hive/components/SiteFooter.astro";
-import SiteNavigation from "../../../hive/components/SiteNavigation.astro";
-import BaseHead from "../../../hive/components/BaseHead.astro";
-import "../../../hive/styles/global.css";
+import BaseHead from '../../../hive/components/BaseHead.astro';
+import ExploreMainProductCards from '../../../hive/components/ExploreMainProductCards.astro';
+import FrequentlyAskedQuestions from '../../../hive/components/FrequentlyAskedQuestions.astro';
+import CloudNativeSection from '../../../hive/components/gateway/CloudNativeSection.astro';
+import FederationCompatibleBenchmarksSection from '../../../hive/components/gateway/FederationCompatibleBenchmarksSection.astro';
+import GatewayFeatureTabs from '../../../hive/components/gateway/GatewayFeatureTabs.astro';
+import LetsGetAdvancedSection from '../../../hive/components/gateway/LetsGetAdvancedSection.astro';
+import OrchestrateYourWay from '../../../hive/components/gateway/OrchestrateYourWay.astro';
+import GetYourAPIGameRightList from '../../../hive/components/GetYourAPIGameRightList.astro';
+import SiteFooter from '../../../hive/components/SiteFooter.astro';
+import SiteNavigation from '../../../hive/components/SiteNavigation.astro';
+import { withBase } from '../../../hive/lib/base-path';
+import '../../../hive/styles/global.css';
+import checkIconRaw from '../../../hive/design-system/icons/check.svg?raw';
+import hiveGatewayIconRaw from '../../../hive/design-system/icons/hive-gateway.svg?raw';
 
-import hiveGatewayIconRaw from "../../../hive/design-system/icons/hive-gateway.svg?raw";
-import checkIconRaw from "../../../hive/design-system/icons/check.svg?raw";
+const withAttrs = (svg: string, attrs: string) => svg.replace('<svg', `<svg ${attrs}`);
 
-const withAttrs = (svg: string, attrs: string) => svg.replace("<svg", `<svg ${attrs}`);
-
-const checkmarks = ["Fully open source", "No vendor lock-in", "Can be self-hosted!"];
+const checkmarks = ['Fully open source', 'No vendor lock-in', 'Can be self-hosted!'];
 
 const faqs: [string, string][] = [
   [
-    "What do I need to do migrating from another Federation gateway?",
-    "Hive Gateway is a drop-in replacement for gateways alike! Start the gateway using your existing <code class=\"font-mono text-green-1000\">supergraph.graphql</code> and you're off. <a class=\"hive-focus underline decoration-blue-500 underline-offset-2\" href=\"https://the-guild.dev/graphql/hive/docs/gateway/supergraph-proxy-source#supergraph\">Read more.</a>",
+    'What do I need to do migrating from another Federation gateway?',
+    'Hive Gateway is a drop-in replacement for gateways alike! Start the gateway using your existing <code class="font-mono text-green-1000">supergraph.graphql</code> and you\'re off. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="https://the-guild.dev/graphql/hive/docs/gateway/supergraph-proxy-source#supergraph">Read more.</a>',
   ],
   [
-    "Can I run Hive Gateway on the edge?",
-    "Yes! Hive Gateway is implemented with JavaScript in mind and can be run natively in serverless runtimes like Cloudflare Workers, AWS Lambda, Google Cloud Platform and Azure Functions. <a class=\"hive-focus underline decoration-blue-500 underline-offset-2\" href=\"https://the-guild.dev/graphql/hive/docs/gateway/deployment/serverless\">Read more.</a>",
+    'Can I run Hive Gateway on the edge?',
+    'Yes! Hive Gateway is implemented with JavaScript in mind and can be run natively in serverless runtimes like Cloudflare Workers, AWS Lambda, Google Cloud Platform and Azure Functions. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="https://the-guild.dev/graphql/hive/docs/gateway/deployment/serverless">Read more.</a>',
   ],
   [
-    "Does Hive Gateway support subscriptions?",
-    "Of course! Hive Gateway fully supports federated subscriptions and behaves just like Federation GraphQL subscriptions in Apollo Router. <a class=\"hive-focus underline decoration-blue-500 underline-offset-2\" href=\"https://the-guild.dev/graphql/hive/docs/gateway/subscriptions\">Read more.</a>",
+    'Does Hive Gateway support subscriptions?',
+    'Of course! Hive Gateway fully supports federated subscriptions and behaves just like Federation GraphQL subscriptions in Apollo Router. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="https://the-guild.dev/graphql/hive/docs/gateway/subscriptions">Read more.</a>',
   ],
   [
-    "How does Hive Gateway integrate with tracing tools?",
-    "Hive Gateway has extensive monitoring and tracing capabilities allowing you deep insights into its inner workings. Use OpenTelemetry, Prometheus, StatsD and Sentry with simple to use plugins. <a class=\"hive-focus underline decoration-blue-500 underline-offset-2\" href=\"https://the-guild.dev/graphql/hive/docs/gateway/monitoring-tracing\">Read more.</a>",
+    'How does Hive Gateway integrate with tracing tools?',
+    'Hive Gateway has extensive monitoring and tracing capabilities allowing you deep insights into its inner workings. Use OpenTelemetry, Prometheus, StatsD and Sentry with simple to use plugins. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="https://the-guild.dev/graphql/hive/docs/gateway/monitoring-tracing">Read more.</a>',
   ],
   [
-    "Is customising the supergraph possible?",
-    "Changing the supergraph and adjusting it to your needs, either to accommodate extra fields or allow for gradual migration from non-federated systems, is easily achievable using <a class=\"hive-focus underline decoration-blue-500 underline-offset-2\" href=\"https://the-guild.dev/graphql/mesh\" target=\"_blank\" rel=\"noreferrer\">GraphQL Mesh</a>. It is a first-class citizen in Hive Gateway and its outputs are directly usable.",
+    'Is customising the supergraph possible?',
+    'Changing the supergraph and adjusting it to your needs, either to accommodate extra fields or allow for gradual migration from non-federated systems, is easily achievable using <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="https://the-guild.dev/graphql/mesh" target="_blank" rel="noreferrer">GraphQL Mesh</a>. It is a first-class citizen in Hive Gateway and its outputs are directly usable.',
   ],
   [
     "Can I optimize Hive Gateway's performance for large-scale applications?",
-    "The gateway is designed from ground up with performance in mind, capable of handling even the largest of application loads. Using techniques like request caching and deduplication, query batching, HTTP compression and more - you're able to tune Hive Gateway exactly to your needs. <a class=\"hive-focus underline decoration-blue-500 underline-offset-2\" href=\"https://the-guild.dev/graphql/hive/docs/gateway/other-features/performance\">Read more.</a>",
+    'The gateway is designed from ground up with performance in mind, capable of handling even the largest of application loads. Using techniques like request caching and deduplication, query batching, HTTP compression and more - you\'re able to tune Hive Gateway exactly to your needs. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="https://the-guild.dev/graphql/hive/docs/gateway/other-features/performance">Read more.</a>',
   ],
   [
-    "Are all Hive Gateway features open source?",
-    "Yes, Hive Gateway, and all of its features, are fully open-source and free to use. Including all the enterprise-grade features offered by other vendors, without licensing restrictions; features like: subscriptions, persisted queries, JWT authentication, query batching, rate-limiting and high security, observability and tracing, advanced caching, deployments everywhere, and much more. <a class=\"hive-focus underline decoration-blue-500 underline-offset-2\" href=\"https://the-guild.dev/graphql/hive/docs/gateway\">Read more.</a>",
+    'Are all Hive Gateway features open source?',
+    'Yes, Hive Gateway, and all of its features, are fully open-source and free to use. Including all the enterprise-grade features offered by other vendors, without licensing restrictions; features like: subscriptions, persisted queries, JWT authentication, query batching, rate-limiting and high security, observability and tracing, advanced caching, deployments everywhere, and much more. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="https://the-guild.dev/graphql/hive/docs/gateway">Read more.</a>',
   ],
 ];
 ---
@@ -66,54 +65,83 @@ const faqs: [string, string][] = [
     <SiteNavigation />
     <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
       <!-- Hero -->
-      <div class="relative isolate flex max-w-360 flex-col items-center justify-center gap-6 overflow-hidden rounded-3xl bg-blue-400 px-4 py-6 text-green-1000 max-sm:mt-2 sm:py-12 md:gap-8 lg:py-24 mx-4 sm:pb-28! md:mx-6 lg:pb-[168px]!">
+      <div
+        class="text-green-1000 relative isolate mx-4 flex max-w-360 flex-col items-center justify-center gap-6 overflow-hidden rounded-3xl bg-blue-400 px-4 py-6 max-sm:mt-2 sm:py-12 sm:pb-28! md:mx-6 md:gap-8 lg:py-24 lg:pb-[168px]!"
+      >
         <div class="relative">
           <Fragment
             set:html={withAttrs(
               hiveGatewayIconRaw,
               `class="absolute inset-1/2 size-1/2 -translate-1/2" fill="url(#gateway-logo-blue-3028)" stroke="url(#gateway-logo-white-3028)"`,
-            ).replace('fill="currentColor"', "")}
+            ).replace('fill="currentColor"', '')}
           />
           <svg fill="none" height="96" viewBox="0 0 96 96" width="96">
             <rect fill="url(#gateway-logo-green-sgz9qg7vvt)" height="96" rx="24" width="96"></rect>
-            <rect height="95" rx="23.5" stroke="url(#gateway-logo-white-sgz9qg7vvt)" width="95" x="0.5" y="0.5"></rect>
-            <path d="M57.0264 32.1652H48.9577L53.8032 27.3197L48.4855 22L43.1658 27.3197L48.0114 32.1652H39.9427C38.9042 32.1652 37.9069 32.5786 37.1721 33.3134L23 47.4855L28.3197 52.8052L45.715 35.4099C47.2452 33.8797 49.7258 33.8797 51.2561 35.4099L68.6513 52.8052L73.971 47.4855L59.797 33.3114C59.0622 32.5767 58.0649 32.1632 57.0264 32.1632V32.1652ZM48.4854 63.3623L43.1665 68.6811L48.4854 74L53.8042 68.6811L48.4854 63.3623ZM39.9446 52.8054H48.4855H48.4894H57.0303C58.0688 52.8054 59.0661 53.2188 59.8008 53.9536L63.89 58.0428L58.5704 63.3625L51.258 56.0501C49.7277 54.5198 47.2472 54.5198 45.7169 56.0501L38.4045 63.3625L33.0848 58.0428L37.174 53.9536C37.9088 53.2188 38.9061 52.8054 39.9446 52.8054Z"></path>
+            <rect
+              height="95"
+              rx="23.5"
+              stroke="url(#gateway-logo-white-sgz9qg7vvt)"
+              width="95"
+              x="0.5"
+              y="0.5"></rect>
+            <path
+              d="M57.0264 32.1652H48.9577L53.8032 27.3197L48.4855 22L43.1658 27.3197L48.0114 32.1652H39.9427C38.9042 32.1652 37.9069 32.5786 37.1721 33.3134L23 47.4855L28.3197 52.8052L45.715 35.4099C47.2452 33.8797 49.7258 33.8797 51.2561 35.4099L68.6513 52.8052L73.971 47.4855L59.797 33.3114C59.0622 32.5767 58.0649 32.1632 57.0264 32.1632V32.1652ZM48.4854 63.3623L43.1665 68.6811L48.4854 74L53.8042 68.6811L48.4854 63.3623ZM39.9446 52.8054H48.4855H48.4894H57.0303C58.0688 52.8054 59.0661 53.2188 59.8008 53.9536L63.89 58.0428L58.5704 63.3625L51.258 56.0501C49.7277 54.5198 47.2472 54.5198 45.7169 56.0501L38.4045 63.3625L33.0848 58.0428L37.174 53.9536C37.9088 53.2188 38.9061 52.8054 39.9446 52.8054Z"
+            ></path>
           </svg>
           <svg class="size-0" viewBox="0 0 52 53">
-            <linearGradient gradientUnits="userSpaceOnUse" id="gateway-logo-blue-3028" x1="0" x2="51.998" y1="0.524872" y2="52.5229">
+            <linearGradient
+              gradientUnits="userSpaceOnUse"
+              id="gateway-logo-blue-3028"
+              x1="0"
+              x2="51.998"
+              y1="0.524872"
+              y2="52.5229"
+            >
               <stop stop-color="#A7D5CA"></stop>
               <stop offset="1" stop-color="#86B6C1"></stop>
             </linearGradient>
-            <linearGradient gradientUnits="userSpaceOnUse" id="gateway-logo-white-3028" x1="0" x2="52" y1="0.524872" y2="52.5249">
+            <linearGradient
+              gradientUnits="userSpaceOnUse"
+              id="gateway-logo-white-3028"
+              x1="0"
+              x2="52"
+              y1="0.524872"
+              y2="52.5249"
+            >
               <stop stop-color="white" stop-opacity="0.5"></stop>
               <stop offset="1" stop-color="white" stop-opacity="0.2"></stop>
             </linearGradient>
           </svg>
         </div>
-        <h1 class="group text-4xl leading-[1.2] md:text-[4rem] md:leading-[1.1875] tracking-[-0.64px] mx-auto max-w-3xl text-balance text-center">
+        <h1
+          class="group mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]"
+        >
           Hive Gateway
         </h1>
         <p class="mx-auto w-[512px] max-w-[80%] text-center leading-6 text-green-800">
-          Unify and accelerate your data graph across diverse services with Hive Gateway, which seamlessly integrates with Apollo Federation.
+          Unify and accelerate your data graph across diverse services with Hive Gateway, which
+          seamlessly integrates with Apollo Federation.
         </p>
         <ul class="mx-auto flex list-none gap-x-6 gap-y-2 text-sm font-medium max-md:flex-col">
-          {checkmarks.map((text) => (
-            <li class="flex items-center gap-2">
-              <Fragment set:html={withAttrs(checkIconRaw, `class="text-green-800"`)} />
-              {text}
-            </li>
-          ))}
+          {
+            checkmarks.map(text => (
+              <li class="flex items-center gap-2">
+                <Fragment set:html={withAttrs(checkIconRaw, `class="text-green-800"`)} />
+                {text}
+              </li>
+            ))
+          }
         </ul>
         <div class="flex w-full justify-center gap-2 px-0.5 max-sm:flex-col sm:gap-4">
           <a
-            class="outline-hidden focus-visible:ring-3 relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 bg-primary text-green-1000 hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40 sm:w-fit"
-            href={withBase("/docs/gateway")}
+            class="bg-primary text-green-1000 relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap outline-hidden hover:bg-white focus-visible:ring-3 focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40 sm:w-fit"
+            href={withBase('/docs/gateway')}
           >
             <span class="absolute inset-0 rounded-lg border border-green-800"></span>
             Get Started
           </a>
           <a
-            class="outline-hidden focus-visible:ring-3 relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 bg-green-800 text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit"
+            class="relative flex items-center justify-center gap-2 rounded-lg bg-green-800 px-6 py-3 leading-6 font-medium text-nowrap text-white outline-hidden hover:bg-green-700 focus-visible:ring-3 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit"
             href="https://github.com/graphql-hive/gateway"
             target="_blank"
             rel="noreferrer"
@@ -124,26 +152,38 @@ const faqs: [string, string][] = [
         </div>
 
         <!-- GatewayHeroDecoration -->
-        <div class="pointer-events-none absolute inset-0 overflow-hidden -z-10">
+        <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
           <Fragment
             set:html={withAttrs(
               hiveGatewayIconRaw,
               `class="absolute left-[-268px] top-[-8px] size-[520px] fill-[url(#gateway-hero-gradient)] max-lg:hidden"`,
-            ).replace('fill="currentColor"', "")}
+            ).replace('fill="currentColor"', '')}
           />
           <Fragment
             set:html={withAttrs(
               hiveGatewayIconRaw,
               `class="absolute right-[-144px] top-[-64px] size-[320px] fill-[url(#gateway-hero-gradient-mobile)] md:bottom-[-64px] md:right-[-268px] md:top-auto md:size-[520px] md:fill-[url(#gateway-hero-gradient)] lg:bottom-[-8px]"`,
-            ).replace('fill="currentColor"', "")}
+            ).replace('fill="currentColor"', '')}
           />
-          <svg class="pointer-events-none -z-50 size-0" height="296" viewBox="0 0 192 296" width="192">
+          <svg
+            class="pointer-events-none -z-50 size-0"
+            height="296"
+            viewBox="0 0 192 296"
+            width="192"
+          >
             <defs>
               <linearGradient gradientTransform="rotate(139)" id="gateway-hero-gradient">
                 <stop offset="11.66%" stop-color="rgba(255, 255, 255, 0.1)"></stop>
                 <stop offset="74.87%" stop-color="rgba(255, 255, 255, 0.3)"></stop>
               </linearGradient>
-              <linearGradient gradientUnits="userSpaceOnUse" id="gateway-hero-gradient-mobile" x1="35.3488" x2="224.372" y1="15.0697" y2="229.023">
+              <linearGradient
+                gradientUnits="userSpaceOnUse"
+                id="gateway-hero-gradient-mobile"
+                x1="35.3488"
+                x2="224.372"
+                y1="15.0697"
+                y2="229.023"
+              >
                 <stop stop-color="white" stop-opacity="0.2"></stop>
                 <stop offset="80%" stop-color="white"></stop>
               </linearGradient>

@@ -1,1 +1,1 @@
-export { default as Image } from "../components/mdx/Image.astro";
+export { default as Image } from '../components/mdx/Image.astro';
