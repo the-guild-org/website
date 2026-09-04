@@ -63,6 +63,80 @@
               "errorsTotal": {
                 "type": "integer",
                 "minimum": 0
+              },
+              "fetches": {
+                "type": ["array", "null"],
+                "items": {
+                  "title": "OperationSubRequest",
+                  "additionalProperties": false,
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "duration": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "status": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "fields": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "coordinate": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["coordinate"]
+                      }
+                    },
+                    "subgraph": {
+                      "type": "string"
+                    },
+                    "paths": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": ["ROOT", "ENTITY"]
+                    }
+                  },
+                  "required": [
+                    "start",
+                    "duration",
+                    "status",
+                    "fields",
+                    "subgraph",
+                    "paths",
+                    "type"
+                  ]
+                }
               }
             },
             "required": ["ok", "duration", "errorsTotal"]
@@ -110,6 +184,11 @@
           },
           "operationMapKey": {
             "type": "string"
+          },
+          "persistedDocumentHash": {
+            "type": "string",
+            "title": "PersistedDocumentHash",
+            "pattern": "^[a-zA-Z0-9_-]{1,64}~[a-zA-Z0-9._-]{1,64}~([A-Za-z]|[0-9]|_){1,128}$"
           },
           "metadata": {
             "title": "Metadata",

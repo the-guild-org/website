@@ -34,11 +34,13 @@ reporting permissions. [Learn how to create an access token](/docs/schema-regist
 ```typescript
 export interface Report {
   size: number;
-  map: {
-    [k: string]: OperationMapRecord;
-  };
+  map: OperationMap;
   operations?: RequestOperation[];
   subscriptionOperations?: SubscriptionOperation[];
+}
+
+export interface OperationMap {
+  [key: string]: OperationMapRecord;
 }
 
 export interface OperationMapRecord {
@@ -51,7 +53,13 @@ export interface OperationMapRecord {
 }
 
 export interface RequestOperation {
+  /**
+   * milliseconds elapsed since January 1, 1970, UTC. must be within retention period of use plan (free/Pro/enterprise)
+   */
   timestamp: number;
+  /**
+   * Used in the Report.map to lookup operation metadata
+   */
   operationMapKey: string;
   execution: Execution;
   metadata?: Metadata;
@@ -60,13 +68,34 @@ export interface RequestOperation {
 
 export interface Execution {
   ok: boolean;
+  /**
+   * in nanoseconds
+   */
   duration: number;
   errorsTotal: number;
+  fetches?: OperationSubgraphRequest[] | null;
+}
+
+export interface OperationSubgraphRequest {
+  start: number;
+  duration: number;
+  status: number;
+  fields: { [coordinate: string]: number };
+  errors?: SubgraphError[];
+  subgraph: string;
+  paths: string | string[];
+  type: "ROOT" | "ENTITY";
+}
+
+export interface SubgraphError {
+  coordinate: string;
+  code?: string;
 }
 
 export interface SubscriptionOperation {
   timestamp: number;
   operationMapKey: string;
+  persistedDocumentHash?: string;
   metadata?: Metadata;
 }
 
@@ -98,12 +127,12 @@ export interface Metadata {
     "c3b6d9b0": {
       "operationName": "me",
       "operation": "query me { me { id name } }",
-      "fields": ["Query", "Query.me", "User", "User.id", "User.name"],
+      "fields": ["Query", "Query.me", "User", "User.id", "User.name"]
     },
     "762a45e3": {
       "operationName": "users",
       "operation": "query users { users { id } }",
-      "fields": ["Query", "Query.users", "User", "User.id"],
+      "fields": ["Query", "Query.users", "User", "User.id"]
     },
     "12f3712a": {
       "operationName": "liveCoordinates",
@@ -114,69 +143,116 @@ export interface Metadata {
         "User",
         "Location",
         "Location.x",
-        "Location.y",
-      ],
-    },
+        "Location.y"
+      ]
+    }
   },
   "operations": [
     {
-      "operationMapKey": "c3b6d9b0", // points to the 'me' query
-      "timestamp": 1663158676535, // milliseconds elapsed since January 1, 1970, UTC. must be within retention period of use plan (free/Pro/enterprise)
+      "operationMapKey": "c3b6d9b0",
+      "timestamp": 1663158676535,
       "execution": {
         "ok": true,
-        "duration": 150000000, // 150ms in nanoseconds
+        "duration": 150000000,
         "errorsTotal": 0,
+        "fetches": [
+          {
+            "start": 1200000,
+            "duration": 142000000,
+            "status": 200,
+            "subgraph": "users-subgraph",
+            "type": "ROOT",
+            "paths": "Query",
+            "fields": {
+              "Query": 1,
+              "Query.me": 1,
+              "User": 1,
+              "User.id": 1,
+              "User.name": 1,
+              "ID": 1
+              "String": 1
+            }
+          }
+        ]
       },
       "metadata": {
         "client": {
           "name": "demo",
-          "version": "0.0.1",
-        },
+          "version": "0.0.1"
+        }
       },
+      "persistedDocumentHash": "sha256~demo-app~a1b2c3d4e5f6g7h8i9j0"
     },
     {
-      "operationMapKey": "c3b6d9b0", // points to the 'me' query
+      "operationMapKey": "c3b6d9b0",
       "timestamp": 1663158676589,
       "execution": {
-        "ok": false, // failed operation
-        "duration": 150000000, // 150ms in nanoseconds
-        "errorsTotal": 1, // 1 GraphQL error
+        "ok": false,
+        "duration": 150000000,
+        "errorsTotal": 1,
+        "fetches": [
+          {
+            "start": 800000,
+            "duration": 148000000,
+            "status": 200,
+            "subgraph": "users-subgraph",
+            "type": "ROOT",
+            "paths": ["Query"],
+            "fields": {
+              "Query": 1,
+              "Query.me": 1,
+              "User": 1,
+              "User.id": 1
+              "User.name": 1,
+              "ID": 1
+            },
+            "errors": [
+              {
+                "coordinate": "User.name",
+                "code": "UNAUTHENTICATED"
+              }
+            ]
+          }
+        ]
       },
       "metadata": {
         "client": {
           "name": "demo",
-          "version": "0.0.1",
-        },
+          "version": "0.0.1"
+        }
       },
+      "persistedDocumentHash": "sha256~demo-app~a1b2c3d4e5f6g7h8i9j0"
     },
     {
-      "operationMapKey": "762a45e3", // points to the 'users' query
+      "operationMapKey": "762a45e3",
       "timestamp": 1663158676589,
       "execution": {
         "ok": true,
-        "duration": 150000000, // 150ms in nanoseconds
+        "duration": 150000000,
         "errorsTotal": 0,
+        "fetches": null
       },
       "metadata": {
         "client": {
           "name": "demo",
-          "version": "0.0.1",
-        },
-      },
-    },
+          "version": "0.0.1"
+        }
+      }
+    }
   ],
   "subscriptionOperations": [
     {
-      "operationMapKey": "12f3712a", // points to the 'users' query
+      "operationMapKey": "12f3712a",
       "timestamp": 1663158676589,
       "metadata": {
         "client": {
           "name": "demo",
-          "version": "0.0.1",
-        },
+          "version": "0.0.1"
+        }
       },
-    },
-  ],
+      "persistedDocumentHash": "sha256~demo-app~z9y8x7w6v5u4t3s2r1q0"
+    }
+  ]
 }
 ```
 
