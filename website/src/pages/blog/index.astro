@@ -51,7 +51,7 @@ const formatDate = (date: Date) =>
     class="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--nav-bg)] backdrop-blur-[10px]"
   >
     <div
-      class="mx-auto flex min-h-[48px] w-[calc(100%-24px)] max-w-shell items-center gap-[26px] font-mono text-[14px] sm:min-h-[54px] sm:w-[calc(100%-40px)]"
+      class="mx-auto flex min-h-[48px] w-[calc(100%-24px)] max-w-shell items-center gap-[26px] font-mono text-sm sm:min-h-[54px] sm:w-[calc(100%-40px)]"
     >
       <a
         href="/"
@@ -76,15 +76,13 @@ const formatDate = (date: Date) =>
   <main>
     <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
       <div class="max-w-[820px] py-[64px] sm:py-[88px]">
-        <div class="mb-3.5 font-mono text-[12px] tracking-[.075em] text-[var(--muted)] lowercase">
+        <div class="mb-3.5 font-mono text-xs tracking-label text-[var(--muted)] lowercase">
           ~/the-guild/blog
         </div>
-        <h1
-          class="mb-3.5 font-mono text-[clamp(30px,4.5vw,52px)] leading-[1.1] font-semibold tracking-[-.045em] text-balance text-[var(--strong)]"
-        >
+        <h1 class="mb-3.5 font-mono text-5xl font-semibold text-balance text-[var(--strong)]">
           The Guild blog.
         </h1>
-        <p class="max-w-[700px] text-[17px] leading-[1.65] text-[var(--muted)]">
+        <p class="max-w-[700px] text-lg text-[var(--muted)]">
           Writing on open source, GraphQL, and the craft of long-term software. Product posts live
           on the <a
             class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
@@ -100,18 +98,18 @@ const formatDate = (date: Date) =>
               class="group grid grid-cols-1 gap-x-8 border-b border-[var(--line)] py-6 transition-colors hover:border-[var(--line-strong)] sm:grid-cols-[130px_1fr]"
               href={post.href}
             >
-              <div class="pt-0.5 font-mono text-[13px] text-[var(--green)] tabular-nums">
+              <div class="pt-0.5 font-mono text-sm text-[var(--green)] tabular-nums">
                 {formatDate(post.date)}
               </div>
               <div>
-                <h2 class="font-mono text-[18px] font-semibold text-[var(--strong)] transition-colors group-hover:underline">
+                <h2 class="font-mono text-lg font-semibold text-[var(--strong)] transition-colors group-hover:underline">
                   {post.title}
                   {post.external && ' '}
                   {post.external && (
                     <span
                       aria-hidden="true"
                       class:list={[
-                        'ml-1.5 inline-block font-mono text-[13px] font-normal transition-transform group-hover:translate-x-0.5',
+                        'ml-1.5 inline-block font-mono text-sm font-normal transition-transform group-hover:translate-x-0.5',
                         post.external === 'hive' ? 'text-[var(--hive)]' : 'text-[var(--stellate)]',
                       ]}
                     >
@@ -119,10 +117,8 @@ const formatDate = (date: Date) =>
                     </span>
                   )}
                 </h2>
-                <p class="mt-1.5 max-w-[720px] text-[15px] text-[var(--muted)]">
-                  {post.description}
-                </p>
-                <div class="mt-2.5 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[11px] text-[var(--faint)]">
+                <p class="mt-1.5 max-w-[720px] text-base text-[var(--muted)]">{post.description}</p>
+                <div class="mt-2.5 flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs text-[var(--faint)]">
                   {post.tags.map(tag => (
                     <span>#{tag}</span>
                   ))}
