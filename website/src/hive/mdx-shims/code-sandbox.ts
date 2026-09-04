@@ -1,1 +1,1 @@
-export { default as CodeSandbox } from "../components/mdx/CodeSandbox.astro";
+export { default as CodeSandbox } from '../components/mdx/CodeSandbox.astro';

@@ -1,13 +1,12 @@
 ---
-import "../styles/global.css";
-
-import BlogPageHero from "../components/blog/BlogPageHero.astro";
-import CompanyNewsAndPressSection from "../components/blog/CompanyNewsAndPressSection.astro";
-import GetYourAPIGameRightSection from "../components/GetYourAPIGameRightSection.astro";
-import SiteFooter from "../components/SiteFooter.astro";
-import SiteNavigation from "../components/SiteNavigation.astro";
-import BaseHead from "../components/BaseHead.astro";
-import ThemeInit from "../components/ThemeInit.astro";
+import '../styles/global.css';
+import BaseHead from '../components/BaseHead.astro';
+import BlogPageHero from '../components/blog/BlogPageHero.astro';
+import CompanyNewsAndPressSection from '../components/blog/CompanyNewsAndPressSection.astro';
+import GetYourAPIGameRightSection from '../components/GetYourAPIGameRightSection.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteNavigation from '../components/SiteNavigation.astro';
+import ThemeInit from '../components/ThemeInit.astro';
 
 interface Props {
   description: string;
@@ -24,7 +23,12 @@ const { description, title } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <BaseHead description={description} title={`${title} | Hive`} />
     <ThemeInit />
-    <link rel="alternate" type="application/rss+xml" title="Hive Blog" href="https://the-guild.dev/graphql/hive/blog/feed.xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Hive Blog"
+      href="https://the-guild.dev/graphql/hive/blog/feed.xml"
+    />
   </head>
   <body class="min-h-screen antialiased">
     <SiteNavigation />
@@ -33,7 +37,9 @@ const { description, title } = Astro.props;
       <BlogPageHero class="mx-4 max-sm:mt-2 md:mx-6" />
       <slot />
       <CompanyNewsAndPressSection class="mx-4 md:mx-6" />
-      <GetYourAPIGameRightSection class="light text-green-1000 dark:bg-primary/95 mx-4 sm:mb-6 md:mx-6" />
+      <GetYourAPIGameRightSection
+        class="light text-green-1000 dark:bg-primary/95 mx-4 sm:mb-6 md:mx-6"
+      />
     </div>
 
     <SiteFooter />

@@ -1,5 +1,6 @@
 ---
-import { withBase } from "../../lib/base-path";
+import { withBase } from '../../lib/base-path';
+
 interface Props {
   href?: string;
   [key: string]: unknown;
@@ -9,6 +10,11 @@ const { href, ...props } = Astro.props;
 const external = href ? /^https?:\/\//.test(href) : false;
 ---
 
-<a {...props} href={withBase(href)} rel={external ? "noreferrer" : undefined} target={external ? "_blank" : undefined}>
+<a
+  {...props}
+  href={withBase(href)}
+  rel={external ? 'noreferrer' : undefined}
+  target={external ? '_blank' : undefined}
+>
   <slot />
 </a>

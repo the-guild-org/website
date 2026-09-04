@@ -1,7 +1,7 @@
 ---
-import PostsByTag from "../../../../../hive/components/blog/PostsByTag.astro";
-import BlogPageLayout from "../../../../../hive/layouts/BlogPageLayout.astro";
-import { getBlogPosts } from "../../../../../hive/lib/get-blog-posts";
+import PostsByTag from '../../../../../hive/components/blog/PostsByTag.astro';
+import BlogPageLayout from '../../../../../hive/layouts/BlogPageLayout.astro';
+import { getBlogPosts } from '../../../../../hive/lib/get-blog-posts';
 
 export async function getStaticPaths() {
   const posts = await getBlogPosts();
@@ -10,12 +10,12 @@ export async function getStaticPaths() {
     for (const tag of post.tags) tags.add(tag);
   }
 
-  return [...tags].map((tag) => ({ params: { tag } }));
+  return [...tags].map(tag => ({ params: { tag } }));
 }
 
 const { tag } = Astro.params;
 const allPosts = await getBlogPosts();
-const posts = allPosts.filter((post) => post.tags.includes(tag!));
+const posts = allPosts.filter(post => post.tags.includes(tag!));
 ---
 
 <BlogPageLayout description={`Posts tagged ${tag} in the Hive Blog.`} title={`Hive Blog - ${tag}`}>

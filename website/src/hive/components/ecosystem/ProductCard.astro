@@ -1,5 +1,6 @@
 ---
-import { withBase } from "../../lib/base-path";
+import { withBase } from '../../lib/base-path';
+
 interface Props {
   class?: string;
   decoration?: string;
@@ -8,39 +9,45 @@ interface Props {
   isHive?: boolean;
   name: string;
   title?: string;
-  variant: "ancillary" | "main";
+  variant: 'ancillary' | 'main';
 }
 
 const { class: className, decoration, href, icon, isHive, name, title, variant } = Astro.props;
 
-const blurId = `eco-pc-blur-${name.toLowerCase().replace(/\s+/g, "-")}`;
+const blurId = `eco-pc-blur-${name.toLowerCase().replace(/\s+/g, '-')}`;
 ---
 
 {
-  variant === "main" ? (
+  variant === 'main' ? (
     <li
       class:list={[
-        "hive-focus-within group relative flex-1 shrink-0 basis-[283.5px] overflow-hidden rounded-2xl h-[222px] max-md:min-w-[283.5px] max-md:w-auto",
-        isHive ? "bg-green-1000 text-white" : "bg-blue-400 text-green-1000",
+        'hive-focus-within group relative h-[222px] flex-1 shrink-0 basis-[283.5px] overflow-hidden rounded-2xl max-md:w-auto max-md:min-w-[283.5px]',
+        isHive ? 'bg-green-1000 text-white' : 'text-green-1000 bg-blue-400',
         className,
       ]}
     >
       <a
-        class="outline-hidden focus-visible:ring-3 relative z-10 flex h-full flex-1 flex-col justify-between p-8 focus-visible:outline-hidden"
+        class="relative z-10 flex h-full flex-1 flex-col justify-between p-8 outline-hidden focus-visible:ring-3 focus-visible:outline-hidden"
         href={withBase(href)}
       >
         <p class="relative z-10 font-medium">{name}</p>
         <div class="relative z-0 mt-8 size-12" set:html={icon} />
-        <svg class="absolute bottom-8 right-8 z-10" fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
+        <svg
+          class="absolute right-8 bottom-8 z-10"
+          fill="currentColor"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+        >
           <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
         </svg>
         <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
           <div
-            class="pointer-events-none absolute bottom-0 right-0 h-full opacity-0 transition-opacity duration-500 group-focus-within:opacity-100 group-hover:opacity-100 md:translate-x-12"
+            class="pointer-events-none absolute right-0 bottom-0 h-full opacity-0 transition-opacity duration-500 group-focus-within:opacity-100 group-hover:opacity-100 md:translate-x-12"
             set:html={decoration}
           />
           <svg
-            class="firefox-highlight-fix pointer-events-none absolute left-0 top-[-15%] h-[150%] w-full opacity-0 transition-opacity duration-1000 group-focus-within:opacity-100 group-hover:opacity-100"
+            class="firefox-highlight-fix pointer-events-none absolute top-[-15%] left-0 h-[150%] w-full opacity-0 transition-opacity duration-1000 group-focus-within:opacity-100 group-hover:opacity-100"
             fill="#86B6C1"
             height="674"
             viewBox="0 0 895 674"
@@ -72,12 +79,12 @@ const blurId = `eco-pc-blur-${name.toLowerCase().replace(/\s+/g, "-")}`;
   ) : (
     <li
       class:list={[
-        "hive-focus-within h-[222px] shrink-0 basis-[283.5px] rounded-2xl bg-beige-200 text-green-1000 transition-colors duration-500 hover:bg-beige-400 max-md:min-w-[283.5px] max-md:w-auto",
+        'hive-focus-within bg-beige-200 text-green-1000 hover:bg-beige-400 h-[222px] shrink-0 basis-[283.5px] rounded-2xl transition-colors duration-500 max-md:w-auto max-md:min-w-[283.5px]',
         className,
       ]}
     >
       <a
-        class="outline-hidden focus-visible:ring-3 relative flex h-full flex-col justify-between rounded-[inherit] p-8 focus:outline-hidden focus-visible:outline-hidden"
+        class="relative flex h-full flex-col justify-between rounded-[inherit] p-8 outline-hidden focus:outline-hidden focus-visible:ring-3 focus-visible:outline-hidden"
         href={withBase(href)}
       >
         <div>
@@ -85,11 +92,17 @@ const blurId = `eco-pc-blur-${name.toLowerCase().replace(/\s+/g, "-")}`;
           <p class="mt-2 text-sm text-green-800">{title}</p>
         </div>
         <div
-          class="mt-8 flex size-8 items-center justify-center rounded-sm bg-green-1000 p-1.25 text-sm/5 font-medium text-white"
+          class="bg-green-1000 mt-8 flex size-8 items-center justify-center rounded-sm p-1.25 text-sm/5 font-medium text-white"
           role="presentation"
           set:html={icon}
         />
-        <svg class="absolute bottom-8 right-8" fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
+        <svg
+          class="absolute right-8 bottom-8"
+          fill="currentColor"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+        >
           <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
         </svg>
       </a>
