@@ -52,7 +52,9 @@ const hiveAuthor = z.union([
     .object({ avatar: z.string().optional(), name: z.string(), position: z.string().optional() })
     .passthrough(),
 ]);
-const hiveDate = z.union([z.date(), z.string()]);
+// String dates must be ISO days — the product-updates page sorts them
+// lexically and parses them with `new Date(`${date}T00:00:00Z`)`.
+const hiveDate = z.union([z.date(), z.string().regex(/^\d{4}-\d{2}-\d{2}$/)]);
 
 const docs = defineCollection({
   loader: glob({
