@@ -1,6 +1,7 @@
 ---
 const sizes = {
   lg: 'text-lg',
+  base: 'text-base',
 } as const;
 
 interface Props {
@@ -11,7 +12,7 @@ const { size = 'lg' } = Astro.props;
 ---
 
 <p
-  class={`mb-3 max-w-[880px] ${sizes[size]} text-pretty text-[var(--hero-copy)] [&_strong]:font-semibold [&_strong]:text-[var(--strong)]`}
+  class={`mb-3 max-w-[880px] ${sizes[size]} text-pretty ${size === 'base' ? `text-[var(--muted)]` : `text-[var(--hero-copy)]`} [&_strong]:font-semibold [&_strong]:text-[var(--strong)]`}
 >
   <slot />
 </p>
