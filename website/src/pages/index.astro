@@ -4,6 +4,7 @@ import Cell from '../components/Cell.astro';
 import CommandLink from '../components/CommandLink.astro';
 import ContactDialog from '../components/ContactDialog.astro';
 import Footer from '../components/Footer.astro';
+import Paragraph from '../components/Paragraph.astro';
 import { productLogos } from '../components/product-logos';
 import SectionHeader from '../components/SectionHeader.astro';
 import SiteHeader from '../components/SiteHeader.astro';
@@ -31,7 +32,7 @@ const organizationJsonLd = JSON.stringify({
 
 const stellateAcquisitionHref = '/graphql/hive/blog/stellate-acquisition';
 const grafbaseAcquisitionHref = '/graphql/hive/blog/acquired-grafbase';
-const benchmarksHref = '/graphql/hive/federation-gateway-performance';
+const benchmarksHref = 'https://the-guild.dev/graphql/hive/federation-gateway-performance';
 const federationAuditHref = 'https://github.com/graphql-hive/federation-gateway-audit';
 
 const history = [
@@ -198,20 +199,16 @@ const stellateCaseStudies = [
     <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
       <div class="max-w-[920px] py-[76px] sm:py-[102px] sm:pt-[118px]">
         <h1
-          class="mb-6 max-w-[840px] font-mono text-[44px] leading-[1.02] font-semibold tracking-[-.06em] text-balance text-[var(--strong)] sm:text-[clamp(40px,6vw,68px)]"
+          class="mb-6 max-w-[840px] font-mono text-6xl font-semibold text-balance text-[var(--strong)]"
         >
-          The GraphQL company enterprises build on.<span
-            aria-hidden="true"
-            class="ml-[.13em] inline-block h-[.82em] w-[.09em] animate-blink bg-[var(--green)] align-[-.04em] motion-reduce:animate-none"
-          ></span>
+          The GraphQL company enterprises build on.
         </h1>
-        <div
-          class="max-w-[880px] text-lg leading-[1.68] text-pretty text-[var(--hero-copy)] [&_strong]:font-semibold [&_strong]:text-[var(--strong)]"
-        >
+        <Paragraph>
           The Guild is the engine behind open-source GraphQL. <strong
             >Profitable and bootstrapped</strong
           > for over 10 years.
-          <br /><br />
+        </Paragraph>
+        <Paragraph>
           We build <a
             class="font-semibold text-[var(--hive)] hover:text-[var(--strong)]"
             href="/graphql/hive">Hive</a
@@ -223,13 +220,13 @@ const stellateCaseStudies = [
             class="text-[var(--green)] hover:text-[var(--strong)]"
             href="#why">Learn more →</a
           >
-        </div>
+        </Paragraph>
         <div class="mt-[30px] flex flex-wrap gap-2.5">
           <CommandLink href="#platform" primary>explore platform</CommandLink>
           <CommandLink href="#contact" data-contact-open>talk to an engineer</CommandLink>
         </div>
         <div
-          class="mt-9 border-t border-[var(--line)] pt-4 font-mono text-[13px] leading-[1.9] text-[var(--muted)] [&_a]:text-[var(--text)] [&_a]:underline [&_a]:decoration-[var(--line-strong)] [&_a]:underline-offset-2 [&_a]:transition-colors hover:[&_a]:text-[var(--strong)] hover:[&_a]:decoration-current"
+          class="mt-9 border-t border-[var(--line)] pt-4 font-mono text-xs leading-[1.9] text-[var(--muted)] [&_a]:text-[var(--text)] [&_a]:underline [&_a]:decoration-[var(--line-strong)] [&_a]:underline-offset-2 [&_a]:transition-colors [&_a:hover]:text-[var(--strong)] [&_a:hover]:decoration-current"
         >
           Running in production at <a href="#proof">Fortune 500 scale</a>
           {' '}<span class="mx-1.5 text-[var(--faint)]">·</span> Acquired <a
@@ -248,25 +245,29 @@ const stellateCaseStudies = [
           path="~/the-guild/why"
           title="Built for trust, structured for the long term. And you can verify all of it."
         >
-          Most infrastructure vendors ask you to trust their intentions. We've structured the whole
-          company from the beginning so you don't have to: the license, the finances, and the track
-          record each remove a category of risk on their own.
+          <Paragraph>
+            Most infrastructure vendors ask you to trust their intentions. We've structured the
+            whole company from the beginning so you don't have to: the license, the finances, and
+            the track record each remove a category of risk on their own.
+          </Paragraph>
         </SectionHeader>
         <div class="grid grid-cols-1 gap-x-9 gap-y-11 md:grid-cols-2 lg:grid-cols-3">
           <Cell
             title="MIT, all the way down"
             evidence="learn more ↗"
             evidenceHref="https://github.com/graphql-hive"
-            ><p>
+          >
+            <Paragraph size="base">
               Cloud and self-hosted are the <b>same code</b>. No open-core bait, no features clawed
               back into an enterprise tier. If we disappeared tomorrow, you'd keep running.
-            </p></Cell
-          >
+            </Paragraph>
+          </Cell>
           <Cell
             title="Profitable, bootstrapped"
             evidence="learn more ↗"
             evidenceHref={grafbaseAcquisitionHref}
-            ><p>
+          >
+            <Paragraph size="base">
               Stable finances, zero venture capital. Profitable enough to acquire <a
                 class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
                 href={stellateAcquisitionHref}>Stellate (2024)</a
@@ -274,18 +275,19 @@ const stellateCaseStudies = [
                 class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
                 href={grafbaseAcquisitionHref}>Grafbase (2026)</a
               > from cash flow, not from a raise.
-            </p></Cell
-          >
+            </Paragraph>
+          </Cell>
           <Cell
             title="Adopt one piece, or the whole platform"
             evidence="learn more ↗"
             evidenceHref="/graphql/hive/docs/other-integrations/apollo-router"
-            ><p>
+          >
+            <Paragraph size="base">
               The opposite of lock-in: <b>Hive Console</b> and <b>Hive Router</b> each work standalone.
               Run just the schema registry with the gateway you already have, or just the router with
               your existing registry, then migrate the rest gradually, only what you want, when you want.
-            </p></Cell
-          >
+            </Paragraph>
+          </Cell>
         </div>
       </div>
     </section>
@@ -297,26 +299,21 @@ const stellateCaseStudies = [
       <div
         class="mx-auto grid w-[calc(100%-24px)] max-w-shell grid-cols-1 gap-[42px] sm:w-[calc(100%-40px)] lg:grid-cols-[minmax(260px,.8fr)_minmax(0,1.2fr)] lg:gap-[72px]"
       >
-        <div>
-          <div class="mb-3.5 font-mono text-[12px] tracking-[.075em] text-[var(--muted)] lowercase">
-            ~/the-guild/history
-          </div>
-          <h2
-            class="mb-3.5 font-mono text-[clamp(28px,4vw,48px)] leading-[1.12] font-semibold tracking-[-.045em] text-balance text-[var(--strong)]"
-          >
-            With GraphQL from day one. Still here. Still shipping.
-          </h2>
-          <div class="text-[var(--muted)] [&_strong]:text-[var(--text)]">
+        <SectionHeader
+          path="~/the-guild/history"
+          title="With GraphQL from day one. Still here. Still shipping."
+        >
+          <Paragraph>
             Vendors show you roadmaps; we'd rather show you history. The pattern to notice: when
             others left the ecosystem, <strong>we stayed and took over the maintenance</strong>,
             four times now.
-          </div>
-        </div>
+          </Paragraph>
+        </SectionHeader>
         <div class="border-l border-[var(--line-strong)]">
           {
             history.map(event => (
               <div class="relative grid grid-cols-[62px_1fr] gap-[22px] pb-8 pl-[26px] before:absolute before:top-[9px] before:left-[-3.5px] before:size-1.5 before:bg-[var(--green)] before:shadow-[0_0_0_3px_var(--bg)] before:content-[''] sm:grid-cols-[88px_1fr]">
-                <div class="pt-0.5 font-mono text-[13px] text-[var(--green)] tabular-nums">
+                <div class="pt-0.5 font-mono text-sm text-[var(--green)] tabular-nums">
                   {event.year}
                 </div>
                 <div>
@@ -330,12 +327,12 @@ const stellateCaseStudies = [
                     )}
                     {event.badge && ' '}
                     {event.badge && (
-                      <span class="ml-2 inline-block rounded-xs border border-[var(--badge-line)] px-1.5 py-px align-middle font-mono text-[11px] leading-6 font-normal tracking-[.02em] text-[var(--green)] before:mr-[5px] before:inline-block before:size-1 before:rounded-full before:bg-current before:align-[1px] before:content-['']">
+                      <span class="ml-2 inline-block rounded-xs border border-[var(--badge-line)] px-1.5 py-px align-middle font-mono text-xs leading-6 font-normal tracking-[.02em] text-[var(--green)] before:mr-[5px] before:inline-block before:size-1 before:rounded-full before:bg-current before:align-[1px] before:content-['']">
                         {` ${event.badge} `}
                       </span>
                     )}
                   </h3>
-                  <p class="max-w-[760px] text-[15px] text-[var(--muted)]">{event.copy}</p>
+                  <Paragraph size="base">{event.copy}</Paragraph>
                 </div>
               </div>
             ))
@@ -353,16 +350,18 @@ const stellateCaseStudies = [
           path="~/the-guild/platform"
           title="Hive runs your federation. Stellate makes it fast everywhere."
         >
-          One open-source platform for the whole GraphQL lifecycle (schema registry, gateway, and
-          observability), with a global edge in front of it. Adopt each piece independently; they're
-          better together.
+          <Paragraph>
+            One open-source platform for the whole GraphQL lifecycle (schema registry, gateway, and
+            observability), with a global edge in front of it. Adopt each piece independently;
+            they're better together.
+          </Paragraph>
         </SectionHeader>
         <div class="grid grid-cols-1 gap-16 lg:grid-cols-2">
           <article
             class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
           >
             <a
-              class="mb-[3px] inline-flex items-center gap-2.5 font-mono text-[28px] font-semibold text-[var(--hive)] hover:underline"
+              class="mb-[3px] inline-flex items-center gap-2.5 font-mono text-3xl font-semibold text-[var(--hive)] hover:underline"
               href="/graphql/hive"
               ><svg
                 aria-hidden="true"
@@ -373,48 +372,56 @@ const stellateCaseStudies = [
                 set:html={productLogos.Hive.markup}
               />Hive</a
             >
-            <div class="mb-5 font-mono text-[12px] text-[var(--muted)]">
+            <div class="mb-5 font-mono text-xs text-[var(--muted)]">
               open-source GraphQL federation platform
             </div>
-            <p class="text-[var(--muted)]">
+            <Paragraph size="base">
               Schema registry, gateway, and observability in one MIT-licensed platform. Prevent
               breaking changes before they ship, watch every operation in production, and serve the
               supergraph from your clusters or ours.
-            </p>
+            </Paragraph>
             <ul class="mt-6">
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
               >
-                <b class="font-semibold text-[var(--text)]">Schema registry</b>: composition checks
-                against live traffic and persisted operations, so a breaking change is caught in CI,
-                not by a customer.
+                <Paragraph size="base">
+                  <b class="font-semibold text-[var(--text)]">Schema registry</b>: composition
+                  checks against live traffic and persisted operations, so a breaking change is
+                  caught in CI, not by a customer.
+                </Paragraph>
               </li>
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
               >
-                <a
-                  class="font-mono font-semibold text-[var(--text)] hover:underline"
-                  href="https://github.com/graphql-hive/router">Hive Router</a
-                >: open-source (MIT) federation router built in Rust; the fastest gateway in <a
-                  class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
-                  href={benchmarksHref}>public benchmarks</a
-                >, verified by a <a
-                  class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
-                  href={federationAuditHref}>reproducible federation audit</a
-                >.
+                <Paragraph size="base">
+                  <a
+                    class="font-mono font-semibold text-[var(--text)] hover:underline"
+                    href="https://github.com/graphql-hive/router">Hive Router</a
+                  >: open-source (MIT) federation router built in Rust; the fastest gateway in <a
+                    class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
+                    href={benchmarksHref}>public benchmarks</a
+                  >, verified by a <a
+                    class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
+                    href={federationAuditHref}>reproducible federation audit</a
+                  >.
+                </Paragraph>
               </li>
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
               >
-                <b class="font-semibold text-[var(--text)]">Observability</b>: per-operation,
-                per-client usage analytics; know exactly who depends on every field before you touch
-                it.
+                <Paragraph size="base">
+                  <b class="font-semibold text-[var(--text)]">Observability</b>: per-operation,
+                  per-client usage analytics; know exactly who depends on every field before you
+                  touch it.
+                </Paragraph>
               </li>
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
               >
-                <b class="font-semibold text-[var(--text)]">Enterprise controls</b>: SSO, RBAC,
-                audit logs, self-hosting, schema policies.
+                <Paragraph size="base">
+                  <b class="font-semibold text-[var(--text)]">Enterprise controls</b>: SSO, RBAC,
+                  audit logs, self-hosting, schema policies.
+                </Paragraph>
               </li>
             </ul>
           </article>
@@ -422,7 +429,7 @@ const stellateCaseStudies = [
             class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
           >
             <a
-              class="mb-[3px] inline-flex items-center gap-2.5 font-mono text-[28px] font-semibold text-[var(--stellate)] hover:underline"
+              class="mb-[3px] inline-flex items-center gap-2.5 font-mono text-3xl font-semibold text-[var(--stellate)] hover:underline"
               href="https://stellate.co"
             >
               <svg
@@ -435,46 +442,54 @@ const stellateCaseStudies = [
               />
               Stellate
             </a>
-            <div class="mb-5 font-mono text-[12px] text-[var(--muted)]">the CDN for GraphQL</div>
-            <p class="text-[var(--muted)]">
+            <div class="mb-5 font-mono text-xs text-[var(--muted)]">the CDN for GraphQL</div>
+            <Paragraph size="base">
               GraphQL-aware edge caching and protection, in front of any GraphQL API, including the
               ones Hive doesn't run. <a
                 class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
                 href={stellateAcquisitionHref}>Acquired by The Guild in 2024</a
               >, actively developed since.
-            </p>
+            </Paragraph>
             <ul class="mt-6">
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
               >
-                <b class="font-semibold text-[var(--text)]">Edge caching</b>: GraphQL-aware
-                invalidation at the CDN layer; serve reads from the edge, pass mutations through and
-                invalidate precisely.
+                <Paragraph size="base">
+                  <b class="font-semibold text-[var(--text)]">Edge caching</b>: GraphQL-aware
+                  invalidation at the CDN layer; serve reads from the edge, pass mutations through
+                  and invalidate precisely.
+                </Paragraph>
               </li>
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
               >
-                <b class="font-semibold text-[var(--text)]">Protection</b>: rate limiting,
-                query-depth and complexity limits, and persisted-operation enforcement at the
-                perimeter.
+                <Paragraph size="base">
+                  <b class="font-semibold text-[var(--text)]">Protection</b>: rate limiting,
+                  query-depth and complexity limits, and persisted-operation enforcement at the
+                  perimeter.
+                </Paragraph>
               </li>
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
               >
-                <b class="font-semibold text-[var(--text)]">Insight</b>: see cache hit rates and
-                origin load per operation, per client.
+                <Paragraph size="base">
+                  <b class="font-semibold text-[var(--text)]">Insight</b>: see cache hit rates and
+                  origin load per operation, per client.
+                </Paragraph>
               </li>
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
               >
-                <b class="font-semibold text-[var(--text)]">Independent</b>: works with Apollo,
-                Yoga, Hive, or any spec-compliant GraphQL server.
+                <Paragraph size="base">
+                  <b class="font-semibold text-[var(--text)]">Independent</b>: works with Apollo,
+                  Yoga, Hive, or any spec-compliant GraphQL server.
+                </Paragraph>
               </li>
             </ul>
           </article>
         </div>
         <div class="mt-12 border-t border-[var(--line)] pt-7">
-          <div class="mb-5 font-mono text-[12px] tracking-[.075em] text-[var(--muted)]">
+          <div class="mb-5 font-mono text-xs tracking-label text-[var(--muted)]">
             also part of our graphql ecosystem:
           </div>
           <div
@@ -484,10 +499,10 @@ const stellateCaseStudies = [
             {
               packages.map(([name, description, href]) => (
                 <a class="group min-w-28 shrink-0 pr-0.5" href={href}>
-                  <span class="block font-mono text-[13px] font-semibold whitespace-nowrap text-[var(--text)] transition-colors group-hover:text-[var(--strong)] group-hover:underline">
+                  <span class="block font-mono text-sm font-semibold whitespace-nowrap text-[var(--text)] transition-colors group-hover:text-[var(--strong)] group-hover:underline">
                     {name}
                   </span>
-                  <span class="mt-1 block font-mono text-[11px] leading-[1.35] whitespace-nowrap text-[var(--faint)]">
+                  <span class="mt-1 block font-mono text-xs leading-[1.35] whitespace-nowrap text-[var(--faint)]">
                     {description}
                   </span>
                 </a>
@@ -504,13 +519,15 @@ const stellateCaseStudies = [
     >
       <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
         <SectionHeader path="~/the-guild/proof" title="In production, at scale, on the record.">
-          Public case studies with named companies, not anonymized "a leading enterprise" slides.
+          <Paragraph>
+            Public case studies with named companies, not anonymized "a leading enterprise" slides.
+          </Paragraph>
         </SectionHeader>
         <div class="grid grid-cols-1 gap-16 lg:grid-cols-2">
           <blockquote
             class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
           >
-            <p class="mb-[18px] font-mono text-[17px] leading-[1.55]">
+            <p class="mb-[18px] font-mono text-lg leading-[1.55]">
               Hemnet moved from Apollo Router to Hive Gateway expecting a performance cost, and
               measured it running at <b class="text-[var(--amber)]"
                 >less than 30% of Apollo Router's resource usage</b
@@ -523,7 +540,7 @@ const stellateCaseStudies = [
           <blockquote
             class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
           >
-            <p class="mb-[18px] font-mono text-[17px] leading-[1.55]">
+            <p class="mb-[18px] font-mono text-lg leading-[1.55]">
               "Hive empowers us to <b class="text-[var(--amber)]">confidently evolve our schemas</b>
               {' '}by ensuring seamless API updates, detecting potential breaking changes, and
               guiding developers."
@@ -535,7 +552,7 @@ const stellateCaseStudies = [
         </div>
         <div class="mt-12 border-t border-[var(--line)] pt-7">
           <h3
-            class="mb-7 flex items-center gap-2.5 font-mono text-[20px] font-semibold tracking-[-.03em] text-[var(--strong)]"
+            class="mb-7 flex items-center gap-2.5 font-mono text-xl font-semibold text-[var(--strong)]"
           >
             <svg
               aria-hidden="true"
@@ -554,7 +571,7 @@ const stellateCaseStudies = [
                   class="group border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]"
                   href={study.href}
                 >
-                  <div class="flex items-center gap-2 font-mono text-[16px] font-semibold text-[var(--strong)]">
+                  <div class="flex items-center gap-2 font-mono text-base font-semibold text-[var(--strong)]">
                     {caseStudyLogos[study.company] && (
                       <svg
                         aria-hidden="true"
@@ -567,24 +584,24 @@ const stellateCaseStudies = [
                     )}
                     {study.company}
                   </div>
-                  <div class="mt-1 mb-3 font-mono text-[11px] text-[var(--faint)] lowercase">
+                  <div class="mt-1 mb-3 font-mono text-xs text-[var(--faint)] lowercase">
                     {study.industry}
                   </div>
-                  <p class="text-[15px] text-[var(--muted)]">
+                  <Paragraph size="base">
                     {study.copy}{' '}
                     <span
                       aria-hidden="true"
-                      class="ml-1 inline-block font-mono text-[12px] text-[var(--hive)] transition-transform group-hover:translate-x-0.5"
+                      class="ml-1 inline-block font-mono text-xs text-[var(--hive)] transition-transform group-hover:translate-x-0.5"
                     >
                       ↗
                     </span>
-                  </p>
+                  </Paragraph>
                 </a>
               ))
             }
           </div>
           <a
-            class="group mt-8 inline-flex items-center gap-1.5 font-mono text-[12px] text-[var(--green)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
+            class="group mt-8 inline-flex items-center gap-1.5 font-mono text-xs text-[var(--green)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
             href="/graphql/hive/case-studies"
           >
             read more hive case studies
@@ -592,7 +609,7 @@ const stellateCaseStudies = [
         </div>
         <div class="mt-12 border-t border-[var(--line)] pt-7">
           <h3
-            class="mb-7 flex items-center gap-2.5 font-mono text-[20px] font-semibold tracking-[-.03em] text-[var(--strong)]"
+            class="mb-7 flex items-center gap-2.5 font-mono text-xl font-semibold text-[var(--strong)]"
           >
             <svg
               aria-hidden="true"
@@ -611,7 +628,7 @@ const stellateCaseStudies = [
                   class="group border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]"
                   href={study.href}
                 >
-                  <div class="flex items-center gap-2 font-mono text-[16px] font-semibold text-[var(--strong)]">
+                  <div class="flex items-center gap-2 font-mono text-base font-semibold text-[var(--strong)]">
                     {stellateCaseStudyLogos[study.company] && (
                       <svg
                         aria-hidden="true"
@@ -624,24 +641,24 @@ const stellateCaseStudies = [
                     )}
                     {study.company}
                   </div>
-                  <div class="mt-1 mb-3 font-mono text-[11px] text-[var(--faint)] lowercase">
+                  <div class="mt-1 mb-3 font-mono text-xs text-[var(--faint)] lowercase">
                     {study.industry}
                   </div>
-                  <p class="text-[15px] text-[var(--muted)]">
+                  <Paragraph size="base">
                     {study.copy}{' '}
                     <span
                       aria-hidden="true"
-                      class="ml-1 inline-block font-mono text-[12px] text-[var(--stellate)] transition-transform group-hover:translate-x-0.5"
+                      class="ml-1 inline-block font-mono text-xs text-[var(--stellate)] transition-transform group-hover:translate-x-0.5"
                     >
                       ↗
                     </span>
-                  </p>
+                  </Paragraph>
                 </a>
               ))
             }
           </div>
           <a
-            class="group mt-8 inline-flex items-center gap-1.5 font-mono text-[12px] text-[var(--green)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
+            class="group mt-8 inline-flex items-center gap-1.5 font-mono text-xs text-[var(--green)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
             href="https://stellate.co/use-cases/industry/ecommerce"
           >
             read more stellate case studies
@@ -656,8 +673,10 @@ const stellateCaseStudies = [
     >
       <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
         <SectionHeader path="~/the-guild/security" title="Your security review, pre-answered.">
-          For procurement and security reviewers: the attestations, controls, and deployment options
-          you'll ask about, each with a public source you can check before the first call.
+          <Paragraph>
+            For procurement and security reviewers: the attestations, controls, and deployment
+            options you'll ask about, each with a public source you can check before the first call.
+          </Paragraph>
         </SectionHeader>
         <div class="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
           <Cell
@@ -666,40 +685,42 @@ const stellateCaseStudies = [
             evidenceHref="https://security.graphql-hive.com"
             ><div
               slot="metric"
-              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
+              class="mb-2.5 font-mono text-3xl leading-none tracking-tight text-[var(--amber)]"
             >
               SOC 2 Type II
-            </div><p>
+            </div>
+            <Paragraph size="base">
               <b>SOC 2 Type II</b> attested and listed in the <b>Cloud Security Alliance STAR</b>
               {' '}registry. Reports, policies, and subprocessors are published in the trust center,
               no NDA required to read them.
-            </p></Cell
-          >
+            </Paragraph>
+          </Cell>
           <Cell
             title="Managed or self-hosted"
             evidence="learn more ↗"
-            evidenceHref="/graphql/hive/docs/self-hosting"
+            evidenceHref="/graphql/hive/docs/schema-registry/self-hosting/get-started"
             ><div
               slot="metric"
-              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
+              class="mb-2.5 font-mono text-3xl leading-none tracking-tight text-[var(--amber)]"
             >
               air-gap
-            </div><p>
+            </div>
+            <Paragraph size="base">
               Use the managed cloud, or run the entire platform on your own infrastructure, in your
               VPC or fully <b>air-gapped</b>. Same MIT-licensed code either way, not a stripped
               "enterprise edition."
-            </p></Cell
-          >
+            </Paragraph>
+          </Cell>
           <Cell
             title="SSO · SCIM"
             evidence="learn more ↗"
-            evidenceHref="/graphql/hive/docs/management/sso-oidc-provider"
+            evidenceHref="/graphql/hive/docs/schema-registry/management/sso-oidc-provider"
             ><div
               slot="metric"
-              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
+              class="mb-2.5 font-mono text-3xl leading-none tracking-tight text-[var(--amber)]"
             >
               Enterprise-ready
-            </div><p>
+            </div><Paragraph size="base">
               SAML/OIDC <b>single sign-on</b>, SCIM provisioning, custom <a
                 class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
                 href="/graphql/hive/docs/schema-registry/management/members-roles-permissions"
@@ -708,8 +729,8 @@ const stellateCaseStudies = [
                 class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
                 href="/graphql/hive/docs/schema-registry/management/audit-logs">audit logs</a
               >. The controls your review checklist actually names.
-            </p></Cell
-          >
+            </Paragraph>
+          </Cell>
         </div>
       </div>
     </section>
@@ -737,16 +758,16 @@ const stellateCaseStudies = [
     >
       <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
         <h2
-          class="mb-3.5 max-w-[900px] font-mono text-[clamp(28px,4vw,48px)] leading-[1.12] font-semibold tracking-[-.045em] text-balance text-[var(--strong)]"
+          class="mb-3.5 max-w-[900px] font-mono text-5xl font-semibold text-balance text-[var(--strong)]"
         >
           Get in touch.
         </h2>
-        <p class="mb-7 max-w-[700px] text-[var(--muted)]">
+        <Paragraph>
           Looking to work with The Guild, learn more about our products, or just validate your API
           strategy with us? We'll be happy to speak with you and learn about your efforts, for free.
           You'll be talking to the engineers who maintain the tools you already run, not an SDR.
-        </p>
-        <div class="flex flex-wrap gap-2.5">
+        </Paragraph>
+        <div class="mt-6 flex flex-wrap gap-2.5">
           <CommandLink href="#contact" primary data-contact-open>talk to an engineer</CommandLink>
           <CommandLink href="/graphql/hive">start with hive</CommandLink>
           <CommandLink href="https://stellate.co">cache with stellate</CommandLink>

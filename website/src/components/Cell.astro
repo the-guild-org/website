@@ -12,8 +12,8 @@ const { title, evidence, evidenceHref } = Astro.props;
   class="min-h-full border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]"
 >
   <slot name="metric" />
-  <h3 class="mb-2.5 font-mono text-[16px] font-semibold text-[var(--strong)]">{title}</h3>
-  <div class="text-[15px] text-[var(--muted)] [&_b]:font-semibold [&_b]:text-[var(--text)]">
+  <h3 class="mb-2.5 font-mono text-base font-semibold text-[var(--strong)]">{title}</h3>
+  <div class="text-base text-[var(--muted)] [&_b]:font-semibold [&_b]:text-[var(--text)]">
     <slot />
   </div>
   {
@@ -21,12 +21,12 @@ const { title, evidence, evidenceHref } = Astro.props;
       (evidenceHref ? (
         <a
           href={evidenceHref}
-          class="mt-4 inline-block font-mono text-[12px] leading-[1.45] text-[var(--green)] transition-colors hover:text-[var(--strong)]"
+          class="mt-4 inline-block font-mono text-xs leading-[1.45] text-[var(--green)] transition-colors hover:text-[var(--strong)]"
         >
           {evidence}
         </a>
       ) : (
-        <div class="mt-4 font-mono text-[12px] leading-[1.45] text-[var(--faint)]">{evidence}</div>
+        <div class="mt-4 font-mono text-xs leading-[1.45] text-[var(--faint)]">{evidence}</div>
       ))
   }
 </article>

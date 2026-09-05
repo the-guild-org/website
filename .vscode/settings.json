@@ -1,5 +1,11 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
+  // Tailwind v4 keeps its config in CSS (@theme, @source, @import 'tailwindcss'
+  // source(...)), which VS Code's built-in CSS validator doesn't know. Hand .css
+  // files to the Tailwind CSS IntelliSense extension, which does.
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
   "eslint.options": {
     "extensions": [".js", ".jsx", ".md", ".mdx", ".ts", ".tsx"]
   },

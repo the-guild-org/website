@@ -1,4 +1,6 @@
 ---
+import Path from 'src/components/Path.astro';
+
 interface Props {
   path: string;
   title: string;
@@ -8,15 +10,15 @@ const { path, title } = Astro.props;
 ---
 
 <header class="mb-12 max-w-[820px]">
-  <div class="mb-3.5 font-mono text-[12px] tracking-[.075em] text-[var(--muted)] lowercase">
-    {path}
+  <div class="mb-3.5 font-mono text-xs tracking-label text-[var(--muted)] lowercase">
+    <Path>
+      {path}
+    </Path>
   </div>
-  <h2
-    class="mb-3.5 font-mono text-[clamp(28px,4vw,48px)] leading-[1.12] font-semibold tracking-[-.045em] text-balance text-[var(--strong)]"
-  >
+  <h2 class="mb-3.5 font-mono text-5xl font-semibold text-balance text-[var(--strong)]">
     {title}
   </h2>
-  <div class="max-w-[800px] text-[17px] leading-[1.65] text-pretty text-[var(--muted)]">
+  <div class="max-w-[800px] text-lg text-pretty text-[var(--muted)]">
     <slot />
   </div>
 </header>
