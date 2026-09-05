@@ -1,9 +1,11 @@
 ---
+import Path from 'src/components/Path.astro';
 import { caseStudyLogos, stellateCaseStudyLogos } from '../components/case-study-logos';
 import Cell from '../components/Cell.astro';
 import CommandLink from '../components/CommandLink.astro';
 import ContactDialog from '../components/ContactDialog.astro';
 import Footer from '../components/Footer.astro';
+import Paragraph from '../components/Paragraph.astro';
 import { productLogos } from '../components/product-logos';
 import SectionHeader from '../components/SectionHeader.astro';
 import SiteHeader from '../components/SiteHeader.astro';
@@ -198,17 +200,16 @@ const stellateCaseStudies = [
     <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
       <div class="max-w-[920px] py-[76px] sm:py-[102px] sm:pt-[118px]">
         <h1
-          class="mb-6 max-w-[840px] font-mono text-[44px] leading-[1.02] font-semibold tracking-[-.06em] text-balance text-[var(--strong)] sm:text-[clamp(40px,6vw,68px)]"
+          class="mb-6 max-w-[840px] font-mono text-6xl font-semibold text-balance text-[var(--strong)]"
         >
           The GraphQL company enterprises build on.
         </h1>
-        <div
-          class="max-w-[880px] text-lg leading-[1.68] text-pretty text-[var(--hero-copy)] [&_strong]:font-semibold [&_strong]:text-[var(--strong)]"
-        >
+        <Paragraph>
           The Guild is the engine behind open-source GraphQL. <strong
             >Profitable and bootstrapped</strong
           > for over 10 years.
-          <br /><br />
+        </Paragraph>
+        <Paragraph>
           We build <a
             class="font-semibold text-[var(--hive)] hover:text-[var(--strong)]"
             href="/graphql/hive">Hive</a
@@ -220,13 +221,13 @@ const stellateCaseStudies = [
             class="text-[var(--green)] hover:text-[var(--strong)]"
             href="#why">Learn more →</a
           >
-        </div>
+        </Paragraph>
         <div class="mt-[30px] flex flex-wrap gap-2.5">
           <CommandLink href="#platform" primary>explore platform</CommandLink>
           <CommandLink href="#contact" data-contact-open>talk to an engineer</CommandLink>
         </div>
         <div
-          class="mt-9 border-t border-[var(--line)] pt-4 font-mono text-[13px] leading-[1.9] text-[var(--muted)] [&_a]:text-[var(--text)] [&_a]:underline [&_a]:decoration-[var(--line-strong)] [&_a]:underline-offset-2 [&_a]:transition-colors hover:[&_a]:text-[var(--strong)] hover:[&_a]:decoration-current"
+          class="mt-9 border-t border-[var(--line)] pt-4 font-mono text-xs leading-[1.9] text-[var(--muted)] [&_a]:text-[var(--text)] [&_a]:underline [&_a]:decoration-[var(--line-strong)] [&_a]:underline-offset-2 [&_a]:transition-colors hover:[&_a]:text-[var(--strong)] hover:[&_a]:decoration-current"
         >
           Running in production at <a href="#proof">Fortune 500 scale</a>
           {' '}<span class="mx-1.5 text-[var(--faint)]">·</span> Acquired <a
@@ -245,9 +246,11 @@ const stellateCaseStudies = [
           path="~/the-guild/why"
           title="Built for trust, structured for the long term. And you can verify all of it."
         >
-          Most infrastructure vendors ask you to trust their intentions. We've structured the whole
-          company from the beginning so you don't have to: the license, the finances, and the track
-          record each remove a category of risk on their own.
+          <Paragraph>
+            Most infrastructure vendors ask you to trust their intentions. We've structured the
+            whole company from the beginning so you don't have to: the license, the finances, and
+            the track record each remove a category of risk on their own.
+          </Paragraph>
         </SectionHeader>
         <div class="grid grid-cols-1 gap-x-9 gap-y-11 md:grid-cols-2 lg:grid-cols-3">
           <Cell
@@ -295,12 +298,8 @@ const stellateCaseStudies = [
         class="mx-auto grid w-[calc(100%-24px)] max-w-shell grid-cols-1 gap-[42px] sm:w-[calc(100%-40px)] lg:grid-cols-[minmax(260px,.8fr)_minmax(0,1.2fr)] lg:gap-[72px]"
       >
         <div>
-          <div class="mb-3.5 font-mono text-[12px] tracking-[.075em] text-[var(--muted)] lowercase">
-            ~/the-guild/history
-          </div>
-          <h2
-            class="mb-3.5 font-mono text-[clamp(28px,4vw,48px)] leading-[1.12] font-semibold tracking-[-.045em] text-balance text-[var(--strong)]"
-          >
+          <Path>~/the-guild/history</Path>
+          <h2 class="mb-3.5 font-mono text-5xl font-semibold text-balance text-[var(--strong)]">
             With GraphQL from day one. Still here. Still shipping.
           </h2>
           <div class="text-[var(--muted)] [&_strong]:text-[var(--text)]">
@@ -313,7 +312,7 @@ const stellateCaseStudies = [
           {
             history.map(event => (
               <div class="relative grid grid-cols-[62px_1fr] gap-[22px] pb-8 pl-[26px] before:absolute before:top-[9px] before:left-[-3.5px] before:size-1.5 before:bg-[var(--green)] before:shadow-[0_0_0_3px_var(--bg)] before:content-[''] sm:grid-cols-[88px_1fr]">
-                <div class="pt-0.5 font-mono text-[13px] text-[var(--green)] tabular-nums">
+                <div class="pt-0.5 font-mono text-sm text-[var(--green)] tabular-nums">
                   {event.year}
                 </div>
                 <div>
@@ -327,12 +326,12 @@ const stellateCaseStudies = [
                     )}
                     {event.badge && ' '}
                     {event.badge && (
-                      <span class="ml-2 inline-block rounded-xs border border-[var(--badge-line)] px-1.5 py-px align-middle font-mono text-[11px] leading-6 font-normal tracking-[.02em] text-[var(--green)] before:mr-[5px] before:inline-block before:size-1 before:rounded-full before:bg-current before:align-[1px] before:content-['']">
+                      <span class="ml-2 inline-block rounded-xs border border-[var(--badge-line)] px-1.5 py-px align-middle font-mono text-xs leading-6 font-normal tracking-[.02em] text-[var(--green)] before:mr-[5px] before:inline-block before:size-1 before:rounded-full before:bg-current before:align-[1px] before:content-['']">
                         {` ${event.badge} `}
                       </span>
                     )}
                   </h3>
-                  <p class="max-w-[760px] text-[15px] text-[var(--muted)]">{event.copy}</p>
+                  <p class="max-w-[760px] text-base text-[var(--muted)]">{event.copy}</p>
                 </div>
               </div>
             ))
@@ -359,7 +358,7 @@ const stellateCaseStudies = [
             class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
           >
             <a
-              class="mb-[3px] inline-flex items-center gap-2.5 font-mono text-[28px] font-semibold text-[var(--hive)] hover:underline"
+              class="mb-[3px] inline-flex items-center gap-2.5 font-mono text-3xl font-semibold text-[var(--hive)] hover:underline"
               href="/graphql/hive"
               ><svg
                 aria-hidden="true"
@@ -370,7 +369,7 @@ const stellateCaseStudies = [
                 set:html={productLogos.Hive.markup}
               />Hive</a
             >
-            <div class="mb-5 font-mono text-[12px] text-[var(--muted)]">
+            <div class="mb-5 font-mono text-xs text-[var(--muted)]">
               open-source GraphQL federation platform
             </div>
             <p class="text-[var(--muted)]">
@@ -380,14 +379,14 @@ const stellateCaseStudies = [
             </p>
             <ul class="mt-6">
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-base text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
               >
                 <b class="font-semibold text-[var(--text)]">Schema registry</b>: composition checks
                 against live traffic and persisted operations, so a breaking change is caught in CI,
                 not by a customer.
               </li>
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-base text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
               >
                 <a
                   class="font-mono font-semibold text-[var(--text)] hover:underline"
@@ -401,14 +400,14 @@ const stellateCaseStudies = [
                 >.
               </li>
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-base text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
               >
                 <b class="font-semibold text-[var(--text)]">Observability</b>: per-operation,
                 per-client usage analytics; know exactly who depends on every field before you touch
                 it.
               </li>
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-base text-[var(--muted)] before:absolute before:left-0 before:text-[var(--hive)] before:content-['--']"
               >
                 <b class="font-semibold text-[var(--text)]">Enterprise controls</b>: SSO, RBAC,
                 audit logs, self-hosting, schema policies.
@@ -419,7 +418,7 @@ const stellateCaseStudies = [
             class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
           >
             <a
-              class="mb-[3px] inline-flex items-center gap-2.5 font-mono text-[28px] font-semibold text-[var(--stellate)] hover:underline"
+              class="mb-[3px] inline-flex items-center gap-2.5 font-mono text-3xl font-semibold text-[var(--stellate)] hover:underline"
               href="https://stellate.co"
             >
               <svg
@@ -432,7 +431,7 @@ const stellateCaseStudies = [
               />
               Stellate
             </a>
-            <div class="mb-5 font-mono text-[12px] text-[var(--muted)]">the CDN for GraphQL</div>
+            <div class="mb-5 font-mono text-xs text-[var(--muted)]">the CDN for GraphQL</div>
             <p class="text-[var(--muted)]">
               GraphQL-aware edge caching and protection, in front of any GraphQL API, including the
               ones Hive doesn't run. <a
@@ -442,27 +441,27 @@ const stellateCaseStudies = [
             </p>
             <ul class="mt-6">
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-base text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
               >
                 <b class="font-semibold text-[var(--text)]">Edge caching</b>: GraphQL-aware
                 invalidation at the CDN layer; serve reads from the edge, pass mutations through and
                 invalidate precisely.
               </li>
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-base text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
               >
                 <b class="font-semibold text-[var(--text)]">Protection</b>: rate limiting,
                 query-depth and complexity limits, and persisted-operation enforcement at the
                 perimeter.
               </li>
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-base text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
               >
                 <b class="font-semibold text-[var(--text)]">Insight</b>: see cache hit rates and
                 origin load per operation, per client.
               </li>
               <li
-                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-[15px] text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
+                class="relative border-t border-dotted border-[var(--line-strong)] py-2.5 pl-[22px] text-base text-[var(--muted)] before:absolute before:left-0 before:text-[var(--stellate)] before:content-['--']"
               >
                 <b class="font-semibold text-[var(--text)]">Independent</b>: works with Apollo,
                 Yoga, Hive, or any spec-compliant GraphQL server.
@@ -471,7 +470,7 @@ const stellateCaseStudies = [
           </article>
         </div>
         <div class="mt-12 border-t border-[var(--line)] pt-7">
-          <div class="mb-5 font-mono text-[12px] tracking-[.075em] text-[var(--muted)]">
+          <div class="mb-5 font-mono text-xs tracking-label text-[var(--muted)]">
             also part of our graphql ecosystem:
           </div>
           <div
@@ -481,10 +480,10 @@ const stellateCaseStudies = [
             {
               packages.map(([name, description, href]) => (
                 <a class="group min-w-28 shrink-0 pr-0.5" href={href}>
-                  <span class="block font-mono text-[13px] font-semibold whitespace-nowrap text-[var(--text)] transition-colors group-hover:text-[var(--strong)] group-hover:underline">
+                  <span class="block font-mono text-sm font-semibold whitespace-nowrap text-[var(--text)] transition-colors group-hover:text-[var(--strong)] group-hover:underline">
                     {name}
                   </span>
-                  <span class="mt-1 block font-mono text-[11px] leading-[1.35] whitespace-nowrap text-[var(--faint)]">
+                  <span class="mt-1 block font-mono text-xs leading-[1.35] whitespace-nowrap text-[var(--faint)]">
                     {description}
                   </span>
                 </a>
@@ -507,7 +506,7 @@ const stellateCaseStudies = [
           <blockquote
             class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
           >
-            <p class="mb-[18px] font-mono text-[17px] leading-[1.55]">
+            <p class="mb-[18px] font-mono text-lg leading-[1.55]">
               Hemnet moved from Apollo Router to Hive Gateway expecting a performance cost, and
               measured it running at <b class="text-[var(--amber)]"
                 >less than 30% of Apollo Router's resource usage</b
@@ -520,7 +519,7 @@ const stellateCaseStudies = [
           <blockquote
             class="border-t border-[var(--line)] pt-5 transition-colors hover:border-[var(--line-strong)]"
           >
-            <p class="mb-[18px] font-mono text-[17px] leading-[1.55]">
+            <p class="mb-[18px] font-mono text-lg leading-[1.55]">
               "Hive empowers us to <b class="text-[var(--amber)]">confidently evolve our schemas</b>
               {' '}by ensuring seamless API updates, detecting potential breaking changes, and
               guiding developers."
@@ -532,7 +531,7 @@ const stellateCaseStudies = [
         </div>
         <div class="mt-12 border-t border-[var(--line)] pt-7">
           <h3
-            class="mb-7 flex items-center gap-2.5 font-mono text-[20px] font-semibold tracking-[-.03em] text-[var(--strong)]"
+            class="mb-7 flex items-center gap-2.5 font-mono text-xl font-semibold text-[var(--strong)]"
           >
             <svg
               aria-hidden="true"
@@ -551,7 +550,7 @@ const stellateCaseStudies = [
                   class="group border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]"
                   href={study.href}
                 >
-                  <div class="flex items-center gap-2 font-mono text-[16px] font-semibold text-[var(--strong)]">
+                  <div class="flex items-center gap-2 font-mono text-base font-semibold text-[var(--strong)]">
                     {caseStudyLogos[study.company] && (
                       <svg
                         aria-hidden="true"
@@ -564,14 +563,14 @@ const stellateCaseStudies = [
                     )}
                     {study.company}
                   </div>
-                  <div class="mt-1 mb-3 font-mono text-[11px] text-[var(--faint)] lowercase">
+                  <div class="mt-1 mb-3 font-mono text-xs text-[var(--faint)] lowercase">
                     {study.industry}
                   </div>
-                  <p class="text-[15px] text-[var(--muted)]">
+                  <p class="text-base text-[var(--muted)]">
                     {study.copy}{' '}
                     <span
                       aria-hidden="true"
-                      class="ml-1 inline-block font-mono text-[12px] text-[var(--hive)] transition-transform group-hover:translate-x-0.5"
+                      class="ml-1 inline-block font-mono text-xs text-[var(--hive)] transition-transform group-hover:translate-x-0.5"
                     >
                       ↗
                     </span>
@@ -581,7 +580,7 @@ const stellateCaseStudies = [
             }
           </div>
           <a
-            class="group mt-8 inline-flex items-center gap-1.5 font-mono text-[12px] text-[var(--green)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
+            class="group mt-8 inline-flex items-center gap-1.5 font-mono text-xs text-[var(--green)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
             href="/graphql/hive/case-studies"
           >
             read more hive case studies
@@ -589,7 +588,7 @@ const stellateCaseStudies = [
         </div>
         <div class="mt-12 border-t border-[var(--line)] pt-7">
           <h3
-            class="mb-7 flex items-center gap-2.5 font-mono text-[20px] font-semibold tracking-[-.03em] text-[var(--strong)]"
+            class="mb-7 flex items-center gap-2.5 font-mono text-xl font-semibold text-[var(--strong)]"
           >
             <svg
               aria-hidden="true"
@@ -608,7 +607,7 @@ const stellateCaseStudies = [
                   class="group border-t border-[var(--line)] pt-[18px] transition-colors hover:border-[var(--line-strong)]"
                   href={study.href}
                 >
-                  <div class="flex items-center gap-2 font-mono text-[16px] font-semibold text-[var(--strong)]">
+                  <div class="flex items-center gap-2 font-mono text-base font-semibold text-[var(--strong)]">
                     {stellateCaseStudyLogos[study.company] && (
                       <svg
                         aria-hidden="true"
@@ -621,14 +620,14 @@ const stellateCaseStudies = [
                     )}
                     {study.company}
                   </div>
-                  <div class="mt-1 mb-3 font-mono text-[11px] text-[var(--faint)] lowercase">
+                  <div class="mt-1 mb-3 font-mono text-xs text-[var(--faint)] lowercase">
                     {study.industry}
                   </div>
-                  <p class="text-[15px] text-[var(--muted)]">
+                  <p class="text-base text-[var(--muted)]">
                     {study.copy}{' '}
                     <span
                       aria-hidden="true"
-                      class="ml-1 inline-block font-mono text-[12px] text-[var(--stellate)] transition-transform group-hover:translate-x-0.5"
+                      class="ml-1 inline-block font-mono text-xs text-[var(--stellate)] transition-transform group-hover:translate-x-0.5"
                     >
                       ↗
                     </span>
@@ -638,7 +637,7 @@ const stellateCaseStudies = [
             }
           </div>
           <a
-            class="group mt-8 inline-flex items-center gap-1.5 font-mono text-[12px] text-[var(--green)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
+            class="group mt-8 inline-flex items-center gap-1.5 font-mono text-xs text-[var(--green)] transition-colors after:text-[var(--faint)] after:transition-transform after:content-['→'] hover:text-[var(--strong)] hover:after:translate-x-0.5 hover:after:text-current"
             href="https://stellate.co/use-cases/industry/ecommerce"
           >
             read more stellate case studies
@@ -663,7 +662,7 @@ const stellateCaseStudies = [
             evidenceHref="https://security.graphql-hive.com"
             ><div
               slot="metric"
-              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
+              class="mb-2.5 font-mono text-3xl leading-none tracking-tight text-[var(--amber)]"
             >
               SOC 2 Type II
             </div><p>
@@ -678,7 +677,7 @@ const stellateCaseStudies = [
             evidenceHref="/graphql/hive/docs/self-hosting"
             ><div
               slot="metric"
-              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
+              class="mb-2.5 font-mono text-3xl leading-none tracking-tight text-[var(--amber)]"
             >
               air-gap
             </div><p>
@@ -693,7 +692,7 @@ const stellateCaseStudies = [
             evidenceHref="/graphql/hive/docs/management/sso-oidc-provider"
             ><div
               slot="metric"
-              class="mb-2.5 font-mono text-[26px] leading-none tracking-[-.04em] text-[var(--amber)]"
+              class="mb-2.5 font-mono text-3xl leading-none tracking-tight text-[var(--amber)]"
             >
               Enterprise-ready
             </div><p>
@@ -734,7 +733,7 @@ const stellateCaseStudies = [
     >
       <div class="mx-auto w-[calc(100%-24px)] max-w-shell sm:w-[calc(100%-40px)]">
         <h2
-          class="mb-3.5 max-w-[900px] font-mono text-[clamp(28px,4vw,48px)] leading-[1.12] font-semibold tracking-[-.045em] text-balance text-[var(--strong)]"
+          class="mb-3.5 max-w-[900px] font-mono text-5xl font-semibold text-balance text-[var(--strong)]"
         >
           Get in touch.
         </h2>
