@@ -26,8 +26,8 @@ import graphQLConfImage from '../documentation/src/components/graphql-conf-image
 interface Props {
   docsNavigation?: DocsNavPage[];
   docsNavigationTree?: DocsNavNode[];
-  /** Top-left product identity; the rest of the header is shared. */
-  logo?: { href: string; html: string; label: string };
+  /** Full top-left corner markup (its own anchors); defaults to the Hive mark. */
+  logo?: { html: string };
 }
 
 const { docsNavigation = [], docsNavigationTree = [], logo } = Astro.props;
@@ -105,19 +105,24 @@ const externalProps = (href: string) =>
       pathname.startsWith('/docs') && 'bg-beige-100 w-full dark:bg-[rgb(var(--nextra-bg))]',
     ]}
   >
-    <a
-      class="hive-focus -m-2 flex items-center rounded-md p-2"
-      href={logo?.href ?? withBase('/')}
-      aria-label={logo?.label ?? 'Hive home'}
-    >
-      <Fragment
-        set:html={logo?.html ??
-          withClass(
-            hiveCombinationMarkRaw,
-            'text-green-1000 dark:text-neutral-200 max-sm:h-6 max-sm:w-auto',
-          )}
-      />
-    </a>
+    {
+      logo ? (
+        <span class="-m-2 flex items-center p-2" set:html={logo.html} />
+      ) : (
+        <a
+          class="hive-focus -m-2 flex items-center rounded-md p-2"
+          href={withBase('/')}
+          aria-label="Hive home"
+        >
+          <Fragment
+            set:html={withClass(
+              hiveCombinationMarkRaw,
+              'text-green-1000 dark:text-neutral-200 max-sm:h-6 max-sm:w-auto',
+            )}
+          />
+        </a>
+      )
+    }
     <div class="flex items-center gap-2">
       {
         docsNavigation.length > 0 && (
@@ -223,19 +228,24 @@ const externalProps = (href: string) =>
     id="h-navmenu-container"
     aria-label="Navigation Menu"
   >
-    <a
-      class="hive-focus -m-2 flex items-center rounded-md p-2"
-      href={logo?.href ?? withBase('/')}
-      aria-label={logo?.label ?? 'Hive home'}
-    >
-      <Fragment
-        set:html={logo?.html ??
-          withClass(
-            hiveCombinationMarkRaw,
-            'text-green-1000 dark:text-neutral-200 max-sm:h-6 max-sm:w-auto',
-          )}
-      />
-    </a>
+    {
+      logo ? (
+        <span class="-m-2 flex items-center p-2" set:html={logo.html} />
+      ) : (
+        <a
+          class="hive-focus -m-2 flex items-center rounded-md p-2"
+          href={withBase('/')}
+          aria-label="Hive home"
+        >
+          <Fragment
+            set:html={withClass(
+              hiveCombinationMarkRaw,
+              'text-green-1000 dark:text-neutral-200 max-sm:h-6 max-sm:w-auto',
+            )}
+          />
+        </a>
+      )
+    }
 
     <ul
       class="group lg:border-beige-200 ml-4 flex flex-none list-none items-center rounded-lg bg-white px-1.5 lg:border lg:px-3 dark:border-neutral-700 dark:bg-transparent [@media(min-width:1180px)]:ml-16"
