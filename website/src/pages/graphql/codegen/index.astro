@@ -10,7 +10,7 @@ import SiteNavigation from '~hive/components/SiteNavigation.astro';
 import CodegenFooter from '../../../codegen/components/CodegenFooter.astro';
 import npmInfo from '../../../codegen/generated/npm-info.json';
 import { withBase } from '../../../codegen/lib/base-path';
-import { getPluginNpmInfo, getPlugins } from '../../../codegen/lib/plugin-data';
+import { getPlugins } from '../../../codegen/lib/plugin-data';
 import { CODEGEN_LOGO, CODEGEN_SITE } from '../../../codegen/lib/site';
 
 const description =
@@ -37,10 +37,31 @@ const highlights = [
   },
 ];
 
-const popular = plugins
-  .map(plugin => ({ ...plugin, downloads: getPluginNpmInfo(plugin.key)?.weeklyNPMDownloads ?? 0 }))
-  .sort((a, b) => b.downloads - a.downloads)
-  .slice(0, 6);
+// Curated starting points rather than a raw download ranking: the two
+// recommended presets and the schema printer.
+const featuredPlugins = [
+  {
+    title: 'Client preset',
+    npmPackage: '@graphql-codegen/client-preset',
+    href: withBase('/plugins/presets/preset-client'),
+    copy: 'The recommended way to type GraphQL operations on the frontend — one preset for React, Vue, and vanilla TypeScript.',
+    icon: `<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><rect height="14" rx="2" width="20" x="2" y="3"/><path d="M8 21h8M12 17v4"/><path d="m9 8-2 2.5L9 13M15 8l2 2.5L15 13"/></svg>`,
+  },
+  {
+    title: 'Server preset',
+    npmPackage: '@eddeee888/gcg-typescript-resolver-files',
+    href: withBase('/docs/guides/graphql-server-apollo-yoga-with-server-preset'),
+    copy: 'Typed resolvers with a scalable file structure for GraphQL Yoga and Apollo Server — write only the logic.',
+    icon: `<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><rect height="7" rx="1.5" width="18" x="3" y="3.5"/><rect height="7" rx="1.5" width="18" x="3" y="13.5"/><path d="M7 7h.01M7 17h.01M11 7h2M11 17h2"/></svg>`,
+  },
+  {
+    title: 'Schema AST',
+    npmPackage: '@graphql-codegen/schema-ast',
+    href: withBase('/plugins/other/schema-ast'),
+    copy: 'Merge all your type definitions and print the final schema into a single .graphql file.',
+    icon: `<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"/><path d="M14 3v6h6"/><path d="m9.5 13-1.5 2 1.5 2M14.5 13l1.5 2-1.5 2"/></svg>`,
+  },
+];
 
 const checkmark = `<svg fill="none" height="20" viewBox="0 0 20 20" width="20"><path d="M16.667 5 7.5 14.167 3.333 10" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round" stroke-width="1.5"></path></svg>`;
 ---
@@ -251,34 +272,30 @@ const checkmark = `<svg fill="none" height="20" viewBox="0 0 20 20" width="20"><
         </ul>
       </section>
 
-      <!-- Popular plugins -->
+      <!-- Featured plugins -->
       <section class="px-4 py-6 sm:py-12 md:px-6 xl:px-30">
         <h2
           class="group text-center text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]"
         >
-          Most popular plugins
+          Start with these
         </h2>
-        <ul
-          class="mt-6 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2 md:mt-16 md:gap-6 lg:grid-cols-3"
-        >
+        <ul class="mt-6 grid list-none grid-cols-1 gap-2 p-0 md:mt-16 md:grid-cols-3 md:gap-6">
           {
-            popular.map(plugin => (
-              <li>
+            featuredPlugins.map(plugin => (
+              <li class="min-w-0">
                 <a
                   class="hive-focus border-beige-400 block h-full rounded-3xl border bg-white p-6 transition-colors hover:border-green-800 lg:p-8"
-                  href={withBase(`/plugins/${plugin.category}/${plugin.key}`)}
+                  href={plugin.href}
                 >
-                  <span class="flex items-baseline justify-between gap-2">
-                    <span class="font-medium">{plugin.title}</span>
-                    <span class="text-sm text-green-800">
-                      {plugin.downloads >= 1_000_000
-                        ? `${(plugin.downloads / 1_000_000).toFixed(1)}M/wk`
-                        : `${Math.round(plugin.downloads / 1_000)}k/wk`}
-                    </span>
-                  </span>
-                  <span class="mt-2 block font-mono text-xs text-green-800">
+                  <span
+                    class="bg-green-1000 flex size-12 items-center justify-center rounded-xl text-white [&>svg]:size-6"
+                    set:html={plugin.icon}
+                  />
+                  <span class="mt-5 block text-xl font-medium">{plugin.title}</span>
+                  <span class="mt-1 block truncate font-mono text-xs text-green-800">
                     {plugin.npmPackage}
                   </span>
+                  <span class="mt-3 block leading-6 text-green-800">{plugin.copy}</span>
                 </a>
               </li>
             ))
