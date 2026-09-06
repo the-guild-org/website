@@ -35,6 +35,11 @@ Each provider needs:
 - **`polling_interval`**: `string` - (Remote only) How often to refresh the keys (like `"15m"`).
   Default is `"10m"`
 - **`prefetch`**: `boolean` - (Remote only) Whether to fetch keys on startup. Default is `false`
+- **`headers`**: `object` - (Remote only) Additional HTTP headers to send with the JWKS request, as
+  `name: value` pairs. Useful when the endpoint isn't reachable as a plain public URL: an identity
+  provider that selects its tenant from the `Host` header while being addressed internally, or a
+  JWKS endpoint behind a gateway that expects an API key. A `Host` entry overrides the authority
+  derived from `url` without changing where the request is sent. Default is empty.
 
 ### `lookup_locations`
 
@@ -206,6 +211,28 @@ With this setup, your subgraphs only receive the listed claims, even if the JWT 
   }
 }
 ```
+
+### JWKS Request Headers
+
+```yaml title="router.config.yaml"
+jwt:
+  jwks_providers:
+    - source: remote
+      url: http://idp.identity.svc.cluster.local/oauth/v2/keys
+      headers:
+        Host: auth.example.com
+      polling_interval: "15m"
+```
+
+Use `headers` when the JWKS endpoint can't be addressed by a plain public URL, or when you need to customize the HTTP request:
+
+- **Virtual-host-routed identity providers** (like Zitadel) resolve the tenant from the `Host`
+  header. Addressing them by an internal URL fails since the provider sees the internal authority
+  and finds no tenant for it. Setting `Host` lets the router reach the provider over an internal
+  address while still presenting the public hostname the provider expects.
+- **JWKS endpoints behind a gateway** that require an API key or other custom header can be reached
+  directly, without a proxy in front of the router.
+- **Custom JWKS endpoints** that require an API key or other custom header. 
 
 ### Local Development with File-based Keys
 
