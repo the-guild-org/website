@@ -8,6 +8,13 @@ import DocsSearchTrigger from '../../hive/components/DocsSearchTrigger.astro';
 import ThemeToggle from '../../hive/components/ThemeToggle.astro';
 import { withBase } from '../lib/base-path';
 
+interface Props {
+  /** Landing pages are light-only and have no search modal. */
+  minimal?: boolean;
+}
+
+const { minimal = false } = Astro.props;
+
 const links = [
   { href: withBase('/docs'), label: 'Documentation' },
   { href: withBase('/plugins'), label: 'Plugins' },
@@ -50,8 +57,14 @@ const externalProps = (href: string) =>
       }
     </nav>
     <div class="ml-auto flex items-center gap-2">
-      <ThemeToggle />
-      <DocsSearchTrigger compact />
+      {
+        !minimal && (
+          <>
+            <ThemeToggle />
+            <DocsSearchTrigger compact />
+          </>
+        )
+      }
     </div>
   </div>
 </header>

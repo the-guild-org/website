@@ -41,7 +41,9 @@ async function fetchJson(url: string, attempts = 3): Promise<unknown> {
       return await response.json();
     } catch (error) {
       if (attempt >= attempts) throw error;
-      await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+      // npm rate-limits bursts with 429s; back off harder for those.
+      const rateLimited = (error as Error).message.startsWith('429');
+      await new Promise(resolve => setTimeout(resolve, attempt * (rateLimited ? 5000 : 2000)));
     }
   }
 }
@@ -57,9 +59,12 @@ async function fetchPackage(npmPackage: string): Promise<NpmInfo> {
       time?: Record<string, string>;
       versions?: Record<string, { license?: string }>;
     }>,
-    fetchJson(`https://api.npmjs.org/downloads/point/last-week/${encoded}`).catch(() => ({
-      downloads: 0,
-    })) as Promise<{ downloads?: number }>,
+    fetchJson(`https://api.npmjs.org/downloads/point/last-week/${encoded}`, 5).catch(error => {
+      // A zero here shows up as missing download counts on the site — warn
+      // so a throttled run is visible in the build log.
+      console.warn(`downloads fetch failed for ${npmPackage}: ${(error as Error).message}`);
+      return { downloads: 0 };
+    }) as Promise<{ downloads?: number }>,
   ]);
   const version = pkg['dist-tags']?.latest ?? '';
   const readme = pkg.readme ?? '';
@@ -79,7 +84,7 @@ const info: Record<string, NpmInfo> = {};
 let failed = 0;
 
 // Modest concurrency; the registry throttles bursts.
-const CONCURRENCY = 8;
+const CONCURRENCY = 2;
 for (let index = 0; index < entries.length; index += CONCURRENCY) {
   await Promise.all(
     entries.slice(index, index + CONCURRENCY).map(async ([key, { npmPackage }]) => {
