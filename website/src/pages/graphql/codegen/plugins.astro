@@ -48,11 +48,11 @@ const plugins = getPlugins()
     />
   </head>
   <body
-    class="bg-beige-100 text-green-1000 grid min-h-screen grid-rows-[auto_1fr_auto] font-sans antialiased [grid-template-areas:'nav'_'main'_'footer'] dark:bg-[rgb(var(--nextra-bg))] dark:text-neutral-200"
+    class="bg-beige-100 text-green-1000 min-h-screen font-sans antialiased dark:bg-[rgb(var(--nextra-bg))] dark:text-neutral-200"
     data-theme-enabled
   >
     <SiteNavigation logo={CODEGEN_LOGO} />
-    <main class="mx-auto w-full max-w-5xl px-6 py-12 [grid-area:main]">
+    <main class="mx-auto w-full max-w-5xl px-6 py-12">
       <h1 class="text-3xl font-semibold">Plugins</h1>
       <p class="mt-2 text-green-800 dark:text-neutral-300">
         {plugins.length} plugins and presets, sorted by weekly npm downloads.
@@ -68,6 +68,7 @@ const plugins = getPlugins()
         {
           plugins.map(plugin => (
             <li
+              class="min-w-0"
               data-search={`${plugin.title} ${plugin.npmPackage} ${plugin.tags.join(' ')}`.toLowerCase()}
             >
               <a
@@ -102,7 +103,7 @@ const plugins = getPlugins()
         No plugins match that filter.
       </p>
     </main>
-    <div class="[grid-area:footer]"><CodegenFooter /></div>
+    <CodegenFooter />
 
     <script>
       const input = document.querySelector<HTMLInputElement>('#plugin-filter')!;
