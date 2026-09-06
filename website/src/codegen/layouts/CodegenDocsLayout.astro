@@ -4,12 +4,12 @@
  * hrefs pre-based on /graphql/codegen, and its own header/footer.
  */
 import type { DocsNavNode, DocsNavPage } from '../../docs/nav';
+import SiteNavigation from '../../hive/components/SiteNavigation.astro';
 import DocsLayout from '../../hive/layouts/DocsLayout.astro';
 import type { TocHeading } from '../../hive/lib/toc';
 import CodegenFooter from '../components/CodegenFooter.astro';
-import CodegenSiteNavigation from '../components/CodegenSiteNavigation.astro';
 import { basePath, withBase } from '../lib/base-path';
-import { CODEGEN_SITE } from '../lib/site';
+import { CODEGEN_LOGO, CODEGEN_SITE } from '../lib/site';
 
 interface Props {
   /** Mount-relative path, e.g. "/docs/getting-started". */
@@ -71,7 +71,12 @@ const docsBase = withBase(currentPath.startsWith('/plugins') ? '/plugins' : '/do
   site={CODEGEN_SITE}
   title={title}
 >
-  <CodegenSiteNavigation slot="site-navigation" />
+  <SiteNavigation
+    slot="site-navigation"
+    docsNavigation={basedItems}
+    docsNavigationTree={basedTree}
+    logo={CODEGEN_LOGO}
+  />
   <slot />
   <CodegenFooter slot="site-footer" />
 </DocsLayout>

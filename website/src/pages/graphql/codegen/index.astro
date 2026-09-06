@@ -6,12 +6,12 @@
 import '~hive/styles/global.css';
 import BaseHead from '~hive/components/BaseHead.astro';
 import ToolsAndLibraries from '~hive/components/landing/ToolsAndLibraries.astro';
+import SiteNavigation from '~hive/components/SiteNavigation.astro';
 import CodegenFooter from '../../../codegen/components/CodegenFooter.astro';
-import CodegenSiteNavigation from '../../../codegen/components/CodegenSiteNavigation.astro';
 import npmInfo from '../../../codegen/generated/npm-info.json';
 import { withBase } from '../../../codegen/lib/base-path';
 import { getPluginNpmInfo, getPlugins } from '../../../codegen/lib/plugin-data';
-import { CODEGEN_SITE } from '../../../codegen/lib/site';
+import { CODEGEN_LOGO, CODEGEN_SITE } from '../../../codegen/lib/site';
 
 const description =
   'Generate typed clients, resolvers and SDKs from your GraphQL schema and operations with a simple CLI. TypeScript, Java, C#, Flow, Dart and more.';
@@ -73,7 +73,7 @@ const checkmark = `<svg fill="none" height="20" viewBox="0 0 20 20" width="20"><
     />
   </head>
   <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
-    <CodegenSiteNavigation minimal />
+    <SiteNavigation logo={CODEGEN_LOGO} />
     <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
       <!-- Hero -->
       <div

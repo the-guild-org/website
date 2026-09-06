@@ -6,12 +6,12 @@
  */
 import '~hive/styles/global.css';
 import BaseHead from '~hive/components/BaseHead.astro';
+import SiteNavigation from '~hive/components/SiteNavigation.astro';
 import ThemeInit from '~hive/components/ThemeInit.astro';
 import CodegenFooter from '../../../codegen/components/CodegenFooter.astro';
-import CodegenSiteNavigation from '../../../codegen/components/CodegenSiteNavigation.astro';
 import { withBase } from '../../../codegen/lib/base-path';
 import { getPluginNpmInfo, getPlugins } from '../../../codegen/lib/plugin-data';
-import { CODEGEN_SITE } from '../../../codegen/lib/site';
+import { CODEGEN_LOGO, CODEGEN_SITE } from '../../../codegen/lib/site';
 
 const formatDownloads = (count: number) =>
   count >= 1_000_000
@@ -51,7 +51,7 @@ const plugins = getPlugins()
     class="bg-beige-100 text-green-1000 grid min-h-screen grid-rows-[auto_1fr_auto] font-sans antialiased [grid-template-areas:'nav'_'main'_'footer'] dark:bg-[rgb(var(--nextra-bg))] dark:text-neutral-200"
     data-theme-enabled
   >
-    <CodegenSiteNavigation />
+    <SiteNavigation logo={CODEGEN_LOGO} />
     <main class="mx-auto w-full max-w-5xl px-6 py-12 [grid-area:main]">
       <h1 class="text-3xl font-semibold">Plugins</h1>
       <p class="mt-2 text-green-800 dark:text-neutral-300">

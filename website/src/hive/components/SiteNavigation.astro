@@ -26,9 +26,11 @@ import graphQLConfImage from '../documentation/src/components/graphql-conf-image
 interface Props {
   docsNavigation?: DocsNavPage[];
   docsNavigationTree?: DocsNavNode[];
+  /** Top-left product identity; the rest of the header is shared. */
+  logo?: { href: string; html: string; label: string };
 }
 
-const { docsNavigation = [], docsNavigationTree = [] } = Astro.props;
+const { docsNavigation = [], docsNavigationTree = [], logo } = Astro.props;
 // File-format output and the mount prefix mean the landing page's pathname
 // is "<base>.html", never "/" — compare mount-relative so the "on the
 // landing page, link to docs" branch actually fires.
@@ -105,14 +107,15 @@ const externalProps = (href: string) =>
   >
     <a
       class="hive-focus -m-2 flex items-center rounded-md p-2"
-      href={withBase('/')}
-      aria-label="Hive home"
+      href={logo?.href ?? withBase('/')}
+      aria-label={logo?.label ?? 'Hive home'}
     >
       <Fragment
-        set:html={withClass(
-          hiveCombinationMarkRaw,
-          'text-green-1000 dark:text-neutral-200 max-sm:h-6 max-sm:w-auto',
-        )}
+        set:html={logo?.html ??
+          withClass(
+            hiveCombinationMarkRaw,
+            'text-green-1000 dark:text-neutral-200 max-sm:h-6 max-sm:w-auto',
+          )}
       />
     </a>
     <div class="flex items-center gap-2">
@@ -222,14 +225,15 @@ const externalProps = (href: string) =>
   >
     <a
       class="hive-focus -m-2 flex items-center rounded-md p-2"
-      href={withBase('/')}
-      aria-label="Hive home"
+      href={logo?.href ?? withBase('/')}
+      aria-label={logo?.label ?? 'Hive home'}
     >
       <Fragment
-        set:html={withClass(
-          hiveCombinationMarkRaw,
-          'text-green-1000 dark:text-neutral-200 max-sm:h-6 max-sm:w-auto',
-        )}
+        set:html={logo?.html ??
+          withClass(
+            hiveCombinationMarkRaw,
+            'text-green-1000 dark:text-neutral-200 max-sm:h-6 max-sm:w-auto',
+          )}
       />
     </a>
 
