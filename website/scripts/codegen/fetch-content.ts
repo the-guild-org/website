@@ -5,7 +5,9 @@
  *
  * Set CODEGEN_REPO_DIR to a local clone to skip the network fetch (useful
  * for development); otherwise a shallow sparse clone of the default branch
- * is made into a temporary directory.
+ * is made into a temporary directory. CODEGEN_REPO_REF overrides the ref to
+ * fetch — a branch, tag, SHA, or refs/pull/<n>/head — used by the docs
+ * preview workflow to build a codegen PR's content.
  *
  * Nextra-isms are converted mechanically:
  *   - `_meta.ts` ordering files    → Fumadocs-style `meta.json` + injected
