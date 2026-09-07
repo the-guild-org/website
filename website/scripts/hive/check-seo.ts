@@ -46,6 +46,10 @@ const REQUIRED_TAGS = [
 // description in dotansimha/graphql-code-generator.
 const KNOWN_DUPLICATE_DESCRIPTIONS = new Set(['graphql/codegen/docs/getting-started.html']);
 
+// The Yoga docs keep the older majors (v2, v3, v4) frozen as they were
+// published; sibling pages there share descriptions and will never be edited.
+const FROZEN_CONTENT = /^graphql\/yoga-server\/v\d\//;
+
 // Paths the website-router rewrites to other targets at the edge.
 const ROUTER_HANDLED_PATHS = new Set([
   '/graphql/hive/federation-gateway-performance',
@@ -57,7 +61,6 @@ const ROUTER_HANDLED_PATHS = new Set([
 // links to them cannot resolve inside this dist.
 // Keep in sync with packages/website-router/src/config.ts mappings.
 const EXTERNAL_DEPLOYMENT_PREFIXES = [
-  '/graphql/yoga-server',
   '/graphql/tools',
   '/graphql/mesh',
   '/graphql/scalars',
@@ -221,7 +224,11 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   }
   if (description) {
     const owner = descriptionOwners.get(description);
-    if (owner && !KNOWN_DUPLICATE_DESCRIPTIONS.has(relativePath)) {
+    if (
+      owner &&
+      !KNOWN_DUPLICATE_DESCRIPTIONS.has(relativePath) &&
+      !FROZEN_CONTENT.test(relativePath)
+    ) {
       issues.push(`${relativePath}: duplicate description (also on ${owner})`);
     } else if (!owner) {
       descriptionOwners.set(description, relativePath);

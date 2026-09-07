@@ -162,6 +162,50 @@ const codegenPlugins = defineCollection({
   }),
 });
 
+/**
+ * GraphQL Yoga content is fetched from the graphql-yoga repo by
+ * scripts/yoga/fetch-content.ts (run in prebuild) — gitignored and empty
+ * until it runs. The older majors live under v2/, v3/ and v4/ in one
+ * collection, keyed by version prefix.
+ */
+const yogaContentRoot = './src/yoga/content';
+
+const yogaDocs = defineCollection({
+  loader: glob({
+    base: `${yogaContentRoot}/docs`,
+    generateId: generateHiveId,
+    pattern: '**/*.{md,mdx}',
+  }),
+  schema: codegenDocsSchema,
+});
+
+const yogaTutorial = defineCollection({
+  loader: glob({
+    base: `${yogaContentRoot}/tutorial`,
+    generateId: generateHiveId,
+    pattern: '**/*.{md,mdx}',
+  }),
+  schema: codegenDocsSchema,
+});
+
+const yogaLegacy = defineCollection({
+  loader: glob({
+    base: yogaContentRoot,
+    generateId: generateHiveId,
+    pattern: 'v[0-9]/**/*.{md,mdx}',
+  }),
+  schema: codegenDocsSchema,
+});
+
+const yogaChangelogs = defineCollection({
+  loader: glob({
+    base: `${yogaContentRoot}/changelogs`,
+    generateId: generateHiveId,
+    pattern: '**/*.md',
+  }),
+  schema: z.object({ title: z.string(), description: z.string().optional() }).passthrough(),
+});
+
 export const collections = {
   blog,
   caseStudies,
@@ -170,4 +214,8 @@ export const collections = {
   docs,
   hiveBlog,
   productUpdates,
+  yogaChangelogs,
+  yogaDocs,
+  yogaLegacy,
+  yogaTutorial,
 };

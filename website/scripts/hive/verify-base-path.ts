@@ -67,9 +67,10 @@ for (const rule of readRedirects()) {
     rule.destination.startsWith('/') &&
     rule.destination !== base &&
     !rule.destination.startsWith(`${base}/`) &&
-    // Codegen rules are appended by scripts/codegen/generate-redirects.ts
-    // and are correctly prefixed with their own mount.
-    !rule.destination.startsWith('/graphql/codegen')
+    // Codegen and Yoga rules are added by their own generate-redirects
+    // scripts and are correctly prefixed with their mounts.
+    !rule.destination.startsWith('/graphql/codegen') &&
+    !rule.destination.startsWith('/graphql/yoga-server')
   ) {
     report('_redirects', rule.destination);
   }

@@ -1,0 +1,37 @@
+---
+/** Links between the current docs and the older majors kept under /v<n>. */
+import { withBase } from '../lib/base-path';
+import { CURRENT_VERSION } from '../lib/site';
+
+interface Props {
+  current: string;
+  versions: string[];
+}
+
+const { current, versions } = Astro.props;
+const hrefFor = (version: string) => withBase(version === CURRENT_VERSION ? '/docs' : `/${version}`);
+---
+
+<nav
+  aria-label="Documentation version"
+  class="mb-6 flex flex-wrap items-center gap-2 text-sm text-green-800 dark:text-neutral-400"
+  data-pagefind-ignore
+>
+  <span>Version:</span>
+  {
+    versions.map(version => (
+      <a
+        aria-current={version === current ? 'page' : undefined}
+        class:list={[
+          'hive-focus rounded-md border px-2 py-0.5 transition-colors',
+          version === current
+            ? 'border-green-800 text-green-1000 dark:border-neutral-400 dark:text-neutral-100'
+            : 'border-beige-400 hover:border-green-800 dark:border-neutral-700 dark:hover:border-neutral-400',
+        ]}
+        href={hrefFor(version)}
+      >
+        {version === CURRENT_VERSION ? `${version} (latest)` : version}
+      </a>
+    ))
+  }
+</nav>

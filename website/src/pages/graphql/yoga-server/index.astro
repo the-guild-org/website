@@ -1,0 +1,450 @@
+---
+/**
+ * GraphQL Yoga landing page in the Hive brand: the dark-green arch hero,
+ * feature sections ported from the old site, and the shared ecosystem
+ * section.
+ */
+import '~hive/styles/global.css';
+import BaseHead from '~hive/components/BaseHead.astro';
+import ToolsAndLibraries from '~hive/components/landing/ToolsAndLibraries.astro';
+import Table from '~hive/components/mdx/Table.astro';
+import SiteNavigation from '~hive/components/SiteNavigation.astro';
+import { Image } from 'astro:assets';
+import practicingYoga from '../../../yoga/assets/practicing-yoga.png';
+import apolloIcon from '../../../yoga/assets/icons/apollo.svg?raw';
+import arrowUpIcon from '../../../yoga/assets/icons/arrow-up.svg?raw';
+import checkIcon from '../../../yoga/assets/icons/check.svg?raw';
+import errorWarningIcon from '../../../yoga/assets/icons/error-warning.svg?raw';
+import graphqlIcon from '../../../yoga/assets/icons/graphql.svg?raw';
+import pulseLineIcon from '../../../yoga/assets/icons/pulse-line.svg?raw';
+import puzzleIcon from '../../../yoga/assets/icons/puzzle.svg?raw';
+import safeLineIcon from '../../../yoga/assets/icons/safe-line.svg?raw';
+import serverLineIcon from '../../../yoga/assets/icons/server-line.svg?raw';
+import timerLineIcon from '../../../yoga/assets/icons/timer-line.svg?raw';
+import YogaFooter from '../../../yoga/components/YogaFooter.astro';
+import ComparisonTable from '../../../yoga/content/partials/comparison-table.mdx';
+import { withBase } from '../../../yoga/lib/base-path';
+import { YOGA_LOGO, YOGA_REPO_URL, YOGA_SITE } from '../../../yoga/lib/site';
+
+const description =
+  'Fully-featured, cross-platform GraphQL server designed for effortless setup and optimal developer experience. Runs anywhere the Fetch API does.';
+
+const practice = [
+  {
+    title: 'Error masking',
+    copy: 'Enhance security by masking errors to prevent sensitive data leaks.',
+    href: withBase('/docs/features/error-masking'),
+    icon: errorWarningIcon,
+  },
+  {
+    title: 'Health checks',
+    copy: 'Built-in health checks to ensure server vitality and readiness.',
+    href: withBase('/docs/features/health-check'),
+    icon: pulseLineIcon,
+  },
+  {
+    title: 'GraphiQL integration',
+    copy: 'In-browser IDE for seamless writing, validation, and testing of GraphQL operations.',
+    href: withBase('/docs/features/graphiql'),
+    icon: graphqlIcon,
+  },
+];
+
+const extendable = [
+  {
+    title: 'Apollo Federation',
+    copy: 'Fully supports Apollo Federation for managing complex supergraphs and subgraphs.',
+    href: withBase('/docs/features/apollo-federation'),
+    icon: apolloIcon,
+  },
+  {
+    title: 'Persisted operations',
+    copy: 'Mitigates the risk of arbitrary GraphQL operations with robust persistence capabilities.',
+    href: withBase('/docs/features/persisted-operations'),
+    icon: safeLineIcon,
+  },
+  {
+    title: 'Response caching',
+    copy: 'Optimizes server performance by caching responses, significantly reducing server load.',
+    href: withBase('/docs/features/response-caching'),
+    icon: serverLineIcon,
+  },
+  {
+    title: 'Rate limiting',
+    copy: 'Prevents denial of service attacks with advanced rate limiting.',
+    href: 'https://the-guild.dev/graphql/envelop/plugins/use-rate-limiter',
+    icon: timerLineIcon,
+  },
+];
+
+const envelopRepo = `${YOGA_REPO_URL}/tree/main/packages/envelop`;
+const plugins: { name: string; href: string }[] = [
+  ['useSentry', `${envelopRepo}/plugins/sentry`],
+  ['useStatsD', `${envelopRepo}/plugins/statsd`],
+  ['useSchema', `${envelopRepo}/core`],
+  ['useValidationRule', `${envelopRepo}/core`],
+  ['useErrorHandler', `${envelopRepo}/core`],
+  ['useMaskedErrors', `${envelopRepo}/core`],
+  ['useEngine', `${envelopRepo}/core`],
+  ['useExtendContext', `${envelopRepo}/core`],
+  ['useImmediateIntrospection', `${envelopRepo}/plugins/immediate-introspection`],
+  ['useLogger', `${envelopRepo}/core`],
+  ['usePayloadFormatter', `${envelopRepo}/core`],
+  ['useGraphQLJit', `${envelopRepo}/plugins/graphql-jit`],
+  ['useParserCache', `${envelopRepo}/plugins/parser-cache`],
+  ['useValidationCache', `${envelopRepo}/plugins/validation-cache`],
+  ['useDataLoader', `${envelopRepo}/plugins/dataloader`],
+  ['useApolloTracing', `${envelopRepo}/plugins/apollo-tracing`],
+  ['useApolloDataSources', `${envelopRepo}/plugins/apollo-datasources`],
+  ['useOpenTelemetry', `${envelopRepo}/plugins/opentelemetry`],
+  ['useGenericAuth', `${envelopRepo}/plugins/generic-auth`],
+  ['useAuth0', `${envelopRepo}/plugins/auth0`],
+  ['useGraphQLModules', `${envelopRepo}/plugins/graphql-modules`],
+  ['useRateLimiter', `${envelopRepo}/plugins/rate-limiter`],
+  ['useDisableIntrospection', `${envelopRepo}/plugins/disable-introspection`],
+  ['useFilterAllowedOperations', `${envelopRepo}/plugins/filter-operation-type`],
+  ['usePreloadAssets', `${envelopRepo}/plugins/preload-assets`],
+  ['usePersistedOperations', `${envelopRepo}/plugins/persisted-operations`],
+  ['useHive', 'https://the-guild.dev/graphql/hive/docs/other-integrations/envelop'],
+  ['useNewRelic', `${envelopRepo}/plugins/newrelic`],
+  ['useLiveQuery', `${envelopRepo}/plugins/live-query`],
+  ['useFragmentArguments', `${envelopRepo}/plugins/fragment-arguments`],
+  ['useDepthLimit', `${envelopRepo}/plugins/depth-limit`],
+  ['useResponseCache', `${envelopRepo}/plugins/response-cache`],
+  ['usePrometheus', `${envelopRepo}/plugins/prometheus`],
+  ['useResourceLimitations', `${envelopRepo}/plugins/resource-limitations`],
+].map(([name, href]) => ({ name, href }));
+
+const http = [
+  {
+    title: 'Fully audited',
+    copy: 'Meets rigorous standards as confirmed by comprehensive',
+    link: {
+      label: 'graphql-http library audits',
+      href: 'https://github.com/enisdenjo/graphql-http/blob/master/implementations/graphql-yoga/README.md',
+    },
+    icon: checkIcon,
+  },
+  {
+    title: 'Subscriptions',
+    copy: 'Supports real-time communications with built-in GraphQL',
+    link: { label: 'Subscriptions over Server-Sent Events', href: withBase('/docs/features/subscriptions') },
+    icon: puzzleIcon,
+  },
+  {
+    title: 'File uploads',
+    copy: 'Facilitates file uploads directly through GraphQL using',
+    link: {
+      label: 'the multipart request specification',
+      href: 'https://github.com/jaydenseric/graphql-multipart-request-spec',
+    },
+    icon: arrowUpIcon,
+  },
+];
+
+const runtimes = [
+  ['AWS Lambda', 'integration-with-aws-lambda'],
+  ['Cloudflare Workers', 'integration-with-cloudflare-workers'],
+  ['Deno', 'integration-with-deno'],
+  ['Express', 'integration-with-express'],
+  ['Fastify', 'integration-with-fastify'],
+  ['Koa', 'integration-with-koa'],
+  ['NestJS', 'integration-with-nestjs'],
+  ['Next.js', 'integration-with-nextjs'],
+  ['SvelteKit', 'integration-with-sveltekit'],
+  ['Bun', 'integration-with-bun'],
+  ['& more…', 'z-other-environments'],
+].map(([name, slug]) => ({ name, href: withBase(`/docs/integrations/${slug}`) }));
+
+const checkmark = `<svg fill="none" height="20" viewBox="0 0 20 20" width="20"><path d="M16.667 5 7.5 14.167 3.333 10" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round" stroke-width="1.5"></path></svg>`;
+const arch = `<path d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z" fill="url(#yoga-hero-arch-a)" stroke="url(#yoga-hero-arch-b)" stroke-width=".5"></path>`;
+const sectionTitle =
+  'group text-center text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]';
+const iconBadge =
+  'bg-green-1000 flex size-12 shrink-0 items-center justify-center rounded-xl text-white [&>svg]:size-6 [&>svg_path]:fill-current';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <BaseHead
+      description={description}
+      image={withBase('/assets/cover.png')}
+      imageAlt="GraphQL Yoga"
+      site={YOGA_SITE}
+      title="GraphQL Yoga"
+    />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'GraphQL Yoga',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Web',
+        url: 'https://the-guild.dev/graphql/yoga-server',
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+      })}
+    />
+  </head>
+  <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
+    <SiteNavigation logo={YOGA_LOGO} />
+    <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
+      <!-- Hero -->
+      <div
+        class="bg-green-1000 relative isolate mx-4 flex max-w-360 flex-col gap-6 overflow-hidden rounded-3xl px-4 py-6 max-sm:mt-2 sm:pt-12 sm:pb-28 md:mx-6 md:gap-8 lg:pt-24 lg:pb-[168px]"
+      >
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <svg
+            class="absolute top-[-20px] left-[-46px] size-[200px] rotate-180 md:top-[-76px] md:left-[-186px] md:size-auto"
+            height="432"
+            viewBox="0 0 432 432"
+            width="432"
+            xmlns="http://www.w3.org/2000/svg"
+            set:html={arch}
+          />
+          <svg
+            class="absolute right-[-53px] bottom-0 size-[200px] md:-bottom-32 md:size-auto lg:right-[-72px] lg:bottom-0"
+            height="432"
+            viewBox="0 0 432 432"
+            width="432"
+            xmlns="http://www.w3.org/2000/svg"
+            set:html={arch}
+          />
+          <svg class="absolute -z-10" height="432" viewBox="0 0 432 432" width="432">
+            <defs>
+              <linearGradient gradientUnits="userSpaceOnUse" id="yoga-hero-arch-a" x1="48.5" x2="302.5" y1="53.5" y2="341">
+                <stop stop-color="#fff" stop-opacity=".1"></stop>
+                <stop offset="1" stop-color="#fff" stop-opacity=".3"></stop>
+              </linearGradient>
+              <linearGradient gradientUnits="userSpaceOnUse" id="yoga-hero-arch-b" x1="1" x2="431" y1="1" y2="431">
+                <stop stop-color="#fff" stop-opacity=".1"></stop>
+                <stop offset="1" stop-color="#fff" stop-opacity=".4"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <h1
+          class="group mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance text-white md:text-[4rem] md:leading-[1.1875]"
+        >
+          High-performance GraphQL server
+        </h1>
+        <p class="mx-auto w-lg max-w-[80%] text-center leading-6 text-white/80">
+          Fully-featured GraphQL server designed for effortless setup and optimal developer
+          experience. Part of the{' '}
+          <a
+            class="hive-focus underline decoration-white/30 underline-offset-2 hover:decoration-white/80"
+            href="https://the-guild.dev/graphql/hive"
+            title="Explore the Hive platform">Hive</a
+          >
+          {' '}ecosystem by{' '}
+          <a
+            class="hive-focus underline decoration-white/30 underline-offset-2 hover:decoration-white/80"
+            href="https://the-guild.dev"
+            title="Visit The Guild">The Guild</a
+          >.
+        </p>
+        <ul
+          class="relative z-10 mx-auto flex list-none flex-col gap-x-6 gap-y-2 text-sm leading-[21px] font-medium text-white md:flex-row [&>li]:flex [&>li]:items-center [&>li]:gap-2"
+        >
+          <li><span class="text-blue-400" set:html={checkmark} />Fully open source</li>
+          <li><span class="text-blue-400" set:html={checkmark} />No vendor lock</li>
+          <li><span class="text-blue-400" set:html={checkmark} />Can be self-hosted</li>
+        </ul>
+        <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
+          <a
+            class="text-green-1000 bg-primary relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40 sm:w-fit"
+            href={withBase('/docs')}
+          >
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            Get started
+          </a>
+          <a
+            class="text-green-1000 relative flex items-center justify-center gap-2 rounded-lg bg-green-300 px-6 py-3 leading-6 font-medium text-nowrap hover:bg-green-200 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-300/40 sm:w-fit"
+            href={withBase('/tutorial/basic')}
+          >
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            Tutorial
+          </a>
+          <a
+            class="relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white/40 sm:w-fit"
+            href={YOGA_REPO_URL}
+          >
+            <span class="absolute inset-0 rounded-lg border border-white/30"></span>
+            GitHub
+          </a>
+        </div>
+      </div>
+
+      <!-- Practice Yoga -->
+      <section class="flex gap-6 px-4 py-6 max-lg:flex-col sm:py-20 md:px-6 md:py-24 lg:gap-24 xl:px-30">
+        <div class="grow">
+          <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]">
+            Practice Yoga while doing server-work
+          </h2>
+          <p class="mt-4 leading-6 text-green-800">
+            Yoga ensures optimal configuration out-of-the-box, enhancing performance and developer
+            workflow.
+          </p>
+          <ul class="my-12 grid list-none grid-cols-1 gap-6 p-0 sm:grid-cols-3">
+            {
+              practice.map(item => (
+                <li>
+                  <a class="hive-focus block rounded-2xl p-4 transition-colors hover:bg-beige-100" href={item.href}>
+                    <span class={iconBadge} set:html={item.icon} />
+                    <span class="mt-4 block text-lg font-medium">{item.title}</span>
+                    <span class="mt-2 block text-sm leading-6 text-green-800">{item.copy}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+          <a
+            class="text-green-1000 relative inline-flex items-center justify-center gap-2 rounded-lg bg-green-800 px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40"
+            href={withBase('/docs')}
+          >
+            Learn more
+          </a>
+        </div>
+        <div class="relative shrink-0 lg:basis-5/12">
+          <Image
+            alt="Person in black clothing practicing yoga"
+            class="h-96 w-full rounded-3xl object-cover lg:h-full"
+            src={practicingYoga}
+            widths={[480, 720, 960]}
+          />
+        </div>
+      </section>
+
+      <!-- Truly extendable -->
+      <section class="bg-green-1000 relative isolate mx-4 overflow-hidden rounded-3xl p-8 text-white md:mx-6 md:p-[72px]">
+        <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] max-sm:text-[32px] md:text-5xl md:leading-[1.16667]">
+          Truly extendable
+        </h2>
+        <p class="mt-4 text-white/80">
+          Highly extendable through plugins, allowing customization to fit any development needs.
+        </p>
+        <div class="my-6 flex gap-6 max-xl:flex-col xl:my-12 xl:gap-20">
+          <ul class="grid list-none grid-cols-1 gap-6 p-0 sm:grid-cols-2 xl:basis-1/2 xl:shrink-0">
+            {
+              extendable.map(item => (
+                <li>
+                  <a
+                    class="hive-focus block h-full rounded-2xl bg-green-900 p-6 transition-colors hover:bg-green-800"
+                    href={item.href}
+                  >
+                    <span class="flex size-12 items-center justify-center rounded-xl bg-white/10 [&>svg]:size-6 [&>svg_path]:fill-white" set:html={item.icon} />
+                    <span class="mt-4 block text-base font-medium">{item.title}</span>
+                    <span class="mt-2 block text-sm leading-6 text-white/70">{item.copy}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+          <ul class="flex list-none flex-wrap content-start gap-2 p-0 sm:gap-3">
+            {
+              plugins.map(plugin => (
+                <li>
+                  <a
+                    class="hive-focus block rounded-lg bg-green-900 px-3 py-1.5 font-mono text-xs text-green-600 transition-colors hover:bg-green-800 hover:text-white sm:px-4 sm:py-2 sm:text-sm"
+                    href={plugin.href}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    {plugin.name}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <a
+          class="text-green-1000 bg-primary relative inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40"
+          href={withBase('/docs/features/envelop-plugins')}
+        >
+          Learn more about Envelop plugins
+        </a>
+      </section>
+
+      <!-- Everything HTTP -->
+      <section class="px-4 py-6 sm:py-12 md:px-6 lg:py-16 xl:px-30">
+        <h2 class={sectionTitle}>Everything HTTP</h2>
+        <p class="mt-4 text-center leading-6 text-green-800">
+          Complies with the latest GraphQL over HTTP specifications for full compatibility.
+        </p>
+        <ul class="mt-6 grid list-none grid-cols-1 gap-2 p-0 md:mt-16 md:grid-cols-3 md:gap-6">
+          {
+            http.map(item => (
+              <li class="bg-beige-100 rounded-3xl p-8 lg:p-12">
+                <span class={iconBadge} set:html={item.icon} />
+                <h3 class="mt-5 text-xl leading-[1.4] font-medium">{item.title}</h3>
+                <p class="mt-4 leading-6 text-green-800">
+                  {item.copy}{' '}
+                  <a class="hive-focus text-green-1000 font-medium underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800" href={item.link.href}>
+                    {item.link.label}
+                  </a>.
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <!-- Run anywhere -->
+      <section class="mx-4 rounded-3xl bg-blue-400 p-4 pt-6 sm:py-24 md:mx-6 md:px-6 lg:px-12 2xl:px-24">
+        <h2 class={sectionTitle}>Run anywhere</h2>
+        <p class="mt-4 text-center text-balance">
+          Deploy Yoga across any JavaScript environment, powered by its versatile Fetch API
+          compatibility.
+        </p>
+        <ul class="mx-auto mt-4 flex max-w-[1200px] list-none flex-wrap items-center justify-center gap-2 p-0 sm:mt-8 sm:gap-4 lg:mt-16">
+          {
+            runtimes.map(runtime => (
+              <li>
+                <a
+                  class="hive-focus flex h-[72px] items-center gap-4 rounded-2xl bg-blue-200 px-4 font-medium transition-colors hover:bg-blue-100 sm:h-[102px] sm:px-6 md:px-8"
+                  href={runtime.href}
+                >
+                  {runtime.name}
+                  <svg class="size-6 max-sm:hidden" fill="currentColor" viewBox="0 0 24 24"><path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" /></svg>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <!-- Comparison -->
+      <section class="px-4 py-6 md:px-6 md:pt-[120px] md:pb-12 xl:px-30">
+        <h2 class={sectionTitle}>Using Apollo Server? Reach zen quicker with Yoga.</h2>
+        <div class="mt-6 flex gap-6 max-lg:flex-col sm:mt-16 lg:gap-24">
+          <div class="lg:basis-1/4">
+            <h3 class="text-2xl leading-[1.3] font-medium">Runtime performance champion</h3>
+            <p class="mt-4 mb-6 leading-6 text-green-800">
+              Yoga demonstrates superior performance with lower latency and higher request rates
+              than Apollo Server. Benchmarked.
+            </p>
+            <a
+              class="hive-focus text-green-1000 font-medium underline decoration-green-800/30 underline-offset-4 hover:decoration-green-800"
+              href={withBase('/docs/comparison#graphql-yoga-and-apollo-server')}
+            >
+              Detailed Apollo Server comparison →
+            </a>
+          </div>
+          <div class="hive-prose min-w-0 grow overflow-x-auto [&_a]:font-medium [&_td]:py-4">
+            <ComparisonTable components={{ table: Table }} />
+          </div>
+        </div>
+      </section>
+
+      <!-- Ecosystem (shared Hive section: links to Hive, Gateway, and the libraries) -->
+      <ToolsAndLibraries class="mx-4 md:mx-6" />
+    </main>
+    <YogaFooter />
+  </body>
+</html>

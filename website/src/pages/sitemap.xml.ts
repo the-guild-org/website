@@ -15,6 +15,9 @@ export const GET: APIRoute = ({ site }) => {
   <sitemap>
     <loc>${new URL('/graphql/codegen/sitemap.xml', site).href}</loc>
   </sitemap>
+  <sitemap>
+    <loc>${new URL('/graphql/yoga-server/sitemap.xml', site).href}</loc>
+  </sitemap>
 </sitemapindex>
 `;
   return new Response(xml, { headers: { 'Content-Type': 'application/xml' } });
