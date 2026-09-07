@@ -8,7 +8,7 @@ import { routeRules } from '../../src/hive/documentation/redirects.ts';
  * redirects.ts stay un-prefixed (they predate the merge and read naturally).
  */
 import { basePath as PREFIX } from '../../src/hive/lib/base-path.ts';
-import { DIST } from '../lib/build-output.ts';
+import { DIST, resolvesInDist } from '../lib/build-output.ts';
 
 const outputDirectory = DIST;
 const outputFile = `${DIST}/_redirects`;
@@ -78,6 +78,24 @@ const redirects = [
   }),
   ...astroOnlyRedirects,
 ].sort((a, b) => Number(a.source.endsWith('/*')) - Number(b.source.endsWith('/*')));
+
+// A redirect that lands on a missing page is a 404 Google reports against us
+// (three catch-alls did exactly that in 2026-09). Every fixed Hive
+// destination must be a page in the build; splat destinations depend on the
+// request path and cannot be checked statically.
+const deadDestinations = redirects
+  .map(({ destination }) => destination.split('#')[0]!)
+  .filter(
+    destination =>
+      destination.startsWith(`${PREFIX}/`) &&
+      !destination.includes(':splat') &&
+      !resolvesInDist(destination),
+  );
+if (deadDestinations.length > 0) {
+  throw new Error(
+    `Redirect destinations that are not pages in the build:\n${[...new Set(deadDestinations)].map(d => `  ${d}`).join('\n')}`,
+  );
+}
 
 const MARKER =
   '# Generated from website/src/hive/documentation/redirects.ts. Do not edit manually.';

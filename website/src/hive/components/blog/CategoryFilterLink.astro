@@ -18,7 +18,7 @@ const isActive = currentCategory === category;
       ? 'text-green-1000 bg-green-200 hover:bg-transparent! hover:text-green-800 dark:bg-neutral-800 dark:text-white dark:hover:text-white/80'
       : 'hover:bg-beige-100 hover:text-green-1000 text-green-800 dark:text-white/80 dark:hover:bg-neutral-800 dark:hover:text-white',
   ]}
-  href={withBase(category ? `/blog/tag/${category}` : '/blog')}
+  href={withBase(category ? `/blog/tag/${encodeURIComponent(category)}` : '/blog')}
 >
   {prettyPrintTag(category || 'All')}
 </a>
