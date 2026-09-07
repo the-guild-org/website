@@ -466,8 +466,9 @@ traffic_shaping:
 
 ### `compression` (Router ↔ Subgraphs)
 
-Controls compression of request bodies the router sends to subgraphs. `gzip`, `deflate`, `br`
-(Brotli), and `zstd` are supported.
+Controls compression of request bodies the router sends to subgraphs, and the `Accept-Encoding`
+header it advertises for the responses it gets back. `gzip`, `deflate`, `br` (Brotli), and `zstd`
+are supported.
 
 Note: this is unrelated to the inbound [`router.compression`](#routercompression-client--router)
 option above, which controls compression between the client and the router.
@@ -475,9 +476,8 @@ option above, which controls compression between the client and the router.
 <Callout type="info">
   Decompressing subgraph responses is always on and unconfigured — the router
   transparently decompresses any subgraph response carrying a recognized
-  `Content-Encoding`, regardless of the outbound `compression` setting. The
-  router also always advertises `Accept-Encoding: gzip, deflate, br, zstd` to
-  every subgraph, independent of whether outbound compression is enabled.
+  `Content-Encoding`, regardless of the `compression.request` or
+  `compression.response.accept_encoding` settings.
 </Callout>
 
 ```yaml title="router.config.yaml"
@@ -488,6 +488,10 @@ traffic_shaping:
         enabled: false
         algorithm:
           kind: gzip
+      response:
+        accept_encoding:
+          publish: true
+          algorithms: [gzip, deflate, br, zstd]
   subgraphs:
     accounts:
       compression:
@@ -496,13 +500,17 @@ traffic_shaping:
           algorithm:
             kind: zstd
             level: 5
+        response:
+          accept_encoding:
+            publish: false
 ```
 
 <Callout type="info">
   A per-subgraph `compression` block fully **replaces** the `all` default
   rather than merging field-by-field — setting only `request.enabled` for a
-  subgraph also resets `request.algorithm` back to its own default (`gzip`)
-  rather than inheriting the algorithm configured in `all`.
+  subgraph also resets `request.algorithm` back to its own default (`gzip`),
+  and `response.accept_encoding` back to its own default, rather than
+  inheriting the values configured in `all`.
 </Callout>
 
 #### `compression.request.enabled`
@@ -528,6 +536,29 @@ one algorithm and sends it.
 - `{ kind: deflate }`
 - `{ kind: br, quality: <0-11> }` — defaults to `5`.
 - `{ kind: zstd, level: <1-22> }` — defaults to `3`.
+
+#### `compression.response.accept_encoding.publish`
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+Enables or disables sending the `Accept-Encoding` header to the subgraph. When disabled, the
+router sends no `Accept-Encoding` header at all, leaving it up to the subgraph whether to
+compress its response — the router still transparently decompresses any recognized
+`Content-Encoding` it gets back regardless of this setting.
+
+#### `compression.response.accept_encoding.algorithms`
+
+- **Type:** `("gzip" | "deflate" | "br" | "zstd")[]`
+- **Default:** `[gzip, deflate, br, zstd]`
+
+The algorithms advertised in the `Accept-Encoding` header sent to the subgraph, in preference
+order. Order matters here: some subgraphs pick the first algorithm they support from this list
+rather than their own preferred one, so this is a preference list, not just an allow-list. It
+only controls what the router asks for — the router always transparently decompresses any of
+`gzip`, `deflate`, `br`, or `zstd` it receives back, regardless of this setting.
+
+An empty list is equivalent to `publish: false`.
 
 ### `dedupe_enabled`
 
