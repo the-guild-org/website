@@ -62,7 +62,7 @@ const isRule = (line: string) => line.trim() !== '' && !line.startsWith('#');
 const isDynamic = (line: string) => /[*:]/.test(line.split(/\s+/)[0]!);
 
 const file = `${DIST}/_redirects`;
-let lines = readFileSync(file, 'utf8').split('\n');
+const lines = readFileSync(file, 'utf8').split('\n');
 
 // Re-runs replace the previous block instead of stacking another copy.
 const start = lines.indexOf(START);
