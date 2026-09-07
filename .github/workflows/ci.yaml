@@ -145,6 +145,9 @@ jobs:
         name: setup env
 
       - name: build
+        # TEMPORARY, remove before merging (see the deploy step above).
+        env:
+          YOGA_REPO_REF: refs/pull/4569/head
         run: pnpm --filter website build
 
       # lhci runs directly (no third-party action; the org's Actions policy

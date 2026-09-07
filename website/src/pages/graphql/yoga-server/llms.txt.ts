@@ -1,6 +1,6 @@
+import { getCollection } from 'astro:content';
 import { getYogaDocsNav, getYogaTutorialNav } from '../../../yoga/lib/docs-nav';
 import { getYogaLlmsText } from '../../../yoga/lib/llms';
-import { getCollection } from 'astro:content';
 
 export const prerender = true;
 

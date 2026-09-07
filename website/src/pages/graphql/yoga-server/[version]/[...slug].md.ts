@@ -11,7 +11,10 @@ export async function getStaticPaths() {
   return entries.flatMap(entry => {
     const [version, ...rest] = entry.id.split('/');
     if (!version || !isLegacyVersion(version)) return [];
-    const slug = rest.join('/').replace(/(^|\/)index$/, '').replace(/\.(md|mdx)$/, '');
+    const slug = rest
+      .join('/')
+      .replace(/(^|\/)index$/, '')
+      .replace(/\.(md|mdx)$/, '');
     return [{ params: { version, slug: slug || undefined }, props: { entry } }];
   });
 }

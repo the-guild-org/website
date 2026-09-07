@@ -7,7 +7,10 @@ export const prerender = true;
 
 export async function getStaticPaths() {
   const entries = await getCollection('yogaChangelogs');
-  return entries.map(entry => ({ params: { slug: entry.id.replace(/\.md$/, '') }, props: { entry } }));
+  return entries.map(entry => ({
+    params: { slug: entry.id.replace(/\.md$/, '') },
+    props: { entry },
+  }));
 }
 
 export function GET({ props }: { props: { entry: Entry } }) {

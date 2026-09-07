@@ -32,7 +32,9 @@ describe('getYogaLlmsText', () => {
     expect(output).toContain(
       '- [Quick start](https://the-guild.dev/graphql/yoga-server/docs.md): Start here',
     );
-    expect(output).toContain('- [CORS](https://the-guild.dev/graphql/yoga-server/docs/features/cors.md)\n');
+    expect(output).toContain(
+      '- [CORS](https://the-guild.dev/graphql/yoga-server/docs/features/cors.md)\n',
+    );
     expect(output).toContain(
       '- [Basic](https://the-guild.dev/graphql/yoga-server/tutorial/basic.md): From scratch',
     );
