@@ -60,22 +60,57 @@ export const routeRules: Record<string, RouteRule> = {
   // Schema registry link specifications
   '/docs/schema-registry/link-specifications': redirect('/docs/api-reference/link-specifications'),
 
-  // Management paths → schema-registry/management
-  '/docs/management/**': redirect('/docs/schema-registry/management'),
+  // Management paths → schema-registry/management (no index page there, so
+  // the catch-all lands on the first page and known sub-pages map 1:1)
+  '/docs/management/**': redirect('/docs/schema-registry/management/organizations'),
+  '/docs/management/access-tokens': redirect('/docs/schema-registry/management/access-tokens'),
+  '/docs/management/audit-logs': redirect('/docs/schema-registry/management/audit-logs'),
+  '/docs/management/members-roles-permissions': redirect(
+    '/docs/schema-registry/management/members-roles-permissions',
+  ),
+  '/docs/management/organizations': redirect('/docs/schema-registry/management/organizations'),
+  '/docs/management/projects': redirect('/docs/schema-registry/management/projects'),
+  '/docs/management/scim-provisioning': redirect(
+    '/docs/schema-registry/management/scim-provisioning',
+  ),
+  '/docs/management/targets': redirect('/docs/schema-registry/management/targets'),
   '/docs/management/contracts': redirect('/docs/schema-registry/contracts'),
   '/docs/management/external-schema-composition': redirect(
     '/docs/schema-registry/external-schema-composition',
   ),
 
-  // Get started paths
-  '/docs/get-started/**': redirect('/docs/schema-registry/get-started'),
+  // Get started paths (no index page there either)
+  '/docs/get-started/**': redirect('/docs/schema-registry/get-started/first-steps'),
+  '/docs/get-started/first-steps': redirect('/docs/schema-registry/get-started/first-steps'),
+  '/docs/get-started/apollo-federation': redirect(
+    '/docs/schema-registry/get-started/apollo-federation',
+  ),
+  '/docs/get-started/schema-stitching': redirect(
+    '/docs/schema-registry/get-started/schema-stitching',
+  ),
+  '/docs/get-started/single-project': redirect('/docs/schema-registry/get-started/single-project'),
   '/docs/get-started/organizations': redirect('/docs/schema-registry/management/organizations'),
   '/docs/get-started/projects': redirect('/docs/schema-registry/management/projects'),
   '/docs/get-started/targets': redirect('/docs/schema-registry/management/targets'),
 
   // Self-hosting
   '/docs/self-hosting': redirect('/docs/schema-registry/self-hosting/get-started'),
-  '/docs/self-hosting/**': redirect('/docs/schema-registry/self-hosting'),
+  '/docs/self-hosting/**': redirect('/docs/schema-registry/self-hosting/get-started'),
+  '/docs/self-hosting/get-started': redirect('/docs/schema-registry/self-hosting/get-started'),
+  '/docs/self-hosting/oidc-login': redirect('/docs/schema-registry/self-hosting/oidc-login'),
+  '/docs/self-hosting/cdn-artifacts': redirect('/docs/schema-registry/self-hosting/cdn-artifacts'),
+  '/docs/self-hosting/changelog': redirect('/docs/schema-registry/self-hosting/changelog'),
+  '/docs/self-hosting/client-and-cli-configuration': redirect(
+    '/docs/schema-registry/self-hosting/client-and-cli-configuration',
+  ),
+  '/docs/self-hosting/external-composition': redirect(
+    '/docs/schema-registry/self-hosting/external-composition',
+  ),
+  '/docs/self-hosting/s3-provider': redirect('/docs/schema-registry/self-hosting/s3-provider'),
+  '/docs/self-hosting/telemetry': redirect('/docs/schema-registry/self-hosting/telemetry'),
+  '/docs/self-hosting/troubleshooting': redirect(
+    '/docs/schema-registry/self-hosting/troubleshooting',
+  ),
   '/docs/self-hosting/apollo-federation-2': redirect(
     '/docs/schema-registry/self-hosting/external-composition',
   ),
