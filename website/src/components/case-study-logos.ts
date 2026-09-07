@@ -37,6 +37,12 @@ export const caseStudyLogos: Record<string, { viewBox: string; markup: string }>
 // Stellate case-study marks, from the logos on stellate.co's case-study pages
 // (single-color originals recolored to currentColor, cropped to each mark).
 export const stellateCaseStudyLogos: Record<string, { viewBox: string; markup: string }> = {
+  // Hashnode's mark: a rounded square turned 45° with a circular cutout.
+  Hashnode: {
+    viewBox: '0 0 32 32',
+    markup:
+      '<path fill-rule="evenodd" transform="rotate(45 16 16)" d="M12 4h8a8 8 0 0 1 8 8v8a8 8 0 0 1-8 8h-8a8 8 0 0 1-8-8v-8a8 8 0 0 1 8-8Zm4 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12Z"/>',
+  },
   'THAT Conference': {
     viewBox: '0 0 46 32',
     markup:
