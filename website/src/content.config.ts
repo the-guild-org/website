@@ -126,4 +126,48 @@ const hiveBlog = defineCollection({
     .passthrough(),
 });
 
-export const collections = { blog, caseStudies, docs, hiveBlog, productUpdates };
+/**
+ * GraphQL Codegen content is fetched from the graphql-code-generator repo by
+ * scripts/codegen/fetch-content.ts (run in prebuild) — these directories are
+ * gitignored and empty until it runs.
+ */
+const codegenContentRoot = './src/codegen/content';
+
+const codegenDocsSchema = z
+  .object({
+    title: z.string().optional(),
+    sidebarTitle: z.string().optional(),
+    description: z.string().optional(),
+  })
+  .passthrough();
+
+const codegenDocs = defineCollection({
+  loader: glob({
+    base: `${codegenContentRoot}/docs`,
+    generateId: generateHiveId,
+    pattern: '**/*.{md,mdx}',
+  }),
+  schema: codegenDocsSchema,
+});
+
+const codegenPlugins = defineCollection({
+  loader: glob({
+    base: `${codegenContentRoot}/plugins`,
+    generateId: generateHiveId,
+    pattern: '**/*.{md,mdx}',
+  }),
+  schema: codegenDocsSchema.extend({
+    hasOperationsNote: z.boolean().optional(),
+    isDev: z.boolean().optional(),
+  }),
+});
+
+export const collections = {
+  blog,
+  caseStudies,
+  codegenDocs,
+  codegenPlugins,
+  docs,
+  hiveBlog,
+  productUpdates,
+};

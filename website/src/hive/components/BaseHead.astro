@@ -14,6 +14,14 @@ interface Breadcrumb {
   path: string;
 }
 
+interface SiteIdentity {
+  /** Mount path of the product, e.g. "/graphql/hive". */
+  mountPath: string;
+  name: string;
+  /** Absolute URL of the mount point. */
+  url: string;
+}
+
 interface Props {
   /** Ancestor breadcrumbs for the JSON-LD trail; the page itself is appended. */
   breadcrumbs?: Breadcrumb[];
@@ -21,11 +29,11 @@ interface Props {
   description: string;
   image?: ImageMetadata | string;
   imageAlt?: string;
+  /** Which docs product this head belongs to; defaults to Hive. */
+  site?: SiteIdentity;
   title: string;
   type?: 'article' | 'website';
 }
-
-const SITE_NAME = 'Hive';
 
 const TWITTER_ACCOUNT = '@TheGuildDev';
 
@@ -35,16 +43,21 @@ const {
   description,
   image = defaultImage,
   imageAlt = 'GraphQL Hive',
+  site = { mountPath: basePath, name: 'Hive', url: SITE_URL },
   title,
   type = 'website',
 } = Astro.props;
 
+const SITE_NAME = site.name;
+const siteUrl = site.url;
+const mountPath = site.mountPath;
+
 /** Strips the mount prefix — it is not part of logical paths. */
 function stripBase(path: string) {
   // File-format output puts the landing page at <base>.html.
-  if (path === `${basePath}.html`) return '';
-  return basePath && (path === basePath || path.startsWith(`${basePath}/`))
-    ? path.slice(basePath.length)
+  if (path === `${mountPath}.html`) return '';
+  return mountPath && (path === mountPath || path.startsWith(`${mountPath}/`))
+    ? path.slice(mountPath.length)
     : path;
 }
 
@@ -54,7 +67,7 @@ function stripBase(path: string) {
 const currentPath = stripBase(Astro.url.pathname)
   .replace(/\.html$/, '')
   .replace(/\/$/, '');
-const canonicalUrl = canonical ?? `${SITE_URL}${currentPath}`;
+const canonicalUrl = canonical ?? `${siteUrl}${currentPath}`;
 // Bundled assets are emitted at the shared /_astro root of the unified
 // site, so they join with the origin; anything else is a Hive-relative
 // path and joins with the mounted site URL.
@@ -63,7 +76,7 @@ const imageUrl = /^https?:\/\//.test(imagePath)
   ? imagePath
   : imagePath.startsWith('/_astro/')
     ? `${SITE_ORIGIN}${imagePath}`
-    : `${SITE_URL}/${imagePath.replace(/^\//, '')}`;
+    : `${siteUrl}/${imagePath.replace(/^\//, '')}`;
 const imageWidth = typeof image === 'string' ? undefined : image.width;
 const imageHeight = typeof image === 'string' ? undefined : image.height;
 
@@ -76,7 +89,7 @@ const breadcrumbJsonLd = JSON.stringify({
   itemListElement: [...breadcrumbs, { name: pageCrumbName, path: currentPath }].map(
     (crumb, index) => ({
       '@type': 'ListItem',
-      item: /^https?:\/\//.test(crumb.path) ? crumb.path : `${SITE_URL}${stripBase(crumb.path)}`,
+      item: /^https?:\/\//.test(crumb.path) ? crumb.path : `${siteUrl}${stripBase(crumb.path)}`,
       name: crumb.name,
       position: index + 1,
     }),
@@ -91,10 +104,10 @@ const breadcrumbJsonLd = JSON.stringify({
 <link
   rel="alternate"
   type="text/markdown"
-  href={withBase(`${SITE_URL}/llms.txt`)}
-  title="Hive documentation for LLMs"
+  href={withBase(`${siteUrl}/llms.txt`)}
+  title={`${SITE_NAME} documentation for LLMs`}
 />
-<link rel="sitemap" type="application/xml" href={withBase(`${SITE_URL}/sitemap.xml`)} />
+<link rel="sitemap" type="application/xml" href={withBase(`${siteUrl}/sitemap.xml`)} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:type" content={type} />

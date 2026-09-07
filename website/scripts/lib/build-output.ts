@@ -13,7 +13,11 @@ export const DIST = fileURLToPath(new URL('../../dist', import.meta.url));
 export const HIVE_DIST = `${DIST}${basePath}`;
 export const REPO_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
-export const SITEMAPS = ['/sitemap-0.xml', `${basePath}/sitemap.xml`];
+export const SITEMAPS = [
+  '/sitemap-0.xml',
+  `${basePath}/sitemap.xml`,
+  '/graphql/codegen/sitemap.xml',
+];
 
 /** Public URL path served by a dist html file (build.format: "file"). */
 export function publicPath(relativePath: string): string {

@@ -1,0 +1,34 @@
+---
+/** Minimal footer for the Codegen docs pages. */
+const year = new Date().getFullYear();
+
+const links = [
+  { href: 'https://github.com/dotansimha/graphql-code-generator', label: 'GitHub' },
+  { href: 'https://discord.gg/xud7bH9', label: 'Discord' },
+  { href: 'https://the-guild.dev', label: 'The Guild' },
+  { href: 'https://the-guild.dev/graphql/hive', label: 'Hive' },
+];
+---
+
+<footer
+  class="border-fd-border border-t px-6 py-8 text-sm text-green-800 dark:text-neutral-400"
+  data-pagefind-ignore
+>
+  <div class="mx-auto flex max-w-[90rem] flex-wrap items-center justify-between gap-4">
+    <p>© {year} The Guild — GraphQL Code Generator is MIT licensed.</p>
+    <nav aria-label="Footer" class="flex flex-wrap gap-4">
+      {
+        links.map(link => (
+          <a
+            class="hover:text-green-1000 transition-colors dark:hover:text-neutral-100"
+            href={link.href}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</footer>

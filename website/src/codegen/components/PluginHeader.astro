@@ -1,0 +1,135 @@
+---
+/**
+ * Header block of a plugin page: npm badges, installation tabs, the
+ * operations-requirement note, and the generated Config API Reference (or
+ * the npm readme when no config interface exists and the page carries no
+ * prose of its own). Mirrors what plugin-get-static-props.ts synthesized on
+ * the old Nextra site.
+ */
+import Callout from '../../hive/components/mdx/Callout.astro';
+import PackageManagerTabs from '../../hive/components/mdx/PackageManagerTabs.astro';
+import PackageManagerTab from '../../hive/components/mdx/Tab.astro';
+import { withBase } from '../lib/base-path';
+import {
+  getConfigReferenceMarkdown,
+  getPluginNpmInfo,
+  type PluginRecord,
+} from '../lib/plugin-data';
+import { renderMarkdown } from '../lib/render-markdown';
+
+interface Props {
+  hasOperationsNote?: boolean;
+  /** Render the npm readme when the page has no hand-written prose. */
+  includeReadme?: boolean;
+  plugin: PluginRecord;
+}
+
+const { hasOperationsNote = false, includeReadme = false, plugin } = Astro.props;
+const npm = getPluginNpmInfo(plugin.key);
+
+const formatDownloads = (count: number) =>
+  count >= 1_000_000
+    ? `${(count / 1_000_000).toFixed(1)}M`
+    : count >= 1_000
+      ? `${(count / 1_000).toFixed(0)}k`
+      : String(count);
+const updated = npm?.updatedAt
+  ? new Date(npm.updatedAt).toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    })
+  : undefined;
+
+const installCommands = [
+  `npm i -D ${plugin.npmPackage}`,
+  `yarn add -D ${plugin.npmPackage}`,
+  `pnpm add -D ${plugin.npmPackage}`,
+  `bun add -D ${plugin.npmPackage}`,
+];
+
+const configReference = getConfigReferenceMarkdown(plugin.key);
+// Readme h1s would compete with the page's own <h1> — demote them.
+const readme = npm?.readme?.replace(/^# /gm, '## ');
+const bodyMarkdown = configReference ?? (includeReadme ? readme : undefined);
+const bodyHtml = bodyMarkdown ? await renderMarkdown(bodyMarkdown) : undefined;
+---
+
+<div class="plugin-header" data-pagefind-ignore>
+  <dl
+    class="border-fd-border my-6 flex flex-wrap gap-x-8 gap-y-2 rounded-lg border p-4 text-sm text-green-800 dark:text-neutral-300"
+  >
+    <div>
+      <dt class="font-medium">Package</dt>
+      <dd>
+        <a
+          class="underline underline-offset-2"
+          href={`https://www.npmjs.com/package/${plugin.npmPackage}`}
+          rel="noopener noreferrer"
+          target="_blank">{plugin.npmPackage}</a
+        >
+      </dd>
+    </div>
+    {
+      npm?.version && (
+        <div>
+          <dt class="font-medium">Version</dt>
+          <dd>{npm.version}</dd>
+        </div>
+      )
+    }
+    {
+      npm && npm.weeklyNPMDownloads > 0 && (
+        <div>
+          <dt class="font-medium">Weekly downloads</dt>
+          <dd>{formatDownloads(npm.weeklyNPMDownloads)}</dd>
+        </div>
+      )
+    }
+    {
+      npm?.license && (
+        <div>
+          <dt class="font-medium">License</dt>
+          <dd>{npm.license}</dd>
+        </div>
+      )
+    }
+    {
+      updated && (
+        <div>
+          <dt class="font-medium">Updated</dt>
+          <dd>{updated}</dd>
+        </div>
+      )
+    }
+  </dl>
+</div>
+
+<h2 id="installation">Installation</h2>
+<PackageManagerTabs>
+  {
+    installCommands.map((command, index) => (
+      <PackageManagerTab hidden={index !== 0}>
+        <pre class="shiki">
+          <code>{command}</code>
+        </pre>
+      </PackageManagerTab>
+    ))
+  }
+</PackageManagerTabs>
+
+{
+  hasOperationsNote && (
+    <Callout type="info">
+      <p>
+        We recommend reading about{' '}
+        <a href={withBase('/docs/getting-started/documents-field')}>
+          how to configure your operations
+        </a>{' '}
+        first — this plugin requires GraphQL operations (documents) to generate output.
+      </p>
+    </Callout>
+  )
+}
+
+{bodyHtml && <div class="plugin-api-docs" set:html={bodyHtml} />}

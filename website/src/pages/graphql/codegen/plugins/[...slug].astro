@@ -1,0 +1,89 @@
+---
+import Callout from '~hive/components/mdx/Callout.astro';
+import Card from '~hive/components/mdx/Card.astro';
+import CardsBase from '~hive/components/mdx/Cards.astro';
+import CodeBlock from '~hive/components/mdx/CodeBlock.astro';
+import File from '~hive/components/mdx/File.astro';
+import FileTreeBase from '~hive/components/mdx/Files.astro';
+import Folder from '~hive/components/mdx/Folder.astro';
+import PackageManagerTabs from '~hive/components/mdx/PackageManagerTabs.astro';
+import PackageManagerTab from '~hive/components/mdx/Tab.astro';
+import Tab from '~hive/components/mdx/Tab.astro';
+import Table from '~hive/components/mdx/Table.astro';
+import TabsBase from '~hive/components/mdx/Tabs.astro';
+import { getHeadingHtmlBySlug } from '~hive/lib/docs-markdown';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import PluginHeader from '../../../../codegen/components/PluginHeader.astro';
+import CodegenDocsLayout from '../../../../codegen/layouts/CodegenDocsLayout.astro';
+import { getCodegenPluginsNav } from '../../../../codegen/lib/docs-nav';
+import { getPlugin } from '../../../../codegen/lib/plugin-data';
+
+type PluginEntry = CollectionEntry<'codegenPlugins'>;
+
+export async function getStaticPaths() {
+  const entries = await getCollection('codegenPlugins');
+  return entries.map(entry => ({
+    params: { slug: entry.id.replace(/\.(md|mdx)$/, '') },
+    props: { entry },
+  }));
+}
+
+const Tabs = Object.assign(TabsBase, { Tab });
+const Cards = Object.assign(CardsBase, { Card });
+const FileTree = Object.assign(FileTreeBase, { File, Folder });
+
+const { entry } = Astro.props as { entry: PluginEntry };
+const { Content, headings: renderedHeadings } = await render(entry);
+const headingHtmlBySlug = getHeadingHtmlBySlug(entry.body ?? '', renderedHeadings);
+const headings = renderedHeadings.map(heading => ({
+  ...heading,
+  html: headingHtmlBySlug.get(heading.slug) ?? heading.text,
+}));
+const slug = entry.id.replace(/\.(md|mdx)$/, '');
+const currentPath = `/plugins/${slug}`;
+const key = slug.split('/').at(-1)!;
+const plugin = getPlugin(key);
+const data = entry.data;
+const sourceExtension = entry.filePath?.match(/\.mdx?$/)?.[0] ?? '.mdx';
+const githubUrl = `https://github.com/dotansimha/graphql-code-generator/blob/master/website/src/pages/plugins/${entry.id}${sourceExtension}`;
+const { items: navItems, tree: navTree } = await getCodegenPluginsNav();
+const title = plugin?.title ?? data.title ?? key;
+// Pure shims carried no prose; those pages show the npm readme instead.
+const hasProse = (entry.body ?? '').trim().length > 0;
+---
+
+<CodegenDocsLayout
+  currentPath={currentPath}
+  description={data.description || `${title} plugin for GraphQL Code Generator.`}
+  githubUrl={githubUrl}
+  headings={headings}
+  longPage={(entry.body?.length ?? 0) > 60_000}
+  markdownUrl={hasProse ? undefined : null}
+  navItems={navItems}
+  navTree={navTree}
+  searchSection="Plugins"
+  title={title}
+>
+  {
+    plugin && (
+      <PluginHeader
+        hasOperationsNote={data.hasOperationsNote === true}
+        includeReadme={!hasProse}
+        plugin={plugin}
+      />
+    )
+  }
+  <Content
+    components={{
+      Callout,
+      Cards,
+      Card,
+      FileTree,
+      PackageManagerTab,
+      PackageManagerTabs,
+      Tabs,
+      pre: CodeBlock,
+      table: Table,
+    }}
+  />
+</CodegenDocsLayout>
