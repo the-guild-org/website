@@ -4,12 +4,12 @@
  * pre-based on /graphql/yoga-server, and its own header/footer.
  */
 import type { DocsNavNode, DocsNavPage } from '../../docs/nav';
+import SiteFooter from '../../hive/components/SiteFooter.astro';
 import SiteNavigation from '../../hive/components/SiteNavigation.astro';
 import DocsLayout from '../../hive/layouts/DocsLayout.astro';
 import type { TocHeading } from '../../hive/lib/toc';
-import YogaFooter from '../components/YogaFooter.astro';
 import { basePath, withBase } from '../lib/base-path';
-import { YOGA_LOGO, YOGA_SITE } from '../lib/site';
+import { YOGA_FOOTER, YOGA_LOGO, YOGA_SITE } from '../lib/site';
 
 interface Props {
   /** Mount-relative path, e.g. "/docs/features/cors". */
@@ -79,5 +79,5 @@ const basedTree = navTree.map(baseNode);
     logo={YOGA_LOGO}
   />
   <slot />
-  <YogaFooter slot="site-footer" />
+  <SiteFooter slot="site-footer" description={YOGA_FOOTER.description} logo={YOGA_FOOTER.logo} />
 </DocsLayout>
