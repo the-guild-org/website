@@ -1,0 +1,29 @@
+---
+/** One page per package CHANGELOG.md from the Yoga repo (Envelop packages included). */
+import { getCollection, type CollectionEntry } from 'astro:content';
+import YogaDocsPage from '../../../../yoga/components/YogaDocsPage.astro';
+import { getYogaChangelogsNav } from '../../../../yoga/lib/docs-nav';
+
+type Entry = CollectionEntry<'yogaChangelogs'>;
+
+export async function getStaticPaths() {
+  const entries = await getCollection('yogaChangelogs');
+  return entries.map(entry => ({
+    params: { slug: entry.id.replace(/\.md$/, '') },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props as { entry: Entry };
+---
+
+<YogaDocsPage
+  docsBase="/changelogs"
+  entry={entry}
+  githubPath={`packages/${entry.id}/CHANGELOG.md`}
+  nav={await getYogaChangelogsNav()}
+  section="GraphQL Yoga Changelogs"
+  searchSection="Changelogs"
+  searchable={false}
+  sectionId={entry.id}
+/>

@@ -31,6 +31,8 @@ export const GET: APIRoute = async () => {
 - [GraphQL Codegen documentation index for LLMs](${SITE}/graphql/codegen/llms.txt)
 - [Full GraphQL Codegen documentation as one file](${SITE}/graphql/codegen/llms-full.txt)
 - [GraphQL Yoga](${SITE}/graphql/yoga-server): spec-compliant GraphQL server
+- [GraphQL Yoga documentation index for LLMs](${SITE}/graphql/yoga-server/llms.txt)
+- [Full GraphQL Yoga documentation as one file](${SITE}/graphql/yoga-server/llms-full.txt)
 - [GraphQL-Tools](${SITE}/graphql/tools): schema building and stitching utilities
 - [GraphQL Mesh](${SITE}/graphql/mesh): compose any API into a graph
 - [GraphQL Scalars](${SITE}/graphql/scalars): custom scalar types
