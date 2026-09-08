@@ -148,6 +148,35 @@ const pageTitle = title.includes('|') ? title : `${title} | Hive`;
     line-height: 1.75;
   }
 
+  /* Dark theme: the rules below hardcode the light palette, which
+     dark:prose-invert on the article cannot override. */
+  .dark [data-blog-prose] {
+    color: var(--color-neutral-200);
+  }
+
+  .dark [data-blog-prose] :is(h2, h3, h4, h5, h6):not(:where(.not-prose *)),
+  .dark [data-blog-prose] div:has(> blockquote) blockquote {
+    color: var(--color-white);
+  }
+
+  .dark [data-blog-prose] blockquote,
+  .dark [data-blog-prose] th,
+  .dark [data-blog-prose] td {
+    border-color: var(--color-neutral-700);
+  }
+
+  .dark [data-blog-prose] div:has(> blockquote) {
+    background: var(--color-neutral-800);
+  }
+
+  .dark [data-blog-prose] a:not(:where(.not-prose, .not-prose *)) {
+    text-decoration-color: var(--color-blue-300);
+  }
+
+  .dark [data-blog-prose] a:not(:where(.not-prose, .not-prose *)):hover {
+    color: var(--color-blue-300);
+  }
+
   [data-blog-prose] > :is(h2, h3, h4, h5, h6, p, ol, ul, figure, hr, iframe):not(.hive-bleed) {
     max-width: var(--article-max-width);
     margin-inline: auto;

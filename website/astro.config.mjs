@@ -33,6 +33,17 @@ const codegenLinkOptions = {
  */
 const isHiveFile = path => typeof path === 'string' && path.includes('/src/hive/');
 const isCodegenFile = path => typeof path === 'string' && path.includes('/src/codegen/');
+const isYogaFile = path => typeof path === 'string' && path.includes('/src/yoga/');
+
+const yogaContentDir = fileURLToPath(new URL('./src/yoga/content', import.meta.url));
+/** Yoga content collections for relative-link resolution. */
+const yogaLinkOptions = {
+  collections: ['tutorial', 'v2', 'v3', 'v4', 'changelogs'].map(section => ({
+    base: `/${section}`,
+    directory: join(yogaContentDir, section),
+  })),
+  fallback: { base: '/docs', directory: join(yogaContentDir, 'docs') },
+};
 
 function scoped(test, plugin, ...pluginArgs) {
   return function () {
@@ -53,9 +64,11 @@ function scoped(test, plugin, ...pluginArgs) {
 const hiveOnly = (plugin, ...args) => scoped(isHiveFile, plugin, ...args);
 /** Runs only on Codegen files (content fetched into src/codegen). */
 const codegenOnly = (plugin, ...args) => scoped(isCodegenFile, plugin, ...args);
+/** Runs only on Yoga files (content fetched into src/yoga). */
+const yogaOnly = (plugin, ...args) => scoped(isYogaFile, plugin, ...args);
 /** Runs on everything except docs-product files (including files without a path). */
 const mainOnly = (plugin, ...args) =>
-  scoped(path => !isHiveFile(path) && !isCodegenFile(path), plugin, ...args);
+  scoped(path => !isHiveFile(path) && !isCodegenFile(path) && !isYogaFile(path), plugin, ...args);
 
 /**
  * The main site's MDX uses Astro's default syntax highlighting. The shared
@@ -143,6 +156,7 @@ export default defineConfig({
   integrations: [
     pagefindDevServer(),
     pagefindDevServer('/graphql/codegen/pagefind'),
+    pagefindDevServer('/graphql/yoga-server/pagefind'),
     mdx({
       processor: unified({
         remarkPlugins: [
@@ -154,6 +168,10 @@ export default defineConfig({
           codegenOnly(remarkRelativeLinks, codegenLinkOptions),
           codegenOnly(remarkBasePath, { base: '/graphql/codegen' }),
           codegenOnly(remarkTocMarkers),
+          yogaOnly(remarkNpm2Yarn),
+          yogaOnly(remarkRelativeLinks, yogaLinkOptions),
+          yogaOnly(remarkBasePath, { base: '/graphql/yoga-server' }),
+          yogaOnly(remarkTocMarkers),
         ],
         rehypePlugins: [
           defaultShiki,
@@ -168,6 +186,11 @@ export default defineConfig({
             themes: DOCS_CODE_THEMES,
             // Nextra highlights lines with `{1,3-5}` fence meta; the meta
             // transformer emits the same class as the notation one.
+            transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
+          }),
+          yogaOnly(rehypeCode, {
+            langs: [...DOCS_CODE_LANGS],
+            themes: DOCS_CODE_THEMES,
             transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
           }),
         ],

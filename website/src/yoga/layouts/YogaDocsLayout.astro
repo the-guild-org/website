@@ -1,0 +1,83 @@
+---
+/**
+ * Yoga docs chrome: Hive's DocsLayout with the Yoga identity, nav hrefs
+ * pre-based on /graphql/yoga-server, and its own header/footer.
+ */
+import type { DocsNavNode, DocsNavPage } from '../../docs/nav';
+import SiteFooter from '../../hive/components/SiteFooter.astro';
+import SiteNavigation from '../../hive/components/SiteNavigation.astro';
+import DocsLayout from '../../hive/layouts/DocsLayout.astro';
+import type { TocHeading } from '../../hive/lib/toc';
+import { basePath, withBase } from '../lib/base-path';
+import { YOGA_FOOTER, YOGA_LOGO, YOGA_SITE } from '../lib/site';
+
+interface Props {
+  /** Mount-relative path, e.g. "/docs/features/cors". */
+  currentPath: string;
+  description?: string;
+  /** Mount-relative root of this section's tree: /docs, /tutorial, /v4, /changelogs. */
+  docsBase: string;
+  githubUrl: string;
+  headings: TocHeading[];
+  longPage?: boolean;
+  navItems: DocsNavPage[];
+  navTree: DocsNavNode[];
+  /** Drives search badges. */
+  searchSection: string;
+  /** Title suffix, e.g. "GraphQL Yoga Tutorial". */
+  section: string;
+  title: string;
+}
+
+const {
+  currentPath,
+  description,
+  docsBase,
+  githubUrl,
+  headings,
+  longPage,
+  navItems,
+  navTree,
+  searchSection,
+  section,
+  title,
+} = Astro.props;
+
+const baseNode = (node: DocsNavNode): DocsNavNode =>
+  node.type === 'page'
+    ? { ...node, href: withBase(node.href) }
+    : {
+        ...node,
+        href: node.href ? withBase(node.href) : undefined,
+        children: node.children.map(baseNode),
+      };
+
+const basedItems = navItems.map(item => ({ ...item, href: withBase(item.href) }));
+const basedTree = navTree.map(baseNode);
+---
+
+<DocsLayout
+  currentPath={withBase(currentPath)}
+  description={description}
+  docsBase={withBase(docsBase)}
+  githubUrl={githubUrl}
+  headings={headings}
+  longPage={longPage}
+  markdownUrl={`${withBase(currentPath)}.md`}
+  navItems={basedItems}
+  navTree={basedTree}
+  searchBase={basePath}
+  searchSection={searchSection}
+  section={section}
+  site={YOGA_SITE}
+  title={title}
+>
+  <SiteNavigation
+    slot="site-navigation"
+    docsNavigation={basedItems}
+    docsNavigationTree={basedTree}
+    logo={YOGA_LOGO}
+  />
+  <slot />
+  <SiteFooter slot="site-footer" description={YOGA_FOOTER.description} logo={YOGA_FOOTER.logo} />
+</DocsLayout>
