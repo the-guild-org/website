@@ -4,7 +4,7 @@
  * scripts re-deriving paths, parsing sitemaps and reading _redirects in
  * subtly different ways.
  */
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { basePath, SITE_ORIGIN } from '../../src/hive/lib/base-path.ts';
 
@@ -13,7 +13,12 @@ export const DIST = fileURLToPath(new URL('../../dist', import.meta.url));
 export const HIVE_DIST = `${DIST}${basePath}`;
 export const REPO_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
-export const SITEMAPS = ['/sitemap-0.xml', `${basePath}/sitemap.xml`];
+export const SITEMAPS = [
+  '/sitemap-0.xml',
+  `${basePath}/sitemap.xml`,
+  '/graphql/codegen/sitemap.xml',
+  '/graphql/yoga-server/sitemap.xml',
+];
 
 /** Public URL path served by a dist html file (build.format: "file"). */
 export function publicPath(relativePath: string): string {
@@ -21,7 +26,13 @@ export function publicPath(relativePath: string): string {
   return `/${relativePath.replace(/\/index\.html$/, '').replace(/\.html$/, '')}`;
 }
 
-/** Whether an internal path resolves to a file in dist. */
+const isFile = (path: string) => existsSync(path) && statSync(path).isFile();
+
+/**
+ * Whether an internal path resolves to a file in dist. A bare directory does
+ * not count: Pages serves nothing there, so a redirect or link that lands on
+ * one is a 404.
+ */
 export function resolvesInDist(pathname: string): boolean {
   const decoded = decodeURI(pathname);
   return [
@@ -29,7 +40,7 @@ export function resolvesInDist(pathname: string): boolean {
     `${DIST}${decoded}.html`,
     `${DIST}${decoded}/index.html`,
     ...(decoded === '/' ? [`${DIST}/index.html`] : []),
-  ].some(candidate => existsSync(candidate));
+  ].some(isFile);
 }
 
 /** Every <loc> pathname across the generated sitemaps. */

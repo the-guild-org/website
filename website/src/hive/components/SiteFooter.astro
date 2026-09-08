@@ -15,9 +15,17 @@ interface LinkItem {
 
 interface Props {
   class?: string;
+  /** Tagline under the logo; defaults to Hive's. */
+  description?: string;
+  /** Full logo markup and its link; defaults to the Hive combination mark. */
+  logo?: { href: string; html: string };
 }
 
-const { class: className } = Astro.props;
+const {
+  class: className,
+  description = 'Open-source GraphQL management platform',
+  logo,
+} = Astro.props;
 const currentYear = new Date().getFullYear();
 const externalProps = (href: string) =>
   href.startsWith('http') ? { rel: 'noreferrer', target: '_blank' } : {};
@@ -144,13 +152,12 @@ const standaloneLinks: LinkItem[] = [
     <div class="max-lg:col-span-full">
       <a
         class="hive-focus text-green-1000 -m-1.5 flex rounded-sm p-1.5 outline-hidden focus-visible:ring-3 dark:text-white"
-        href="https://the-guild.dev/"
-        rel="noreferrer"
-        target="_blank"
+        href={logo?.href ?? 'https://the-guild.dev/'}
+        {...externalProps(logo?.href ?? 'https://the-guild.dev/')}
       >
-        <Fragment set:html={withClass(hiveCombinationMarkRaw, 'h-8 w-auto')} />
+        <Fragment set:html={logo?.html ?? withClass(hiveCombinationMarkRaw, 'h-8 w-auto')} />
       </a>
-      <p class="mt-6 lg:mt-8">Open-source GraphQL management platform</p>
+      <p class="mt-6 lg:mt-8">{description}</p>
     </div>
 
     <div

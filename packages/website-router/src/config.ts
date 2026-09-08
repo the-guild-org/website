@@ -24,18 +24,6 @@ export const jsonConfig = {
   } satisfies RewriteRecord,
   mappings: {
     // Rewrites
-    '/graphql/codegen': {
-      rewrite: 'graphql-code-generator.pages.dev',
-      crisp: {
-        segments: ['codegen'],
-      },
-      sitemap: true,
-    },
-    '/graphql/yoga-server': {
-      rewrite: 'graphql-yoga.pages.dev',
-      crisp: { segments: ['yoga'] },
-      sitemap: true,
-    },
     '/graphql/scalars': {
       rewrite: 'graphql-scalars.pages.dev',
       crisp: { segments: ['scalars'] },

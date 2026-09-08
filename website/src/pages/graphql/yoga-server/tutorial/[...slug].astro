@@ -1,0 +1,28 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import YogaDocsPage from '../../../../yoga/components/YogaDocsPage.astro';
+import { getYogaTutorialNav } from '../../../../yoga/lib/docs-nav';
+
+type Entry = CollectionEntry<'yogaTutorial'>;
+
+export async function getStaticPaths() {
+  const entries = await getCollection('yogaTutorial');
+  return entries.map(entry => ({
+    params: { slug: entry.id.replace(/(^|\/)index$/, '').replace(/\.(md|mdx)$/, '') || undefined },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props as { entry: Entry };
+const extension = entry.filePath?.match(/\.mdx?$/)?.[0] ?? '.mdx';
+---
+
+<YogaDocsPage
+  docsBase="/tutorial"
+  entry={entry}
+  githubPath={`website/content/tutorial/${entry.id}${extension}`}
+  nav={await getYogaTutorialNav()}
+  section="GraphQL Yoga Tutorial"
+  searchSection="Tutorial"
+  sectionId={entry.id}
+/>

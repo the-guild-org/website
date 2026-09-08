@@ -7,9 +7,7 @@
  */
 const URL_ATTRIBUTES = new Set(['href', 'src']);
 
-export function remarkBasePath() {
-  const base = '/graphql/hive';
-
+export function remarkBasePath({ base = '/graphql/hive' } = {}) {
   const prefix = url => {
     if (!base || typeof url !== 'string') return url;
     if (!url.startsWith('/') || url.startsWith('//')) return url;

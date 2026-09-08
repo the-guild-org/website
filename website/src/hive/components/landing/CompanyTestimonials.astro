@@ -5,6 +5,7 @@ import hemnetPicture from '../../documentation/src/components/company-testimonia
 import karrotPicture from '../../documentation/src/components/company-testimonials/karrot-picture.webp';
 import nacellePicture from '../../documentation/src/components/company-testimonials/nacelle-picture.webp';
 import prodigyPicture from '../../documentation/src/components/company-testimonials/prodigy-picture.webp';
+import soundXyzPicture from '../../documentation/src/components/company-testimonials/sound-xyz-picture.webp';
 import trivagoPicture from '../../documentation/src/components/company-testimonials/trivago-picture.webp';
 import wealthsimplePicture from '../../documentation/src/components/company-testimonials/wealthsimple-picture.webp';
 
@@ -34,6 +35,17 @@ const testimonials = [
     slug: 'wealthsimple',
   },
   {
+    caseStudyHref: '/case-studies/reverb',
+    company: 'Reverb',
+    slug: 'reverb',
+  },
+  {
+    caseStudyHref: '/case-studies/sound-xyz',
+    company: 'Sound.xyz',
+    picture: soundXyzPicture,
+    slug: 'sound-xyz',
+  },
+  {
     company: 'nacelle',
     picture: nacellePicture,
     slug: 'nacelle',
@@ -59,6 +71,9 @@ const testimonialText: Record<string, string> = {
     'Most GraphQL Gateway and general GraphQL discussions focus on customer-facing applications—aggregating microservices behind a single endpoint for web and mobile clients, enabling frontend teams to query exactly the data they need without multiple round trips. Trivagos use case and perspective were different.',
   Wealthsimple:
     'Hive enables Wealthsimple to build flexible and resilient GraphQL APIs. The GitHub integration provides feedback in a format developers are familiar with and conditional breaking changes enable us to focus our discussion on schema design rather than maintenance. Hive empowers us to confidently evolve our schemas by ensuring seamless API updates, detecting potential breaking changes, and guiding developers.',
+  Reverb:
+    "Just wanted to extend an appreciation for how responsive and helpful The Guild has been with our questions — whether it's about the Gateway code or us stepping on our own toes. The team has been incredibly quick to help and consistently follows through.",
+  'Sound.xyz': 'Hive gives us great developer experience and observability over our GraphQL API.',
   nacelle:
     "Our migration from Apollo GraphOS to Hive was incredibly straightforward. In less than a month, we had about 20 subgraphs running on Hive in production. The process was smooth, and the Hive team's friendly demeanor made it even more pleasant. Although we haven't needed direct assistance with our implementation, their openness to feedback and generally nice attitude has fostered a sense of collaboration and partnership.",
   Karrot:
@@ -83,7 +98,7 @@ const testimonialId = (company: string) =>
 
   <div class="flex flex-col overflow-hidden">
     <div
-      class="lg:bg-beige-200 z-10 order-1 -mx-1 mt-4 flex flex-row justify-center rounded-2xl px-1 lg:order-first lg:my-16"
+      class="lg:bg-beige-200 z-10 order-1 -mx-1 mt-4 flex flex-row justify-center rounded-2xl px-1 lg:order-first lg:my-16 lg:grid lg:grid-cols-4"
       role="tablist"
     >
       {
@@ -96,10 +111,7 @@ const testimonialId = (company: string) =>
             aria-selected={i === 0 ? 'true' : 'false'}
           >
             <div class="size-2 rounded-full bg-blue-200 transition-colors lg:hidden" />
-            <span
-              class="logo-svg-wrap text-blue-1000 max-lg:sr-only"
-              style="height:32px; display:inline-flex; align-items:center;"
-            >
+            <span class="logo-svg-wrap text-blue-1000 inline-flex h-6 items-center max-lg:sr-only xl:h-8">
               <CompanyLogo height={32} slug={testimonial.slug} title={testimonial.company} />
             </span>
           </button>
@@ -123,16 +135,23 @@ const testimonialId = (company: string) =>
             data-testimonial-panel={testimonial.company}
             tabindex={-1}
           >
-            <img
-              alt=""
-              class:list={[
-                'hidden size-[300px] shrink-0 rounded-3xl object-cover mix-blend-multiply max-lg:mt-6 md:block',
-                'pictureClass' in testimonial ? testimonial.pictureClass : undefined,
-              ]}
-              height="300"
-              src={testimonial.picture.src}
-              width="300"
-            />
+            {!('picture' in testimonial) && (
+              <div class="bg-beige-200 logo-svg-wrap text-blue-1000 hidden size-[300px] shrink-0 items-center justify-center rounded-3xl p-12 max-lg:mt-6 md:flex [&>svg]:h-auto [&>svg]:w-full">
+                <CompanyLogo height={64} slug={testimonial.slug} title={testimonial.company} />
+              </div>
+            )}
+            {'picture' in testimonial && (
+              <img
+                alt=""
+                class:list={[
+                  'hidden size-[300px] shrink-0 rounded-3xl object-cover mix-blend-multiply max-lg:mt-6 md:block',
+                  'pictureClass' in testimonial ? testimonial.pictureClass : undefined,
+                ]}
+                height="300"
+                src={testimonial.picture.src}
+                width="300"
+              />
+            )}
             <div
               class="flex flex-col max-lg:mt-6 lg:relative"
               id={testimonialId(testimonial.company)}

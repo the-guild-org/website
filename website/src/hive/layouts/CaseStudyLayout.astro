@@ -274,10 +274,32 @@ const pageTitle = `${title} | Hive`;
     line-height: 1.75;
   }
 
-  /* The `.docs-content` dark overrides in styles/global.css don't reach case
-     study markup. Same values as those, so every article type reads alike. */
+  /* Dark theme: the rules below hardcode the light palette, which
+     dark:prose-invert on the article cannot override. */
   .dark [data-case-study-prose] {
-    color: color-mix(in oklab, var(--color-neutral-200) 90%, transparent);
+    color: var(--color-neutral-200);
+  }
+
+  .dark [data-case-study-prose] :is(h2, h3, h4, h5, h6):not(:where(.not-prose *)),
+  .dark [data-case-study-prose] div:has(> blockquote) blockquote {
+    color: var(--color-white);
+  }
+
+  .dark [data-case-study-prose] blockquote,
+  .dark [data-case-study-prose] pre {
+    border-color: var(--color-neutral-700);
+  }
+
+  .dark [data-case-study-prose] div:has(> blockquote) {
+    background: var(--color-neutral-800);
+  }
+
+  .dark [data-case-study-prose] a:not(:where(.not-prose, .not-prose *)) {
+    text-decoration-color: var(--color-blue-300);
+  }
+
+  .dark [data-case-study-prose] a:not(:where(.not-prose, .not-prose *)):hover {
+    color: var(--color-blue-300);
   }
 
   [data-case-study-prose]

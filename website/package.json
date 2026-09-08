@@ -4,11 +4,16 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "astro check && astro build && pnpm run postbuild:hive",
+    "build": "pnpm run fetch:codegen && pnpm run fetch:yoga && astro check && astro build && pnpm run postbuild:hive && pnpm run postbuild:codegen && pnpm run postbuild:yoga && pnpm run postbuild:verify",
     "check": "astro check",
     "check-seo": "node scripts/hive/check-seo.ts",
     "dev": "astro dev",
-    "postbuild:hive": "node scripts/hive/generate-sitemap.ts && node scripts/hive/generate-redirects.ts && node scripts/hive/generate-headers.ts && pagefind --site dist/graphql/hive && node scripts/hive/verify-base-path.ts && node scripts/verify-sitemaps.ts && node scripts/hive/check-seo.ts",
+    "fetch:codegen": "node scripts/codegen/fetch-content.ts && node scripts/codegen/fetch-npm-info.ts",
+    "fetch:yoga": "node scripts/yoga/fetch-content.ts",
+    "postbuild:codegen": "node scripts/codegen/generate-sitemap.ts && node scripts/codegen/generate-redirects.ts && pagefind --site dist/graphql/codegen",
+    "postbuild:hive": "node scripts/hive/generate-sitemap.ts && node scripts/hive/generate-redirects.ts && node scripts/hive/generate-headers.ts && pagefind --site dist/graphql/hive",
+    "postbuild:verify": "node scripts/hive/verify-base-path.ts && node scripts/verify-sitemaps.ts && node scripts/hive/check-seo.ts",
+    "postbuild:yoga": "node scripts/yoga/generate-sitemap.ts && node scripts/yoga/generate-redirects.ts && pagefind --site dist/graphql/yoga-server",
     "postinstall": "playwright install chromium",
     "preview": "astro preview",
     "test": "vitest run src"

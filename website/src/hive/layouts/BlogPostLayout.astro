@@ -148,11 +148,33 @@ const pageTitle = title.includes('|') ? title : `${title} | Hive`;
     line-height: 1.75;
   }
 
-  /* The wrapper's `dark:text-white` is defeated by the rule above, and the
-     `.docs-content` dark overrides in styles/global.css don't reach blog
-     markup. Same values as those, so posts and docs read alike. */
+  /* Dark theme: the rules below hardcode the light palette, which
+     dark:prose-invert on the article cannot override. */
   .dark [data-blog-prose] {
-    color: color-mix(in oklab, var(--color-neutral-200) 90%, transparent);
+    color: var(--color-neutral-200);
+  }
+
+  .dark [data-blog-prose] :is(h2, h3, h4, h5, h6):not(:where(.not-prose *)),
+  .dark [data-blog-prose] div:has(> blockquote) blockquote {
+    color: var(--color-white);
+  }
+
+  .dark [data-blog-prose] blockquote,
+  .dark [data-blog-prose] th,
+  .dark [data-blog-prose] td {
+    border-color: var(--color-neutral-700);
+  }
+
+  .dark [data-blog-prose] div:has(> blockquote) {
+    background: var(--color-neutral-800);
+  }
+
+  .dark [data-blog-prose] a:not(:where(.not-prose, .not-prose *)) {
+    text-decoration-color: var(--color-blue-300);
+  }
+
+  .dark [data-blog-prose] a:not(:where(.not-prose, .not-prose *)):hover {
+    color: var(--color-blue-300);
   }
 
   [data-blog-prose] > :is(h2, h3, h4, h5, h6, p, ol, ul, figure, hr, iframe):not(.hive-bleed) {

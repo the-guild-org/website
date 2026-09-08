@@ -1,12 +1,14 @@
 ---
-import { basePath } from '../lib/base-path';
+import { basePath as hiveBasePath } from '../lib/base-path';
 
 interface Props {
+  /** Mount whose Pagefind bundle to query; defaults to the Hive mount. */
+  basePath?: string;
   /** Product section of the current page — search defaults to it. */
-  section?: 'Console' | 'Gateway' | 'Router';
+  section?: string;
 }
 
-const { section } = Astro.props;
+const { basePath = hiveBasePath, section } = Astro.props;
 ---
 
 <pagefind-config

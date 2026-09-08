@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 import { markdownConfigDefaults, rehypeShiki, unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
+import { transformerMetaHighlight } from '@shikijs/transformers';
 import tailwindcss from '@tailwindcss/vite';
 import {
   DOCS_CODE_LANGS,
@@ -16,6 +17,13 @@ import { remarkNpm2Yarn } from './src/hive/markdown/remark-npm2yarn.mjs';
 import { remarkRelativeLinks } from './src/hive/markdown/remark-relative-links.mjs';
 import { remarkTocMarkers } from './src/hive/markdown/remark-toc-markers.mjs';
 
+const codegenContentDir = fileURLToPath(new URL('./src/codegen/content', import.meta.url));
+/** Codegen content collections for relative-link resolution. */
+const codegenLinkOptions = {
+  collections: [{ base: '/plugins', directory: join(codegenContentDir, 'plugins') }],
+  fallback: { base: '/docs', directory: join(codegenContentDir, 'docs') },
+};
+
 /**
  * The project hosts two visually independent sites in one Astro build: the
  * main the-guild.dev pages, and the Hive docs site under /graphql/hive
@@ -24,6 +32,18 @@ import { remarkTocMarkers } from './src/hive/markdown/remark-toc-markers.mjs';
  * matching side, keyed on whether the file lives in src/hive.
  */
 const isHiveFile = path => typeof path === 'string' && path.includes('/src/hive/');
+const isCodegenFile = path => typeof path === 'string' && path.includes('/src/codegen/');
+const isYogaFile = path => typeof path === 'string' && path.includes('/src/yoga/');
+
+const yogaContentDir = fileURLToPath(new URL('./src/yoga/content', import.meta.url));
+/** Yoga content collections for relative-link resolution. */
+const yogaLinkOptions = {
+  collections: ['tutorial', 'v2', 'v3', 'v4', 'changelogs'].map(section => ({
+    base: `/${section}`,
+    directory: join(yogaContentDir, section),
+  })),
+  fallback: { base: '/docs', directory: join(yogaContentDir, 'docs') },
+};
 
 function scoped(test, plugin, ...pluginArgs) {
   return function () {
@@ -42,8 +62,13 @@ function scoped(test, plugin, ...pluginArgs) {
 
 /** Runs only on Hive files (skips files without a path). */
 const hiveOnly = (plugin, ...args) => scoped(isHiveFile, plugin, ...args);
-/** Runs on everything except Hive files (including files without a path). */
-const mainOnly = (plugin, ...args) => scoped(path => !isHiveFile(path), plugin, ...args);
+/** Runs only on Codegen files (content fetched into src/codegen). */
+const codegenOnly = (plugin, ...args) => scoped(isCodegenFile, plugin, ...args);
+/** Runs only on Yoga files (content fetched into src/yoga). */
+const yogaOnly = (plugin, ...args) => scoped(isYogaFile, plugin, ...args);
+/** Runs on everything except docs-product files (including files without a path). */
+const mainOnly = (plugin, ...args) =>
+  scoped(path => !isHiveFile(path) && !isCodegenFile(path) && !isYogaFile(path), plugin, ...args);
 
 /**
  * The main site's MDX uses Astro's default syntax highlighting. The shared
@@ -72,8 +97,8 @@ const defaultShiki = mainOnly(
  * one `pnpm build`, and the page degrades gracefully (open does nothing)
  * before that.
  */
-function pagefindDevServer() {
-  const bundleDirectory = fileURLToPath(new URL('./dist/graphql/hive/pagefind', import.meta.url));
+function pagefindDevServer(mount = '/graphql/hive/pagefind') {
+  const bundleDirectory = fileURLToPath(new URL(`./dist${mount}`, import.meta.url));
   const contentTypes = {
     '.css': 'text/css',
     '.js': 'text/javascript',
@@ -82,10 +107,10 @@ function pagefindDevServer() {
   };
   let warned = false;
   return {
-    name: 'pagefind-dev-server',
+    name: `pagefind-dev-server-${mount.split('/').at(-2)}`,
     hooks: {
       'astro:server:setup': ({ server }) => {
-        server.middlewares.use('/graphql/hive/pagefind', (request, response, next) => {
+        server.middlewares.use(mount, (request, response, next) => {
           // request.url can carry a cache-busting query string (?ts=...).
           const path = (request.url ?? '/').split('?')[0];
           const file = join(bundleDirectory, normalize(path).replace(/^(\.\.\/?)+/, ''));
@@ -130,6 +155,8 @@ export default defineConfig({
   },
   integrations: [
     pagefindDevServer(),
+    pagefindDevServer('/graphql/codegen/pagefind'),
+    pagefindDevServer('/graphql/yoga-server/pagefind'),
     mdx({
       processor: unified({
         remarkPlugins: [
@@ -137,6 +164,14 @@ export default defineConfig({
           hiveOnly(remarkRelativeLinks),
           hiveOnly(remarkBasePath),
           hiveOnly(remarkTocMarkers),
+          codegenOnly(remarkNpm2Yarn),
+          codegenOnly(remarkRelativeLinks, codegenLinkOptions),
+          codegenOnly(remarkBasePath, { base: '/graphql/codegen' }),
+          codegenOnly(remarkTocMarkers),
+          yogaOnly(remarkNpm2Yarn),
+          yogaOnly(remarkRelativeLinks, yogaLinkOptions),
+          yogaOnly(remarkBasePath, { base: '/graphql/yoga-server' }),
+          yogaOnly(remarkTocMarkers),
         ],
         rehypePlugins: [
           defaultShiki,
@@ -145,6 +180,18 @@ export default defineConfig({
             langs: [...DOCS_CODE_LANGS],
             themes: DOCS_CODE_THEMES,
             transformers: rehypeCodeDefaultOptions.transformers,
+          }),
+          codegenOnly(rehypeCode, {
+            langs: [...DOCS_CODE_LANGS],
+            themes: DOCS_CODE_THEMES,
+            // Nextra highlights lines with `{1,3-5}` fence meta; the meta
+            // transformer emits the same class as the notation one.
+            transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
+          }),
+          yogaOnly(rehypeCode, {
+            langs: [...DOCS_CODE_LANGS],
+            themes: DOCS_CODE_THEMES,
+            transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
           }),
         ],
       }),

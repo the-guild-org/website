@@ -1,0 +1,50 @@
+---
+/**
+ * Docs of the older majors (v2, v3, v4), kept verbatim from when each was
+ * current. Static /docs, /tutorial and /changelogs routes take precedence
+ * over this dynamic segment.
+ */
+import { getCollection, type CollectionEntry } from 'astro:content';
+import YogaDocsPage from '../../../../yoga/components/YogaDocsPage.astro';
+import { getYogaLegacyNav, isLegacyVersion } from '../../../../yoga/lib/docs-nav';
+import type { LegacyVersion } from '../../../../yoga/lib/site';
+
+type Entry = CollectionEntry<'yogaLegacy'>;
+
+export async function getStaticPaths() {
+  const entries = await getCollection('yogaLegacy');
+  return entries.flatMap(entry => {
+    const [version, ...rest] = entry.id.split('/');
+    if (!version || !isLegacyVersion(version)) return [];
+    const sectionId = rest.join('/');
+    return [
+      {
+        params: {
+          version,
+          slug: sectionId.replace(/(^|\/)index$/, '').replace(/\.(md|mdx)$/, '') || undefined,
+        },
+        props: { entry, sectionId, version },
+      },
+    ];
+  });
+}
+
+const { entry, sectionId, version } = Astro.props as {
+  entry: Entry;
+  sectionId: string;
+  version: LegacyVersion;
+};
+const extension = entry.filePath?.match(/\.mdx?$/)?.[0] ?? '.mdx';
+---
+
+<YogaDocsPage
+  docsBase={`/${version}`}
+  entry={entry}
+  githubPath={`website/content/${entry.id}${extension}`}
+  legacyVersion={version}
+  nav={await getYogaLegacyNav(version)}
+  searchSection={`Yoga ${version} docs`}
+  section={`GraphQL Yoga ${version}`}
+  searchable={false}
+  sectionId={sectionId}
+/>
