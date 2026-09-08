@@ -316,6 +316,10 @@ const pageTitle = `${title} | Hive`;
     line-height: 1.25;
   }
 
+  .dark [data-case-study-prose] :is(h2, h3, h4, h5, h6):not(:where(.not-prose *)) {
+    color: var(--color-neutral-100);
+  }
+
   [data-case-study-prose] h2:not(:where(.not-prose *)) {
     font-size: 1.5rem;
     line-height: 2rem;
@@ -353,6 +357,10 @@ const pageTitle = `${title} | Hive`;
     border-left: 4px solid var(--color-beige-400);
     font-style: italic;
     font-weight: 500;
+  }
+
+  .dark [data-case-study-prose] blockquote {
+    border-left-color: var(--color-neutral-700);
   }
 
   [data-case-study-prose] blockquote p:first-of-type::before {
@@ -401,6 +409,14 @@ const pageTitle = `${title} | Hive`;
     text-decoration: none;
   }
 
+  .dark [data-case-study-prose] a:not(:where(.not-prose, .not-prose *)) {
+    text-decoration-color: var(--color-primary);
+  }
+
+  .dark [data-case-study-prose] a:not(:where(.not-prose, .not-prose *)):hover {
+    color: var(--color-primary);
+  }
+
   [data-case-study-prose] img {
     max-width: 100%;
     height: auto;
@@ -423,11 +439,19 @@ const pageTitle = `${title} | Hive`;
     line-height: 1.42857;
   }
 
+  .dark [data-case-study-prose] pre {
+    border-color: var(--color-neutral-700);
+  }
+
   [data-case-study-prose] div:has(> blockquote) {
     margin-top: 2.5rem;
     padding: 1.5rem;
     border-radius: 1rem;
     background: var(--color-beige-100);
+  }
+
+  .dark [data-case-study-prose] div:has(> blockquote) {
+    background: var(--color-neutral-900);
   }
 
   [data-case-study-prose] div:has(> blockquote) blockquote {
@@ -439,6 +463,10 @@ const pageTitle = `${title} | Hive`;
     color: var(--color-green-1000);
     font-style: normal;
     font-weight: 400;
+  }
+
+  .dark [data-case-study-prose] div:has(> blockquote) blockquote {
+    color: var(--color-neutral-100);
   }
 
   @media (min-width: 640px) {

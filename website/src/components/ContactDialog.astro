@@ -1,4 +1,6 @@
 ---
+import Path from './Path.astro';
+
 // Same backend as the current Guild website's Get in Touch form:
 // POST https://utils.the-guild.dev/api/contact-us { name, email, notes }
 // (packages/website-helper-worker). CORS is limited to the-guild.dev origins,
@@ -11,22 +13,20 @@
 >
   <div class="p-7 sm:p-9">
     <div class="mb-3.5 flex items-baseline justify-between">
-      <div class="font-mono text-[12px] tracking-[.075em] text-[var(--muted)] lowercase">
-        ~/the-guild/contact
-      </div>
+      <Path> ~/the-guild/contact </Path>
       <button
         type="button"
         data-contact-close
-        class="rounded-xs px-1 font-mono text-[13px] text-[var(--muted)] transition-colors hover:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+        class="rounded-xs px-1 font-mono text-sm text-[var(--muted)] transition-colors hover:text-[var(--strong)] focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
         aria-label="Close contact form">[ esc ]</button
       >
     </div>
 
     <div data-contact-form-view>
-      <h2 class="mb-2 font-mono text-[22px] font-semibold tracking-[-.03em] text-[var(--strong)]">
+      <h2 class="mb-2 font-mono text-2xl font-semibold text-[var(--strong)]">
         Talk to an engineer
       </h2>
-      <p class="mb-6 text-sm text-[var(--muted)]">
+      <p class="mb-6 text-base text-[var(--muted)]">
         Tell us a bit about your setup and what you're after. An engineer who maintains these tools
         will get back to you.
       </p>
@@ -34,7 +34,7 @@
         <div class="flex flex-col gap-5">
           <label class="block">
             <span
-              class="mb-1.5 block font-mono text-[12px] tracking-[.075em] text-[var(--muted)] lowercase"
+              class="mb-1.5 block font-mono text-xs tracking-label text-[var(--muted)] lowercase"
               >name *</span
             >
             <input
@@ -42,13 +42,13 @@
               type="text"
               required
               autocomplete="name"
-              class="w-full border border-[var(--line-strong)] bg-transparent px-3 py-2 text-[16px] text-[var(--text)] placeholder:text-[var(--faint)] focus:outline focus:outline-1 focus:outline-offset-2 focus:outline-[var(--green)]"
+              class="w-full border border-[var(--line-strong)] bg-transparent px-3 py-2 text-base text-[var(--text)] placeholder:text-[var(--faint)] focus:outline focus:outline-offset-2 focus:outline-[var(--green)]"
               placeholder="Ada Lovelace"
             />
           </label>
           <label class="block">
             <span
-              class="mb-1.5 block font-mono text-[12px] tracking-[.075em] text-[var(--muted)] lowercase"
+              class="mb-1.5 block font-mono text-xs tracking-label text-[var(--muted)] lowercase"
               >email *</span
             >
             <input
@@ -56,43 +56,43 @@
               type="email"
               required
               autocomplete="email"
-              class="w-full border border-[var(--line-strong)] bg-transparent px-3 py-2 text-[16px] text-[var(--text)] placeholder:text-[var(--faint)] focus:outline focus:outline-1 focus:outline-offset-2 focus:outline-[var(--green)]"
+              class="w-full border border-[var(--line-strong)] bg-transparent px-3 py-2 text-base text-[var(--text)] placeholder:text-[var(--faint)] focus:outline focus:outline-offset-2 focus:outline-[var(--green)]"
               placeholder="you@company.com"
             />
           </label>
           <label class="block">
             <span
-              class="mb-1.5 block font-mono text-[12px] tracking-[.075em] text-[var(--muted)] lowercase"
+              class="mb-1.5 block font-mono text-xs tracking-label text-[var(--muted)] lowercase"
               >message *</span
             >
             <textarea
               name="notes"
               required
               rows="4"
-              class="w-full resize-y border border-[var(--line-strong)] bg-transparent px-3 py-2 text-[16px] text-[var(--text)] placeholder:text-[var(--faint)] focus:outline focus:outline-1 focus:outline-offset-2 focus:outline-[var(--green)]"
+              class="w-full resize-y border border-[var(--line-strong)] bg-transparent px-3 py-2 text-base text-[var(--text)] placeholder:text-[var(--faint)] focus:outline focus:outline-offset-2 focus:outline-[var(--green)]"
               placeholder="What are you building, and how can we help?"></textarea>
           </label>
         </div>
-        <p data-contact-error hidden class="mt-4 font-mono text-[13px] text-[var(--amber)]">
+        <p data-contact-error hidden class="mt-4 font-mono text-sm text-[var(--amber)]">
           Something went wrong. Please try again, or email us at <a
             class="underline underline-offset-2 hover:text-[var(--strong)]"
             href="mailto:contact@the-guild.dev">contact@the-guild.dev</a
           >.
         </p>
-        <p data-contact-invalid hidden class="mt-4 font-mono text-[13px] text-[var(--amber)]">
+        <p data-contact-invalid hidden class="mt-4 font-mono text-sm text-[var(--amber)]">
           Please fill in all fields with a valid email.
         </p>
         <div class="mt-6 flex flex-wrap items-center gap-2.5">
           <button
             type="submit"
             data-contact-submit
-            class="inline-flex cursor-pointer items-center rounded-xs px-0.5 py-1.5 font-mono text-[13px] leading-tight whitespace-nowrap text-[var(--strong)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)] disabled:cursor-wait disabled:opacity-60"
+            class="inline-flex cursor-pointer items-center rounded-xs px-0.5 py-1.5 font-mono text-sm leading-tight whitespace-nowrap text-[var(--strong)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-[var(--green)] disabled:cursor-wait disabled:opacity-60"
             >send message</button
           >
           <button
             type="button"
             data-contact-close
-            class="inline-flex cursor-pointer items-center rounded-xs px-0.5 py-1.5 font-mono text-[13px] leading-tight whitespace-nowrap text-[var(--muted)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:text-[var(--strong)] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+            class="inline-flex cursor-pointer items-center rounded-xs px-0.5 py-1.5 font-mono text-sm leading-tight whitespace-nowrap text-[var(--muted)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:text-[var(--strong)] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
             >cancel</button
           >
         </div>
@@ -100,14 +100,12 @@
     </div>
 
     <div data-contact-success-view hidden>
-      <h2 class="mb-2 font-mono text-[22px] font-semibold tracking-[-.03em] text-[var(--green)]">
-        Message sent
-      </h2>
+      <h2 class="mb-2 font-mono text-2xl font-semibold text-[var(--green)]">Message sent</h2>
       <p class="mb-6 text-sm text-[var(--muted)]">Thank you, we'll contact you soon.</p>
       <button
         type="button"
         data-contact-close
-        class="inline-flex cursor-pointer items-center rounded-xs px-0.5 py-1.5 font-mono text-[13px] leading-tight whitespace-nowrap text-[var(--strong)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+        class="inline-flex cursor-pointer items-center rounded-xs px-0.5 py-1.5 font-mono text-sm leading-tight whitespace-nowrap text-[var(--strong)] transition-colors before:mr-[.7ch] before:text-[var(--faint)] before:content-['['] after:ml-[.7ch] after:text-[var(--faint)] after:content-[']'] hover:before:text-[var(--strong)] hover:after:text-[var(--strong)] focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
         >close</button
       >
     </div>

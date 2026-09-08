@@ -201,6 +201,10 @@ const pageTitle = title.includes('|') ? title : `${title} | Hive`;
     line-height: 1.25;
   }
 
+  .dark [data-blog-prose] :is(h2, h3, h4, h5, h6):not(:where(.not-prose *)) {
+    color: var(--color-neutral-100);
+  }
+
   [data-blog-prose] h2:not(:where(.not-prose *)) {
     font-size: 1.5rem;
     line-height: 2rem;
@@ -253,6 +257,10 @@ const pageTitle = title.includes('|') ? title : `${title} | Hive`;
     font-weight: 500;
   }
 
+  .dark [data-blog-prose] blockquote {
+    border-left-color: var(--color-neutral-700);
+  }
+
   [data-blog-prose] blockquote p:first-of-type::before {
     content: open-quote;
   }
@@ -279,6 +287,14 @@ const pageTitle = title.includes('|') ? title : `${title} | Hive`;
   [data-blog-prose] a:not(:where(.not-prose, .not-prose *)):hover {
     color: var(--color-blue-700);
     text-decoration: none;
+  }
+
+  .dark [data-blog-prose] a:not(:where(.not-prose, .not-prose *)) {
+    text-decoration-color: var(--color-primary);
+  }
+
+  .dark [data-blog-prose] a:not(:where(.not-prose, .not-prose *)):hover {
+    color: var(--color-primary);
   }
 
   [data-blog-prose] :not(pre) > code {
@@ -346,6 +362,10 @@ const pageTitle = title.includes('|') ? title : `${title} | Hive`;
     background: var(--color-beige-100);
   }
 
+  .dark [data-blog-prose] div:has(> blockquote) {
+    background: var(--color-neutral-900);
+  }
+
   [data-blog-prose] div:has(> blockquote) blockquote {
     display: flex;
     gap: 1.5rem;
@@ -355,6 +375,10 @@ const pageTitle = title.includes('|') ? title : `${title} | Hive`;
     color: var(--color-green-1000);
     font-style: normal;
     font-weight: 400;
+  }
+
+  .dark [data-blog-prose] div:has(> blockquote) blockquote {
+    color: var(--color-neutral-100);
   }
 
   @media (min-width: 640px) {
