@@ -49,7 +49,7 @@ const KNOWN_DUPLICATE_DESCRIPTIONS = new Set(['graphql/codegen/docs/getting-star
 
 // The Yoga docs keep the older majors (v2, v3, v4) frozen as they were
 // published; sibling pages there share descriptions and will never be edited.
-const FROZEN_CONTENT = /^graphql\/(yoga-server|envelop)\/v\d(?:\/|\.html$)/;
+const FROZEN_CONTENT = /^graphql\/(?:(?:yoga-server|envelop)\/v\d(?:\/|\.html$)|mesh\/docs\/)/;
 
 // Paths the website-router rewrites to other targets at the edge.
 const ROUTER_HANDLED_PATHS = new Set([
@@ -65,7 +65,6 @@ const ROUTER_HANDLED_PATHS = new Set([
 const registryMounts = new Set((await loadProducts()).map(product => `/graphql/${product.slug}`));
 const EXTERNAL_DEPLOYMENT_PREFIXES = [
   '/graphql/tools',
-  '/graphql/mesh',
   '/graphql/scalars',
   '/graphql/apollo-angular',
   '/graphql/sofa-api',
@@ -169,6 +168,8 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   if (path.basename(filePath) === '404.html') continue;
   // Static legal page copied verbatim from public/, not a rendered page.
   if (path.basename(filePath) === 'privacy-policy.html') continue;
+  // The Mesh live-examples host page is only ever loaded inside an iframe.
+  if (path.relative(OUTPUT_DIR, filePath) === 'graphql/mesh/codesandbox-iframe.html') continue;
 
   scanned += 1;
   const html = await readFile(filePath, 'utf8');

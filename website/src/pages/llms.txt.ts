@@ -36,6 +36,8 @@ export const GET: APIRoute = async () => {
 - [Full GraphQL Yoga documentation as one file](${SITE}/graphql/yoga-server/llms-full.txt)
 - [GraphQL-Tools](${SITE}/graphql/tools): schema building and stitching utilities
 - [GraphQL Mesh](${SITE}/graphql/mesh): compose any API into a graph
+- [GraphQL Mesh documentation index for LLMs](${SITE}/graphql/mesh/llms.txt)
+- [Full GraphQL Mesh documentation as one file](${SITE}/graphql/mesh/llms-full.txt)
 - [Envelop](${SITE}/graphql/envelop): the GraphQL plugin system
 - [Envelop documentation index for LLMs](${SITE}/graphql/envelop/llms.txt)
 - [Full Envelop documentation as one file](${SITE}/graphql/envelop/llms-full.txt)

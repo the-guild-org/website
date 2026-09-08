@@ -1,0 +1,105 @@
+---
+/**
+ * Renders one Mesh content entry (v1 docs or the v0 docs) inside the Mesh
+ * docs chrome, with the MDX components the content relies on.
+ */
+import Callout from '~hive/components/mdx/Callout.astro';
+import Card from '~hive/components/mdx/Card.astro';
+import CardsBase from '~hive/components/mdx/Cards.astro';
+import CodeBlock from '~hive/components/mdx/CodeBlock.astro';
+import File from '~hive/components/mdx/File.astro';
+import FileTreeBase from '~hive/components/mdx/Files.astro';
+import Folder from '~hive/components/mdx/Folder.astro';
+import PackageManagerTabs from '~hive/components/mdx/PackageManagerTabs.astro';
+import Steps from '~hive/components/mdx/Steps.astro';
+import PackageManagerTab from '~hive/components/mdx/Tab.astro';
+import Tab from '~hive/components/mdx/Tab.astro';
+import Table from '~hive/components/mdx/Table.astro';
+import TabsBase from '~hive/components/mdx/Tabs.astro';
+import { getHeadingHtmlBySlug } from '~hive/lib/docs-markdown';
+import { render } from 'astro:content';
+import type { DocsNav } from '../../docs/nav';
+import MeshDocsLayout from '../layouts/MeshDocsLayout.astro';
+import { withBase } from '../lib/base-path';
+import { MESH_REPO_URL } from '../lib/site';
+import VersionSwitch from './VersionSwitch.astro';
+
+interface Props {
+  /** Mount-relative root of the section: /v1 or /docs. */
+  docsBase: '/v1' | '/docs';
+  entry: {
+    body?: string;
+    data: { description?: string; sidebarTitle?: string; title?: string };
+    filePath?: string;
+    id: string;
+  };
+  /** Path of the source file in the Mesh repo, for the "edit this page" link. */
+  githubPath: string;
+  nav: DocsNav;
+  searchSection: string;
+  /** Title suffix. */
+  section: string;
+}
+
+const { docsBase, entry, githubPath, nav, searchSection, section } = Astro.props;
+const legacy = docsBase === '/docs';
+
+const Tabs = Object.assign(TabsBase, { Tab });
+const Cards = Object.assign(CardsBase, { Card });
+const FileTree = Object.assign(FileTreeBase, { File, Folder });
+
+const { Content, headings: renderedHeadings } = await render(entry as never);
+const headingHtmlBySlug = getHeadingHtmlBySlug(entry.body ?? '', renderedHeadings);
+const headings = renderedHeadings.map(heading => ({
+  ...heading,
+  html: headingHtmlBySlug.get(heading.slug) ?? heading.text,
+}));
+const slug = entry.id.replace(/(^|\/)index$/, '').replace(/\.(md|mdx)$/, '');
+const currentPath = `${docsBase}${slug ? `/${slug}` : ''}`;
+const { data } = entry;
+const title =
+  data.title ?? data.sidebarTitle ?? (entry.id.split('/').at(-1) ?? entry.id).replace(/-/g, ' ');
+const description = legacy
+  ? `GraphQL Mesh v0 documentation (superseded by v1): ${data.description || title}`
+  : data.description || `${title} — GraphQL Mesh documentation.`;
+---
+
+<MeshDocsLayout
+  currentPath={currentPath}
+  description={description}
+  docsBase={docsBase}
+  githubUrl={`${MESH_REPO_URL}/blob/master/${githubPath}`}
+  headings={headings}
+  longPage={(entry.body?.length ?? 0) > 60_000}
+  navItems={nav.items}
+  navTree={nav.tree}
+  searchSection={searchSection}
+  section={section}
+  title={title}
+>
+  <VersionSwitch current={legacy ? 'v0' : 'v1'} />
+  {
+    legacy && (
+      <Callout title="This is the documentation for the old GraphQL Mesh v0" type="warning">
+        We recommend upgrading to the latest GraphQL Mesh v1.{' '}
+        <a href={withBase('/v1/migration-from-v0')}>Migrate to GraphQL Mesh v1</a>.
+      </Callout>
+    )
+  }
+  <div data-pagefind-ignore={legacy ? 'all' : undefined}>
+    <Content
+      components={{
+        Callout,
+        Cards,
+        Card,
+        FileTree,
+        PackageManagerTab,
+        PackageManagerTabs,
+        Steps,
+        Tabs,
+        pre: CodeBlock,
+        table: Table,
+      }}
+    />
+  </div>
+</MeshDocsLayout>

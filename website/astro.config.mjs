@@ -66,6 +66,14 @@ const envelopLinkOptions = {
   })),
   fallback: { base: '/docs', directory: join(envelopContentDir, 'docs') },
 };
+const isMeshFile = path => typeof path === 'string' && path.includes('/src/mesh/');
+
+const meshContentDir = fileURLToPath(new URL('./src/mesh/content', import.meta.url));
+/** Mesh content collections for relative-link resolution (v1 is current, v0 under /docs). */
+const meshLinkOptions = {
+  collections: [{ base: '/docs', directory: join(meshContentDir, 'docs') }],
+  fallback: { base: '/v1', directory: join(meshContentDir, 'v1') },
+};
 
 const yogaContentDir = fileURLToPath(new URL('./src/yoga/content', import.meta.url));
 /** Yoga content collections for relative-link resolution. */
@@ -102,6 +110,8 @@ const yogaOnly = (plugin, ...args) => scoped(isYogaFile, plugin, ...args);
 const envelopOnly = (plugin, ...args) => scoped(isEnvelopFile, plugin, ...args);
 /** Runs only on Inspector files (content fetched into src/inspector). */
 const inspectorOnly = (plugin, ...args) => scoped(isInspectorFile, plugin, ...args);
+/** Runs only on Mesh files (content fetched into src/mesh). */
+const meshOnly = (plugin, ...args) => scoped(isMeshFile, plugin, ...args);
 /** Runs on everything except docs-product files (including files without a path). */
 const mainOnly = (plugin, ...args) =>
   scoped(
@@ -111,6 +121,7 @@ const mainOnly = (plugin, ...args) =>
       !isYogaFile(path) &&
       !isEnvelopFile(path) &&
       !isInspectorFile(path) &&
+      !isMeshFile(path) &&
       !isProductFile(path),
     plugin,
     ...args,
@@ -206,6 +217,7 @@ export default defineConfig({
     pagefindDevServer('/graphql/envelop/pagefind'),
     pagefindDevServer('/graphql/inspector/pagefind'),
     ...products.map(slug => pagefindDevServer(`/graphql/${slug}/pagefind`)),
+    pagefindDevServer('/graphql/mesh/pagefind'),
     mdx({
       processor: unified({
         remarkPlugins: [
@@ -235,6 +247,10 @@ export default defineConfig({
             scoped(isProductSlugFile(slug), remarkBasePath, { base: `/graphql/${slug}` }),
             scoped(isProductSlugFile(slug), remarkTocMarkers),
           ]),
+          meshOnly(remarkNpm2Yarn),
+          meshOnly(remarkRelativeLinks, meshLinkOptions),
+          meshOnly(remarkBasePath, { base: '/graphql/mesh' }),
+          meshOnly(remarkTocMarkers),
         ],
         rehypePlugins: [
           defaultShiki,
@@ -251,6 +267,7 @@ export default defineConfig({
             // transformer emits the same class as the notation one.
             transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
           }),
+          yogaOnly(...mermaidRehypePlugin),
           yogaOnly(rehypeCode, {
             langs: [...DOCS_CODE_LANGS],
             themes: DOCS_CODE_THEMES,
@@ -262,6 +279,12 @@ export default defineConfig({
             transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
           }),
           inspectorOnly(rehypeCode, {
+            langs: [...DOCS_CODE_LANGS],
+            themes: DOCS_CODE_THEMES,
+            transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
+          }),
+          meshOnly(...mermaidRehypePlugin),
+          meshOnly(rehypeCode, {
             langs: [...DOCS_CODE_LANGS],
             themes: DOCS_CODE_THEMES,
             transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],

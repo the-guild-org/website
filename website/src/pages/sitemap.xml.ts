@@ -25,6 +25,9 @@ export const GET: APIRoute = ({ site }) => {
   <sitemap>
     <loc>${new URL('/graphql/inspector/sitemap.xml', site).href}</loc>
   </sitemap>
+  <sitemap>
+    <loc>${new URL('/graphql/mesh/sitemap.xml', site).href}</loc>
+  </sitemap>
 ${PRODUCTS.map(
   product => `  <sitemap>
     <loc>${new URL(`/graphql/${product.slug}/sitemap.xml`, site).href}</loc>

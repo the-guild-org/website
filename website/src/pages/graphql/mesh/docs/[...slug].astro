@@ -1,0 +1,28 @@
+---
+/** The Mesh v0 docs, kept under /docs as they were, with the "old version" banner. */
+import { getCollection, type CollectionEntry } from 'astro:content';
+import MeshDocsPage from '../../../../mesh/components/MeshDocsPage.astro';
+import { getMeshLegacyNav } from '../../../../mesh/lib/docs-nav';
+
+type Entry = CollectionEntry<'meshLegacy'>;
+
+export async function getStaticPaths() {
+  const entries = await getCollection('meshLegacy');
+  return entries.map(entry => ({
+    params: { slug: entry.id.replace(/\.(md|mdx)$/, '').replace(/(^|\/)index$/, '') || undefined },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props as { entry: Entry };
+const extension = entry.filePath?.match(/\.mdx?$/)?.[0] ?? '.mdx';
+---
+
+<MeshDocsPage
+  docsBase="/docs"
+  entry={entry}
+  githubPath={`website/content/docs/${entry.id}${extension}`}
+  nav={await getMeshLegacyNav()}
+  searchSection="Mesh v0 docs"
+  section="GraphQL Mesh v0"
+/>

@@ -12,8 +12,8 @@ on:
     branches:
       - master
   # Fired by dotansimha/graphql-code-generator, graphql-hive/graphql-yoga (Yoga
-  # and Envelop docs) and graphql-hive/graphql-inspector when their docs content changes — the build fetches that content, so a
-  # redeploy picks it up.
+  # and Envelop docs), ardatan/graphql-mesh and graphql-hive/graphql-inspector when
+  # their docs content changes — the build fetches that content, so a redeploy picks it up.
   repository_dispatch:
     types:
       - codegen-content-update
@@ -21,6 +21,7 @@ on:
       - inspector-content-update
       # Any registry product (src/products/<slug>), sent by its notify-website workflow.
       - product-content-update
+      - mesh-content-update
 
 jobs:
   build:

@@ -1,0 +1,128 @@
+---
+/**
+ * Live examples: a picker over the repo's example projects and a CodeSandbox
+ * embed hosted by /codesandbox-iframe, told which example to show through
+ * postMessage. The embed mounts when it scrolls into view.
+ */
+import { withBase } from '../lib/base-path';
+
+interface Props {
+  border?: boolean;
+  class?: string;
+}
+
+const { border = false, class: className } = Astro.props;
+
+const EXAMPLES: Record<string, Record<string, string>> = {
+  OpenAPI: {
+    'JavaScript Wiki': 'openapi-javascript-wiki',
+    'Location Weather': 'openapi-location-weather',
+    YouTrack: 'openapi-youtrack',
+    Stripe: 'openapi-stripe',
+    StackExchange: 'openapi-stackexchange',
+    'WeatherBit on React App': 'openapi-react-weatherbit',
+    'NextJS with Apollo': 'nextjs-apollo-example',
+  },
+  'JSON Schema': {
+    'Fake API': 'json-schema-example',
+    'Covid-19 Statistics': 'json-schema-covid',
+    'Subscriptions, Webhooks & Live Queries': 'json-schema-subscriptions',
+  },
+  OData: { TripPin: 'odata-trippin', 'Microsoft Graph': 'odata-microsoft' },
+  SOAP: { 'Country Info': 'soap-country-info' },
+  MySQL: { Rfam: 'mysql-rfam' },
+  SQLite: { Chinook: 'sqlite-chinook' },
+  'Apollo Federation': { 'Apollo Federation Example': 'federation-example' },
+  'Apache Thrift': { Calculator: 'thrift-calculator' },
+  gRPC: { 'Movies Example': 'grpc-example' },
+  Neo4J: { 'Movies Example': 'neo4j-example' },
+};
+---
+
+<div
+  class:list={['w-full', className]}
+  data-examples-sandbox
+  data-src={withBase('/codesandbox-iframe')}
+>
+  <label class="flex items-center justify-center gap-2">
+    <span>Choose live example:</span>
+    <span class="relative">
+      <select
+        class="hive-focus border-beige-400 hover:bg-beige-100 w-[240px] cursor-pointer appearance-none rounded-lg border bg-inherit py-2 pr-8 pl-3 dark:border-neutral-800 dark:hover:bg-neutral-900"
+        name="codesandbox-example-name"
+      >
+        {
+          Object.entries(EXAMPLES).map(([group, examples]) => (
+            <optgroup label={group}>
+              {Object.entries(examples).map(([name, dir]) => (
+                <option selected={dir === 'json-schema-example'} value={dir}>
+                  {name}
+                </option>
+              ))}
+            </optgroup>
+          ))
+        }
+      </select>
+      <svg
+        aria-hidden="true"
+        class="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        viewBox="0 0 24 24"
+        ><path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path></svg
+      >
+    </span>
+  </label>
+  <div
+    class:list={[
+      'mt-8 h-[520px] w-full overflow-hidden bg-[#0D0D0D] sm:h-[720px]',
+      border && 'border-beige-400 rounded-lg border dark:border-neutral-800',
+    ]}
+    data-examples-frame
+  >
+  </div>
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-examples-sandbox]')) {
+    const select = root.querySelector('select')!;
+    const frame = root.querySelector<HTMLElement>('[data-examples-frame]')!;
+    let iframe: HTMLIFrameElement | undefined;
+    // The directory the host frame currently shows; reset on every load so a
+    // selection made while the frame was still navigating is sent again.
+    let shown: string | undefined;
+    const show = (dir: string) => {
+      if (!iframe?.contentWindow || shown === dir) return;
+      shown = dir;
+      iframe.contentWindow.postMessage({ type: 'set-dir', dir }, window.location.origin);
+    };
+    const mount = () => {
+      if (iframe) return;
+      iframe = document.createElement('iframe');
+      iframe.className = 'size-full';
+      iframe.title = 'GraphQL Mesh Example';
+      iframe.setAttribute(
+        'sandbox',
+        'allow-modals allow-forms allow-popups allow-scripts allow-same-origin',
+      );
+      iframe.src = root.dataset.src!;
+      iframe.addEventListener('load', () => {
+        shown = undefined;
+        show(select.value);
+      });
+      frame.append(iframe);
+    };
+    select.addEventListener('change', () => show(select.value));
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          mount();
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '100px' },
+    );
+    observer.observe(frame);
+  }
+</script>
