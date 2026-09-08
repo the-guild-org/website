@@ -1,0 +1,82 @@
+---
+title: Native Datadog Tracing in Hive Router
+description:
+  Hive Router now integrates with Datadog's native Rust tracer for all-request APM statistics,
+  native sampling, and direct export through the Datadog Agent.
+date: 2026-09-09
+authors: [denis]
+---
+
+[Hive Router](/docs/router) now supports native Datadog tracing through the
+[Datadog Agent](https://docs.datadoghq.com/agent/). Unlike generic OTLP export, the integration uses
+Datadog's native Rust tracer inside the router, preserving Datadog sampling rules, rate limiting,
+remote configuration, and request, error, and latency statistics across all recorded requests.
+
+## Quick Start
+
+Point the new `datadog` exporter at your Agent's trace endpoint:
+
+```yaml title="router.config.yaml"
+telemetry:
+  tracing:
+    collect:
+      # Retain about 1% of detailed traces while keeping all-request APM statistics
+      sampling: 0.01
+    propagation:
+      trace_context: true
+    exporters:
+      - kind: datadog
+        endpoint: http://datadog-agent:8126
+```
+
+The endpoint is optional. When omitted, the tracer uses Datadog's native `DD_TRACE_AGENT_URL`,
+`DD_AGENT_HOST`, and `DD_TRACE_AGENT_PORT` configuration. Native trace intake normally uses port
+`8126`, not the OTLP gRPC port `4317`.
+
+The router validates configured endpoint values at startup but does not probe Agent connectivity.
+An Agent outage therefore cannot prevent the router from starting.
+
+## Complete APM Statistics with Controlled Trace Volume
+
+Native Datadog tracing separates all-request statistics from retained trace detail. Requests rejected
+by the detailed trace sampler are still recorded for Datadog's request counts, error rates, and
+latency distributions.
+
+Hive Router maps `telemetry.tracing.collect.sampling` to Datadog's catch-all sample rate. Datadog
+sampling rules and remote configuration can make more specific decisions, while
+`DD_TRACE_RATE_LIMIT` controls the retained-trace ceiling. The default ceiling is 100 traces per
+second when explicit sampling is active, so high-traffic routers may retain less than the configured
+percentage without losing all-request APM statistics.
+
+This also means `sampling: 0.0` keeps tracing instrumentation active when Datadog is enabled. It
+retains no detailed traces, but continues producing complete request, error, and latency statistics.
+
+## Works Alongside Existing Exporters
+
+Datadog, OTLP, stdout, and Hive Console tracing can share one tracer provider. Datadog owns the
+provider-wide sampling decision, and the other processors export only sampled spans rather than the
+`RecordOnly` spans used for Datadog statistics.
+
+Because the provider is shared, `DD_TRACE_ENABLED=false` disables every attached tracing processor.
+To disable only Datadog while keeping another exporter active, use router configuration:
+
+```yaml title="router.config.yaml"
+telemetry:
+  tracing:
+    exporters:
+      - kind: datadog
+        enabled: false
+      - kind: otlp
+        enabled: true
+        protocol: grpc
+        endpoint: https://otel-collector.example.com:4317
+```
+
+The router keeps its existing propagation configuration and telemetry shutdown lifecycle, so adding
+Datadog does not replace W3C Trace Context or change how providers are flushed.
+
+---
+
+- [Native Datadog tracing guide](/docs/router/observability/tracing#send-traces-through-native-datadog-tracing)
+- [`telemetry.tracing` configuration reference](/docs/router/configuration/telemetry#tracing)
+- [Datadog Rust tracing configuration](https://docs.datadoghq.com/tracing/trace_collection/library_config/rust/)
