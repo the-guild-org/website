@@ -43,7 +43,7 @@ const slug = entry.id.replace(/(^|\/)index$/, '').replace(/\.(md|mdx)$/, '');
 const currentPath = `/docs${slug ? `/${slug}` : ''}`;
 const data = entry.data;
 const sourceExtension = entry.filePath?.match(/\.mdx?$/)?.[0] ?? '.mdx';
-const githubUrl = `https://github.com/dotansimha/graphql-code-generator/blob/master/website/src/pages/docs/${entry.id}${sourceExtension}`;
+const githubUrl = `https://github.com/dotansimha/graphql-code-generator/blob/master/website/content/docs/${entry.id}${sourceExtension}`;
 const { items: navItems, tree: navTree } = await getCodegenDocsNav();
 const title =
   data.title ?? data.sidebarTitle ?? (entry.id.split('/').at(-1) ?? entry.id).replace(/-/g, ' ');
