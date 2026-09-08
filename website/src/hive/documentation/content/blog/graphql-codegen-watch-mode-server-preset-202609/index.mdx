@@ -1,5 +1,5 @@
 ---
-title: Consistent Watch Mode and a Faster Server Preset
+title: Consistent Watcher, Happier Windows, and a Faster Server Preset
 authors: eddeee888
 tags: [graphql, graphql-codegen, watch-mode, server-preset, performance]
 date: 2026-09-08
@@ -9,9 +9,9 @@ description:
 ---
 
 Watch mode in [GraphQL Code Generator](https://the-guild.dev/graphql/codegen) is now consistent
-across file tracking, profiling, plugins and presets, and
-[Server Preset](https://github.com/eddeee888/graphql-code-generator-plugins) 0.19 builds on that
-with internal caching to make watch re-runs up to 80% faster.
+across file tracking, profiling, plugins and presets, Windows gets a couple of watch-mode fixes of
+its own, and [Server Preset](https://github.com/eddeee888/graphql-code-generator-plugins) 0.19
+builds on all of that with internal caching to make watch re-runs up to 80% faster.
 
 ## Watch mode is consistent now
 
@@ -35,6 +35,17 @@ The changes shipped across `@graphql-codegen/cli` 7.3.0, 7.3.1 and 7.4.0, in
 [#10928](https://github.com/dotansimha/graphql-code-generator/pull/10928),
 [#10930](https://github.com/dotansimha/graphql-code-generator/pull/10930) and
 [#10936](https://github.com/dotansimha/graphql-code-generator/pull/10936).
+
+## Happier Windows
+
+Windows gets some watch-mode love too: its ignore patterns now always use forward slashes, so
+generated output is correctly ignored instead of being watched and re-triggering builds, and
+loading a schema or documents from a `.js`, `.cjs`, or `.mjs` file no longer crashes with an
+ESM URL-scheme error.
+
+{/* TODO: confirm release status before publishing - #10936 (ignore-glob fix) is merged but not
+    yet in a shipped cli version, and #10935 (ESM import fix) is still an open draft pinning an
+    alpha graphql-tools build; name the release(s) these ship in, or drop these claims */}
 
 ## Server Preset 0.19: up to 80% faster watch re-runs
 
