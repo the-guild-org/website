@@ -13,13 +13,13 @@ traces, how to configure OTLP, how to tune throughput, and how to debug missing 
 
 ## Choose your tracing destination
 
-Hive Router supports two common tracing paths. You can send traces directly to Hive Console through
-`telemetry.hive.tracing`, or you can send them to an OTLP-compatible backend through
-`telemetry.tracing.exporters`.
+Hive Router supports three tracing paths. You can send traces directly to Hive Console through
+`telemetry.hive.tracing`, send them to an OTLP-compatible backend through
+`telemetry.tracing.exporters`, or use native Datadog tracing through a Datadog Agent.
 
-In practice, teams already running OpenTelemetry infrastructure (Jaeger, Tempo, Datadog, Honeycomb,
-and others) usually prefer OTLP because it fits into existing telemetry pipelines and backend
-routing rules.
+Teams already running OpenTelemetry infrastructure usually prefer OTLP because it fits into existing
+collector pipelines and backend routing rules. Use native Datadog tracing when you need Datadog's
+sampling, rate limiting, remote configuration, and all-request APM statistics.
 
 ## Send traces to Hive Console
 
@@ -116,6 +116,92 @@ If gRPC export fails, metadata credentials and TLS files are usually the first p
 </Tabs.Tab>
 
 </Tabs>
+
+## Send traces through native Datadog tracing
+
+Native Datadog tracing uses the [Datadog Rust tracer](https://github.com/DataDog/dd-trace-rs) and
+sends traces to a Datadog Agent trace endpoint. This differs from sending generic OpenTelemetry data
+to a Datadog OTLP endpoint. It preserves Datadog's native sampling behavior and computes request,
+error, and latency statistics from every recorded request, including requests whose detailed traces
+are not retained.
+
+```yaml title="router.config.yaml"
+telemetry:
+  tracing:
+    collect:
+      # Retain about 1% of detailed traces while keeping all-request APM statistics
+      sampling: 0.01
+    propagation:
+      trace_context: true
+    exporters:
+      - kind: datadog
+        enabled: true
+        endpoint: http://datadog-agent:8126
+```
+
+`enabled` defaults to `true`. The `endpoint` is optional and can be a
+[`StringOrExpression`](/docs/router/configuration/expressions). When omitted, Datadog uses its
+native configuration, including `DD_TRACE_AGENT_URL`, `DD_AGENT_HOST`, and `DD_TRACE_AGENT_PORT`.
+The Agent trace endpoint normally uses port `8126`; it is not the OTLP gRPC endpoint commonly
+exposed on port `4317`.
+
+The router resolves and validates a configured endpoint at startup. An unresolved expression,
+malformed URL, unsupported Agent URL scheme, or more than one enabled Datadog exporter prevents
+startup. The router does not probe Agent connectivity. An unavailable Agent therefore does not stop
+the router from starting, and asynchronous export failures are reported through Datadog logging.
+
+<Callout type="info">
+  Native Datadog tracing requires a Datadog Agent while the router is running.
+  Sampling is performed in the router, not delegated to the Agent.
+</Callout>
+
+### Sampling and mixed exporters
+
+Hive Router uses one shared tracer provider. When a Datadog exporter is enabled, Datadog owns the
+provider-wide, parent-aware sampling decision. The router maps `collect.sampling` to Datadog's
+catch-all sample rate, overriding `DD_TRACE_SAMPLE_RATE`. More specific `DD_TRACE_SAMPLING_RULES`
+can apply before that rate, and Datadog remote configuration can update native sampling behavior.
+The router's `parent_based_sampler` option only applies to the generic OpenTelemetry provider.
+
+When explicit sampling is active, Datadog retains at most 100 detailed traces per second by default.
+Set `DD_TRACE_RATE_LIMIT` to change this ceiling. At high request rates, the retained percentage can
+be lower than `collect.sampling`, while all-request request, error, and latency statistics remain
+complete. For the same reason, `sampling: 0.0` keeps instrumentation active when Datadog is enabled:
+no detailed traces are retained, but Datadog can still compute its APM statistics.
+
+You can attach OTLP, stdout, and Hive trace processors to the same Datadog-backed provider. Those
+processors receive only sampled spans and ignore Datadog's `RecordOnly` spans. Because sampling is
+provider-wide, independent per-exporter sampling rates are not supported.
+
+`DD_TRACE_ENABLED=false` disables the Datadog tracer and every OTLP, stdout, and Hive processor on
+the shared Datadog-backed provider. To disable only Datadog, disable its router exporter instead:
+
+```yaml title="router.config.yaml"
+telemetry:
+  tracing:
+    exporters:
+      - kind: datadog
+        enabled: false
+      - kind: otlp
+        enabled: true
+        protocol: grpc
+        endpoint: https://otel-collector.example.com:4317
+```
+
+Without an enabled Datadog exporter, the router uses its generic OpenTelemetry provider and sampler.
+Router resource attributes are passed to Datadog, where native Datadog precedence applies to the
+equivalent `DD_SERVICE`, `DD_ENV`, and `DD_VERSION` values.
+
+The router continues to use the propagation formats configured under
+`telemetry.tracing.propagation`, including W3C Trace Context. It does not install Datadog-native
+propagation. The Datadog-backed provider also uses the router's existing force-flush and shutdown
+lifecycle.
+
+For native Datadog behavior and configuration details, see the
+[`datadog-opentelemetry` API](https://docs.rs/datadog-opentelemetry/),
+[Datadog Rust tracing configuration](https://docs.datadoghq.com/tracing/trace_collection/library_config/rust/),
+[trace metrics](https://docs.datadoghq.com/tracing/metrics/metrics_namespace/), and
+[ingestion mechanisms](https://docs.datadoghq.com/tracing/trace_pipeline/ingestion_mechanisms/).
 
 ## Production baseline
 
