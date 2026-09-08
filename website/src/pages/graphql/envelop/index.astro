@@ -1,0 +1,415 @@
+---
+/**
+ * Envelop landing page in the Hive brand, ported section by section from
+ * the old React page: hero, "What is Envelop?", "How does it work?", the
+ * Plugin Hub, "Learn more", and the shared ecosystem section.
+ */
+import '~hive/styles/global.css';
+import puzzleIcon from '../../../envelop/assets/icons/puzzle.svg?raw';
+import serverLineIcon from '../../../envelop/assets/icons/server-line.svg?raw';
+import timerLineIcon from '../../../envelop/assets/icons/timer-line.svg?raw';
+import BaseHead from '~hive/components/BaseHead.astro';
+import ToolsAndLibraries from '~hive/components/landing/ToolsAndLibraries.astro';
+import SiteFooter from '~hive/components/SiteFooter.astro';
+import SiteNavigation from '~hive/components/SiteNavigation.astro';
+import { Image } from 'astro:assets';
+import { withBase } from '../../../envelop/lib/base-path';
+import { getPluginNpmInfo, getPlugins } from '../../../envelop/lib/plugin-data';
+import {
+  ENVELOP_FOOTER,
+  ENVELOP_LOGO,
+  ENVELOP_REPO_URL,
+  ENVELOP_SITE,
+  envelopMark,
+} from '../../../envelop/lib/site';
+import howItWorks from '../../../envelop/assets/how-it-works.png';
+
+const description =
+  'The missing GraphQL plugin system: develop and share plugins that are usable with any GraphQL server framework or schema.';
+
+const features = [
+  {
+    title: 'Pluggable',
+    copy: 'A powerful plugin system that wraps the entire GraphQL execution pipeline: parse, validate, execute and subscribe.',
+    icon: puzzleIcon,
+  },
+  {
+    title: 'Flexible',
+    copy: 'Use any HTTP server, and any GraphQL schema, code-first or schema-first. Envelop is not opinionated about your transport.',
+    icon: serverLineIcon,
+  },
+  {
+    title: 'Develop faster',
+    copy: "You don't have to reinvent the wheel for every feature. Write a plugin once, or reuse one of the many that exist.",
+    icon: timerLineIcon,
+  },
+];
+
+const plugins = getPlugins();
+const featured = [
+  'use-sentry',
+  'use-open-telemetry',
+  'use-auth0',
+  'use-response-cache',
+  'use-prometheus',
+  'use-graphql-modules',
+]
+  .map(key => plugins.find(plugin => plugin.key === key))
+  .filter(plugin => plugin !== undefined)
+  .map(plugin => ({
+    ...plugin,
+    downloads: getPluginNpmInfo(plugin.key)?.weeklyNPMDownloads ?? 0,
+    href: withBase(`/plugins/${plugin.key}`),
+    iconSrc: withBase(`/assets/${plugin.icon}`),
+  }));
+const marqueeRows = Array.from({ length: 5 }, (_, row) =>
+  plugins.filter((_, index) => index % 5 === row),
+);
+
+const learnMore = [
+  {
+    title: 'The Envelop approach',
+    copy: 'Learn how the core works: the plugin lifecycle, the hooks, and how plugins compose.',
+    href: withBase('/docs'),
+    label: 'Documentation',
+  },
+  {
+    title: 'Integrations',
+    copy: 'Plug Envelop into your existing setup quickly, based on usage examples for the popular servers.',
+    href: withBase('/docs/integrations'),
+    label: 'Integrations & examples',
+  },
+  {
+    title: 'Custom plugins',
+    copy: 'Plan, build, test and share your own Envelop plugins.',
+    href: withBase('/docs/plugins'),
+    label: 'Plugin guide',
+  },
+];
+
+const formatDownloads = (count: number) =>
+  count >= 1_000_000
+    ? `${(count / 1_000_000).toFixed(1)}M`
+    : count >= 1_000
+      ? `${(count / 1_000).toFixed(0)}k`
+      : String(count);
+const githubIcon = `<svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.17c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>`;
+const checkmark = `<svg fill="none" height="20" viewBox="0 0 20 20" width="20"><path d="M16.667 5 7.5 14.167 3.333 10" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round" stroke-width="1.5"></path></svg>`;
+const sectionTitle =
+  'group text-center text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]';
+const iconBadge =
+  'bg-green-1000 flex size-12 shrink-0 items-center justify-center rounded-xl text-white [&>svg]:size-6 [&>svg_path]:fill-current';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <BaseHead
+      description={description}
+      image={withBase('/assets/logo.png')}
+      imageAlt="Envelop"
+      site={ENVELOP_SITE}
+      title="Envelop"
+    />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'Envelop',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Web',
+        url: ENVELOP_SITE.url,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+      })}
+    />
+  </head>
+  <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
+    <SiteNavigation logo={ENVELOP_LOGO} />
+    <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
+      <!-- Hero -->
+      <div
+        class="relative isolate mx-4 flex max-w-360 flex-col items-center gap-6 overflow-hidden rounded-3xl bg-blue-400 px-4 py-6 max-sm:mt-2 sm:py-16 md:mx-6 md:gap-8 lg:py-24"
+      >
+        <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+          <span
+            class="absolute top-1/2 -left-40 w-[420px] -translate-y-1/2 -rotate-12 text-white/30 md:-left-32 md:w-[520px] [&>svg]:w-full"
+            set:html={envelopMark('fill="currentColor"')}
+          />
+          <span
+            class="absolute -right-56 -bottom-64 w-[560px] rotate-12 text-white/30 max-md:hidden md:w-[680px] [&>svg]:w-full"
+            set:html={envelopMark('fill="currentColor"')}
+          />
+        </div>
+        <div
+          class="to-green-1000 relative flex size-24 items-center justify-center rounded-3xl bg-gradient-to-br from-green-800 text-white shadow-[0_12px_40px_-12px_rgba(0,52,44,0.6)] [&>svg]:size-12"
+          set:html={envelopMark('fill="currentColor"')}
+        />
+        <h1
+          class="group relative mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]"
+        >
+          The missing GraphQL plugin system
+        </h1>
+        <p class="relative mx-auto w-lg max-w-[80%] text-center leading-6 text-green-800">
+          Develop and share plugins that are usable with any GraphQL server framework or schema.
+          Part of the{' '}
+          <a
+            class="hive-focus underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
+            href="https://the-guild.dev/graphql/hive"
+            title="Explore the Hive platform">Hive</a
+          >
+          {' '}ecosystem by{' '}
+          <a
+            class="hive-focus underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
+            href="https://the-guild.dev"
+            title="Visit The Guild">The Guild</a
+          >.
+        </p>
+        <ul
+          class="relative z-10 mx-auto flex list-none flex-col gap-x-6 gap-y-2 text-sm leading-[21px] font-medium md:flex-row [&>li]:flex [&>li]:items-center [&>li]:gap-2"
+        >
+          <li><span class="text-green-800" set:html={checkmark} />Any GraphQL server</li>
+          <li><span class="text-green-800" set:html={checkmark} />Any schema</li>
+          <li>
+            <span class="text-green-800" set:html={checkmark} />{plugins.length}+ ready-made plugins
+          </li>
+        </ul>
+        <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
+          <a
+            class="text-green-1000 bg-primary relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit"
+            href={withBase('/docs')}
+          >
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            Get started
+          </a>
+          <a
+            class="relative flex items-center justify-center gap-2 rounded-lg bg-green-800 px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit"
+            href={withBase('/plugins')}
+          >
+            Plugin Hub
+          </a>
+          <a
+            class="text-green-1000 relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit [&>svg]:size-6"
+            href={`${ENVELOP_REPO_URL}/tree/main/packages/envelop`}
+          >
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            <Fragment set:html={githubIcon} />
+            GitHub
+          </a>
+        </div>
+      </div>
+
+      <!-- What is Envelop? -->
+      <section class="px-4 py-6 sm:py-12 md:px-6 lg:py-24 xl:px-30">
+        <h2 class={sectionTitle}>What is Envelop?</h2>
+        <p class="mx-auto mt-4 max-w-2xl text-center leading-6 text-balance text-green-800">
+          A lightweight library for customizing the GraphQL execution layer, so you can build, share
+          and compose plugins that add logging, monitoring, caching, rate limiting, error handling
+          and more to any GraphQL server.
+        </p>
+        <ul class="mt-6 grid list-none grid-cols-1 gap-2 p-0 md:mt-16 md:grid-cols-3 md:gap-6">
+          {
+            features.map(feature => (
+              <li class="bg-beige-100 rounded-3xl p-8 lg:p-12">
+                <span class={iconBadge} set:html={feature.icon} />
+                <h3 class="mt-5 text-xl leading-[1.4] font-medium">{feature.title}</h3>
+                <p class="mt-4 leading-6 text-green-800">{feature.copy}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <!-- How does it work? -->
+      <section
+        class="bg-beige-100 mx-4 flex flex-col gap-8 rounded-3xl p-8 md:mx-6 md:p-16 lg:flex-row lg:items-center lg:gap-16 lg:p-[72px]"
+      >
+        <div class="lg:basis-5/12">
+          <h2
+            class="group text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]"
+          >
+            How does it work?
+          </h2>
+          <p class="mt-4 leading-6 text-green-800">
+            Envelop provides a low-level, hook-based plugin API. Plugins hook into every phase of
+            the GraphQL pipeline: parse, validate, execute and subscribe. By combining plugins, you
+            compose your own GraphQL "framework" and get a modified version of GraphQL with exactly
+            the capabilities you need.
+          </p>
+          <a
+            class="mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-green-800 px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40"
+            href={withBase('/docs/plugins/lifecycle')}
+          >
+            Read about the plugin lifecycle
+          </a>
+        </div>
+        <div class="min-w-0 grow">
+          <Image
+            alt="An HTTP request flowing through Envelop's parse, validate, execute and subscribe phases"
+            class="mx-auto h-auto w-full max-w-2xl"
+            src={howItWorks}
+            widths={[640, 960, 1280]}
+          />
+        </div>
+      </section>
+
+      <!-- Plugin Hub -->
+      <section
+        class="bg-green-1000 relative isolate mx-4 mt-6 overflow-hidden rounded-3xl p-8 text-white md:mx-6 md:p-[72px]"
+      >
+        <h2
+          class="group text-4xl leading-[1.2] tracking-[-0.48px] max-sm:text-[32px] md:text-5xl md:leading-[1.16667]"
+        >
+          Plugin Hub
+        </h2>
+        <p class="mt-4 max-w-2xl text-white/80">
+          Find, explore, try and test plugins for Envelop. Tracing, metrics, caching, security,
+          authentication, schema tooling: {plugins.length} plugins and counting.
+        </p>
+        <div class="my-6 flex gap-6 max-xl:flex-col xl:my-12 xl:gap-20">
+          <ul class="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 xl:shrink-0 xl:basis-1/2">
+            {
+              featured.map(plugin => (
+                <li>
+                  <a
+                    class="hive-focus flex h-full items-center gap-4 rounded-2xl bg-green-900 p-5 transition-colors hover:bg-green-800"
+                    href={plugin.href}
+                  >
+                    <span class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-white p-2">
+                      <img
+                        alt=""
+                        aria-hidden="true"
+                        class="size-8 object-contain"
+                        height="32"
+                        loading="lazy"
+                        src={plugin.iconSrc}
+                        width="32"
+                      />
+                    </span>
+                    <span class="min-w-0">
+                      <span class="block font-medium">{plugin.title}</span>
+                      <span class="mt-0.5 block truncate font-mono text-xs text-white/60">
+                        {plugin.npmPackage}
+                      </span>
+                      {plugin.downloads > 0 && (
+                        <span class="mt-1 block text-xs text-white/60">
+                          {formatDownloads(plugin.downloads)} weekly downloads
+                        </span>
+                      )}
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+          <div class="group relative min-w-0 grow overflow-hidden max-xl:order-first">
+            <div class="envelop-marquee flex flex-col gap-2 sm:gap-3">
+              {
+                marqueeRows.map((row, index) => (
+                  <ul
+                    class:list={[
+                      'flex w-max list-none gap-2 p-0 sm:gap-3',
+                      index % 2 ? 'envelop-marquee-row-reverse' : 'envelop-marquee-row',
+                    ]}
+                  >
+                    {[...row, ...row].map((plugin, index) => (
+                      // The second copy only keeps the loop seamless; keep it out of the tab order.
+                      <li aria-hidden={index >= row.length ? 'true' : undefined}>
+                        <a
+                          class="hive-focus block rounded-lg bg-green-900 px-3 py-1.5 font-mono text-xs text-green-600 transition-colors hover:bg-green-800 hover:text-white sm:px-4 sm:py-2 sm:text-sm"
+                          href={withBase(`/plugins/${plugin.key}`)}
+                          tabindex={index >= row.length ? -1 : undefined}
+                        >
+                          {plugin.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                ))
+              }
+            </div>
+            <span
+              class="pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-700 group-hover:opacity-0 [&>svg]:size-2/3"
+              set:html={envelopMark(
+                'fill="url(#envelop-mark-gradient)" stroke="white" stroke-width="0.6"',
+              )}
+            />
+            <svg class="absolute size-0" aria-hidden="true">
+              <defs>
+                <linearGradient id="envelop-mark-gradient" x1="0%" x2="100%" y1="0%" y2="100%">
+                  <stop offset="0%" stop-color="#86b6c1" stop-opacity="0.85"></stop>
+                  <stop offset="100%" stop-color="#4f96a6"></stop>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+        <a
+          class="text-green-1000 bg-primary relative inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40"
+          href={withBase('/plugins')}
+        >
+          Explore all plugins
+        </a>
+      </section>
+
+      <!-- Learn more -->
+      <section class="px-4 py-6 sm:py-12 md:px-6 lg:py-24 xl:px-30">
+        <h2 class={sectionTitle}>Learn more</h2>
+        <ul class="mt-6 grid list-none grid-cols-1 gap-2 p-0 md:mt-16 md:grid-cols-3 md:gap-6">
+          {
+            learnMore.map(item => (
+              <li class="bg-beige-100 flex flex-col rounded-3xl p-8 lg:p-12">
+                <h3 class="text-xl leading-[1.4] font-medium">{item.title}</h3>
+                <p class="mt-4 grow leading-6 text-green-800">{item.copy}</p>
+                <a
+                  class="hive-focus text-green-1000 mt-6 inline-flex items-center gap-1 font-medium underline decoration-green-800/30 underline-offset-4 hover:decoration-green-800"
+                  href={item.href}
+                >
+                  {item.label} →
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <!-- Ecosystem (shared Hive section) -->
+      <ToolsAndLibraries class="mx-4 md:mx-6" />
+    </main>
+    <SiteFooter description={ENVELOP_FOOTER.description} logo={ENVELOP_FOOTER.logo} />
+  </body>
+</html>
+
+<style>
+  @keyframes envelop-marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  .envelop-marquee-row,
+  .envelop-marquee-row-reverse {
+    animation: envelop-marquee 45s linear infinite;
+  }
+  .envelop-marquee-row-reverse {
+    animation-direction: reverse;
+  }
+  .envelop-marquee:hover .envelop-marquee-row,
+  .envelop-marquee:hover .envelop-marquee-row-reverse,
+  .envelop-marquee:focus-within .envelop-marquee-row,
+  .envelop-marquee:focus-within .envelop-marquee-row-reverse {
+    animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .envelop-marquee-row,
+    .envelop-marquee-row-reverse {
+      animation: none;
+    }
+  }
+</style>

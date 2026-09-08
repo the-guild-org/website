@@ -20,6 +20,8 @@ interface Props {
   description?: string;
   /** Mount-relative base of the docs tree; other products pass theirs. */
   docsBase?: string;
+  /** Label of the breadcrumb root (the docsBase link); defaults to "Docs". */
+  docsLabel?: string;
   githubUrl: string;
   headings: TocHeading[];
   /** Very long pages get content-visibility on their heavy blocks. */
@@ -42,6 +44,7 @@ const {
   currentPath,
   description,
   docsBase = '/docs',
+  docsLabel = 'Docs',
   githubUrl,
   headings,
   longPage,
@@ -77,7 +80,7 @@ const pathSegments = currentPath
   .split('/')
   .filter(Boolean);
 const jsonLdBreadcrumbs = [
-  { name: 'Docs', path: docsBase },
+  { name: docsLabel, path: docsBase },
   ...breadcrumbTrail.map((crumb, index) => ({
     name: crumb.title,
     path: crumb.href ?? `${docsBase}/${pathSegments.slice(0, index + 1).join('/')}`,
@@ -182,7 +185,7 @@ const titleId = title.replaceAll(/[\s.,]+/g, '-').toLowerCase();
               aria-label="Breadcrumb"
             >
               <a class="truncate transition-opacity hover:opacity-80" href={withBase(docsBase)}>
-                Docs
+                {docsLabel}
               </a>
               {breadcrumbs.map(breadcrumb => (
                 <>

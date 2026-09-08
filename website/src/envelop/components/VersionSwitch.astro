@@ -1,0 +1,42 @@
+---
+/** Segmented control linking the current docs and the older majors kept under /v<n>. */
+import { withBase } from '../lib/base-path';
+import { CURRENT_VERSION } from '../lib/site';
+
+interface Props {
+  current: string;
+  versions: string[];
+}
+
+const { current, versions } = Astro.props;
+const hrefFor = (version: string) =>
+  withBase(version === CURRENT_VERSION ? '/docs' : `/${version}`);
+---
+
+<nav
+  aria-label="Documentation version"
+  class="not-prose bg-beige-200 mb-8 inline-flex items-center gap-0.5 rounded-full p-1 text-sm dark:bg-neutral-800"
+  data-pagefind-ignore
+>
+  {
+    versions.map(version => (
+      <a
+        aria-current={version === current ? 'page' : undefined}
+        class:list={[
+          'hive-focus flex items-center gap-1.5 rounded-full px-3.5 py-1.5 font-medium no-underline transition-colors',
+          version === current
+            ? 'text-green-1000 bg-white shadow-sm dark:bg-neutral-700 dark:text-white'
+            : 'hover:text-green-1000 text-green-800 hover:bg-white/60 dark:text-neutral-400 dark:hover:bg-neutral-700/60 dark:hover:text-white',
+        ]}
+        href={hrefFor(version)}
+      >
+        {version}
+        {version === CURRENT_VERSION && (
+          <span class="rounded-full bg-green-800 px-1.5 py-px text-[10px] leading-4 font-medium tracking-wide text-white uppercase dark:bg-green-700">
+            latest
+          </span>
+        )}
+      </a>
+    ))
+  }
+</nav>

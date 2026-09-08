@@ -34,6 +34,17 @@ const codegenLinkOptions = {
 const isHiveFile = path => typeof path === 'string' && path.includes('/src/hive/');
 const isCodegenFile = path => typeof path === 'string' && path.includes('/src/codegen/');
 const isYogaFile = path => typeof path === 'string' && path.includes('/src/yoga/');
+const isEnvelopFile = path => typeof path === 'string' && path.includes('/src/envelop/');
+
+const envelopContentDir = fileURLToPath(new URL('./src/envelop/content', import.meta.url));
+/** Envelop content collections for relative-link resolution (v4 is current, v2/v3 under /v<n>). */
+const envelopLinkOptions = {
+  collections: ['v2', 'v3'].map(version => ({
+    base: `/${version}`,
+    directory: join(envelopContentDir, version),
+  })),
+  fallback: { base: '/docs', directory: join(envelopContentDir, 'docs') },
+};
 
 const yogaContentDir = fileURLToPath(new URL('./src/yoga/content', import.meta.url));
 /** Yoga content collections for relative-link resolution. */
@@ -66,9 +77,15 @@ const hiveOnly = (plugin, ...args) => scoped(isHiveFile, plugin, ...args);
 const codegenOnly = (plugin, ...args) => scoped(isCodegenFile, plugin, ...args);
 /** Runs only on Yoga files (content fetched into src/yoga). */
 const yogaOnly = (plugin, ...args) => scoped(isYogaFile, plugin, ...args);
+/** Runs only on Envelop files (content fetched into src/envelop). */
+const envelopOnly = (plugin, ...args) => scoped(isEnvelopFile, plugin, ...args);
 /** Runs on everything except docs-product files (including files without a path). */
 const mainOnly = (plugin, ...args) =>
-  scoped(path => !isHiveFile(path) && !isCodegenFile(path) && !isYogaFile(path), plugin, ...args);
+  scoped(
+    path => !isHiveFile(path) && !isCodegenFile(path) && !isYogaFile(path) && !isEnvelopFile(path),
+    plugin,
+    ...args,
+  );
 
 /**
  * The main site's MDX uses Astro's default syntax highlighting. The shared
@@ -157,6 +174,7 @@ export default defineConfig({
     pagefindDevServer(),
     pagefindDevServer('/graphql/codegen/pagefind'),
     pagefindDevServer('/graphql/yoga-server/pagefind'),
+    pagefindDevServer('/graphql/envelop/pagefind'),
     mdx({
       processor: unified({
         remarkPlugins: [
@@ -172,6 +190,10 @@ export default defineConfig({
           yogaOnly(remarkRelativeLinks, yogaLinkOptions),
           yogaOnly(remarkBasePath, { base: '/graphql/yoga-server' }),
           yogaOnly(remarkTocMarkers),
+          envelopOnly(remarkNpm2Yarn),
+          envelopOnly(remarkRelativeLinks, envelopLinkOptions),
+          envelopOnly(remarkBasePath, { base: '/graphql/envelop' }),
+          envelopOnly(remarkTocMarkers),
         ],
         rehypePlugins: [
           defaultShiki,
@@ -189,6 +211,11 @@ export default defineConfig({
             transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
           }),
           yogaOnly(rehypeCode, {
+            langs: [...DOCS_CODE_LANGS],
+            themes: DOCS_CODE_THEMES,
+            transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
+          }),
+          envelopOnly(rehypeCode, {
             langs: [...DOCS_CODE_LANGS],
             themes: DOCS_CODE_THEMES,
             transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],

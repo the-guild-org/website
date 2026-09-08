@@ -1,0 +1,50 @@
+---
+/**
+ * Docs of the older majors (v2, v3), kept verbatim from when each was
+ * current. The static /docs and /plugins routes take precedence over this
+ * dynamic segment.
+ */
+import { getCollection, type CollectionEntry } from 'astro:content';
+import EnvelopDocsPage from '../../../../envelop/components/EnvelopDocsPage.astro';
+import { getEnvelopLegacyNav, isLegacyVersion } from '../../../../envelop/lib/docs-nav';
+import type { LegacyVersion } from '../../../../envelop/lib/site';
+
+type Entry = CollectionEntry<'envelopLegacy'>;
+
+export async function getStaticPaths() {
+  const entries = await getCollection('envelopLegacy');
+  return entries.flatMap(entry => {
+    const [version, ...rest] = entry.id.split('/');
+    if (!version || !isLegacyVersion(version)) return [];
+    const sectionId = rest.join('/');
+    return [
+      {
+        params: {
+          version,
+          slug: sectionId.replace(/(^|\/)index$/, '').replace(/\.(md|mdx)$/, '') || undefined,
+        },
+        props: { entry, sectionId, version },
+      },
+    ];
+  });
+}
+
+const { entry, sectionId, version } = Astro.props as {
+  entry: Entry;
+  sectionId: string;
+  version: LegacyVersion;
+};
+const extension = entry.filePath?.match(/\.mdx?$/)?.[0] ?? '.mdx';
+---
+
+<EnvelopDocsPage
+  docsBase={`/${version}`}
+  entry={entry}
+  githubPath={`envelop-website/content/${entry.id}${extension}`}
+  legacyVersion={version}
+  nav={await getEnvelopLegacyNav(version)}
+  searchSection={`Envelop ${version} docs`}
+  section={`Envelop ${version}`}
+  searchable={false}
+  sectionId={sectionId}
+/>

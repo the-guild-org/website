@@ -1,0 +1,61 @@
+---
+/**
+ * One Plugin Hub page: the package facts and the plugin's readme, rendered
+ * from the source repository (or npm) at build time, inside the docs chrome
+ * with every plugin in the sidebar — what the old site's [name].mdx did.
+ */
+import PluginHeader from '../../../../envelop/components/PluginHeader.astro';
+import EnvelopDocsLayout from '../../../../envelop/layouts/EnvelopDocsLayout.astro';
+import { getEnvelopPluginsNav } from '../../../../envelop/lib/docs-nav';
+import {
+  demoteReadmeHeadings,
+  getPluginDescription,
+  getPluginReadme,
+  getPlugins,
+  type PluginRecord,
+} from '../../../../envelop/lib/plugin-data';
+import { renderMarkdown } from '../../../../envelop/lib/render-markdown';
+
+export function getStaticPaths() {
+  return getPlugins().map(plugin => ({ params: { name: plugin.key }, props: { plugin } }));
+}
+
+const { plugin } = Astro.props as { plugin: PluginRecord };
+const readme = demoteReadmeHeadings(getPluginReadme(plugin.key));
+const { headings, html } = readme
+  ? await renderMarkdown(readme)
+  : { headings: [], html: '<p>No readme available for this plugin yet.</p>' };
+const nav = getEnvelopPluginsNav();
+// Heading text comes from the third-party readme and the TOC renders html.
+const escapeHtml = (text: string) => text.replace(/[&<>"']/g, char => `&#${char.charCodeAt(0)};`);
+const description =
+  getPluginDescription(plugin.key) || `${plugin.title}: the ${plugin.npmPackage} Envelop plugin.`;
+const githubUrl = `https://github.com/${plugin.readme.repo}/blob/HEAD/${plugin.readme.path}`;
+---
+
+<EnvelopDocsLayout
+  currentPath={`/plugins/${plugin.key}`}
+  description={description}
+  docsBase="/plugins"
+  githubUrl={githubUrl}
+  headings={headings
+    .filter(heading => heading.depth <= 3)
+    .map(heading => ({ ...heading, html: escapeHtml(heading.text) }))}
+  longPage={readme.length > 60_000}
+  navItems={nav.items}
+  navTree={nav.tree}
+  searchSection="Plugins"
+  section="Envelop Plugins"
+  title={plugin.title}
+>
+  <PluginHeader plugin={plugin} />
+  <div class="plugin-readme" set:html={html} />
+</EnvelopDocsLayout>
+
+<style is:global>
+  /* Readme images are hot-linked from GitHub; keep them inside the column. */
+  .plugin-readme img {
+    max-width: 100%;
+    height: auto;
+  }
+</style>

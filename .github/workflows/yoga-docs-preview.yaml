@@ -1,6 +1,6 @@
 name: yoga-docs-preview
 
-# Builds the site with the docs content from a graphql-yoga PR and
+# Builds the site with the Yoga and Envelop docs content from a graphql-yoga PR and
 # deploys it as a Pages preview at
 # https://yoga-pr-<n>.guild-dev-website.pages.dev.
 # Fired by that repo's docs-preview workflow (repository_dispatch), or by
@@ -55,6 +55,8 @@ jobs:
       - name: build with PR content
         env:
           YOGA_REPO_REF: refs/pull/${{ env.YOGA_PR }}/head
+          # Envelop's docs live in the same repo; build them from the PR too.
+          ENVELOP_REPO_REF: refs/pull/${{ env.YOGA_PR }}/head
         run: pnpm --filter website build
 
       - name: deploy preview
