@@ -55,7 +55,8 @@ function fetchSource(): string {
     return local;
   }
   const tmp = mkdtempSync(join(tmpdir(), 'mesh-content-'));
-  const ref = process.env.MESH_REPO_REF;
+  // TEMPORARY: default to the Mesh content PR branch until ardatan/graphql-mesh#9655 merges.
+  const ref = process.env.MESH_REPO_REF ?? 'website-content-only';
   console.log(`Sparse-cloning ${MESH_REPO}${ref ? ` at ${ref}` : ''}`);
   execFileSync('git', ['clone', '--depth=1', '--filter=blob:none', '--sparse', MESH_REPO, tmp], {
     stdio: ['ignore', 'ignore', 'inherit'],
