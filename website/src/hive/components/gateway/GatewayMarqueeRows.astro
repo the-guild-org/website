@@ -1,5 +1,6 @@
 ---
-import { withBase } from "../../lib/base-path";
+import { withBase } from '../../lib/base-path';
+
 interface Props {
   class?: string;
 }
@@ -7,77 +8,51 @@ interface Props {
 const { class: className } = Astro.props;
 
 const termsList: [string[], string][] = [
-  [["@stream", "@defer", "Incremental Delivery"], "/docs/gateway/defer-stream"],
+  [['@stream', '@defer', 'Incremental Delivery'], '/docs/gateway/defer-stream'],
   [
-    ["APQ", "Automatic Persisted Queries"],
-    "/docs/gateway/other-features/performance/automatic-persisted-queries",
+    ['APQ', 'Automatic Persisted Queries'],
+    '/docs/gateway/other-features/performance/automatic-persisted-queries',
   ],
   [
-    ["authenticated", "requiresScopes", "policy"],
-    "/docs/gateway/authorization-authentication#granular-protection-using-auth-directives-authenticated-requiresscopes-and-policy",
+    ['authenticated', 'requiresScopes', 'policy'],
+    '/docs/gateway/authorization-authentication#granular-protection-using-auth-directives-authenticated-requiresscopes-and-policy',
   ],
+  [['Authorization', 'Authentication'], '/docs/gateway/authorization-authentication'],
   [
-    ["Authorization", "Authentication"],
-    "/docs/gateway/authorization-authentication",
+    ['batching', 'Request Batching'],
+    'https://the-guild.dev/graphql/hive/docs/gateway/other-features/performance/request-batching',
   ],
+  [['Content-Encoding'], '/docs/gateway/other-features/performance/compression'],
+  [['Cost Limit'], '/docs/gateway/other-features/security/demand-control'],
+  [['CSRF Prevention'], '/docs/gateway/other-features/security/csrf-prevention'],
+  [['documentCache', 'errorCache', 'validationCache'], '/docs/gateway/other-features/performance'],
+  [['executionCancellation'], '/docs/gateway/other-features/performance/execution-cancellation'],
+  [['Header Propagation'], '/docs/gateway/other-features/header-propagation'],
+  [['HTTP Caching'], '/docs/gateway/other-features/performance/http-caching'],
+  [['maskedErrors'], '/docs/gateway/logging-and-error-handling'],
+  [['Monitoring', 'Tracing'], '/docs/gateway/monitoring-tracing'],
   [
-    ["batching", "Request Batching"],
-    "https://the-guild.dev/graphql/hive/docs/gateway/other-features/performance/request-batching",
+    ['parserAndValidationCache'],
+    '/docs/gateway/other-features/performance/parsing-and-validation-caching',
   ],
+  [['Persisted Documents'], '/docs/gateway/persisted-documents'],
+  [['Persisted Documents'], '/docs/gateway/persisted-documents'],
+  [['Rate Limiting'], '/docs/gateway/other-features/security/rate-limiting'],
+  [['Response Caching'], '/docs/gateway/other-features/performance/response-caching'],
+  [['Security'], '/docs/gateway/other-features/security'],
+  [['Snapshots'], '/docs/gateway/other-features/testing/snapshot'],
+  [['Subscriptions'], '/docs/gateway/subscriptions'],
+  [['Supergraph', 'Proxy'], '/docs/gateway/supergraph-proxy-source'],
+  [['Upstream Cancellation'], '/docs/gateway/other-features/performance/upstream-cancellation'],
+  [['Usage Reporting'], 'https://the-guild.dev/graphql/hive/docs/gateway/usage-reporting'],
+  [['useMock', 'Mocking'], '/docs/gateway/other-features/testing/mocking'],
   [
-    ["Content-Encoding"],
-    "/docs/gateway/other-features/performance/compression",
-  ],
-  [["Cost Limit"], "/docs/gateway/other-features/security/demand-control"],
-  [
-    ["CSRF Prevention"],
-    "/docs/gateway/other-features/security/csrf-prevention",
-  ],
-  [
-    ["documentCache", "errorCache", "validationCache"],
-    "/docs/gateway/other-features/performance",
-  ],
-  [
-    ["executionCancellation"],
-    "/docs/gateway/other-features/performance/execution-cancellation",
-  ],
-  [["Header Propagation"], "/docs/gateway/other-features/header-propagation"],
-  [["HTTP Caching"], "/docs/gateway/other-features/performance/http-caching"],
-  [["maskedErrors"], "/docs/gateway/logging-and-error-handling"],
-  [["Monitoring", "Tracing"], "/docs/gateway/monitoring-tracing"],
-  [
-    ["parserAndValidationCache"],
-    "/docs/gateway/other-features/performance/parsing-and-validation-caching",
-  ],
-  [["Persisted Documents"], "/docs/gateway/persisted-documents"],
-  [["Persisted Documents"], "/docs/gateway/persisted-documents"],
-  [["Rate Limiting"], "/docs/gateway/other-features/security/rate-limiting"],
-  [
-    ["Response Caching"],
-    "/docs/gateway/other-features/performance/response-caching",
-  ],
-  [["Security"], "/docs/gateway/other-features/security"],
-  [["Snapshots"], "/docs/gateway/other-features/testing/snapshot"],
-  [["Subscriptions"], "/docs/gateway/subscriptions"],
-  [["Supergraph", "Proxy"], "/docs/gateway/supergraph-proxy-source"],
-  [
-    ["Upstream Cancellation"],
-    "/docs/gateway/other-features/performance/upstream-cancellation",
-  ],
-  [
-    ["Usage Reporting"],
-    "https://the-guild.dev/graphql/hive/docs/gateway/usage-reporting",
-  ],
-  [["useMock", "Mocking"], "/docs/gateway/other-features/testing/mocking"],
-  [
-    ["useRequestDeduplication"],
-    "/docs/gateway/other-features/performance/deduplicate-inflight-requests",
+    ['useRequestDeduplication'],
+    '/docs/gateway/other-features/performance/deduplicate-inflight-requests',
   ],
 ];
 
-const pills = termsList.flatMap(([labels, href]) =>
-  labels.map((label) => ({ href, label })),
-);
+const pills = termsList.flatMap(([labels, href]) => labels.map(label => ({ href, label })));
 
 /**
  * @see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
@@ -106,29 +81,31 @@ for (let i = 0; i < ROWS; i++) {
 }
 ---
 
-<div class:list={["flex max-w-full flex-col justify-center rounded-2xl p-4 pb-28", className]}>
-  {rows.map((row, i) => (
-    <div class="marquee-row mask-[linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]">
-      <div
-        class="marquee-track flex w-max gap-1 py-0.5 sm:gap-2 sm:py-1"
-        style={{
-          "--animation-direction": i % 2 ? "reverse" : "forwards",
-          "--animation-duration": "60000ms",
-        }}
-      >
-        {[...row, ...row, ...(i === rows.length - 1 ? row : [])].map((pill) => (
-          <a
-            class="hive-focus rounded-lg border border-transparent bg-(--pill-bg) px-2 py-1.5 text-[10px] text-(--pill-text) transition duration-500 hover:border-(--pill-hover-text) hover:bg-(--pill-bg-hover) hover:text-(--pill-text-hover) sm:px-4 sm:py-3 sm:text-sm"
-            href={withBase(pill.href)}
-            target={pill.href.startsWith("http") ? "_blank" : undefined}
-            rel={pill.href.startsWith("http") ? "noreferrer" : undefined}
-          >
-            {pill.label}
-          </a>
-        ))}
+<div class:list={['flex max-w-full flex-col justify-center rounded-2xl p-4 pb-28', className]}>
+  {
+    rows.map((row, i) => (
+      <div class="marquee-row mask-[linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]">
+        <div
+          class="marquee-track flex w-max gap-1 py-0.5 sm:gap-2 sm:py-1"
+          style={{
+            '--animation-direction': i % 2 ? 'reverse' : 'forwards',
+            '--animation-duration': '60000ms',
+          }}
+        >
+          {[...row, ...row, ...(i === rows.length - 1 ? row : [])].map(pill => (
+            <a
+              class="hive-focus rounded-lg border border-transparent bg-(--pill-bg) px-2 py-1.5 text-[10px] text-(--pill-text) transition duration-500 hover:border-(--pill-hover-text) hover:bg-(--pill-bg-hover) hover:text-(--pill-text-hover) sm:px-4 sm:py-3 sm:text-sm"
+              href={withBase(pill.href)}
+              target={pill.href.startsWith('http') ? '_blank' : undefined}
+              rel={pill.href.startsWith('http') ? 'noreferrer' : undefined}
+            >
+              {pill.label}
+            </a>
+          ))}
+        </div>
       </div>
-    </div>
-  ))}
+    ))
+  }
 </div>
 
 <style>

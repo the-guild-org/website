@@ -5,12 +5,12 @@
  * rendered literally on the page and leaked into search results.
  */
 export function remarkTocMarkers() {
-  return (tree) => {
-    visit(tree, (node) => {
-      if (node.type !== "heading") return;
+  return tree => {
+    visit(tree, node => {
+      if (node.type !== 'heading') return;
       const last = node.children?.at(-1);
-      if (last?.type === "text" && /\[!toc\]\s*$/.test(last.value)) {
-        last.value = last.value.replace(/\s*\[!toc\]\s*$/, "");
+      if (last?.type === 'text' && /\[!toc\]\s*$/.test(last.value)) {
+        last.value = last.value.replace(/\s*\[!toc\]\s*$/, '');
         if (!last.value) node.children.pop();
       }
     });

@@ -1,10 +1,10 @@
-import { spawnSync } from "node:child_process";
-import { globSync, writeFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { spawnSync } from 'node:child_process';
+import { globSync, writeFileSync } from 'node:fs';
+import { HIVE_SITE_URL as SITE_URL } from '../../src/hive/lib/base-path.ts';
+import { HIVE_DIST, REPO_ROOT } from '../lib/build-output.ts';
 
-const SITE_URL = "https://the-guild.dev/graphql/hive";
-const distDirectory = fileURLToPath(new URL("../../dist/graphql/hive", import.meta.url));
-const repoRoot = fileURLToPath(new URL("../../..", import.meta.url));
+const distDirectory = HIVE_DIST;
+const repoRoot = REPO_ROOT;
 
 /**
  * Last-modified dates per URL, derived from the git history of the content
@@ -17,34 +17,34 @@ function contentPathToUrlPath(file: string): string | undefined {
   );
   if (!match) return undefined;
   const [, collection, rawPath] = match;
-  const path = rawPath!.replace(/(^|\/)index$/, "");
-  const prefix = collection === "docs" ? "/docs" : `/${collection}`;
+  const path = rawPath!.replace(/(^|\/)index$/, '');
+  const prefix = collection === 'docs' ? '/docs' : `/${collection}`;
   return path ? `${prefix}/${path}` : prefix;
 }
 
 function gitLastModified(): Map<string, string> {
   const dates = new Map<string, string>();
   const proc = spawnSync(
-    "git",
+    'git',
     [
-      "log",
-      "--format=commit:%cI",
-      "--name-only",
-      "--",
+      'log',
+      '--format=commit:%cI',
+      '--name-only',
+      '--',
       // Content history spans the standalone-repo layout, the vendored
       // hive/ layout, and the current unified location.
-      "website/src/hive/documentation/content",
-      "hive/packages/documentation/content",
-      "packages/documentation/content",
+      'website/src/hive/documentation/content',
+      'hive/packages/documentation/content',
+      'packages/documentation/content',
     ],
-    { cwd: repoRoot, encoding: "utf8" },
+    { cwd: repoRoot, encoding: 'utf8' },
   );
   if (proc.status !== 0) return dates;
 
-  let currentDate = "";
-  for (const line of proc.stdout.split("\n")) {
-    if (line.startsWith("commit:")) {
-      currentDate = line.slice("commit:".length).slice(0, 10);
+  let currentDate = '';
+  for (const line of proc.stdout.split('\n')) {
+    if (line.startsWith('commit:')) {
+      currentDate = line.slice('commit:'.length).slice(0, 10);
       continue;
     }
     if (!line) continue;
@@ -59,12 +59,12 @@ const lastModified = gitLastModified();
 const pages = [
   // File-format output puts the Hive landing page at ../hive.html, one level
   // above the globbed directory — add its root URL explicitly.
-  { lastmod: lastModified.get(""), path: "" },
-  ...globSync("**/*.html", { cwd: distDirectory })
-    .filter((file) => file !== "404.html")
-    .map((file) => {
+  { lastmod: lastModified.get(''), path: '' },
+  ...globSync('**/*.html', { cwd: distDirectory })
+    .filter(file => file !== '404.html')
+    .map(file => {
       // File-format output: page.html serves /page.
-      const path = `/${file.replace(/\/index\.html$/, "").replace(/\.html$/, "")}`;
+      const path = `/${file.replace(/\/index\.html$/, '').replace(/\.html$/, '')}`;
       return { lastmod: lastModified.get(path), path };
     }),
 ].sort((a, b) => a.path.localeCompare(b.path));
@@ -77,7 +77,7 @@ const urls = pages
       ? `  <url><loc>${loc}</loc><lastmod>${lastmod}</lastmod></url>`
       : `  <url><loc>${loc}</loc></url>`;
   })
-  .join("\n");
+  .join('\n');
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -85,7 +85,7 @@ ${urls}
 </urlset>
 `;
 
-writeFileSync(new URL("../../dist/graphql/hive/sitemap.xml", import.meta.url), sitemap);
+writeFileSync(new URL('../../dist/graphql/hive/sitemap.xml', import.meta.url), sitemap);
 console.log(
-  `Generated sitemap.xml with ${pages.length} URLs (${pages.filter((p) => p.lastmod).length} with lastmod)`,
+  `Generated sitemap.xml with ${pages.length} URLs (${pages.filter(p => p.lastmod).length} with lastmod)`,
 );

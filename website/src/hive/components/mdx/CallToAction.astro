@@ -1,31 +1,32 @@
 ---
-import { withBase } from "../../lib/base-path";
-const { href, variant = "primary", className, ...props } = Astro.props;
+import { withBase } from '../../lib/base-path';
+
+const { href, variant = 'primary', className, ...props } = Astro.props;
 const variants: Record<string, string> = {
   primary:
-    "bg-primary hover:bg-green-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 dark:bg-neutral-100 dark:text-neutral-800 dark:hover:bg-white dark:hover:text-neutral-900",
-  "primary-inverted":
-    "bg-primary text-green-1000 hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40 dark:text-green-1000",
+    'bg-primary hover:bg-green-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 dark:bg-neutral-100 dark:text-neutral-800 dark:hover:bg-white dark:hover:text-neutral-900',
+  'primary-inverted':
+    'bg-primary text-green-1000 hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40 dark:text-green-1000',
   secondary:
-    "bg-green-300 hover:bg-green-200 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-300/40",
-  "secondary-inverted":
-    "bg-green-800 text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 dark:text-white",
+    'bg-green-300 hover:bg-green-200 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-300/40',
+  'secondary-inverted':
+    'bg-green-800 text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 dark:text-white',
   tertiary:
-    "bg-transparent text-green-1000 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800",
+    'bg-transparent text-green-1000 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800',
 };
-const external = typeof href === "string" && href.startsWith("http");
+const external = typeof href === 'string' && href.startsWith('http');
 ---
 
 <a
   {...props}
   class:list={[
-    "outline-hidden relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 focus-visible:ring-0 focus-visible:ring-offset-0 sm:w-fit [&:hover>:first-child]:-inset-px [&:hover>:first-child]:rounded-[9px]",
+    'relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap outline-hidden focus-visible:ring-0 focus-visible:ring-offset-0 sm:w-fit [&:hover>:first-child]:-inset-px [&:hover>:first-child]:rounded-[9px]',
     variants[variant],
     className,
   ]}
   href={withBase(href)}
-  rel={external ? "noreferrer" : undefined}
-  target={external ? "_blank" : undefined}
+  rel={external ? 'noreferrer' : undefined}
+  target={external ? '_blank' : undefined}
 >
   <span class="absolute inset-0 rounded-lg border border-green-800 dark:border-neutral-200"></span>
   <slot />

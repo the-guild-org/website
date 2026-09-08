@@ -4,16 +4,22 @@
  * BreadcrumbList structured data, feed and llms.txt discovery, font
  * preloads, and the page title. Included by every page's <head>.
  */
-import { basePath, withBase } from "../lib/base-path";
-
-import FontPreloads from "./FontPreloads.astro";
-import type { ImageMetadata } from "astro";
-
-import defaultImage from "../documentation/src/routes/opengraph-image.png";
+import type { ImageMetadata } from 'astro';
+import { basePath, SITE_ORIGIN, HIVE_SITE_URL as SITE_URL, withBase } from '../lib/base-path';
+import FontPreloads from './FontPreloads.astro';
+import defaultImage from '../documentation/src/routes/opengraph-image.png';
 
 interface Breadcrumb {
   name: string;
   path: string;
+}
+
+interface SiteIdentity {
+  /** Mount path of the product, e.g. "/graphql/hive". */
+  mountPath: string;
+  name: string;
+  /** Absolute URL of the mount point. */
+  url: string;
 }
 
 interface Props {
@@ -23,31 +29,35 @@ interface Props {
   description: string;
   image?: ImageMetadata | string;
   imageAlt?: string;
+  /** Which docs product this head belongs to; defaults to Hive. */
+  site?: SiteIdentity;
   title: string;
-  type?: "article" | "website";
+  type?: 'article' | 'website';
 }
 
-const SITE_NAME = "Hive";
-const SITE_ORIGIN = "https://the-guild.dev";
-const SITE_URL = `${SITE_ORIGIN}/graphql/hive`;
-const TWITTER_ACCOUNT = "@TheGuildDev";
+const TWITTER_ACCOUNT = '@TheGuildDev';
 
 const {
   breadcrumbs = [],
   canonical,
   description,
   image = defaultImage,
-  imageAlt = "GraphQL Hive",
+  imageAlt = 'GraphQL Hive',
+  site = { mountPath: basePath, name: 'Hive', url: SITE_URL },
   title,
-  type = "website",
+  type = 'website',
 } = Astro.props;
+
+const SITE_NAME = site.name;
+const siteUrl = site.url;
+const mountPath = site.mountPath;
 
 /** Strips the mount prefix — it is not part of logical paths. */
 function stripBase(path: string) {
   // File-format output puts the landing page at <base>.html.
-  if (path === `${basePath}.html`) return "";
-  return basePath && (path === basePath || path.startsWith(`${basePath}/`))
-    ? path.slice(basePath.length)
+  if (path === `${mountPath}.html`) return '';
+  return mountPath && (path === mountPath || path.startsWith(`${mountPath}/`))
+    ? path.slice(mountPath.length)
     : path;
 }
 
@@ -55,39 +65,35 @@ function stripBase(path: string) {
 // trailing slash, so canonicals match the public URL shape and the
 // generated sitemap (slash-less, no extension).
 const currentPath = stripBase(Astro.url.pathname)
-  .replace(/\.html$/, "")
-  .replace(/\/$/, "");
-const canonicalUrl = canonical ?? `${SITE_URL}${currentPath}`;
+  .replace(/\.html$/, '')
+  .replace(/\/$/, '');
+const canonicalUrl = canonical ?? `${siteUrl}${currentPath}`;
 // Bundled assets are emitted at the shared /_astro root of the unified
 // site, so they join with the origin; anything else is a Hive-relative
 // path and joins with the mounted site URL.
-const imagePath = stripBase(typeof image === "string" ? image : image.src);
+const imagePath = stripBase(typeof image === 'string' ? image : image.src);
 const imageUrl = /^https?:\/\//.test(imagePath)
   ? imagePath
-  : imagePath.startsWith("/_astro/")
+  : imagePath.startsWith('/_astro/')
     ? `${SITE_ORIGIN}${imagePath}`
-    : `${SITE_URL}/${imagePath.replace(/^\//, "")}`;
-const imageWidth = typeof image === "string" ? undefined : image.width;
-const imageHeight = typeof image === "string" ? undefined : image.height;
+    : `${siteUrl}/${imagePath.replace(/^\//, '')}`;
+const imageWidth = typeof image === 'string' ? undefined : image.width;
+const imageHeight = typeof image === 'string' ? undefined : image.height;
 
 // BreadcrumbList structured data, mirroring the old site: provided ancestors
 // followed by the page itself (the bare site root is named after the site).
-const pageCrumbName =
-  currentPath === "" ? SITE_NAME : (title.split("|")[0] ?? title).trim();
+const pageCrumbName = currentPath === '' ? SITE_NAME : (title.split('|')[0] ?? title).trim();
 const breadcrumbJsonLd = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    ...breadcrumbs,
-    { name: pageCrumbName, path: currentPath },
-  ].map((crumb, index) => ({
-    "@type": "ListItem",
-    item: /^https?:\/\//.test(crumb.path)
-      ? crumb.path
-      : `${SITE_URL}${stripBase(crumb.path)}`,
-    name: crumb.name,
-    position: index + 1,
-  })),
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [...breadcrumbs, { name: pageCrumbName, path: currentPath }].map(
+    (crumb, index) => ({
+      '@type': 'ListItem',
+      item: /^https?:\/\//.test(crumb.path) ? crumb.path : `${siteUrl}${stripBase(crumb.path)}`,
+      name: crumb.name,
+      position: index + 1,
+    }),
+  ),
 });
 ---
 
@@ -95,8 +101,13 @@ const breadcrumbJsonLd = JSON.stringify({
 <FontPreloads />
 <meta name="description" content={description} />
 <link rel="canonical" href={withBase(canonicalUrl)} />
-<link rel="alternate" type="text/markdown" href={withBase(`${SITE_URL}/llms.txt`)} title="Hive documentation for LLMs" />
-<link rel="sitemap" type="application/xml" href={withBase(`${SITE_URL}/sitemap.xml`)} />
+<link
+  rel="alternate"
+  type="text/markdown"
+  href={withBase(`${siteUrl}/llms.txt`)}
+  title={`${SITE_NAME} documentation for LLMs`}
+/>
+<link rel="sitemap" type="application/xml" href={withBase(`${siteUrl}/sitemap.xml`)} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:type" content={type} />

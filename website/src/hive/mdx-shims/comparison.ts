@@ -1,1 +1,1 @@
-export { default as Comparison } from "../components/mdx/Comparison.astro";
+export { default as Comparison } from '../components/mdx/Comparison.astro';

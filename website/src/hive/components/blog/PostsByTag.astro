@@ -1,21 +1,20 @@
 ---
-import type { BlogPost } from "../../lib/get-blog-posts";
-
-import CategorySelect from "./CategorySelect.astro";
-import FeaturedPosts from "./FeaturedPosts.astro";
-import LatestPosts from "./LatestPosts.astro";
+import type { BlogPost } from '../../lib/get-blog-posts';
+import CategorySelect from './CategorySelect.astro';
+import FeaturedPosts from './FeaturedPosts.astro';
+import LatestPosts from './LatestPosts.astro';
 
 const TOP_10_TAGS = [
-  "graphql",
-  "graphql-federation",
-  "codegen",
-  "typescript",
-  "react",
-  "graphql-hive",
-  "node",
-  "graphql-modules",
-  "angular",
-  "graphql-tools",
+  'graphql',
+  'graphql-federation',
+  'codegen',
+  'typescript',
+  'react',
+  'graphql-hive',
+  'node',
+  'graphql-modules',
+  'angular',
+  'graphql-tools',
 ];
 
 interface Props {
@@ -37,11 +36,11 @@ if (tag && !TOP_10_TAGS.includes(tag)) {
 }
 ---
 
-<section class:list={["px-4 sm:px-6", className]}>
+<section class:list={['px-4 sm:px-6', className]}>
   <CategorySelect categories={categories} tag={tag} />
   <FeaturedPosts class="sm:mb-12 md:mt-16" posts={posts} tag={tag} />
   {
-    Astro.slots.has("default") ? (
+    Astro.slots.has('default') ? (
       <LatestPosts posts={posts} tag={tag}>
         <slot />
       </LatestPosts>

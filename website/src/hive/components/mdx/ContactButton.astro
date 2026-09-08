@@ -1,19 +1,19 @@
 ---
-const { className, variant = "primary", ...props } = Astro.props;
+const { className, variant = 'primary', ...props } = Astro.props;
 const variants: Record<string, string> = {
   primary:
-    "bg-primary hover:bg-green-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800",
-  "secondary-inverted":
-    "bg-green-800 text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 dark:text-white",
+    'bg-primary hover:bg-green-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800',
+  'secondary-inverted':
+    'bg-green-800 text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 dark:text-white',
   tertiary:
-    "bg-transparent text-green-1000 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800",
+    'bg-transparent text-green-1000 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800',
 };
 ---
 
 <a
   {...props}
   class:list={[
-    "relative flex items-center justify-center gap-2 text-nowrap rounded-lg px-6 py-3 font-medium leading-6 text-green-1000 focus-visible:outline focus-visible:ring-0 focus-visible:ring-offset-0 sm:w-fit dark:text-neutral-200 [&:hover>:first-child]:-inset-px [&:hover>:first-child]:rounded-[9px]",
+    'text-green-1000 relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline sm:w-fit dark:text-neutral-200 [&:hover>:first-child]:-inset-px [&:hover>:first-child]:rounded-[9px]',
     variants[variant],
     className,
   ]}

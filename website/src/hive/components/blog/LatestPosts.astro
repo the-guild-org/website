@@ -1,8 +1,7 @@
 ---
-import type { BlogPost } from "../../lib/get-blog-posts";
-
-import { prettyPrintTag } from "../../lib/pretty-print-tag";
-import BlogCard from "./BlogCard.astro";
+import type { BlogPost } from '../../lib/get-blog-posts';
+import { prettyPrintTag } from '../../lib/pretty-print-tag';
+import BlogCard from './BlogCard.astro';
 
 interface Props {
   posts: BlogPost[];
@@ -10,7 +9,7 @@ interface Props {
 }
 
 const { posts, tag } = Astro.props;
-const hasExtra = Astro.slots.has("default");
+const hasExtra = Astro.slots.has('default');
 
 const itemsInFirstSection = hasExtra ? 11 : 12;
 const firstTwelve = posts.slice(0, itemsInFirstSection);
@@ -18,11 +17,22 @@ const rest = posts.slice(itemsInFirstSection);
 ---
 
 <section class="pt-6 sm:pt-12">
-  <h2 class="group text-4xl leading-[1.2] md:text-5xl md:leading-[1.16667] tracking-[-0.48px] text-center">
+  <h2
+    class="group text-center text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]"
+  >
     Latest posts
-    {tag && <> in <span>{prettyPrintTag(tag)}</span></>}
+    {
+      tag && (
+        <>
+          {' '}
+          in <span>{prettyPrintTag(tag)}</span>
+        </>
+      )
+    }
   </h2>
-  <ul class="mt-6 grid grid-cols-1 gap-4 sm:grid sm:grid-cols-2 sm:gap-6 md:mt-16 lg:grid-cols-3 xl:grid-cols-4">
+  <ul
+    class="mt-6 grid grid-cols-1 gap-4 sm:grid sm:grid-cols-2 sm:gap-6 md:mt-16 lg:grid-cols-3 xl:grid-cols-4"
+  >
     {
       firstTwelve.map((post, index) => (
         <>
@@ -41,13 +51,13 @@ const rest = posts.slice(itemsInFirstSection);
   {
     rest.length > 0 && (
       <details class="mt-8 sm:mt-12">
-        <summary class="bg-beige-200 text-green-1000 border-beige-300 hover:bg-beige-300 hive-focus outline-hidden focus-visible:ring-3 mx-auto w-fit cursor-pointer select-none list-none rounded-lg border px-4 py-2 hover:border-current dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700 [&::marker]:hidden [[open]>&]:mb-8 [[open]>&]:sm:mb-12">
+        <summary class="bg-beige-200 text-green-1000 border-beige-300 hover:bg-beige-300 hive-focus mx-auto w-fit cursor-pointer list-none rounded-lg border px-4 py-2 outline-hidden select-none hover:border-current focus-visible:ring-3 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700 [&::marker]:hidden [[open]>&]:mb-8 [[open]>&]:sm:mb-12">
           <span class="in-[[open]]:hidden">Show more</span>
           <span class="hidden in-[[open]]:inline">Hide posts</span>
         </summary>
 
         <ul class="mt-4 grid grid-cols-1 gap-4 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
-          {rest.map((post) => (
+          {rest.map(post => (
             <li class="*:h-full">
               <BlogCard post={post} tag={tag} />
             </li>

@@ -3,7 +3,6 @@ export type RewriteRecord = {
   preserveSearch?: boolean;
   crisp?: { segments: string[] };
   sitemap?: boolean;
-  banner?: string;
 };
 export type RedirectRecord = { redirect: string; status?: number };
 export type WebsiteRecord = RewriteRecord | RedirectRecord;
@@ -17,7 +16,6 @@ export const jsonConfig = {
   cfFetchCacheTtl: 60,
   gaTrackingId: 'G-VN2KZS6FK4',
   crispWebsiteId: 'af9adec5-ddfa-4db9-a4a3-25769daf2fc2',
-  defaultBanner: undefined,
   fallbackRoute: {
     rewrite: 'guild-dev-website.pages.dev',
     crisp: {
@@ -26,18 +24,6 @@ export const jsonConfig = {
   } satisfies RewriteRecord,
   mappings: {
     // Rewrites
-    '/graphql/codegen': {
-      rewrite: 'graphql-code-generator.pages.dev',
-      crisp: {
-        segments: ['codegen'],
-      },
-      sitemap: true,
-    },
-    '/graphql/yoga-server': {
-      rewrite: 'graphql-yoga.pages.dev',
-      crisp: { segments: ['yoga'] },
-      sitemap: true,
-    },
     '/graphql/scalars': {
       rewrite: 'graphql-scalars.pages.dev',
       crisp: { segments: ['scalars'] },

@@ -6,7 +6,5 @@ export interface TocHeading {
 }
 
 export function filterToc(headings: TocHeading[], minDepth = 2, maxDepth = 4) {
-  return headings.filter(
-    (heading) => heading.depth >= minDepth && heading.depth <= maxDepth,
-  );
+  return headings.filter(heading => heading.depth >= minDepth && heading.depth <= maxDepth);
 }

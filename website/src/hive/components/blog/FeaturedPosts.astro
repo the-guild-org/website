@@ -1,7 +1,6 @@
 ---
-import type { BlogPost } from "../../lib/get-blog-posts";
-
-import BlogCard from "./BlogCard.astro";
+import type { BlogPost } from '../../lib/get-blog-posts';
+import BlogCard from './BlogCard.astro';
 
 interface Props {
   class?: string;
@@ -10,13 +9,18 @@ interface Props {
 }
 
 const { class: className, posts, tag } = Astro.props;
-const featuredPosts = posts.filter((post) => post.featured).slice(0, 3);
+const featuredPosts = posts.filter(post => post.featured).slice(0, 3);
 ---
 
 {
   featuredPosts.length > 0 && (
-    <ul class:list={["mt-6 flex items-stretch gap-4 *:flex-1 max-md:flex-col sm:gap-6 lg:mt-16", className]}>
-      {featuredPosts.map((post) => (
+    <ul
+      class:list={[
+        'mt-6 flex items-stretch gap-4 *:flex-1 max-md:flex-col sm:gap-6 lg:mt-16',
+        className,
+      ]}
+    >
+      {featuredPosts.map(post => (
         <li>
           <BlogCard class="h-full" post={post} tag={tag} variant="featured" />
         </li>

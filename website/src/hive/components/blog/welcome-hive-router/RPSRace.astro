@@ -1,24 +1,27 @@
 ---
-import { gateways } from "./gateways-data";
+import { gateways } from './gateways-data';
 
 const sorted = [...gateways].sort((a, b) => b.rps - a.rps);
-const max = Math.max(...sorted.map((d) => d.rps));
+const max = Math.max(...sorted.map(d => d.rps));
 const first = sorted[0]!;
 ---
 
 <div class="rps-race my-4 space-y-3 font-mono">
   {
-    sorted.map((d) => (
+    sorted.map(d => (
       <div class="rps-race-row" data-name={d.name} data-rps={d.rps}>
         <div class="mb-1 flex items-center justify-between">
           <span class="text-sm text-green-900 dark:text-neutral-300">{d.name}</span>
-          <span class="text-sm tabular-nums text-green-800 dark:text-neutral-400">
-            {d.name === first.name && <span class="rps-race-ratio"></span>}
+          <span class="text-sm text-green-800 tabular-nums dark:text-neutral-400">
+            {d.name === first.name && <span class="rps-race-ratio" />}
             {d.rps.toFixed(0)} rps
           </span>
         </div>
         <div class="h-[5px] overflow-hidden bg-blue-200 dark:bg-zinc-800">
-          <div class="h-full bg-sky-600/90 transition-[width] duration-1000 ease-out dark:bg-sky-600" style={`width: ${(d.rps / max) * 100}%`} />
+          <div
+            class="h-full bg-sky-600/90 transition-[width] duration-1000 ease-out dark:bg-sky-600"
+            style={`width: ${(d.rps / max) * 100}%`}
+          />
         </div>
       </div>
     ))
@@ -26,20 +29,20 @@ const first = sorted[0]!;
 </div>
 
 <script>
-  document.querySelectorAll<HTMLElement>(".rps-race").forEach((race) => {
-    const rows = [...race.querySelectorAll<HTMLElement>(".rps-race-row")];
+  document.querySelectorAll<HTMLElement>('.rps-race').forEach(race => {
+    const rows = [...race.querySelectorAll<HTMLElement>('.rps-race-row')];
     const first = rows[0];
-    const ratioEl = first?.querySelector<HTMLElement>(".rps-race-ratio");
+    const ratioEl = first?.querySelector<HTMLElement>('.rps-race-ratio');
     const firstRps = Number(first?.dataset.rps);
     if (!first || !ratioEl) return;
 
     for (const row of rows.slice(1)) {
-      row.addEventListener("mouseenter", () => {
+      row.addEventListener('mouseenter', () => {
         const rps = Number(row.dataset.rps);
         ratioEl.textContent = `${(firstRps / rps).toFixed(1)}x faster | `;
       });
-      row.addEventListener("mouseleave", () => {
-        ratioEl.textContent = "";
+      row.addEventListener('mouseleave', () => {
+        ratioEl.textContent = '';
       });
     }
   });

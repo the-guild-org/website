@@ -1,34 +1,36 @@
 ---
-import { gateways } from "./gateways-data";
+import { gateways } from './gateways-data';
 
 const rows = [...gateways].sort((a, b) => b.rps - a.rps);
 ---
 
 <div class="relative w-full overflow-x-auto">
-  <table class="w-full caption-bottom text-sm mt-6 font-mono">
+  <table class="mt-6 w-full caption-bottom font-mono text-sm">
     <thead class="[&_tr]:border-b">
-      <tr class="hover:bg-beige-100 border-beige-400 border-b transition-colors hover:transition-none dark:border-neutral-800 dark:hover:bg-neutral-800/25 bg-beige-100 dark:bg-neutral-800/50">
-        <th class="whitespace-nowrap p-2 text-left align-middle font-medium w-[100px]">
+      <tr
+        class="hover:bg-beige-100 border-beige-400 bg-beige-100 border-b transition-colors hover:transition-none dark:border-neutral-800 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/25"
+      >
+        <th class="w-[100px] p-2 text-left align-middle font-medium whitespace-nowrap">
           Gateway<br />
           <span class="text-green-800 dark:text-neutral-400">version</span>
         </th>
-        <th class="whitespace-nowrap p-2 text-left align-middle font-medium text-center">
+        <th class="p-2 text-center text-left align-middle font-medium whitespace-nowrap">
           RPS<br />
           <span class="text-green-800 dark:text-neutral-400">reqs/s</span>
         </th>
-        <th class="whitespace-nowrap p-2 text-left align-middle font-medium text-center">
+        <th class="p-2 text-center text-left align-middle font-medium whitespace-nowrap">
           P95<br />
           <span class="text-green-800 dark:text-neutral-400">ms</span>
         </th>
-        <th class="whitespace-nowrap p-2 text-left align-middle font-medium text-center">
+        <th class="p-2 text-center text-left align-middle font-medium whitespace-nowrap">
           P99.9<br />
           <span class="text-green-800 dark:text-neutral-400">ms</span>
         </th>
-        <th class="whitespace-nowrap p-2 text-left align-middle font-medium text-center">
+        <th class="p-2 text-center text-left align-middle font-medium whitespace-nowrap">
           CPU<br />
           <span class="text-green-800 dark:text-neutral-400">max %</span>
         </th>
-        <th class="whitespace-nowrap p-2 text-left align-middle font-medium text-center">
+        <th class="p-2 text-center text-left align-middle font-medium whitespace-nowrap">
           MEM<br />
           <span class="text-green-800 dark:text-neutral-400">max MB</span>
         </th>
@@ -36,23 +38,23 @@ const rows = [...gateways].sort((a, b) => b.rps - a.rps);
     </thead>
     <tbody class="[&_tr:last-child]:border-0">
       {
-        rows.map((row) => (
+        rows.map(row => (
           <tr class="hover:bg-beige-100 border-beige-400 border-b transition-colors hover:transition-none dark:border-neutral-800 dark:hover:bg-neutral-800/25">
-            <td class="whitespace-nowrap p-2 align-middle">
+            <td class="p-2 align-middle whitespace-nowrap">
               <div class="font-medium">{row.name}</div>
               <span class="text-xs text-green-800 dark:text-neutral-400">{row.version}</span>
             </td>
-            <td class="whitespace-nowrap p-2 align-middle text-center">{row.rps}</td>
-            <td class="whitespace-nowrap p-2 align-middle text-center">{row.p95}</td>
-            <td class="whitespace-nowrap p-2 align-middle text-center">{row.p99_9}</td>
-            <td class="whitespace-nowrap p-2 align-middle text-center">{row.cpu}</td>
-            <td class="whitespace-nowrap p-2 align-middle text-center">{row.mem}</td>
+            <td class="p-2 text-center align-middle whitespace-nowrap">{row.rps}</td>
+            <td class="p-2 text-center align-middle whitespace-nowrap">{row.p95}</td>
+            <td class="p-2 text-center align-middle whitespace-nowrap">{row.p99_9}</td>
+            <td class="p-2 text-center align-middle whitespace-nowrap">{row.cpu}</td>
+            <td class="p-2 text-center align-middle whitespace-nowrap">{row.mem}</td>
           </tr>
         ))
       }
     </tbody>
-    <caption class="mt-2 text-sm text-green-800 dark:text-neutral-400 text-xs">
-      Results from our open-source{" "}
+    <caption class="mt-2 text-sm text-xs text-green-800 dark:text-neutral-400">
+      Results from our open-source{' '}
       <a
         class="underline"
         href="http://the-guild.dev/graphql/hive/federation-gateway-performance/#/constant"

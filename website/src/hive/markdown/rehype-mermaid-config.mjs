@@ -1,4 +1,4 @@
-import rehypeMermaid from "rehype-mermaid";
+import rehypeMermaid from 'rehype-mermaid';
 
 const themeCSS = `
   .node rect, .node circle, .node ellipse, .node polygon, .node path {
@@ -125,12 +125,12 @@ export const mermaidRehypePlugin = [
   {
     mermaidConfig: {
       flowchart: {
-        defaultRenderer: "elk",
+        defaultRenderer: 'elk',
         padding: 6,
       },
-      fontFamily: "Arial, Helvetica, sans-serif",
-      look: "classic",
-      theme: "neutral",
+      fontFamily: 'Arial, Helvetica, sans-serif',
+      look: 'classic',
+      theme: 'neutral',
       themeCSS,
     },
   },

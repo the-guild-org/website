@@ -1,9 +1,9 @@
-import convert from "npm-to-yarn";
+import convert from 'npm-to-yarn';
 
-const packageManagers = ["npm", "yarn", "pnpm", "bun"];
+const packageManagers = ['npm', 'yarn', 'pnpm', 'bun'];
 
 export function remarkNpm2Yarn() {
-  return (tree) => {
+  return tree => {
     transformChildren(tree);
   };
 }
@@ -11,8 +11,8 @@ export function remarkNpm2Yarn() {
 function transformChildren(parent) {
   if (!Array.isArray(parent.children)) return;
 
-  parent.children = parent.children.map((node) => {
-    if (node.type === "code" && hasNpm2YarnMeta(node.meta)) {
+  parent.children = parent.children.map(node => {
+    if (node.type === 'code' && hasNpm2YarnMeta(node.meta)) {
       return createPackageManagerTabs(node);
     }
 
@@ -22,28 +22,24 @@ function transformChildren(parent) {
 }
 
 function hasNpm2YarnMeta(meta) {
-  return typeof meta === "string" && /(?:^|\s)npm2yarn(?:\s|$)/.test(meta);
+  return typeof meta === 'string' && /(?:^|\s)npm2yarn(?:\s|$)/.test(meta);
 }
 
 function createPackageManagerTabs(node) {
-  const meta =
-    node.meta.replace(/(?:^|\s)npm2yarn(?=\s|$)/, " ").trim() || null;
+  const meta = node.meta.replace(/(?:^|\s)npm2yarn(?=\s|$)/, ' ').trim() || null;
 
   return {
-    type: "mdxJsxFlowElement",
-    name: "PackageManagerTabs",
+    type: 'mdxJsxFlowElement',
+    name: 'PackageManagerTabs',
     attributes: [],
     children: packageManagers.map((manager, index) => ({
-      type: "mdxJsxFlowElement",
-      name: "PackageManagerTab",
-      attributes:
-        index === 0
-          ? []
-          : [{ type: "mdxJsxAttribute", name: "hidden", value: null }],
+      type: 'mdxJsxFlowElement',
+      name: 'PackageManagerTab',
+      attributes: index === 0 ? [] : [{ type: 'mdxJsxAttribute', name: 'hidden', value: null }],
       children: [
         {
           ...node,
-          lang: node.lang || "sh",
+          lang: node.lang || 'sh',
           meta,
           value: convert(node.value, manager),
         },

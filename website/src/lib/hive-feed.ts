@@ -2,9 +2,8 @@
 // directly instead of fetching the production RSS feed — a build-time fetch
 // of our own deployment is circular: if production is down or stale, the
 // build that would fix it can't complete.
+import { HIVE_SITE_URL } from '../hive/lib/base-path';
 import { getBlogPosts } from '../hive/lib/get-blog-posts';
-
-const HIVE_SITE_URL = 'https://the-guild.dev/graphql/hive';
 
 export interface HiveFeedItem {
   title: string;

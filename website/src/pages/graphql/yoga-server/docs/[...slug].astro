@@ -1,0 +1,27 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import YogaDocsPage from '../../../../yoga/components/YogaDocsPage.astro';
+import { getYogaDocsNav } from '../../../../yoga/lib/docs-nav';
+
+type Entry = CollectionEntry<'yogaDocs'>;
+
+export async function getStaticPaths() {
+  const entries = await getCollection('yogaDocs');
+  return entries.map(entry => ({
+    params: { slug: entry.id.replace(/(^|\/)index$/, '').replace(/\.(md|mdx)$/, '') || undefined },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props as { entry: Entry };
+const extension = entry.filePath?.match(/\.mdx?$/)?.[0] ?? '.mdx';
+---
+
+<YogaDocsPage
+  docsBase="/docs"
+  entry={entry}
+  githubPath={`website/content/docs/${entry.id}${extension}`}
+  nav={await getYogaDocsNav()}
+  searchSection="Documentation"
+  sectionId={entry.id}
+/>

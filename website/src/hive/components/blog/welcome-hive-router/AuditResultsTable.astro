@@ -1,46 +1,58 @@
 ---
-import { gateways, testCasesTotal, testSuitesTotal } from "./gateways-data";
+import { gateways, testCasesTotal, testSuitesTotal } from './gateways-data';
 
 const rows = [...gateways].sort((a, b) => b.okTestCases - a.okTestCases);
 ---
 
 <div class="relative w-full overflow-x-auto">
-  <table class="w-full caption-bottom text-sm mt-6 font-mono">
+  <table class="mt-6 w-full caption-bottom font-mono text-sm">
     <thead class="[&_tr]:border-b">
-      <tr class="hover:bg-beige-100 border-beige-400 border-b transition-colors hover:transition-none dark:border-neutral-800 dark:hover:bg-neutral-800/25 bg-beige-100 hover:bg-beige-100 dark:bg-neutral-800/50 hover:dark:bg-neutral-800/50">
-        <th class="whitespace-nowrap p-2 text-left align-middle font-medium w-[100px]">Gateway</th>
-        <th class="whitespace-nowrap p-2 text-left align-middle font-medium text-center">Compatibility</th>
-        <th class="whitespace-nowrap p-2 text-left align-middle font-medium text-center">Test Cases</th>
-        <th class="whitespace-nowrap p-2 text-left align-middle font-medium text-center">Test Suites</th>
+      <tr
+        class="hover:bg-beige-100 border-beige-400 bg-beige-100 hover:bg-beige-100 border-b transition-colors hover:transition-none dark:border-neutral-800 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/25 hover:dark:bg-neutral-800/50"
+      >
+        <th class="w-[100px] p-2 text-left align-middle font-medium whitespace-nowrap">Gateway</th>
+        <th class="p-2 text-center text-left align-middle font-medium whitespace-nowrap"
+          >Compatibility</th
+        >
+        <th class="p-2 text-center text-left align-middle font-medium whitespace-nowrap"
+          >Test Cases</th
+        >
+        <th class="p-2 text-center text-left align-middle font-medium whitespace-nowrap"
+          >Test Suites</th
+        >
       </tr>
     </thead>
     <tbody class="[&_tr:last-child]:border-0">
       {
-        rows.map((row) => (
+        rows.map(row => (
           <tr class="hover:bg-beige-100 border-beige-400 border-b transition-colors hover:transition-none dark:border-neutral-800 dark:hover:bg-neutral-800/25">
-            <td class="whitespace-nowrap p-2 align-middle font-medium">{row.name}</td>
-            <td class="whitespace-nowrap p-2 align-middle text-center font-medium">
+            <td class="p-2 align-middle font-medium whitespace-nowrap">{row.name}</td>
+            <td class="p-2 text-center align-middle font-medium whitespace-nowrap">
               {((row.okTestCases * 100) / testCasesTotal).toFixed(2)}
               <span class="text-green-800 dark:text-neutral-400">%</span>
             </td>
-            <td class="whitespace-nowrap p-2 align-middle space-x-2 text-center">
+            <td class="space-x-2 p-2 text-center align-middle whitespace-nowrap">
               <span class="text-green-600 dark:text-green-500">✓ {row.okTestCases}</span>
               {testCasesTotal - row.okTestCases > 0 && (
-                <span class="text-red-600 dark:text-red-500">✗ {testCasesTotal - row.okTestCases}</span>
+                <span class="text-red-600 dark:text-red-500">
+                  ✗ {testCasesTotal - row.okTestCases}
+                </span>
               )}
             </td>
-            <td class="whitespace-nowrap p-2 align-middle space-x-2 text-center">
+            <td class="space-x-2 p-2 text-center align-middle whitespace-nowrap">
               <span class="text-green-600 dark:text-green-500">✓ {row.okTestSuites}</span>
               {testSuitesTotal - row.okTestSuites > 0 && (
-                <span class="text-red-600 dark:text-red-500">✗ {testSuitesTotal - row.okTestSuites}</span>
+                <span class="text-red-600 dark:text-red-500">
+                  ✗ {testSuitesTotal - row.okTestSuites}
+                </span>
               )}
             </td>
           </tr>
         ))
       }
     </tbody>
-    <caption class="mt-2 text-sm text-green-800 dark:text-neutral-400 text-xs">
-      Results from our open-source{" "}
+    <caption class="mt-2 text-sm text-xs text-green-800 dark:text-neutral-400">
+      Results from our open-source{' '}
       <a
         class="underline"
         href="http://the-guild.dev/graphql/hive/federation-gateway-audit"

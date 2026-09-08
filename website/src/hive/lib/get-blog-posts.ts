@@ -1,4 +1,4 @@
-import { getCollection } from "astro:content";
+import { getCollection } from 'astro:content';
 
 export interface BlogPost {
   authors: string[];
@@ -12,13 +12,11 @@ export interface BlogPost {
 }
 
 function slug(id: string) {
-  return id.replace(/\/index$/, "").replace(/\.(md|mdx)$/, "");
+  return id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
 }
 
 function dateString(value: unknown) {
-  return value instanceof Date
-    ? value.toISOString().slice(0, 10)
-    : String(value);
+  return value instanceof Date ? value.toISOString().slice(0, 10) : String(value);
 }
 
 /**
@@ -26,14 +24,13 @@ function dateString(value: unknown) {
  * Mirrors the old site's behavior where all content types appear in /blog.
  */
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  const [blogEntries, productUpdateEntries, caseStudyEntries] =
-    await Promise.all([
-      getCollection("hiveBlog"),
-      getCollection("productUpdates"),
-      getCollection("caseStudies"),
-    ]);
+  const [blogEntries, productUpdateEntries, caseStudyEntries] = await Promise.all([
+    getCollection('hiveBlog'),
+    getCollection('productUpdates'),
+    getCollection('caseStudies'),
+  ]);
 
-  const blogPosts = blogEntries.map((entry) => {
+  const blogPosts = blogEntries.map(entry => {
     const data = entry.data as {
       authors: string | string[];
       date: Date | string;
@@ -47,7 +44,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     return {
       authors,
       date: dateString(data.date),
-      description: data.description ?? "",
+      description: data.description ?? '',
       featured: data.featured ?? false,
       route: `/blog/${slug(entry.id)}`,
       slug: slug(entry.id),
@@ -56,7 +53,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     };
   });
 
-  const productUpdatePosts = productUpdateEntries.map((entry) => {
+  const productUpdatePosts = productUpdateEntries.map(entry => {
     const data = entry.data as {
       authors: (string | { name: string })[];
       date: Date | string;
@@ -65,18 +62,18 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     };
 
     return {
-      authors: data.authors.map((a) => (typeof a === "string" ? a : a.name)),
+      authors: data.authors.map(a => (typeof a === 'string' ? a : a.name)),
       date: dateString(data.date),
-      description: data.description ?? "",
+      description: data.description ?? '',
       featured: false,
       route: `/product-updates/${slug(entry.id)}`,
       slug: slug(entry.id),
-      tags: ["Product Update"],
+      tags: ['Product Update'],
       title: data.title,
     };
   });
 
-  const caseStudyPosts = caseStudyEntries.map((entry) => {
+  const caseStudyPosts = caseStudyEntries.map(entry => {
     const data = entry.data as {
       authors?: { name: string }[];
       date: Date | string;
@@ -85,13 +82,13 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     };
 
     return {
-      authors: data.authors?.map((a) => a.name) ?? [],
+      authors: data.authors?.map(a => a.name) ?? [],
       date: dateString(data.date),
-      description: data.excerpt ?? "",
+      description: data.excerpt ?? '',
       featured: false,
       route: `/case-studies/${slug(entry.id)}`,
       slug: slug(entry.id),
-      tags: ["Case Study"],
+      tags: ['Case Study'],
       title: data.title,
     };
   });

@@ -1,5 +1,5 @@
 ---
-import BlogCard from "./BlogCard.astro";
+import BlogCard from './BlogCard.astro';
 
 interface Props {
   class?: string;
@@ -9,34 +9,36 @@ const { class: className } = Astro.props;
 
 const posts = [
   {
-    authors: ["dotan"],
-    date: "2025-03-25",
-    route: "/blog/hive-platform-achieves-soc2-certification",
-    tags: ["security"],
-    title: "Hive Platform Achieves SOC-2 Type II Certification",
+    authors: ['dotan'],
+    date: '2025-03-25',
+    route: '/blog/hive-platform-achieves-soc2-certification',
+    tags: ['security'],
+    title: 'Hive Platform Achieves SOC-2 Type II Certification',
   },
   {
-    authors: ["uri"],
-    date: "2024-09-10",
-    route: "/blog/stellate-acquisition",
-    tags: ["Company", "GraphQL"],
-    title: "The Guild acquires Stellate",
+    authors: ['uri'],
+    date: '2024-09-10',
+    route: '/blog/stellate-acquisition',
+    tags: ['Company', 'GraphQL'],
+    title: 'The Guild acquires Stellate',
   },
   {
-    authors: ["uri"],
-    date: "2024-02-24",
-    route: "https://the-guild.dev/blog/rebranding-in-open-source",
-    tags: ["branding"],
-    title: "Rebranding in open source",
+    authors: ['uri'],
+    date: '2024-02-24',
+    route: 'https://the-guild.dev/blog/rebranding-in-open-source',
+    tags: ['branding'],
+    title: 'Rebranding in open source',
   },
 ];
 ---
 
-<section class:list={["py-6 lg:py-24", className]}>
-  <h3 class="group text-[40px] leading-[1.2] tracking-[-0.2px] text-balance text-center">Company News and Press</h3>
+<section class:list={['py-6 lg:py-24', className]}>
+  <h3 class="group text-center text-[40px] leading-[1.2] tracking-[-0.2px] text-balance">
+    Company News and Press
+  </h3>
   <ul class="mt-6 flex items-stretch gap-4 *:flex-1 max-md:flex-col sm:gap-6 lg:mt-16">
     {
-      posts.map((post) => (
+      posts.map(post => (
         <li>
           <BlogCard class="h-full" post={post} variant="featured" />
         </li>

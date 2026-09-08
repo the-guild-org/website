@@ -16,9 +16,10 @@ export default tseslint.config(
       '**/node_modules/**',
       '**/.astro/**',
       '**/.wrangler/**',
-      'website/src/hive/**',
-      'website/src/pages/graphql/hive/**',
-      'website/scripts/hive/**',
+      // Vendored MIT port of fumadocs' rehypeCode - keeps upstream style.
+      'website/src/hive/markdown/rehype-code.mjs',
+      // Content tree: MDX prose plus images, not linted source.
+      'website/src/hive/documentation/content/**',
       'website/public/**',
       'eslint_report.json',
     ],

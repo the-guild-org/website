@@ -1,25 +1,15 @@
-import {
-  type ByteMapEntry,
-  COLORS,
-  type IdMapperInfo,
-  type JsonValue,
-} from "./zero-copy-data";
+import { COLORS, type ByteMapEntry, type IdMapperInfo, type JsonValue } from './zero-copy-data';
 
 function escapeHtml(value: string) {
   return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
 }
 
 function isPrimitive(v: unknown): v is boolean | number | string | null {
-  return (
-    v === null ||
-    typeof v === "string" ||
-    typeof v === "number" ||
-    typeof v === "boolean"
-  );
+  return v === null || typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean';
 }
 
 function idxValId(path: string, i: number) {
@@ -39,13 +29,11 @@ function coloredSpan(text: string, kind: keyof typeof COLORS, gid: string) {
 
 function refChip(
   gid: string,
-  sliceLookupFn?: (
-    gid: string,
-  ) => { len: number; src: "A" | "B"; start: number } | null,
+  sliceLookupFn?: (gid: string) => { len: number; src: 'A' | 'B'; start: number } | null,
 ) {
-  if (!sliceLookupFn) return "";
+  if (!sliceLookupFn) return '';
   const info = sliceLookupFn(gid);
-  if (!info) return "";
+  if (!info) return '';
   return `<span class="zc-token" data-gid="${escapeHtml(gid)}" style="margin-left:0.25rem;border:1px solid #404040;background:#262626;border-radius:4px;padding:0 4px;vertical-align:middle;font-size:10px;" title="References ${info.src} slice(${info.start}, ${info.len})">${info.src}: ${info.start}&hellip;${info.start + info.len - 1}</span>`;
 }
 
@@ -53,111 +41,97 @@ interface RenderOptions {
   idMapper?: (info: IdMapperInfo) => string | null | undefined;
   idPrefix?: string;
   pretty: boolean;
-  sliceLookup?: (
-    gid: string,
-  ) => { len: number; src: "A" | "B"; start: number } | null;
+  sliceLookup?: (gid: string) => { len: number; src: 'A' | 'B'; start: number } | null;
 }
 
 function kindOf(v: boolean | number | string | null): keyof typeof COLORS {
-  return typeof v === "string"
-    ? "string"
-    : typeof v === "number"
-      ? "number"
-      : typeof v === "boolean"
-        ? "bool"
-        : "null";
+  return typeof v === 'string'
+    ? 'string'
+    : typeof v === 'number'
+      ? 'number'
+      : typeof v === 'boolean'
+        ? 'bool'
+        : 'null';
 }
 
-function renderVal(
-  v: JsonValue,
-  path: string,
-  indent: number,
-  opts: RenderOptions,
-): string {
-  const idPrefix = opts.idPrefix ?? "";
-  const pad = "  ".repeat(indent);
-  let out = "";
+function renderVal(v: JsonValue, path: string, indent: number, opts: RenderOptions): string {
+  const idPrefix = opts.idPrefix ?? '';
+  const pad = '  '.repeat(indent);
+  let out = '';
 
   if (Array.isArray(v)) {
-    out += "[";
-    if (opts.pretty) out += "\n";
+    out += '[';
+    if (opts.pretty) out += '\n';
     for (const [idx, item] of v.entries()) {
-      if (opts.pretty) out += pad + "  ";
+      if (opts.pretty) out += pad + '  ';
       if (isPrimitive(item)) {
         const localId = idxValId(path, idx);
         const globalId = opts.idMapper
-          ? opts.idMapper({ index: idx, kind: "index", path }) ||
-            `${idPrefix}${localId}`
+          ? opts.idMapper({ index: idx, kind: 'index', path }) || `${idPrefix}${localId}`
           : `${idPrefix}${localId}`;
         const kind = kindOf(item);
-        if (typeof item === "string") out += "&quot;";
+        if (typeof item === 'string') out += '&quot;';
         out += coloredSpan(String(item), kind, globalId);
-        if (typeof item === "string") out += "&quot;";
+        if (typeof item === 'string') out += '&quot;';
         out += refChip(globalId, opts.sliceLookup);
       } else {
         out += renderVal(item, `${path}/${idx}`, indent + 1, opts);
       }
-      out += idx < v.length - 1 ? "," : "";
-      if (opts.pretty) out += "\n";
+      out += idx < v.length - 1 ? ',' : '';
+      if (opts.pretty) out += '\n';
     }
     if (opts.pretty) out += pad;
-    out += "]";
+    out += ']';
     return out;
   }
 
-  if (v && typeof v === "object") {
+  if (v && typeof v === 'object') {
     const keys = Object.keys(v);
-    out += "{";
-    if (opts.pretty) out += "\n";
+    out += '{';
+    if (opts.pretty) out += '\n';
     for (const [idx, k] of keys.entries()) {
       const localKeyId = keyId(path, k);
       const keyGlobalId = opts.idMapper
-        ? opts.idMapper({ key: k, kind: "key", path }) ||
-          `${idPrefix}${localKeyId}`
+        ? opts.idMapper({ key: k, kind: 'key', path }) || `${idPrefix}${localKeyId}`
         : `${idPrefix}${localKeyId}`;
-      if (opts.pretty) out += pad + "  ";
-      out += `&quot;${coloredSpan(k, "key", keyGlobalId)}&quot;:`;
+      if (opts.pretty) out += pad + '  ';
+      out += `&quot;${coloredSpan(k, 'key', keyGlobalId)}&quot;:`;
       const v2 = (v as Record<string, JsonValue>)[k]!;
       if (isPrimitive(v2)) {
         const localValId = valId(path, k);
         const valGlobalId = opts.idMapper
-          ? opts.idMapper({ key: k, kind: "value", path }) ||
-            `${idPrefix}${localValId}`
+          ? opts.idMapper({ key: k, kind: 'value', path }) || `${idPrefix}${localValId}`
           : `${idPrefix}${localValId}`;
         const kind = kindOf(v2);
-        if (typeof v2 === "string") out += "&quot;";
+        if (typeof v2 === 'string') out += '&quot;';
         out += coloredSpan(String(v2), kind, valGlobalId);
-        if (typeof v2 === "string") out += "&quot;";
+        if (typeof v2 === 'string') out += '&quot;';
         out += refChip(valGlobalId, opts.sliceLookup);
       } else {
         out += renderVal(v2, `${path}/${k}`, indent + 1, opts);
       }
-      out += idx < keys.length - 1 ? "," : "";
-      if (opts.pretty) out += "\n";
+      out += idx < keys.length - 1 ? ',' : '';
+      if (opts.pretty) out += '\n';
     }
     if (opts.pretty) out += pad;
-    out += "}";
+    out += '}';
     return out;
   }
 
   const localId = `${path}#value`;
   const globalId = opts.idMapper
-    ? opts.idMapper({ kind: "value", path }) || `${idPrefix}${localId}`
+    ? opts.idMapper({ kind: 'value', path }) || `${idPrefix}${localId}`
     : `${idPrefix}${localId}`;
   const kind = kindOf(v);
-  if (typeof v === "string") out += "&quot;";
+  if (typeof v === 'string') out += '&quot;';
   out += coloredSpan(String(v), kind, globalId);
-  if (typeof v === "string") out += "&quot;";
+  if (typeof v === 'string') out += '&quot;';
   out += refChip(globalId, opts.sliceLookup);
   return out;
 }
 
-export function renderJsonBlock(
-  value: JsonValue,
-  title: string,
-  opts: RenderOptions,
-) {
-  const body = renderVal(value, "", 0, opts);
+export function renderJsonBlock(value: JsonValue, title: string, opts: RenderOptions) {
+  const body = renderVal(value, '', 0, opts);
   return `<div class="rounded-xl border border-neutral-800 bg-neutral-900 p-3 text-slate-100 shadow-sm">
     <h3 class="mb-1 text-sm font-medium tracking-wide text-slate-200">${escapeHtml(title)}</h3>
     <pre class="max-h-40 overflow-auto rounded-lg border border-neutral-800 bg-[#111111] p-2 font-mono text-[12px]/5 text-neutral-200">${body}</pre>
@@ -168,7 +142,7 @@ export function renderByteBuffer(
   entries: ByteMapEntry[],
   json: string,
   title: string,
-  idPrefix: "A:" | "B:",
+  idPrefix: 'A:' | 'B:',
 ) {
   const bytes = new TextEncoder().encode(json);
   const PX = 6;
@@ -177,18 +151,17 @@ export function renderByteBuffer(
 
   const backgroundRects = Array.from(
     bytes,
-    (_, i) =>
-      `<rect fill="#111111" height="${H}" width="${PX - 1}" x="${i * PX}" y="4"></rect>`,
-  ).join("");
+    (_, i) => `<rect fill="#111111" height="${H}" width="${PX - 1}" x="${i * PX}" y="4"></rect>`,
+  ).join('');
   const entryRects = entries
-    .map((e) => {
+    .map(e => {
       const x = e.start * PX;
       const w = Math.max(2, e.len * PX);
       const gid = `${idPrefix}${e.localId}`;
       const color = COLORS[e.kind];
       return `<rect class="zc-byte" data-gid="${escapeHtml(gid)}" style="--zc-fill:${color}33;--zc-fill-hover:${color}66;--zc-stroke:${color};" fill="var(--zc-fill)" height="${H}" stroke="var(--zc-stroke)" stroke-width="1" width="${w}" x="${x}" y="4"></rect>`;
     })
-    .join("");
+    .join('');
 
   return `<div class="rounded-xl border border-neutral-800 bg-neutral-900 p-3 text-neutral-100">
     <h3 class="mb-1 text-sm font-medium tracking-wide text-slate-200">${escapeHtml(title)}</h3>

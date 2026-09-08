@@ -42,7 +42,7 @@ const logoSvgs = {
 export type LogoName = keyof typeof logoSvgs;
 
 function escapeAttribute(value: string) {
-  return value.replaceAll("&", "&amp;").replaceAll('"', "&quot;");
+  return value.replaceAll('&', '&amp;').replaceAll('"', '&quot;');
 }
 
 export function renderLogo(name: LogoName, props: LogoProps): string {
@@ -53,10 +53,7 @@ export function renderLogo(name: LogoName, props: LogoProps): string {
     props.width !== undefined && `width="${props.width}"`,
   ]
     .filter(Boolean)
-    .join(" ");
+    .join(' ');
 
-  return logoSvgs[name].replace(
-    "<svg",
-    attributes ? `<svg ${attributes}` : "<svg",
-  );
+  return logoSvgs[name].replace('<svg', attributes ? `<svg ${attributes}` : '<svg');
 }

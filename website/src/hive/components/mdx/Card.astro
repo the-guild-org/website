@@ -1,5 +1,6 @@
 ---
-import { withBase } from "../../lib/base-path";
+import { withBase } from '../../lib/base-path';
+
 interface Props {
   class?: string;
   className?: string;
@@ -10,65 +11,52 @@ interface Props {
   [key: string]: unknown;
 }
 
-const {
-  class: classNameProp,
-  className,
-  description,
-  href,
-  icon,
-  title,
-  ...props
-} = Astro.props;
-const external = href.startsWith("http");
+const { class: classNameProp, className, description, href, icon, title, ...props } = Astro.props;
+const external = href.startsWith('http');
 
 const attributeNames: Record<string, string> = {
-  className: "class",
-  clipRule: "clip-rule",
-  fillRule: "fill-rule",
-  strokeLinecap: "stroke-linecap",
-  strokeLinejoin: "stroke-linejoin",
-  strokeWidth: "stroke-width",
+  className: 'class',
+  clipRule: 'clip-rule',
+  fillRule: 'fill-rule',
+  strokeLinecap: 'stroke-linecap',
+  strokeLinejoin: 'stroke-linejoin',
+  strokeWidth: 'stroke-width',
 };
 const escapeHtml = (value: unknown) =>
   String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
 const renderMdxNode = (node: unknown): string => {
-  if (node == null || typeof node === "boolean") return "";
-  if (typeof node === "string" || typeof node === "number") {
+  if (node == null || typeof node === 'boolean') return '';
+  if (typeof node === 'string' || typeof node === 'number') {
     return escapeHtml(node);
   }
-  if (Array.isArray(node)) return node.map(renderMdxNode).join("");
-  if (typeof node !== "object") return "";
+  if (Array.isArray(node)) return node.map(renderMdxNode).join('');
+  if (typeof node !== 'object') return '';
 
   const element = node as {
     props?: Record<string, unknown>;
     type?: string | symbol;
   };
-  if (typeof element.type === "symbol") {
+  if (typeof element.type === 'symbol') {
     return renderMdxNode(element.props?.children);
   }
-  if (typeof element.type !== "string") return "";
+  if (typeof element.type !== 'string') return '';
 
   const attributes = Object.entries(element.props ?? {})
     .filter(
       ([name, value]) =>
-        name !== "children" &&
-        !name.startsWith("on") &&
-        value != null &&
-        value !== false,
+        name !== 'children' && !name.startsWith('on') && value != null && value !== false,
     )
     .map(([name, value]) => {
       const attribute = attributeNames[name] ?? name;
-      return value === true
-        ? attribute
-        : `${attribute}="${escapeHtml(value)}"`;
+      return value === true ? attribute : `${attribute}="${escapeHtml(value)}"`;
     })
-    .join(" ");
+    .join(' ');
   const children = renderMdxNode(element.props?.children);
-  return `<${element.type}${attributes ? ` ${attributes}` : ""}>${children}</${element.type}>`;
+  return `<${element.type}${attributes ? ` ${attributes}` : ''}>${children}</${element.type}>`;
 };
 const iconHtml = renderMdxNode(icon);
 const descriptionHtml = renderMdxNode(description);
@@ -77,13 +65,13 @@ const descriptionHtml = renderMdxNode(description);
 <a
   {...props}
   class:list={[
-    "outline-hidden focus-visible:ring-3 hive-card group flex flex-col justify-start overflow-hidden rounded-lg border ring-beige-200 no-underline bg-white dark:bg-transparent shadow-sm transition-all duration-200 hover:shadow-md dark:ring-neutral-800 dark:shadow-none dark:hover:ring-neutral-700 dark:hover:bg-neutral-900",
+    'hive-card group ring-beige-200 flex flex-col justify-start overflow-hidden rounded-lg border bg-white no-underline shadow-sm outline-hidden transition-all duration-200 hover:shadow-md focus-visible:ring-3 dark:bg-transparent dark:shadow-none dark:ring-neutral-800 dark:hover:bg-neutral-900 dark:hover:ring-neutral-700',
     classNameProp,
     className,
   ]}
   href={withBase(href)}
-  rel={external ? "noreferrer" : undefined}
-  target={external ? "_blank" : undefined}
+  rel={external ? 'noreferrer' : undefined}
+  target={external ? '_blank' : undefined}
 >
   <slot />
   <span
@@ -92,10 +80,7 @@ const descriptionHtml = renderMdxNode(description);
   >
     {iconHtml && <Fragment set:html={iconHtml} />}
     <span class="truncate">{title}</span>
-    <span
-      aria-hidden="true"
-      class="transition-transform duration-75 group-hover:translate-x-0.5"
-    >
+    <span aria-hidden="true" class="transition-transform duration-75 group-hover:translate-x-0.5">
       →
     </span>
   </span>

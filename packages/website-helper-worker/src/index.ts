@@ -3,6 +3,7 @@ import { handleContactUs } from './contact-guild';
 import { buildResponseCorsHeaders } from './cors';
 import { createCrispClient } from './crisp-client';
 import { Env } from './env';
+import { jsonResponse } from './http';
 import { handleSubscribeToNewsletter } from './newsletter-subscribe';
 
 export default {
@@ -33,40 +34,39 @@ export default {
         });
       }
 
+      // The body carries contact PII (name, email, notes) and must not be
+      // attached to the Sentry scope.
       const maybeBody = request.body ? await request.text() : null;
 
-      sentry.setExtra('Body', maybeBody);
+      let body: unknown = null;
+      if (maybeBody) {
+        try {
+          body = JSON.parse(maybeBody);
+        } catch {
+          return jsonResponse({ error: 'Invalid JSON body' }, 400, request.headers);
+        }
+      }
 
       if (request.method === 'POST' && url.pathname === '/api/contact-us') {
         return await handleContactUs({
           email: env.EMAIL_SENDER,
           request,
-          body: maybeBody ? JSON.parse(maybeBody) : null,
+          body,
           crisp,
         });
       }
 
       if (request.method === 'POST' && url.pathname === '/api/newsletter-subscribe') {
-        return await handleSubscribeToNewsletter(
-          {
-            request,
-            body: maybeBody ? JSON.parse(maybeBody) : null,
-          },
-          env.BEEHIIV_API_KEY,
-        );
+        return await handleSubscribeToNewsletter({ request, body }, env.BEEHIIV_API_KEY);
       }
 
-      return new Response(JSON.stringify({ error: 'not found' }), {
-        status: 404,
-        headers: {
-          ...buildResponseCorsHeaders(request.headers),
-          contentType: 'application/json',
-        },
-      });
+      return jsonResponse({ error: 'not found' }, 404, request.headers);
     } catch (e) {
       sentry.captureException(e);
 
-      return new Response(JSON.stringify({ error: (e as Error).message }), { status: 500 });
+      // The detailed error goes to Sentry; the client gets a generic message
+      // rather than internal upstream details.
+      return jsonResponse({ error: 'Internal error' }, 500, request.headers);
     }
   },
 };

@@ -12,12 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: the-guild-org/shared-config/setup@main
+      - uses: ./.github/actions/setup
         name: setup env
-        with:
-          nodeVersion: 26.8.1
-          packageManager: pnpm
-          packageManagerVersion: 11.25.0
+
+      - name: typecheck and test
+        run: pnpm --filter guild-website-router typecheck && pnpm --filter guild-website-router test
 
       - name: publish
         uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0

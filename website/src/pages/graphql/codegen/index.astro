@@ -1,0 +1,319 @@
+---
+/**
+ * GraphQL Codegen landing page in the Hive brand: the dark-green arch hero,
+ * stat cards, and the shared ecosystem section, with Codegen-focused copy.
+ */
+import '~hive/styles/global.css';
+import BaseHead from '~hive/components/BaseHead.astro';
+import ToolsAndLibraries from '~hive/components/landing/ToolsAndLibraries.astro';
+import SiteNavigation from '~hive/components/SiteNavigation.astro';
+import CodegenFooter from '../../../codegen/components/CodegenFooter.astro';
+import npmInfo from '../../../codegen/generated/npm-info.json';
+import { withBase } from '../../../codegen/lib/base-path';
+import { getPlugins } from '../../../codegen/lib/plugin-data';
+import { CODEGEN_LOGO, CODEGEN_SITE } from '../../../codegen/lib/site';
+
+const description =
+  'Generate typed clients, resolvers and SDKs from your GraphQL schema and operations with a simple CLI. TypeScript, Java, C#, Flow, Dart and more.';
+
+const plugins = getPlugins();
+const weeklyDownloads = Object.values(
+  npmInfo as Record<string, { weeklyNPMDownloads: number }>,
+).reduce((sum, info) => sum + info.weeklyNPMDownloads, 0);
+const weeklyDownloadsLabel = `${Math.floor(weeklyDownloads / 1_000_000)}M`;
+
+const highlights = [
+  {
+    title: 'Type safety end to end',
+    copy: 'Typed clients, resolvers, and documents generated straight from your schema — no hand-written types drifting out of sync.',
+  },
+  {
+    title: 'Watch mode & CLI first',
+    copy: 'One command in development and CI. Watch mode regenerates on every schema or operation change.',
+  },
+  {
+    title: 'An ecosystem of plugins',
+    copy: 'TypeScript, React, Vue, Apollo, urql, Java, C#, Dart — and when nothing fits, writing your own plugin takes minutes.',
+  },
+];
+
+// Curated starting points rather than a raw download ranking: the two
+// recommended presets and the schema printer.
+const featuredPlugins = [
+  {
+    title: 'Client preset',
+    npmPackage: '@graphql-codegen/client-preset',
+    href: withBase('/plugins/presets/preset-client'),
+    copy: 'The recommended way to type GraphQL operations on the frontend — one preset for React, Vue, and vanilla TypeScript.',
+    icon: `<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><rect height="14" rx="2" width="20" x="2" y="3"/><path d="M8 21h8M12 17v4"/><path d="m9 8-2 2.5L9 13M15 8l2 2.5L15 13"/></svg>`,
+  },
+  {
+    title: 'Server preset',
+    npmPackage: '@eddeee888/gcg-typescript-resolver-files',
+    href: withBase('/docs/guides/graphql-server-apollo-yoga-with-server-preset'),
+    copy: 'Typed resolvers with a scalable file structure for GraphQL Yoga and Apollo Server — write only the logic.',
+    icon: `<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><rect height="7" rx="1.5" width="18" x="3" y="3.5"/><rect height="7" rx="1.5" width="18" x="3" y="13.5"/><path d="M7 7h.01M7 17h.01M11 7h2M11 17h2"/></svg>`,
+  },
+  {
+    title: 'Schema AST',
+    npmPackage: '@graphql-codegen/schema-ast',
+    href: withBase('/plugins/other/schema-ast'),
+    copy: 'Merge all your type definitions and print the final schema into a single .graphql file.',
+    icon: `<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"/><path d="M14 3v6h6"/><path d="m9.5 13-1.5 2 1.5 2M14.5 13l1.5 2-1.5 2"/></svg>`,
+  },
+];
+
+const checkmark = `<svg fill="none" height="20" viewBox="0 0 20 20" width="20"><path d="M16.667 5 7.5 14.167 3.333 10" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round" stroke-width="1.5"></path></svg>`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <BaseHead
+      description={description}
+      image={withBase('/assets/img/gql-codegen-cover.png')}
+      imageAlt="GraphQL Code Generator"
+      site={CODEGEN_SITE}
+      title="GraphQL Code Generator"
+    />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'GraphQL Code Generator',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Web',
+        url: 'https://the-guild.dev/graphql/codegen',
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+      })}
+    />
+  </head>
+  <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
+    <SiteNavigation logo={CODEGEN_LOGO} />
+    <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
+      <!-- Hero -->
+      <div
+        class="bg-green-1000 relative isolate mx-4 flex max-w-360 flex-col gap-6 overflow-hidden rounded-3xl px-4 py-6 max-sm:mt-2 sm:pt-12 sm:pb-28 md:mx-6 md:gap-8 lg:pt-24 lg:pb-[168px]"
+      >
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <svg
+            class="pointer-events-none absolute top-[-20px] left-[-46px] size-[200px] rotate-180 md:top-[-76px] md:left-[-186px] md:size-auto"
+            height="432"
+            preserveAspectRatio="xMidYMid meet"
+            viewBox="0 0 432 432"
+            width="432"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z"
+              fill="url(#codegen-hero-arch-a)"
+              stroke="url(#codegen-hero-arch-b)"
+              stroke-width=".5"></path>
+          </svg>
+          <svg
+            class="pointer-events-none absolute right-[-53px] bottom-0 size-[200px] md:-bottom-32 md:size-auto lg:right-[-72px] lg:bottom-0"
+            height="432"
+            preserveAspectRatio="xMidYMid meet"
+            viewBox="0 0 432 432"
+            width="432"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z"
+              fill="url(#codegen-hero-arch-a)"
+              stroke="url(#codegen-hero-arch-b)"
+              stroke-width=".5"></path>
+          </svg>
+          <svg class="absolute -z-10" height="432" viewBox="0 0 432 432" width="432">
+            <defs>
+              <linearGradient
+                gradientUnits="userSpaceOnUse"
+                id="codegen-hero-arch-a"
+                x1="48.5"
+                x2="302.5"
+                y1="53.5"
+                y2="341"
+                ><stop stop-color="#fff" stop-opacity=".1"></stop><stop
+                  offset="1"
+                  stop-color="#fff"
+                  stop-opacity=".3"></stop></linearGradient
+              >
+              <linearGradient
+                gradientUnits="userSpaceOnUse"
+                id="codegen-hero-arch-b"
+                x1="1"
+                x2="431"
+                y1="1"
+                y2="431"
+                ><stop stop-color="#fff" stop-opacity=".1"></stop><stop
+                  offset="1"
+                  stop-color="#fff"
+                  stop-opacity=".4"></stop></linearGradient
+              >
+            </defs>
+          </svg>
+        </div>
+
+        <h1
+          class="group mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance text-white md:text-[4rem] md:leading-[1.1875]"
+        >
+          Generate anything from your GraphQL schema
+        </h1>
+        <p class="mx-auto w-lg max-w-[80%] text-center leading-6 text-white/80">
+          Typed clients, resolvers and SDKs from your schema and operations, with a simple CLI. Part
+          of the{' '}
+          <a
+            class="hive-focus underline decoration-white/30 underline-offset-2 hover:decoration-white/80"
+            href="https://the-guild.dev/graphql/hive"
+            title="Explore the Hive platform">Hive</a
+          >
+          {' '}ecosystem by{' '}
+          <a
+            class="hive-focus underline decoration-white/30 underline-offset-2 hover:decoration-white/80"
+            href="https://the-guild.dev"
+            title="Visit The Guild">The Guild</a
+          >.
+        </p>
+        <ul
+          class="relative z-10 mx-auto flex list-none flex-col gap-x-6 gap-y-2 text-sm leading-[21px] font-medium text-white md:flex-row [&>li]:flex [&>li]:items-center [&>li]:gap-2"
+        >
+          <li><span class="text-blue-400" set:html={checkmark} />MIT licensed</li>
+          <li>
+            <span class="text-blue-400" set:html={checkmark} />{plugins.length}+ plugins and presets
+          </li>
+          <li><span class="text-blue-400" set:html={checkmark} />Watch mode for dev and CI</li>
+        </ul>
+        <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
+          <a
+            class="text-green-1000 bg-primary relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40 sm:w-fit"
+            href={withBase('/docs/getting-started')}
+          >
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            Get started
+          </a>
+          <a
+            class="text-green-1000 relative flex items-center justify-center gap-2 rounded-lg bg-green-300 px-6 py-3 leading-6 font-medium text-nowrap hover:bg-green-200 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-300/40 sm:w-fit"
+            href={withBase('/plugins')}
+          >
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            Browse plugins
+          </a>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <section class="mt-6 p-6 sm:py-20 md:mt-0 md:py-24 xl:px-[120px]">
+        <h2
+          class="group text-center text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]"
+        >
+          The standard for GraphQL type safety
+        </h2>
+        <div class="mx-auto mt-8 grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-6 lg:mt-16">
+          <div
+            class="flex items-end justify-between gap-4 rounded-3xl border border-green-400 p-8 lg:flex-col lg:items-start lg:p-12"
+          >
+            <div
+              class="group text-green-1000 min-w-[120px] text-4xl text-[48px] leading-[1.2] tracking-[-0.64px] md:text-[4rem] md:leading-[1.1875] lg:text-6xl"
+            >
+              {weeklyDownloadsLabel}
+            </div>
+            <div class="mb-3 font-medium max-md:text-right sm:mb-3 md:mb-2 lg:mb-0">
+              Weekly npm downloads
+            </div>
+          </div>
+          <div
+            class="flex items-end justify-between gap-4 rounded-3xl border border-green-400 p-8 lg:flex-col lg:items-start lg:p-12"
+          >
+            <div
+              class="group text-green-1000 min-w-[120px] text-4xl text-[48px] leading-[1.2] tracking-[-0.64px] md:text-[4rem] md:leading-[1.1875] lg:text-6xl"
+            >
+              {plugins.length}+
+            </div>
+            <div class="mb-3 font-medium max-md:text-right sm:mb-3 md:mb-2 lg:mb-0">
+              Plugins and presets
+            </div>
+          </div>
+          <div
+            class="flex items-end justify-between gap-4 rounded-3xl border border-green-400 p-8 lg:flex-col lg:items-start lg:p-12"
+          >
+            <div
+              class="group text-green-1000 min-w-[120px] text-4xl text-[48px] leading-[1.2] tracking-[-0.64px] md:text-[4rem] md:leading-[1.1875] lg:text-6xl"
+            >
+              10y
+            </div>
+            <div class="mb-3 font-medium max-md:text-right sm:mb-3 md:mb-2 lg:mb-0">
+              Maintained since 2016
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Highlights -->
+      <section class="px-4 py-6 sm:py-12 md:px-6 xl:px-30">
+        <h2
+          class="group text-center text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]"
+        >
+          Your schema is the source of truth
+        </h2>
+        <ul class="mt-6 grid list-none grid-cols-1 gap-2 p-0 md:mt-16 md:grid-cols-3 md:gap-6">
+          {
+            highlights.map(item => (
+              <li class="bg-beige-100 rounded-3xl p-8 lg:p-12">
+                <h3 class="text-xl leading-[1.4] font-medium">{item.title}</h3>
+                <p class="mt-4 leading-6 text-green-800">{item.copy}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <!-- Featured plugins -->
+      <section class="px-4 py-6 sm:py-12 md:px-6 xl:px-30">
+        <h2
+          class="group text-center text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]"
+        >
+          Start with these
+        </h2>
+        <ul class="mt-6 grid list-none grid-cols-1 gap-2 p-0 md:mt-16 md:grid-cols-3 md:gap-6">
+          {
+            featuredPlugins.map(plugin => (
+              <li class="min-w-0">
+                <a
+                  class="hive-focus border-beige-400 block h-full rounded-3xl border bg-white p-6 transition-colors hover:border-green-800 lg:p-8"
+                  href={plugin.href}
+                >
+                  <span
+                    class="bg-green-1000 flex size-12 items-center justify-center rounded-xl text-white [&>svg]:size-6"
+                    set:html={plugin.icon}
+                  />
+                  <span class="mt-5 block text-xl font-medium">{plugin.title}</span>
+                  <span class="mt-1 block truncate font-mono text-xs text-green-800">
+                    {plugin.npmPackage}
+                  </span>
+                  <span class="mt-3 block leading-6 text-green-800">{plugin.copy}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="mt-8 text-center">
+          <a
+            class="hive-focus font-medium underline decoration-green-800/30 underline-offset-4 hover:decoration-green-800"
+            href={withBase('/plugins')}
+          >
+            Browse all {plugins.length} plugins →
+          </a>
+        </div>
+      </section>
+
+      <!-- Ecosystem (shared Hive section: links to Hive, Gateway, and the libraries) -->
+      <ToolsAndLibraries class="mx-4 md:mx-6" />
+    </main>
+    <CodegenFooter />
+  </body>
+</html>

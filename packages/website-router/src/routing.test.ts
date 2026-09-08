@@ -2,7 +2,10 @@
 
 import { equal } from 'node:assert/strict';
 import { test } from 'node:test';
-import { buildUpstreamUrl, isLeakedRouteTemplate } from './routing';
+import { shouldHandleFavicon } from './favicon/handler';
+import { shouldHandleFeed } from './feed/handler';
+import { shouldHandleRobotsTxt } from './robots/handler';
+import { buildUpstreamUrl, canonicalizeUrl, isLeakedRouteTemplate } from './routing';
 
 test('preserveSearch keeps the original query string', () => {
   const upstreamUrl = buildUpstreamUrl({
@@ -43,4 +46,26 @@ test('leaked route templates are recognised', () => {
   equal(isLeakedRouteTemplate('/graphql/hive/docs/gateway'), false);
   equal(isLeakedRouteTemplate('/blog/price-of-graphql'), false);
   equal(isLeakedRouteTemplate('/'), false);
+});
+
+test('canonicalizeUrl strips www and trailing slashes in one hop', () => {
+  equal(canonicalizeUrl(new URL('https://the-guild.dev/docs')), null);
+  equal(canonicalizeUrl(new URL('https://the-guild.dev/')), null);
+  equal(canonicalizeUrl(new URL('https://the-guild.dev/docs/')), 'https://the-guild.dev/docs');
+  equal(canonicalizeUrl(new URL('https://www.the-guild.dev/docs/')), 'https://the-guild.dev/docs');
+  equal(
+    canonicalizeUrl(new URL('https://the-guild.dev/docs/?utm=x')),
+    'https://the-guild.dev/docs?utm=x',
+  );
+  equal(canonicalizeUrl(new URL('https://www.the-guild.dev/')), 'https://the-guild.dev/');
+});
+
+test('special-route predicates anchor on path segments', () => {
+  equal(shouldHandleRobotsTxt(new URL('https://x.dev/graphql/hive/robots.txt')), true);
+  equal(shouldHandleRobotsTxt(new URL('https://x.dev/robots.txt')), false);
+  equal(shouldHandleRobotsTxt(new URL('https://x.dev/foorobots.txt')), false);
+  equal(shouldHandleFavicon(new URL('https://x.dev/graphql/yoga/favicon.ico')), true);
+  equal(shouldHandleFavicon(new URL('https://x.dev/my-favicon.ico')), false);
+  equal(shouldHandleFeed(new URL('https://x.dev/graphql/codegen/feed')), true);
+  equal(shouldHandleFeed(new URL('https://x.dev/myfeed')), false);
 });

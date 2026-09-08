@@ -5,11 +5,16 @@ import { createSentry } from './error-handling/sentry';
 import { handleFavicon, shouldHandleFavicon } from './favicon/handler';
 import { FaviconHandler } from './favicon/transformer';
 import { handleFeed, shouldHandleFeed } from './feed/handler';
-import { BannerHandler } from './html-handlers/banner';
 import { CrispHandler } from './html-handlers/crisp';
 import { GoogleAnalyticsHandler } from './html-handlers/ga';
 import { handleRobotsTxt, shouldHandleRobotsTxt } from './robots/handler';
-import { handleRewrite, isLeakedRouteTemplate, ManipulateResponseFn, redirect } from './routing';
+import {
+  canonicalizeUrl,
+  handleRewrite,
+  isLeakedRouteTemplate,
+  ManipulateResponseFn,
+  redirect,
+} from './routing';
 import { handleSitemap, shouldHandleSitemap } from './sitemap/handler';
 
 const {
@@ -21,7 +26,6 @@ const {
   cfFetchCacheTtl,
   cacheStorageId,
   fallbackRoute,
-  defaultBanner,
 } = jsonConfig;
 
 function isRewriteRecord(record: WebsiteRecord): record is RewriteRecord {
@@ -39,7 +43,6 @@ const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => 
     result = new HTMLRewriter()
       .on('head', new FaviconHandler())
       .on('head', new CrispHandler(crispWebsiteId, record))
-      .on('body', new BannerHandler(defaultBanner || record.banner))
       .on('head', new GoogleAnalyticsHandler(gaTrackingId))
       .transform(result);
   }
@@ -51,7 +54,11 @@ const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => 
   return result;
 };
 
-async function handleEvent(request: Request, sentry: Toucan): Promise<Response> {
+async function handleEvent(
+  request: Request,
+  sentry: Toucan,
+  waitUntil: (promise: Promise<unknown>) => void,
+): Promise<Response> {
   const parsedUrl = new URL(request.url);
 
   // Old build bugs leaked route templates into public URLs; Google recrawls
@@ -70,38 +77,22 @@ async function handleEvent(request: Request, sentry: Toucan): Promise<Response> 
     message: 'Parsed incoming request URL',
   });
 
-  // Remove all trailing slashes
-  if (request.url.endsWith('/') && parsedUrl.pathname !== '/' && parsedUrl.pathname !== '') {
-    const to = request.url.slice(0, -1);
-
+  // One canonicalization hop: strip www and trailing slashes together
+  // (previously two sequential redirects = a chain for www + slash URLs,
+  // and the slash check missed URLs with query strings).
+  const canonical = canonicalizeUrl(parsedUrl);
+  if (canonical) {
     sentry.addBreadcrumb({
       type: 'navigation',
       data: {
         from: request.url,
-        to,
+        to: canonical,
       },
       level: 'info',
-      message: 'Redirecting to non-trailing slash URL',
+      message: 'Redirecting to canonical URL',
     });
 
-    return redirect(sentry, request.url, to);
-  }
-
-  // Remove all www && https && http from the URL
-  if (parsedUrl.hostname.startsWith('www.')) {
-    const to = request.url.replace('//www.', '//');
-
-    sentry.addBreadcrumb({
-      type: 'navigation',
-      data: {
-        from: request.url,
-        to,
-      },
-      level: 'info',
-      message: 'Redirecting to non-trailing www URL',
-    });
-
-    return redirect(sentry, request.url, to);
+    return redirect(sentry, request.url, canonical);
   }
 
   // Handle sitemap
@@ -185,6 +176,7 @@ async function handleEvent(request: Request, sentry: Toucan): Promise<Response> 
         upstreamPath: parsedUrl.pathname.replace(match, ''),
         match,
         publicDomain,
+        waitUntil,
       });
     }
 
@@ -210,6 +202,7 @@ async function handleEvent(request: Request, sentry: Toucan): Promise<Response> 
     record: fallbackRoute,
     match: null,
     publicDomain,
+    waitUntil,
   });
 }
 
@@ -218,7 +211,7 @@ export default {
   async fetch(request: Request, env: Env, context: EventContext<Env, any, any>): Promise<Response> {
     const sentry = createSentry(request, context, env.SENTRY_DSN);
 
-    return handleEvent(request, sentry)
+    return handleEvent(request, sentry, promise => context.waitUntil(promise))
       .then(resultResponse => {
         sentry.addBreadcrumb({
           type: 'debug',
