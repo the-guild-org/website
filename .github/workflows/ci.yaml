@@ -52,11 +52,6 @@ jobs:
 
       - uses: the-guild-org/shared-config/website-cf@main
         name: build and deploy website
-        # TEMPORARY, remove before merging: build against the Yoga content PR
-        # (graphql-hive/graphql-yoga#4569) so this PR's preview includes the
-        # Yoga site before that PR lands on main.
-        env:
-          YOGA_REPO_REF: refs/pull/4569/head
         with:
           cloudflareApiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflareAccountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -145,9 +140,6 @@ jobs:
         name: setup env
 
       - name: build
-        # TEMPORARY, remove before merging (see the deploy step above).
-        env:
-          YOGA_REPO_REF: refs/pull/4569/head
         run: pnpm --filter website build
 
       # lhci runs directly (no third-party action; the org's Actions policy
