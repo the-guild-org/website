@@ -268,6 +268,34 @@ For additional reading:
 - [Deleting a service using Hive CLI](/docs/api-reference/cli#delete-a-subgraph)
 - [`schema:delete` API Reference](https://github.com/graphql-hive/console/tree/main/packages/libraries/cli#hive-schemadelete-service)
 
+### Rename a service/subgraph
+
+Hive identifies subgraphs by their service name, so a subgraph cannot be renamed in place. Rename it
+by publishing the existing schema under the new service name and then deleting the old service:
+
+1. Publish the latest subgraph schema using the new service name. At this point, both the old and new
+   services exist in the target. Because they contain duplicate definitions, composition fails and
+   Hive records an invalid schema version.
+2. Delete the service with the old name. Composition succeeds again, and Hive records a new valid
+   schema version containing only the renamed subgraph.
+
+<Callout type="info">
+  This process does not cause gateway downtime. Hive's high-availability CDN continues to serve the
+  latest valid schema while the invalid intermediate version exists. It starts serving the newly
+  composed schema after the old service is deleted.
+</Callout>
+
+For environments such as staging and production, perform both steps in the lower environment first.
+Then promote only the resulting valid schema version to the higher environment. The invalid
+intermediate version remains confined to the lower environment, and the higher environment receives
+the complete rename as a single promotion.
+
+For additional reading:
+
+- [Publishing a schema using Hive CLI](/docs/api-reference/cli#publish-a-schema)
+- [Deleting a service using Hive CLI](/docs/api-reference/cli#delete-a-subgraph)
+- [Promote and Rollback Schema Versions](#promote-and-rollback-schema-versions)
+
 ## Schema History and Changelog
 
 The Hive Schema History consists of a list of all published schemas, and their respective changes.
