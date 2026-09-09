@@ -59,11 +59,6 @@ export const jsonConfig = {
       crisp: { segments: ['tools'] },
       sitemap: true,
     },
-    '/graphql/envelop': {
-      rewrite: 'envelop.pages.dev',
-      crisp: { segments: ['envelop'] },
-      sitemap: true,
-    },
     '/graphql/shield': {
       redirect: 'https://github.com/maticzav/graphql-shield',
       status: 302,
