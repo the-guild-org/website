@@ -1,0 +1,199 @@
+---
+/**
+ * Plugin Hub: every Envelop plugin with icon, package, description, tags,
+ * last update and weekly downloads, filterable by text and tag on the
+ * client. Replaces the Nextra MarketplaceSearch page.
+ */
+import '~hive/styles/global.css';
+import BaseHead from '~hive/components/BaseHead.astro';
+import SiteFooter from '~hive/components/SiteFooter.astro';
+import SiteNavigation from '~hive/components/SiteNavigation.astro';
+import ThemeInit from '~hive/components/ThemeInit.astro';
+import { withBase } from '../../../envelop/lib/base-path';
+import {
+  getPluginDescription,
+  getPluginNpmInfo,
+  getPlugins,
+  getPluginTags,
+} from '../../../envelop/lib/plugin-data';
+import { ENVELOP_FOOTER, ENVELOP_LOGO, ENVELOP_SITE } from '../../../envelop/lib/site';
+
+const formatDownloads = (count: number) =>
+  count >= 1_000_000
+    ? `${(count / 1_000_000).toFixed(1)}M`
+    : count >= 1_000
+      ? `${(count / 1_000).toFixed(0)}k`
+      : String(count);
+const formatDate = (iso: string) =>
+  iso
+    ? new Date(iso).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
+    : '';
+
+const plugins = getPlugins()
+  .map(plugin => {
+    const npm = getPluginNpmInfo(plugin.key);
+    return {
+      ...plugin,
+      description: getPluginDescription(plugin.key),
+      downloads: npm?.weeklyNPMDownloads ?? 0,
+      iconSrc: withBase(`/assets/${plugin.icon}`),
+      updated: npm?.updatedAt ?? '',
+    };
+  })
+  .sort((a, b) => b.downloads - a.downloads);
+const tags = getPluginTags();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <ThemeInit />
+    <BaseHead
+      description="Browse every Envelop plugin: tracing, metrics, caching, security, authentication, schema tooling and more, ready to compose into any GraphQL server."
+      image={withBase('/assets/logo.png')}
+      imageAlt="Envelop plugins"
+      site={ENVELOP_SITE}
+      title="Plugin Hub | Envelop"
+    />
+  </head>
+  <body
+    class="bg-beige-100 text-green-1000 min-h-screen font-sans antialiased dark:bg-[rgb(var(--nextra-bg))] dark:text-neutral-200"
+    data-theme-enabled
+  >
+    <SiteNavigation logo={ENVELOP_LOGO} />
+    <main class="mx-auto w-full max-w-5xl px-6 py-12">
+      <h1 class="text-3xl font-semibold">Plugin Hub</h1>
+      <p class="mt-2 text-green-800 dark:text-neutral-300">
+        {plugins.length} plugins for Envelop, sorted by weekly npm downloads.
+      </p>
+      <input
+        aria-label="Filter plugins"
+        class="border-beige-400 mt-6 w-full rounded-lg border bg-white px-4 py-3 text-sm focus:ring-2 focus:ring-green-500/50 focus:outline-hidden dark:border-neutral-700 dark:bg-neutral-900"
+        id="plugin-filter"
+        placeholder="Find plugins — name, package, or tag"
+        type="search"
+      />
+      <ul class="mt-4 flex list-none flex-wrap gap-2 p-0" id="plugin-tags">
+        {
+          tags.map(tag => (
+            <li>
+              <button
+                aria-pressed="false"
+                class="border-beige-400 aria-pressed:bg-green-1000 aria-pressed:border-green-1000 rounded-full border bg-white px-3 py-1 text-xs font-medium transition-colors hover:border-green-800 aria-pressed:text-white dark:border-neutral-700 dark:bg-neutral-900 dark:hover:border-neutral-400 dark:aria-pressed:border-white dark:aria-pressed:bg-white dark:aria-pressed:text-neutral-900"
+                data-tag={tag}
+                id={`tag-${tag}`}
+                type="button"
+              >
+                {tag}
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+      <ul class="mt-8 grid gap-4 sm:grid-cols-2" id="plugin-list">
+        {
+          plugins.map(plugin => (
+            <li
+              class="min-w-0"
+              data-search={`${plugin.title} ${plugin.npmPackage} ${plugin.tags.join(' ')} ${plugin.description}`.toLowerCase()}
+              data-tags={JSON.stringify(plugin.tags)}
+            >
+              <a
+                class="border-beige-400 flex h-full gap-4 rounded-xl border bg-white/60 p-5 transition-colors hover:border-green-800 dark:border-neutral-800 dark:bg-neutral-900/60 dark:hover:border-neutral-500"
+                href={withBase(`/plugins/${plugin.key}`)}
+              >
+                <img
+                  alt=""
+                  aria-hidden="true"
+                  class:list={[
+                    'size-10 shrink-0 object-contain',
+                    plugin.invertIconInDark && 'dark:invert',
+                  ]}
+                  height="40"
+                  loading="lazy"
+                  src={plugin.iconSrc}
+                  width="40"
+                />
+                <span class="min-w-0 grow">
+                  <span class="flex items-baseline justify-between gap-2">
+                    <span class="font-medium">{plugin.title}</span>
+                    {plugin.downloads > 0 && (
+                      <span class="text-xs whitespace-nowrap text-green-800 dark:text-neutral-400">
+                        {formatDownloads(plugin.downloads)}/week
+                      </span>
+                    )}
+                  </span>
+                  <span class="mt-1 block truncate font-mono text-xs text-green-800 dark:text-neutral-400">
+                    {plugin.npmPackage}
+                  </span>
+                  {plugin.description && (
+                    <span class="mt-2 line-clamp-2 block text-sm text-green-800 dark:text-neutral-300">
+                      {plugin.description}
+                    </span>
+                  )}
+                  <span class="mt-3 flex flex-wrap items-center gap-1.5">
+                    {plugin.tags.map(tag => (
+                      <span class="bg-beige-200 rounded-full px-2 py-0.5 text-[11px] font-medium dark:bg-neutral-800">
+                        {tag}
+                      </span>
+                    ))}
+                    {plugin.updated && (
+                      <span class="ml-auto text-[11px] text-green-800 dark:text-neutral-400">
+                        Updated {formatDate(plugin.updated)}
+                      </span>
+                    )}
+                  </span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-8 text-green-800 dark:text-neutral-300" hidden id="plugin-no-results">
+        No plugins match that filter.
+      </p>
+    </main>
+    <SiteFooter description={ENVELOP_FOOTER.description} logo={ENVELOP_FOOTER.logo} />
+
+    <script>
+      const input = document.querySelector<HTMLInputElement>('#plugin-filter')!;
+      const tagButtons = [...document.querySelectorAll<HTMLButtonElement>('#plugin-tags button')];
+      const items = [...document.querySelectorAll<HTMLLIElement>('#plugin-list li')];
+      const empty = document.querySelector<HTMLElement>('#plugin-no-results')!;
+      let activeTag: string | null = null;
+
+      function apply() {
+        const query = input.value.trim().toLowerCase();
+        let visible = 0;
+        for (const item of items) {
+          const tags: string[] = JSON.parse(item.dataset.tags ?? '[]');
+          const match =
+            (!query || (item.dataset.search ?? '').includes(query)) &&
+            (!activeTag || tags.includes(activeTag));
+          item.hidden = !match;
+          if (match) visible++;
+        }
+        empty.hidden = visible > 0;
+        for (const button of tagButtons) {
+          button.setAttribute('aria-pressed', String(button.dataset.tag === activeTag));
+        }
+      }
+
+      input.addEventListener('input', apply);
+      for (const button of tagButtons) {
+        button.addEventListener('click', () => {
+          activeTag = activeTag === button.dataset.tag ? null : (button.dataset.tag ?? null);
+          apply();
+        });
+      }
+      // /plugins#tag-<name> (from a plugin page's tag chips) preselects that tag.
+      const fromHash = decodeURIComponent(location.hash).match(/^#tag-(.+)$/)?.[1];
+      if (fromHash && tagButtons.some(button => button.dataset.tag === fromHash)) {
+        activeTag = fromHash;
+        apply();
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+---
+/**
+ * Header block of a plugin page: the package facts the old Plugin Hub showed
+ * in a table (package, weekly downloads, version, license, last update) and
+ * the install command.
+ */
+import { getPluginNpmInfo, type PluginRecord } from '../lib/plugin-data';
+
+interface Props {
+  plugin: PluginRecord;
+}
+
+const { plugin } = Astro.props;
+const npm = getPluginNpmInfo(plugin.key);
+
+const formatDownloads = (count: number) =>
+  count >= 1_000_000
+    ? `${(count / 1_000_000).toFixed(1)}M`
+    : count >= 1_000
+      ? `${(count / 1_000).toFixed(0)}k`
+      : String(count);
+const updated = npm?.updatedAt
+  ? new Date(npm.updatedAt).toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    })
+  : undefined;
+const facts = [
+  npm?.weeklyNPMDownloads
+    ? ['Weekly downloads', formatDownloads(npm.weeklyNPMDownloads)]
+    : undefined,
+  npm?.version ? ['Version', npm.version] : undefined,
+  npm?.license ? ['License', npm.license] : undefined,
+  updated ? ['Updated', updated] : undefined,
+].filter((fact): fact is [string, string] => fact !== undefined);
+---
+
+<div class="not-prose my-6" data-pagefind-ignore>
+  <dl
+    class="border-beige-400 flex flex-wrap gap-x-8 gap-y-2 rounded-lg border p-4 text-sm text-green-800 dark:border-neutral-700 dark:text-neutral-300"
+  >
+    <div>
+      <dt class="text-xs tracking-wide uppercase opacity-70">Package</dt>
+      <dd>
+        <a
+          class="text-green-1000 font-mono font-medium underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800 dark:text-neutral-100"
+          href={`https://www.npmjs.com/package/${plugin.npmPackage}`}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {plugin.npmPackage}
+        </a>
+      </dd>
+    </div>
+    {
+      facts.map(([label, value]) => (
+        <div>
+          <dt class="text-xs tracking-wide uppercase opacity-70">{label}</dt>
+          <dd class="text-green-1000 font-medium dark:text-neutral-100">{value}</dd>
+        </div>
+      ))
+    }
+  </dl>
+  <p class="mt-3 flex flex-wrap gap-2">
+    {
+      plugin.tags.map(tag => (
+        <a
+          class="bg-beige-200 text-green-1000 hover:bg-beige-300 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium no-underline dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
+          href={`/graphql/envelop/plugins#tag-${tag}`}
+        >
+          {tag}
+        </a>
+      ))
+    }
+  </p>
+</div>

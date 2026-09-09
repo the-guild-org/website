@@ -206,12 +206,34 @@ const yogaChangelogs = defineCollection({
   schema: z.object({ title: z.string(), description: z.string().optional() }).passthrough(),
 });
 
+const envelopContentRoot = './src/envelop/content';
+
+const envelopDocs = defineCollection({
+  loader: glob({
+    base: `${envelopContentRoot}/docs`,
+    generateId: generateHiveId,
+    pattern: '**/*.{md,mdx}',
+  }),
+  schema: codegenDocsSchema,
+});
+
+const envelopLegacy = defineCollection({
+  loader: glob({
+    base: envelopContentRoot,
+    generateId: generateHiveId,
+    pattern: 'v[0-9]/**/*.{md,mdx}',
+  }),
+  schema: codegenDocsSchema,
+});
+
 export const collections = {
   blog,
   caseStudies,
   codegenDocs,
   codegenPlugins,
   docs,
+  envelopDocs,
+  envelopLegacy,
   hiveBlog,
   productUpdates,
   yogaChangelogs,

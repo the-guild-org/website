@@ -18,6 +18,7 @@ export const SITEMAPS = [
   `${basePath}/sitemap.xml`,
   '/graphql/codegen/sitemap.xml',
   '/graphql/yoga-server/sitemap.xml',
+  '/graphql/envelop/sitemap.xml',
 ];
 
 /** Public URL path served by a dist html file (build.format: "file"). */

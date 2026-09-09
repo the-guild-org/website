@@ -1,0 +1,88 @@
+---
+/**
+ * Envelop docs chrome: Hive's DocsLayout with the Envelop identity, nav hrefs
+ * pre-based on /graphql/envelop, and its own header/footer.
+ */
+import type { DocsNavNode, DocsNavPage } from '../../docs/nav';
+import SiteFooter from '../../hive/components/SiteFooter.astro';
+import SiteNavigation from '../../hive/components/SiteNavigation.astro';
+import DocsLayout from '../../hive/layouts/DocsLayout.astro';
+import type { TocHeading } from '../../hive/lib/toc';
+import { basePath, withBase } from '../lib/base-path';
+import { ENVELOP_FOOTER, ENVELOP_LOGO, ENVELOP_SITE } from '../lib/site';
+
+interface Props {
+  /** Mount-relative path, e.g. "/docs/plugins/lifecycle". */
+  currentPath: string;
+  description?: string;
+  /** Mount-relative root of this section's tree: /docs, /v3, /plugins. */
+  docsBase: string;
+  githubUrl: string;
+  headings: TocHeading[];
+  longPage?: boolean;
+  navItems: DocsNavPage[];
+  navTree: DocsNavNode[];
+  /** Drives search badges. */
+  searchSection: string;
+  /** Title suffix, e.g. "Envelop v3". */
+  section: string;
+  title: string;
+}
+
+const {
+  currentPath,
+  description,
+  docsBase,
+  githubUrl,
+  headings,
+  longPage,
+  navItems,
+  navTree,
+  searchSection,
+  section,
+  title,
+} = Astro.props;
+
+const baseNode = (node: DocsNavNode): DocsNavNode =>
+  node.type === 'page'
+    ? { ...node, href: withBase(node.href) }
+    : {
+        ...node,
+        href: node.href ? withBase(node.href) : undefined,
+        children: node.children.map(baseNode),
+      };
+
+const basedItems = navItems.map(item => ({ ...item, href: withBase(item.href) }));
+const basedTree = navTree.map(baseNode);
+---
+
+<DocsLayout
+  currentPath={withBase(currentPath)}
+  description={description}
+  docsBase={withBase(docsBase)}
+  docsLabel={docsBase === '/plugins' ? 'Plugins' : 'Docs'}
+  githubUrl={githubUrl}
+  headings={headings}
+  longPage={longPage}
+  markdownUrl={`${withBase(currentPath)}.md`}
+  navItems={basedItems}
+  navTree={basedTree}
+  searchBase={basePath}
+  searchSection={searchSection}
+  section={section}
+  site={ENVELOP_SITE}
+  title={title}
+>
+  <SiteNavigation
+    slot="site-navigation"
+    docsNavigation={basedItems}
+    docsNavigationTree={basedTree}
+    logo={ENVELOP_LOGO}
+  />
+  <slot />
+  <SiteFooter
+    slot="site-footer"
+    description={ENVELOP_FOOTER.description}
+    logo={ENVELOP_FOOTER.logo}
+  />
+</DocsLayout>

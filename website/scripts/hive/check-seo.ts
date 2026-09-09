@@ -48,7 +48,7 @@ const KNOWN_DUPLICATE_DESCRIPTIONS = new Set(['graphql/codegen/docs/getting-star
 
 // The Yoga docs keep the older majors (v2, v3, v4) frozen as they were
 // published; sibling pages there share descriptions and will never be edited.
-const FROZEN_CONTENT = /^graphql\/yoga-server\/v\d\//;
+const FROZEN_CONTENT = /^graphql\/(yoga-server|envelop)\/v\d(?:\/|\.html$)/;
 
 // Paths the website-router rewrites to other targets at the edge.
 const ROUTER_HANDLED_PATHS = new Set([
@@ -68,7 +68,6 @@ const EXTERNAL_DEPLOYMENT_PREFIXES = [
   '/graphql/apollo-angular',
   '/graphql/sofa-api',
   '/graphql/modules',
-  '/graphql/envelop',
   '/graphql/eslint',
   '/graphql/config',
   '/graphql/stitching',
@@ -253,9 +252,22 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   const canonicalOnSiblingDeployment =
     canonicalPath !== undefined &&
     EXTERNAL_DEPLOYMENT_PREFIXES.some(prefix => canonicalPath.startsWith(`${prefix}/`));
+  // A page may declare another page on this site as its canonical when both
+  // carry the same content (a blog post republished as a docs guide), as long
+  // as that page is actually built.
+  const canonicalOnBuiltPage =
+    canonicalPath !== undefined &&
+    canonicalPath !== pagePath &&
+    existsSync(
+      path.join(
+        OUTPUT_DIR,
+        canonicalPath === '/' ? 'index.html' : `${canonicalPath.replace(/\/$/, '')}.html`,
+      ),
+    );
   if (
     canonical?.startsWith(SITE) &&
     !canonicalOnSiblingDeployment &&
+    !canonicalOnBuiltPage &&
     decodeURI(canonical) !== expectedCanonical &&
     decodeURI(canonical) !== `${expectedCanonical}/` &&
     !(pagePath === '/' && canonical === `${SITE}/`)
