@@ -4,10 +4,11 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "pnpm run fetch:codegen && pnpm run fetch:yoga && pnpm run fetch:envelop && pnpm run fetch:inspector && pnpm run fetch:products && astro check && astro build && pnpm run postbuild:hive && pnpm run postbuild:codegen && pnpm run postbuild:yoga && pnpm run postbuild:envelop && pnpm run postbuild:inspector && pnpm run postbuild:products && pnpm run postbuild:verify",
+    "build": "pnpm run fetch-all && astro build && pnpm run postbuild:hive && pnpm run postbuild:codegen && pnpm run postbuild:yoga && pnpm run postbuild:envelop && pnpm run postbuild:inspector && pnpm run postbuild:products && pnpm run postbuild:verify",
     "check": "astro check",
     "check-seo": "node scripts/hive/check-seo.ts",
     "dev": "astro dev",
+    "fetch-all": "node scripts/fetch-all.ts",
     "fetch:codegen": "node scripts/codegen/fetch-content.ts && node scripts/codegen/fetch-npm-info.ts",
     "fetch:envelop": "node scripts/envelop/fetch-content.ts && node scripts/envelop/fetch-plugins.ts",
     "fetch:inspector": "node scripts/inspector/fetch-content.ts",

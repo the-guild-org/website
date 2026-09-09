@@ -42,15 +42,17 @@ function generateHiveId({ entry }: { entry: string }) {
 
 /**
  * Hive frontmatter schemas, derived from the shapes every consumer was
- * previously asserting with `as` casts. passthrough() keeps unknown legacy
+ * previously asserting with `as` casts. looseObject() keeps unknown legacy
  * keys instead of stripping them; unions reflect real frontmatter variance
  * in the 400+ migrated files (string vs array authors, string vs date).
  */
 const hiveAuthor = z.union([
   z.string(),
-  z
-    .object({ avatar: z.string().optional(), name: z.string(), position: z.string().optional() })
-    .passthrough(),
+  z.looseObject({
+    avatar: z.string().optional(),
+    name: z.string(),
+    position: z.string().optional(),
+  }),
 ]);
 // String dates must be ISO days — the product-updates page sorts them
 // lexically and parses them with `new Date(`${date}T00:00:00Z`)`.
@@ -62,13 +64,11 @@ const docs = defineCollection({
     generateId: generateHiveId,
     pattern: '**/*.{md,mdx}',
   }),
-  schema: z
-    .object({
-      title: z.string().optional(),
-      sidebarTitle: z.string().optional(),
-      description: z.string().optional(),
-    })
-    .passthrough(),
+  schema: z.looseObject({
+    title: z.string().optional(),
+    sidebarTitle: z.string().optional(),
+    description: z.string().optional(),
+  }),
 });
 
 const productUpdates = defineCollection({
@@ -77,15 +77,13 @@ const productUpdates = defineCollection({
     generateId: generateHiveId,
     pattern: '**/*.{md,mdx}',
   }),
-  schema: z
-    .object({
-      title: z.string(),
-      description: z.string(),
-      date: hiveDate,
-      authors: z.array(hiveAuthor),
-      canonical: z.string().optional(),
-    })
-    .passthrough(),
+  schema: z.looseObject({
+    title: z.string(),
+    description: z.string(),
+    date: hiveDate,
+    authors: z.array(hiveAuthor),
+    canonical: z.string().optional(),
+  }),
 });
 
 const caseStudies = defineCollection({
@@ -94,16 +92,14 @@ const caseStudies = defineCollection({
     generateId: generateHiveId,
     pattern: '**/*.{md,mdx}',
   }),
-  schema: z
-    .object({
-      title: z.string(),
-      excerpt: z.string(),
-      category: z.string(),
-      date: hiveDate,
-      authors: z.array(hiveAuthor).optional(),
-      canonical: z.string().optional(),
-    })
-    .passthrough(),
+  schema: z.looseObject({
+    title: z.string(),
+    excerpt: z.string(),
+    category: z.string(),
+    date: hiveDate,
+    authors: z.array(hiveAuthor).optional(),
+    canonical: z.string().optional(),
+  }),
 });
 
 const hiveBlog = defineCollection({
@@ -112,18 +108,16 @@ const hiveBlog = defineCollection({
     generateId: generateHiveId,
     pattern: '**/*.{md,mdx}',
   }),
-  schema: z
-    .object({
-      title: z.string(),
-      description: z.string().optional(),
-      date: hiveDate,
-      authors: z.union([z.string(), z.array(hiveAuthor)]),
-      tags: z.array(z.string()).default([]),
-      featured: z.boolean().optional(),
-      canonical: z.string().optional(),
-      ogImage: z.string().optional(),
-    })
-    .passthrough(),
+  schema: z.looseObject({
+    title: z.string(),
+    description: z.string().optional(),
+    date: hiveDate,
+    authors: z.union([z.string(), z.array(hiveAuthor)]),
+    tags: z.array(z.string()).default([]),
+    featured: z.boolean().optional(),
+    canonical: z.string().optional(),
+    ogImage: z.string().optional(),
+  }),
 });
 
 /**
@@ -133,13 +127,11 @@ const hiveBlog = defineCollection({
  */
 const codegenContentRoot = './src/codegen/content';
 
-const codegenDocsSchema = z
-  .object({
-    title: z.string().optional(),
-    sidebarTitle: z.string().optional(),
-    description: z.string().optional(),
-  })
-  .passthrough();
+const codegenDocsSchema = z.looseObject({
+  title: z.string().optional(),
+  sidebarTitle: z.string().optional(),
+  description: z.string().optional(),
+});
 
 const codegenDocs = defineCollection({
   loader: glob({
@@ -203,7 +195,7 @@ const yogaChangelogs = defineCollection({
     generateId: generateHiveId,
     pattern: '**/*.md',
   }),
-  schema: z.object({ title: z.string(), description: z.string().optional() }).passthrough(),
+  schema: z.looseObject({ title: z.string(), description: z.string().optional() }),
 });
 
 const envelopContentRoot = './src/envelop/content';
