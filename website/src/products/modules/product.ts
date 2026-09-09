@@ -10,8 +10,6 @@ export default {
   description: 'Enterprise-grade tooling for modular GraphQL servers.',
   repo: 'graphql-hive/graphql-modules',
   branch: 'master',
-  // TEMPORARY: until graphql-hive/graphql-modules's website-content-only branch merges.
-  contentRef: 'website-content-only',
   sections: [
     { base: '/docs', dir: 'docs', label: 'Documentation' },
     { base: '/changelog', dir: 'changelog', label: 'Changelog', breadcrumb: 'Changelog' },
