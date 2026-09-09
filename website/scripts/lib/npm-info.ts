@@ -63,7 +63,8 @@ export function saveNpmInfoCache(hub: string, cache: NpmInfoCache): void {
 export async function fetchWithRetry(url: string, attempts = 3): Promise<Response> {
   for (let attempt = 1; ; attempt++) {
     try {
-      const response = await fetch(url);
+      // A stalled registry request would otherwise hold its whole batch.
+      const response = await fetch(url, { signal: AbortSignal.timeout(60_000) });
       if (!response.ok) throw new Error(`${response.status} for ${url}`);
       return response;
     } catch (error) {

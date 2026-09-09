@@ -56,9 +56,9 @@ await inBatches(entries, async ([key, { npmPackage }]) => {
 });
 
 writeFileSync(join(generatedDir, 'npm-info.json'), `${JSON.stringify(info, null, 2)}\n`);
-// A fresh cache keeps its date so it still expires on schedule; a full fetch starts a new day.
+// A fresh cache keeps its date so it still expires on schedule; an empty one starts today.
 saveNpmInfoCache('codegen', {
-  fetchedAt: reused > 0 ? cache.fetchedAt : new Date().toISOString(),
+  fetchedAt: cache.fetchedAt || new Date().toISOString(),
   packages: { ...cache.packages, ...fetched },
   readmes: {},
 });

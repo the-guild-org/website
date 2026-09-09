@@ -38,16 +38,23 @@ const children = fetches.map(name => {
   return { name, child };
 });
 
-const results = await Promise.all(
+let firstFailure: string | undefined;
+await Promise.all(
   children.map(
     ({ name, child }) =>
-      new Promise<{ name: string; code: number | null }>(resolve => {
-        child.on('close', code => resolve({ name, code }));
+      new Promise<void>(resolve => {
+        child.on('close', code => {
+          // No point finishing the other clones once one fetch has failed.
+          if (code !== 0 && !firstFailure) {
+            firstFailure = name;
+            for (const other of children) other.child.kill();
+          }
+          resolve();
+        });
       }),
   ),
 );
-const failed = results.filter(({ code }) => code !== 0);
-if (failed.length > 0) {
-  console.error(`fetch failed: ${failed.map(({ name }) => name).join(', ')}`);
+if (firstFailure) {
+  console.error(`${firstFailure} failed; the other fetches were stopped`);
   process.exit(1);
 }
