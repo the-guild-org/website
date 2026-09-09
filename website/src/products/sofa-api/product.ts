@@ -10,8 +10,6 @@ export default {
   description: 'Generate RESTful APIs from your GraphQL server.',
   repo: 'graphql-hive/SOFA',
   branch: 'master',
-  // TEMPORARY: until graphql-hive/SOFA's website-content-only branch merges.
-  contentRef: 'website-content-only',
   sections: [{ base: '/docs', dir: 'docs', label: 'Documentation' }],
   redirects: {
     '/docs/essentials': '/docs/essentials/queries',
