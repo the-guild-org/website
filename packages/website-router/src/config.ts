@@ -63,10 +63,6 @@ export const jsonConfig = {
       redirect: 'https://github.com/maticzav/graphql-shield',
       status: 302,
     },
-    '/graphql/apollo-angular': {
-      rewrite: 'apollo-angular.pages.dev',
-      sitemap: true,
-    },
     '/graphql/hive/federation-gateway-audit': {
       rewrite: 'federation-gateway-compatibility.pages.dev',
       crisp: { segments: ['hive-website'] },
