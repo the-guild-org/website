@@ -108,7 +108,7 @@ const cms: DescriptionProvider = {
     // `context.label` carries the request's `?promptLabel=` (or the configured default), so a
     // custom provider can serve environment-specific variants the same way Langfuse does.
     const variant = context?.label ?? 'production'
-    const res = await fetch(`https://my-cms.example.com/api/${config.prompt}?variant=${variant}`)
+    const res = await fetch(`https://my-cms.example.com/api/${config.prompt}?variant=${encodeURIComponent(variant)}`)
     return res.text()
   }
 }
