@@ -17,6 +17,7 @@ import {
   readSitemapPaths,
   resolvesInDist,
 } from '../lib/build-output.ts';
+import { loadProducts } from '../products/registry.ts';
 
 const verbose = process.env['VERBOSE'] === 'true' || process.argv.includes('--verbose');
 
@@ -60,6 +61,8 @@ const ROUTER_HANDLED_PATHS = new Set([
 // Path prefixes served by other deployments through the website-router —
 // links to them cannot resolve inside this dist.
 // Keep in sync with packages/website-router/src/config.ts mappings.
+// Registry products (src/products/<slug>) are served by this build.
+const registryMounts = new Set((await loadProducts()).map(product => `/graphql/${product.slug}`));
 const EXTERNAL_DEPLOYMENT_PREFIXES = [
   '/graphql/tools',
   '/graphql/mesh',
@@ -74,7 +77,7 @@ const EXTERNAL_DEPLOYMENT_PREFIXES = [
   '/graphql/sse',
   '/openapi/fets',
   '/heltin',
-];
+].filter(prefix => !registryMounts.has(prefix));
 
 async function* walk(dir: string): AsyncGenerator<string> {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
@@ -151,7 +154,7 @@ const redirectSources = {
   exact: new Set(redirectRules.filter(r => !r.source.endsWith('/*')).map(r => r.source)),
   prefixes: redirectRules.filter(r => r.source.endsWith('/*')).map(r => r.source.slice(0, -1)),
 };
-const sitemapPaths = readSitemapPaths();
+const sitemapPaths = readSitemapPaths([...registryMounts].map(mount => `${mount}/sitemap.xml`));
 
 const issues: string[] = [];
 const warnings: string[] = [];

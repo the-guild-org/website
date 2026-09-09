@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { SITE_ORIGIN as SITE } from '../hive/lib/base-path';
+import { PRODUCTS } from '../products/registry';
 
 // Root-level llms.txt: an index of The Guild's ecosystem for agents and
 // crawlers. The Hive docs ship their own, much deeper one under
@@ -38,7 +39,10 @@ export const GET: APIRoute = async () => {
 - [Envelop](${SITE}/graphql/envelop): the GraphQL plugin system
 - [Envelop documentation index for LLMs](${SITE}/graphql/envelop/llms.txt)
 - [Full Envelop documentation as one file](${SITE}/graphql/envelop/llms-full.txt)
-- [GraphQL Scalars](${SITE}/graphql/scalars): custom scalar types
+${PRODUCTS.map(
+  product =>
+    `- [${product.name}](${SITE}/graphql/${product.slug}): ${product.llmsTagline}\n- [${product.name} documentation index for LLMs](${SITE}/graphql/${product.slug}/llms.txt)\n- [Full ${product.name} documentation as one file](${SITE}/graphql/${product.slug}/llms-full.txt)`,
+).join('\n')}
 - [GraphQL Inspector](${SITE}/graphql/inspector): schema change validation
 - [GraphQL Inspector documentation index for LLMs](${SITE}/graphql/inspector/llms.txt)
 - [Full GraphQL Inspector documentation as one file](${SITE}/graphql/inspector/llms-full.txt)

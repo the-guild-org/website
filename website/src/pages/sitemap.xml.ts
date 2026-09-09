@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { PRODUCTS } from '../products/registry';
 
 // The website-router worker fetches this sitemapindex and injects the
 // product sites' sitemaps into it (packages/website-router/src/sitemap),
@@ -24,6 +25,11 @@ export const GET: APIRoute = ({ site }) => {
   <sitemap>
     <loc>${new URL('/graphql/inspector/sitemap.xml', site).href}</loc>
   </sitemap>
+${PRODUCTS.map(
+  product => `  <sitemap>
+    <loc>${new URL(`/graphql/${product.slug}/sitemap.xml`, site).href}</loc>
+  </sitemap>`,
+).join('\n')}
 </sitemapindex>
 `;
   return new Response(xml, { headers: { 'Content-Type': 'application/xml' } });

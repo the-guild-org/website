@@ -1,0 +1,87 @@
+---
+/**
+ * Renders one content entry of a registry product inside its docs chrome,
+ * with the MDX components the content may use.
+ */
+import Callout from '~hive/components/mdx/Callout.astro';
+import Card from '~hive/components/mdx/Card.astro';
+import CardsBase from '~hive/components/mdx/Cards.astro';
+import CodeBlock from '~hive/components/mdx/CodeBlock.astro';
+import File from '~hive/components/mdx/File.astro';
+import FileTreeBase from '~hive/components/mdx/Files.astro';
+import Folder from '~hive/components/mdx/Folder.astro';
+import PackageManagerTabs from '~hive/components/mdx/PackageManagerTabs.astro';
+import Steps from '~hive/components/mdx/Steps.astro';
+import PackageManagerTab from '~hive/components/mdx/Tab.astro';
+import Tab from '~hive/components/mdx/Tab.astro';
+import Table from '~hive/components/mdx/Table.astro';
+import TabsBase from '~hive/components/mdx/Tabs.astro';
+import { getHeadingHtmlBySlug } from '~hive/lib/docs-markdown';
+import { render } from 'astro:content';
+import type { DocsNav } from '../../docs/nav';
+import { productRepoUrl, type ProductDefinition, type ProductSection } from '../define';
+import { entryHref } from '../nav';
+import ProductDocsLayout from './ProductDocsLayout.astro';
+
+interface Props {
+  product: ProductDefinition;
+  section: ProductSection;
+  entry: {
+    body?: string;
+    data: { description?: string; sidebarTitle?: string; title?: string };
+    filePath?: string;
+    id: string;
+  };
+  nav: DocsNav;
+}
+
+const { product, section, entry, nav } = Astro.props;
+
+const Tabs = Object.assign(TabsBase, { Tab });
+const Cards = Object.assign(CardsBase, { Card });
+const FileTree = Object.assign(FileTreeBase, { File, Folder });
+
+const { Content, headings: renderedHeadings } = await render(entry as never);
+const headingHtmlBySlug = getHeadingHtmlBySlug(entry.body ?? '', renderedHeadings);
+const headings = renderedHeadings.map(heading => ({
+  ...heading,
+  html: headingHtmlBySlug.get(heading.slug) ?? heading.text,
+}));
+const { data } = entry;
+const title =
+  data.title ?? data.sidebarTitle ?? (entry.id.split('/').at(-1) ?? entry.id).replace(/-/g, ' ');
+const extension = entry.filePath?.match(/\.mdx?$/)?.[0] ?? '.mdx';
+// The changelog page is rendered from the repo's CHANGELOG.md, not from content/.
+const sourcePath =
+  product.changelog && entry.id.replace(/\/index$/, '') === 'changelog'
+    ? product.changelog
+    : `website/content/${entry.id}${extension}`;
+---
+
+<ProductDocsLayout
+  currentPath={entryHref(section, entry.id)}
+  description={data.description || `${title} — ${product.name} documentation.`}
+  githubUrl={`${productRepoUrl(product)}/blob/${product.branch}/${sourcePath}`}
+  headings={headings}
+  longPage={(entry.body?.length ?? 0) > 60_000}
+  navItems={nav.items}
+  navTree={nav.tree}
+  product={product}
+  section={section}
+  title={title}
+>
+  <Content
+    components={{
+      Callout,
+      Cards,
+      Card,
+      FileTree,
+      PackageManagerTab,
+      PackageManagerTabs,
+      Steps,
+      Tabs,
+      pre: CodeBlock,
+      table: Table,
+    }}
+  />
+</ProductDocsLayout>

@@ -46,9 +46,10 @@ export function resolvesInDist(pathname: string): boolean {
 }
 
 /** Every <loc> pathname across the generated sitemaps. */
-export function readSitemapPaths(): Set<string> {
+/** Every URL path listed in the sitemaps (the hand-wired ones plus any `extra` sitemaps). */
+export function readSitemapPaths(extra: string[] = []): Set<string> {
   const paths = new Set<string>();
-  for (const sitemap of SITEMAPS) {
+  for (const sitemap of [...SITEMAPS, ...extra]) {
     const file = `${DIST}${sitemap}`;
     if (!existsSync(file)) continue;
     for (const [, loc] of readFileSync(file, 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)) {

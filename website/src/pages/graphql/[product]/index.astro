@@ -1,0 +1,14 @@
+---
+/** Landing pages of the registry products; the larger products have their own static routes. */
+import ProductLanding from '../../../products/components/ProductLanding.astro';
+import type { ProductDefinition } from '../../../products/define';
+import { PRODUCTS } from '../../../products/registry';
+
+export function getStaticPaths() {
+  return PRODUCTS.map(product => ({ params: { product: product.slug }, props: { product } }));
+}
+
+const { product } = Astro.props as { product: ProductDefinition };
+---
+
+<ProductLanding product={product} />

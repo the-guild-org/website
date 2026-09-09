@@ -5,7 +5,18 @@
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { basePath, SITE_ORIGIN } from '../src/hive/lib/base-path.ts';
-import { DIST, readSitemapPaths, resolvesInDist, SITEMAPS } from './lib/build-output.ts';
+import {
+  SITEMAPS as BASE_SITEMAPS,
+  DIST,
+  readSitemapPaths,
+  resolvesInDist,
+} from './lib/build-output.ts';
+import { loadProducts } from './products/registry.ts';
+
+const PRODUCT_SITEMAPS = (await loadProducts()).map(
+  product => `/graphql/${product.slug}/sitemap.xml`,
+);
+const SITEMAPS = [...BASE_SITEMAPS, ...PRODUCT_SITEMAPS];
 
 const failures: string[] = [];
 
@@ -15,7 +26,7 @@ for (const sitemap of SITEMAPS) {
   }
 }
 
-const paths = readSitemapPaths();
+const paths = readSitemapPaths(PRODUCT_SITEMAPS);
 for (const pathname of paths) {
   if (!resolvesInDist(pathname)) {
     failures.push(`no dist file serves ${pathname}`);

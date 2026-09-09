@@ -1,0 +1,92 @@
+---
+/**
+ * Docs chrome for a registry product: Hive's DocsLayout with the product's
+ * identity, nav hrefs pre-based on its mount, and the shared header/footer
+ * carrying its mark.
+ */
+import type { DocsNavNode, DocsNavPage } from '../../docs/nav';
+import SiteFooter from '../../hive/components/SiteFooter.astro';
+import SiteNavigation from '../../hive/components/SiteNavigation.astro';
+import DocsLayout from '../../hive/layouts/DocsLayout.astro';
+import type { TocHeading } from '../../hive/lib/toc';
+import {
+  productBasePath,
+  productSiteUrl,
+  withProductBase,
+  type ProductDefinition,
+  type ProductSection,
+} from '../define';
+import { productFooter, productLogo } from '../identity';
+
+interface Props {
+  product: ProductDefinition;
+  section: ProductSection;
+  /** Mount-relative path, e.g. "/docs/guides/setup". */
+  currentPath: string;
+  description?: string;
+  githubUrl: string;
+  headings: TocHeading[];
+  longPage?: boolean;
+  navItems: DocsNavPage[];
+  navTree: DocsNavNode[];
+  title: string;
+}
+
+const {
+  product,
+  section,
+  currentPath,
+  description,
+  githubUrl,
+  headings,
+  longPage,
+  navItems,
+  navTree,
+  title,
+} = Astro.props;
+
+const withBase = (path: string) => withProductBase(product, path);
+const baseNode = (node: DocsNavNode): DocsNavNode =>
+  node.type === 'page'
+    ? { ...node, href: withBase(node.href) }
+    : {
+        ...node,
+        href: node.href ? withBase(node.href) : undefined,
+        children: node.children.map(baseNode),
+      };
+const basedItems = navItems.map(item => ({ ...item, href: withBase(item.href) }));
+const basedTree = navTree.map(baseNode);
+const site = {
+  mountPath: productBasePath(product),
+  name: product.name,
+  url: productSiteUrl(product),
+};
+const footer = productFooter(product);
+---
+
+<DocsLayout
+  currentPath={withBase(currentPath)}
+  description={description}
+  docsBase={withBase(section.base)}
+  docsLabel={section.breadcrumb ?? 'Docs'}
+  githubUrl={githubUrl}
+  headings={headings}
+  longPage={longPage}
+  markdownUrl={`${withBase(currentPath)}.md`}
+  navItems={basedItems}
+  navTree={basedTree}
+  searchBase={productBasePath(product)}
+  searchSection={section.label}
+  section={product.name}
+  site={site}
+  title={title}
+>
+  <SiteNavigation
+    slot="site-navigation"
+    docsNavigation={basedItems}
+    docsNavigationTree={basedTree}
+    logo={productLogo(product)}
+  />
+  <slot />
+  <SiteFooter slot="site-footer" description={footer.description} logo={footer.logo} />
+</DocsLayout>

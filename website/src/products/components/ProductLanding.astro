@@ -1,0 +1,252 @@
+---
+/**
+ * Landing page of a registry product in the Hive brand: the blue hero with
+ * the product mark, feature cards, an optional dark code-sample section,
+ * "learn more" cards, an optional Hive tie-in, and the shared ecosystem
+ * section. The copy comes from the product definition.
+ */
+import '~hive/styles/global.css';
+import BaseHead from '~hive/components/BaseHead.astro';
+import ToolsAndLibraries from '~hive/components/landing/ToolsAndLibraries.astro';
+import SiteFooter from '~hive/components/SiteFooter.astro';
+import SiteNavigation from '~hive/components/SiteNavigation.astro';
+import { Code } from 'astro:components';
+import type { BuiltinLanguage } from 'shiki';
+import {
+  productBasePath,
+  productMark,
+  productRepoUrl,
+  productSiteUrl,
+  withProductBase,
+  type ProductDefinition,
+} from '../define';
+import { productFooter, productLogo } from '../identity';
+
+interface Props {
+  product: ProductDefinition;
+}
+
+const { product } = Astro.props;
+const { landing } = product;
+const withBase = (path: string) => withProductBase(product, path);
+const icons = import.meta.glob<string>('../assets/icons/*.svg', {
+  eager: true,
+  query: '?raw',
+  import: 'default',
+});
+const icon = (name: string) =>
+  icons[`../assets/icons/${name}.svg`] ?? icons['../assets/icons/puzzle.svg']!;
+const site = {
+  mountPath: productBasePath(product),
+  name: product.name,
+  url: productSiteUrl(product),
+};
+const footer = productFooter(product);
+
+const githubIcon = `<svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.17c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>`;
+const checkmark = `<svg fill="none" height="20" viewBox="0 0 20 20" width="20"><path d="M16.667 5 7.5 14.167 3.333 10" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round" stroke-width="1.5"></path></svg>`;
+const sectionTitle =
+  'group text-center text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]';
+const iconBadge =
+  'bg-green-1000 flex size-12 shrink-0 items-center justify-center rounded-xl text-white [&>svg]:size-6 [&>svg_path]:fill-current';
+const featureColumns =
+  landing.features.length % 3 === 0 ? 'md:grid-cols-3' : 'sm:grid-cols-2 xl:grid-cols-4';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <BaseHead description={product.description} site={site} title={product.name} />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: product.name,
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Web',
+        url: site.url,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+      })}
+    />
+  </head>
+  <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
+    <SiteNavigation logo={productLogo(product)} />
+    <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
+      <!-- Hero -->
+      <div
+        class="relative isolate mx-4 flex max-w-360 flex-col items-center gap-6 overflow-hidden rounded-3xl bg-blue-400 px-4 py-6 max-sm:mt-2 sm:py-16 md:mx-6 md:gap-8 lg:py-24"
+      >
+        <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+          <span
+            class="absolute top-1/2 -left-40 w-[420px] -translate-y-1/2 -rotate-12 text-white/30 md:-left-32 md:w-[520px] [&_text]:hidden [&>svg]:w-full"
+            set:html={productMark(product, 'fill="currentColor"')}
+          />
+          <span
+            class="absolute -right-56 -bottom-64 w-[560px] rotate-12 text-white/30 max-md:hidden md:w-[680px] [&_text]:hidden [&>svg]:w-full"
+            set:html={productMark(product, 'fill="currentColor"')}
+          />
+        </div>
+        <div
+          class="to-green-1000 relative flex size-24 items-center justify-center rounded-3xl bg-gradient-to-br from-green-800 text-white shadow-[0_12px_40px_-12px_rgba(0,52,44,0.6)] [&>svg]:size-12"
+          set:html={productMark(product, 'fill="currentColor"')}
+        />
+        <h1
+          class="group relative mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]"
+        >
+          {landing.headline}
+        </h1>
+        <p class="relative mx-auto w-lg max-w-[80%] text-center leading-6 text-green-800">
+          {landing.tagline} Part of the{' '}
+          <a
+            class="hive-focus underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
+            href="https://the-guild.dev/graphql/hive"
+            title="Explore the Hive platform">Hive</a
+          >
+          {' '}ecosystem by{' '}
+          <a
+            class="hive-focus underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
+            href="https://the-guild.dev"
+            title="Visit The Guild">The Guild</a
+          >.
+        </p>
+        <ul
+          class="relative z-10 mx-auto flex list-none flex-col gap-x-6 gap-y-2 text-sm leading-[21px] font-medium md:flex-row [&>li]:flex [&>li]:items-center [&>li]:gap-2"
+        >
+          {
+            landing.claims.map(claim => (
+              <li>
+                <span class="text-green-800" set:html={checkmark} />
+                {claim}
+              </li>
+            ))
+          }
+        </ul>
+        <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
+          <a
+            class="text-green-1000 bg-primary relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit"
+            href={withBase(landing.getStarted)}
+          >
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            Get started
+          </a>
+          <a
+            class="text-green-1000 relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit [&>svg]:size-6"
+            href={productRepoUrl(product)}
+          >
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            <Fragment set:html={githubIcon} />
+            GitHub
+          </a>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <section class="px-4 py-6 sm:py-12 md:px-6 lg:py-24 xl:px-30">
+        <h2 class={sectionTitle}>{landing.featuresTitle}</h2>
+        {
+          landing.featuresIntro && (
+            <p class="mx-auto mt-4 max-w-2xl text-center leading-6 text-balance text-green-800">
+              {landing.featuresIntro}
+            </p>
+          )
+        }
+        <ul
+          class:list={[
+            'mt-6 grid list-none grid-cols-1 gap-2 p-0 md:mt-16 md:gap-6',
+            featureColumns,
+          ]}
+        >
+          {
+            landing.features.map(feature => (
+              <li>
+                <a
+                  class="hive-focus bg-beige-100 hover:bg-beige-200 block h-full rounded-3xl p-8 transition-colors"
+                  href={withBase(feature.href)}
+                >
+                  <span class={iconBadge} set:html={icon(feature.icon)} />
+                  <span class="mt-5 block text-xl leading-[1.4] font-medium">{feature.title}</span>
+                  <span class="mt-4 block leading-6 text-green-800">{feature.copy}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <!-- Code sample -->
+      {
+        landing.codeSample && (
+          <section class="bg-green-1000 relative isolate mx-4 overflow-hidden rounded-3xl p-8 text-white md:mx-6 md:p-[72px]">
+            <div class="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-16">
+              <div class="lg:basis-5/12">
+                <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] max-sm:text-[32px] md:text-5xl md:leading-[1.16667]">
+                  {landing.codeSample.title}
+                </h2>
+                <p class="mt-4 text-white/80">{landing.codeSample.copy}</p>
+                <a
+                  class="text-green-1000 bg-primary relative mt-8 inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40"
+                  href={withBase(landing.codeSample.href)}
+                >
+                  {landing.codeSample.cta}
+                </a>
+              </div>
+              <div class="min-w-0 grow">
+                <Code
+                  class="rounded-xl bg-green-900! p-5 text-sm [&_code]:text-sm"
+                  code={landing.codeSample.code}
+                  lang={landing.codeSample.lang as BuiltinLanguage}
+                  theme="github-dark"
+                />
+              </div>
+            </div>
+          </section>
+        )
+      }
+
+      <!-- Learn more -->
+      <section class="px-4 py-6 sm:py-12 md:px-6 lg:py-24 xl:px-30">
+        <h2 class={sectionTitle}>Learn more</h2>
+        <ul class="mt-6 grid list-none grid-cols-1 gap-2 p-0 md:mt-16 md:grid-cols-3 md:gap-6">
+          {
+            landing.links.map(link => (
+              <li class="bg-beige-100 flex flex-col rounded-3xl p-8 lg:p-12">
+                <h3 class="text-xl leading-[1.4] font-medium">{link.title}</h3>
+                <p class="mt-4 grow leading-6 text-green-800">{link.copy}</p>
+                <a
+                  class="hive-focus text-green-1000 mt-6 inline-flex items-center gap-1 font-medium underline decoration-green-800/30 underline-offset-4 hover:decoration-green-800"
+                  href={withBase(link.href)}
+                >
+                  {link.label} →
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      {
+        landing.hive && (
+          <section class="text-green-1000 mx-4 rounded-3xl bg-blue-400 p-8 text-center md:mx-6 md:p-16 lg:p-[72px]">
+            <h2 class={sectionTitle}>{landing.hive.title}</h2>
+            <p class="mx-auto mt-4 max-w-2xl leading-6 text-balance">{landing.hive.copy}</p>
+            <a
+              class="relative mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-green-800 px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40"
+              href="https://the-guild.dev/graphql/hive"
+            >
+              Explore Hive
+            </a>
+          </section>
+        )
+      }
+
+      <!-- Ecosystem (shared Hive section) -->
+      <ToolsAndLibraries class="mx-4 md:mx-6" />
+    </main>
+    <SiteFooter description={footer.description} logo={footer.logo} />
+  </body>
+</html>
