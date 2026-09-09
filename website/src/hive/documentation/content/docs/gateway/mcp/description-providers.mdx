@@ -104,8 +104,11 @@ reference it with `type` set to that name:
 import type { DescriptionProvider } from '@graphql-hive/plugin-mcp'
 
 const cms: DescriptionProvider = {
-  async fetchDescription(toolName, config) {
-    const res = await fetch(`https://my-cms.example.com/api/${config.prompt}`)
+  async fetchDescription(toolName, config, context) {
+    // `context.label` carries the request's `?promptLabel=` (or the configured default), so a
+    // custom provider can serve environment-specific variants the same way Langfuse does.
+    const variant = context?.label ?? 'production'
+    const res = await fetch(`https://my-cms.example.com/api/${config.prompt}?variant=${variant}`)
     return res.text()
   }
 }
@@ -123,8 +126,9 @@ useMCP(ctx, {
 })
 ```
 
-`fetchDescription` receives the tool name and the reference configuration, and returns the
-description text.
+`fetchDescription` receives the tool name, the reference configuration (the object from
+`descriptionProvider`, so any extra fields you put there are available), and a context with the
+resolved prompt `label`. It returns the description text.
 
 ## Where descriptions come from
 

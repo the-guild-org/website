@@ -46,7 +46,8 @@ executed.
   },
   hooks: {
     preprocess: (args, context) => {
-      if (!args["confirm"]) return { error: "Confirmation required" };
+      // Hooks see the original variable names, not the aliases agents use.
+      if (!args["confirmationId"]) return { error: "Confirmation required" };
       return undefined;
     },
   },
