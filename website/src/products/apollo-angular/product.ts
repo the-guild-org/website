@@ -10,8 +10,6 @@ export default {
   description: 'GraphQL client for the Angular framework.',
   repo: 'the-guild-org/apollo-angular',
   branch: 'master',
-  // TEMPORARY: until the-guild-org/apollo-angular's website-content-only branch merges.
-  contentRef: 'website-content-only',
   sections: [{ base: '/docs', dir: 'docs', label: 'Documentation' }],
   redirects: {
     '/docs/features/subscriptions.html': '/docs/data/subscriptions',
