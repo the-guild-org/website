@@ -35,7 +35,7 @@ jobs:
       # service re-optimizes every asset on a cold cache. Both are restored
       # here (before setup runs pnpm install).
       - name: cache playwright browsers
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
@@ -43,12 +43,26 @@ jobs:
             ${{ runner.os }}-playwright-
 
       - name: cache astro image optimization
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: website/node_modules/.astro
           key: ${{ runner.os }}-astro-assets-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-astro-assets-
+
+      # The plugin hubs' npm metadata (scripts/lib/npm-info.ts) is reused for a
+      # day; the date in the key rolls the cache over once a day.
+      - name: npm metadata cache key
+        id: npm-info
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: cache npm metadata
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: website/.cache/npm-info
+          key: ${{ runner.os }}-npm-info-${{ steps.npm-info.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-npm-info-
 
       - uses: ./.github/actions/setup
         name: setup env
@@ -101,6 +115,20 @@ jobs:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      # The type check imports the fetched content and generated data, so the
+      # fetch runs here too; with the npm metadata cache warm it takes seconds.
+      - name: npm metadata cache key
+        id: npm-info
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: cache npm metadata
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: website/.cache/npm-info
+          key: ${{ runner.os }}-npm-info-test-${{ steps.npm-info.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-npm-info-
+
       - uses: ./.github/actions/setup
         name: setup env
 
@@ -109,6 +137,13 @@ jobs:
 
       - name: website tests
         run: pnpm --filter website test
+
+      # Type-checks the Astro sources; off the deploy path so the build ships sooner.
+      - name: fetch website content
+        run: pnpm --filter website fetch
+
+      - name: website typecheck
+        run: pnpm --filter website check
 
       - name: helper worker typecheck
         run: pnpm --filter website-helper-worker typecheck
@@ -124,7 +159,7 @@ jobs:
           persist-credentials: false
 
       - name: cache playwright browsers
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
@@ -132,12 +167,26 @@ jobs:
             ${{ runner.os }}-playwright-
 
       - name: cache astro image optimization
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: website/node_modules/.astro
           key: ${{ runner.os }}-astro-assets-lh-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-astro-assets-
+
+      # The plugin hubs' npm metadata (scripts/lib/npm-info.ts) is reused for a
+      # day; the date in the key rolls the cache over once a day.
+      - name: npm metadata cache key
+        id: npm-info
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: cache npm metadata
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: website/.cache/npm-info
+          key: ${{ runner.os }}-npm-info-lh-${{ steps.npm-info.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-npm-info-
 
       - uses: ./.github/actions/setup
         name: setup env
@@ -152,7 +201,7 @@ jobs:
 
       - name: upload lighthouse reports
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: lighthouse-reports
           path: .lighthouseci

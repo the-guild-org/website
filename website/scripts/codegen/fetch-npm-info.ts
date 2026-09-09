@@ -4,11 +4,20 @@
  * src/codegen/generated/npm-info.json (gitignored). Run after
  * fetch-content.ts. Failures degrade to placeholder entries so a flaky npm
  * response can't take the build down — the affected page just misses its
- * download count / readme until the next deploy.
+ * download count / readme until the next deploy. Results are reused from
+ * .cache/npm-info for a day (see scripts/lib/npm-info.ts).
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  fetchPackage,
+  inBatches,
+  loadNpmInfoCache,
+  placeholderInfo,
+  saveNpmInfoCache,
+  type NpmInfo,
+} from '../lib/npm-info.ts';
 
 const projectDir = fileURLToPath(new URL('../..', import.meta.url));
 const generatedDir = join(projectDir, 'src/codegen/generated');
@@ -18,94 +27,39 @@ if (!existsSync(registryPath)) {
   throw new Error('plugins-registry.json missing — run fetch-content.ts first');
 }
 
-interface NpmInfo {
-  createdAt: string;
-  description: string;
-  license: string;
-  readme: string;
-  updatedAt: string;
-  version: string;
-  weeklyNPMDownloads: number;
-}
-
 const registry = JSON.parse(readFileSync(registryPath, 'utf8')) as Record<
   string,
   { npmPackage: string }
 >;
 
-async function fetchJson(url: string, attempts = 3): Promise<unknown> {
-  for (let attempt = 1; ; attempt++) {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`${response.status} for ${url}`);
-      return await response.json();
-    } catch (error) {
-      if (attempt >= attempts) throw error;
-      // npm rate-limits bursts with 429s; back off harder for those.
-      const rateLimited = (error as Error).message.startsWith('429');
-      await new Promise(resolve => setTimeout(resolve, attempt * (rateLimited ? 5000 : 2000)));
-    }
-  }
-}
-
-async function fetchPackage(npmPackage: string): Promise<NpmInfo> {
-  const encoded = encodeURIComponent(npmPackage);
-  const [pkg, downloads] = await Promise.all([
-    fetchJson(`https://registry.npmjs.org/${encoded}`) as Promise<{
-      description?: string;
-      'dist-tags'?: { latest?: string };
-      license?: string;
-      readme?: string;
-      time?: Record<string, string>;
-      versions?: Record<string, { license?: string }>;
-    }>,
-    fetchJson(`https://api.npmjs.org/downloads/point/last-week/${encoded}`, 5).catch(error => {
-      // A zero here shows up as missing download counts on the site — warn
-      // so a throttled run is visible in the build log.
-      console.warn(`downloads fetch failed for ${npmPackage}: ${(error as Error).message}`);
-      return { downloads: 0 };
-    }) as Promise<{ downloads?: number }>,
-  ]);
-  const version = pkg['dist-tags']?.latest ?? '';
-  const readme = pkg.readme ?? '';
-  return {
-    createdAt: pkg.time?.created ?? '',
-    description: pkg.description ?? '',
-    license: pkg.license ?? pkg.versions?.[version]?.license ?? 'MIT',
-    readme: readme === 'ERROR: No README data found!' ? '' : readme,
-    updatedAt: (version && pkg.time?.[version]) || pkg.time?.modified || '',
-    version,
-    weeklyNPMDownloads: downloads.downloads ?? 0,
-  };
-}
-
+const cache = loadNpmInfoCache('codegen');
 const entries = Object.entries(registry);
 const info: Record<string, NpmInfo> = {};
+const fetched: Record<string, NpmInfo> = {};
 let failed = 0;
+let reused = 0;
 
-// Modest concurrency; the registry throttles bursts.
-const CONCURRENCY = 2;
-for (let index = 0; index < entries.length; index += CONCURRENCY) {
-  await Promise.all(
-    entries.slice(index, index + CONCURRENCY).map(async ([key, { npmPackage }]) => {
-      try {
-        info[key] = await fetchPackage(npmPackage);
-      } catch (error) {
-        failed++;
-        console.warn(`npm info failed for ${npmPackage}: ${(error as Error).message}`);
-        info[key] = {
-          createdAt: '',
-          description: '',
-          license: 'MIT',
-          readme: '',
-          updatedAt: '',
-          version: '',
-          weeklyNPMDownloads: 0,
-        };
-      }
-    }),
-  );
-}
+await inBatches(entries, async ([key, { npmPackage }]) => {
+  const cached = cache.packages[npmPackage];
+  if (cached) {
+    info[key] = cached;
+    reused++;
+    return;
+  }
+  try {
+    info[key] = fetched[npmPackage] = await fetchPackage(npmPackage, 'MIT');
+  } catch (error) {
+    failed++;
+    console.warn(`npm info failed for ${npmPackage}: ${(error as Error).message}`);
+    info[key] = placeholderInfo('MIT');
+  }
+});
 
 writeFileSync(join(generatedDir, 'npm-info.json'), `${JSON.stringify(info, null, 2)}\n`);
-console.log(`npm info for ${entries.length} packages (${failed} fallbacks)`);
+// A fresh cache keeps its date so it still expires on schedule; a full fetch starts a new day.
+saveNpmInfoCache('codegen', {
+  fetchedAt: reused > 0 ? cache.fetchedAt : new Date().toISOString(),
+  packages: { ...cache.packages, ...fetched },
+  readmes: {},
+});
+console.log(`npm info for ${entries.length} packages (${reused} from cache, ${failed} fallbacks)`);
