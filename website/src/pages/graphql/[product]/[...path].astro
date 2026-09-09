@@ -1,0 +1,39 @@
+---
+/**
+ * Every content page of every registry product: /graphql/<slug>/<section>/<path>.
+ * Static product routes (hive, codegen, yoga-server, envelop, inspector, mesh)
+ * take precedence over this dynamic segment.
+ */
+import ProductDocsPage from '../../../products/components/ProductDocsPage.astro';
+import type { ProductDefinition, ProductSection } from '../../../products/define';
+import { entryHref, getProductEntries, getProductNav, sectionOf } from '../../../products/nav';
+import { PRODUCTS } from '../../../products/registry';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const product of PRODUCTS) {
+    for (const entry of await getProductEntries(product)) {
+      const section = sectionOf(product, entry.id);
+      if (!section) continue;
+      paths.push({
+        params: { product: product.slug, path: entryHref(section, entry.id).slice(1) },
+        props: { entry, product, section },
+      });
+    }
+  }
+  return paths;
+}
+
+const { entry, product, section } = Astro.props as {
+  entry: Awaited<ReturnType<typeof getProductEntries>>[number];
+  product: ProductDefinition;
+  section: ProductSection;
+};
+---
+
+<ProductDocsPage
+  entry={entry}
+  nav={await getProductNav(product, section)}
+  product={product}
+  section={section}
+/>

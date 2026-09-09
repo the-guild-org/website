@@ -8,6 +8,7 @@
 import { existsSync, globSync, readFileSync } from 'node:fs';
 import { basePath as base } from '../../src/hive/lib/base-path.ts';
 import { HIVE_DIST, PROJECT_DIR, readRedirects } from '../lib/build-output.ts';
+import { loadProducts } from '../products/registry.ts';
 
 const hiveDistDirectory = HIVE_DIST;
 
@@ -60,6 +61,8 @@ const mainSiteRedirects = new Set(
     : []
   ).map(line => line.trim()),
 );
+// Mounts served by this build besides the hand-wired products.
+const servedMounts = (await loadProducts()).map(product => `/graphql/${product.slug}`);
 for (const rule of readRedirects()) {
   const line = `${rule.source} ${rule.destination}${rule.status ? ` ${rule.status}` : ''}`;
   if (mainSiteRedirects.has(line)) continue;
@@ -67,14 +70,17 @@ for (const rule of readRedirects()) {
     rule.destination.startsWith('/') &&
     rule.destination !== base &&
     !rule.destination.startsWith(`${base}/`) &&
-    // Codegen, Yoga, Envelop and Inspector rules are added by their own generate-redirects
+    // Codegen, Yoga, Envelop, Inspector and the registry products' rules are added by their own generate-redirects
     // scripts and are correctly prefixed with their mounts.
     !rule.destination.startsWith('/graphql/codegen') &&
     !rule.destination.startsWith('/graphql/yoga-server') &&
     rule.destination !== '/graphql/envelop' &&
     !rule.destination.startsWith('/graphql/envelop/') &&
     rule.destination !== '/graphql/inspector' &&
-    !rule.destination.startsWith('/graphql/inspector/')
+    !rule.destination.startsWith('/graphql/inspector/') &&
+    !servedMounts.some(
+      mount => rule.destination === mount || rule.destination.startsWith(`${mount}/`),
+    )
   ) {
     report('_redirects', rule.destination);
   }

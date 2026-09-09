@@ -234,8 +234,27 @@ const inspectorDocs = defineCollection({
   }),
   schema: codegenDocsSchema,
 });
+// One collection per registry product (src/products/<slug>/product.ts); ids are
+// "<section dir>/<path>" so the shared routes can tell the sections apart.
+const productModules = import.meta.glob<{ default: { slug: string } }>('./products/*/product.ts', {
+  eager: true,
+});
+const productCollections = Object.fromEntries(
+  Object.values(productModules).map(({ default: product }) => [
+    `product_${product.slug.replace(/-/g, '_')}`,
+    defineCollection({
+      loader: glob({
+        base: `./src/products/${product.slug}/content`,
+        generateId: generateHiveId,
+        pattern: '**/*.{md,mdx}',
+      }),
+      schema: codegenDocsSchema,
+    }),
+  ]),
+);
 
 export const collections = {
+  ...productCollections,
   blog,
   caseStudies,
   codegenDocs,

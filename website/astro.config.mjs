@@ -1,4 +1,4 @@
-import { createReadStream, existsSync } from 'node:fs';
+import { createReadStream, existsSync, readdirSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
@@ -43,6 +43,19 @@ const inspectorLinkOptions = {
   collections: [],
   fallback: { base: '/docs', directory: join(inspectorContentDir, 'docs') },
 };
+const isProductFile = path => typeof path === 'string' && path.includes('/src/products/');
+/** The registry products (src/products/<slug>/product.ts), for per-product plugin scoping. */
+const productsDir = fileURLToPath(new URL('./src/products', import.meta.url));
+const products = readdirSync(productsDir, { withFileTypes: true })
+  .filter(entry => entry.isDirectory() && existsSync(join(productsDir, entry.name, 'product.ts')))
+  .map(entry => entry.name)
+  .sort();
+const isProductSlugFile = slug => path =>
+  typeof path === 'string' && path.includes(`/src/products/${slug}/`);
+const productLinkOptions = slug => ({
+  collections: [],
+  fallback: { base: '', directory: join(productsDir, slug, 'content') },
+});
 
 const envelopContentDir = fileURLToPath(new URL('./src/envelop/content', import.meta.url));
 /** Envelop content collections for relative-link resolution (v4 is current, v2/v3 under /v<n>). */
@@ -97,7 +110,8 @@ const mainOnly = (plugin, ...args) =>
       !isCodegenFile(path) &&
       !isYogaFile(path) &&
       !isEnvelopFile(path) &&
-      !isInspectorFile(path),
+      !isInspectorFile(path) &&
+      !isProductFile(path),
     plugin,
     ...args,
   );
@@ -191,6 +205,7 @@ export default defineConfig({
     pagefindDevServer('/graphql/yoga-server/pagefind'),
     pagefindDevServer('/graphql/envelop/pagefind'),
     pagefindDevServer('/graphql/inspector/pagefind'),
+    ...products.map(slug => pagefindDevServer(`/graphql/${slug}/pagefind`)),
     mdx({
       processor: unified({
         remarkPlugins: [
@@ -214,6 +229,12 @@ export default defineConfig({
           inspectorOnly(remarkRelativeLinks, inspectorLinkOptions),
           inspectorOnly(remarkBasePath, { base: '/graphql/inspector' }),
           inspectorOnly(remarkTocMarkers),
+          ...products.flatMap(slug => [
+            scoped(isProductSlugFile(slug), remarkNpm2Yarn),
+            scoped(isProductSlugFile(slug), remarkRelativeLinks, productLinkOptions(slug)),
+            scoped(isProductSlugFile(slug), remarkBasePath, { base: `/graphql/${slug}` }),
+            scoped(isProductSlugFile(slug), remarkTocMarkers),
+          ]),
         ],
         rehypePlugins: [
           defaultShiki,
@@ -241,6 +262,12 @@ export default defineConfig({
             transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
           }),
           inspectorOnly(rehypeCode, {
+            langs: [...DOCS_CODE_LANGS],
+            themes: DOCS_CODE_THEMES,
+            transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
+          }),
+          // The registry products share one code-block setup.
+          scoped(isProductFile, rehypeCode, {
             langs: [...DOCS_CODE_LANGS],
             themes: DOCS_CODE_THEMES,
             transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
