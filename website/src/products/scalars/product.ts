@@ -10,8 +10,6 @@ export default {
   description: 'A collection of custom scalar types not included in base GraphQL.',
   repo: 'graphql-hive/graphql-scalars',
   branch: 'master',
-  // TEMPORARY: until graphql-hive/graphql-scalars's website-content-only branch merges.
-  contentRef: 'website-content-only',
   sections: [
     { base: '/docs', dir: 'docs', label: 'Documentation' },
     { base: '/changelog', dir: 'changelog', label: 'Changelog', breadcrumb: 'Changelog' },
