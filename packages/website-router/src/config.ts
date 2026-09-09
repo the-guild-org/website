@@ -24,11 +24,6 @@ export const jsonConfig = {
   } satisfies RewriteRecord,
   mappings: {
     // Rewrites
-    '/graphql/scalars': {
-      rewrite: 'graphql-scalars.pages.dev',
-      crisp: { segments: ['scalars'] },
-      sitemap: true,
-    },
     '/graphql/mesh': {
       rewrite: 'graphql-mesh-ai3.pages.dev',
       crisp: { segments: ['mesh'] },
