@@ -34,11 +34,6 @@ export const jsonConfig = {
       crisp: { segments: ['mesh'] },
       sitemap: true,
     },
-    '/graphql/sofa-api': {
-      rewrite: 'sofa.pages.dev',
-      crisp: { segments: ['sofa'] },
-      sitemap: true,
-    },
     '/graphql/tools': {
       rewrite: 'graphql-tools-8ja.pages.dev',
       crisp: { segments: ['tools'] },
