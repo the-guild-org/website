@@ -1,0 +1,379 @@
+---
+/**
+ * GraphQL Inspector landing page in the Hive brand, ported from the old
+ * React page: hero, the four ways to use it, a schema diff rendered at
+ * build time with @graphql-inspector/core (the old page ran the same diff
+ * live in a Monaco editor), the feature walkthrough, Hive, and the shared
+ * ecosystem section.
+ */
+import '~hive/styles/global.css';
+import checkIcon from '../../../inspector/assets/icons/check.svg?raw';
+import puzzleIcon from '../../../inspector/assets/icons/puzzle.svg?raw';
+import serverLineIcon from '../../../inspector/assets/icons/server-line.svg?raw';
+import timerLineIcon from '../../../inspector/assets/icons/timer-line.svg?raw';
+import BaseHead from '~hive/components/BaseHead.astro';
+import ToolsAndLibraries from '~hive/components/landing/ToolsAndLibraries.astro';
+import SiteFooter from '~hive/components/SiteFooter.astro';
+import SiteNavigation from '~hive/components/SiteNavigation.astro';
+import { Image } from 'astro:assets';
+import { Code } from 'astro:components';
+import { buildSchema } from 'graphql';
+import { diff } from '@graphql-inspector/core';
+import { withBase } from '../../../inspector/lib/base-path';
+import {
+  INSPECTOR_FOOTER,
+  INSPECTOR_LOGO,
+  INSPECTOR_REPO_URL,
+  INSPECTOR_SITE,
+  inspectorMark,
+} from '../../../inspector/lib/site';
+import annotations from '../../../inspector/assets/features/annotations.png';
+import intercept from '../../../inspector/assets/features/intercept.png';
+import notifications from '../../../inspector/assets/features/notifications.png';
+import schemaCheck from '../../../inspector/assets/features/schema-check.png';
+
+const description =
+  'Validate schemas and detect changes. Receive schema change notifications. Keep operations and fragments consistent.';
+
+const ways = [
+  {
+    title: 'Works with GitHub',
+    copy: 'Check every pull request with the GitHub Action: breaking, dangerous and safe changes, annotated in the diff.',
+    href: withBase('/docs/products/action'),
+    icon: checkIcon,
+  },
+  {
+    title: 'CI/CD',
+    copy: 'Runs in any continuous integration service with a modular, CI-suited version of the CLI.',
+    href: withBase('/docs/products/ci'),
+    icon: serverLineIcon,
+  },
+  {
+    title: 'Command line',
+    copy: 'Diff schemas, validate documents, measure coverage, find similar types and audit operations from your terminal.',
+    href: withBase('/docs/commands/diff'),
+    icon: timerLineIcon,
+  },
+  {
+    title: 'Programmatic API',
+    copy: 'Every command is a function in @graphql-inspector/core, ready to build your own tooling on top of.',
+    href: withBase('/docs/api/schema'),
+    icon: puzzleIcon,
+  },
+];
+
+// The old landing ran this diff live in the browser; the result is the same
+// for a fixed pair of schemas, so it is computed once at build time.
+const OLD_SCHEMA = `type Post {
+  id: ID!
+  title: String
+  createdAt: String
+  modifiedAt: String
+}
+
+type Query {
+  post: Post!
+  posts: [Post!]
+}`;
+const NEW_SCHEMA = `type Post {
+  id: ID!
+  title: String!
+  createdAt: String
+}
+
+type Query {
+  post: Post!
+}`;
+const changes = (await diff(buildSchema(OLD_SCHEMA), buildSchema(NEW_SCHEMA))).map(change => ({
+  level: change.criticality.level,
+  message: change.message,
+}));
+const levelStyle: Record<string, { label: string; className: string }> = {
+  BREAKING: { label: 'Breaking', className: 'bg-red-500/15 text-red-200 ring-red-400/40' },
+  DANGEROUS: { label: 'Dangerous', className: 'bg-amber-500/15 text-amber-200 ring-amber-400/40' },
+  NON_BREAKING: { label: 'Safe', className: 'bg-green-500/15 text-green-200 ring-green-400/40' },
+};
+
+const features = [
+  {
+    title: 'Detect changes',
+    copy: 'Prevent breaking changes on pull requests and pushes. Get a detailed summary of every proposed change to the schema and decide whether to accept it.',
+    href: withBase('/docs/commands/diff'),
+    image: schemaCheck,
+    alt: 'A pull request check reporting a successful schema validation',
+  },
+  {
+    title: 'In-code annotations',
+    copy: 'The GitHub Action annotates the schema file in the pull request diff, so the exact line of each change is visible where it was made.',
+    href: withBase('/docs/recipes/annotations'),
+    image: annotations,
+    alt: 'GitHub annotations placed on the changed lines of a schema file',
+  },
+  {
+    title: 'Notifications',
+    copy: 'Stay up to date with changes in your GraphQL schema. Receive notifications on Slack, Discord or via webhooks whenever changes land.',
+    href: withBase('/docs/notifications'),
+    image: notifications,
+    alt: 'A Slack message listing breaking, dangerous and safe schema changes',
+  },
+  {
+    title: 'Intercept via HTTP',
+    copy: 'On every schema check, your HTTP endpoint receives the list of changes and the pull request or commit. You decide the outcome.',
+    href: withBase('/docs/recipes/intercept'),
+    image: intercept,
+    alt: 'A serverless function deciding the check outcome from the list of changes',
+  },
+];
+
+const githubIcon = `<svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.17c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>`;
+const checkmark = `<svg fill="none" height="20" viewBox="0 0 20 20" width="20"><path d="M16.667 5 7.5 14.167 3.333 10" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round" stroke-width="1.5"></path></svg>`;
+const sectionTitle =
+  'group text-center text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]';
+const iconBadge =
+  'bg-green-1000 flex size-12 shrink-0 items-center justify-center rounded-xl text-white [&>svg]:size-6 [&>svg_path]:fill-current';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <BaseHead
+      description={description}
+      image={withBase('/assets/favicon.png')}
+      imageAlt="GraphQL Inspector"
+      site={INSPECTOR_SITE}
+      title="GraphQL Inspector"
+    />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'GraphQL Inspector',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Web',
+        url: INSPECTOR_SITE.url,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+      })}
+    />
+  </head>
+  <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
+    <SiteNavigation logo={INSPECTOR_LOGO} />
+    <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
+      <!-- Hero -->
+      <div
+        class="relative isolate mx-4 flex max-w-360 flex-col items-center gap-6 overflow-hidden rounded-3xl bg-blue-400 px-4 py-6 max-sm:mt-2 sm:py-16 md:mx-6 md:gap-8 lg:py-24"
+      >
+        <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+          <span
+            class="absolute top-1/2 -left-40 w-[420px] -translate-y-1/2 -rotate-12 text-white/30 md:-left-32 md:w-[520px] [&>svg]:w-full"
+            set:html={inspectorMark('fill="currentColor"')}
+          />
+          <span
+            class="absolute -right-56 -bottom-64 w-[560px] rotate-12 text-white/30 max-md:hidden md:w-[680px] [&>svg]:w-full"
+            set:html={inspectorMark('fill="currentColor"')}
+          />
+        </div>
+        <div
+          class="to-green-1000 relative flex size-24 items-center justify-center rounded-3xl bg-gradient-to-br from-green-800 text-white shadow-[0_12px_40px_-12px_rgba(0,52,44,0.6)] [&>svg]:size-12"
+          set:html={inspectorMark('fill="currentColor"')}
+        />
+        <h1
+          class="group relative mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]"
+        >
+          Keep your GraphQL schema honest
+        </h1>
+        <p class="relative mx-auto w-lg max-w-[80%] text-center leading-6 text-green-800">
+          Validate schemas and detect changes. Receive schema change notifications. Keep operations
+          and fragments consistent. Part of the{' '}
+          <a
+            class="hive-focus underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
+            href="https://the-guild.dev/graphql/hive"
+            title="Explore the Hive platform">Hive</a
+          >
+          {' '}ecosystem by{' '}
+          <a
+            class="hive-focus underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
+            href="https://the-guild.dev"
+            title="Visit The Guild">The Guild</a
+          >.
+        </p>
+        <ul
+          class="relative z-10 mx-auto flex list-none flex-col gap-x-6 gap-y-2 text-sm leading-[21px] font-medium md:flex-row [&>li]:flex [&>li]:items-center [&>li]:gap-2"
+        >
+          <li><span class="text-green-800" set:html={checkmark} />Breaking-change detection</li>
+          <li><span class="text-green-800" set:html={checkmark} />GitHub Action and CLI</li>
+          <li><span class="text-green-800" set:html={checkmark} />Coverage and validation</li>
+        </ul>
+        <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
+          <a
+            class="text-green-1000 bg-primary relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit"
+            href={withBase('/docs')}
+          >
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            Get started
+          </a>
+          <a
+            class="text-green-1000 relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit [&>svg]:size-6"
+            href={INSPECTOR_REPO_URL}
+          >
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            <Fragment set:html={githubIcon} />
+            GitHub
+          </a>
+        </div>
+      </div>
+
+      <!-- Four ways to use it -->
+      <section class="px-4 py-6 sm:py-12 md:px-6 lg:py-24 xl:px-30">
+        <h2 class={sectionTitle}>Use it however you work</h2>
+        <p class="mx-auto mt-4 max-w-2xl text-center leading-6 text-balance text-green-800">
+          The same checks are available as a GitHub Action, in your CI, from the command line, and
+          as a library.
+        </p>
+        <ul
+          class="mt-6 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2 md:mt-16 md:gap-6 xl:grid-cols-4"
+        >
+          {
+            ways.map(way => (
+              <li>
+                <a
+                  class="hive-focus bg-beige-100 hover:bg-beige-200 block h-full rounded-3xl p-8 transition-colors"
+                  href={way.href}
+                >
+                  <span class={iconBadge} set:html={way.icon} />
+                  <span class="mt-5 block text-xl leading-[1.4] font-medium">{way.title}</span>
+                  <span class="mt-4 block leading-6 text-green-800">{way.copy}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <!-- Schema diff -->
+      <section
+        class="bg-green-1000 relative isolate mx-4 overflow-hidden rounded-3xl p-8 text-white md:mx-6 md:p-[72px]"
+      >
+        <h2
+          class="group text-4xl leading-[1.2] tracking-[-0.48px] max-sm:text-[32px] md:text-5xl md:leading-[1.16667]"
+        >
+          Every change, classified
+        </h2>
+        <p class="mt-4 max-w-2xl text-white/80">
+          Inspector compares two schemas and explains each difference as breaking, dangerous or
+          safe. This is the output of <code class="font-mono text-sm">graphql-inspector diff</code>
+          for the two schemas below.
+        </p>
+        <div class="mt-8 grid gap-4 lg:grid-cols-[1fr_1fr_minmax(0,1.1fr)] lg:gap-6">
+          <div class="min-w-0">
+            <p class="mb-2 font-mono text-xs tracking-wide text-white/60 uppercase">Before</p>
+            <Code
+              class="rounded-xl bg-green-900! p-4 text-sm [&_code]:text-sm"
+              code={OLD_SCHEMA}
+              lang="graphql"
+              theme="github-dark"
+            />
+          </div>
+          <div class="min-w-0">
+            <p class="mb-2 font-mono text-xs tracking-wide text-white/60 uppercase">After</p>
+            <Code
+              class="rounded-xl bg-green-900! p-4 text-sm [&_code]:text-sm"
+              code={NEW_SCHEMA}
+              lang="graphql"
+              theme="github-dark"
+            />
+          </div>
+          <div class="min-w-0">
+            <p class="mb-2 font-mono text-xs tracking-wide text-white/60 uppercase">
+              {changes.length} changes detected
+            </p>
+            <ul class="flex list-none flex-col gap-3 p-0">
+              {
+                changes.map(change => (
+                  <li class="rounded-xl bg-green-900 p-4">
+                    <span
+                      class:list={[
+                        'inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ring-1',
+                        levelStyle[change.level]?.className,
+                      ]}
+                    >
+                      {levelStyle[change.level]?.label ?? change.level}
+                    </span>
+                    <p class="mt-2 text-sm leading-6 text-white/85">{change.message}</p>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+        <a
+          class="text-green-1000 bg-primary relative mt-8 inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40"
+          href={withBase('/docs/commands/diff')}
+        >
+          Learn about the diff command
+        </a>
+      </section>
+
+      <!-- Feature walkthrough -->
+      <section class="flex flex-col gap-6 px-4 py-6 sm:py-12 md:px-6 lg:gap-12 lg:py-24 xl:px-30">
+        {
+          features.map((feature, index) => (
+            <div
+              class:list={[
+                'bg-beige-100 flex flex-col gap-8 rounded-3xl p-8 lg:items-center lg:gap-16 lg:p-16',
+                index % 2 ? 'lg:flex-row-reverse' : 'lg:flex-row',
+              ]}
+            >
+              <div class="lg:basis-5/12">
+                <h2 class="group text-3xl leading-[1.2] tracking-[-0.48px] text-balance md:text-4xl">
+                  {feature.title}
+                </h2>
+                <p class="mt-4 leading-6 text-green-800">{feature.copy}</p>
+                <a
+                  class="hive-focus text-green-1000 mt-6 inline-flex items-center gap-1 font-medium underline decoration-green-800/30 underline-offset-4 hover:decoration-green-800"
+                  href={feature.href}
+                >
+                  Learn more →
+                </a>
+              </div>
+              <div class="min-w-0 grow">
+                <Image
+                  alt={feature.alt}
+                  class="mx-auto h-auto w-full max-w-2xl rounded-2xl shadow-[0_12px_40px_-16px_rgba(0,52,44,0.35)]"
+                  src={feature.image}
+                  widths={[640, 960, 1280]}
+                />
+              </div>
+            </div>
+          ))
+        }
+      </section>
+
+      <!-- Hive -->
+      <section
+        class="text-green-1000 mx-4 rounded-3xl bg-blue-400 p-8 text-center md:mx-6 md:p-16 lg:p-[72px]"
+      >
+        <h2 class={sectionTitle}>The engine behind Hive's schema registry</h2>
+        <p class="mx-auto mt-4 max-w-2xl leading-6 text-balance">
+          GraphQL Hive runs Inspector's change detection on every schema publish, across all your
+          services, with usage data to tell you whether a breaking change is actually breaking
+          anyone. Cloud-hosted or self-hosted, on top of the same open-source core.
+        </p>
+        <a
+          class="relative mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-green-800 px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40"
+          href="https://the-guild.dev/graphql/hive"
+        >
+          Explore Hive
+        </a>
+      </section>
+
+      <!-- Ecosystem (shared Hive section) -->
+      <ToolsAndLibraries class="mx-4 md:mx-6" />
+    </main>
+    <SiteFooter description={INSPECTOR_FOOTER.description} logo={INSPECTOR_FOOTER.logo} />
+  </body>
+</html>

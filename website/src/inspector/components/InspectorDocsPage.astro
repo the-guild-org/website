@@ -1,0 +1,82 @@
+---
+/**
+ * Renders one Inspector docs entry inside the Inspector docs chrome, with
+ * the MDX components the content uses.
+ */
+import Callout from '~hive/components/mdx/Callout.astro';
+import Card from '~hive/components/mdx/Card.astro';
+import CardsBase from '~hive/components/mdx/Cards.astro';
+import CodeBlock from '~hive/components/mdx/CodeBlock.astro';
+import File from '~hive/components/mdx/File.astro';
+import FileTreeBase from '~hive/components/mdx/Files.astro';
+import Folder from '~hive/components/mdx/Folder.astro';
+import PackageManagerTabs from '~hive/components/mdx/PackageManagerTabs.astro';
+import Steps from '~hive/components/mdx/Steps.astro';
+import PackageManagerTab from '~hive/components/mdx/Tab.astro';
+import Tab from '~hive/components/mdx/Tab.astro';
+import Table from '~hive/components/mdx/Table.astro';
+import TabsBase from '~hive/components/mdx/Tabs.astro';
+import { getHeadingHtmlBySlug } from '~hive/lib/docs-markdown';
+import { render } from 'astro:content';
+import type { DocsNav } from '../../docs/nav';
+import InspectorDocsLayout from '../layouts/InspectorDocsLayout.astro';
+import { INSPECTOR_REPO_URL } from '../lib/site';
+
+interface Props {
+  entry: {
+    body?: string;
+    data: { description?: string; sidebarTitle?: string; title?: string };
+    filePath?: string;
+    id: string;
+  };
+  nav: DocsNav;
+}
+
+const { entry, nav } = Astro.props;
+
+const Tabs = Object.assign(TabsBase, { Tab });
+const Cards = Object.assign(CardsBase, { Card });
+const FileTree = Object.assign(FileTreeBase, { File, Folder });
+
+const { Content, headings: renderedHeadings } = await render(entry as never);
+const headingHtmlBySlug = getHeadingHtmlBySlug(entry.body ?? '', renderedHeadings);
+const headings = renderedHeadings.map(heading => ({
+  ...heading,
+  html: headingHtmlBySlug.get(heading.slug) ?? heading.text,
+}));
+const slug = entry.id.replace(/(^|\/)index$/, '').replace(/\.(md|mdx)$/, '');
+const currentPath = `/docs${slug ? `/${slug}` : ''}`;
+const { data } = entry;
+const title =
+  data.title ?? data.sidebarTitle ?? (entry.id.split('/').at(-1) ?? entry.id).replace(/-/g, ' ');
+const extension = entry.filePath?.match(/\.mdx?$/)?.[0] ?? '.mdx';
+---
+
+<InspectorDocsLayout
+  currentPath={currentPath}
+  description={data.description || `${title} — GraphQL Inspector documentation.`}
+  docsBase="/docs"
+  githubUrl={`${INSPECTOR_REPO_URL}/blob/master/website/content/docs/${entry.id}${extension}`}
+  headings={headings}
+  longPage={(entry.body?.length ?? 0) > 60_000}
+  navItems={nav.items}
+  navTree={nav.tree}
+  searchSection="Documentation"
+  section="GraphQL Inspector"
+  title={title}
+>
+  <Content
+    components={{
+      Callout,
+      Cards,
+      Card,
+      FileTree,
+      PackageManagerTab,
+      PackageManagerTabs,
+      Steps,
+      Tabs,
+      pre: CodeBlock,
+      table: Table,
+    }}
+  />
+</InspectorDocsLayout>

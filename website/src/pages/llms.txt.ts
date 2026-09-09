@@ -40,6 +40,8 @@ export const GET: APIRoute = async () => {
 - [Full Envelop documentation as one file](${SITE}/graphql/envelop/llms-full.txt)
 - [GraphQL Scalars](${SITE}/graphql/scalars): custom scalar types
 - [GraphQL Inspector](${SITE}/graphql/inspector): schema change validation
+- [GraphQL Inspector documentation index for LLMs](${SITE}/graphql/inspector/llms.txt)
+- [Full GraphQL Inspector documentation as one file](${SITE}/graphql/inspector/llms-full.txt)
 
 ## Blog
 

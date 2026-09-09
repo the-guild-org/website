@@ -11,13 +11,14 @@ on:
   push:
     branches:
       - master
-  # Fired by dotansimha/graphql-code-generator and graphql-hive/graphql-yoga (Yoga
-  # and Envelop docs) when their docs content changes — the build fetches that content, so a
+  # Fired by dotansimha/graphql-code-generator, graphql-hive/graphql-yoga (Yoga
+  # and Envelop docs) and graphql-hive/graphql-inspector when their docs content changes — the build fetches that content, so a
   # redeploy picks it up.
   repository_dispatch:
     types:
       - codegen-content-update
       - yoga-content-update
+      - inspector-content-update
 
 jobs:
   build:

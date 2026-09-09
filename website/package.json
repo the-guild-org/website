@@ -4,16 +4,18 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "pnpm run fetch:codegen && pnpm run fetch:yoga && pnpm run fetch:envelop && astro check && astro build && pnpm run postbuild:hive && pnpm run postbuild:codegen && pnpm run postbuild:yoga && pnpm run postbuild:envelop && pnpm run postbuild:verify",
+    "build": "pnpm run fetch:codegen && pnpm run fetch:yoga && pnpm run fetch:envelop && pnpm run fetch:inspector && astro check && astro build && pnpm run postbuild:hive && pnpm run postbuild:codegen && pnpm run postbuild:yoga && pnpm run postbuild:envelop && pnpm run postbuild:inspector && pnpm run postbuild:verify",
     "check": "astro check",
     "check-seo": "node scripts/hive/check-seo.ts",
     "dev": "astro dev",
     "fetch:codegen": "node scripts/codegen/fetch-content.ts && node scripts/codegen/fetch-npm-info.ts",
     "fetch:envelop": "node scripts/envelop/fetch-content.ts && node scripts/envelop/fetch-plugins.ts",
+    "fetch:inspector": "node scripts/inspector/fetch-content.ts",
     "fetch:yoga": "node scripts/yoga/fetch-content.ts",
     "postbuild:codegen": "node scripts/codegen/generate-sitemap.ts && node scripts/codegen/generate-redirects.ts && pagefind --site dist/graphql/codegen",
     "postbuild:envelop": "node scripts/envelop/generate-sitemap.ts && node scripts/envelop/generate-redirects.ts && pagefind --site dist/graphql/envelop",
     "postbuild:hive": "node scripts/hive/generate-sitemap.ts && node scripts/hive/generate-redirects.ts && node scripts/hive/generate-headers.ts && pagefind --site dist/graphql/hive",
+    "postbuild:inspector": "node scripts/inspector/generate-sitemap.ts && node scripts/inspector/generate-redirects.ts && pagefind --site dist/graphql/inspector",
     "postbuild:verify": "node scripts/hive/verify-base-path.ts && node scripts/verify-sitemaps.ts && node scripts/hive/check-seo.ts",
     "postbuild:yoga": "node scripts/yoga/generate-sitemap.ts && node scripts/yoga/generate-redirects.ts && pagefind --site dist/graphql/yoga-server",
     "postinstall": "playwright install chromium",
@@ -41,6 +43,8 @@
     "unified": "11.0.5"
   },
   "devDependencies": {
+    "@graphql-inspector/core": "8.0.0",
+    "graphql": "17.0.2",
     "pagefind": "1.5.2",
     "playwright": "1.62.1",
     "typescript": "5.9.3",
