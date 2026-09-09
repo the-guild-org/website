@@ -64,7 +64,6 @@ const EXTERNAL_DEPLOYMENT_PREFIXES = [
   '/graphql/tools',
   '/graphql/mesh',
   '/graphql/scalars',
-  '/graphql/inspector',
   '/graphql/apollo-angular',
   '/graphql/sofa-api',
   '/graphql/modules',

@@ -226,6 +226,15 @@ const envelopLegacy = defineCollection({
   schema: codegenDocsSchema,
 });
 
+const inspectorDocs = defineCollection({
+  loader: glob({
+    base: './src/inspector/content/docs',
+    generateId: generateHiveId,
+    pattern: '**/*.{md,mdx}',
+  }),
+  schema: codegenDocsSchema,
+});
+
 export const collections = {
   blog,
   caseStudies,
@@ -235,6 +244,7 @@ export const collections = {
   envelopDocs,
   envelopLegacy,
   hiveBlog,
+  inspectorDocs,
   productUpdates,
   yogaChangelogs,
   yogaDocs,

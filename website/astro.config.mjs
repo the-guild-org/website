@@ -35,6 +35,14 @@ const isHiveFile = path => typeof path === 'string' && path.includes('/src/hive/
 const isCodegenFile = path => typeof path === 'string' && path.includes('/src/codegen/');
 const isYogaFile = path => typeof path === 'string' && path.includes('/src/yoga/');
 const isEnvelopFile = path => typeof path === 'string' && path.includes('/src/envelop/');
+const isInspectorFile = path => typeof path === 'string' && path.includes('/src/inspector/');
+
+const inspectorContentDir = fileURLToPath(new URL('./src/inspector/content', import.meta.url));
+/** Inspector content: a single docs section. */
+const inspectorLinkOptions = {
+  collections: [],
+  fallback: { base: '/docs', directory: join(inspectorContentDir, 'docs') },
+};
 
 const envelopContentDir = fileURLToPath(new URL('./src/envelop/content', import.meta.url));
 /** Envelop content collections for relative-link resolution (v4 is current, v2/v3 under /v<n>). */
@@ -79,10 +87,17 @@ const codegenOnly = (plugin, ...args) => scoped(isCodegenFile, plugin, ...args);
 const yogaOnly = (plugin, ...args) => scoped(isYogaFile, plugin, ...args);
 /** Runs only on Envelop files (content fetched into src/envelop). */
 const envelopOnly = (plugin, ...args) => scoped(isEnvelopFile, plugin, ...args);
+/** Runs only on Inspector files (content fetched into src/inspector). */
+const inspectorOnly = (plugin, ...args) => scoped(isInspectorFile, plugin, ...args);
 /** Runs on everything except docs-product files (including files without a path). */
 const mainOnly = (plugin, ...args) =>
   scoped(
-    path => !isHiveFile(path) && !isCodegenFile(path) && !isYogaFile(path) && !isEnvelopFile(path),
+    path =>
+      !isHiveFile(path) &&
+      !isCodegenFile(path) &&
+      !isYogaFile(path) &&
+      !isEnvelopFile(path) &&
+      !isInspectorFile(path),
     plugin,
     ...args,
   );
@@ -175,6 +190,7 @@ export default defineConfig({
     pagefindDevServer('/graphql/codegen/pagefind'),
     pagefindDevServer('/graphql/yoga-server/pagefind'),
     pagefindDevServer('/graphql/envelop/pagefind'),
+    pagefindDevServer('/graphql/inspector/pagefind'),
     mdx({
       processor: unified({
         remarkPlugins: [
@@ -194,6 +210,10 @@ export default defineConfig({
           envelopOnly(remarkRelativeLinks, envelopLinkOptions),
           envelopOnly(remarkBasePath, { base: '/graphql/envelop' }),
           envelopOnly(remarkTocMarkers),
+          inspectorOnly(remarkNpm2Yarn),
+          inspectorOnly(remarkRelativeLinks, inspectorLinkOptions),
+          inspectorOnly(remarkBasePath, { base: '/graphql/inspector' }),
+          inspectorOnly(remarkTocMarkers),
         ],
         rehypePlugins: [
           defaultShiki,
@@ -216,6 +236,11 @@ export default defineConfig({
             transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
           }),
           envelopOnly(rehypeCode, {
+            langs: [...DOCS_CODE_LANGS],
+            themes: DOCS_CODE_THEMES,
+            transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
+          }),
+          inspectorOnly(rehypeCode, {
             langs: [...DOCS_CODE_LANGS],
             themes: DOCS_CODE_THEMES,
             transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],

@@ -1,0 +1,19 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import InspectorDocsPage from '../../../../inspector/components/InspectorDocsPage.astro';
+import { getInspectorDocsNav } from '../../../../inspector/lib/docs-nav';
+
+type Entry = CollectionEntry<'inspectorDocs'>;
+
+export async function getStaticPaths() {
+  const entries = await getCollection('inspectorDocs');
+  return entries.map(entry => ({
+    params: { slug: entry.id.replace(/\.(md|mdx)$/, '').replace(/(^|\/)index$/, '') || undefined },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props as { entry: Entry };
+---
+
+<InspectorDocsPage entry={entry} nav={await getInspectorDocsNav()} />

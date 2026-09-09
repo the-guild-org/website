@@ -67,12 +67,14 @@ for (const rule of readRedirects()) {
     rule.destination.startsWith('/') &&
     rule.destination !== base &&
     !rule.destination.startsWith(`${base}/`) &&
-    // Codegen, Yoga and Envelop rules are added by their own generate-redirects
+    // Codegen, Yoga, Envelop and Inspector rules are added by their own generate-redirects
     // scripts and are correctly prefixed with their mounts.
     !rule.destination.startsWith('/graphql/codegen') &&
     !rule.destination.startsWith('/graphql/yoga-server') &&
     rule.destination !== '/graphql/envelop' &&
-    !rule.destination.startsWith('/graphql/envelop/')
+    !rule.destination.startsWith('/graphql/envelop/') &&
+    rule.destination !== '/graphql/inspector' &&
+    !rule.destination.startsWith('/graphql/inspector/')
   ) {
     report('_redirects', rule.destination);
   }
