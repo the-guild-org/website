@@ -480,6 +480,15 @@ option above, which controls compression between the client and the router.
   `compression.response.accept_encoding` settings.
 </Callout>
 
+<Callout type="info">
+  A subgraph response with `Content-Encoding: identity` (the [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110#name-identity-2)
+  token meaning "no encoding"), or with an empty `Content-Encoding` value, is
+  treated the same as a response with no `Content-Encoding` header at all: the
+  body is passed through unchanged rather than failing with a decompression
+  error. Only an unrecognized compression algorithm surfaces a decompression
+  error.
+</Callout>
+
 ```yaml title="router.config.yaml"
 traffic_shaping:
   all:
