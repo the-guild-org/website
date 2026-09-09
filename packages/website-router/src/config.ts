@@ -29,11 +29,6 @@ export const jsonConfig = {
       crisp: { segments: ['scalars'] },
       sitemap: true,
     },
-    '/graphql/inspector': {
-      rewrite: 'graphql-inspector.pages.dev',
-      crisp: { segments: ['inspector'] },
-      sitemap: true,
-    },
     '/graphql/mesh': {
       rewrite: 'graphql-mesh-ai3.pages.dev',
       crisp: { segments: ['mesh'] },
