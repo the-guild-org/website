@@ -1,0 +1,110 @@
+---
+title: MCP Resources and Dynamic Operations
+sidebarTitle: Resources and Dynamic Operations
+description:
+  Serve static and templated MCP resources from Hive Gateway, and load tool operations from an
+  external source with live updates.
+---
+
+Besides tools, an MCP server can offer resources: documents agents read for context, such as an API
+guide or a schema. The plugin serves static resources and parameterized resource templates, and it
+can also load the operations behind your tools from an external source at runtime.
+
+## Static resources
+
+Resources are listed with `resources/list` and fetched with `resources/read`. Each one has a `uri`,
+a `name` and content from one of three sources:
+
+- `text`: an inline string
+- `blob`: inline base64-encoded binary content
+- `file`: a path read from disk at startup
+
+```ts title="gateway.config.ts"
+useMCP(ctx, {
+  name: 'my-api',
+  resources: [
+    {
+      name: 'api-guide',
+      uri: 'docs://api-guide',
+      mimeType: 'text/markdown',
+      text: '# API Guide\n\nUse get_users to fetch user data.'
+    },
+    {
+      name: 'icon',
+      uri: 'files://icon.png',
+      mimeType: 'image/png',
+      blob: 'iVBOR...'
+    },
+    {
+      name: 'schema',
+      uri: 'files://schema.graphql',
+      file: './schema.graphql'
+    }
+  ]
+})
+```
+
+`mimeType` defaults to `text/plain`. For `file` resources the plugin reads the file as text or as
+binary based on the MIME type; set `binary` explicitly to override. Resources also accept `title`,
+`description`, `icons`, `annotations` (`audience`, `priority`, `lastModified`) and a
+`descriptionProvider`.
+
+## Resource templates
+
+A resource template describes a family of resources with a URI pattern. Placeholders in
+`uriTemplate` become the parameters of a `handler` that produces the content on demand:
+
+```ts title="gateway.config.ts"
+useMCP(ctx, {
+  name: 'my-api',
+  resourceTemplates: [
+    {
+      uriTemplate: 'users://{id}',
+      name: 'User Profile',
+      description: 'Get a user profile by ID',
+      mimeType: 'application/json',
+      handler: async params => ({
+        text: JSON.stringify({ id: params['id'], source: 'gateway' })
+      })
+    }
+  ]
+})
+```
+
+Templates are listed with `resources/templates/list`. The handler returns either `text` or `blob`,
+optionally with a `mimeType` override for that response.
+
+## Dynamic operations loader
+
+Instead of shipping operation files with the gateway, a `loader` fetches the operations source from
+anywhere (a CDN, an object store, a persisted-documents service) when the gateway starts, and can
+subscribe to updates:
+
+```ts title="gateway.config.ts"
+useMCP(ctx, {
+  name: 'my-api',
+  loader: {
+    async load() {
+      const res = await fetch('https://my-cdn.example.com/operations.graphql')
+      return res.text()
+    },
+    onUpdate(callback) {
+      const interval = setInterval(async () => {
+        const res = await fetch('https://my-cdn.example.com/operations.graphql')
+        callback(await res.text())
+      }, 60_000)
+      return () => clearInterval(interval)
+    }
+  }
+})
+```
+
+- `load()` is called once at startup and returns the raw GraphQL source, which may contain several
+  operations. Tools declared with `@mcpTool` in that source are registered, and the other operations
+  are available to `source.type: "graphql"` tools.
+- `onUpdate` is called after a successful `load()`. Invoke the callback with the full new source
+  whenever it changes; the plugin re-parses it and rebuilds the tool registry. Return a cleanup
+  function to unsubscribe when the plugin is disposed.
+- If `load()` rejects, the error is logged, `onUpdate` is not called, and the gateway keeps running
+  with the tools from the other sources. Implement retries inside `load()` if you need automatic
+  recovery.
