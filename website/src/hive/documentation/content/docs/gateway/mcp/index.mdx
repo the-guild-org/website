@@ -13,14 +13,21 @@ becomes an MCP server: you pick the GraphQL operations you want to expose, and e
 tool that agents can list and execute, complete with typed input and output schemas derived from
 your supergraph.
 
-```text
-AI Agent  --MCP JSON-RPC-->  /mcp endpoint  --GraphQL-->  your subgraphs
+```mermaid
+flowchart LR
+    agent["AI agent"] -- "MCP (JSON-RPC)" --> gateway["Hive Gateway<br/><code>/mcp</code> endpoint"]
+    gateway -- GraphQL --> subgraphs["Your subgraphs"]
 ```
 
 The gateway takes care of loading the schema, generating input and output schemas, validating
 arguments and formatting responses. You only define which operations become tools. The plugin
 implements the `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read` and
 `resources/templates/list` MCP methods.
+
+<Callout type="warning">
+  The MCP plugin is in beta. Its configuration and behavior may change between releases as the
+  protocol and the plugin evolve, and these docs are updated alongside it.
+</Callout>
 
 <Callout type="info">
   The plugin is available on the JavaScript distributions of Hive Gateway (the `hive-gateway` CLI
