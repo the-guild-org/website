@@ -101,7 +101,7 @@ function fetchSource(product: ProductDefinition): { dir: string; temporary: bool
  */
 function changelogBody(markdown: string): string {
   const lines = markdown.trim().split('\n');
-  if (/^# /.test(lines[0] ?? '') && !/\d+\.\d+/.test(lines[0])) lines.shift();
+  if (/^ {0,3}# /.test(lines[0] ?? '') && !/\d+\.\d+/.test(lines[0])) lines.shift();
   let fence: string | null = null;
   return lines
     .map(line => {
@@ -111,7 +111,8 @@ function changelogBody(markdown: string): string {
         else if (line.trim().startsWith(fence)) fence = null;
         return line;
       }
-      return fence === null && line.startsWith('# ') ? `#${line}` : line;
+      // Up to three leading spaces still make a heading.
+      return fence === null ? line.replace(/^( {0,3})# /, '$1## ') : line;
     })
     .join('\n')
     .trim();
