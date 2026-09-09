@@ -10,8 +10,6 @@ export default {
   description: 'One configuration for all your GraphQL tools.',
   repo: 'graphql-hive/graphql-config',
   branch: 'master',
-  // TEMPORARY: until graphql-hive/graphql-config's website-content-only branch merges.
-  contentRef: 'website-content-only',
   sections: [
     { base: '/docs', dir: 'docs', label: 'Documentation' },
     { base: '/changelog', dir: 'changelog', label: 'Changelog', breadcrumb: 'Changelog' },
