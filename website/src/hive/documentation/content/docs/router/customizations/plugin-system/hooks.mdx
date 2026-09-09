@@ -451,8 +451,8 @@ query/subscription dedupe fingerprint. Requests with different partitions are ne
 the same in-flight response, even if [`traffic_shaping.router.dedupe.headers`](/docs/router/configuration/traffic_shaping#routerdedupeheaders)
 would otherwise treat them as identical - useful for partitioning by an authenticated user extracted
 from a header without hashing the entire header value. This method is only available from
-`on_http_request` and `on_graphql_params`, since those are the only hooks that run before the router
-computes the fingerprint.
+`on_http_request`, `on_graphql_params`, and `on_graphql_validation`, since those are the only hooks
+that run before the router computes the fingerprint.
 
 ```rust
 fn on_http_request<'req>(
@@ -729,6 +729,24 @@ async fn on_graphql_validation<'exec>(
     payload: OnGraphQLValidationStartHookPayload<'exec>,
 ) -> OnGraphQLValidationStartHookResult<'exec> {
     payload.with_validation_rule(MyCustomValidationRule::new()).proceed()
+}
+```
+
+**Add a custom dedupe partition**
+
+Call `add_inbound_dedupe_partition` to mix an extra value into the router's inbound
+query/subscription dedupe fingerprint, derived from the parsed operation document (available here
+before the router computes the fingerprint). See
+[Add a custom dedupe partition](#on_http_request) under `on_http_request` for the full explanation.
+
+```rust
+async fn on_graphql_validation<'exec>(
+    &'exec self,
+    payload: OnGraphQLValidationStartHookPayload<'exec>,
+) -> OnGraphQLValidationStartHookResult<'exec> {
+    let partition = compute_partition_from_document(&payload.document);
+    payload.add_inbound_dedupe_partition(partition);
+    payload.proceed()
 }
 ```
 
