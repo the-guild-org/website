@@ -99,24 +99,28 @@ for (const product of await selectedProducts()) {
   const { dir: source, temporary } = fetchSource(product);
   const website = join(source, 'website');
 
-  rmSync(contentDir, { recursive: true, force: true });
-  rmSync(publicDir, { recursive: true, force: true });
-  cpSync(join(website, 'content'), contentDir, { recursive: true });
-  mkdirSync(publicDir, { recursive: true });
-  cpSync(join(website, 'assets'), join(publicDir, 'assets'), { recursive: true });
-  if (product.changelog) {
-    // The package changelog as a page: its own h1 goes, the title comes from frontmatter.
-    const body = readFileSync(join(source, product.changelog), 'utf8')
-      .replace(/^# .+\n+/, '')
-      .trim();
-    mkdirSync(join(contentDir, 'changelog'), { recursive: true });
-    writeFileSync(
-      join(contentDir, 'changelog', 'index.md'),
-      `---\ntitle: Changelog\ndescription: ${JSON.stringify(`Every ${product.name} release with its changes and the pull requests behind them.`)}\n---\n\n${body || 'No published releases yet.'}\n`,
-    );
+  try {
+    rmSync(contentDir, { recursive: true, force: true });
+    rmSync(publicDir, { recursive: true, force: true });
+    cpSync(join(website, 'content'), contentDir, { recursive: true });
+    mkdirSync(publicDir, { recursive: true });
+    cpSync(join(website, 'assets'), join(publicDir, 'assets'), { recursive: true });
+    if (product.changelog) {
+      // The package changelog as a page: its own h1 goes, the title comes from frontmatter.
+      const body = readFileSync(join(source, product.changelog), 'utf8')
+        .replace(/^# .+\n+/, '')
+        .trim();
+      mkdirSync(join(contentDir, 'changelog'), { recursive: true });
+      writeFileSync(
+        join(contentDir, 'changelog', 'index.md'),
+        `---\ntitle: Changelog\ndescription: ${JSON.stringify(`Every ${product.name} release with its changes and the pull requests behind them.`)}\n---\n\n${body || 'No published releases yet.'}\n`,
+      );
+    }
+  } finally {
+    // The clone is only an input; drop it whether or not the copy succeeded.
+    if (temporary) rmSync(source, { recursive: true, force: true });
   }
 
-  if (temporary) rmSync(source, { recursive: true, force: true });
   const docsCount = globSync('**/*.{md,mdx}', { cwd: contentDir }).length;
   console.log(`[${product.slug}] content ready: ${docsCount} pages`);
 }
