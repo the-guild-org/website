@@ -24,11 +24,6 @@ export const jsonConfig = {
   } satisfies RewriteRecord,
   mappings: {
     // Rewrites
-    '/graphql/mesh': {
-      rewrite: 'graphql-mesh-ai3.pages.dev',
-      crisp: { segments: ['mesh'] },
-      sitemap: true,
-    },
     '/graphql/shield': {
       redirect: 'https://github.com/maticzav/graphql-shield',
       status: 302,
