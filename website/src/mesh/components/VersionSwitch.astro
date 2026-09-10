@@ -1,0 +1,42 @@
+---
+/** Segmented control linking the current (v1) docs and the v0 docs kept under /docs. */
+import { withBase } from '../lib/base-path';
+
+interface Props {
+  current: 'v1' | 'v0';
+}
+
+const { current } = Astro.props;
+const versions = [
+  { href: withBase('/v1'), label: 'v1', latest: true, value: 'v1' },
+  { href: withBase('/docs'), label: 'v0', latest: false, value: 'v0' },
+];
+---
+
+<nav
+  aria-label="Documentation version"
+  class="not-prose bg-beige-200 mb-8 inline-flex items-center gap-0.5 rounded-full p-1 text-sm dark:bg-neutral-800"
+  data-pagefind-ignore
+>
+  {
+    versions.map(version => (
+      <a
+        aria-current={version.value === current ? 'page' : undefined}
+        class:list={[
+          'hive-focus flex items-center gap-1.5 rounded-full px-3.5 py-1.5 font-medium no-underline transition-colors',
+          version.value === current
+            ? 'text-green-1000 bg-white shadow-sm dark:bg-neutral-700 dark:text-white'
+            : 'hover:text-green-1000 text-green-800 hover:bg-white/60 dark:text-neutral-400 dark:hover:bg-neutral-700/60 dark:hover:text-white',
+        ]}
+        href={version.href}
+      >
+        {version.label}
+        {version.latest && (
+          <span class="rounded-full bg-green-800 px-1.5 py-px text-[10px] leading-4 font-medium tracking-wide text-white uppercase dark:bg-green-700">
+            latest
+          </span>
+        )}
+      </a>
+    ))
+  }
+</nav>

@@ -1,0 +1,36 @@
+---
+import '~hive/styles/global.css';
+import BaseHead from '~hive/components/BaseHead.astro';
+import SiteFooter from '~hive/components/SiteFooter.astro';
+import SiteNavigation from '~hive/components/SiteNavigation.astro';
+import ExamplesSandbox from '../../../mesh/components/ExamplesSandbox.astro';
+import { MESH_FOOTER, MESH_LOGO, MESH_SITE } from '../../../mesh/lib/site';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <BaseHead
+      description="Live examples of GraphQL Mesh composing OpenAPI, JSON Schema, OData, SOAP, gRPC, databases and more into one graph."
+      site={MESH_SITE}
+      title="Examples | GraphQL Mesh"
+    />
+  </head>
+  <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
+    <SiteNavigation logo={MESH_LOGO} />
+    <main class="text-green-1000 light mx-auto max-w-360 px-4 py-6 md:px-6">
+      <h1
+        class="group text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]"
+      >
+        Live examples
+      </h1>
+      <p class="mt-4 leading-6 text-green-800">
+        Pick an example from the repository and run it in your browser.
+      </p>
+      <ExamplesSandbox class="mt-8" />
+    </main>
+    <SiteFooter description={MESH_FOOTER.description} logo={MESH_FOOTER.logo} />
+  </body>
+</html>

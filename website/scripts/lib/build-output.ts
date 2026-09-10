@@ -20,6 +20,7 @@ export const SITEMAPS = [
   '/graphql/yoga-server/sitemap.xml',
   '/graphql/envelop/sitemap.xml',
   '/graphql/inspector/sitemap.xml',
+  '/graphql/mesh/sitemap.xml',
 ];
 
 /** Public URL path served by a dist html file (build.format: "file"). */

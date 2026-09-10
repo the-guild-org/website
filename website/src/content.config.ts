@@ -209,6 +209,22 @@ const envelopDocs = defineCollection({
   schema: codegenDocsSchema,
 });
 
+/**
+ * GraphQL Mesh content is fetched from the graphql-mesh repo by
+ * scripts/mesh/fetch-content.ts (run in prebuild) — gitignored and empty
+ * until it runs. v1 is current (served under /v1); v0 stays under /docs.
+ */
+const meshContentRoot = './src/mesh/content';
+
+const meshDocs = defineCollection({
+  loader: glob({
+    base: `${meshContentRoot}/v1`,
+    generateId: generateHiveId,
+    pattern: '**/*.{md,mdx}',
+  }),
+  schema: codegenDocsSchema,
+});
+
 const envelopLegacy = defineCollection({
   loader: glob({
     base: envelopContentRoot,
@@ -221,6 +237,15 @@ const envelopLegacy = defineCollection({
 const inspectorDocs = defineCollection({
   loader: glob({
     base: './src/inspector/content/docs',
+    generateId: generateHiveId,
+    pattern: '**/*.{md,mdx}',
+  }),
+  schema: codegenDocsSchema,
+});
+
+const meshLegacy = defineCollection({
+  loader: glob({
+    base: `${meshContentRoot}/docs`,
     generateId: generateHiveId,
     pattern: '**/*.{md,mdx}',
   }),
@@ -256,6 +281,8 @@ export const collections = {
   envelopLegacy,
   hiveBlog,
   inspectorDocs,
+  meshDocs,
+  meshLegacy,
   productUpdates,
   yogaChangelogs,
   yogaDocs,

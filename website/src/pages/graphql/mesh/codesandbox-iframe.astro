@@ -1,0 +1,56 @@
+---
+/**
+ * Host page for the live-examples sandbox: embeds a CodeSandbox for one of
+ * the repo's examples and switches it on a `set-dir` message from the
+ * parent page (the landing and /examples pages).
+ */
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>GraphQL Mesh Example</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: #0d0d0d;
+      }
+      iframe {
+        position: fixed;
+        border: 0;
+        width: 100%;
+        height: 100%;
+      }
+      body > .crisp-client {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>JavaScript is required to load the example.</noscript>
+    <iframe
+      loading="eager"
+      sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+      src="https://codesandbox.io/embed/github/ardatan/graphql-mesh/tree/master/examples/json-schema-example"
+      tabindex="-1"
+      title="Example"></iframe>
+    <script is:inline>
+      window.addEventListener('message', event => {
+        if (event.origin !== window.location.origin) return;
+        if (!event.data || event.data.type !== 'set-dir') return;
+        const dir = String(event.data.dir ?? '');
+        if (!/^[a-z0-9-]+$/i.test(dir)) return;
+        document.querySelector('iframe').src =
+          `https://codesandbox.io/embed/github/ardatan/graphql-mesh/tree/master/examples/${encodeURIComponent(dir)}`;
+      });
+    </script>
+  </body>
+</html>

@@ -80,7 +80,8 @@ for (const rule of readRedirects()) {
     !rule.destination.startsWith('/graphql/inspector/') &&
     !servedMounts.some(
       mount => rule.destination === mount || rule.destination.startsWith(`${mount}/`),
-    )
+    ) &&
+    !rule.destination.startsWith('/graphql/mesh')
   ) {
     report('_redirects', rule.destination);
   }

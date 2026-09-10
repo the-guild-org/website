@@ -1,0 +1,71 @@
+name: mesh-docs-preview
+
+# Builds the site with the docs content from a graphql-mesh PR and
+# deploys it as a Pages preview at
+# https://mesh-pr-<n>.guild-dev-website.pages.dev.
+# Fired by that repo's docs-preview workflow (repository_dispatch), or by
+# hand with a PR number (workflow_dispatch).
+
+on:
+  repository_dispatch:
+    types:
+      - mesh-docs-preview
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: graphql-mesh PR number
+        required: true
+
+concurrency:
+  group: mesh-docs-preview-${{ github.event.client_payload.pr || inputs.pr }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      MESH_PR: ${{ github.event.client_payload.pr || inputs.pr }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          # PR content is rendered during the build; keep the token out of .git/config.
+          persist-credentials: false
+
+      - name: cache playwright browsers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: cache astro image optimization
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: website/node_modules/.astro
+          key: ${{ runner.os }}-astro-assets-mesh-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-astro-assets-
+
+      - uses: ./.github/actions/setup
+        name: setup env
+
+      - name: validate the PR number
+        run: |
+          [[ "$MESH_PR" =~ ^[0-9]+$ ]] || { echo "MESH_PR must be numeric, got: $MESH_PR"; exit 1; }
+      - name: build with PR content
+        env:
+          MESH_REPO_REF: refs/pull/${{ env.MESH_PR }}/head
+        run: pnpm --filter website build
+
+      - name: deploy preview
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: >
+          pnpm exec wrangler pages deploy website/dist --project-name=guild-dev-website
+          --branch=mesh-pr-${{ env.MESH_PR }}
