@@ -265,8 +265,8 @@ Top-level OpenTelemetry tracing configuration.
 | `max_attributes_per_span`  | `integer` | `128`   | Maximum attributes to record per span.                                                                                  |
 | `max_attributes_per_event` | `integer` | `16`    | Maximum attributes to record per span event.                                                                            |
 | `max_attributes_per_link`  | `integer` | `32`    | Maximum attributes to record per span link.                                                                             |
-| `sampling`                 | `number`  | `1.0`   | Sampling ratio between `0.0` and `1.0`. Can also be set via the `TELEMETRY_TRACING_SAMPLING_RATE` environment variable. |
-| `parent_based_sampler`     | `boolean` | `false` | Inherit sampling decisions from parent span.                                                                            |
+| `sampling`                 | `number`  | `1.0`   | Sampling ratio between `0.0` and `1.0`. Can also be set via `TELEMETRY_TRACING_SAMPLING_RATE`. With Datadog, this is the provider-wide catch-all rate. |
+| `parent_based_sampler`     | `boolean` | `false` | Inherit sampling decisions from the parent span with the generic OpenTelemetry provider. Datadog uses its native parent-aware sampler. |
 
 `propagation` - Incoming and outgoing trace context propagation formats.
 
@@ -292,14 +292,19 @@ context into outgoing requests.
 
 List of exporters used to send traces.
 
-Each item in this array defines one exporter instance, so you can configure multiple OTLP
-destinations if needed.
+Each item in this array defines one exporter instance. OTLP, stdout, Hive Console tracing, and one
+enabled native Datadog exporter can share the same tracer provider.
 
-This reference documents the OTLP exporter configuration.
+| Field     | Type      | Default | Notes                                           |
+| --------- | --------- | ------- | ----------------------------------------------- |
+| `kind`    | `string`  | -       | Exporter kind: `otlp`, `stdout`, or `datadog`. |
+| `enabled` | `boolean` | `true`  | Enables or disables this exporter.              |
+
+### `otlp`
 
 | Field             | Type                 | Default | Notes                                                                        |
 | ----------------- | -------------------- | ------- | ---------------------------------------------------------------------------- |
-| `kind`            | `string`             | -       | Exporter kind. Supported value: `otlp`.                                      |
+| `kind`            | `string`             | -       | Must be `otlp`.                                                              |
 | `enabled`         | `boolean`            | `true`  | Enables or disables this exporter.                                           |
 | `endpoint`        | `StringOrExpression` | -       | OTLP endpoint. Must be set explicitly.                                       |
 | `batch_processor` | `object`             | -       | See [`batch_processor`](#telemetry-tracing-exporters-batch-processor) below. |
@@ -357,6 +362,51 @@ telemetry:
           metadata:
             x-api-key: key
 ```
+
+### `datadog`
+
+Native Datadog tracing sends traces to a Datadog Agent and uses Datadog's provider-wide sampler.
+Only one Datadog exporter can be enabled.
+
+| Field                      | Type                 | Default | Notes                                                                                      |
+| -------------------------- | -------------------- | ------- | ------------------------------------------------------------------------------------------ |
+| `kind`                     | `string`             | -       | Must be `datadog`.                                                                         |
+| `enabled`                  | `boolean`            | `true`  | Enables or disables this exporter.                                                         |
+| `endpoint`                 | `StringOrExpression` | -       | Optional Datadog Agent trace endpoint. Normally uses port `8126`, not OTLP port `4317`.     |
+| `include_graphql_document` | `boolean`            | `false` | Records `graphql.document`, which may contain full queries and sensitive literal values.   |
+
+```yaml title="router.config.yaml"
+telemetry:
+  tracing:
+    collect:
+      sampling: 0.01
+    exporters:
+      - kind: datadog
+        endpoint:
+          expression: env("DD_TRACE_AGENT_URL")
+        include_graphql_document: false
+```
+
+When `endpoint` is omitted, Datadog uses `DD_TRACE_AGENT_URL`, `DD_AGENT_HOST`,
+`DD_TRACE_AGENT_PORT`, or its native default. Configured endpoints are resolved and validated at
+startup, but Agent reachability is not probed.
+
+`collect.sampling` overrides `DD_TRACE_SAMPLE_RATE` as Datadog's catch-all rate. More specific
+`DD_TRACE_SAMPLING_RULES`, remote configuration, and `DD_TRACE_RATE_LIMIT` still apply. Explicit
+sampling has a default ceiling of 100 retained traces per second. Datadog continues recording
+non-retained requests for request, error, and latency statistics, including when `sampling` is
+`0.0`.
+
+`parent_based_sampler` does not configure Datadog. Mixed OTLP, stdout, and Hive processors receive
+only sampled spans. `DD_TRACE_ENABLED=false` disables every processor attached to the shared
+Datadog-backed provider; set this exporter's `enabled` field to `false` to disable only Datadog.
+
+When `include_graphql_document` is `false`, suppression occurs before the shared provider, so mixed
+OTLP, stdout, and Hive processors also omit the document. The router retains its configured
+propagators and does not install Datadog-native propagation.
+
+See [Native Datadog tracing](/docs/router/observability/tracing#send-traces-through-native-datadog-tracing)
+for operational details and security guidance.
 
 </details>
 
