@@ -74,8 +74,15 @@ this safe behavior **cannot be turned off**.
 
 - You **must** use `algorithm: append`. Any other algorithm is rejected at compile time, because
   propagating `Cache-Control` across subgraphs without the restrictive merge is unsafe.
-- A `private` or `no-cache` subgraph **always wins** over a `public` one. Mutations and errored
-  responses are **never** cached.
+- `no-store` or `no-cache` from any subgraph produces `no-store, no-cache`.
+- `private` from any subgraph overrides `public` but remains `private`, preserving directives such as
+  the minimum `max-age` for private caches.
+- `max-age`, `s-maxage`, `stale-while-revalidate`, and `stale-if-error` use their minimum effective
+  values. The merge accounts for shared caches preferring `s-maxage` over `max-age`.
+- `public` and `immutable` require every subgraph to set them, while revalidation and transformation
+  restrictions are preserved if any subgraph sets them.
+- Malformed or unmodeled directives produce `no-store, no-cache` rather than being ignored.
+- Mutations and errored responses produce `no-store, no-cache, must-revalidate`.
 - If you don't propagate `Cache-Control`, the merge is inactive and the header is not forwarded.
 
 This matters because without it, a single mis-configured subgraph can silently cache private data or cache a

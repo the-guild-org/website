@@ -170,15 +170,23 @@ cannot turn it off while still propagating the header.
 Given the `Cache-Control` headers from N subgraph responses, the router computes the result like
 this:
 
-1. Any `no-store`, `no-cache`, or `private` directive in any subgraph short-circuits the result to
-   `no-store, no-cache`. The most restrictive directive always wins.
-2. Otherwise `max-age` is the **minimum** of all present `max-age` values. Subgraphs without a
-   `max-age` are ignored.
-3. `public` is emitted only when **every** subgraph is `public`. If a single subgraph omits `public`,
-   is `private`, or does not emit a `Cache-Control` header at all, the merged `Cache-Control` will
-   **not** contain the `public` directive. The remaining directives still follow the merge rules
-   above.
-4. `must-revalidate` is emitted if **any** subgraph sets it.
+1. Any `no-store` or `no-cache` directive in any subgraph short-circuits the result to
+   `no-store, no-cache`.
+2. `private` is preserved if **any** subgraph sets it and overrides `public`. Other directives are
+   retained, so `public, max-age=100` merged with `private, max-age=50` produces
+   `private, max-age=50`. This prevents shared caches from storing the response while still allowing
+   private caches to use its freshness lifetime.
+3. `max-age` and `s-maxage` use the **minimum** effective freshness lifetime. Shared caches prefer
+   `s-maxage` over `max-age`, so the router accounts for that precedence when the directives are
+   mixed. For example, `public, s-maxage=100` merged with `public, s-maxage=20` produces
+   `public, s-maxage=20`.
+4. `stale-while-revalidate` and `stale-if-error` use the minimum value supplied for each directive.
+5. `public` and `immutable` are emitted only when **every** subgraph sets them. A subgraph that does
+   not emit a `Cache-Control` header also removes these directives from the result.
+6. `must-revalidate`, `proxy-revalidate`, `must-understand`, and `no-transform` are emitted if
+   **any** subgraph sets them.
+7. A malformed directive or a directive the router does not model short-circuits the result to
+   `no-store, no-cache`, because an ignored directive might contain a restriction.
 
 On top of that, the router forces `no-store, no-cache, must-revalidate` regardless of what the
 subgraphs returned when any of the following is true:
@@ -208,14 +216,13 @@ headers:
           default: "public, max-age=180"
 ```
 
-Because a subgraph that emits **no** `Cache-Control` header strips `public` from the merged result,
-the `default` is your safety net. If you are not sure whether every subgraph will emit a
-`Cache-Control` header, set a `default` (like `public, max-age=180` above) - it is applied for any
-subgraph that does not provide one, so the merge can still produce a `public` result. If you skip the
-`default`, you must make sure **all** subgraphs emit a `public` `Cache-Control` header, otherwise the
-merged response will never be `public`. The merge itself **still works either way** - you only lose the
-`public` directive; every other directive (`max-age`, `must-revalidate`, etc.) is still merged
-normally.
+Because a subgraph that emits **no** `Cache-Control` header strips `public` and `immutable` from the
+merged result, the `default` is your safety net. If you are not sure whether every subgraph will emit
+one, set a `default` (like `public, max-age=180` above) - it is applied for any subgraph that does not
+provide one, so the merge can still produce a `public` result. If you skip the `default`, you must
+make sure **all** subgraphs emit a `public` `Cache-Control` header, otherwise the merged response will
+never be `public`. The merge itself **still works either way** - you only lose directives that require
+consent from every subgraph; freshness and restriction directives are still merged normally.
 
 If you do **not** propagate `Cache-Control`, the merge is inactive and the header is not forwarded.
 This is the safer default: you have to explicitly _not_ propagate to disable merging, rather than
