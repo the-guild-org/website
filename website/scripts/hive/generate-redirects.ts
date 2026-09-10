@@ -55,9 +55,15 @@ const migratedBlogRedirects = globSync('graphql/hive/blog/*.html', {
  * shipped without the base path from earlier build bugs. The route-template
  * leaks (/_landing/..., $-segments) get 410s from the router worker instead —
  * Pages _redirects cannot emit 410.
+ *
+ * `/docs/*` is deliberately absent. The root /docs/ space was shared by
+ * several products — graphql-tools, graphql-ws, apollo-angular, scalars and
+ * mesh, not only Hive — so a catch-all into the Hive docs sent almost all of
+ * it to a missing page (19 of 20 sampled URLs, SEO-09). Those paths are now
+ * resolved per product from the build by
+ * scripts/generate-legacy-root-redirects.ts.
  */
 const deadFamilyRedirects = [
-  { source: '/docs/*', destination: `${PREFIX}/docs/:splat`, status: 301 },
   { source: '/product-updates/*', destination: `${PREFIX}/product-updates/:splat`, status: 301 },
   { source: '/case-studies/*', destination: `${PREFIX}/case-studies/:splat`, status: 301 },
 ];
@@ -77,7 +83,20 @@ const redirects = [
     };
   }),
   ...astroOnlyRedirects,
-].sort((a, b) => Number(a.source.endsWith('/*')) - Number(b.source.endsWith('/*')));
+];
+
+// A `/x/*` rule does not match `/x` itself (SEO-10): every wildcard rule gets
+// a static partner for its bare parent, pointing at the destination without
+// the splat, whenever that is a page in the build.
+for (const rule of [...redirects]) {
+  if (!rule.source.endsWith('/*')) continue;
+  const bare = rule.source.slice(0, -2);
+  if (redirects.some(other => other.source === bare)) continue;
+  const destination = rule.destination.replace(/\/:splat.*$/, '');
+  if (destination.startsWith('/') && !resolvesInDist(destination)) continue;
+  redirects.push({ source: bare, destination, status: rule.status });
+}
+redirects.sort((a, b) => Number(a.source.endsWith('/*')) - Number(b.source.endsWith('/*')));
 
 // A redirect that lands on a missing page is a 404 Google reports against us
 // (three catch-alls did exactly that in 2026-09). Every fixed Hive

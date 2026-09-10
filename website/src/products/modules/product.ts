@@ -24,7 +24,6 @@ export default {
     '/docs/recipes/db-connection-pooling': '/docs/get-started',
     '/docs/legacy/recipes/development-environment': '/docs/get-started',
     '/docs/legacy/recipes/file-uploads': '/docs/get-started',
-    '/docs/api.md': '/docs/api',
     '/docs/api/api.md': '/docs/api',
     '/docs/essentials': '/docs/essentials/type-definitions',
     '/docs/introduction/context': '/docs/essentials/context',

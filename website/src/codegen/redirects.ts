@@ -6,9 +6,9 @@
 export const codegenRedirects: Record<string, string> = {
   '/live-demo': '/',
   '/docs/presets/presets-index': '/plugins',
-  '/docs/guides': '/docs/guides/react',
+  '/docs/guides': '/docs/guides/react-vue',
   '/docs/plugins/typescript-server': '/plugins/typescript/typescript-resolvers',
-  '/docs/react': '/docs/guides/react',
+  '/docs/react': '/docs/guides/react-vue',
   '/docs/guides/react-vue-angular': '/docs/guides/react-vue',
   '/docs/guides/front-end-typescript-only': '/docs/guides/react-vue',
   '/plugins/other': '/plugins',

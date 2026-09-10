@@ -39,20 +39,30 @@ for (const [source, destination] of Object.entries(codegenRedirects)) {
 }
 
 for (const [key, { category }] of Object.entries(registry)) {
-  // Old flat plugin URLs moved into category folders.
-  add(`/plugins/${key}`, `/plugins/${category}/${key}`);
-  // Pre-marketplace config/plugin doc routes.
-  add(`/docs/generated-config/${key}`, `/plugins/${key}`);
-  add(`/docs/plugins/${key}`, `/plugins/${key}`);
+  const page = `/plugins/${category}/${key}`;
+  // Old flat plugin URLs moved into category folders — unless the flat URL is
+  // the category page itself (the java plugin lives in the java category).
+  if (key !== category) add(`/plugins/${key}`, page);
+  // Pre-marketplace config/plugin doc routes, straight to the page (no chain
+  // through the flat URL: a redirect that lands on another redirect costs a
+  // second crawl and is what the build now verifies against).
+  add(`/docs/generated-config/${key}`, page);
+  add(`/docs/plugins/${key}`, page);
   if (key.endsWith('-preset')) {
-    add(`/docs/presets/${key.slice(0, -'-preset'.length)}`, `/plugins/${key}`);
+    add(`/docs/presets/${key.slice(0, -'-preset'.length)}`, page);
   }
 }
 
 const block = [
   START,
   ...[...rules].map(([source, destination]) => {
-    const target = destination.startsWith('/') ? `${basePath}${destination}` : destination;
+    // The landing page is <base>.html, so '/' must not become '<base>/'.
+    const target =
+      destination === '/'
+        ? basePath
+        : destination.startsWith('/')
+          ? `${basePath}${destination}`
+          : destination;
     return `${basePath}${source} ${target} 301`;
   }),
   END,

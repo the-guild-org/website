@@ -18,6 +18,13 @@ const allPosts = await getBlogPosts();
 const posts = allPosts.filter(post => post.tags.includes(tag!));
 ---
 
-<BlogPageLayout description={`Posts tagged ${tag} in the Hive Blog.`} title={`Hive Blog - ${tag}`}>
+{
+  /* Tag listings duplicate the posts index for Google (31 of the 56 "chose a different canonical" pages); keep them crawlable but out of the index. */
+}
+<BlogPageLayout
+  description={`Posts tagged ${tag} in the Hive Blog.`}
+  robots="noindex, follow"
+  title={`Hive Blog - ${tag}`}
+>
   <PostsByTag posts={posts} tag={tag} />
 </BlogPageLayout>

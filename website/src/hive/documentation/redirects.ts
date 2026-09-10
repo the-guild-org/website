@@ -126,6 +126,9 @@ export const routeRules: Record<string, RouteRule> = {
 
   // Integrations
   '/docs/integrations': redirect('/docs/other-integrations'),
+  // Hive Gateway has its own docs section; schema checks are part of the registry overview.
+  '/docs/other-integrations/hive-gateway': redirect('/docs/gateway'),
+  '/docs/schema-registry/schema-checks': redirect('/docs/schema-registry'),
   '/docs/integrations/**': redirect('/docs/other-integrations'),
 
   // API reference
