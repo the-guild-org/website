@@ -29,11 +29,6 @@ export const jsonConfig = {
       crisp: { segments: ['mesh'] },
       sitemap: true,
     },
-    '/graphql/tools': {
-      rewrite: 'graphql-tools-8ja.pages.dev',
-      crisp: { segments: ['tools'] },
-      sitemap: true,
-    },
     '/graphql/shield': {
       redirect: 'https://github.com/maticzav/graphql-shield',
       status: 302,
