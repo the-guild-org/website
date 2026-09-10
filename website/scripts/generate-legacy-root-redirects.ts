@@ -27,6 +27,9 @@ import {
 /** Which product a shared path belongs to; the old root domains, oldest first. */
 const PRIORITY = ['hive', 'codegen', 'yoga-server', 'envelop', 'mesh', 'inspector'];
 const FAMILIES = ['docs', 'tutorial', 'v1', 'v2', 'v3', 'v4', 'v5'];
+const BY = 'scripts/generate-legacy-root-redirects.ts';
+const LEGACY_BLOCK = 'Legacy root paths of the old product sites';
+const PARTNERS_BLOCK = 'Bare parents of wildcard rules';
 /** A directory owned by one product gets a wildcard once it has this many pages. */
 const WILDCARD_FROM = 8;
 
@@ -114,24 +117,18 @@ for (const family of FAMILIES) {
 }
 
 const lines = readRedirectLines();
+// Strip this generator's own blocks first so a re-run does not treat its
+// previous output as hand-written rules and drop everything as "existing".
+setRuleBlocks(lines, LEGACY_BLOCK, [], BY);
+setRuleBlocks(lines, PARTNERS_BLOCK, [], BY);
 const existing = new Set(lines.filter(isRule).map(sourceOf));
 // A root path that is a real page here, or already redirected by hand, is left alone.
 const fresh = rules.filter(rule => {
   const source = sourceOf(rule);
   return !existing.has(source) && !resolvesInDist(source);
 });
-setRuleBlocks(
-  lines,
-  'Legacy root paths of the old product sites',
-  fresh,
-  'scripts/generate-legacy-root-redirects.ts',
-);
-setRuleBlocks(
-  lines,
-  'Bare parents of wildcard rules',
-  barePartnerRules(lines),
-  'scripts/generate-legacy-root-redirects.ts',
-);
+setRuleBlocks(lines, LEGACY_BLOCK, fresh, BY);
+setRuleBlocks(lines, PARTNERS_BLOCK, barePartnerRules(lines), BY);
 const { staticCount, dynamicCount } = checkLimits(lines);
 writeRedirectLines(lines);
 console.log(
