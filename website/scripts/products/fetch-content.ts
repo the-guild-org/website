@@ -93,6 +93,31 @@ function fetchSource(product: ProductDefinition): { dir: string; temporary: bool
   return { dir: tmp, temporary: true };
 }
 
+/**
+ * The package changelog as a page body. The page title comes from the
+ * frontmatter, so a leading package-name h1 goes; release headings that
+ * some changelog generators write as h1 (`# [2.6.0](...)`) become h2 so the
+ * page keeps a single h1. Code fences are left alone.
+ */
+function changelogBody(markdown: string): string {
+  const lines = markdown.trim().split('\n');
+  if (/^ {0,3}# /.test(lines[0] ?? '') && !/\d+\.\d+/.test(lines[0])) lines.shift();
+  let fence: string | null = null;
+  return lines
+    .map(line => {
+      const opening = line.match(/^\s*(`{3,}|~{3,})/);
+      if (opening) {
+        if (fence === null) fence = opening[1];
+        else if (line.trim().startsWith(fence)) fence = null;
+        return line;
+      }
+      // Up to three leading spaces still make a heading.
+      return fence === null ? line.replace(/^( {0,3})# /, '$1## ') : line;
+    })
+    .join('\n')
+    .trim();
+}
+
 for (const product of await selectedProducts()) {
   const contentDir = join(projectDir, 'src/products', product.slug, 'content');
   const publicDir = join(projectDir, 'public/graphql', product.slug);
@@ -106,10 +131,7 @@ for (const product of await selectedProducts()) {
     mkdirSync(publicDir, { recursive: true });
     cpSync(join(website, 'assets'), join(publicDir, 'assets'), { recursive: true });
     if (product.changelog) {
-      // The package changelog as a page: its own h1 goes, the title comes from frontmatter.
-      const body = readFileSync(join(source, product.changelog), 'utf8')
-        .replace(/^# .+\n+/, '')
-        .trim();
+      const body = changelogBody(readFileSync(join(source, product.changelog), 'utf8'));
       mkdirSync(join(contentDir, 'changelog'), { recursive: true });
       writeFileSync(
         join(contentDir, 'changelog', 'index.md'),
