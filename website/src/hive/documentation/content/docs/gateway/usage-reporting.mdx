@@ -101,6 +101,35 @@ If you want to control the usage reporting to the Hive Console like `selfHosting
 please look at the Hive Client documentation to learn more about other options.
 [See more in Hive Client reference](/docs/api-reference/client#configuration)
 
+## Experimental: gateway-plugin-console-sdk
+
+If using Hive Gateway and you want to track the executions for your schema coordinates, then you may enable a new experimental feature, "Field Level Metrics".
+This new feature requires a bit more processing power to parse through your execution result, so scale accordingly, but it allows tracking the exact number of times each schema coordinate has been executed. It also tracks GraphQLErrors by coordinate along with any error codes (from the error's `extensions.code` field). This means much deeper and more accurate insights into how your API is performing.
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+import { useHive } from "@graphql-hive/gateway-plugin-console-sdk";
+
+export const gatewayConfig = defineConfig({
+  // Disable default reporter and usage provider, "@graphql-hive/yoga"
+  reporting: {
+    enabled: false,
+    type: "hive",
+    usage: false,
+  },
+  plugins: (ctx) => [
+    // Enable gateway plugin as the hive reporter and usage tracker
+    useHive({
+      token: "<token>",
+      usage: {
+        fieldLevelMetricsEnabled: true,
+      },
+      enabled: true,
+    }),
+  ],
+});
+```
+
 </Tabs.Tab>
 
 {/* Apollo GraphOS */}
