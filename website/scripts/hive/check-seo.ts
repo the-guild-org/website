@@ -49,6 +49,8 @@ const KNOWN_DUPLICATE_DESCRIPTIONS = new Set(['graphql/codegen/docs/getting-star
 
 // The Yoga docs keep the older majors (v2, v3, v4) frozen as they were
 // published; sibling pages there share descriptions and will never be edited.
+/** Pages that are noindex by design: the Hive blog tag listings (SEO-15). */
+const NOINDEX_ALLOWED = /^graphql\/hive\/blog\/tag\//;
 const FROZEN_CONTENT = /^graphql\/(?:(?:yoga-server|envelop)\/v\d(?:\/|\.html$)|mesh\/docs\/)/;
 
 // Paths the website-router rewrites to other targets at the edge.
@@ -296,8 +298,11 @@ for await (const filePath of walk(OUTPUT_DIR)) {
     }
   }
 
-  // A stray noindex can silently deindex a section.
-  if (parsed['robots']?.toLowerCase().includes('noindex')) {
+  // A stray noindex can silently deindex a section. Only the blog tag
+  // listings opt out on purpose (SEO-15), and those must then stay out of
+  // the sitemaps.
+  const noindex = parsed['robots']?.toLowerCase().includes('noindex') ?? false;
+  if (noindex && !NOINDEX_ALLOWED.test(relativePath)) {
     issues.push(`${relativePath}: noindex present`);
   }
 
@@ -333,8 +338,10 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   }
 
   // Reverse sitemap parity: verify-sitemaps proves sitemap URLs have files;
-  // this proves every indexable page is in a sitemap.
-  if (!sitemapPaths.has(pagePath)) {
+  // this proves every indexable page is in a sitemap, and no noindex page is.
+  if (noindex && sitemapPaths.has(pagePath)) {
+    issues.push(`${relativePath}: noindex page listed in a sitemap`);
+  } else if (!noindex && !sitemapPaths.has(pagePath)) {
     issues.push(`${relativePath}: not listed in any sitemap`);
   }
 }

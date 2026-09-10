@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { globSync, writeFileSync } from 'node:fs';
+import { globSync, readFileSync, writeFileSync } from 'node:fs';
 import { HIVE_SITE_URL as SITE_URL } from '../../src/hive/lib/base-path.ts';
 import { HIVE_DIST, REPO_ROOT } from '../lib/build-output.ts';
 
@@ -62,6 +62,13 @@ const pages = [
   { lastmod: lastModified.get(''), path: '' },
   ...globSync('**/*.html', { cwd: distDirectory })
     .filter(file => file !== '404.html')
+    // noindex pages (the blog tag listings) are not for the sitemap.
+    .filter(
+      file =>
+        !/<meta name="robots" content="[^"]*noindex/i.test(
+          readFileSync(`${distDirectory}/${file}`, 'utf8'),
+        ),
+    )
     .map(file => {
       // File-format output: page.html serves /page.
       const path = `/${file.replace(/\/index\.html$/, '').replace(/\.html$/, '')}`;

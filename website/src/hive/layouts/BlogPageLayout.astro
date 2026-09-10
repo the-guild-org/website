@@ -10,10 +10,12 @@ import ThemeInit from '../components/ThemeInit.astro';
 
 interface Props {
   description: string;
+  /** Passed through to the head; tag listings are noindex (SEO-15). */
+  robots?: string;
   title: string;
 }
 
-const { description, title } = Astro.props;
+const { description, robots, title } = Astro.props;
 ---
 
 <!doctype html>
@@ -21,7 +23,7 @@ const { description, title } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <BaseHead description={description} title={`${title} | Hive`} />
+    <BaseHead description={description} robots={robots} title={`${title} | Hive`} />
     <ThemeInit />
     <link
       rel="alternate"

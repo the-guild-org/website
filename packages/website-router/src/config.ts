@@ -52,7 +52,8 @@ export const jsonConfig = {
       crisp: {
         segments: ['fets'],
       },
-      sitemap: true,
+      // Its sitemap lists fets.dev URLs, which this domain's index cannot vouch for.
+      sitemap: false,
     },
     '/heltin': {
       rewrite: 'heltin.pages.dev',

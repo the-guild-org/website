@@ -29,6 +29,8 @@ interface Props {
   description: string;
   image?: ImageMetadata | string;
   imageAlt?: string;
+  /** Robots directives for pages that must not be indexed, e.g. "noindex, follow". */
+  robots?: string;
   /** Which docs product this head belongs to; defaults to Hive. */
   site?: SiteIdentity;
   title: string;
@@ -43,6 +45,7 @@ const {
   description,
   image = defaultImage,
   imageAlt = 'GraphQL Hive',
+  robots,
   site = { mountPath: basePath, name: 'Hive', url: SITE_URL },
   title,
   type = 'website',
@@ -100,6 +103,7 @@ const breadcrumbJsonLd = JSON.stringify({
 {/* Rendered here because every page head includes this component. */}
 <FontPreloads />
 <meta name="description" content={description} />
+{robots && <meta name="robots" content={robots} />}
 <link rel="canonical" href={withBase(canonicalUrl)} />
 <link
   rel="alternate"

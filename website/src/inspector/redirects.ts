@@ -8,7 +8,7 @@ export const inspectorRedirects: Record<string, string> = {
   '/enterprise': '/docs',
   '/docs/index': '/docs',
   '/products': '/docs/products/ci',
-  '/docs/recipies/github': '/docs/products/github',
+  '/docs/recipies/github': '/docs/migration-guides/github',
   '/docs/api': '/docs/api/schema',
   '/docs/recipes': '/docs/recipes/environments',
   '/docs/recipes/github': '/docs/recipes/pull-requests',
