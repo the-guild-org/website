@@ -47,13 +47,6 @@ export const jsonConfig = {
       redirect: 'https://the-guild.dev/graphql/hive/docs/gateway',
       status: 302,
     },
-    '/graphql/stitching': {
-      rewrite: 'schema-stitching-9g8.pages.dev',
-      crisp: {
-        segments: ['stitching'],
-      },
-      sitemap: true,
-    },
     '/openapi/fets': {
       rewrite: 'fets-3ku.pages.dev',
       crisp: {
