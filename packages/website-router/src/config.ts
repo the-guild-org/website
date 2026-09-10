@@ -59,13 +59,6 @@ export const jsonConfig = {
       },
       sitemap: true,
     },
-    '/graphql/sse': {
-      rewrite: 'graphql-sse.pages.dev',
-      crisp: {
-        segments: ['sse'],
-      },
-      sitemap: true,
-    },
     '/openapi/fets': {
       rewrite: 'fets-3ku.pages.dev',
       crisp: {
