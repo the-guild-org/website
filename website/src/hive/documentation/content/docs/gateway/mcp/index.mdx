@@ -7,6 +7,11 @@ description:
 import { Callout } from '@hive/design-system/hive-components/callout'
 import { Tabs } from '@hive/design-system/tabs'
 
+<Callout type="warning">
+  The MCP plugin is in beta. Its configuration and behavior may change between releases as the
+  protocol and the plugin evolve, and these docs are updated alongside it.
+</Callout>
+
 The [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) is the standard AI agents use
 to discover and call external tools. With the `@graphql-hive/plugin-mcp` plugin, Hive Gateway
 becomes an MCP server: you pick the GraphQL operations you want to expose, and each one becomes a
@@ -23,11 +28,6 @@ The gateway takes care of loading the schema, generating input and output schema
 arguments and formatting responses. You only define which operations become tools. The plugin
 implements the `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read` and
 `resources/templates/list` MCP methods.
-
-<Callout type="warning">
-  The MCP plugin is in beta. Its configuration and behavior may change between releases as the
-  protocol and the plugin evolve, and these docs are updated alongside it.
-</Callout>
 
 <Callout type="info">
   The plugin is available on the JavaScript distributions of Hive Gateway (the `hive-gateway` CLI
