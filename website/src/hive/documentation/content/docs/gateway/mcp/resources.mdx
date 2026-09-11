@@ -3,7 +3,7 @@ title: MCP Resources and Dynamic Operations
 sidebarTitle: Resources and Dynamic Operations
 description:
   Serve static and templated MCP resources from Hive Gateway, and load tool operations from an
-  external source with live updates.
+  external source per request.
 ---
 
 Besides tools, an MCP server can offer resources: documents agents read for context, such as an API
@@ -76,35 +76,80 @@ optionally with a `mimeType` override for that response.
 
 ## Dynamic operations loader
 
-Instead of shipping operation files with the gateway, a `loader` fetches the operations source from
-anywhere (a CDN, an object store, a persisted-documents service) when the gateway starts, and can
-subscribe to updates:
+Instead of shipping operation files with the gateway, a `loader` can fetch the operations source
+from anywhere, such as a CDN, object store or persisted-documents service:
 
 ```ts title="gateway.config.ts"
 useMCP(ctx, {
   name: 'my-api',
   loader: {
-    async load() {
-      const res = await fetch('https://my-cdn.example.com/operations.graphql')
+    async load({ request, serverContext }) {
+      const tenant = encodeURIComponent(request.headers.get('x-tenant') ?? 'default')
+      const res = await fetch(`https://my-cdn.example.com/${tenant}/operations.graphql`)
       return res.text()
-    },
-    onUpdate(callback) {
-      const interval = setInterval(async () => {
-        const res = await fetch('https://my-cdn.example.com/operations.graphql')
-        callback(await res.text())
-      }, 60_000)
-      return () => clearInterval(interval)
     }
   }
 })
 ```
 
-- `load()` is called once at startup and returns the raw GraphQL source, which may contain several
-  operations. Tools declared with `@mcpTool` in that source are registered, and the other operations
-  are available to `source.type: "graphql"` tools.
-- `onUpdate` is called after a successful `load()`. Invoke the callback with the full new source
-  whenever it changes; the plugin re-parses it and rebuilds the tool registry. Return a cleanup
-  function to unsubscribe when the plugin is disposed.
-- If `load()` rejects, the error is logged, `onUpdate` is not called, and the gateway keeps running
-  with the tools from the other sources. Implement retries inside `load()` if you need automatic
-  recovery.
+`load()` runs for every MCP request and receives its `request` and `serverContext`, so the source can
+vary by tenant or any other request data. It returns raw GraphQL source, which may contain several
+operations. Operations carrying `@mcpTool` are registered as tools; the others are available to
+`source.type: "graphql"` tools.
+
+The plugin caches each resulting tool registry by the returned string. Returning an identical source
+reuses the cached registry without parsing and rebuilding it. The cache is cleared whenever the
+GraphQL schema changes. If `load()` throws, the plugin logs the error and uses only the statically
+configured tools for that request.
+
+## Load persisted documents from Hive
+
+`createHiveLoader` resolves an app deployment manifest from the Hive CDN, fetches every persisted
+GraphQL document in it, and returns the documents as one operations source for the plugin to parse:
+
+```ts title="gateway.config.ts"
+import { createHiveLoader } from '@graphql-hive/plugin-mcp/loaders/hive'
+
+useMCP(ctx, {
+  name: 'my-api',
+  loader: createHiveLoader(ctx, {
+    endpoint: 'https://cdn.graphql-hive.com/artifacts/v1/<target-id>',
+    accessToken: '<cdn-access-token>',
+    appDeployment: {
+      appName: 'my-app',
+      appVersion: '1.0.0'
+    }
+  })
+})
+```
+
+Pass two endpoints to fail over from the first, primary CDN to the second endpoint:
+
+```ts
+createHiveLoader(ctx, {
+  endpoint: [
+    'https://cdn.graphql-hive.com/artifacts/v1/<target-id>',
+    'https://cdn-mirror.graphql-hive.com/artifacts/v1/<target-id>'
+  ],
+  accessToken: '<cdn-access-token>',
+  appDeployment: { appName: 'my-app', appVersion: '1.0.0' }
+})
+```
+
+For multi-tenant gateways, resolve the app deployment from each request:
+
+```ts
+createHiveLoader(ctx, {
+  endpoint: 'https://cdn.graphql-hive.com/artifacts/v1/<target-id>',
+  accessToken: '<cdn-access-token>',
+  appDeployment: ({ request }) => {
+    const appName = request.headers.get('x-app-name')
+    const appVersion = request.headers.get('x-app-version')
+    if (!appName || !appVersion) throw new Error('Missing app deployment headers')
+    return { appName, appVersion }
+  }
+})
+```
+
+With a function, the manifest and documents are fetched on every request. Identical concatenated
+sources still reuse the plugin's cached tool registry.
