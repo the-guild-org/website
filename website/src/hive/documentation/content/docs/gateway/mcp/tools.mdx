@@ -1,0 +1,345 @@
+---
+title: MCP Tools
+description:
+  Map GraphQL operations to MCP tools in Hive Gateway. Tool sources, directives, input and output
+  shaping, hooks and annotations.
+---
+
+import { Callout } from '@hive/design-system/hive-components/callout'
+
+<Callout type="warning">
+  The MCP plugin is in beta. Its configuration and behavior may change between releases as the
+  protocol and the plugin evolve, and these docs are updated alongside it.
+</Callout>
+
+A tool is one GraphQL operation exposed to agents under a name of your choice. The plugin derives
+the tool's input schema from the operation's variables and its output schema from the selection set,
+so agents know what to send and what to expect. This page walks through every part of a tool
+definition.
+
+## A complete tool definition
+
+Only `name` and `source` are required; everything else refines how the tool is presented and
+executed.
+
+```ts title="gateway.config.ts"
+{
+  name: "cancel_order",
+  source: {
+    type: "inline",
+    query: `mutation ($orderId: String!, $confirmationId: String) {
+      cancelOrder(orderId: $orderId, confirmationId: $confirmationId) { success message }
+    }`,
+  },
+  tool: {
+    title: "Cancel Order",
+    description: "Cancel a pending order by ID",
+    annotations: { destructiveHint: true, idempotentHint: false },
+    execution: { taskSupport: "optional" },
+  },
+  input: {
+    schema: {
+      properties: {
+        orderId: { description: "The order ID to cancel", examples: ["ORD-123"] },
+        confirmationId: { alias: "confirm", description: "Confirmation code" },
+      },
+    },
+  },
+  output: {
+    path: "cancelOrder",
+    contentAnnotations: { audience: ["user"], priority: 0.9 },
+  },
+  hooks: {
+    preprocess: (args, context) => {
+      // Hooks see the original variable names, not the aliases agents use.
+      if (!args["confirmationId"]) return { error: "Confirmation required" };
+      return undefined;
+    },
+  },
+}
+```
+
+## Tool sources
+
+The `source` tells the plugin where the GraphQL operation comes from.
+
+### Inline queries
+
+The operation is written directly in the configuration:
+
+```ts
+{
+  name: "get_users",
+  source: {
+    type: "inline",
+    query: `query ($limit: Int) { users(limit: $limit) { id name } }`,
+  },
+}
+```
+
+### Named operations from files
+
+Point the plugin at a `.graphql` file, or a directory of them, with `operationsPath`, then reference
+operations by name:
+
+```ts title="gateway.config.ts"
+useMCP(ctx, {
+  name: 'my-api',
+  operationsPath: './operations',
+  tools: [
+    {
+      name: 'get_weather',
+      source: {
+        type: 'graphql',
+        operationName: 'GetWeather',
+        operationType: 'query'
+      }
+    }
+  ]
+})
+```
+
+A tool can load its operation from a specific file instead of the global `operationsPath` with
+`source.file`:
+
+```ts
+{
+  name: "get_weather",
+  source: {
+    type: "graphql",
+    operationName: "GetWeather",
+    operationType: "query",
+    file: "./custom-operations/weather.graphql",
+  },
+}
+```
+
+`operationsStr` accepts the operations as a string instead of a file path, and the
+[dynamic loader](/docs/gateway/mcp/resources#dynamic-operations-loader) fetches them from anywhere
+for each MCP request.
+
+### Directives in operation files
+
+Operations can declare themselves as tools with the `@mcpTool` directive, which removes the need for
+a `tools` entry:
+
+```graphql title="operations/weather.graphql"
+query QuickWeather($location: String!)
+@mcpTool(name: "quick_weather", description: "Quick weather check") {
+  weather(location: $location) {
+    temperature
+    conditions
+  }
+}
+```
+
+`@mcpTool` also accepts `descriptionProvider` (see
+[Description providers](/docs/gateway/mcp/description-providers)) and `meta`, an object passed
+through to clients as the tool's `_meta`:
+
+```graphql
+query MetaWeather($location: String!)
+@mcpTool(
+  name: "meta_weather"
+  description: "Weather with metadata"
+  meta: { entitlement: "weather_access", tags: ["read", "public"], version: 2 }
+) {
+  weather(location: $location) {
+    temperature
+  }
+}
+```
+
+When the same tool is both declared with a directive and listed in `tools`, the configuration
+entry's values win; `meta` objects are shallow-merged with the configuration taking precedence on
+conflicting keys.
+
+## Input schema
+
+### Aliases, descriptions, examples and defaults
+
+Override how each variable appears to agents under `input.schema.properties`, keyed by the GraphQL
+variable name:
+
+```ts
+{
+  name: "get_weather",
+  source: {
+    type: "inline",
+    query: `query ($location: String!) { weather(location: $location) { temperature } }`,
+  },
+  input: {
+    schema: {
+      properties: {
+        location: {
+          alias: "city",
+          description: "City name to check weather for",
+          examples: ["London", "New York"],
+          default: "London",
+        },
+      },
+    },
+  },
+}
+```
+
+Agents see a `city` parameter with the description, examples and default; the plugin maps it back to
+`location` when it executes the query.
+
+### Field descriptions from directives
+
+`@mcpDescription` attaches a description to a variable or a selected field, either inline or via a
+[description provider](/docs/gateway/mcp/description-providers):
+
+```graphql
+query GetForecast($location: String!, $days: Int)
+@mcpTool(name: "get_forecast", description: "Weather forecast") {
+  forecast(location: $location, days: $days) {
+    date
+    conditions @mcpDescription(provider: "langfuse:conditions_desc")
+  }
+}
+```
+
+### Values from HTTP headers
+
+Some variables should never come from the agent, such as a tenant or user id that your
+authentication layer puts in a header. `@mcpHeader` hides the variable from the input schema and
+fills it from the named request header on every call:
+
+```graphql
+query GetCompanyData($companyId: String! @mcpHeader(name: "x-company-id"))
+@mcpTool(name: "get_company_data") {
+  company(companyId: $companyId) {
+    id
+    name
+    plan
+  }
+}
+```
+
+If the header is missing, the tool call returns an error. When you need more control, for example to
+transform the header value or fall back to a default, hide the variable with `hidden: true` and set
+it in a `preprocess` hook:
+
+```ts
+{
+  name: "get_company_data",
+  source: { type: "inline", query: `query ($companyId: String!) { ... }` },
+  input: { schema: { properties: { companyId: { hidden: true } } } },
+  hooks: {
+    preprocess(args, { headers }) {
+      args.companyId = headers["x-company-id"] || "default-company";
+    },
+  },
+}
+```
+
+## Output
+
+### Extract part of the response
+
+By default a tool returns the whole `data` object of the GraphQL response. `output.path` narrows it
+to a nested value, and the output schema advertised in `tools/list` is narrowed to match:
+
+```ts
+{
+  name: "search_cities",
+  source: {
+    type: "inline",
+    query: `query ($query: String!) { cities(query: $query) { name country population } }`,
+  },
+  output: { path: "cities" },
+}
+```
+
+Without `path`, the agent receives `{ cities: [{ name: "London", ... }] }`; with `path: "cities"` it
+receives the array directly.
+
+### Output schema and annotations
+
+- `output.schema: false` omits the output schema for one tool. `suppressOutputSchema: true` on the
+  plugin does it for all tools. Output schemas are also omitted automatically when a tool has hooks,
+  because hooks may change the shape of the result.
+- `output.contentAnnotations` attaches MCP content annotations (`audience`, `priority`,
+  `lastModified`) to the returned content items.
+- `output.descriptionProviders` adds dynamic descriptions to output fields, keyed by dot-notation
+  path:
+
+```ts
+output: {
+  descriptionProviders: {
+    "forecast.conditions": { type: "langfuse", prompt: "conditions_desc" },
+  },
+}
+```
+
+## Hooks
+
+Hooks let you intercept a tool call before and after the GraphQL execution. Both receive a context
+with `toolName`, the request `headers` sent by the agent, and the resolved GraphQL `query`.
+
+### Preprocess
+
+`preprocess` runs before execution with the de-aliased arguments (original variable names). Return
+`undefined` to continue, or return any value to short-circuit and use it as the tool result:
+
+```ts
+{
+  name: "gated_action",
+  source: { type: "inline", query: "..." },
+  hooks: {
+    preprocess: (args, context) => {
+      if (!args["_confirmed"]) {
+        return { needsConfirmation: true };
+      }
+      return undefined;
+    },
+  },
+}
+```
+
+When `preprocess` short-circuits, `postprocess` is not called.
+
+### Postprocess
+
+`postprocess` receives the GraphQL result (after `output.path` extraction), the arguments and the
+context, and returns what the agent gets:
+
+```ts
+{
+  name: "formatted_weather",
+  source: { type: "inline", query: "..." },
+  hooks: {
+    postprocess: (result, args, context) => {
+      const data = result as { weather: { temperature: number; conditions: string } };
+      return `${data.weather.temperature}F and ${data.weather.conditions}`;
+    },
+  },
+}
+```
+
+A string result is sent as text content instead of structured content.
+
+<Callout type="info">
+  Either hook can return a raw MCP result: an object with a `content` array of MCP content items
+  (`text`, `image`, `audio`, `resource` or `resource_link`). It is passed through unchanged, which
+  lets you set fields such as `_meta` or `isError`.
+</Callout>
+
+## Annotations and task support
+
+`tool.annotations` gives clients behavioral hints, following the MCP specification:
+
+| Hint              | Meaning                                                           |
+| ----------------- | ----------------------------------------------------------------- |
+| `readOnlyHint`    | The tool does not modify its environment. Clients assume `false`. |
+| `destructiveHint` | The tool may perform destructive updates. Clients assume `true`.  |
+| `idempotentHint`  | Repeated calls with the same arguments have no extra effect.      |
+| `openWorldHint`   | The tool interacts with external entities beyond a closed domain. |
+
+`tool.execution.taskSupport` declares whether a tool supports task-augmented execution for
+long-running operations: `"forbidden"` (default), `"optional"` or `"required"`.
+
+Other presentation options on `tool` are `title`, `icons` (a list of
+`{ src, mimeType, sizes, theme }` objects for client UIs) and `_meta` for opaque metadata.

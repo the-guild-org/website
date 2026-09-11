@@ -1,0 +1,149 @@
+---
+title: MCP Description Providers
+sidebarTitle: Description Providers
+description:
+  Manage the descriptions agents see for Hive Gateway MCP tools and fields in Langfuse or a custom
+  service, and update them without redeploying.
+---
+
+import { Callout } from '@hive/design-system/hive-components/callout'
+
+<Callout type="warning">
+  The MCP plugin is in beta. Its configuration and behavior may change between releases as the
+  protocol and the plugin evolve, and these docs are updated alongside it.
+</Callout>
+
+The description of a tool is what an agent reads to decide when and how to call it, so it deserves
+the same iteration as a prompt. Description providers resolve tool and field descriptions at runtime
+from an external source, so you can refine them without changing the gateway configuration. The
+plugin ships a [Langfuse](https://langfuse.com/) provider and accepts custom ones.
+
+## Langfuse
+
+Install the client and set the credentials the provider reads from the environment:
+
+```sh npm2yarn
+npm i @langfuse/client
+```
+
+```sh
+export LANGFUSE_SECRET_KEY=sk-lf-...
+export LANGFUSE_PUBLIC_KEY=pk-lf-...
+export LANGFUSE_BASE_URL=https://cloud.langfuse.com
+```
+
+Register the provider under `providers.langfuse` and reference prompts from tools:
+
+```ts title="gateway.config.ts"
+useMCP(ctx, {
+  name: 'my-api',
+  providers: {
+    langfuse: {
+      defaults: { label: 'production' }
+    }
+  },
+  tools: [
+    {
+      name: 'get_weather',
+      source: { type: 'inline', query: '...' },
+      tool: {
+        descriptionProvider: {
+          type: 'langfuse',
+          prompt: 'get_weather_description'
+        }
+      }
+    }
+  ]
+})
+```
+
+`providers.langfuse` accepts the Langfuse client parameters (`publicKey`, `secretKey`, `baseUrl`)
+when you prefer not to use environment variables, plus `defaults` applied to every prompt lookup.
+Each reference can pin a `version` or pass extra `options` (such as `label` or `cacheTtlSeconds`).
+
+Descriptions are resolved when tools are listed, so editing a prompt in Langfuse takes effect on the
+next `tools/list`. If Langfuse is unreachable, tools keep their fallback descriptions.
+
+### Referencing prompts from directives
+
+Operation files can point at providers too, with `provider:` values of the form
+`<provider>:<prompt>` or `<provider>:<prompt>:<version>`:
+
+```graphql
+query GetWeather($location: String! @mcpDescription(provider: "langfuse:location_field_desc"))
+@mcpTool(name: "get_weather", descriptionProvider: "langfuse:get_weather_description") {
+  weather(location: $location) {
+    temperature
+    conditions @mcpDescription(provider: "langfuse:conditions_desc")
+  }
+}
+```
+
+### Labels and versions
+
+A Langfuse label selects the prompt variant tagged for an environment. Labels are resolved with this
+precedence, most specific first:
+
+1. A per-request `?promptLabel=` query parameter on the MCP endpoint
+2. The tool's `descriptionProvider.options.label`
+3. The provider's `defaults.label`
+
+```sh title="Preview the staging descriptions"
+curl "http://localhost:4000/mcp?promptLabel=staging" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+<Callout type="info">
+  Langfuse treats `version` and `label` as mutually exclusive. When a reference pins an explicit
+  `version`, the plugin drops any label before calling Langfuse: a pinned version is a deliberate
+  contract, while a label is environment-level routing.
+</Callout>
+
+## Custom providers
+
+Any object with a `fetchDescription` method works as a provider. Register it under a name and
+reference it with `type` set to that name:
+
+```ts title="gateway.config.ts"
+import type { DescriptionProvider } from '@graphql-hive/plugin-mcp'
+
+const cms: DescriptionProvider = {
+  async fetchDescription(toolName, config, context) {
+    // `context.label` carries the request's `?promptLabel=` (or the configured default), so a
+    // custom provider can serve environment-specific variants the same way Langfuse does.
+    const variant = context?.label ?? 'production'
+    const res = await fetch(`https://my-cms.example.com/api/${config.prompt}?variant=${encodeURIComponent(variant)}`)
+    return res.text()
+  }
+}
+
+useMCP(ctx, {
+  name: 'my-api',
+  providers: { cms },
+  tools: [
+    {
+      name: 'get_weather',
+      source: { type: 'inline', query: '...' },
+      tool: { descriptionProvider: { type: 'cms', prompt: 'get-weather' } }
+    }
+  ]
+})
+```
+
+`fetchDescription` receives the tool name, the reference configuration (the object from
+`descriptionProvider`, so any extra fields you put there are available), and a context with the
+resolved prompt `label`. It returns the description text.
+
+## Where descriptions come from
+
+When several sources define a description for the same tool, the first match in this list wins:
+
+1. `descriptionProvider`, resolved at runtime from Langfuse or a custom provider
+2. `tool.description` in the configuration
+3. The `description` argument of the `@mcpTool` directive
+4. The description of the field in the GraphQL schema
+
+The same order applies to variable descriptions set through
+`input.schema.properties.<variable>.descriptionProvider` and `description`, and to output fields
+through `output.descriptionProviders`.

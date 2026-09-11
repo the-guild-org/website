@@ -1,0 +1,72 @@
+---
+title: MCP Plugin Configuration Reference
+sidebarTitle: Configuration Reference
+description: Every option of the Hive Gateway MCP plugin, its type and default.
+---
+
+import { Callout } from '@hive/design-system/hive-components/callout'
+
+<Callout type="warning">
+  The MCP plugin is in beta. Its configuration and behavior may change between releases as the
+  protocol and the plugin evolve, and these docs are updated alongside it.
+</Callout>
+
+`useMCP(ctx, config)` takes the gateway plugin context and an `MCPConfig` object. The `MCPConfig`
+type is exported by `@graphql-hive/plugin-mcp` so a configuration can be authored and type-checked
+separately, or loaded from YAML or JSON.
+
+## Server options
+
+| Option            | Type        | Default        | Description                                                                        |
+| ----------------- | ----------- | -------------- | ---------------------------------------------------------------------------------- |
+| `name`            | `string`    | (required)     | Server name reported in `initialize` responses                                     |
+| `version`         | `string`    | `"1.0.0"`      | Server version reported in `initialize` responses                                  |
+| `title`           | `string`    |                | Human-readable server title                                                        |
+| `description`     | `string`    |                | Human-readable server description                                                  |
+| `instructions`    | `string`    |                | Free-text instructions included in `initialize` responses, for the model's context |
+| `icons`           | `MCPIcon[]` |                | Server icons for client UIs (`src`, `mimeType`, `sizes`, `theme`)                  |
+| `websiteUrl`      | `string`    |                | Server website URL                                                                 |
+| `protocolVersion` | `string`    | `"2025-11-25"` | MCP protocol version to advertise                                                  |
+| `path`            | `string`    | `"/mcp"`       | HTTP path of the MCP endpoint                                                      |
+| `log`             | `Logger`    |                | Logger instance; defaults to the gateway's logger                                  |
+
+## Operation sources
+
+| Option           | Type                  | Default | Description                                                                                      |
+| ---------------- | --------------------- | ------- | ------------------------------------------------------------------------------------------------ |
+| `operationsPath` | `string`              |         | A `.graphql` file, or a directory of them, containing named operations and `@mcpTool` directives |
+| `operationsStr`  | `string`              |         | The operations as a raw GraphQL string, as an alternative to a file                              |
+| `loader`         | `MCPOperationsLoader` |         | Load operations for each MCP request with access to its `request` and `serverContext`             |
+
+## Tools, resources and providers
+
+| Option                 | Type                          | Default | Description                                                                              |
+| ---------------------- | ----------------------------- | ------- | ---------------------------------------------------------------------------------------- |
+| `tools`                | `MCPToolConfig[]`             | `[]`    | Tool definitions; see [Tools](/docs/gateway/mcp/tools)                                   |
+| `resources`            | `MCPResourceConfig[]`         | `[]`    | Static resources; see [Resources](/docs/gateway/mcp/resources)                           |
+| `resourceTemplates`    | `MCPResourceTemplateConfig[]` | `[]`    | Resource templates with URI patterns and handlers                                        |
+| `providers`            | `object`                      |         | Description providers by name, e.g. `{ langfuse: {} }` or a custom `DescriptionProvider` |
+| `suppressOutputSchema` | `boolean`                     | `false` | Omit the output schema from every tool in `tools/list`                                   |
+
+## Tool definition
+
+Each entry of `tools` is an `MCPToolConfig`:
+
+| Field    | Type                 | Description                                                                                                                 |
+| -------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `name`   | `string`             | Unique tool name exposed to clients (required)                                                                              |
+| `source` | `MCPToolSource`      | `{ type: "inline", query }` or `{ type: "graphql", operationName, operationType, file? }` (required)                        |
+| `tool`   | `MCPToolOverrides`   | `title`, `description`, `descriptionProvider`, `annotations`, `icons`, `execution.taskSupport`, `_meta`                     |
+| `input`  | `MCPInputOverrides`  | `schema.properties.<variable>` with `description`, `examples`, `default`, `alias`, `hidden`, `descriptionProvider`          |
+| `output` | `MCPOutputOverrides` | `path`, `schema: false`, `contentAnnotations`, `descriptionProviders`                                                       |
+| `hooks`  | `MCPToolHooks`       | `preprocess(args, context)` and `postprocess(result, args, context)`; the context carries `toolName`, `headers` and `query` |
+
+## Directives
+
+Available in operation files loaded through `operationsPath`, `operationsStr` or a `loader`:
+
+| Directive         | Placement                  | Arguments                                                             | Effect                                                                                   |
+| ----------------- | -------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `@mcpTool`        | Operation                  | `name`, `description`, `descriptionProvider`, `meta`                  | Registers the operation as a tool                                                        |
+| `@mcpDescription` | Variable or selected field | `provider` (`<provider>:<prompt>` or `<provider>:<prompt>:<version>`) | Sets a dynamic description for the variable or output field                              |
+| `@mcpHeader`      | Variable                   | `name`                                                                | Hides the variable from the input schema and fills it from the named HTTP request header |

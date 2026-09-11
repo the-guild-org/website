@@ -1,0 +1,162 @@
+---
+title: MCP Resources and Dynamic Operations
+sidebarTitle: Resources and Dynamic Operations
+description:
+  Serve static and templated MCP resources from Hive Gateway, and load tool operations from an
+  external source per request.
+---
+
+import { Callout } from '@hive/design-system/hive-components/callout'
+
+<Callout type="warning">
+  The MCP plugin is in beta. Its configuration and behavior may change between releases as the
+  protocol and the plugin evolve, and these docs are updated alongside it.
+</Callout>
+
+Besides tools, an MCP server can offer resources: documents agents read for context, such as an API
+guide or a schema. The plugin serves static resources and parameterized resource templates, and it
+can also load the operations behind your tools from an external source at runtime.
+
+## Static resources
+
+Resources are listed with `resources/list` and fetched with `resources/read`. Each one has a `uri`,
+a `name` and content from one of three sources:
+
+- `text`: an inline string
+- `blob`: inline base64-encoded binary content
+- `file`: a path read from disk at startup
+
+```ts title="gateway.config.ts"
+useMCP(ctx, {
+  name: 'my-api',
+  resources: [
+    {
+      name: 'api-guide',
+      uri: 'docs://api-guide',
+      mimeType: 'text/markdown',
+      text: '# API Guide\n\nUse get_users to fetch user data.'
+    },
+    {
+      name: 'icon',
+      uri: 'files://icon.png',
+      mimeType: 'image/png',
+      blob: 'iVBOR...'
+    },
+    {
+      name: 'schema',
+      uri: 'files://schema.graphql',
+      file: './schema.graphql'
+    }
+  ]
+})
+```
+
+`mimeType` defaults to `text/plain`. For `file` resources the plugin reads the file as text or as
+binary based on the MIME type; set `binary` explicitly to override. Resources also accept `title`,
+`description`, `icons`, `annotations` (`audience`, `priority`, `lastModified`) and a
+`descriptionProvider`.
+
+## Resource templates
+
+A resource template describes a family of resources with a URI pattern. Placeholders in
+`uriTemplate` become the parameters of a `handler` that produces the content on demand:
+
+```ts title="gateway.config.ts"
+useMCP(ctx, {
+  name: 'my-api',
+  resourceTemplates: [
+    {
+      uriTemplate: 'users://{id}',
+      name: 'User Profile',
+      description: 'Get a user profile by ID',
+      mimeType: 'application/json',
+      handler: async params => ({
+        text: JSON.stringify({ id: params['id'], source: 'gateway' })
+      })
+    }
+  ]
+})
+```
+
+Templates are listed with `resources/templates/list`. The handler returns either `text` or `blob`,
+optionally with a `mimeType` override for that response.
+
+## Dynamic operations loader
+
+Instead of shipping operation files with the gateway, a `loader` can fetch the operations source
+from anywhere, such as a CDN, object store or persisted-documents service:
+
+```ts title="gateway.config.ts"
+useMCP(ctx, {
+  name: 'my-api',
+  loader: {
+    async load({ request, serverContext }) {
+      const tenant = encodeURIComponent(request.headers.get('x-tenant') ?? 'default')
+      const res = await fetch(`https://my-cdn.example.com/${tenant}/operations.graphql`)
+      return res.text()
+    }
+  }
+})
+```
+
+`load()` runs for every MCP request and receives its `request` and `serverContext`, so the source can
+vary by tenant or any other request data. It returns raw GraphQL source, which may contain several
+operations. Operations carrying `@mcpTool` are registered as tools; the others are available to
+`source.type: "graphql"` tools.
+
+The plugin caches each resulting tool registry by the returned string. Returning an identical source
+reuses the cached registry without parsing and rebuilding it. The cache is cleared whenever the
+GraphQL schema changes. If `load()` throws, the plugin logs the error and uses only the statically
+configured tools for that request.
+
+## Load persisted documents from Hive
+
+`createHiveLoader` resolves an app deployment manifest from the Hive CDN, fetches every persisted
+GraphQL document in it, and returns the documents as one operations source for the plugin to parse:
+
+```ts title="gateway.config.ts"
+import { createHiveLoader } from '@graphql-hive/plugin-mcp/loaders/hive'
+
+useMCP(ctx, {
+  name: 'my-api',
+  loader: createHiveLoader(ctx, {
+    endpoint: 'https://cdn.graphql-hive.com/artifacts/v1/<target-id>',
+    accessToken: '<cdn-access-token>',
+    appDeployment: {
+      appName: 'my-app',
+      appVersion: '1.0.0'
+    }
+  })
+})
+```
+
+Pass two endpoints to fail over from the first, primary CDN to the second endpoint:
+
+```ts
+createHiveLoader(ctx, {
+  endpoint: [
+    'https://cdn.graphql-hive.com/artifacts/v1/<target-id>',
+    'https://cdn-mirror.graphql-hive.com/artifacts/v1/<target-id>'
+  ],
+  accessToken: '<cdn-access-token>',
+  appDeployment: { appName: 'my-app', appVersion: '1.0.0' }
+})
+```
+
+For multi-tenant gateways, resolve the app deployment from each request:
+
+```ts
+createHiveLoader(ctx, {
+  endpoint: 'https://cdn.graphql-hive.com/artifacts/v1/<target-id>',
+  accessToken: '<cdn-access-token>',
+  appDeployment: ({ request }) => {
+    const appName = request.headers.get('x-app-name')
+    const appVersion = request.headers.get('x-app-version')
+    if (!appName || !appVersion) throw new Error('Missing app deployment headers')
+    return { appName, appVersion }
+  }
+})
+```
+
+With a function, the manifest and documents are fetched on every request. Identical concatenated
+sources still reuse the plugin's cached tool registry.
