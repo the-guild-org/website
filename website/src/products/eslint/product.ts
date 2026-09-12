@@ -22,6 +22,9 @@ export default {
     // The old site's playground ran ESLint in the browser; it is not ported.
     '/play': '/docs',
     '/docs/getting-started': '/docs/usage',
+    // Reported in the-guild-org/website#1788: the old "code files" usage page is the JS/TS one.
+    '/usage/code-files': '/docs/usage/js',
+    '/docs/usage/code-files': '/docs/usage/js',
     '/docs/getting-started/parser': '/docs/parser',
     '/docs/getting-started/parser-options': '/docs/parser',
     '/docs/parser-options': '/docs/parser',

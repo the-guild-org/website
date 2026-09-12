@@ -8,7 +8,7 @@ description:
   show how you can use these patterns in your existing projects.
 ---
 
-import { Callout } from "@hive/design-system/hive-components/callout";
+import { Callout } from '@hive/design-system/hive-components/callout'
 
 Maybe this even inspires you to dig deeper into the optimizations the Relay client runtime does on
 top of these patterns and convince you to use Relay within your next project. You can learn more
@@ -21,7 +21,7 @@ building. The most important thing is the patterns that are applicable anywhere!
 
 I also talked about this topic recently at the GraphQL Berlin meetup!
 
-import { YoutubeIframe } from "@hive/design-system/youtube-iframe";
+import { YoutubeIframe } from '@hive/design-system/youtube-iframe'
 
 There is no doubt that Relay is the most advanced JavaScript GraphQL Client out there. However, at
 the same time, the learning curve and adoption is yet very sparse compared to other popular
@@ -44,27 +44,30 @@ with `@defer` and `@stream` is an actual improvement in the performance of the a
 
 ![Fragmentized Component Tree](./component-tree-diagram.png)
 
+(The `UserList_QueryFragment` in the diagram is the `FriendList_QueryFragment` defined further down;
+the component was renamed while writing this post.)
+
 **Colocate GraphQL documents with the component code.** Instead of writing GraphQL operations in a
 dedicated file, the operations are written within the component code. Have you ever deleted
 component code and forgot to delete the corresponding operation or fragment definitions that are in
 some other field? We encountered this issue over and over again generating a lot of dead code.
 
 ```tsx
-import { FragmentType, graphql, useFragment } from "./gql";
+import { FragmentType, graphql, useFragment } from './gql'
 
 const Avatar_UserFragment = graphql(/* GraphQL */ `
   fragment Avatar_UserFragment on User {
     avatarUrl
   }
-`);
+`)
 
 type AvatarProps = {
-  user: FragmentType<typeof Avatar_UserFragment>;
-};
+  user: FragmentType<typeof Avatar_UserFragment>
+}
 
 export function Avatar(props: AvatarProps) {
-  const user = useFragment(Avatar_UserFragment, props.user);
-  return <CircleImage src={user.avatarUrl} />;
+  const user = useFragment(Avatar_UserFragment, props.user)
+  return <CircleImage src={user.avatarUrl} />
 }
 ```
 
@@ -86,20 +89,20 @@ yarn add -D @graphql-codegen/client-preset
 ```
 
 ```ts
-import { CodegenConfig } from "@graphql-codegen/cli";
+import { CodegenConfig } from '@graphql-codegen/cli'
 
 const config: CodegenConfig = {
-  schema: "https://swapi-graphql.netlify.app/.netlify/functions/index",
-  documents: ["src/**/*.tsx", "!src/gql/**/*"],
+  schema: 'https://swapi-graphql.netlify.app/.netlify/functions/index',
+  documents: ['src/**/*.tsx', '!src/gql/**/*'],
   generates: {
-    "./src/gql/": {
-      preset: "client",
-      plugins: [],
-    },
-  },
-};
+    './src/gql/': {
+      preset: 'client',
+      plugins: []
+    }
+  }
+}
 
-export default config;
+export default config
 ```
 
 Instead of generating the hooks for the existing clients, the preset works with function signature
@@ -112,8 +115,8 @@ operation and variables type.
 In your application code you will now effectively write the following code.
 
 ```tsx
-import { useQuery } from "urql";
-import { graphql } from "./gql/gql";
+import { useQuery } from 'urql'
+import { graphql } from './gql/gql'
 
 const ViewerQueryDocument = graphql(/* GraphQL */ `
   query ViewerQuery {
@@ -122,17 +125,17 @@ const ViewerQueryDocument = graphql(/* GraphQL */ `
       name
     }
   }
-`);
+`)
 
 const Viewer = () => {
-  const [result] = useQuery({ query: ViewerQueryDocument });
-  const { data, fetching, error } = result;
+  const [result] = useQuery({ query: ViewerQueryDocument })
+  const { data, fetching, error } = result
 
-  if (fetching) return <p>Loading…</p>;
-  if (error) return <p>Oh no… {error.message}</p>;
+  if (fetching) return <p>Loading…</p>
+  if (error) return <p>Oh no… {error.message}</p>
   // data is fully typed!
-  return <p>{data?.viewer?.name}</p>;
-};
+  return <p>{data?.viewer?.name}</p>
+}
 ```
 
 Because the client has built in support for TypedDocumentNode, it will extract the correct operation
@@ -152,21 +155,21 @@ that some would colocate the TypeScript definitions or CSS if you are using the 
 pattern.
 
 ```tsx
-import { FragmentType, graphql, useFragment } from "./gql";
+import { FragmentType, graphql, useFragment } from './gql'
 
 const Avatar_UserFragment = graphql(/* GraphQL */ `
   fragment Avatar_UserFragment on User {
     avatarUrl
   }
-`);
+`)
 
 type AvatarProps = {
-  user: FragmentType<typeof Avatar_UserFragment>;
-};
+  user: FragmentType<typeof Avatar_UserFragment>
+}
 
 export function Avatar(props: AvatarProps) {
-  const user = useFragment(Avatar_UserFragment, props.user);
-  return <CircleImage src={user.avatarUrl} />;
+  const user = useFragment(Avatar_UserFragment, props.user)
+  return <CircleImage src={user.avatarUrl} />
 }
 ```
 
@@ -181,26 +184,26 @@ The following example would raise a TypeScript error, as the `avatarUrl` field i
 within the `UserListItem_UserFragment` fragment.
 
 ```tsx
-import { Avatar } from "./avatar";
-import { FragmentType, graphql, useFragment } from "./gql";
+import { Avatar } from './avatar'
+import { FragmentType, graphql, useFragment } from './gql'
 
 const UserListItem_UserFragment = graphql(/* GraphQL */ `
   fragment UserListItem_UserFragment on User {
     fullName
     ...Avatar_UserFragment
   }
-`);
+`)
 
 type UserListItemProps = {
-  user: FragmentType<typeof UserListItem_UserFragment>;
-};
+  user: FragmentType<typeof UserListItem_UserFragment>
+}
 
 export function UserListItem(props: UserListItemProps) {
-  const user = useFragment(UserListItem_UserFragment, props.user);
+  const user = useFragment(UserListItem_UserFragment, props.user)
 
   // ERROR: Property 'avatarUrl' does not exist on type
-  const icon = <img src={user.avatarUrl} />;
-  return <ListItem icon={icon}>{user.fullName}</ListItem>;
+  const icon = <img src={user.avatarUrl} />
+  return <ListItem icon={icon}>{user.fullName}</ListItem>
 }
 ```
 
@@ -210,23 +213,23 @@ As we compose simple visual UI components into bigger functional UI components w
 the fragments of the consumed UI component.
 
 ```tsx
-import { Avatar } from "./avatar";
-import { FragmentType, graphql, useFragment } from "./gql";
+import { Avatar } from './avatar'
+import { FragmentType, graphql, useFragment } from './gql'
 
 const UserListItem_UserFragment = graphql(/* GraphQL */ `
   fragment UserListItem_UserFragment on User {
     fullName
     ...Avatar_UserFragment
   }
-`);
+`)
 
 type UserListItemProps = {
-  user: FragmentType<typeof UserListItem_UserFragment>;
-};
+  user: FragmentType<typeof UserListItem_UserFragment>
+}
 
 export function UserListItem(props: UserListItemProps) {
-  const user = useFragment(UserListItem_UserFragment, props.user);
-  return <ListItem icon={<Avatar user={user} />}>{user.fullName}</ListItem>;
+  const user = useFragment(UserListItem_UserFragment, props.user)
+  return <ListItem icon={<Avatar user={user} />}>{user.fullName}</ListItem>
 }
 ```
 
@@ -236,8 +239,8 @@ We can now further compose our components till we reach those components that se
 object type.
 
 ```tsx
-import { FragmentType, graphql, useFragment } from "./gql";
-import { UserListItem } from "./user-list-item";
+import { FragmentType, graphql, useFragment } from './gql'
+import { UserListItem } from './user-list-item'
 
 const FriendList_QueryFragment = graphql(/* GraphQL */ `
   fragment FriendList_QueryFragment on Query {
@@ -246,21 +249,21 @@ const FriendList_QueryFragment = graphql(/* GraphQL */ `
       ...UserListItem_UserFragment
     }
   }
-`);
+`)
 
 type FriendListProps = {
-  query: FragmentType<typeof FriendList_QueryFragment>;
-};
+  query: FragmentType<typeof FriendList_QueryFragment>
+}
 
 export function FriendList(props: FriendListProps) {
-  const query = useFragment(FriendList_QueryFragment, props.query);
+  const query = useFragment(FriendList_QueryFragment, props.query)
   return (
     <List>
-      {query.friends.map((user) => (
+      {query.friends.map(user => (
         <FriendListItem key={user.id} user={user} />
       ))}
     </List>
-  );
+  )
 }
 ```
 
@@ -269,7 +272,7 @@ re-use this Avatar in a different context by again spreading the fragment and th
 relevant data to the `Avatar` component `user` property.
 
 ```tsx
-import { FragmentType, graphql, useFragment } from "./gql";
+import { FragmentType, graphql, useFragment } from './gql'
 
 const UserProfileHeader_QueryFragment = graphql(/* GraphQL */ `
   fragment UserProfileHeader_QueryFragment on Query {
@@ -280,21 +283,21 @@ const UserProfileHeader_QueryFragment = graphql(/* GraphQL */ `
       ...Avatar_UserFragment
     }
   }
-`);
+`)
 
 type UserProfileHeaderProps = {
-  query: FragmentType<typeof UserProfileHeader_QueryFragment>;
-};
+  query: FragmentType<typeof UserProfileHeader_QueryFragment>
+}
 
 export function UserProfileHeader(props: UserProfileHeaderProps) {
-  const query = useFragment(UserProfileHeader_QueryFragment, props.query);
+  const query = useFragment(UserProfileHeader_QueryFragment, props.query)
   return (
     <>
       <Avatar user={query.viewer} />
       {query.viewer.homeTown}
       {query.viewer.registeredAt}
     </>
-  );
+  )
 }
 ```
 
@@ -336,6 +339,9 @@ Finally, we have the following component tree as mentioned before.
 
 ![Fragmentized Component Tree](./component-tree-diagram.png)
 
+(The `UserList_QueryFragment` in the diagram is the `FriendList_QueryFragment` defined further down;
+the component was renamed while writing this post.)
+
 ## Conclusion
 
 This pattern allows you to re-use and scale your components to the maximum while having a clear and
@@ -357,9 +363,9 @@ You can start quickly without much configuration by following
 [the preset documentation](https://graphql-code-generator.com/plugins/presets/client-preset).
 
 <Callout type="info">
-  If you want to learn how to optimize the generated code for your frontend
-  applications, check out our article [Optimize your Bundle Size with SWC and
-  GraphQL Codegen](/blog/optimize-bundle-size-with-swc-and-graphql-codegen).
+  If you want to learn how to optimize the generated code for your frontend applications, check out
+  our article [Optimize your Bundle Size with SWC and GraphQL
+  Codegen](/blog/optimize-bundle-size-with-swc-and-graphql-codegen).
 </Callout>
 
 <YoutubeIframe

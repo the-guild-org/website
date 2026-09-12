@@ -94,12 +94,12 @@ Step 1: npm install the [`sofa-api`](https://npmjs.com/package/sofa-api) package
 following line of code:
 
 ```ts
-import express from "express";
-import sofa from "sofa-api";
+import express from 'express'
+import sofa from 'sofa-api'
 
-const app = express();
+const app = express()
 
-app.use(sofa({ schema }));
+app.use(sofa({ schema }))
 ```
 
 Step 2: Go REST on a Sofa, you're done.
@@ -109,10 +109,9 @@ Kamil Kisiela added Sofa to the
 implementation by Carlos Rufo, **in a single
 [commit](https://github.com/spacexland/api/pull/7/commits/9b50393ad33c27693d89f271ec1247715c6dcc53#diff-f41e9d04a45c83f3b6f6e630f10117fe)**.
 
-Check out the fully generated [REST endpoints](https://api.spacex.land/rest/capsules), the
-[Swagger live documentation](https://api.spacex.land/rest),
-[GraphiQL editor](https://api.spacex.land/graphql) and the
-[GraphiQL-Explorer](https://api.spacex.land)!
+That gave the API fully generated REST endpoints, Swagger live documentation and a GraphiQL editor,
+all from the same GraphQL schema. (The SpaceX Land API has since been shut down, so those live links
+are gone; the commit above still shows everything it took.)
 
 By the way, what you see here is a REST API, generated on top of a GraphQL API, created on top of
 another REST API….
@@ -211,8 +210,8 @@ With `ignore: ['Book.author']`you end up with an entire User object.
 ```ts
 sofa({
   // ...
-  ignore: ["Book.author"],
-});
+  ignore: ['Book.author']
+})
 ```
 
 ## Swagger and OpenAPI
@@ -222,28 +221,28 @@ REST API. Right now we support Swagger and its OpenAPI specification but it's re
 different specs.
 
 ```ts
-import sofa, { OpenAPI } from "sofa-api";
+import sofa, { OpenAPI } from 'sofa-api'
 
 const openApi = OpenAPI({
   schema,
   info: {
-    title: "Example API",
-    version: "3.0.0",
-  },
-});
+    title: 'Example API',
+    version: '3.0.0'
+  }
+})
 
 app.use(
   sofa({
     schema,
     onRoute(info) {
       openApi.addRoute(info, {
-        basePath: "",
-      });
-    },
-  }),
-);
+        basePath: ''
+      })
+    }
+  })
+)
 
-openApi.save("./swagger.json");
+openApi.save('./swagger.json')
 ```
 
 ## Summary

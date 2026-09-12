@@ -4,6 +4,12 @@
  * kept as-is.
  */
 export const meshRedirects: Record<string, string> = {
+  // Reported in the-guild-org/website#1750, #1721 and #1894.
+  '/v1/configuration': '/v1/getting-started',
+  '/docs/features/persisted-operations': '/docs/guides/persisted-operations',
+  // `@link(url: "…/mesh/spec/v1.0")` in the auth docs is a directive-import identifier; people follow it.
+  '/spec/*': '/v1',
+
   '/api': '/docs',
   '/api/enums/store_src.PredefinedProxyOptionsName': '/docs/getting-started/customize-mesh-server',
   '/docs/api/classes/*': '/docs',
