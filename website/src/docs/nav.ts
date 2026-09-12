@@ -16,6 +16,8 @@ export interface DocsNavPage {
   href: string;
   title: string;
   type: 'page';
+  /** An absolute URL from a `[Title](https://…)` meta entry: opens elsewhere. */
+  external?: boolean;
 }
 
 export interface DocsNavFolder {
@@ -151,6 +153,9 @@ export function buildDocsNav(source: DocsNavSource): DocsNav {
           children.push(folder);
         } else if (slugs.has(slug)) {
           children.push(page(slug, bracket.title));
+        } else if (/^https?:\/\//i.test(bracket.href)) {
+          // A link to another site (Tools' sidebar points at Schema Stitching).
+          children.push({ external: true, href: bracket.href, title: bracket.title, type: 'page' });
         }
         continue;
       }
@@ -171,8 +176,10 @@ export function buildDocsNav(source: DocsNavSource): DocsNav {
   function flatten(nodes: DocsNavNode[]): DocsNavPage[] {
     const items: DocsNavPage[] = [];
     for (const node of nodes) {
-      if (node.type === 'page') items.push(node);
-      else {
+      // External links are not pages of this site: no prev/next, no llms entry.
+      if (node.type === 'page') {
+        if (!node.external) items.push(node);
+      } else {
         if (node.href) items.push(page(hrefToSlug(node.href), node.title));
         items.push(...flatten(node.children));
       }
