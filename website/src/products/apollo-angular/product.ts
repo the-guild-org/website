@@ -10,7 +10,11 @@ export default {
   description: 'GraphQL client for the Angular framework.',
   repo: 'the-guild-org/apollo-angular',
   branch: 'master',
-  sections: [{ base: '/docs', dir: 'docs', label: 'Documentation' }],
+  sections: [
+    { base: '/docs', dir: 'docs', label: 'Documentation' },
+    { base: '/changelog', dir: 'changelog', label: 'Changelog', breadcrumb: 'Changelog' },
+  ],
+  changelog: 'packages/apollo-angular/CHANGELOG.md',
   redirects: {
     '/docs/features/subscriptions.html': '/docs/data/subscriptions',
     '/docs/basics/*': '/docs/data/:splat',

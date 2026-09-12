@@ -10,7 +10,11 @@ export default {
   description: 'Generate RESTful APIs from your GraphQL server.',
   repo: 'graphql-hive/SOFA',
   branch: 'master',
-  sections: [{ base: '/docs', dir: 'docs', label: 'Documentation' }],
+  sections: [
+    { base: '/docs', dir: 'docs', label: 'Documentation' },
+    { base: '/changelog', dir: 'changelog', label: 'Changelog', breadcrumb: 'Changelog' },
+  ],
+  changelog: 'CHANGELOG.md',
   redirects: {
     '/docs/essentials': '/docs/essentials/queries',
     '/docs/recipes': '/docs/recipes/open-api',
