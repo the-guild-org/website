@@ -20,11 +20,11 @@ Watch mode is the recommended way to work with Codegen in managed workflows like
 Server Preset. But the base CLI's watch-mode support wasn't consistent across plugins and presets,
 and profiling didn't work on every run.
 
-There are fixes and improvements to allow library authors more flexibility to control the output:
+Recent fixes and improvements allow library authors more flexibility to control the output:
 
 - `overwrite.updateExistingFiles` and `overwrite.removeStaleFiles` let a preset control whether its
   regenerated files are updated in place or removed as stale
-- `overwrite` set on a preset-based `generates` entry is no longer silently ignored
+- `overwrite` set on a preset-based `generates` entry now works
 - `contentComparison` lets plugins and presets choose disk vs. cache comparison when deciding
   whether to rewrite a file
 - `--profile --watch` now writes a trace after every rebuild, not just the initial run
@@ -38,7 +38,7 @@ that compares resolver types against your mappers, and the schema parsing that e
 block used to repeat.
 
 Measured on [Hive Console](https://github.com/graphql-hive/console)'s codebase, on re-runs where
-schema types and mappers don't change, generation time dropped by **50 to 80%**.
+schema types and mappers don't change, generation time dropped by **up to 80%**.
 
 ## Fixed Windows
 
