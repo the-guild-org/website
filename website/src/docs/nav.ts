@@ -153,7 +153,7 @@ export function buildDocsNav(source: DocsNavSource): DocsNav {
           children.push(folder);
         } else if (slugs.has(slug)) {
           children.push(page(slug, bracket.title));
-        } else if (/^https?:\/\//.test(bracket.href)) {
+        } else if (/^https?:\/\//i.test(bracket.href)) {
           // A link to another site (Tools' sidebar points at Schema Stitching).
           children.push({ external: true, href: bracket.href, title: bracket.title, type: 'page' });
         }
