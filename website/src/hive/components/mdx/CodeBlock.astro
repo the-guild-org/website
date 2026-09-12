@@ -3,37 +3,11 @@ const { class: className, icon, tabindex: _tabindex, title, ...props } = Astro.p
 ---
 
 <figure {...props} class:list={['code-block', className]} data-code-block dir="ltr" tabindex="-1">
-  {
-    title ? (
-      <div class="code-block-header">
-        {icon && <span class="code-block-icon" aria-hidden="true" set:html={icon} />}
-        <figcaption>{title}</figcaption>
-        <button aria-label="Copy Text" data-copy-code type="button">
-          <svg
-            data-copy-icon
-            aria-hidden="true"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-          </svg>
-          <svg
-            data-check-icon
-            aria-hidden="true"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="m20 6-11 11-5-5" />
-          </svg>
-        </button>
-      </div>
-    ) : (
-      <button class="floating-copy" aria-label="Copy Text" data-copy-code type="button">
+  {title ? (
+    <div class="code-block-header">
+      {icon && <span class="code-block-icon" aria-hidden="true" set:html={icon} />}
+      <figcaption>{title}</figcaption>
+      <button aria-label="Copy Text" data-copy-code type="button">
         <svg
           data-copy-icon
           aria-hidden="true"
@@ -56,8 +30,32 @@ const { class: className, icon, tabindex: _tabindex, title, ...props } = Astro.p
           <path d="m20 6-11 11-5-5" />
         </svg>
       </button>
-    )
-  }
+    </div>
+  ) : (
+    <button class="floating-copy" aria-label="Copy Text" data-copy-code type="button">
+      <svg
+        data-copy-icon
+        aria-hidden="true"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+      </svg>
+      <svg
+        data-check-icon
+        aria-hidden="true"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="m20 6-11 11-5-5" />
+      </svg>
+    </button>
+  )}
   <div class="code-block-viewport" role="region" tabindex="0">
     <pre><slot /></pre>
   </div>

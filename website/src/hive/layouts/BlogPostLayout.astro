@@ -84,19 +84,12 @@ const pageTitle = title.includes('|') ? title : `${title} | Hive`;
         title={title}
       />
 
-      <div
-        class="blog-prose-shell mx-auto grid w-full max-w-[1436px] grid-cols-1 px-4 md:px-12 xl:grid-cols-[268px_minmax(0,900px)_268px] xl:px-0"
-      >
-        {
-          tableOfContents.length > 0 && (
-            <details
-              class="group sticky top-(--header-height) z-10 h-10 xl:hidden"
-              data-toc-popover
-            >
-              <TocPopoverContent headings={tableOfContents} />
-            </details>
-          )
-        }
+      <div class="blog-prose-shell mx-auto grid w-full max-w-[1436px] grid-cols-1 px-4 md:px-12 xl:grid-cols-[268px_minmax(0,900px)_268px] xl:px-0">
+        {tableOfContents.length > 0 && (
+          <details class="group sticky top-(--header-height) z-10 h-10 xl:hidden" data-toc-popover>
+            <TocPopoverContent headings={tableOfContents} />
+          </details>
+        )}
 
         <article
           class="prose dark:prose-invert mx-auto w-(--article-max-width) max-w-full min-w-0 xl:col-start-2"
@@ -119,9 +112,7 @@ const pageTitle = title.includes('|') ? title : `${title} | Hive`;
         currentTags={tags}
         currentTitle={title}
       />
-      <GetYourAPIGameRightSection
-        class="light text-green-1000 dark:bg-primary/95 mx-4 sm:mb-6 md:mx-6"
-      />
+      <GetYourAPIGameRightSection class="light text-green-1000 dark:bg-primary/95 mx-4 sm:mb-6 md:mx-6" />
     </div>
 
     <SiteFooter />

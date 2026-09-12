@@ -46,39 +46,35 @@ const external = ctaHref.startsWith('http') && ctaHref !== 'https://the-guild.de
 >
   <div>
     <header class="mb-6 flex items-center gap-2">
-      {
-        icon && (
-          <svg
-            fill="currentColor"
-            height="25"
-            viewBox="0 0 24 25"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M21 18.375H6a1 1 0 000 2h15v2H6a3 3 0 01-3-3v-15a2 2 0 012-2h16v16zm-16-1.95c.162-.033.329-.05.5-.05H19v-12H5v12.05zm11-7.05H8v-2h8v2z" />
-          </svg>
-        )
-      }
+      {icon && (
+        <svg
+          fill="currentColor"
+          height="25"
+          viewBox="0 0 24 25"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M21 18.375H6a1 1 0 000 2h15v2H6a3 3 0 01-3-3v-15a2 2 0 012-2h16v16zm-16-1.95c.162-.033.329-.05.5-.05H19v-12H5v12.05zm11-7.05H8v-2h8v2z" />
+        </svg>
+      )}
       <h3 class="font-medium">{heading}</h3>
     </header>
     <slot />
   </div>
-  {
-    cta && (
-      <a
-        class:list={[
-          ctaHref !== 'https://the-guild.dev/contact' && 'outline-hidden focus-visible:ring-3',
-          'text-green-1000 relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline sm:w-fit dark:text-neutral-200 [&:hover>:first-child]:-inset-px [&:hover>:first-child]:rounded-[9px]',
-          ctaClasses[ctaVariant],
-        ]}
-        href={withBase(ctaHref)}
-        data-case-study-contact={ctaHref === 'https://the-guild.dev/contact' ? '' : undefined}
-        rel={external ? 'noreferrer' : undefined}
-        target={external ? '_blank' : undefined}
-      >
-        <span class="absolute inset-0 rounded-lg border border-green-800 dark:border-neutral-200" />
-        {ctaLabel}
-      </a>
-    )
-  }
+  {cta && (
+    <a
+      class:list={[
+        ctaHref !== 'https://the-guild.dev/contact' && 'outline-hidden focus-visible:ring-3',
+        'text-green-1000 relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline sm:w-fit dark:text-neutral-200 [&:hover>:first-child]:-inset-px [&:hover>:first-child]:rounded-[9px]',
+        ctaClasses[ctaVariant],
+      ]}
+      href={withBase(ctaHref)}
+      data-case-study-contact={ctaHref === 'https://the-guild.dev/contact' ? '' : undefined}
+      rel={external ? 'noreferrer' : undefined}
+      target={external ? '_blank' : undefined}
+    >
+      <span class="absolute inset-0 rounded-lg border border-green-800 dark:border-neutral-200" />
+      {ctaLabel}
+    </a>
+  )}
 </article>

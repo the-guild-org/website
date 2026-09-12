@@ -101,103 +101,97 @@ const testimonialId = (company: string) =>
       class="lg:bg-beige-200 z-10 order-1 -mx-1 mt-4 flex flex-row justify-center rounded-2xl px-1 lg:order-first lg:my-16 lg:grid lg:grid-cols-4"
       role="tablist"
     >
-      {
-        testimonials.map((testimonial, i) => (
-          <button
-            class="hive-focus aria-selected:text-green-1000 lg:aria-selected:border-beige-600 flex flex-1 grow-0 cursor-pointer items-center justify-center rounded-[15px] border-transparent p-0.5 leading-6 font-medium text-green-800 lg:grow lg:border lg:bg-transparent lg:p-4 lg:aria-selected:bg-white [&[aria-selected=true]>:first-child]:bg-blue-400"
-            data-testimonial-tab={testimonial.company}
-            role="tab"
-            type="button"
-            aria-selected={i === 0 ? 'true' : 'false'}
-          >
-            <div class="size-2 rounded-full bg-blue-200 transition-colors lg:hidden" />
-            <span class="logo-svg-wrap text-blue-1000 inline-flex h-6 items-center max-lg:sr-only xl:h-8">
-              <CompanyLogo height={32} slug={testimonial.slug} title={testimonial.company} />
-            </span>
-          </button>
-        ))
-      }
+      {testimonials.map((testimonial, i) => (
+        <button
+          class="hive-focus aria-selected:text-green-1000 lg:aria-selected:border-beige-600 flex flex-1 grow-0 cursor-pointer items-center justify-center rounded-[15px] border-transparent p-0.5 leading-6 font-medium text-green-800 lg:grow lg:border lg:bg-transparent lg:p-4 lg:aria-selected:bg-white [&[aria-selected=true]>:first-child]:bg-blue-400"
+          data-testimonial-tab={testimonial.company}
+          role="tab"
+          type="button"
+          aria-selected={i === 0 ? 'true' : 'false'}
+        >
+          <div class="size-2 rounded-full bg-blue-200 transition-colors lg:hidden" />
+          <span class="logo-svg-wrap text-blue-1000 inline-flex h-6 items-center max-lg:sr-only xl:h-8">
+            <CompanyLogo height={32} slug={testimonial.slug} title={testimonial.company} />
+          </span>
+        </button>
+      ))}
     </div>
 
-    <div
-      class="testimonial-scrollview no-scrollbar -m-2 -mb-10 flex snap-x snap-mandatory gap-4 overflow-auto p-2 lg:pb-10"
-    >
-      {
-        testimonials.map(testimonial => (
-          <article
-            class:list={[
-              'relative flex w-full shrink-0 snap-center flex-col gap-6 outline-hidden md:flex-row lg:gap-12',
-              'data-hidden:lg:hidden',
-              'caseStudyHref' in testimonial && testimonial.caseStudyHref
-                ? 'pb-[72px] lg:pb-0'
-                : 'max-lg:pb-8',
-            ]}
-            data-testimonial-panel={testimonial.company}
-            tabindex={-1}
-          >
-            {!('picture' in testimonial) && (
-              <div class="bg-beige-200 logo-svg-wrap text-blue-1000 hidden size-[300px] shrink-0 items-center justify-center rounded-3xl p-12 max-lg:mt-6 md:flex [&>svg]:h-auto [&>svg]:w-full">
-                <CompanyLogo height={64} slug={testimonial.slug} title={testimonial.company} />
-              </div>
-            )}
-            {'picture' in testimonial && (
-              <img
-                alt=""
-                class:list={[
-                  'hidden size-[300px] shrink-0 rounded-3xl object-cover mix-blend-multiply max-lg:mt-6 md:block',
-                  'pictureClass' in testimonial ? testimonial.pictureClass : undefined,
-                ]}
-                height="300"
-                src={testimonial.picture.src}
-                width="300"
-              />
-            )}
-            <div
-              class="flex flex-col max-lg:mt-6 lg:relative"
-              id={testimonialId(testimonial.company)}
-            >
-              <div class="logo-svg-wrap text-blue-1000 mb-6 lg:hidden" style="height:32px">
-                <CompanyLogo height={32} slug={testimonial.slug} title={testimonial.company} />
-              </div>
-              <blockquote
-                class:list={[
-                  'sm:blockquote-beige-500 lg:text-xl xl:text-2xl xl:leading-[32px] [&_code]:font-mono [&_code]:text-[0.9em]',
-                  'data' in testimonial && testimonial.data ? 'lg:text-lg' : undefined,
-                ]}
-              >
-                {testimonialText[testimonial.company]}
-              </blockquote>
-              {'caseStudyHref' in testimonial && testimonial.caseStudyHref && (
-                <a
-                  class="text-green-1000 bg-primary absolute relative bottom-0 mt-0 mt-auto flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-green-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 max-sm:hidden md:w-fit"
-                  href={withBase(testimonial.caseStudyHref)}
-                >
-                  <span class="absolute inset-0 rounded-lg border border-green-800" />
-                  Read the case study
-                  <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
-                    <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
-                  </svg>
-                </a>
-              )}
+    <div class="testimonial-scrollview no-scrollbar -m-2 -mb-10 flex snap-x snap-mandatory gap-4 overflow-auto p-2 lg:pb-10">
+      {testimonials.map(testimonial => (
+        <article
+          class:list={[
+            'relative flex w-full shrink-0 snap-center flex-col gap-6 outline-hidden md:flex-row lg:gap-12',
+            'data-hidden:lg:hidden',
+            'caseStudyHref' in testimonial && testimonial.caseStudyHref
+              ? 'pb-[72px] lg:pb-0'
+              : 'max-lg:pb-8',
+          ]}
+          data-testimonial-panel={testimonial.company}
+          tabindex={-1}
+        >
+          {!('picture' in testimonial) && (
+            <div class="bg-beige-200 logo-svg-wrap text-blue-1000 hidden size-[300px] shrink-0 items-center justify-center rounded-3xl p-12 max-lg:mt-6 md:flex [&>svg]:h-auto [&>svg]:w-full">
+              <CompanyLogo height={64} slug={testimonial.slug} title={testimonial.company} />
             </div>
-            {'data' in testimonial && testimonial.data && (
-              <>
-                <div class="bg-beige-600 hidden w-px md:block" />
-                <ul class="flex gap-6 md:flex-col md:gap-12">
-                  {testimonial.data.map(entry => (
-                    <li>
-                      <span class="block text-[40px] leading-[1.2] tracking-[-0.2px] md:text-6xl md:leading-[1.1875] md:tracking-[-0.64px]">
-                        {entry.numbers}
-                      </span>
-                      <span class="mt-2">{entry.description}</span>
-                    </li>
-                  ))}
-                </ul>
-              </>
+          )}
+          {'picture' in testimonial && (
+            <img
+              alt=""
+              class:list={[
+                'hidden size-[300px] shrink-0 rounded-3xl object-cover mix-blend-multiply max-lg:mt-6 md:block',
+                'pictureClass' in testimonial ? testimonial.pictureClass : undefined,
+              ]}
+              height="300"
+              src={testimonial.picture.src}
+              width="300"
+            />
+          )}
+          <div
+            class="flex flex-col max-lg:mt-6 lg:relative"
+            id={testimonialId(testimonial.company)}
+          >
+            <div class="logo-svg-wrap text-blue-1000 mb-6 lg:hidden" style="height:32px">
+              <CompanyLogo height={32} slug={testimonial.slug} title={testimonial.company} />
+            </div>
+            <blockquote
+              class:list={[
+                'sm:blockquote-beige-500 lg:text-xl xl:text-2xl xl:leading-[32px] [&_code]:font-mono [&_code]:text-[0.9em]',
+                'data' in testimonial && testimonial.data ? 'lg:text-lg' : undefined,
+              ]}
+            >
+              {testimonialText[testimonial.company]}
+            </blockquote>
+            {'caseStudyHref' in testimonial && testimonial.caseStudyHref && (
+              <a
+                class="text-green-1000 bg-primary absolute relative bottom-0 mt-0 mt-auto flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-green-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 max-sm:hidden md:w-fit"
+                href={withBase(testimonial.caseStudyHref)}
+              >
+                <span class="absolute inset-0 rounded-lg border border-green-800" />
+                Read the case study
+                <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
+                  <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
+                </svg>
+              </a>
             )}
-          </article>
-        ))
-      }
+          </div>
+          {'data' in testimonial && testimonial.data && (
+            <>
+              <div class="bg-beige-600 hidden w-px md:block" />
+              <ul class="flex gap-6 md:flex-col md:gap-12">
+                {testimonial.data.map(entry => (
+                  <li>
+                    <span class="block text-[40px] leading-[1.2] tracking-[-0.2px] md:text-6xl md:leading-[1.1875] md:tracking-[-0.64px]">
+                      {entry.numbers}
+                    </span>
+                    <span class="mt-2">{entry.description}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </article>
+      ))}
     </div>
   </div>
 </section>

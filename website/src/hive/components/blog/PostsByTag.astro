@@ -39,13 +39,11 @@ if (tag && !TOP_10_TAGS.includes(tag)) {
 <section class:list={['px-4 sm:px-6', className]}>
   <CategorySelect categories={categories} tag={tag} />
   <FeaturedPosts class="sm:mb-12 md:mt-16" posts={posts} tag={tag} />
-  {
-    Astro.slots.has('default') ? (
-      <LatestPosts posts={posts} tag={tag}>
-        <slot />
-      </LatestPosts>
-    ) : (
-      <LatestPosts posts={posts} tag={tag} />
-    )
-  }
+  {Astro.slots.has('default') ? (
+    <LatestPosts posts={posts} tag={tag}>
+      <slot />
+    </LatestPosts>
+  ) : (
+    <LatestPosts posts={posts} tag={tag} />
+  )}
 </section>

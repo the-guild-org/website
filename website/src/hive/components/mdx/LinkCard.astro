@@ -16,36 +16,34 @@ const hasCaption = Boolean(title || description);
 const external = href.startsWith('http');
 ---
 
-{
-  hasCaption ? (
-    <a
-      class:list={[
-        'bg-beige-100 mt-6 flex gap-2 overflow-hidden rounded-2xl dark:bg-neutral-900',
-        className,
-      ]}
-      href={withBase(href)}
-    >
-      <span class="flex flex-col gap-1 p-6">
-        <strong>{title}</strong>
-        <p class="text-sm">{description}</p>
-      </span>
-      <img
-        alt={alt || ''}
-        class="rounded-none"
-        height="160"
-        role="presentation"
-        src={imgSrc}
-        width="286"
-      />
-    </a>
-  ) : (
-    <a
-      class="border-beige-200 mt-6 block overflow-hidden rounded-2xl border outline-hidden focus-visible:ring-3 dark:border-neutral-800"
-      href={withBase(href)}
-      rel={external ? 'noreferrer' : undefined}
-      target={external ? '_blank' : undefined}
-    >
-      <img alt={alt || ''} class="h-auto w-full" src={imgSrc} />
-    </a>
-  )
-}
+{hasCaption ? (
+  <a
+    class:list={[
+      'bg-beige-100 mt-6 flex gap-2 overflow-hidden rounded-2xl dark:bg-neutral-900',
+      className,
+    ]}
+    href={withBase(href)}
+  >
+    <span class="flex flex-col gap-1 p-6">
+      <strong>{title}</strong>
+      <p class="text-sm">{description}</p>
+    </span>
+    <img
+      alt={alt || ''}
+      class="rounded-none"
+      height="160"
+      role="presentation"
+      src={imgSrc}
+      width="286"
+    />
+  </a>
+) : (
+  <a
+    class="border-beige-200 mt-6 block overflow-hidden rounded-2xl border outline-hidden focus-visible:ring-3 dark:border-neutral-800"
+    href={withBase(href)}
+    rel={external ? 'noreferrer' : undefined}
+    target={external ? '_blank' : undefined}
+  >
+    <img alt={alt || ''} class="h-auto w-full" src={imgSrc} />
+  </a>
+)}

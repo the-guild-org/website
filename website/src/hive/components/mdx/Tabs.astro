@@ -15,22 +15,22 @@ const labels = items.map(item =>
     class="fd-tabs-list mt-4 flex w-full gap-2 overflow-x-auto overflow-y-hidden pb-px shadow-[inset_0_-1px_0_var(--color-beige-400)] dark:shadow-[inset_0_-1px_0_var(--color-neutral-800)]"
     role="tablist"
   >
-    {
-      labels.map((label, index) => (
-        <button
-          aria-selected={index === Number(defaultIndex)}
-          class="fd-tab-trigger text-beige-800 hover:border-beige-400 dark:text-beige-200 dark:aria-selected:text-primary -mb-px shrink-0 cursor-pointer rounded-t border-b border-transparent bg-transparent p-2 leading-5 font-medium whitespace-nowrap transition-colors hover:text-black focus-visible:outline-2 focus-visible:-outline-offset-2 aria-selected:border-current aria-selected:text-green-900 dark:hover:border-neutral-800 dark:hover:text-white"
-          data-index={index}
-          data-tab-label={label}
-          role="tab"
-          type="button"
-        >
-          {label}
-        </button>
-      ))
-    }
+    {labels.map((label, index) => (
+      <button
+        aria-selected={index === Number(defaultIndex)}
+        class="fd-tab-trigger text-beige-800 hover:border-beige-400 dark:text-beige-200 dark:aria-selected:text-primary -mb-px shrink-0 cursor-pointer rounded-t border-b border-transparent bg-transparent p-2 leading-5 font-medium whitespace-nowrap transition-colors hover:text-black focus-visible:outline-2 focus-visible:-outline-offset-2 aria-selected:border-current aria-selected:text-green-900 dark:hover:border-neutral-800 dark:hover:text-white"
+        data-index={index}
+        data-tab-label={label}
+        role="tab"
+        type="button"
+      >
+        {label}
+      </button>
+    ))}
   </div>
-  <div class="tab-panels mt-5"><slot /></div>
+  <div class="tab-panels mt-5">
+    <slot />
+  </div>
 </div>
 
 <script>

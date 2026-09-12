@@ -254,15 +254,13 @@ const dot = (score: number) =>
         offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
         publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
       })}
-    />
+    ></script>
   </head>
   <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
     <SiteNavigation logo={MESH_LOGO} />
     <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
       <!-- Hero -->
-      <div
-        class="relative isolate mx-4 flex max-w-360 flex-col items-center gap-6 overflow-hidden rounded-3xl bg-blue-400 px-4 py-6 max-sm:mt-2 sm:py-16 md:mx-6 md:gap-8 lg:py-24"
-      >
+      <div class="relative isolate mx-4 flex max-w-360 flex-col items-center gap-6 overflow-hidden rounded-3xl bg-blue-400 px-4 py-6 max-sm:mt-2 sm:py-16 md:mx-6 md:gap-8 lg:py-24">
         <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
           <span
             class="absolute top-1/2 -left-40 w-[420px] -translate-y-1/2 text-white/30 md:-left-32 md:w-[520px] [&>svg]:w-full"
@@ -277,9 +275,7 @@ const dot = (score: number) =>
           class="relative flex size-24 items-center justify-center rounded-3xl border border-white/40 bg-gradient-to-br from-[#3B736A] to-[#15433C] text-[#A7D5CA] shadow-[0_12px_40px_-12px_rgba(0,52,44,0.6)] [&>svg]:size-14"
           set:html={meshMark('fill="currentColor"')}
         />
-        <h1
-          class="group relative mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]"
-        >
+        <h1 class="group relative mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]">
           GraphQL Mesh
         </h1>
         <p class="relative mx-auto w-lg max-w-[80%] text-center leading-6 text-green-800">
@@ -288,22 +284,32 @@ const dot = (score: number) =>
           <a
             class="hive-focus underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
             href="https://the-guild.dev/graphql/hive"
-            title="Explore the Hive platform">Hive</a
+            title="Explore the Hive platform"
           >
-          {' '}ecosystem by{' '}
+            Hive
+          </a>{' '}
+          ecosystem by{' '}
           <a
             class="hive-focus underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
             href="https://the-guild.dev"
-            title="Visit The Guild">The Guild</a
-          >.
+            title="Visit The Guild"
+          >
+            The Guild
+          </a>
+          .
         </p>
-        <ul
-          class="relative z-10 mx-auto flex list-none flex-col gap-x-6 gap-y-2 text-sm leading-[21px] font-medium md:flex-row [&>li]:flex [&>li]:items-center [&>li]:gap-2"
-        >
-          <li><span class="text-green-800" set:html={checkmark} />Compose any API</li>
-          <li><span class="text-green-800" set:html={checkmark} />Granular field access</li>
+        <ul class="relative z-10 mx-auto flex list-none flex-col gap-x-6 gap-y-2 text-sm leading-[21px] font-medium md:flex-row [&>li]:flex [&>li]:items-center [&>li]:gap-2">
           <li>
-            <span class="text-green-800" set:html={checkmark} />Works with any schema registry
+            <span class="text-green-800" set:html={checkmark} />
+            Compose any API
+          </li>
+          <li>
+            <span class="text-green-800" set:html={checkmark} />
+            Granular field access
+          </li>
+          <li>
+            <span class="text-green-800" set:html={checkmark} />
+            Works with any schema registry
           </li>
         </ul>
         <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
@@ -317,9 +323,9 @@ const dot = (score: number) =>
             class="text-green-1000 relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit [&>svg]:size-6"
             href={MESH_REPO_URL}
           >
-            <span class="absolute inset-0 rounded-lg border border-green-800"></span><Fragment
-              set:html={githubIcon}
-            />GitHub
+            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+            <Fragment set:html={githubIcon} />
+            GitHub
           </a>
         </div>
       </div>
@@ -328,26 +334,20 @@ const dot = (score: number) =>
       <section class="px-4 py-6 sm:py-12 md:px-6 lg:py-24 xl:px-30">
         <h2 class={sectionTitle}>Query anything, run anywhere</h2>
         <ul class="mt-6 grid list-none grid-cols-1 gap-2 p-0 md:mt-16 md:grid-cols-3 md:gap-6">
-          {
-            infoCards.map(card => (
-              <li class="bg-beige-100 rounded-3xl p-8 lg:p-12">
-                <span class={iconTile} set:html={card.icon} />
-                <h3 class="mt-5 text-xl leading-[1.4] font-medium">{card.title}</h3>
-                <p class="mt-4 leading-6 text-green-800">{card.copy}</p>
-              </li>
-            ))
-          }
+          {infoCards.map(card => (
+            <li class="bg-beige-100 rounded-3xl p-8 lg:p-12">
+              <span class={iconTile} set:html={card.icon} />
+              <h3 class="mt-5 text-xl leading-[1.4] font-medium">{card.title}</h3>
+              <p class="mt-4 leading-6 text-green-800">{card.copy}</p>
+            </li>
+          ))}
         </ul>
       </section>
 
       <!-- Connect datasources -->
-      <section
-        class="bg-green-1000 mx-4 flex gap-8 rounded-3xl px-4 py-6 text-white md:mx-6 lg:p-8 lg:py-16 xl:gap-[72px] xl:p-[72px]"
-      >
+      <section class="bg-green-1000 mx-4 flex gap-8 rounded-3xl px-4 py-6 text-white md:mx-6 lg:p-8 lg:py-16 xl:gap-[72px] xl:p-[72px]">
         <div class="lg:w-[400px] lg:shrink-0">
-          <h2
-            class="group text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]"
-          >
+          <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]">
             Connect datasources
           </h2>
           <p class="mt-4 leading-6 text-white/80">
@@ -355,37 +355,31 @@ const dot = (score: number) =>
             consistency.
           </p>
           <ul class="mt-10 flex list-none flex-col gap-6 p-0 lg:mt-12 lg:gap-8">
-            {
-              connectItems.map(item => (
-                <li class="flex items-start gap-4">
-                  <span
-                    class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/10 [&>svg]:size-6"
-                    set:html={item.icon}
-                  />
-                  <p class="leading-6 text-white/80">{item.copy}</p>
-                </li>
-              ))
-            }
+            {connectItems.map(item => (
+              <li class="flex items-start gap-4">
+                <span
+                  class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/10 [&>svg]:size-6"
+                  set:html={item.icon}
+                />
+                <p class="leading-6 text-white/80">{item.copy}</p>
+              </li>
+            ))}
           </ul>
         </div>
         <div class="flex flex-1 justify-center max-lg:hidden">
-          <div
-            class="grid h-[508px] w-full max-w-[600px] grid-cols-8 [grid-template-rows:repeat(5,auto)] text-sm"
-          >
-            {
-              ['Mobile App', 'Web App', 'Node.js Client'].map((label, index) => (
-                <div
-                  class:list={[
-                    'flex items-center justify-center self-end',
-                    ['col-span-2', 'col-span-2 col-start-4', 'col-span-2 col-start-7'][index],
-                  ]}
-                >
-                  <span class="rounded-lg bg-[#004540] px-3 py-2 text-center text-[#A2C1C4] xl:px-6 xl:py-3">
-                    {label}
-                  </span>
-                </div>
-              ))
-            }
+          <div class="grid h-[508px] w-full max-w-[600px] grid-cols-8 [grid-template-rows:repeat(5,auto)] text-sm">
+            {['Mobile App', 'Web App', 'Node.js Client'].map((label, index) => (
+              <div
+                class:list={[
+                  'flex items-center justify-center self-end',
+                  ['col-span-2', 'col-span-2 col-start-4', 'col-span-2 col-start-7'][index],
+                ]}
+              >
+                <span class="rounded-lg bg-[#004540] px-3 py-2 text-center text-[#A2C1C4] xl:px-6 xl:py-3">
+                  {label}
+                </span>
+              </div>
+            ))}
             <span
               class="col-span-2 col-start-2 row-start-2 [&>svg]:h-full [&>svg]:w-auto"
               set:html={diagonal}
@@ -398,8 +392,10 @@ const dot = (score: number) =>
             <div class="col-span-4 col-start-3 row-start-3 flex justify-center">
               <div
                 class="flex flex-col items-center justify-center gap-4 rounded-2xl bg-gradient-to-br from-[#4F6C6A] to-[#004540] px-12 py-6 text-center text-[#A2C1C4] backdrop-blur-sm [&>svg]:size-16 lg:[&>svg]:size-20"
-                set:html={meshMark('fill="currentColor"') +
-                  '<span class="font-medium text-white">GraphQL Mesh</span>'}
+                set:html={
+                  meshMark('fill="currentColor"') +
+                  '<span class="font-medium text-white">GraphQL Mesh</span>'
+                }
               />
             </div>
             <span
@@ -411,24 +407,22 @@ const dot = (score: number) =>
               class="col-span-2 col-start-6 -row-end-2 justify-self-end [&>svg]:h-full [&>svg]:w-auto"
               set:html={diagonal}
             />
-            {
-              ['Books REST API', 'Authors gRPC API', 'Stores GraphQL API'].map((label, index) => (
-                <div
-                  class:list={[
-                    'flex items-center justify-center self-start',
-                    [
-                      'col-span-2 -row-end-1',
-                      'col-span-2 col-start-4 -row-end-1',
-                      'col-span-2 col-start-7 -row-end-1',
-                    ][index],
-                  ]}
-                >
-                  <span class="rounded-lg bg-[#004540] px-3 py-2 text-center text-[#A2C1C4] xl:px-6 xl:py-3">
-                    {label}
-                  </span>
-                </div>
-              ))
-            }
+            {['Books REST API', 'Authors gRPC API', 'Stores GraphQL API'].map((label, index) => (
+              <div
+                class:list={[
+                  'flex items-center justify-center self-start',
+                  [
+                    'col-span-2 -row-end-1',
+                    'col-span-2 col-start-4 -row-end-1',
+                    'col-span-2 col-start-7 -row-end-1',
+                  ][index],
+                ]}
+              >
+                <span class="rounded-lg bg-[#004540] px-3 py-2 text-center text-[#A2C1C4] xl:px-6 xl:py-3">
+                  {label}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -440,9 +434,7 @@ const dot = (score: number) =>
       </section>
 
       <!-- Query anything -->
-      <section
-        class="bg-beige-100 text-green-1000 relative mx-4 overflow-hidden rounded-3xl p-4 pt-6 sm:py-24 md:mx-6 md:px-6 md:py-[120px] lg:px-12 2xl:px-24"
-      >
+      <section class="bg-beige-100 text-green-1000 relative mx-4 overflow-hidden rounded-3xl p-4 pt-6 sm:py-24 md:mx-6 md:px-6 md:py-[120px] lg:px-12 2xl:px-24">
         <span
           class="text-beige-300 pointer-events-none absolute right-0 bottom-0 w-[870px] translate-x-1/2 translate-y-1/2 [&>svg]:w-full"
           aria-hidden="true"
@@ -452,32 +444,26 @@ const dot = (score: number) =>
         <p class="relative mt-4 text-center leading-6 text-balance text-green-800">
           Bring every source into one graph: GraphQL and REST APIs, gRPC, SOAP, and databases.
         </p>
-        <ul
-          class="relative mt-8 flex list-none flex-wrap items-center justify-center gap-3 p-0 lg:mt-16 xl:gap-x-6"
-        >
-          {
-            datasources.map(source => (
-              <li>
-                <a
-                  class="hive-focus group/item bg-beige-200 hover:bg-beige-300 block rounded-full px-4 py-3 font-medium transition lg:px-6 lg:py-4"
-                  href={source.href}
-                >
-                  {source.name}
-                  <span
-                    class="ml-1 inline-block align-top opacity-65 transition group-hover/item:translate-x-px group-hover/item:-translate-y-px group-hover/item:opacity-100 [&>svg]:size-4 [&>svg]:-rotate-45"
-                    set:html={arrow}
-                  />
-                </a>
-              </li>
-            ))
-          }
+        <ul class="relative mt-8 flex list-none flex-wrap items-center justify-center gap-3 p-0 lg:mt-16 xl:gap-x-6">
+          {datasources.map(source => (
+            <li>
+              <a
+                class="hive-focus group/item bg-beige-200 hover:bg-beige-300 block rounded-full px-4 py-3 font-medium transition lg:px-6 lg:py-4"
+                href={source.href}
+              >
+                {source.name}
+                <span
+                  class="ml-1 inline-block align-top opacity-65 transition group-hover/item:translate-x-px group-hover/item:-translate-y-px group-hover/item:opacity-100 [&>svg]:size-4 [&>svg]:-rotate-45"
+                  set:html={arrow}
+                />
+              </a>
+            </li>
+          ))}
         </ul>
       </section>
 
       <!-- Manipulate data -->
-      <section
-        class="bg-green-1000 relative isolate mx-4 mt-6 overflow-hidden rounded-3xl p-4 pt-6 text-white sm:py-24 md:mx-6 md:px-6 md:pt-24 lg:px-12 lg:py-[120px] 2xl:px-24"
-      >
+      <section class="bg-green-1000 relative isolate mx-4 mt-6 overflow-hidden rounded-3xl p-4 pt-6 text-white sm:py-24 md:mx-6 md:px-6 md:pt-24 lg:px-12 lg:py-[120px] 2xl:px-24">
         <Image
           alt=""
           class="pointer-events-none absolute inset-0 -z-10 size-full object-cover object-right"
@@ -489,17 +475,13 @@ const dot = (score: number) =>
           Transform and tailor your schema within Mesh to meet specific business requirements
           efficiently.
         </p>
-        <dl
-          class="mt-8 grid grid-cols-1 gap-4 divide-green-700 max-sm:divide-y sm:grid-cols-2 lg:mt-16 lg:gap-8 xl:grid-cols-4 xl:divide-x max-sm:[&>*:not(:first-child)]:pt-4 xl:[&>*:not(:first-child)]:pl-8"
-        >
-          {
-            manipulate.map(([title, copy]) => (
-              <div>
-                <dt class="font-medium text-white">{title}</dt>
-                <dd class="mt-2 leading-6 text-white/80">{copy}</dd>
-              </div>
-            ))
-          }
+        <dl class="mt-8 grid grid-cols-1 gap-4 divide-green-700 max-sm:divide-y sm:grid-cols-2 lg:mt-16 lg:gap-8 xl:grid-cols-4 xl:divide-x max-sm:[&>*:not(:first-child)]:pt-4 xl:[&>*:not(:first-child)]:pl-8">
+          {manipulate.map(([title, copy]) => (
+            <div>
+              <dt class="font-medium text-white">{title}</dt>
+              <dd class="mt-2 leading-6 text-white/80">{copy}</dd>
+            </div>
+          ))}
         </dl>
       </section>
 
@@ -511,38 +493,33 @@ const dot = (score: number) =>
         </p>
         <div class="hive-focus overflow-x-auto" tabindex="0">
           <div class="w-fit overflow-hidden rounded-3xl border border-green-200 sm:w-full">
-            <table
-              class="w-fit text-sm sm:w-full sm:table-fixed [&_td]:border [&_td]:border-green-200 [&_td]:p-4 [&_td:first-child]:border-l-0 [&_td:last-child]:border-r-0 [&_th]:border [&_th]:border-green-200 [&_th]:p-4 [&_th]:text-left [&_th]:font-medium [&_th:first-child]:border-l-0 [&_th:last-child]:border-r-0 [&_tr:first-child>*]:border-t-0 [&_tr:last-child>*]:border-b-0"
-            >
-              <thead
-                ><tr
-                  ><th class="sm:w-1/4"></th>{
-                    comparisonHeaders.map(header => <th class="sm:w-1/4">{header}</th>)
-                  }</tr
-                ></thead
-              >
+            <table class="w-fit text-sm sm:w-full sm:table-fixed [&_td]:border [&_td]:border-green-200 [&_td]:p-4 [&_td:first-child]:border-l-0 [&_td:last-child]:border-r-0 [&_th]:border [&_th]:border-green-200 [&_th]:p-4 [&_th]:text-left [&_th]:font-medium [&_th:first-child]:border-l-0 [&_th:last-child]:border-r-0 [&_tr:first-child>*]:border-t-0 [&_tr:last-child>*]:border-b-0">
+              <thead>
+                <tr>
+                  <th class="sm:w-1/4"></th>
+                  {comparisonHeaders.map(header => (
+                    <th class="sm:w-1/4">{header}</th>
+                  ))}
+                </tr>
+              </thead>
               <tbody>
-                {
-                  comparison.map(row => (
-                    <tr class:list={[row.name === 'GraphQL Mesh' ? 'bg-green-100' : 'bg-white']}>
-                      <td class="align-top font-medium">{row.name}</td>
-                      {row.cells.map(cell => (
-                        <td class="align-top">
-                          <span
-                            class:list={['mb-4 block size-4 rounded-full border', dot(cell.score)]}
-                            aria-label={
-                              ['not supported', 'partially supported', 'fully supported'][
-                                cell.score
-                              ]
-                            }
-                            role="img"
-                          />
-                          {cell.text}
-                        </td>
-                      ))}
-                    </tr>
-                  ))
-                }
+                {comparison.map(row => (
+                  <tr class:list={[row.name === 'GraphQL Mesh' ? 'bg-green-100' : 'bg-white']}>
+                    <td class="align-top font-medium">{row.name}</td>
+                    {row.cells.map(cell => (
+                      <td class="align-top">
+                        <span
+                          class:list={['mb-4 block size-4 rounded-full border', dot(cell.score)]}
+                          aria-label={
+                            ['not supported', 'partially supported', 'fully supported'][cell.score]
+                          }
+                          role="img"
+                        />
+                        {cell.text}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -550,57 +527,45 @@ const dot = (score: number) =>
       </section>
 
       <!-- Run anywhere -->
-      <section
-        class="text-green-1000 mx-4 mt-6 rounded-3xl bg-blue-400 p-4 pt-6 sm:py-24 md:mx-6 md:px-6 md:py-[120px] lg:px-12 2xl:px-24"
-      >
+      <section class="text-green-1000 mx-4 mt-6 rounded-3xl bg-blue-400 p-4 pt-6 sm:py-24 md:mx-6 md:px-6 md:py-[120px] lg:px-12 2xl:px-24">
         <h2 class={sectionTitle}>Run anywhere</h2>
         <p class="mt-4 text-center leading-6 text-balance">
           Deploy Mesh across any JavaScript environment, powered by its versatile Fetch API
           compatibility.
         </p>
-        <ul
-          class="mx-auto mt-4 flex max-w-[1200px] list-none flex-wrap items-center justify-center gap-2 p-0 sm:mt-8 sm:gap-4 lg:mt-16"
-        >
-          {
-            runtimes.map(([name, href, highlighted]) => (
-              <li>
-                <a
-                  class:list={[
-                    'hive-focus flex h-[72px] items-center gap-4 rounded-2xl px-4 font-medium transition-colors hover:bg-white sm:h-[102px] sm:px-6 md:px-8',
-                    highlighted ? 'bg-blue-100' : 'bg-blue-200',
-                  ]}
-                  href={href}
-                >
-                  {name}
-                  <span class="max-sm:hidden [&>svg]:size-6" set:html={arrow} />
-                </a>
-              </li>
-            ))
-          }
+        <ul class="mx-auto mt-4 flex max-w-[1200px] list-none flex-wrap items-center justify-center gap-2 p-0 sm:mt-8 sm:gap-4 lg:mt-16">
+          {runtimes.map(([name, href, highlighted]) => (
+            <li>
+              <a
+                class:list={[
+                  'hive-focus flex h-[72px] items-center gap-4 rounded-2xl px-4 font-medium transition-colors hover:bg-white sm:h-[102px] sm:px-6 md:px-8',
+                  highlighted ? 'bg-blue-100' : 'bg-blue-200',
+                ]}
+                href={href}
+              >
+                {name}
+                <span class="max-sm:hidden [&>svg]:size-6" set:html={arrow} />
+              </a>
+            </li>
+          ))}
         </ul>
       </section>
 
       <!-- Extend the capabilities -->
-      <section
-        class="bg-beige-100 mx-4 mt-6 rounded-3xl px-4 pt-6 pb-8 sm:py-24 md:mx-6 md:px-6 md:py-[120px]"
-      >
+      <section class="bg-beige-100 mx-4 mt-6 rounded-3xl px-4 pt-6 pb-8 sm:py-24 md:mx-6 md:px-6 md:py-[120px]">
         <h2 class={sectionTitle}>Extend the capabilities</h2>
         <p class="mt-4 text-center leading-6 text-green-800">
           Expand your gateway capabilities robustly with Mesh plugins, tailored to your enterprise
           needs.
         </p>
-        <ul
-          class="mt-6 grid list-none grid-cols-1 gap-8 p-0 sm:mt-16 sm:grid-cols-3 sm:divide-x sm:divide-green-200 md:px-6 xl:px-16"
-        >
-          {
-            capabilities.map(item => (
-              <li class="sm:px-8">
-                <span class={iconTile} set:html={item.icon} />
-                <h3 class="mt-5 text-xl leading-[1.4] font-medium">{item.title}</h3>
-                <p class="mt-4 leading-6 text-green-800">{item.copy}</p>
-              </li>
-            ))
-          }
+        <ul class="mt-6 grid list-none grid-cols-1 gap-8 p-0 sm:mt-16 sm:grid-cols-3 sm:divide-x sm:divide-green-200 md:px-6 xl:px-16">
+          {capabilities.map(item => (
+            <li class="sm:px-8">
+              <span class={iconTile} set:html={item.icon} />
+              <h3 class="mt-5 text-xl leading-[1.4] font-medium">{item.title}</h3>
+              <p class="mt-4 leading-6 text-green-800">{item.copy}</p>
+            </li>
+          ))}
         </ul>
       </section>
 
@@ -608,34 +573,28 @@ const dot = (score: number) =>
       <ToolsAndLibraries class="mx-4 md:mx-6" />
 
       <!-- FAQ -->
-      <section
-        class="mx-4 my-6 flex flex-col gap-x-16 gap-y-6 px-4 py-6 sm:py-12 md:mx-6 md:px-6 lg:flex-row lg:py-24 xl:px-30"
-      >
-        <h2
-          class="group text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667] lg:w-1/3 lg:shrink-0"
-        >
+      <section class="mx-4 my-6 flex flex-col gap-x-16 gap-y-6 px-4 py-6 sm:py-12 md:mx-6 md:px-6 lg:flex-row lg:py-24 xl:px-30">
+        <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667] lg:w-1/3 lg:shrink-0">
           Frequently Asked Questions
         </h2>
         <div class="divide-beige-400 grow divide-y">
-          {
-            faq.map(item => (
-              <details class="group/faq py-4">
-                <summary class="hive-focus flex cursor-pointer list-none items-center justify-between gap-4 rounded-md py-2 font-medium [&::-webkit-details-marker]:hidden">
-                  {item.q}
-                  <span
-                    class="shrink-0 transition-transform group-open/faq:rotate-45 [&>svg]:size-5"
-                    set:html={
-                      '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>'
-                    }
-                  />
-                </summary>
-                <p
-                  class="pb-2 leading-6 text-green-800 [&_a]:font-medium [&_a]:underline [&_a]:decoration-green-800/30 [&_a]:underline-offset-2 hover:[&_a]:decoration-green-800 [&_code]:font-mono [&_code]:text-[0.9em]"
-                  set:html={item.a}
+          {faq.map(item => (
+            <details class="group/faq py-4">
+              <summary class="hive-focus flex cursor-pointer list-none items-center justify-between gap-4 rounded-md py-2 font-medium [&::-webkit-details-marker]:hidden">
+                {item.q}
+                <span
+                  class="shrink-0 transition-transform group-open/faq:rotate-45 [&>svg]:size-5"
+                  set:html={
+                    '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>'
+                  }
                 />
-              </details>
-            ))
-          }
+              </summary>
+              <p
+                class="pb-2 leading-6 text-green-800 [&_a]:font-medium [&_a]:underline [&_a]:decoration-green-800/30 [&_a]:underline-offset-2 hover:[&_a]:decoration-green-800 [&_code]:font-mono [&_code]:text-[0.9em]"
+                set:html={item.a}
+              />
+            </details>
+          ))}
         </div>
       </section>
     </main>

@@ -19,9 +19,9 @@ const formatDate = (date: Date) =>
 >
   <SiteHeader>
     <span class="text-[var(--muted)]">/ blog</span>
-    <Fragment slot="actions"
-      ><CommandLink href="/graphql/hive/blog">hive blog</CommandLink></Fragment
-    >
+    <Fragment slot="actions">
+      <CommandLink href="/graphql/hive/blog">hive blog</CommandLink>
+    </Fragment>
   </SiteHeader>
 
   <main>
@@ -33,49 +33,51 @@ const formatDate = (date: Date) =>
         </h1>
         <Paragraph>
           Writing on open source, GraphQL, and the craft of long-term software. Product posts live
-          on the <a
+          on the{' '}
+          <a
             class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 hover:text-[var(--strong)] hover:decoration-current"
-            href="/graphql/hive/blog">Hive blog</a
-          >.
+            href="/graphql/hive/blog"
+          >
+            Hive blog
+          </a>
+          .
         </Paragraph>
       </div>
 
       <div class="border-t border-[var(--line-strong)] pb-[90px]">
-        {
-          posts.map(post => (
-            <a
-              class="group grid grid-cols-1 gap-x-8 border-b border-[var(--line)] py-6 transition-colors hover:border-[var(--line-strong)] sm:grid-cols-[130px_1fr]"
-              href={post.href}
-            >
-              <div class="pt-0.5 font-mono text-sm text-[var(--green)] tabular-nums">
-                {formatDate(post.date)}
+        {posts.map(post => (
+          <a
+            class="group grid grid-cols-1 gap-x-8 border-b border-[var(--line)] py-6 transition-colors hover:border-[var(--line-strong)] sm:grid-cols-[130px_1fr]"
+            href={post.href}
+          >
+            <div class="pt-0.5 font-mono text-sm text-[var(--green)] tabular-nums">
+              {formatDate(post.date)}
+            </div>
+            <div>
+              <h2 class="font-mono text-lg font-semibold text-[var(--strong)] transition-colors group-hover:underline">
+                {post.title}
+                {post.external && ' '}
+                {post.external && (
+                  <span
+                    aria-hidden="true"
+                    class:list={[
+                      'ml-1.5 inline-block font-mono text-sm font-normal transition-transform group-hover:translate-x-0.5',
+                      post.external === 'hive' ? 'text-[var(--hive)]' : 'text-[var(--stellate)]',
+                    ]}
+                  >
+                    ↗
+                  </span>
+                )}
+              </h2>
+              <p class="mt-1.5 max-w-[720px] text-base text-[var(--muted)]">{post.description}</p>
+              <div class="mt-2.5 flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs text-[var(--faint)]">
+                {post.tags.map(tag => (
+                  <span>#{tag}</span>
+                ))}
               </div>
-              <div>
-                <h2 class="font-mono text-lg font-semibold text-[var(--strong)] transition-colors group-hover:underline">
-                  {post.title}
-                  {post.external && ' '}
-                  {post.external && (
-                    <span
-                      aria-hidden="true"
-                      class:list={[
-                        'ml-1.5 inline-block font-mono text-sm font-normal transition-transform group-hover:translate-x-0.5',
-                        post.external === 'hive' ? 'text-[var(--hive)]' : 'text-[var(--stellate)]',
-                      ]}
-                    >
-                      ↗
-                    </span>
-                  )}
-                </h2>
-                <p class="mt-1.5 max-w-[720px] text-base text-[var(--muted)]">{post.description}</p>
-                <div class="mt-2.5 flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs text-[var(--faint)]">
-                  {post.tags.map(tag => (
-                    <span>#{tag}</span>
-                  ))}
-                </div>
-              </div>
-            </a>
-          ))
-        }
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   </main>

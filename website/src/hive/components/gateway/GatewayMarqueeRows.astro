@@ -82,30 +82,28 @@ for (let i = 0; i < ROWS; i++) {
 ---
 
 <div class:list={['flex max-w-full flex-col justify-center rounded-2xl p-4 pb-28', className]}>
-  {
-    rows.map((row, i) => (
-      <div class="marquee-row mask-[linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]">
-        <div
-          class="marquee-track flex w-max gap-1 py-0.5 sm:gap-2 sm:py-1"
-          style={{
-            '--animation-direction': i % 2 ? 'reverse' : 'forwards',
-            '--animation-duration': '60000ms',
-          }}
-        >
-          {[...row, ...row, ...(i === rows.length - 1 ? row : [])].map(pill => (
-            <a
-              class="hive-focus rounded-lg border border-transparent bg-(--pill-bg) px-2 py-1.5 text-[10px] text-(--pill-text) transition duration-500 hover:border-(--pill-hover-text) hover:bg-(--pill-bg-hover) hover:text-(--pill-text-hover) sm:px-4 sm:py-3 sm:text-sm"
-              href={withBase(pill.href)}
-              target={pill.href.startsWith('http') ? '_blank' : undefined}
-              rel={pill.href.startsWith('http') ? 'noreferrer' : undefined}
-            >
-              {pill.label}
-            </a>
-          ))}
-        </div>
+  {rows.map((row, i) => (
+    <div class="marquee-row mask-[linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]">
+      <div
+        class="marquee-track flex w-max gap-1 py-0.5 sm:gap-2 sm:py-1"
+        style={{
+          '--animation-direction': i % 2 ? 'reverse' : 'forwards',
+          '--animation-duration': '60000ms',
+        }}
+      >
+        {[...row, ...row, ...(i === rows.length - 1 ? row : [])].map(pill => (
+          <a
+            class="hive-focus rounded-lg border border-transparent bg-(--pill-bg) px-2 py-1.5 text-[10px] text-(--pill-text) transition duration-500 hover:border-(--pill-hover-text) hover:bg-(--pill-bg-hover) hover:text-(--pill-text-hover) sm:px-4 sm:py-3 sm:text-sm"
+            href={withBase(pill.href)}
+            target={pill.href.startsWith('http') ? '_blank' : undefined}
+            rel={pill.href.startsWith('http') ? 'noreferrer' : undefined}
+          >
+            {pill.label}
+          </a>
+        ))}
       </div>
-    ))
-  }
+    </div>
+  ))}
 </div>
 
 <style>

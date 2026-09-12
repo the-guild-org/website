@@ -38,12 +38,8 @@ const teamMembers = [
     className,
   ]}
 >
-  <div
-    class="mx-auto flex max-w-full flex-col flex-wrap justify-center gap-x-2 lg:max-xl:w-max xl:h-[476px]"
-  >
-    <h3
-      class="group text-green-1000 max-w-full text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667] xl:w-[468px]"
-    >
+  <div class="mx-auto flex max-w-full flex-col flex-wrap justify-center gap-x-2 lg:max-xl:w-max xl:h-[476px]">
+    <h3 class="group text-green-1000 max-w-full text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667] xl:w-[468px]">
       Built by The Guild. Industry Veterans.
     </h3>
 
@@ -61,48 +57,43 @@ const teamMembers = [
     >
       <span class="absolute inset-0 rounded-lg border border-green-800"></span>
       Visit The Guild
-      <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"
-        ><path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z"
-        ></path></svg
-      >
+      <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
+        <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z"></path>
+      </svg>
     </a>
 
-    <ul
-      class="team-gallery nextra-scrollbar flex shrink-0 [scrollbar-width:auto] [scrollbar-color:#00000029_transparent] grid-cols-5 grid-cols-6 flex-row items-stretch justify-items-stretch gap-2 max-xl:-mx-4 max-xl:max-w-[calc(100%-1rem)] max-xl:px-4 max-xl:py-6 max-lg:max-w-[calc(100%+2rem)] max-lg:overflow-auto lg:flex-wrap lg:gap-6 lg:max-xl:grid xl:ml-auto xl:w-[628px] xl:[&>:nth-child(8n-7)]:ml-[calc(var(--size)/2)]"
-    >
-      {
-        teamMembers.map(member => (
-          <li>
-            <a
-              class="group relative flex flex-col focus-visible:ring-transparent focus-visible:ring-offset-transparent focus-visible:outline-hidden"
-              href={withBase(member.link)}
-              rel="noreferrer"
-              target="_blank"
-            >
-              <div class="relative aspect-square min-h-(--size) w-auto min-w-(--size) flex-1 overflow-hidden rounded-2xl mix-blend-multiply ring-blue-500/0 ring-offset-2 transition-all group-focus:ring-blue-500/40 group-focus-visible:ring-4 hover:ring-4 hover:ring-blue-500/15 xl:w-(--size)">
-                <div class="firefox:hidden absolute inset-0 size-full bg-blue-100" />
-                <img
-                  alt=""
-                  class="rounded-2xl bg-black brightness-100 grayscale transition-all duration-500 group-hover:scale-[1.03] group-hover:brightness-110"
-                  height="180"
-                  loading="lazy"
-                  decoding="async"
-                  src={
-                    'avatar' in member
-                      ? member.avatar.src
-                      : `https://avatars.githubusercontent.com/${member.github}?v=4&s=180`
-                  }
-                  width="180"
-                />
-                <div class="absolute inset-0 size-full bg-blue-500 opacity-10 transition-all group-hover:opacity-20" />
-              </div>
-              <span class="text-green-1000 mt-2 block text-sm/5 font-medium lg:max-xl:block lg:max-xl:text-base">
-                {member.name}
-              </span>
-            </a>
-          </li>
-        ))
-      }
+    <ul class="team-gallery nextra-scrollbar flex shrink-0 [scrollbar-width:auto] [scrollbar-color:#00000029_transparent] grid-cols-5 grid-cols-6 flex-row items-stretch justify-items-stretch gap-2 max-xl:-mx-4 max-xl:max-w-[calc(100%-1rem)] max-xl:px-4 max-xl:py-6 max-lg:max-w-[calc(100%+2rem)] max-lg:overflow-auto lg:flex-wrap lg:gap-6 lg:max-xl:grid xl:ml-auto xl:w-[628px] xl:[&>:nth-child(8n-7)]:ml-[calc(var(--size)/2)]">
+      {teamMembers.map(member => (
+        <li>
+          <a
+            class="group relative flex flex-col focus-visible:ring-transparent focus-visible:ring-offset-transparent focus-visible:outline-hidden"
+            href={withBase(member.link)}
+            rel="noreferrer"
+            target="_blank"
+          >
+            <div class="relative aspect-square min-h-(--size) w-auto min-w-(--size) flex-1 overflow-hidden rounded-2xl mix-blend-multiply ring-blue-500/0 ring-offset-2 transition-all group-focus:ring-blue-500/40 group-focus-visible:ring-4 hover:ring-4 hover:ring-blue-500/15 xl:w-(--size)">
+              <div class="firefox:hidden absolute inset-0 size-full bg-blue-100" />
+              <img
+                alt=""
+                class="rounded-2xl bg-black brightness-100 grayscale transition-all duration-500 group-hover:scale-[1.03] group-hover:brightness-110"
+                height="180"
+                loading="lazy"
+                decoding="async"
+                src={
+                  'avatar' in member
+                    ? member.avatar.src
+                    : `https://avatars.githubusercontent.com/${member.github}?v=4&s=180`
+                }
+                width="180"
+              />
+              <div class="absolute inset-0 size-full bg-blue-500 opacity-10 transition-all group-hover:opacity-20" />
+            </div>
+            <span class="text-green-1000 mt-2 block text-sm/5 font-medium lg:max-xl:block lg:max-xl:text-base">
+              {member.name}
+            </span>
+          </a>
+        </li>
+      ))}
     </ul>
   </div>
 </section>

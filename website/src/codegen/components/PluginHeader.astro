@@ -56,9 +56,7 @@ const bodyHtml = bodyMarkdown ? await renderMarkdown(bodyMarkdown) : undefined;
 ---
 
 <div class="plugin-header" data-pagefind-ignore>
-  <dl
-    class="border-fd-border my-6 flex flex-wrap gap-x-8 gap-y-2 rounded-lg border p-4 text-sm text-green-800 dark:text-neutral-300"
-  >
+  <dl class="border-fd-border my-6 flex flex-wrap gap-x-8 gap-y-2 rounded-lg border p-4 text-sm text-green-800 dark:text-neutral-300">
     <div>
       <dt class="font-medium">Package</dt>
       <dd>
@@ -66,70 +64,60 @@ const bodyHtml = bodyMarkdown ? await renderMarkdown(bodyMarkdown) : undefined;
           class="underline underline-offset-2"
           href={`https://www.npmjs.com/package/${plugin.npmPackage}`}
           rel="noopener noreferrer"
-          target="_blank">{plugin.npmPackage}</a
+          target="_blank"
         >
+          {plugin.npmPackage}
+        </a>
       </dd>
     </div>
-    {
-      npm?.version && (
-        <div>
-          <dt class="font-medium">Version</dt>
-          <dd>{npm.version}</dd>
-        </div>
-      )
-    }
-    {
-      npm && npm.weeklyNPMDownloads > 0 && (
-        <div>
-          <dt class="font-medium">Weekly downloads</dt>
-          <dd>{formatDownloads(npm.weeklyNPMDownloads)}</dd>
-        </div>
-      )
-    }
-    {
-      npm?.license && (
-        <div>
-          <dt class="font-medium">License</dt>
-          <dd>{npm.license}</dd>
-        </div>
-      )
-    }
-    {
-      updated && (
-        <div>
-          <dt class="font-medium">Updated</dt>
-          <dd>{updated}</dd>
-        </div>
-      )
-    }
+    {npm?.version && (
+      <div>
+        <dt class="font-medium">Version</dt>
+        <dd>{npm.version}</dd>
+      </div>
+    )}
+    {npm && npm.weeklyNPMDownloads > 0 && (
+      <div>
+        <dt class="font-medium">Weekly downloads</dt>
+        <dd>{formatDownloads(npm.weeklyNPMDownloads)}</dd>
+      </div>
+    )}
+    {npm?.license && (
+      <div>
+        <dt class="font-medium">License</dt>
+        <dd>{npm.license}</dd>
+      </div>
+    )}
+    {updated && (
+      <div>
+        <dt class="font-medium">Updated</dt>
+        <dd>{updated}</dd>
+      </div>
+    )}
   </dl>
 </div>
 
 <h2 id="installation">Installation</h2>
 <PackageManagerTabs>
-  {
-    installCommands.map((command, index) => (
-      <PackageManagerTab hidden={index !== 0}>
-        <pre class="shiki">
+  {installCommands.map((command, index) => (
+    <PackageManagerTab hidden={index !== 0}>
+      <pre class="shiki">
           <code>{command}</code>
         </pre>
-      </PackageManagerTab>
-    ))
-  }
+    </PackageManagerTab>
+  ))}
 </PackageManagerTabs>
 
-{
-  hasOperationsNote && (
-    <Callout type="info">
-      <p>
-        We recommend reading about{' '}
-        <a href={withBase('/docs/getting-started/documents-field')}>
-          how to configure your operations
-        </a>{' '}
-        first — this plugin requires GraphQL operations (documents) to generate output.
-      </p>
-    </Callout>
-  )
-}
+{hasOperationsNote && (
+  <Callout type="info">
+    <p>
+      We recommend reading about{' '}
+      <a href={withBase('/docs/getting-started/documents-field')}>
+        how to configure your operations
+      </a>{' '}
+      first — this plugin requires GraphQL operations (documents) to generate output.
+    </p>
+  </Callout>
+)}
 
 {bodyHtml && <div class="plugin-api-docs" set:html={bodyHtml} />}

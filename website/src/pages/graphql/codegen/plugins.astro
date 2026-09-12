@@ -65,39 +65,37 @@ const plugins = getPlugins()
         type="search"
       />
       <ul class="mt-8 grid gap-4 sm:grid-cols-2" id="plugin-list">
-        {
-          plugins.map(plugin => (
-            <li
-              class="min-w-0"
-              data-search={`${plugin.title} ${plugin.npmPackage} ${plugin.tags.join(' ')}`.toLowerCase()}
+        {plugins.map(plugin => (
+          <li
+            class="min-w-0"
+            data-search={`${plugin.title} ${plugin.npmPackage} ${plugin.tags.join(' ')}`.toLowerCase()}
+          >
+            <a
+              class="border-beige-400 flex h-full gap-4 rounded-xl border bg-white/60 p-5 transition-colors hover:border-green-800 dark:border-neutral-800 dark:bg-neutral-900/60 dark:hover:border-neutral-500"
+              href={withBase(`/plugins/${plugin.category}/${plugin.key}`)}
             >
-              <a
-                class="border-beige-400 flex h-full gap-4 rounded-xl border bg-white/60 p-5 transition-colors hover:border-green-800 dark:border-neutral-800 dark:bg-neutral-900/60 dark:hover:border-neutral-500"
-                href={withBase(`/plugins/${plugin.category}/${plugin.key}`)}
-              >
-                <img alt="" aria-hidden="true" class="size-10 shrink-0" src={plugin.iconSrc} />
-                <span class="min-w-0">
-                  <span class="flex items-baseline justify-between gap-2">
-                    <span class="font-medium">{plugin.title}</span>
-                    {plugin.downloads > 0 && (
-                      <span class="text-xs whitespace-nowrap text-green-800 dark:text-neutral-400">
-                        {formatDownloads(plugin.downloads)}/week
-                      </span>
-                    )}
-                  </span>
-                  <span class="mt-1 block truncate font-mono text-xs text-green-800 dark:text-neutral-400">
-                    {plugin.npmPackage}
-                  </span>
-                  {plugin.description && (
-                    <span class="mt-2 line-clamp-2 block text-sm text-green-800 dark:text-neutral-300">
-                      {plugin.description}
+              <img alt="" aria-hidden="true" class="size-10 shrink-0" src={plugin.iconSrc} />
+              <span class="min-w-0">
+                <span class="flex items-baseline justify-between gap-2">
+                  <span class="font-medium">{plugin.title}</span>
+                  {plugin.downloads > 0 && (
+                    <span class="text-xs whitespace-nowrap text-green-800 dark:text-neutral-400">
+                      {formatDownloads(plugin.downloads)}/week
                     </span>
                   )}
                 </span>
-              </a>
-            </li>
-          ))
-        }
+                <span class="mt-1 block truncate font-mono text-xs text-green-800 dark:text-neutral-400">
+                  {plugin.npmPackage}
+                </span>
+                {plugin.description && (
+                  <span class="mt-2 line-clamp-2 block text-sm text-green-800 dark:text-neutral-300">
+                    {plugin.description}
+                  </span>
+                )}
+              </span>
+            </a>
+          </li>
+        ))}
       </ul>
       <p class="mt-8 hidden text-green-800 dark:text-neutral-300" id="plugin-no-results">
         No plugins match that filter.

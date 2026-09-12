@@ -57,22 +57,20 @@ const titleId = title.replaceAll(/[\s.,]+/g, '-').toLowerCase();
   >
     <SiteNavigation />
 
-    <div
-      class="update-shell text-green-1000 mx-auto grid w-full grid-cols-1 xl:grid-cols-[minmax(0,48rem)_268px] dark:text-neutral-200"
-    >
-      {
-        tableOfContents.length > 0 && (
-          <details class="group sticky top-(--header-height) z-10 h-10 xl:hidden" data-toc-popover>
-            <TocPopoverContent headings={tableOfContents} />
-          </details>
-        )
-      }
+    <div class="update-shell text-green-1000 mx-auto grid w-full grid-cols-1 xl:grid-cols-[minmax(0,48rem)_268px] dark:text-neutral-200">
+      {tableOfContents.length > 0 && (
+        <details class="group sticky top-(--header-height) z-10 h-10 xl:hidden" data-toc-popover>
+          <TocPopoverContent headings={tableOfContents} />
+        </details>
+      )}
 
       <main class="min-w-0" data-heading-permalinks>
         <a
           class="hive-focus text-sm text-green-800 outline-hidden dark:text-neutral-400 dark:hover:text-neutral-200"
-          href={withBase('/product-updates')}>← All product updates</a
+          href={withBase('/product-updates')}
         >
+          ← All product updates
+        </a>
         <h1
           class="group text-green-1000 mt-4 mb-0 text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667] dark:text-neutral-200"
           id={titleId}
@@ -80,7 +78,9 @@ const titleId = title.replaceAll(/[\s.,]+/g, '-').toLowerCase();
           {title}
         </h1>
         <BlogAuthors align="start" authors={authorIds} class="mb-4" date={date} />
-        <article class="docs-content"><slot /></article>
+        <article class="docs-content">
+          <slot />
+        </article>
       </main>
 
       <aside

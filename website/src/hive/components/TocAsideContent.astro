@@ -16,31 +16,26 @@ const { headings } = Astro.props;
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
-    stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"></path></svg
+    stroke-width="2"
   >
+    <path d="M4 6h16M4 12h16M4 18h10"></path>
+  </svg>
   On this page
 </h2>
-<div
-  class="relative ms-px min-h-0 [scrollbar-width:none] overflow-auto [mask-image:linear-gradient(to_bottom,transparent,white_16px,white_calc(100%-16px),transparent)] py-3 text-sm"
->
-  <div
-    class="toc-thumb bg-fd-primary absolute top-(--fd-top) h-(--fd-height) w-0.5 rounded-e-sm transition-[top,height] ease-linear"
-  >
-  </div>
+<div class="relative ms-px min-h-0 [scrollbar-width:none] overflow-auto [mask-image:linear-gradient(to_bottom,transparent,white_16px,white_calc(100%-16px),transparent)] py-3 text-sm">
+  <div class="toc-thumb bg-fd-primary absolute top-(--fd-top) h-(--fd-height) w-0.5 rounded-e-sm transition-[top,height] ease-linear"></div>
   <nav class="border-fd-foreground/10 flex flex-col border-s">
-    {
-      headings.map(heading => (
-        <a
-          class:list={[
-            'toc-link text-fd-muted-foreground data-[active=true]:text-fd-primary py-1.5 text-sm wrap-anywhere transition-colors first:pt-0 last:pb-0',
-            heading.depth <= 2 ? 'ps-3' : heading.depth === 3 ? 'ps-6' : 'ps-8',
-          ]}
-          data-toc-anchor={heading.slug}
-          href={withBase(`#${heading.slug}`)}
-          set:html={heading.html}
-        />
-      ))
-    }
+    {headings.map(heading => (
+      <a
+        class:list={[
+          'toc-link text-fd-muted-foreground data-[active=true]:text-fd-primary py-1.5 text-sm wrap-anywhere transition-colors first:pt-0 last:pb-0',
+          heading.depth <= 2 ? 'ps-3' : heading.depth === 3 ? 'ps-6' : 'ps-8',
+        ]}
+        data-toc-anchor={heading.slug}
+        href={withBase(`#${heading.slug}`)}
+        set:html={heading.html}
+      />
+    ))}
   </nav>
 </div>
 
