@@ -22,6 +22,20 @@ export default {
     '/changelogs': '/changelogs/graphql-tools',
     // The API reference: the TypeDoc README pages became the folder index pages.
     '/docs/api/README': '/docs/api',
+    // @graphql-tools/delegate, wrap and batch-delegate moved to graphql-hive/gateway and are no
+    // longer in this API reference; their concepts are documented by Schema Stitching
+    // (the-guild-org/website#1844, #1849, #1865, #1868).
+    '/docs/api/modules/delegate_src': 'https://the-guild.dev/graphql/stitching/docs',
+    '/docs/api/interfaces/delegate_src.*': 'https://the-guild.dev/graphql/stitching/docs',
+    '/docs/api/classes/delegate_src.*': 'https://the-guild.dev/graphql/stitching/docs',
+    '/docs/api/enums/delegate_src.*': 'https://the-guild.dev/graphql/stitching/docs',
+    '/docs/api/modules/wrap_src': 'https://the-guild.dev/graphql/stitching/docs/transforms',
+    '/docs/api/classes/wrap_src.*': 'https://the-guild.dev/graphql/stitching/docs/transforms',
+    '/docs/api/interfaces/wrap_src.*': 'https://the-guild.dev/graphql/stitching/docs/transforms',
+    '/docs/api/modules/batch_delegate_src':
+      'https://the-guild.dev/graphql/stitching/docs/approaches/schema-extensions#batch-delegation-array-batching',
+    '/docs/api/interfaces/batch_delegate_src.*':
+      'https://the-guild.dev/graphql/stitching/docs/approaches/schema-extensions#batch-delegation-array-batching',
     '/docs/api/modules': '/docs/api',
     '/docs/api/modules/*': '/docs/api',
     '/api/modules/*': '/docs/api',

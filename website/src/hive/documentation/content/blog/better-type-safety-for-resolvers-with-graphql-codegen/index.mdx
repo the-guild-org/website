@@ -8,14 +8,6 @@ description:
   with your existing TypeScript data models and context types.
 ---
 
-import { CodeSandbox } from "@hive/design-system/hive-components/code-sandbox";
-
-export const embedOptions = {
-  previewwindow: "console",
-  theme: "light",
-  view: "editor",
-};
-
 If you use TypeScript to write your GraphQL schema implementation, you'll love the integration with
 GraphQL Codegen and `typescript-resolvers` plugin.
 
@@ -61,13 +53,28 @@ should create a new file called `resolvers-types.ts` in your codebase.
 ## Simple Resolvers Signature
 
 In this example, we'll use the following GraphQL schema and resolvers as reference.
-[You can find a working live-demo of this part here](https://codesandbox.io/s/condescending-albattani-ixyp9?file=/resolvers.ts).
 
-<CodeSandbox
-  codeSandboxId="condescending-albattani-ixyp9"
-  embedOptions={{ ...embedOptions, module: "/schema.graphql" }}
-  size="300px"
-/>
+```graphql title="schema.graphql"
+type Query {
+  users: [User!]!
+  user(id: ID!): User
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+}
+```
+
+```yaml title="codegen.yml"
+schema: schema.graphql
+generates:
+  ./resolvers-types.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers
+```
 
 This is a naive implementation of a GraphQL API, and we'll see how more advanced use cases could be
 implemented in the upcoming steps.
@@ -75,14 +82,21 @@ implemented in the upcoming steps.
 To get started with the generated files, import `Resolvers` identifier from your generated file, and
 use it to type your resolvers object, for example:
 
-<CodeSandbox
-  codeSandboxId="condescending-albattani-ixyp9"
-  embedOptions={{
-    ...embedOptions,
-    module: "/resolvers.ts,/schema.graphql,/resolvers-types.ts",
-  }}
-  size="410px"
-/>
+```ts title="resolvers.ts"
+import { Resolvers } from './resolvers-types'
+
+const users = [
+  { id: '1', name: 'Ada Lovelace', email: 'ada@example.com' },
+  { id: '2', name: 'Grace Hopper', email: 'grace@example.com' }
+]
+
+export const resolvers: Resolvers = {
+  Query: {
+    users: () => users,
+    user: (_, { id }) => users.find(user => user.id === id) ?? null
+  }
+}
+```
 
 Now, TypeScript engine will verify that object you returned, and you'll be able to see that if
 you'll change one of the fields, it will be type checked immediately.
@@ -117,20 +131,45 @@ our actual objects.
 
 Let's assumes that your backend is implemented this way, with some models types:
 
-<CodeSandbox
-  codeSandboxId="silly-kalam-ym77z"
-  embedOptions={{ ...embedOptions, module: "/models.ts" }}
-  size="330px"
-/>
+```ts title="models.ts"
+// What the database returns: internal fields, and no `name` — only its parts.
+export type UserModel = {
+  _id: string
+  firstName: string
+  lastName: string
+  email: string
+  passwordHash: string
+}
+
+export const db = {
+  users: [
+    {
+      _id: '1',
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+      email: 'ada@example.com',
+      passwordHash: '…'
+    }
+  ] as UserModel[]
+}
+```
 
 It means that now, your resolvers implementation needs to adjusted and handle the different data
 structure:
 
-<CodeSandbox
-  codeSandboxId="silly-kalam-ym77z"
-  embedOptions={{ ...embedOptions, module: "/resolvers-with-error.ts" }}
-  size="400px"
-/>
+```ts title="resolvers.ts"
+import { db } from './models'
+import { Resolvers } from './resolvers-types'
+
+export const resolvers: Resolvers = {
+  Query: {
+    // Type error: `UserModel` has `_id`, `firstName` and `lastName`,
+    // but the generated `User` type expects `id` and `name`.
+    users: () => db.users,
+    user: (_, { id }) => db.users.find(user => user._id === id) ?? null
+  }
+}
+```
 
 Noticed the errors? it caused by the fact that we don't have the appropriate mapping set yet. We
 need to tell GraphQL codegen that our schema types are different than the model types.
@@ -138,20 +177,39 @@ need to tell GraphQL codegen that our schema types are different than the model 
 To do that, let's update codegen config with `mappers` and add a mapping between a GraphQL type to a
 TypeScript type (and the file it's located in):
 
-<CodeSandbox
-  codeSandboxId="silly-kalam-ym77z"
-  embedOptions={{ ...embedOptions, module: "/codegen-with-mappers.yml" }}
-  size="400px"
-/>
+```yaml title="codegen.yml"
+schema: schema.graphql
+generates:
+  ./resolvers-types.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers
+    config:
+      mappers:
+        User: ./models#UserModel
+```
 
 This way, GraphQL Codegen will use your custom models types in the generated output, instead of the
 default types, and your resolvers' implementation will look like that:
 
-<CodeSandbox
-  codeSandboxId="silly-kalam-ym77z"
-  embedOptions={{ ...embedOptions, module: "/resolvers.ts" }}
-  size="400px"
-/>
+```ts title="resolvers.ts"
+import { db } from './models'
+import { Resolvers } from './resolvers-types'
+
+export const resolvers: Resolvers = {
+  Query: {
+    // `Query.users` now resolves to `UserModel[]` — no error.
+    users: () => db.users,
+    user: (_, { id }) => db.users.find(user => user._id === id) ?? null
+  },
+  User: {
+    // And `User`'s field resolvers receive a `UserModel` as their parent,
+    // so the API shape is derived from the model here.
+    id: user => user._id,
+    name: user => `${user.firstName} ${user.lastName}`
+  }
+}
+```
 
 Note that now you'll get autocomplete, type safety and a better connection between your GraphQL
 schema and your GraphQL resolvers.

@@ -61,13 +61,72 @@ function folderIndexRedirects(product: ProductDefinition): Record<string, string
   return redirects;
 }
 
+/**
+ * The API references of graphql-ws and graphql-tools were once rendered by
+ * typedoc-plugin-markdown v3, whose flat file names are still linked from
+ * old issues, READMEs and search results (the-guild-org/website#1848,
+ * #1862, #1865, #1868, #1892 and friends):
+ *   /docs/interfaces/server.ServerOptions        -> /docs/server/interfaces/ServerOptions
+ *   /docs/api/modules/wrap_src                   -> /docs/api/wrap/src
+ *   /docs/api/interfaces/batch_delegate_src.X    -> /docs/api/batch-delegate/src/interfaces/X
+ * Derived from the fetched content: a page `<root>/<module…>/<kind>/<Name>`
+ * gets its old flat name, with the module path joined by `_` (and `-` in
+ * package names turned into `_`), for the kinds v3 gave their own pages.
+ */
+function legacyTypedocRedirects(product: ProductDefinition): Record<string, string> {
+  const redirects: Record<string, string> = {};
+  const KINDS: Record<string, string> = {
+    classes: 'classes',
+    enumerations: 'enums',
+    interfaces: 'interfaces',
+  };
+  const contentDir = join(PROJECT_DIR, 'src/products', product.slug, 'content');
+  for (const section of product.sections) {
+    const sectionDir = join(contentDir, section.dir);
+    if (!existsSync(sectionDir)) continue;
+    for (const file of readdirSync(sectionDir, { recursive: true, withFileTypes: true })) {
+      if (!file.isFile() || !/\.mdx?$/.test(file.name)) continue;
+      const relative = `${file.parentPath}/${file.name}`
+        .slice(sectionDir.length + 1)
+        .replace(/\.mdx?$/, '');
+      const parts = relative.split('/');
+      // The v4 layout puts the API root under <root>/ (Tools: `api/`); module
+      // pages are `…/src/index`, symbol pages `…/<kind>/<Name>`.
+      const srcAt = parts.indexOf('src');
+      const kindAt = parts.findIndex(part => part in KINDS);
+      if (srcAt !== -1 && parts[parts.length - 1] === 'index' && srcAt === parts.length - 2) {
+        const root = parts.slice(0, parts.findIndex(part => !['api'].includes(part)) === 0 ? 0 : 1);
+        const moduleId = `${parts.slice(root.length, srcAt).join('_').replace(/-/g, '_')}_src`;
+        redirects[`${section.base}/${[...root, 'modules', moduleId].join('/')}`] =
+          `${section.base}/${relative.replace(/\/index$/, '')}`;
+      } else if (kindAt > 0 && kindAt === parts.length - 2) {
+        const root = parts[0] === 'api' ? ['api'] : [];
+        const modulePath = parts.slice(root.length, kindAt);
+        const moduleId =
+          srcAt !== -1
+            ? `${modulePath.slice(0, -1).join('_').replace(/-/g, '_')}_src`
+            : modulePath.join('_');
+        const name = parts[parts.length - 1]!;
+        redirects[
+          `${section.base}/${[...root, KINDS[parts[kindAt]!]!, `${moduleId}.${name}`].join('/')}`
+        ] = `${section.base}/${relative}`;
+      }
+    }
+  }
+  return redirects;
+}
+
 const lines = readRedirectLines();
 let total = 0;
 
 for (const product of await loadProducts()) {
   const base = productBasePath(product);
   // Hand-written legacy rules win over the generated folder ones.
-  const all = { ...folderIndexRedirects(product), ...product.redirects };
+  const all = {
+    ...legacyTypedocRedirects(product),
+    ...folderIndexRedirects(product),
+    ...product.redirects,
+  };
   const rules = Object.entries(all)
     .map(([source, destination]) => {
       const target = destination.startsWith('/') ? `${base}${destination}` : destination;

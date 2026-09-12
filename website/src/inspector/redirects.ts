@@ -8,6 +8,8 @@ export const inspectorRedirects: Record<string, string> = {
   '/enterprise': '/docs',
   '/docs/index': '/docs',
   '/products': '/docs/products/ci',
+  // Reported in the-guild-org/website#1867: the introspection docs are the `introspect` command page.
+  '/docs/introspection': '/docs/commands/introspect',
   '/docs/recipies/github': '/docs/migration-guides/github',
   '/docs/api': '/docs/api/schema',
   '/docs/recipes': '/docs/recipes/environments',

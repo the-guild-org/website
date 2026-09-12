@@ -3,10 +3,11 @@ title: Optimize your Bundle Size with SWC and GraphQL Codegen
 authors: jessevelden
 tags: [client-preset, codegen]
 date: 2023-04-18
-description: "Optimize your Bundle Size with the SWC plugin for client-preset for GraphQL Code Generator"
+description:
+  'Optimize your Bundle Size with the SWC plugin for client-preset for GraphQL Code Generator'
 ---
 
-import { Callout } from "@hive/design-system/hive-components/callout";
+import { Callout } from '@hive/design-system/hive-components/callout'
 
 With the new
 [`client-preset` for GraphQL Code Generator](https://the-guild.dev/blog/unleash-the-power-of-fragments-with-graphql-codegen)
@@ -55,22 +56,21 @@ following code, where code-splitting and tree-shaking is not easily possible.
 
 ```ts
 const documents = {
-  "fragment CartItems on CartItem {\n name\n quantity \n  }\n  ":
-    types.CartItemsFragmentDoc,
-  "query GetCartById($id: ID!) {\n cart(id: $id) {\n id \n items { \n id \n ...CartItem\n }\n totalItems\n}\n  }\n":
-    types.GetCartByIdDocument,
-};
+  'fragment CartItems on CartItem {\n name\n quantity \n  }\n  ': types.CartItemsFragmentDoc,
+  'query GetCartById($id: ID!) {\n cart(id: $id) {\n id \n items { \n id \n ...CartItem\n }\n totalItems\n}\n  }\n':
+    types.GetCartByIdDocument
+}
 export function graphql(
-  source: "fragment CartItems on CartItem {\n name\n quantity\n }\n ",
-): (typeof documents)["\n fragment CartItem on CartItem {\n name\n quantity\n }\n "];
+  source: 'fragment CartItems on CartItem {\n name\n quantity\n }\n '
+): (typeof documents)['\n fragment CartItem on CartItem {\n name\n quantity\n }\n ']
 export function graphql(
-  source: "query GetCartById($id: ID!) {\n cart(id: $id) {\nid\nitems {\nid\n...CartItem\n}\ntotalItems\n }\n }\n",
-): (typeof documents)["\n query GetCartById($id: ID!) {\n cart(id: $id) {\n id\n items {\n id \n ...CartItem \n } \n totalItems \n } \n } n"];
-export function graphql(source: string): unknown;
+  source: 'query GetCartById($id: ID!) {\n cart(id: $id) {\nid\nitems {\nid\n...CartItem\n}\ntotalItems\n }\n }\n'
+): (typeof documents)['\n query GetCartById($id: ID!) {\n cart(id: $id) {\n id\n items {\n id \n ...CartItem \n } \n totalItems \n } \n } n']
+export function graphql(source: string): unknown
 export function graphql(source: string) {
   // Here we access the documents object, so the bundler cannot make assumption over what is
   //  actually used at runtime
-  return (documents as any)[source] ?? {};
+  return (documents as any)[source] ?? {}
 }
 ```
 
@@ -79,14 +79,14 @@ regardless of whether they are used or not. This can be a problem if you have a 
 (query, mutation, and fragments) in your project.
 
 <Callout>
-  For more information/ a history of this functionality, you can read more about
-  it in this blog post from Laurin Quast about this new client-preset feature:
-  [Unleash the Power of Fragments with GraphQL Code
-  Generator](https://the-guild.dev/blog/unleash-the-power-of-fragments-with-graphql-codegen).
-  It was based on the former
+  For more information/ a history of this functionality, you can read more about it in this blog
+  post from Laurin Quast about this new client-preset feature: [Unleash the Power of Fragments with
+  GraphQL Code
+  Generator](https://the-guild.dev/blog/unleash-the-power-of-fragments-with-graphql-codegen). It was
+  based on the former
   [`gql-tag-operations-preset`](https://the-guild.dev/graphql/codegen/plugins/presets/gql-tag-operations-preset)
-  that is now replaced by the `client-preset`, which was originally explored by
-  [Maël Nison](https://github.com/arcanis) in [this Github
+  that is now replaced by the `client-preset`, which was originally explored by [Maël
+  Nison](https://github.com/arcanis) in [this Github
   project](https://github.com/arcanis/graphql-typescript-integration).
 </Callout>
 
@@ -132,19 +132,21 @@ const nextConfig = {
   experimental: {
     swcPlugins: [
       [
-        "@graphql-codegen/client-preset-swc-plugin",
-        { artifactDirectory: "./src/gql", gqlTagName: "graphql" },
-      ],
-    ],
-  },
-};
+        '@graphql-codegen/client-preset-swc-plugin',
+        { artifactDirectory: './src/gql', gqlTagName: 'graphql' }
+      ]
+    ]
+  }
+}
 ```
 
-or with Vite React, update your `vite.config.ts` to add the following:
+or with Vite React, update your `vite.config.ts` to add the following (the `plugins` option needs
+`@vitejs/plugin-react-swc` 3.0 or newer; with the plain `@vitejs/plugin-react` or an older version,
+`react()` does not accept SWC plugins):
 
 ```ts title="vite.config.ts"
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -152,13 +154,13 @@ export default defineConfig({
     react({
       plugins: [
         [
-          "@graphql-codegen/client-preset-swc-plugin",
-          { artifactDirectory: "./src/gql", gqlTagName: "graphql" },
-        ],
-      ],
-    }),
-  ],
-});
+          '@graphql-codegen/client-preset-swc-plugin',
+          { artifactDirectory: './src/gql', gqlTagName: 'graphql' }
+        ]
+      ]
+    })
+  ]
+})
 ```
 
 or for other SWC projects add this to your `.swcrc` file:
@@ -171,12 +173,12 @@ or for other SWC projects add this to your `.swcrc` file:
     experimental: {
       plugins: [
         [
-          "@graphql-codegen/client-preset-swc-plugin",
-          { artifactDirectory: "./src/gql", gqlTagName: "graphql" },
-        ],
-      ],
-    },
-  },
+          '@graphql-codegen/client-preset-swc-plugin',
+          { artifactDirectory: './src/gql', gqlTagName: 'graphql' }
+        ]
+      ]
+    }
+  }
 }
 ```
 
