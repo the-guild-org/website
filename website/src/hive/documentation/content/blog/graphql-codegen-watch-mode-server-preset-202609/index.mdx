@@ -5,20 +5,23 @@ tags: [graphql, graphql-codegen, watch-mode, server-preset, performance]
 date: 2026-09-08
 description:
   Codegen watch mode is now consistent across file tracking, profiling, plugins and presets,
-  Server Preset 0.19 uses it to cut watch re-runs by up to 80%, and Windows support is improved
+  Server Preset v0.19 uses it to cut watch re-runs by up to 80%, and Windows support is improved
   too.
 ---
 
 Watch mode in [GraphQL Code Generator](https://the-guild.dev/graphql/codegen) is now consistent
 across file tracking, profiling, plugins and presets.
-[Server Preset](https://github.com/eddeee888/graphql-code-generator-plugins) 0.19 builds on that
-with internal caching to make watch re-runs up to 80% faster, and Windows support is improved too.
+[Server Preset v0.19](https://github.com/eddeee888/graphql-code-generator-plugins/releases/tag/%40eddeee888%2Fgcg-typescript-resolver-files%400.19.0)
+builds on that with internal caching to make watch re-runs up to 80% faster, and Windows support is
+improved too.
 
 ## Watch mode is consistent now
 
-Watch mode is the recommended way to work with Codegen in managed workflows like Client Preset and
-Server Preset. But the base CLI's watch-mode support wasn't consistent across plugins and presets,
-and profiling didn't work on every run.
+Watch mode is the recommended way to work with Codegen in managed workflows like
+[Client Preset](https://the-guild.dev/graphql/codegen/plugins/presets/preset-client) and
+[Server Preset](https://the-guild.dev/graphql/codegen/docs/guides/graphql-server-apollo-yoga-with-server-preset).
+But the base CLI's watch-mode support wasn't consistent across plugins and presets, and profiling
+didn't work on every run.
 
 Recent fixes and improvements allow library authors more flexibility to control the output:
 
@@ -29,10 +32,10 @@ Recent fixes and improvements allow library authors more flexibility to control 
   whether to rewrite a file
 - `--profile --watch` now writes a trace after every rebuild, not just the initial run
 
-## Server Preset 0.19: up to 80% faster watch re-runs
+## Server Preset v0.19: up to 80% faster watch re-runs
 
 With the watcher behaving predictably, we could make Server Preset lean on it.
-[Version 0.19](https://github.com/eddeee888/graphql-code-generator-plugins/releases/tag/%40eddeee888%2Fgcg-typescript-resolver-files%400.19.0)
+[v0.19](https://github.com/eddeee888/graphql-code-generator-plugins/releases/tag/%40eddeee888%2Fgcg-typescript-resolver-files%400.19.0)
 uses the new watch capabilities and adds internal caching of its most expensive work: the check
 that compares resolver types against your mappers, and the schema parsing that every generates
 block used to repeat.
