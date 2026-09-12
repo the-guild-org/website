@@ -49,42 +49,40 @@ const postJsonLd = JSON.stringify({
   type="article"
   publishedTime={post.data.date}
 >
-  <script is:inline slot="head" type="application/ld+json" set:html={postJsonLd} />
+  <script is:inline slot="head" type="application/ld+json" set:html={postJsonLd}></script>
   <SiteHeader>
-    <a href="/blog" class="text-[var(--muted)] transition-colors hover:text-[var(--strong)]"
-      >/ blog</a
-    >
-    <Fragment slot="actions"><CommandLink href="/blog">all posts</CommandLink></Fragment>
+    <a href="/blog" class="text-[var(--muted)] transition-colors hover:text-[var(--strong)]">
+      / blog
+    </a>
+    <Fragment slot="actions">
+      <CommandLink href="/blog">all posts</CommandLink>
+    </Fragment>
   </SiteHeader>
 
   <main>
-    <article
-      class="mx-auto w-[calc(100%-24px)] max-w-[860px] py-[56px] sm:w-[calc(100%-40px)] sm:py-[80px]"
-    >
+    <article class="mx-auto w-[calc(100%-24px)] max-w-[860px] py-[56px] sm:w-[calc(100%-40px)] sm:py-[80px]">
       <div class="mb-3.5 font-mono text-xs tracking-label text-[var(--muted)] lowercase">
         ~/the-guild/blog
       </div>
       <h1 class="mb-5 font-mono text-4xl font-semibold text-balance text-[var(--strong)]">
         {post.data.title}
       </h1>
-      <div
-        class="mb-10 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-[var(--line)] pb-6 font-mono text-sm text-[var(--muted)]"
-      >
-        <time datetime={post.data.date.toISOString()} class="text-[var(--green)]"
-          >{formatDate(post.data.date)}</time
-        >
-        {
-          authors.map(author => (
-            <a
-              class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 transition-colors hover:text-[var(--strong)] hover:decoration-current"
-              href={author.link}
-            >
-              {author.name}
-            </a>
-          ))
-        }
+      <div class="mb-10 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-[var(--line)] pb-6 font-mono text-sm text-[var(--muted)]">
+        <time datetime={post.data.date.toISOString()} class="text-[var(--green)]">
+          {formatDate(post.data.date)}
+        </time>
+        {authors.map(author => (
+          <a
+            class="text-[var(--text)] underline decoration-[var(--line-strong)] underline-offset-2 transition-colors hover:text-[var(--strong)] hover:decoration-current"
+            href={author.link}
+          >
+            {author.name}
+          </a>
+        ))}
         <span class="flex flex-wrap gap-x-3 text-[var(--faint)]">
-          {post.data.tags.map(tag => <span>#{tag}</span>)}
+          {post.data.tags.map(tag => (
+            <span>#{tag}</span>
+          ))}
         </span>
       </div>
 

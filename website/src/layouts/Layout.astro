@@ -47,11 +47,9 @@ const imageUrl = new URL(image ?? DEFAULT_OG_IMAGE, Astro.site).href;
     <meta property="og:site_name" content="The Guild" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:image" content={imageUrl} />
-    {
-      type === 'article' && publishedTime && (
-        <meta property="article:published_time" content={publishedTime.toISOString()} />
-      )
-    }
+    {type === 'article' && publishedTime && (
+      <meta property="article:published_time" content={publishedTime.toISOString()} />
+    )}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@TheGuildDev" />
     <meta name="twitter:creator" content="@TheGuildDev" />

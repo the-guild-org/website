@@ -55,46 +55,44 @@ const questionId = (question: string) =>
     {heading}
   </h2>
   <div class="divide-beige-400 basis-1/2 divide-y max-xl:grow">
-    {
-      faqs.map(([question, answer]) => (
-        <details
-          class="group relative pb-0 open:pb-4"
-          id={questionId(question)}
-          itemscope
-          itemtype="https://schema.org/Question"
+    {faqs.map(([question, answer]) => (
+      <details
+        class="group relative pb-0 open:pb-4"
+        id={questionId(question)}
+        itemscope
+        itemtype="https://schema.org/Question"
+      >
+        <summary
+          class="hive-focus hover:bg-beige-100/80 -mx-2 my-1 flex w-[calc(100%+1rem)] cursor-pointer list-none items-center justify-between gap-3 rounded-xl bg-white px-2 py-3 text-left font-medium transition-colors duration-100 md:my-2 md:py-4"
+          itemprop="name"
         >
-          <summary
-            class="hive-focus hover:bg-beige-100/80 -mx-2 my-1 flex w-[calc(100%+1rem)] cursor-pointer list-none items-center justify-between gap-3 rounded-xl bg-white px-2 py-3 text-left font-medium transition-colors duration-100 md:my-2 md:py-4"
-            itemprop="name"
+          <span>{question}</span>
+          <svg
+            class="size-5 shrink-0 transition-transform duration-150 group-open:rotate-180"
+            fill="none"
+            height="15"
+            viewBox="0 0 15 15"
+            width="15"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <span>{question}</span>
-            <svg
-              class="size-5 shrink-0 transition-transform duration-150 group-open:rotate-180"
-              fill="none"
-              height="15"
-              viewBox="0 0 15 15"
-              width="15"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z"
-                fill="currentColor"
-                fill-rule="evenodd"
-              />
-            </svg>
-          </summary>
-          <div
-            class="text-green-800"
-            itemprop="acceptedAnswer"
-            itemscope
-            itemtype="https://schema.org/Answer"
-          >
-            <p itemprop="text" set:html={answer.replaceAll('href="/', `href="${basePath}/`)} />
-          </div>
-        </details>
-      ))
-    }
+            <path
+              clip-rule="evenodd"
+              d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z"
+              fill="currentColor"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </summary>
+        <div
+          class="text-green-800"
+          itemprop="acceptedAnswer"
+          itemscope
+          itemtype="https://schema.org/Answer"
+        >
+          <p itemprop="text" set:html={answer.replaceAll('href="/', `href="${basePath}/`)} />
+        </div>
+      </details>
+    ))}
   </div>
 </section>
 

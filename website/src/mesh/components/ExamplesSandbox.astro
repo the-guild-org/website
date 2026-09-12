@@ -51,17 +51,15 @@ const EXAMPLES: Record<string, Record<string, string>> = {
         class="hive-focus border-beige-400 hover:bg-beige-100 w-[240px] cursor-pointer appearance-none rounded-lg border bg-inherit py-2 pr-8 pl-3 dark:border-neutral-800 dark:hover:bg-neutral-900"
         name="codesandbox-example-name"
       >
-        {
-          Object.entries(EXAMPLES).map(([group, examples]) => (
-            <optgroup label={group}>
-              {Object.entries(examples).map(([name, dir]) => (
-                <option selected={dir === 'json-schema-example'} value={dir}>
-                  {name}
-                </option>
-              ))}
-            </optgroup>
-          ))
-        }
+        {Object.entries(EXAMPLES).map(([group, examples]) => (
+          <optgroup label={group}>
+            {Object.entries(examples).map(([name, dir]) => (
+              <option selected={dir === 'json-schema-example'} value={dir}>
+                {name}
+              </option>
+            ))}
+          </optgroup>
+        ))}
       </select>
       <svg
         aria-hidden="true"
@@ -70,8 +68,9 @@ const EXAMPLES: Record<string, Record<string, string>> = {
         stroke="currentColor"
         stroke-width="1.5"
         viewBox="0 0 24 24"
-        ><path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path></svg
       >
+        <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
     </span>
   </label>
   <div
@@ -80,8 +79,7 @@ const EXAMPLES: Record<string, Record<string, string>> = {
       border && 'border-beige-400 rounded-lg border dark:border-neutral-800',
     ]}
     data-examples-frame
-  >
-  </div>
+  ></div>
 </div>
 
 <script>

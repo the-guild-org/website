@@ -87,128 +87,115 @@ const ancillaryProducts = [
 <section
   class:list={['isolate flex flex-col gap-6 px-4 py-6 lg:gap-12 lg:py-24 xl:px-[120px]', className]}
 >
-  <h2
-    class="group text-green-1000 text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]"
-  >
+  <h2 class="group text-green-1000 text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]">
     Discover the complete ecosystem of tools and libraries
   </h2>
   <p class="text-green-800">Complete GraphQL Federation Stack</p>
-  <ul
-    class="nextra-scrollbar -mx-12 -my-2 flex grid-cols-2 gap-[22px] overflow-auto px-12 py-2 lg:grid xl:grid-cols-3"
-  >
-    {
-      mainProducts.map(product => (
-        <li
-          class:list={[
-            'hive-focus-within group relative flex-1 shrink-0 basis-[283.5px] overflow-hidden rounded-2xl max-md:min-w-[283.5px]',
-            product.isHive ? 'bg-green-1000 text-white' : 'text-green-1000 bg-blue-400',
-          ]}
+  <ul class="nextra-scrollbar -mx-12 -my-2 flex grid-cols-2 gap-[22px] overflow-auto px-12 py-2 lg:grid xl:grid-cols-3">
+    {mainProducts.map(product => (
+      <li
+        class:list={[
+          'hive-focus-within group relative flex-1 shrink-0 basis-[283.5px] overflow-hidden rounded-2xl max-md:min-w-[283.5px]',
+          product.isHive ? 'bg-green-1000 text-white' : 'text-green-1000 bg-blue-400',
+        ]}
+      >
+        <a
+          class="relative z-10 flex h-full flex-1 flex-col justify-between p-8 outline-hidden focus-visible:outline-hidden"
+          href={withBase(product.href)}
         >
-          <a
-            class="relative z-10 flex h-full flex-1 flex-col justify-between p-8 outline-hidden focus-visible:outline-hidden"
-            href={withBase(product.href)}
+          <p class="relative z-10 font-medium">{product.name}</p>
+          <div class="relative z-0 mt-8 size-12" set:html={product.icon} />
+          <svg
+            class="absolute right-8 bottom-8 z-10"
+            fill="currentColor"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
           >
-            <p class="relative z-10 font-medium">{product.name}</p>
-            <div class="relative z-0 mt-8 size-12" set:html={product.icon} />
+            <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
+          </svg>
+          <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+            <Fragment
+              set:html={withAttrs(
+                product.decoration,
+                `class="pointer-events-none absolute bottom-0 right-0 h-full opacity-0 transition-opacity duration-500 group-focus-within:opacity-100 group-hover:opacity-100 md:translate-x-12"`,
+              )}
+            />
             <svg
-              class="absolute right-8 bottom-8 z-10"
-              fill="currentColor"
-              height="24"
-              viewBox="0 0 24 24"
-              width="24"
+              class="firefox-highlight-fix pointer-events-none absolute top-[-15%] left-0 h-[150%] w-full opacity-0 transition-opacity duration-1000 group-focus-within:opacity-100 group-hover:opacity-100"
+              fill="#86B6C1"
+              height="674"
+              viewBox="0 0 895 674"
+              width="895"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
+              <g filter="url(#tal-blur)">
+                <path d="M350 280.534C350 296.208 356.24 311.261 367.33 322.351L453.447 408.468L463.532 418.553L549.649 504.67C560.739 515.76 575.792 522 591.466 522L894 522L894 408.468L552.251 408.468C503.249 408.468 463.532 368.751 463.532 319.749L463.532 -22L350 -22L350 280.534Z" />
+              </g>
+              <defs>
+                <filter
+                  color-interpolation-filters="sRGB"
+                  filterUnits="userSpaceOnUse"
+                  height="1244"
+                  id="tal-blur"
+                  width="1244"
+                  x="-3.05176e-05"
+                  y="-372"
+                >
+                  <>
+                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                    <feBlend
+                      in="SourceGraphic"
+                      in2="BackgroundImageFix"
+                      mode="normal"
+                      result="shape"
+                    />
+                    <feGaussianBlur result="effect1_foregroundBlur" stdDeviation="175" />
+                  </>
+                </filter>
+              </defs>
             </svg>
-            <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-              <Fragment
-                set:html={withAttrs(
-                  product.decoration,
-                  `class="pointer-events-none absolute bottom-0 right-0 h-full opacity-0 transition-opacity duration-500 group-focus-within:opacity-100 group-hover:opacity-100 md:translate-x-12"`,
-                )}
-              />
-              <svg
-                class="firefox-highlight-fix pointer-events-none absolute top-[-15%] left-0 h-[150%] w-full opacity-0 transition-opacity duration-1000 group-focus-within:opacity-100 group-hover:opacity-100"
-                fill="#86B6C1"
-                height="674"
-                viewBox="0 0 895 674"
-                width="895"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <g filter="url(#tal-blur)">
-                  <path d="M350 280.534C350 296.208 356.24 311.261 367.33 322.351L453.447 408.468L463.532 418.553L549.649 504.67C560.739 515.76 575.792 522 591.466 522L894 522L894 408.468L552.251 408.468C503.249 408.468 463.532 368.751 463.532 319.749L463.532 -22L350 -22L350 280.534Z" />
-                </g>
-                <defs>
-                  <filter
-                    color-interpolation-filters="sRGB"
-                    filterUnits="userSpaceOnUse"
-                    height="1244"
-                    id="tal-blur"
-                    width="1244"
-                    x="-3.05176e-05"
-                    y="-372"
-                  >
-                    <>
-                      <feFlood flood-opacity="0" result="BackgroundImageFix" />
-                      <feBlend
-                        in="SourceGraphic"
-                        in2="BackgroundImageFix"
-                        mode="normal"
-                        result="shape"
-                      />
-                      <feGaussianBlur result="effect1_foregroundBlur" stdDeviation="175" />
-                    </>
-                  </filter>
-                </defs>
-              </svg>
-            </div>
-          </a>
-        </li>
-      ))
-    }
+          </div>
+        </a>
+      </li>
+    ))}
   </ul>
   <p class="text-green-800">Our libraries to support all your GraphQL needs</p>
-  <ul
-    class="nextra-scrollbar -mx-12 -my-2 flex h-max grid-cols-6 gap-[22px] overflow-x-auto overflow-y-hidden px-12 py-2 max-sm:-mx-8 max-sm:px-8 sm:grid sm:grid-cols-2 lg:grid-cols-3"
-  >
-    {
-      ancillaryProducts.map(product => (
-        <li class="hive-focus-within bg-beige-200 text-green-1000 hover:bg-beige-400 shrink-0 basis-[283.5px] rounded-2xl transition-colors duration-500 max-sm:min-w-[283.5px]">
-          <a
-            class="relative flex h-full flex-col justify-between rounded-[inherit] p-8 focus:outline-hidden focus-visible:outline-hidden"
-            href={withBase(product.href)}
+  <ul class="nextra-scrollbar -mx-12 -my-2 flex h-max grid-cols-6 gap-[22px] overflow-x-auto overflow-y-hidden px-12 py-2 max-sm:-mx-8 max-sm:px-8 sm:grid sm:grid-cols-2 lg:grid-cols-3">
+    {ancillaryProducts.map(product => (
+      <li class="hive-focus-within bg-beige-200 text-green-1000 hover:bg-beige-400 shrink-0 basis-[283.5px] rounded-2xl transition-colors duration-500 max-sm:min-w-[283.5px]">
+        <a
+          class="relative flex h-full flex-col justify-between rounded-[inherit] p-8 focus:outline-hidden focus-visible:outline-hidden"
+          href={withBase(product.href)}
+        >
+          <div>
+            <p class="font-medium">{product.name}</p>
+            <p class="mt-2 text-sm text-green-800">{product.title}</p>
+          </div>
+          <div
+            class="bg-green-1000 mt-8 flex size-8 items-center justify-center rounded-sm p-1.25 text-sm/5 font-medium text-white"
+            role="presentation"
           >
-            <div>
-              <p class="font-medium">{product.name}</p>
-              <p class="mt-2 text-sm text-green-800">{product.title}</p>
-            </div>
-            <div
-              class="bg-green-1000 mt-8 flex size-8 items-center justify-center rounded-sm p-1.25 text-sm/5 font-medium text-white"
-              role="presentation"
-            >
-              {'icon' in product ? (
-                <span set:html={product.icon} />
-              ) : (
-                <span
-                  role="img"
-                  class="inline-flex items-center justify-center text-xs font-medium"
-                >
-                  {product.mark}
-                </span>
-              )}
-            </div>
-            <svg
-              class="absolute right-8 bottom-8"
-              fill="currentColor"
-              height="24"
-              viewBox="0 0 24 24"
-              width="24"
-            >
-              <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
-            </svg>
-          </a>
-        </li>
-      ))
-    }
+            {'icon' in product ? (
+              <span set:html={product.icon} />
+            ) : (
+              <span role="img" class="inline-flex items-center justify-center text-xs font-medium">
+                {product.mark}
+              </span>
+            )}
+          </div>
+          <svg
+            class="absolute right-8 bottom-8"
+            fill="currentColor"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+          >
+            <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
+          </svg>
+        </a>
+      </li>
+    ))}
   </ul>
   <a
     class="text-green-1000 bg-primary relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-green-800 hover:text-white focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 sm:w-fit"

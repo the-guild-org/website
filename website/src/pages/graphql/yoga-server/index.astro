@@ -196,15 +196,13 @@ const iconBadge =
         offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
         publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
       })}
-    />
+    ></script>
   </head>
   <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
     <SiteNavigation logo={YOGA_LOGO} />
     <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
       <!-- Hero -->
-      <div
-        class="relative isolate mx-4 flex max-w-360 flex-col items-center gap-6 overflow-hidden rounded-3xl bg-blue-400 px-4 py-6 max-sm:mt-2 sm:py-16 md:mx-6 md:gap-8 lg:py-24"
-      >
+      <div class="relative isolate mx-4 flex max-w-360 flex-col items-center gap-6 overflow-hidden rounded-3xl bg-blue-400 px-4 py-6 max-sm:mt-2 sm:py-16 md:mx-6 md:gap-8 lg:py-24">
         <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
           <span
             class="absolute top-1/2 -left-32 w-[380px] -translate-y-1/2 -rotate-[20deg] text-white/35 md:-left-28 md:w-[600px] [&>svg]:w-full"
@@ -219,9 +217,7 @@ const iconBadge =
           class="to-green-1000 relative flex size-24 items-center justify-center rounded-3xl bg-gradient-to-br from-green-800 text-white shadow-[0_12px_40px_-12px_rgba(0,52,44,0.6)] [&>svg]:size-12"
           set:html={yogaMark('fill="currentColor"')}
         />
-        <h1
-          class="group relative mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]"
-        >
+        <h1 class="group relative mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]">
           High-performance GraphQL server
         </h1>
         <p class="relative mx-auto w-lg max-w-[80%] text-center leading-6 text-green-800">
@@ -230,21 +226,33 @@ const iconBadge =
           <a
             class="hive-focus underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
             href="https://the-guild.dev/graphql/hive"
-            title="Explore the Hive platform">Hive</a
+            title="Explore the Hive platform"
           >
-          {' '}ecosystem by{' '}
+            Hive
+          </a>{' '}
+          ecosystem by{' '}
           <a
             class="hive-focus underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
             href="https://the-guild.dev"
-            title="Visit The Guild">The Guild</a
-          >.
+            title="Visit The Guild"
+          >
+            The Guild
+          </a>
+          .
         </p>
-        <ul
-          class="relative z-10 mx-auto flex list-none flex-col gap-x-6 gap-y-2 text-sm leading-[21px] font-medium md:flex-row [&>li]:flex [&>li]:items-center [&>li]:gap-2"
-        >
-          <li><span class="text-green-800" set:html={checkmark} />Fully open source</li>
-          <li><span class="text-green-800" set:html={checkmark} />No vendor lock</li>
-          <li><span class="text-green-800" set:html={checkmark} />Can be self-hosted!</li>
+        <ul class="relative z-10 mx-auto flex list-none flex-col gap-x-6 gap-y-2 text-sm leading-[21px] font-medium md:flex-row [&>li]:flex [&>li]:items-center [&>li]:gap-2">
+          <li>
+            <span class="text-green-800" set:html={checkmark} />
+            Fully open source
+          </li>
+          <li>
+            <span class="text-green-800" set:html={checkmark} />
+            No vendor lock
+          </li>
+          <li>
+            <span class="text-green-800" set:html={checkmark} />
+            Can be self-hosted!
+          </li>
         </ul>
         <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
           <a
@@ -272,13 +280,9 @@ const iconBadge =
       </div>
 
       <!-- Practice Yoga -->
-      <section
-        class="flex gap-6 px-4 py-6 max-lg:flex-col sm:py-20 md:px-6 md:py-24 lg:gap-24 xl:px-30"
-      >
+      <section class="flex gap-6 px-4 py-6 max-lg:flex-col sm:py-20 md:px-6 md:py-24 lg:gap-24 xl:px-30">
         <div class="grow">
-          <h2
-            class="group text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]"
-          >
+          <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] text-balance md:text-5xl md:leading-[1.16667]">
             Practice Yoga while doing server-work
           </h2>
           <p class="mt-4 leading-6 text-green-800">
@@ -286,20 +290,18 @@ const iconBadge =
             workflow.
           </p>
           <ul class="my-12 grid list-none grid-cols-1 gap-6 p-0 sm:grid-cols-3">
-            {
-              practice.map(item => (
-                <li>
-                  <a
-                    class="hive-focus hover:bg-beige-100 block rounded-2xl p-4 transition-colors"
-                    href={item.href}
-                  >
-                    <span class={iconBadge} set:html={item.icon} />
-                    <span class="mt-4 block text-lg font-medium">{item.title}</span>
-                    <span class="mt-2 block text-sm leading-6 text-green-800">{item.copy}</span>
-                  </a>
-                </li>
-              ))
-            }
+            {practice.map(item => (
+              <li>
+                <a
+                  class="hive-focus hover:bg-beige-100 block rounded-2xl p-4 transition-colors"
+                  href={item.href}
+                >
+                  <span class={iconBadge} set:html={item.icon} />
+                  <span class="mt-4 block text-lg font-medium">{item.title}</span>
+                  <span class="mt-2 block text-sm leading-6 text-green-800">{item.copy}</span>
+                </a>
+              </li>
+            ))}
           </ul>
           <a
             class="text-green-1000 relative inline-flex items-center justify-center gap-2 rounded-lg bg-green-800 px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40"
@@ -323,12 +325,8 @@ const iconBadge =
       </section>
 
       <!-- Truly extendable -->
-      <section
-        class="bg-green-1000 relative isolate mx-4 overflow-hidden rounded-3xl p-8 text-white md:mx-6 md:p-[72px]"
-      >
-        <h2
-          class="group text-4xl leading-[1.2] tracking-[-0.48px] max-sm:text-[32px] md:text-5xl md:leading-[1.16667]"
-        >
+      <section class="bg-green-1000 relative isolate mx-4 overflow-hidden rounded-3xl p-8 text-white md:mx-6 md:p-[72px]">
+        <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] max-sm:text-[32px] md:text-5xl md:leading-[1.16667]">
           Truly extendable
         </h2>
         <p class="mt-4 text-white/80">
@@ -336,49 +334,45 @@ const iconBadge =
         </p>
         <div class="my-6 flex gap-6 max-xl:flex-col xl:my-12 xl:gap-20">
           <ul class="grid list-none grid-cols-1 gap-6 p-0 sm:grid-cols-2 xl:shrink-0 xl:basis-1/2">
-            {
-              extendable.map(item => (
-                <li>
-                  <a
-                    class="hive-focus block h-full rounded-2xl bg-green-900 p-6 transition-colors hover:bg-green-800"
-                    href={item.href}
-                  >
-                    <span
-                      class="flex size-12 items-center justify-center rounded-xl bg-white/10 [&>svg]:size-6 [&>svg_path]:fill-white"
-                      set:html={item.icon}
-                    />
-                    <span class="mt-4 block text-base font-medium">{item.title}</span>
-                    <span class="mt-2 block text-sm leading-6 text-white/70">{item.copy}</span>
-                  </a>
-                </li>
-              ))
-            }
+            {extendable.map(item => (
+              <li>
+                <a
+                  class="hive-focus block h-full rounded-2xl bg-green-900 p-6 transition-colors hover:bg-green-800"
+                  href={item.href}
+                >
+                  <span
+                    class="flex size-12 items-center justify-center rounded-xl bg-white/10 [&>svg]:size-6 [&>svg_path]:fill-white"
+                    set:html={item.icon}
+                  />
+                  <span class="mt-4 block text-base font-medium">{item.title}</span>
+                  <span class="mt-2 block text-sm leading-6 text-white/70">{item.copy}</span>
+                </a>
+              </li>
+            ))}
           </ul>
           <div class="group relative min-w-0 grow overflow-hidden max-xl:order-first">
             <div class="yoga-marquee flex flex-col gap-2 sm:gap-3">
-              {
-                marqueeRows.map((row, index) => (
-                  <ul
-                    class:list={[
-                      'flex w-max list-none gap-2 p-0 sm:gap-3',
-                      index % 2 ? 'yoga-marquee-row-reverse' : 'yoga-marquee-row',
-                    ]}
-                  >
-                    {[...row, ...row].map(plugin => (
-                      <li>
-                        <a
-                          class="hive-focus block rounded-lg bg-green-900 px-3 py-1.5 font-mono text-xs text-green-600 transition-colors hover:bg-green-800 hover:text-white sm:px-4 sm:py-2 sm:text-sm"
-                          href={plugin.href}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          {plugin.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                ))
-              }
+              {marqueeRows.map((row, index) => (
+                <ul
+                  class:list={[
+                    'flex w-max list-none gap-2 p-0 sm:gap-3',
+                    index % 2 ? 'yoga-marquee-row-reverse' : 'yoga-marquee-row',
+                  ]}
+                >
+                  {[...row, ...row].map(plugin => (
+                    <li>
+                      <a
+                        class="hive-focus block rounded-lg bg-green-900 px-3 py-1.5 font-mono text-xs text-green-600 transition-colors hover:bg-green-800 hover:text-white sm:px-4 sm:py-2 sm:text-sm"
+                        href={plugin.href}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        {plugin.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ))}
             </div>
             <span
               class="pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-700 group-hover:opacity-0 [&>svg]:size-2/3"
@@ -411,54 +405,46 @@ const iconBadge =
           Complies with the latest GraphQL over HTTP specifications for full compatibility.
         </p>
         <ul class="mt-6 grid list-none grid-cols-1 gap-2 p-0 md:mt-16 md:grid-cols-3 md:gap-6">
-          {
-            http.map(item => (
-              <li class="bg-beige-100 rounded-3xl p-8 lg:p-12">
-                <span class={iconBadge} set:html={item.icon} />
-                <h3 class="mt-5 text-xl leading-[1.4] font-medium">{item.title}</h3>
-                <p class="mt-4 leading-6 text-green-800">
-                  {item.copy}{' '}
-                  <a
-                    class="hive-focus text-green-1000 font-medium underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
-                    href={item.link.href}
-                  >
-                    {item.link.label}
-                  </a>
-                  .
-                </p>
-              </li>
-            ))
-          }
+          {http.map(item => (
+            <li class="bg-beige-100 rounded-3xl p-8 lg:p-12">
+              <span class={iconBadge} set:html={item.icon} />
+              <h3 class="mt-5 text-xl leading-[1.4] font-medium">{item.title}</h3>
+              <p class="mt-4 leading-6 text-green-800">
+                {item.copy}{' '}
+                <a
+                  class="hive-focus text-green-1000 font-medium underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
+                  href={item.link.href}
+                >
+                  {item.link.label}
+                </a>
+                .
+              </p>
+            </li>
+          ))}
         </ul>
       </section>
 
       <!-- Run anywhere -->
-      <section
-        class="mx-4 rounded-3xl bg-blue-400 p-4 pt-6 sm:py-24 md:mx-6 md:px-6 lg:px-12 2xl:px-24"
-      >
+      <section class="mx-4 rounded-3xl bg-blue-400 p-4 pt-6 sm:py-24 md:mx-6 md:px-6 lg:px-12 2xl:px-24">
         <h2 class={sectionTitle}>Run anywhere</h2>
         <p class="mt-4 text-center text-balance">
           Deploy Yoga across any JavaScript environment, powered by its versatile Fetch API
           compatibility.
         </p>
-        <ul
-          class="mx-auto mt-4 flex max-w-[1200px] list-none flex-wrap items-center justify-center gap-2 p-0 sm:mt-8 sm:gap-4 lg:mt-16"
-        >
-          {
-            runtimes.map(runtime => (
-              <li>
-                <a
-                  class="hive-focus flex h-[72px] items-center gap-4 rounded-2xl bg-blue-200 px-4 font-medium transition-colors hover:bg-blue-100 sm:h-[102px] sm:px-6 md:px-8"
-                  href={runtime.href}
-                >
-                  {runtime.name}
-                  <svg class="size-6 max-sm:hidden" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
-                  </svg>
-                </a>
-              </li>
-            ))
-          }
+        <ul class="mx-auto mt-4 flex max-w-[1200px] list-none flex-wrap items-center justify-center gap-2 p-0 sm:mt-8 sm:gap-4 lg:mt-16">
+          {runtimes.map(runtime => (
+            <li>
+              <a
+                class="hive-focus flex h-[72px] items-center gap-4 rounded-2xl bg-blue-200 px-4 font-medium transition-colors hover:bg-blue-100 sm:h-[102px] sm:px-6 md:px-8"
+                href={runtime.href}
+              >
+                {runtime.name}
+                <svg class="size-6 max-sm:hidden" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
+                </svg>
+              </a>
+            </li>
+          ))}
         </ul>
       </section>
 

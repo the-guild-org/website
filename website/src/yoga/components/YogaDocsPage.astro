@@ -96,25 +96,21 @@ const migrationHref = legacyVersion
   section={section}
   title={baseTitle}
 >
-  {
-    showVersions && (
-      <VersionSwitch
-        current={legacyVersion ?? CURRENT_VERSION}
-        versions={[CURRENT_VERSION, ...LEGACY_VERSIONS]}
-      />
-    )
-  }
-  {
-    legacyVersion && (
-      <Callout
-        title={`This is the documentation for the old GraphQL Yoga ${legacyVersion}`}
-        type="warning"
-      >
-        We recommend upgrading to the latest GraphQL Yoga {CURRENT_VERSION}.{' '}
-        <a href={migrationHref}>Migrate to GraphQL Yoga {CURRENT_VERSION}</a>.
-      </Callout>
-    )
-  }
+  {showVersions && (
+    <VersionSwitch
+      current={legacyVersion ?? CURRENT_VERSION}
+      versions={[CURRENT_VERSION, ...LEGACY_VERSIONS]}
+    />
+  )}
+  {legacyVersion && (
+    <Callout
+      title={`This is the documentation for the old GraphQL Yoga ${legacyVersion}`}
+      type="warning"
+    >
+      We recommend upgrading to the latest GraphQL Yoga {CURRENT_VERSION}.{' '}
+      <a href={migrationHref}>Migrate to GraphQL Yoga {CURRENT_VERSION}</a>.
+    </Callout>
+  )}
   <div data-pagefind-ignore={searchable ? undefined : 'all'}>
     <Content
       components={{

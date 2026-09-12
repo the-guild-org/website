@@ -158,15 +158,13 @@ const iconBadge =
         offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
         publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
       })}
-    />
+    ></script>
   </head>
   <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
     <SiteNavigation logo={INSPECTOR_LOGO} />
     <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
       <!-- Hero -->
-      <div
-        class="relative isolate mx-4 flex max-w-360 flex-col items-center gap-6 overflow-hidden rounded-3xl bg-blue-400 px-4 py-6 max-sm:mt-2 sm:py-16 md:mx-6 md:gap-8 lg:py-24"
-      >
+      <div class="relative isolate mx-4 flex max-w-360 flex-col items-center gap-6 overflow-hidden rounded-3xl bg-blue-400 px-4 py-6 max-sm:mt-2 sm:py-16 md:mx-6 md:gap-8 lg:py-24">
         <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
           <span
             class="absolute top-1/2 -left-40 w-[420px] -translate-y-1/2 -rotate-12 text-white/30 md:-left-32 md:w-[520px] [&>svg]:w-full"
@@ -181,9 +179,7 @@ const iconBadge =
           class="to-green-1000 relative flex size-24 items-center justify-center rounded-3xl bg-gradient-to-br from-green-800 text-white shadow-[0_12px_40px_-12px_rgba(0,52,44,0.6)] [&>svg]:size-12"
           set:html={inspectorMark('fill="currentColor"')}
         />
-        <h1
-          class="group relative mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]"
-        >
+        <h1 class="group relative mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]">
           Keep your GraphQL schema honest
         </h1>
         <p class="relative mx-auto w-lg max-w-[80%] text-center leading-6 text-green-800">
@@ -192,21 +188,33 @@ const iconBadge =
           <a
             class="hive-focus underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
             href="https://the-guild.dev/graphql/hive"
-            title="Explore the Hive platform">Hive</a
+            title="Explore the Hive platform"
           >
-          {' '}ecosystem by{' '}
+            Hive
+          </a>{' '}
+          ecosystem by{' '}
           <a
             class="hive-focus underline decoration-green-800/30 underline-offset-2 hover:decoration-green-800"
             href="https://the-guild.dev"
-            title="Visit The Guild">The Guild</a
-          >.
+            title="Visit The Guild"
+          >
+            The Guild
+          </a>
+          .
         </p>
-        <ul
-          class="relative z-10 mx-auto flex list-none flex-col gap-x-6 gap-y-2 text-sm leading-[21px] font-medium md:flex-row [&>li]:flex [&>li]:items-center [&>li]:gap-2"
-        >
-          <li><span class="text-green-800" set:html={checkmark} />Breaking-change detection</li>
-          <li><span class="text-green-800" set:html={checkmark} />GitHub Action and CLI</li>
-          <li><span class="text-green-800" set:html={checkmark} />Coverage and validation</li>
+        <ul class="relative z-10 mx-auto flex list-none flex-col gap-x-6 gap-y-2 text-sm leading-[21px] font-medium md:flex-row [&>li]:flex [&>li]:items-center [&>li]:gap-2">
+          <li>
+            <span class="text-green-800" set:html={checkmark} />
+            Breaking-change detection
+          </li>
+          <li>
+            <span class="text-green-800" set:html={checkmark} />
+            GitHub Action and CLI
+          </li>
+          <li>
+            <span class="text-green-800" set:html={checkmark} />
+            Coverage and validation
+          </li>
         </ul>
         <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
           <a
@@ -234,33 +242,25 @@ const iconBadge =
           The same checks are available as a GitHub Action, in your CI, from the command line, and
           as a library.
         </p>
-        <ul
-          class="mt-6 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2 md:mt-16 md:gap-6 xl:grid-cols-4"
-        >
-          {
-            ways.map(way => (
-              <li>
-                <a
-                  class="hive-focus bg-beige-100 hover:bg-beige-200 block h-full rounded-3xl p-8 transition-colors"
-                  href={way.href}
-                >
-                  <span class={iconBadge} set:html={way.icon} />
-                  <span class="mt-5 block text-xl leading-[1.4] font-medium">{way.title}</span>
-                  <span class="mt-4 block leading-6 text-green-800">{way.copy}</span>
-                </a>
-              </li>
-            ))
-          }
+        <ul class="mt-6 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2 md:mt-16 md:gap-6 xl:grid-cols-4">
+          {ways.map(way => (
+            <li>
+              <a
+                class="hive-focus bg-beige-100 hover:bg-beige-200 block h-full rounded-3xl p-8 transition-colors"
+                href={way.href}
+              >
+                <span class={iconBadge} set:html={way.icon} />
+                <span class="mt-5 block text-xl leading-[1.4] font-medium">{way.title}</span>
+                <span class="mt-4 block leading-6 text-green-800">{way.copy}</span>
+              </a>
+            </li>
+          ))}
         </ul>
       </section>
 
       <!-- Schema diff -->
-      <section
-        class="bg-green-1000 relative isolate mx-4 overflow-hidden rounded-3xl p-8 text-white md:mx-6 md:p-[72px]"
-      >
-        <h2
-          class="group text-4xl leading-[1.2] tracking-[-0.48px] max-sm:text-[32px] md:text-5xl md:leading-[1.16667]"
-        >
+      <section class="bg-green-1000 relative isolate mx-4 overflow-hidden rounded-3xl p-8 text-white md:mx-6 md:p-[72px]">
+        <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] max-sm:text-[32px] md:text-5xl md:leading-[1.16667]">
           Every change, classified
         </h2>
         <p class="mt-4 max-w-2xl text-white/80">
@@ -292,21 +292,19 @@ const iconBadge =
               {changes.length} changes detected
             </p>
             <ul class="flex list-none flex-col gap-3 p-0">
-              {
-                changes.map(change => (
-                  <li class="rounded-xl bg-green-900 p-4">
-                    <span
-                      class:list={[
-                        'inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ring-1',
-                        levelStyle[change.level]?.className,
-                      ]}
-                    >
-                      {levelStyle[change.level]?.label ?? change.level}
-                    </span>
-                    <p class="mt-2 text-sm leading-6 text-white/85">{change.message}</p>
-                  </li>
-                ))
-              }
+              {changes.map(change => (
+                <li class="rounded-xl bg-green-900 p-4">
+                  <span
+                    class:list={[
+                      'inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ring-1',
+                      levelStyle[change.level]?.className,
+                    ]}
+                  >
+                    {levelStyle[change.level]?.label ?? change.level}
+                  </span>
+                  <p class="mt-2 text-sm leading-6 text-white/85">{change.message}</p>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -320,43 +318,39 @@ const iconBadge =
 
       <!-- Feature walkthrough -->
       <section class="flex flex-col gap-6 px-4 py-6 sm:py-12 md:px-6 lg:gap-12 lg:py-24 xl:px-30">
-        {
-          features.map((feature, index) => (
-            <div
-              class:list={[
-                'bg-beige-100 flex flex-col gap-8 rounded-3xl p-8 lg:items-center lg:gap-16 lg:p-16',
-                index % 2 ? 'lg:flex-row-reverse' : 'lg:flex-row',
-              ]}
-            >
-              <div class="lg:basis-5/12">
-                <h2 class="group text-3xl leading-[1.2] tracking-[-0.48px] text-balance md:text-4xl">
-                  {feature.title}
-                </h2>
-                <p class="mt-4 leading-6 text-green-800">{feature.copy}</p>
-                <a
-                  class="hive-focus text-green-1000 mt-6 inline-flex items-center gap-1 font-medium underline decoration-green-800/30 underline-offset-4 hover:decoration-green-800"
-                  href={feature.href}
-                >
-                  Learn more →
-                </a>
-              </div>
-              <div class="min-w-0 grow">
-                <Image
-                  alt={feature.alt}
-                  class="mx-auto h-auto w-full max-w-2xl rounded-2xl shadow-[0_12px_40px_-16px_rgba(0,52,44,0.35)]"
-                  src={feature.image}
-                  widths={[640, 960, 1280]}
-                />
-              </div>
+        {features.map((feature, index) => (
+          <div
+            class:list={[
+              'bg-beige-100 flex flex-col gap-8 rounded-3xl p-8 lg:items-center lg:gap-16 lg:p-16',
+              index % 2 ? 'lg:flex-row-reverse' : 'lg:flex-row',
+            ]}
+          >
+            <div class="lg:basis-5/12">
+              <h2 class="group text-3xl leading-[1.2] tracking-[-0.48px] text-balance md:text-4xl">
+                {feature.title}
+              </h2>
+              <p class="mt-4 leading-6 text-green-800">{feature.copy}</p>
+              <a
+                class="hive-focus text-green-1000 mt-6 inline-flex items-center gap-1 font-medium underline decoration-green-800/30 underline-offset-4 hover:decoration-green-800"
+                href={feature.href}
+              >
+                Learn more →
+              </a>
             </div>
-          ))
-        }
+            <div class="min-w-0 grow">
+              <Image
+                alt={feature.alt}
+                class="mx-auto h-auto w-full max-w-2xl rounded-2xl shadow-[0_12px_40px_-16px_rgba(0,52,44,0.35)]"
+                src={feature.image}
+                widths={[640, 960, 1280]}
+              />
+            </div>
+          </div>
+        ))}
       </section>
 
       <!-- Hive -->
-      <section
-        class="text-green-1000 mx-4 rounded-3xl bg-blue-400 p-8 text-center md:mx-6 md:p-16 lg:p-[72px]"
-      >
+      <section class="text-green-1000 mx-4 rounded-3xl bg-blue-400 p-8 text-center md:mx-6 md:p-16 lg:p-[72px]">
         <h2 class={sectionTitle}>The engine behind Hive's schema registry</h2>
         <p class="mx-auto mt-4 max-w-2xl leading-6 text-balance">
           GraphQL Hive runs Inspector's change detection on every schema publish, across all your

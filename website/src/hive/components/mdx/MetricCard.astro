@@ -47,28 +47,28 @@ const metricId = `metric-${name
     <div class="mb-3 flex items-center justify-between gap-4">
       <div class="min-w-0 flex-1">
         <div class="flex items-center gap-1.5">
-          <code class="text-sm font-semibold break-all text-gray-900 dark:text-slate-100"
-            >{name}</code
-          >
+          <code class="text-sm font-semibold break-all text-gray-900 dark:text-slate-100">
+            {name}
+          </code>
           <button
             aria-label={`Copy link to ${name}`}
             class="hive-focus metric-copy-link inline-flex items-center justify-center rounded-sm font-mono text-sm leading-none font-semibold text-gray-500 opacity-0 transition-all duration-200 group-focus-within:opacity-100 group-hover:opacity-100 hover:text-gray-700 focus:text-gray-700 dark:text-slate-500 dark:hover:text-slate-200 dark:focus:text-slate-200"
             data-metric-id={metricId}
             title="Copy metric link"
-            type="button">#</button
+            type="button"
           >
+            #
+          </button>
           <span class="sr-only" data-metric-copy-status aria-live="polite"></span>
         </div>
       </div>
       <div class="flex shrink-0 items-center gap-2">
-        {
-          unit && (
-            <div class="flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-100 px-2.5 py-1 text-xs text-gray-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-slate-200">
-              <span class="font-medium text-gray-500 dark:text-slate-300">Unit:</span>
-              <span class="font-mono">{unit}</span>
-            </div>
-          )
-        }
+        {unit && (
+          <div class="flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-100 px-2.5 py-1 text-xs text-gray-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-slate-200">
+            <span class="font-medium text-gray-500 dark:text-slate-300">Unit:</span>
+            <span class="font-mono">{unit}</span>
+          </div>
+        )}
         <div class:list={['flex items-center gap-1.5 rounded-md border px-2.5 py-1', config.color]}>
           <svg
             class="size-3.5"
@@ -86,30 +86,26 @@ const metricId = `metric-${name
       </div>
     </div>
 
-    {
-      description && (
-        <p class="mb-4 text-sm/relaxed text-gray-600 dark:text-slate-100">{description}</p>
-      )
-    }
+    {description && (
+      <p class="mb-4 text-sm/relaxed text-gray-600 dark:text-slate-100">{description}</p>
+    )}
 
-    {
-      labels && labels.length > 0 && (
-        <div class="mt-4 border-t border-gray-100 pt-4 dark:border-neutral-800">
-          <div class="mb-2 flex items-center gap-2">
-            <span class="text-xs font-semibold text-gray-700 uppercase dark:text-slate-100">
-              Labels
-            </span>
-          </div>
-          <div class="flex flex-wrap gap-1.5">
-            {labels.map(label => (
-              <code class="rounded-sm border border-gray-200 bg-gray-50 px-2 py-1 text-xs text-gray-700 transition-colors hover:border-gray-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-slate-200 dark:hover:border-neutral-600">
-                {label}
-              </code>
-            ))}
-          </div>
+    {labels && labels.length > 0 && (
+      <div class="mt-4 border-t border-gray-100 pt-4 dark:border-neutral-800">
+        <div class="mb-2 flex items-center gap-2">
+          <span class="text-xs font-semibold text-gray-700 uppercase dark:text-slate-100">
+            Labels
+          </span>
         </div>
-      )
-    }
+        <div class="flex flex-wrap gap-1.5">
+          {labels.map(label => (
+            <code class="rounded-sm border border-gray-200 bg-gray-50 px-2 py-1 text-xs text-gray-700 transition-colors hover:border-gray-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-slate-200 dark:hover:border-neutral-600">
+              {label}
+            </code>
+          ))}
+        </div>
+      </div>
+    )}
   </div>
 </div>
 

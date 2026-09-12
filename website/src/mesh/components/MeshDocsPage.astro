@@ -78,14 +78,12 @@ const description = legacy
   title={title}
 >
   <VersionSwitch current={legacy ? 'v0' : 'v1'} />
-  {
-    legacy && (
-      <Callout title="This is the documentation for the old GraphQL Mesh v0" type="warning">
-        We recommend upgrading to the latest GraphQL Mesh v1.{' '}
-        <a href={withBase('/v1/migration-from-v0')}>Migrate to GraphQL Mesh v1</a>.
-      </Callout>
-    )
-  }
+  {legacy && (
+    <Callout title="This is the documentation for the old GraphQL Mesh v0" type="warning">
+      We recommend upgrading to the latest GraphQL Mesh v1.{' '}
+      <a href={withBase('/v1/migration-from-v0')}>Migrate to GraphQL Mesh v1</a>.
+    </Callout>
+  )}
   <div data-pagefind-ignore={legacy ? 'all' : undefined}>
     <Content
       components={{

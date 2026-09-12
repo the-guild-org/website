@@ -83,100 +83,94 @@ const products = [
       <Fragment set:html={arrowIconRaw} />
     </a>
   </div>
-  <ul
-    class="nextra-scrollbar -mx-12 -my-2 flex shrink-0 grow gap-[22px] overflow-auto px-12 py-2 [@media(max-width:1490px)]:w-full [@media(min-width:1490px)]:overflow-visible [&>:nth-child(n+5)]:[@media(min-width:1490px)]:hidden"
-  >
-    {
-      products.map(product => (
-        <li
-          class:list={[
-            'hive-focus-within group relative flex-1 shrink-0 basis-[283.5px] overflow-hidden rounded-2xl max-md:min-w-[283.5px]',
-            product.isHive ? 'bg-green-1000 text-white' : 'text-green-1000 bg-blue-400',
-          ]}
+  <ul class="nextra-scrollbar -mx-12 -my-2 flex shrink-0 grow gap-[22px] overflow-auto px-12 py-2 [@media(max-width:1490px)]:w-full [@media(min-width:1490px)]:overflow-visible [&>:nth-child(n+5)]:[@media(min-width:1490px)]:hidden">
+    {products.map(product => (
+      <li
+        class:list={[
+          'hive-focus-within group relative flex-1 shrink-0 basis-[283.5px] overflow-hidden rounded-2xl max-md:min-w-[283.5px]',
+          product.isHive ? 'bg-green-1000 text-white' : 'text-green-1000 bg-blue-400',
+        ]}
+      >
+        <a
+          class="relative z-10 flex h-full flex-1 flex-col justify-between p-8 outline-hidden focus-visible:outline-hidden"
+          href={withBase(product.href)}
+          target="_blank"
+          rel="noreferrer"
         >
-          <a
-            class="relative z-10 flex h-full flex-1 flex-col justify-between p-8 outline-hidden focus-visible:outline-hidden"
-            href={withBase(product.href)}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <p class="relative z-10 font-medium">{product.name}</p>
-            <Fragment set:html={withAttrs(product.icon, `class="mt-8 relative z-0"`)} />
+          <p class="relative z-10 font-medium">{product.name}</p>
+          <Fragment set:html={withAttrs(product.icon, `class="mt-8 relative z-0"`)} />
+          <Fragment set:html={withAttrs(arrowIconRaw, `class="absolute z-10 bottom-8 right-8"`)} />
+          <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
             <Fragment
-              set:html={withAttrs(arrowIconRaw, `class="absolute z-10 bottom-8 right-8"`)}
+              set:html={withAttrs(
+                product.decoration,
+                `class="stroke-white/70 md:translate-x-12 pointer-events-none absolute bottom-0 right-0 h-full opacity-0 transition-opacity duration-500 group-focus-within:opacity-100 group-hover:opacity-100" fill="url(#main-product-gradient-${product.slug})" stroke-width="0.5px"`,
+              )}
             />
-            <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-              <Fragment
-                set:html={withAttrs(
-                  product.decoration,
-                  `class="stroke-white/70 md:translate-x-12 pointer-events-none absolute bottom-0 right-0 h-full opacity-0 transition-opacity duration-500 group-focus-within:opacity-100 group-hover:opacity-100" fill="url(#main-product-gradient-${product.slug})" stroke-width="0.5px"`,
-                )}
-              />
-              <svg class="size-0">
-                <defs>
-                  <linearGradient
-                    gradientUnits="userSpaceOnUse"
-                    id={`main-product-gradient-${product.slug}`}
-                    x1="1"
-                    x2="161"
-                    y1="2"
-                    y2="171"
-                  >
-                    {product.isHive ? (
-                      <>
-                        <stop stop-color="#3b736a" />
-                        <stop offset="1" stop-color="#245850" />
-                      </>
-                    ) : (
-                      <>
-                        <stop stop-color="white" stop-opacity="0.1" />
-                        <stop offset="1" stop-color="white" stop-opacity="0.4" />
-                      </>
-                    )}
-                  </linearGradient>
-                </defs>
-              </svg>
-              <svg
-                class="firefox-highlight-fix pointer-events-none absolute top-[-15%] left-0 h-[150%] w-full opacity-0 transition-opacity duration-1000 group-focus-within:opacity-100 group-hover:opacity-100"
-                fill="#86B6C1"
-                height="674"
-                viewBox="0 0 895 674"
-                width="895"
-              >
-                <g filter={`url(#main-product-blur-${product.slug})`}>
-                  <path d="M350 280.534C350 296.208 356.24 311.261 367.33 322.351L453.447 408.468L463.532 418.553L549.649 504.67C560.739 515.76 575.792 522 591.466 522L894 522L894 408.468L552.251 408.468C503.249 408.468 463.532 368.751 463.532 319.749L463.532 -22L350 -22L350 280.534Z" />
-                </g>
-                <defs>
-                  <filter
-                    color-interpolation-filters="sRGB"
-                    filterUnits="userSpaceOnUse"
-                    height="1244"
-                    id={`main-product-blur-${product.slug}`}
-                    width="1244"
-                    x="-3.05176e-05"
-                    y="-372"
-                  >
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
-                    <feBlend
-                      in="SourceGraphic"
-                      in2="BackgroundImageFix"
-                      mode="normal"
-                      result="shape"
-                    />
-                    <feGaussianBlur result="effect1_foregroundBlur" stdDeviation="175" />
-                  </filter>
-                </defs>
-                <style
-                  is:inline
-                  set:html={
-                    '@supports (-moz-appearance: none) { .firefox-highlight-fix { opacity: 0.3; filter: blur(175px); } }'
-                  }
-                />
-              </svg>
-            </div>
-          </a>
-        </li>
-      ))
-    }
+            <svg class="size-0">
+              <defs>
+                <linearGradient
+                  gradientUnits="userSpaceOnUse"
+                  id={`main-product-gradient-${product.slug}`}
+                  x1="1"
+                  x2="161"
+                  y1="2"
+                  y2="171"
+                >
+                  {product.isHive ? (
+                    <>
+                      <stop stop-color="#3b736a" />
+                      <stop offset="1" stop-color="#245850" />
+                    </>
+                  ) : (
+                    <>
+                      <stop stop-color="white" stop-opacity="0.1" />
+                      <stop offset="1" stop-color="white" stop-opacity="0.4" />
+                    </>
+                  )}
+                </linearGradient>
+              </defs>
+            </svg>
+            <svg
+              class="firefox-highlight-fix pointer-events-none absolute top-[-15%] left-0 h-[150%] w-full opacity-0 transition-opacity duration-1000 group-focus-within:opacity-100 group-hover:opacity-100"
+              fill="#86B6C1"
+              height="674"
+              viewBox="0 0 895 674"
+              width="895"
+            >
+              <g filter={`url(#main-product-blur-${product.slug})`}>
+                <path d="M350 280.534C350 296.208 356.24 311.261 367.33 322.351L453.447 408.468L463.532 418.553L549.649 504.67C560.739 515.76 575.792 522 591.466 522L894 522L894 408.468L552.251 408.468C503.249 408.468 463.532 368.751 463.532 319.749L463.532 -22L350 -22L350 280.534Z" />
+              </g>
+              <defs>
+                <filter
+                  color-interpolation-filters="sRGB"
+                  filterUnits="userSpaceOnUse"
+                  height="1244"
+                  id={`main-product-blur-${product.slug}`}
+                  width="1244"
+                  x="-3.05176e-05"
+                  y="-372"
+                >
+                  <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                  <feBlend
+                    in="SourceGraphic"
+                    in2="BackgroundImageFix"
+                    mode="normal"
+                    result="shape"
+                  />
+                  <feGaussianBlur result="effect1_foregroundBlur" stdDeviation="175" />
+                </filter>
+              </defs>
+              <style
+                is:inline
+                set:html={
+                  '@supports (-moz-appearance: none) { .firefox-highlight-fix { opacity: 0.3; filter: blur(175px); } }'
+                }
+              ></style>
+            </svg>
+          </div>
+        </a>
+      </li>
+    ))}
   </ul>
 </section>

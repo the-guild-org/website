@@ -57,42 +57,36 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
 
     <main class="text-green-1000 mx-auto w-full max-w-360 px-4 dark:text-neutral-200">
       <div class="mx-auto w-[872px] max-w-full pt-16 max-sm:mt-2">
-        <h1
-          class="group text-green-1000 text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667] dark:text-white"
-        >
+        <h1 class="group text-green-1000 text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667] dark:text-white">
           Product Updates
         </h1>
         <p class="mt-2 leading-6 text-green-800 dark:text-neutral-400">
           The most recent developments from Hive Console.
         </p>
 
-        <ol
-          class="relative mx-auto mt-12 w-[872px] max-w-full border-l border-blue-300 dark:border-neutral-700"
-        >
-          {
-            updates.map(update => (
-              <li class="mb-10 ml-4">
-                <a
-                  class="group outline-hidden focus-visible:ring-3"
-                  href={withBase(`/product-updates/${update.slug}`)}
+        <ol class="relative mx-auto mt-12 w-[872px] max-w-full border-l border-blue-300 dark:border-neutral-700">
+          {updates.map(update => (
+            <li class="mb-10 ml-4">
+              <a
+                class="group outline-hidden focus-visible:ring-3"
+                href={withBase(`/product-updates/${update.slug}`)}
+              >
+                <div class="absolute -left-1.5 mt-1.5 size-3 -translate-x-[.5px] rounded-full border border-white bg-blue-300 group-hover:bg-blue-400 dark:border-neutral-900 dark:bg-neutral-700 dark:group-hover:bg-neutral-200" />
+                <time
+                  class="mb-1 text-sm leading-none font-normal text-green-800 dark:text-neutral-400"
+                  datetime={update.date}
                 >
-                  <div class="absolute -left-1.5 mt-1.5 size-3 -translate-x-[.5px] rounded-full border border-white bg-blue-300 group-hover:bg-blue-400 dark:border-neutral-900 dark:bg-neutral-700 dark:group-hover:bg-neutral-200" />
-                  <time
-                    class="mb-1 text-sm leading-none font-normal text-green-800 dark:text-neutral-400"
-                    datetime={update.date}
-                  >
-                    {dateFormat.format(new Date(`${update.date}T00:00:00Z`))}
-                  </time>
-                  <h3 class="text-lg font-semibold text-green-900 group-hover:underline dark:text-white">
-                    {update.title}
-                  </h3>
-                  <div class="mt-1 mb-4 max-w-[600px] text-base/6 font-normal text-green-900 dark:text-neutral-400">
-                    {update.description}
-                  </div>
-                </a>
-              </li>
-            ))
-          }
+                  {dateFormat.format(new Date(`${update.date}T00:00:00Z`))}
+                </time>
+                <h3 class="text-lg font-semibold text-green-900 group-hover:underline dark:text-white">
+                  {update.title}
+                </h3>
+                <div class="mt-1 mb-4 max-w-[600px] text-base/6 font-normal text-green-900 dark:text-neutral-400">
+                  {update.description}
+                </div>
+              </a>
+            </li>
+          ))}
         </ol>
       </div>
     </main>

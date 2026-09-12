@@ -107,20 +107,18 @@ const migrationHref = withBase(
     current={legacyVersion ?? CURRENT_VERSION}
     versions={[CURRENT_VERSION, ...LEGACY_VERSIONS]}
   />
-  {
-    legacyVersion && (
-      <Callout
-        title={`This is the documentation for the old Envelop ${legacyVersion}`}
-        type="warning"
-      >
-        We recommend upgrading to the latest Envelop {CURRENT_VERSION}.{' '}
-        <a href={migrationHref}>
-          Migrate to Envelop {legacyVersion === 'v2' ? 'v3' : CURRENT_VERSION}
-        </a>
-        .
-      </Callout>
-    )
-  }
+  {legacyVersion && (
+    <Callout
+      title={`This is the documentation for the old Envelop ${legacyVersion}`}
+      type="warning"
+    >
+      We recommend upgrading to the latest Envelop {CURRENT_VERSION}.{' '}
+      <a href={migrationHref}>
+        Migrate to Envelop {legacyVersion === 'v2' ? 'v3' : CURRENT_VERSION}
+      </a>
+      .
+    </Callout>
+  )}
   <div data-pagefind-ignore={searchable ? undefined : 'all'}>
     <Content
       components={{

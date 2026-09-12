@@ -18,114 +18,79 @@ function containsCurrentPath(node: DocsNavNode): boolean {
 }
 ---
 
-{
-  nodes.map(node => {
-    if (node.type === 'page') {
-      return (
-        <a
-          class:list={[
-            'text-fd-muted-foreground hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 data-[active=true]:bg-fd-sidebar-active-bg data-[active=true]:text-fd-sidebar-active relative mt-0.5 flex items-center gap-2 rounded-lg p-2 text-start wrap-anywhere transition-colors',
-            depth > 0 &&
-              "data-[active=true]:before:bg-fd-sidebar-active data-[active=true]:before:absolute data-[active=true]:before:inset-y-2.5 data-[active=true]:before:start-2.5 data-[active=true]:before:w-px data-[active=true]:before:content-['']",
-            linkPadding,
-          ]}
-          data-active={node.href === currentPath}
-          aria-current={node.href === currentPath ? 'page' : undefined}
-          href={withBase(node.href)}
-          target={node.external ? '_blank' : undefined}
-          rel={node.external ? 'noreferrer' : undefined}
-        >
-          {node.title}
-          {node.external && (
-            <svg
-              class="ms-auto size-3.5 shrink-0 opacity-60"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M7 17 17 7M8 7h9v9" />
-            </svg>
-          )}
-        </a>
-      );
-    }
-
-    const open = containsCurrentPath(node);
-
-    if (node.children.length === 0 && node.href) {
-      return (
-        <a
-          class:list={[
-            'text-fd-muted-foreground hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 relative mt-0.5 flex items-center rounded-lg p-2',
-            linkPadding,
-          ]}
-          data-active={currentPath === node.href}
-          href={withBase(node.href)}
-        >
-          {node.title}
-        </a>
-      );
-    }
-
-    if (node.href) {
-      return (
-        <details class="nav-folder" open={open}>
-          <summary
-            class:list={[
-              'text-fd-muted-foreground hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 data-[active=true]:bg-fd-sidebar-active-bg data-[active=true]:text-fd-sidebar-active relative mt-0.5 flex w-full cursor-pointer list-none items-center gap-2 rounded-lg px-2 text-start',
-              summaryPadding,
-            ]}
-            data-active={currentPath === node.href}
+{nodes.map(node => {
+  if (node.type === 'page') {
+    return (
+      <a
+        class:list={[
+          'text-fd-muted-foreground hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 data-[active=true]:bg-fd-sidebar-active-bg data-[active=true]:text-fd-sidebar-active relative mt-0.5 flex items-center gap-2 rounded-lg p-2 text-start wrap-anywhere transition-colors',
+          depth > 0 &&
+            "data-[active=true]:before:bg-fd-sidebar-active data-[active=true]:before:absolute data-[active=true]:before:inset-y-2.5 data-[active=true]:before:start-2.5 data-[active=true]:before:w-px data-[active=true]:before:content-['']",
+          linkPadding,
+        ]}
+        data-active={node.href === currentPath}
+        aria-current={node.href === currentPath ? 'page' : undefined}
+        href={withBase(node.href)}
+        target={node.external ? '_blank' : undefined}
+        rel={node.external ? 'noreferrer' : undefined}
+      >
+        {node.title}
+        {node.external && (
+          <svg
+            class="ms-auto size-3.5 shrink-0 opacity-60"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
           >
-            <a
-              class="flex min-w-0 flex-1 items-center gap-2 py-2"
-              data-active={currentPath === node.href}
-              aria-current={currentPath === node.href ? 'page' : undefined}
-              href={withBase(node.href)}
-            >
-              {node.icon && <span class="[&_svg]:size-4 [&_svg]:shrink-0" set:html={node.icon} />}
-              <span>{node.title}</span>
-            </a>
-            <svg
-              class="nav-chevron size-4 shrink-0 transition-transform"
-              aria-hidden="true"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="m9 18 6-6-6-6" />
-            </svg>
-          </summary>
-          <div
-            class:list={[
-              'relative mt-0.5',
-              depth === 0 &&
-                "before:bg-fd-border before:absolute before:inset-y-1 before:start-2.5 before:w-px before:content-['']",
-            ]}
-          >
-            <Astro.self currentPath={currentPath} depth={depth + 1} nodes={node.children} />
-          </div>
-        </details>
-      );
-    }
+            <path d="M7 17 17 7M8 7h9v9" />
+          </svg>
+        )}
+      </a>
+    );
+  }
 
+  const open = containsCurrentPath(node);
+
+  if (node.children.length === 0 && node.href) {
+    return (
+      <a
+        class:list={[
+          'text-fd-muted-foreground hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 relative mt-0.5 flex items-center rounded-lg p-2',
+          linkPadding,
+        ]}
+        data-active={currentPath === node.href}
+        href={withBase(node.href)}
+      >
+        {node.title}
+      </a>
+    );
+  }
+
+  if (node.href) {
     return (
       <details class="nav-folder" open={open}>
         <summary
           class:list={[
-            'text-fd-muted-foreground hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 relative mt-0.5 flex w-full cursor-pointer list-none items-center gap-2 rounded-lg p-2 text-start',
+            'text-fd-muted-foreground hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 data-[active=true]:bg-fd-sidebar-active-bg data-[active=true]:text-fd-sidebar-active relative mt-0.5 flex w-full cursor-pointer list-none items-center gap-2 rounded-lg px-2 text-start',
             summaryPadding,
           ]}
+          data-active={currentPath === node.href}
         >
-          {node.icon && <span class="[&_svg]:size-4 [&_svg]:shrink-0" set:html={node.icon} />}
-          <span>{node.title}</span>
+          <a
+            class="flex min-w-0 flex-1 items-center gap-2 py-2"
+            data-active={currentPath === node.href}
+            aria-current={currentPath === node.href ? 'page' : undefined}
+            href={withBase(node.href)}
+          >
+            {node.icon && <span class="[&_svg]:size-4 [&_svg]:shrink-0" set:html={node.icon} />}
+            <span>{node.title}</span>
+          </a>
           <svg
-            class="nav-chevron ms-auto size-4 shrink-0 transition-transform"
+            class="nav-chevron size-4 shrink-0 transition-transform"
             aria-hidden="true"
             fill="none"
             viewBox="0 0 24 24"
@@ -146,8 +111,41 @@ function containsCurrentPath(node: DocsNavNode): boolean {
         </div>
       </details>
     );
-  })
-}
+  }
+
+  return (
+    <details class="nav-folder" open={open}>
+      <summary
+        class:list={[
+          'text-fd-muted-foreground hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 relative mt-0.5 flex w-full cursor-pointer list-none items-center gap-2 rounded-lg p-2 text-start',
+          summaryPadding,
+        ]}
+      >
+        {node.icon && <span class="[&_svg]:size-4 [&_svg]:shrink-0" set:html={node.icon} />}
+        <span>{node.title}</span>
+        <svg
+          class="nav-chevron ms-auto size-4 shrink-0 transition-transform"
+          aria-hidden="true"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="m9 18 6-6-6-6" />
+        </svg>
+      </summary>
+      <div
+        class:list={[
+          'relative mt-0.5',
+          depth === 0 &&
+            "before:bg-fd-border before:absolute before:inset-y-1 before:start-2.5 before:w-px before:content-['']",
+        ]}
+      >
+        <Astro.self currentPath={currentPath} depth={depth + 1} nodes={node.children} />
+      </div>
+    </details>
+  );
+})}
 
 <style>
   details.nav-folder[open] > summary > svg.nav-chevron {

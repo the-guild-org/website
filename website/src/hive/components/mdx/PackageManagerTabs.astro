@@ -4,21 +4,21 @@ const packageManagers = ['npm', 'yarn', 'pnpm', 'bun'];
 
 <div class="package-manager-tabs" data-package-manager-tabs>
   <div class="package-manager-tabs-list" role="tablist" aria-label="Package manager">
-    {
-      packageManagers.map((manager, index) => (
-        <button
-          aria-selected={index === 0}
-          data-package-manager={manager}
-          role="tab"
-          tabindex={index === 0 ? 0 : -1}
-          type="button"
-        >
-          {manager}
-        </button>
-      ))
-    }
+    {packageManagers.map((manager, index) => (
+      <button
+        aria-selected={index === 0}
+        data-package-manager={manager}
+        role="tab"
+        tabindex={index === 0 ? 0 : -1}
+        type="button"
+      >
+        {manager}
+      </button>
+    ))}
   </div>
-  <div class="package-manager-tab-panels"><slot /></div>
+  <div class="package-manager-tab-panels">
+    <slot />
+  </div>
 </div>
 
 <style>

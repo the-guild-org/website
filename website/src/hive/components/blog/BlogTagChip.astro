@@ -21,25 +21,23 @@ const chipClasses = [
 ];
 ---
 
-{
-  inert ? (
-    <span
-      class:list={[
-        'rounded-full px-3 py-1 text-sm text-white outline-none focus-visible:ring',
-        chipClasses,
-      ]}
-    >
-      {prettyPrintTag(tag)}
-    </span>
-  ) : (
-    <a
-      class:list={[
-        'rounded-full px-3 py-1 text-sm text-white outline-hidden focus-visible:ring-3',
-        chipClasses,
-      ]}
-      href={withBase(`/blog/tag/${encodeURIComponent(tag)}`)}
-    >
-      {prettyPrintTag(tag)}
-    </a>
-  )
-}
+{inert ? (
+  <span
+    class:list={[
+      'rounded-full px-3 py-1 text-sm text-white outline-none focus-visible:ring',
+      chipClasses,
+    ]}
+  >
+    {prettyPrintTag(tag)}
+  </span>
+) : (
+  <a
+    class:list={[
+      'rounded-full px-3 py-1 text-sm text-white outline-hidden focus-visible:ring-3',
+      chipClasses,
+    ]}
+    href={withBase(`/blog/tag/${encodeURIComponent(tag)}`)}
+  >
+    {prettyPrintTag(tag)}
+  </a>
+)}

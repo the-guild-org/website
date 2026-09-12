@@ -24,18 +24,16 @@ const items = [
 ---
 
 <div class="my-8 grid grid-cols-1 gap-x-4 gap-y-6 px-4 lg:grid-cols-2">
-  {
-    items.map(item => (
-      <div class="relative pl-16">
-        <div class="font-semibold">
-          <div
-            class="bg-beige-100 absolute top-0 left-0 flex size-10 items-center justify-center rounded-lg dark:bg-neutral-600/20"
-            set:html={item.icon}
-          />
-          {item.title}
-        </div>
-        <div class="text-sm text-green-800 dark:text-neutral-400">{item.description}</div>
+  {items.map(item => (
+    <div class="relative pl-16">
+      <div class="font-semibold">
+        <div
+          class="bg-beige-100 absolute top-0 left-0 flex size-10 items-center justify-center rounded-lg dark:bg-neutral-600/20"
+          set:html={item.icon}
+        />
+        {item.title}
       </div>
-    ))
-  }
+      <div class="text-sm text-green-800 dark:text-neutral-400">{item.description}</div>
+    </div>
+  ))}
 </div>
