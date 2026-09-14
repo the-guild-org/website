@@ -6,7 +6,6 @@ export default {
   slug: 'eslint',
   name: 'GraphQL ESLint',
   shortName: 'ESLint',
-  mark: 'ESL',
   description: 'Lint GraphQL schemas and operations with ESLint.',
   repo: 'graphql-hive/graphql-eslint',
   branch: 'master',

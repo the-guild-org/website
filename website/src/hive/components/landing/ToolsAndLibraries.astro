@@ -1,4 +1,7 @@
 ---
+import { envelopMark } from '../../../envelop/lib/site';
+import { inspectorMark } from '../../../inspector/lib/site';
+import { productMark } from '../../../products/marks';
 import { withBase } from '../../lib/base-path';
 
 interface Props {
@@ -44,6 +47,7 @@ const mainProducts = [
   },
 ];
 
+const small = 'width="20" height="20" fill="currentColor"';
 const ancillaryProducts = [
   {
     href: 'https://the-guild.dev/graphql/codegen',
@@ -53,31 +57,31 @@ const ancillaryProducts = [
   },
   {
     href: 'https://the-guild.dev/graphql/inspector',
-    mark: 'INS',
+    icon: inspectorMark(small),
     name: 'Inspector',
     title: 'Schema management tool',
   },
   {
     href: 'https://the-guild.dev/graphql/envelop',
-    mark: 'ENV',
+    icon: envelopMark(small),
     name: 'Envelop',
     title: 'Develop and share plugins that are usable with any GraphQL server framework or schema',
   },
   {
     href: 'https://the-guild.dev/graphql/sofa-api',
-    mark: 'SOF',
+    icon: productMark('sofa-api', small),
     name: 'SOFA',
     title: 'Generate RESTful APIs from your GraphQL server',
   },
   {
     href: 'https://the-guild.dev/graphql/scalars',
-    mark: 'SCL',
+    icon: productMark('scalars', small),
     name: 'Scalars',
     title: 'Common custom GraphQL Scalars for precise type-safe GraphQL schemas',
   },
   {
     href: 'https://the-guild.dev/graphql/eslint',
-    mark: 'ESL',
+    icon: productMark('eslint', small),
     name: 'GraphQL ESLint',
     title: 'Customizable ESLint parser, plugin, and rule set for GraphQL',
   },
@@ -176,13 +180,7 @@ const ancillaryProducts = [
             class="bg-green-1000 mt-8 flex size-8 items-center justify-center rounded-sm p-1.25 text-sm/5 font-medium text-white"
             role="presentation"
           >
-            {'icon' in product ? (
-              <span set:html={product.icon} />
-            ) : (
-              <span role="img" class="inline-flex items-center justify-center text-xs font-medium">
-                {product.mark}
-              </span>
-            )}
+            <span set:html={product.icon} />
           </div>
           <svg
             class="absolute right-8 bottom-8"

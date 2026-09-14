@@ -6,7 +6,6 @@ export default {
   slug: 'stitching',
   name: 'Schema Stitching',
   shortName: 'Stitching',
-  mark: 'STI',
   description: 'Combine multiple GraphQL schemas into one gateway API.',
   repo: 'ardatan/schema-stitching',
   branch: 'master',

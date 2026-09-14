@@ -6,7 +6,6 @@ export default {
   slug: 'scalars',
   name: 'GraphQL Scalars',
   shortName: 'Scalars',
-  mark: 'SCL',
   description: 'A collection of custom scalar types not included in base GraphQL.',
   repo: 'graphql-hive/graphql-scalars',
   branch: 'master',

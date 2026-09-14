@@ -16,6 +16,9 @@ import graphQLFoundationRaw from '../design-system/logos/graphql-foundation.svg?
 import guildRaw from '../design-system/logos/guild.svg?raw';
 import hiveCombinationMarkRaw from '../design-system/logos/hive-combination-mark.svg?raw';
 import theGuildRaw from '../design-system/logos/the-guild.svg?raw';
+import { envelopMark } from '../../envelop/lib/site';
+import { inspectorMark } from '../../inspector/lib/site';
+import { productMark } from '../../products/marks';
 import { basePath, withBase } from '../lib/base-path';
 import type { DocsNavNode, DocsNavPage } from '../lib/docs-nav';
 import DocsNavigationTree from './DocsNavigationTree.astro';
@@ -65,13 +68,26 @@ const stackProducts = [
   },
 ];
 
+const fill = 'fill="currentColor"';
 const libraries = [
   { href: 'https://the-guild.dev/graphql/codegen', icon: codegenRaw, name: 'Codegen' },
-  { href: 'https://the-guild.dev/graphql/inspector', mark: 'INS', name: 'Inspector' },
-  { href: 'https://the-guild.dev/graphql/envelop', mark: 'ENV', name: 'Envelop' },
-  { href: 'https://the-guild.dev/graphql/sofa-api', mark: 'SOF', name: 'SOFA' },
-  { href: 'https://the-guild.dev/graphql/scalars', mark: 'SCL', name: 'Scalars' },
-  { href: 'https://the-guild.dev/graphql/eslint', mark: 'ESL', name: 'ESLint' },
+  { href: 'https://the-guild.dev/graphql/inspector', icon: inspectorMark(fill), name: 'Inspector' },
+  { href: 'https://the-guild.dev/graphql/envelop', icon: envelopMark(fill), name: 'Envelop' },
+  {
+    href: 'https://the-guild.dev/graphql/sofa-api',
+    icon: productMark('sofa-api', fill),
+    name: 'SOFA',
+  },
+  {
+    href: 'https://the-guild.dev/graphql/scalars',
+    icon: productMark('scalars', fill),
+    name: 'Scalars',
+  },
+  {
+    href: 'https://the-guild.dev/graphql/eslint',
+    icon: productMark('eslint', fill),
+    name: 'ESLint',
+  },
 ];
 
 const developerLinks = [
@@ -359,16 +375,7 @@ const externalProps = (href: string) =>
                       {...externalProps(library.href)}
                     >
                       <div class="bg-beige-200 flex size-8 items-center justify-center rounded-sm p-1.25">
-                        {library.icon ? (
-                          <Fragment set:html={withClass(library.icon, 'size-8 text-green-1000')} />
-                        ) : (
-                          <span
-                            role="img"
-                            class="inline-flex items-center justify-center text-xs font-medium"
-                          >
-                            {library.mark}
-                          </span>
-                        )}
+                        <Fragment set:html={withClass(library.icon, 'size-8 text-green-1000')} />
                       </div>
                       <p class="text-green-1000 text-base/normal font-medium">{library.name}</p>
                       <Fragment set:html={arrow} />

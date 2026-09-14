@@ -6,7 +6,6 @@ export default {
   slug: 'sse',
   name: 'GraphQL over Server-Sent Events',
   shortName: 'SSE',
-  mark: 'SSE',
   description:
     'Zero-dependency, HTTP/1 safe, simple, GraphQL over Server-Sent Events spec compliant server and client.',
   repo: 'enisdenjo/graphql-sse',

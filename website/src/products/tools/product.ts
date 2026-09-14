@@ -6,7 +6,6 @@ export default {
   slug: 'tools',
   name: 'GraphQL Tools',
   shortName: 'Tools',
-  mark: 'TLS',
   description: 'A set of utilities for faster GraphQL development.',
   repo: 'ardatan/graphql-tools',
   branch: 'master',

@@ -65,14 +65,12 @@ export interface ProductLanding {
 }
 
 export interface ProductDefinition {
-  /** Route segment under /graphql/, e.g. "apollo-angular". */
+  /** Route segment under /graphql/, e.g. "apollo-angular"; its mark's glyph is src/products/<slug>/mark.svg (marks.ts). */
   slug: string;
   /** Product name as written, e.g. "Apollo Angular". */
   name: string;
   /** Short name shown next to the mark in the header, e.g. "Apollo Angular". */
   shortName: string;
-  /** Three-letter mark shown inside the product ring (the Hive ecosystem tile mark). */
-  mark: string;
   /** One-line description used in the footer and as the default meta description. */
   description: string;
   /** GitHub repository, "owner/name". */
@@ -114,20 +112,4 @@ export function withProductBase(product: ProductDefinition, path: string): strin
   if (path === '/graphql' || path.startsWith('/graphql/')) return path;
   const base = productBasePath(product);
   return path === '/' ? base : `${base}${path}`;
-}
-
-/**
- * The product mark in the Hive brand: the octagonal ring shared by the
- * product tiles on the Hive landing page, holding the three-letter mark.
- */
-const RING =
-  'M52 15.386 44.915 8.3l-.69-.691L37.138.525H14.86L7.774 7.61l-.69.69L0 15.387v22.28l7.085 7.085.69.69 7.086 7.086h22.28l7.085-7.085.69-.69 7.086-7.086v-22.28H52ZM40.173 44.749H11.827a4.05 4.05 0 0 1-4.051-4.05V12.351a4.05 4.05 0 0 1 4.05-4.051h28.347a4.05 4.05 0 0 1 4.051 4.05v28.347a4.05 4.05 0 0 1-4.05 4.051Z';
-
-export function productMark(product: ProductDefinition, attrs: string): string {
-  return (
-    `<svg ${attrs} viewBox="0 0 52 53" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">` +
-    `<path d="${RING}"/>` +
-    `<text x="26" y="31.5" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" letter-spacing="0.5" fill="currentColor">${product.mark}</text>` +
-    `</svg>`
-  );
 }
