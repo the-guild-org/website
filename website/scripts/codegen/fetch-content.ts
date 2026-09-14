@@ -53,8 +53,13 @@ const publicDir = join(projectDir, 'public/graphql/codegen');
 function fetchSource(): string {
   const local = process.env.CODEGEN_REPO_DIR;
   if (local) {
-    if (!existsSync(join(local, 'website/content'))) {
-      throw new Error(`CODEGEN_REPO_DIR does not look like the codegen repo: ${local}`);
+    // The changelogs come from packages/, so a docs-only checkout is not enough.
+    for (const required of ['website/content', 'packages']) {
+      if (!existsSync(join(local, required))) {
+        throw new Error(
+          `CODEGEN_REPO_DIR does not look like the codegen repo (missing ${required}): ${local}`,
+        );
+      }
     }
     console.log(`Using local codegen repo at ${local}`);
     return local;

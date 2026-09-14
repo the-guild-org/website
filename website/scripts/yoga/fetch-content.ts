@@ -45,8 +45,13 @@ const publicDir = join(projectDir, 'public/graphql/yoga-server');
 function fetchSource(): string {
   const local = process.env.YOGA_REPO_DIR;
   if (local) {
-    if (!existsSync(join(local, 'website/content'))) {
-      throw new Error(`YOGA_REPO_DIR does not look like the Yoga repo: ${local}`);
+    // The changelogs come from packages/, so a docs-only checkout is not enough.
+    for (const required of ['website/content', 'packages']) {
+      if (!existsSync(join(local, required))) {
+        throw new Error(
+          `YOGA_REPO_DIR does not look like the Yoga repo (missing ${required}): ${local}`,
+        );
+      }
     }
     console.log(`Using local Yoga repo at ${local}`);
     return local;

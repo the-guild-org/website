@@ -22,12 +22,14 @@ import { fileURLToPath } from 'node:url';
 import { collectChangelogs } from '../lib/changelogs.ts';
 
 const REPO = 'https://github.com/graphql-hive/graphql-inspector.git';
-const SPARSE_DIRECTORIES = ['website/content', 'website/assets'];
 const SPARSE_PATHS = [
-  ...SPARSE_DIRECTORIES,
+  'website/content',
+  'website/assets',
   'packages/**/CHANGELOG.md',
   'packages/**/package.json',
 ];
+/** What a local checkout must contain (the changelogs come from packages/). */
+const LOCAL_DIRECTORIES = ['website/content', 'website/assets', 'packages'];
 
 const projectDir = fileURLToPath(new URL('../..', import.meta.url));
 const contentDir = join(projectDir, 'src/inspector/content');
@@ -36,7 +38,7 @@ const publicDir = join(projectDir, 'public/graphql/inspector');
 function fetchSource(): { dir: string; temporary: boolean } {
   const local = process.env.INSPECTOR_REPO_DIR;
   if (local) {
-    for (const required of SPARSE_DIRECTORIES) {
+    for (const required of LOCAL_DIRECTORIES) {
       if (!existsSync(join(local, required))) {
         throw new Error(
           `INSPECTOR_REPO_DIR does not look like the Inspector repo (missing ${required}): ${local}`,
