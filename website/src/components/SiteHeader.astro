@@ -17,6 +17,8 @@ const { logoHref = '/' } = Astro.props;
     <a
       href={logoHref}
       class="inline-flex items-center gap-2 font-bold tracking-[-.02em] whitespace-nowrap text-[var(--strong)] focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]"
+      data-press-kit="/logos"
+      title="Right-click for the press kit"
     >
       <svg
         aria-hidden="true"
@@ -35,3 +37,14 @@ const { logoHref = '/' } = Astro.props;
     </div>
   </div>
 </header>
+
+<script>
+  // Right-clicking the logo opens the press kit, the way brand menus work on
+  // Vercel or Linear: the fastest route to a logo file for someone writing about us.
+  document.querySelectorAll<HTMLAnchorElement>('a[data-press-kit]').forEach(link => {
+    link.addEventListener('contextmenu', event => {
+      event.preventDefault();
+      window.location.assign(link.dataset.pressKit!);
+    });
+  });
+</script>

@@ -635,6 +635,20 @@ const externalProps = (href: string) =>
     viewport.parentElement!.style.transform = `translateX(${Math.min(left, maxLeft)}px)`;
   };
 
+  // Right-clicking the Guild mark opens the press kit, the way brand menus
+  // work on Vercel or Linear: the fastest route to a logo file for someone
+  // writing about us. The product marks are not in the press kit, so they
+  // keep the browser menu.
+  document
+    .querySelectorAll<HTMLAnchorElement>('#hive-navigation a[title="The Guild"]')
+    .forEach(link => {
+      link.title = 'The Guild (right-click for the press kit)';
+      link.addEventListener('contextmenu', event => {
+        event.preventDefault();
+        window.location.assign('https://the-guild.dev/logos');
+      });
+    });
+
   triggers.forEach(trigger => {
     trigger.addEventListener('pointerenter', () => openMenu(trigger));
     trigger.addEventListener('focus', () => openMenu(trigger));
