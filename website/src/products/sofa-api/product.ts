@@ -6,7 +6,6 @@ export default {
   slug: 'sofa-api',
   name: 'SOFA',
   shortName: 'SOFA',
-  mark: 'SOF',
   description: 'Generate RESTful APIs from your GraphQL server.',
   repo: 'graphql-hive/SOFA',
   branch: 'master',

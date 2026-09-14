@@ -4,7 +4,8 @@
  * what the larger products define by hand in their site.ts.
  */
 import guildRaw from '../hive/design-system/logos/guild.svg?raw';
-import { productBasePath, productMark, type ProductDefinition } from './define';
+import { productBasePath, type ProductDefinition } from './define';
+import { productMark } from './marks';
 
 const ancestorLinkClass =
   'hive-focus -my-1 rounded-md p-0.5 text-green-800 transition-colors hover:text-green-1000 dark:text-neutral-400 dark:hover:text-neutral-200';
@@ -25,7 +26,7 @@ export function productLogo(product: ProductDefinition) {
       `<a class="${ancestorLinkClass}" href="https://the-guild.dev/graphql/hive" title="Hive" aria-label="Hive">${hiveGlyph}</a>` +
       separator +
       `<a class="hive-focus text-green-1000 dark:text-neutral-200 -my-1 flex items-center gap-1.5 rounded-md p-0.5" href="${basePath}" aria-label="${product.name} home">` +
-      productMark(product, 'class="h-6 w-auto max-sm:h-5" fill="currentColor"') +
+      productMark(product.slug, 'class="h-6 w-auto max-sm:h-5" fill="currentColor"') +
       `<span class="text-lg font-medium tracking-tight max-sm:hidden">${product.shortName}</span>` +
       `</a>` +
       `</span>`,
@@ -38,7 +39,7 @@ export function productFooter(product: ProductDefinition) {
     logo: {
       href: productBasePath(product),
       html:
-        `<span class="flex items-center gap-2">${productMark(product, 'class="h-8 w-auto" fill="currentColor"')}` +
+        `<span class="flex items-center gap-2">${productMark(product.slug, 'class="h-8 w-auto" fill="currentColor"')}` +
         `<span class="text-2xl font-medium tracking-[-0.16px]">${product.shortName}</span></span>`,
     },
   };

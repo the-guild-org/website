@@ -14,13 +14,13 @@ import { Code } from 'astro:components';
 import type { BuiltinLanguage } from 'shiki';
 import {
   productBasePath,
-  productMark,
   productRepoUrl,
   productSiteUrl,
   withProductBase,
   type ProductDefinition,
 } from '../define';
 import { productFooter, productLogo } from '../identity';
+import { productMark } from '../marks';
 
 interface Props {
   product: ProductDefinition;
@@ -81,17 +81,17 @@ const featureColumns =
       <div class="relative isolate mx-4 flex max-w-360 flex-col items-center gap-6 overflow-hidden rounded-3xl bg-blue-400 px-4 py-6 max-sm:mt-2 sm:py-16 md:mx-6 md:gap-8 lg:py-24">
         <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
           <span
-            class="absolute top-1/2 -left-40 w-[420px] -translate-y-1/2 -rotate-12 text-white/30 md:-left-32 md:w-[520px] [&_text]:hidden [&>svg]:w-full"
-            set:html={productMark(product, 'fill="currentColor"')}
+            class="absolute top-1/2 -left-40 w-[420px] -translate-y-1/2 -rotate-12 text-white/30 md:-left-32 md:w-[520px] [&>svg]:w-full"
+            set:html={productMark(product.slug, 'fill="currentColor"', { glyph: false })}
           />
           <span
-            class="absolute -right-56 -bottom-64 w-[560px] rotate-12 text-white/30 max-md:hidden md:w-[680px] [&_text]:hidden [&>svg]:w-full"
-            set:html={productMark(product, 'fill="currentColor"')}
+            class="absolute -right-56 -bottom-64 w-[560px] rotate-12 text-white/30 max-md:hidden md:w-[680px] [&>svg]:w-full"
+            set:html={productMark(product.slug, 'fill="currentColor"', { glyph: false })}
           />
         </div>
         <div
           class="to-green-1000 relative flex size-24 items-center justify-center rounded-3xl bg-gradient-to-br from-green-800 text-white shadow-[0_12px_40px_-12px_rgba(0,52,44,0.6)] [&>svg]:size-12"
-          set:html={productMark(product, 'fill="currentColor"')}
+          set:html={productMark(product.slug, 'fill="currentColor"')}
         />
         <h1 class="group relative mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]">
           {landing.headline}

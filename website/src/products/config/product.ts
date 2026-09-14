@@ -6,7 +6,6 @@ export default {
   slug: 'config',
   name: 'GraphQL Config',
   shortName: 'Config',
-  mark: 'CFG',
   description: 'One configuration for all your GraphQL tools.',
   repo: 'graphql-hive/graphql-config',
   branch: 'master',

@@ -6,7 +6,6 @@ export default {
   slug: 'ws',
   name: 'GraphQL over WebSocket',
   shortName: 'WS',
-  mark: 'WS ',
   description:
     'Coherent, zero-dependency, lazy, simple, GraphQL over WebSocket spec compliant server and client.',
   repo: 'enisdenjo/graphql-ws',

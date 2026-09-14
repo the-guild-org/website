@@ -6,7 +6,6 @@ export default {
   slug: 'modules',
   name: 'GraphQL Modules',
   shortName: 'Modules',
-  mark: 'MOD',
   description: 'Enterprise-grade tooling for modular GraphQL servers.',
   repo: 'graphql-hive/graphql-modules',
   branch: 'master',

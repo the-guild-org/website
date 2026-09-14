@@ -7,7 +7,6 @@ const product = {
   slug: 'demo-product',
   name: 'Demo Product',
   shortName: 'Demo',
-  mark: 'DEM',
   description: 'A demo.',
   repo: 'the-guild-org/demo',
   branch: 'main',

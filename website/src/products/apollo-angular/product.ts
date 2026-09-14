@@ -6,7 +6,6 @@ export default {
   slug: 'apollo-angular',
   name: 'Apollo Angular',
   shortName: 'Apollo Angular',
-  mark: 'ANG',
   description: 'GraphQL client for the Angular framework.',
   repo: 'the-guild-org/apollo-angular',
   branch: 'master',
