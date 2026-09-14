@@ -58,7 +58,7 @@ const hiveGlyph =
 export const ENVELOP_LOGO = {
   html:
     `<span class="flex items-center gap-1 max-sm:gap-1">` +
-    `<a class="${ancestorLinkClass}" href="https://the-guild.dev" title="The Guild" aria-label="The Guild">${guildGlyph}</a>` +
+    `<a class="${ancestorLinkClass}" href="https://the-guild.dev" title="The Guild (right-click for the press kit)" aria-label="The Guild" data-press-kit="https://the-guild.dev/logos">${guildGlyph}</a>` +
     separator +
     `<a class="${ancestorLinkClass}" href="https://the-guild.dev/graphql/hive" title="Hive" aria-label="Hive">${hiveGlyph}</a>` +
     separator +

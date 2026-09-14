@@ -635,6 +635,20 @@ const externalProps = (href: string) =>
     viewport.parentElement!.style.transform = `translateX(${Math.min(left, maxLeft)}px)`;
   };
 
+  // Right-clicking the Guild mark (the anchors carrying data-press-kit in each
+  // site's logo markup) opens the press kit, the way brand menus work on
+  // Vercel or Linear: the fastest route to a logo file for someone writing
+  // about us. The product marks are not in the press kit, so they keep the
+  // browser menu.
+  document
+    .querySelectorAll<HTMLAnchorElement>('#hive-navigation a[data-press-kit]')
+    .forEach(link => {
+      link.addEventListener('contextmenu', event => {
+        event.preventDefault();
+        window.location.assign(link.dataset.pressKit!);
+      });
+    });
+
   triggers.forEach(trigger => {
     trigger.addEventListener('pointerenter', () => openMenu(trigger));
     trigger.addEventListener('focus', () => openMenu(trigger));
