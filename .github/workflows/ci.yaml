@@ -26,6 +26,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # For the preview comment.
+      pull-requests: write
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -68,17 +72,55 @@ jobs:
       - uses: ./.github/actions/setup
         name: setup env
 
-      - uses: the-guild-org/shared-config/website-cf@1c4632ccc198d4c9b34d9e6b3d556c6f245b4e69 # main
-        name: build and deploy website
-        with:
-          cloudflareApiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          cloudflareAccountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          projectName: guild-dev-website
-          prId: ${{ github.event.pull_request.number }}
-          websiteDirectory: website
-          buildScript: pnpm build
-          artifactDir: dist
+      - name: build website
+        run: pnpm --filter website build
+
+      # A pull request deploys to its own preview branch (pr-<n>); a push to
+      # master or a content dispatch deploys the checked-out branch, which is
+      # the project's production branch.
+      - name: deploy to cloudflare pages
+        id: deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.ndjson
+          BRANCH_FLAG:
+            ${{ github.event_name == 'pull_request' && format('--branch=pr-{0}',
+            github.event.pull_request.number) || '' }}
+        run: |
+          pnpm exec wrangler pages deploy website/dist --project-name=guild-dev-website $BRANCH_FLAG
+          echo "alias=$(jq -r 'select(.type == "pages-deploy-detailed") | .alias' "$WRANGLER_OUTPUT_FILE_PATH")" >> "$GITHUB_OUTPUT"
+
+      # One comment per pull request, updated on every push (the marker finds it).
+      - name: comment the preview url on the pull request
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          URL: ${{ steps.deploy.outputs.alias }}
+        run: |
+          body="$(printf '<!--- website_deployment --->\n### 💻 Website Preview\n\nThe latest changes are available as preview in: [%s](%s)' "$URL" "$URL")"
+          existing=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!--- website_deployment --->"))) | .id' | head -1)
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" -f body="$body" > /dev/null
+          else
+            gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -f body="$body" > /dev/null
+          fi
+
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: ./.github/actions/setup
+        name: setup env
+
+      - name: eslint
+        run: pnpm lint
 
   prettier:
     runs-on: ubuntu-latest

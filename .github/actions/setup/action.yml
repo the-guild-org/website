@@ -1,12 +1,21 @@
-# The repo's pinned toolchain in one place — workflows use this instead of
-# repeating nodeVersion/packageManagerVersion in every job.
+# The repo's toolchain in one place: pnpm from the packageManager field in
+# package.json, Node from .node-version, the pnpm store cached, then a frozen
+# install. Workflows compose on top of this instead of repeating it.
 name: repo setup
-description: Node + pnpm environment with the repo's pinned versions
+description: Node + pnpm at the repo's pinned versions, with a frozen install
 runs:
   using: composite
   steps:
-    - uses: the-guild-org/shared-config/setup@1c4632ccc198d4c9b34d9e6b3d556c6f245b4e69 # main
+    # No version input: the action reads the packageManager field.
+    - name: setup pnpm
+      uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+    - name: setup node
+      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
       with:
-        nodeVersion: 26.8.1
-        packageManager: pnpm
-        packageManagerVersion: 12.4.1
+        node-version-file: .node-version
+        cache: pnpm
+
+    - name: pnpm install
+      shell: bash
+      run: pnpm install --frozen-lockfile
