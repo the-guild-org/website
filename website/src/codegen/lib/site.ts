@@ -1,6 +1,8 @@
 import guildRaw from '../../hive/design-system/logos/guild.svg?raw';
 import { basePath, CODEGEN_SITE_URL } from './base-path';
 
+export const CODEGEN_REPO_URL = 'https://github.com/dotansimha/graphql-code-generator';
+
 /** BaseHead identity for the Codegen docs product. */
 export const CODEGEN_SITE = {
   mountPath: basePath,

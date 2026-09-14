@@ -33,6 +33,7 @@ function build(hrefBase: string, section: string, entries: Entry[]): DocsNav {
 
 let docsNav: Promise<DocsNav> | undefined;
 let legacyNav: Promise<DocsNav> | undefined;
+let changelogsNav: Promise<DocsNav> | undefined;
 
 /** Mesh v1, the current docs, served under /v1. */
 export function getMeshDocsNav() {
@@ -44,4 +45,12 @@ export function getMeshDocsNav() {
 export function getMeshLegacyNav() {
   legacyNav ??= getCollection('meshLegacy').then(entries => build('/docs', 'docs', entries));
   return legacyNav;
+}
+
+/** One package per page; folders follow the packages/ layout upstream (no meta.json). */
+export function getMeshChangelogsNav() {
+  changelogsNav ??= getCollection('meshChangelogs').then(entries =>
+    build('/changelogs', 'changelogs', entries),
+  );
+  return changelogsNav;
 }

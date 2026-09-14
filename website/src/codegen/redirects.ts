@@ -4,6 +4,9 @@
  * also derives the /plugins/<name> category redirects from the registry.
  */
 export const codegenRedirects: Record<string, string> = {
+  // Changelog entry points; the CLI is the package people mean by "codegen".
+  '/changelog': '/changelogs/graphql-codegen-cli',
+  '/changelogs': '/changelogs/graphql-codegen-cli',
   '/live-demo': '/',
   '/docs/presets/presets-index': '/plugins',
   '/docs/guides': '/docs/guides/react-vue',

@@ -4,6 +4,10 @@
  * the v2→v3 migration guide that now lives with the v3 docs.
  */
 export const envelopRedirects: Record<string, string> = {
+  // Envelop's packages live in the Yoga repo, and the Yoga site renders every
+  // package changelog there, the Envelop ones included.
+  '/changelog': 'https://the-guild.dev/graphql/yoga-server/changelogs/envelop/core',
+  '/changelogs': 'https://the-guild.dev/graphql/yoga-server/changelogs/envelop/core',
   '/docs/securing-your-graphql-api': '/docs/guides/securing-your-graphql-api',
   '/docs/adding-authentication-with-auth0': '/docs/guides/adding-authentication-with-auth0',
   '/docs/monitoring-and-tracing': '/docs/guides/monitoring-and-tracing',

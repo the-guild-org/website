@@ -22,8 +22,10 @@ interface Props {
   markdownUrl?: string | null;
   navItems: DocsNavPage[];
   navTree: DocsNavNode[];
-  /** "Documentation" | "Plugins" — drives search badges and title suffix. */
+  /** "Documentation" | "Plugins" | "Changelogs" — drives search badges. */
   searchSection: string;
+  /** Title suffix; defaults to the product name. */
+  section?: string;
   title: string;
 }
 
@@ -37,6 +39,7 @@ const {
   navItems,
   navTree,
   searchSection,
+  section = 'GraphQL Codegen',
   title,
 } = Astro.props;
 
@@ -52,7 +55,9 @@ const baseNode = (node: DocsNavNode): DocsNavNode =>
 
 const basedItems = navItems.map(item => ({ ...item, href: based(item.href) }));
 const basedTree = navTree.map(baseNode);
-const docsBase = withBase(currentPath.startsWith('/plugins') ? '/plugins' : '/docs');
+const sectionBase =
+  ['/plugins', '/changelogs'].find(base => currentPath.startsWith(base)) ?? '/docs';
+const docsBase = withBase(sectionBase);
 ---
 
 <DocsLayout
@@ -67,7 +72,7 @@ const docsBase = withBase(currentPath.startsWith('/plugins') ? '/plugins' : '/do
   navTree={basedTree}
   searchBase={basePath}
   searchSection={searchSection}
-  section="GraphQL Codegen"
+  section={section}
   site={CODEGEN_SITE}
   title={title}
 >

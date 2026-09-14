@@ -4,6 +4,9 @@
  * that moved under products, and a few entry points.
  */
 export const inspectorRedirects: Record<string, string> = {
+  // Changelog entry points; the CLI is the package people install.
+  '/changelog': '/changelogs/cli',
+  '/changelogs': '/changelogs/cli',
   '/install': '/docs/installation',
   '/enterprise': '/docs',
   '/docs/index': '/docs',

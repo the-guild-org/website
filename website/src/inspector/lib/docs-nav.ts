@@ -19,6 +19,7 @@ function metaFor(section: string) {
 }
 
 let cached: Promise<DocsNav> | undefined;
+let cachedChangelogs: Promise<DocsNav> | undefined;
 
 export function getInspectorDocsNav() {
   cached ??= getCollection('inspectorDocs').then(entries =>
@@ -33,4 +34,16 @@ export function getInspectorDocsNav() {
     }),
   );
   return cached;
+}
+
+/** One package per page; folders follow the packages/ layout upstream (no meta.json). */
+export function getInspectorChangelogsNav() {
+  cachedChangelogs ??= getCollection('inspectorChangelogs').then(entries =>
+    buildDocsNav({
+      hrefBase: '/changelogs',
+      metaByDir: new Map(),
+      entries: entries.map(entry => ({ id: entry.id, title: entry.data.title })),
+    }),
+  );
+  return cachedChangelogs;
 }
