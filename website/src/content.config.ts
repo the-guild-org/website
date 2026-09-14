@@ -154,6 +154,18 @@ const codegenPlugins = defineCollection({
   }),
 });
 
+/** Package changelog pages written by the fetch scripts (scripts/lib/changelogs.ts). */
+const changelogSchema = z.looseObject({ title: z.string(), description: z.string().optional() });
+
+const codegenChangelogs = defineCollection({
+  loader: glob({
+    base: `${codegenContentRoot}/changelogs`,
+    generateId: generateHiveId,
+    pattern: '**/*.md',
+  }),
+  schema: changelogSchema,
+});
+
 /**
  * GraphQL Yoga content is fetched from the graphql-yoga repo by
  * scripts/yoga/fetch-content.ts (run in prebuild) — gitignored and empty
@@ -195,7 +207,7 @@ const yogaChangelogs = defineCollection({
     generateId: generateHiveId,
     pattern: '**/*.md',
   }),
-  schema: z.looseObject({ title: z.string(), description: z.string().optional() }),
+  schema: changelogSchema,
 });
 
 const envelopContentRoot = './src/envelop/content';
@@ -225,6 +237,15 @@ const meshDocs = defineCollection({
   schema: codegenDocsSchema,
 });
 
+const meshChangelogs = defineCollection({
+  loader: glob({
+    base: `${meshContentRoot}/changelogs`,
+    generateId: generateHiveId,
+    pattern: '**/*.md',
+  }),
+  schema: changelogSchema,
+});
+
 const envelopLegacy = defineCollection({
   loader: glob({
     base: envelopContentRoot,
@@ -241,6 +262,15 @@ const inspectorDocs = defineCollection({
     pattern: '**/*.{md,mdx}',
   }),
   schema: codegenDocsSchema,
+});
+
+const inspectorChangelogs = defineCollection({
+  loader: glob({
+    base: './src/inspector/content/changelogs',
+    generateId: generateHiveId,
+    pattern: '**/*.md',
+  }),
+  schema: changelogSchema,
 });
 
 const meshLegacy = defineCollection({
@@ -274,13 +304,16 @@ export const collections = {
   ...productCollections,
   blog,
   caseStudies,
+  codegenChangelogs,
   codegenDocs,
   codegenPlugins,
   docs,
   envelopDocs,
   envelopLegacy,
   hiveBlog,
+  inspectorChangelogs,
   inspectorDocs,
+  meshChangelogs,
   meshDocs,
   meshLegacy,
   productUpdates,

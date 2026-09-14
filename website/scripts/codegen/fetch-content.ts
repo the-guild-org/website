@@ -2,7 +2,8 @@
  * Fetches the GraphQL Codegen docs from the graphql-code-generator repository.
  * The content is authored in that repo's website/ folder — plain MDX with
  * meta.json ordering, a plugin registry, icons, images, and the generated
- * config.schema.json — and this script is the only bridge into this site.
+ * config.schema.json — and every package's CHANGELOG.md becomes a changelog
+ * page. This script is the only bridge into this site.
  *
  * Set CODEGEN_REPO_DIR to a local clone to skip the network fetch (useful
  * for development); otherwise a shallow sparse clone of the default branch
@@ -11,7 +12,7 @@
  * preview workflow to build a codegen PR's content.
  *
  * Outputs (all gitignored):
- *   src/codegen/content/{docs,plugins,partials}/**
+ *   src/codegen/content/{docs,plugins,partials,changelogs}/**
  *   src/codegen/generated/plugins-registry.json
  *   src/codegen/generated/config-docs-map.json
  *   public/graphql/codegen/{assets,icons}/** and config.schema.json
@@ -30,6 +31,7 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { collectChangelogs } from '../lib/changelogs.ts';
 
 const CODEGEN_REPO = 'https://github.com/dotansimha/graphql-code-generator.git';
 const SPARSE_PATHS = [
@@ -39,6 +41,8 @@ const SPARSE_PATHS = [
   'website/plugins.json',
   'website/plugin-configs.json',
   'website/config.schema.json',
+  'packages/**/CHANGELOG.md',
+  'packages/**/package.json',
 ];
 
 const projectDir = fileURLToPath(new URL('../..', import.meta.url));
@@ -69,8 +73,8 @@ function fetchSource(): string {
       stdio: ['ignore', 'ignore', 'inherit'],
     });
   }
-  // --no-cone: the sparse list includes individual files, which cone mode
-  // rejects. Patterns are root-anchored.
+  // --no-cone: the sparse list mixes directories, single files and globs,
+  // which cone mode rejects. Patterns are root-anchored.
   execFileSync(
     'git',
     ['-C', tmp, 'sparse-checkout', 'set', '--no-cone', ...SPARSE_PATHS.map(path => `/${path}`)],
@@ -106,6 +110,10 @@ writeFileSync(
     `---\n$1---\n\nimport Callout from '~hive/components/mdx/Callout.astro';\n\n`,
   ),
 );
+
+// Changelogs: every published package's CHANGELOG.md, one page per package,
+// at the package's path under packages/ (so /changelogs/plugins/typescript/resolvers).
+const changelogs = collectChangelogs(join(source, 'packages'), join(contentDir, 'changelogs'));
 
 // Registry: plugins.json plus what only the file layout knows — the category
 // (the page's folder) and the local icon file for the icon name.
@@ -164,5 +172,5 @@ const docsCount = execFileSync('find', [contentDir, '-name', '*.mdx'], { encodin
   .trim()
   .split('\n').length;
 console.log(
-  `Codegen content ready: ${docsCount} MDX files, ${Object.keys(output).length} plugins in registry`,
+  `Codegen content ready: ${docsCount} MDX files, ${Object.keys(output).length} plugins in registry, ${changelogs} changelogs`,
 );

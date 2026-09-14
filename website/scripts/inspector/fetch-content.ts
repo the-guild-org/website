@@ -1,8 +1,8 @@
 /**
  * Fetches the GraphQL Inspector docs from the graphql-inspector repository.
  * The content is authored in that repo's website/ folder — plain MDX with
- * meta.json ordering, and images — and this script is the only bridge into
- * this site.
+ * meta.json ordering, and images — and every package's CHANGELOG.md becomes
+ * a changelog page. This script is the only bridge into this site.
  *
  * Set INSPECTOR_REPO_DIR to a local clone to skip the network fetch;
  * otherwise a shallow sparse clone of the default branch is made into a
@@ -11,7 +11,7 @@
  * workflow to build a PR's content.
  *
  * Outputs (all gitignored):
- *   src/inspector/content/docs/**
+ *   src/inspector/content/{docs,changelogs}/**
  *   public/graphql/inspector/assets/**
  */
 import { execFileSync } from 'node:child_process';
@@ -19,9 +19,15 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { collectChangelogs } from '../lib/changelogs.ts';
 
 const REPO = 'https://github.com/graphql-hive/graphql-inspector.git';
-const SPARSE_PATHS = ['website/content', 'website/assets'];
+const SPARSE_DIRECTORIES = ['website/content', 'website/assets'];
+const SPARSE_PATHS = [
+  ...SPARSE_DIRECTORIES,
+  'packages/**/CHANGELOG.md',
+  'packages/**/package.json',
+];
 
 const projectDir = fileURLToPath(new URL('../..', import.meta.url));
 const contentDir = join(projectDir, 'src/inspector/content');
@@ -30,7 +36,7 @@ const publicDir = join(projectDir, 'public/graphql/inspector');
 function fetchSource(): { dir: string; temporary: boolean } {
   const local = process.env.INSPECTOR_REPO_DIR;
   if (local) {
-    for (const required of SPARSE_PATHS) {
+    for (const required of SPARSE_DIRECTORIES) {
       if (!existsSync(join(local, required))) {
         throw new Error(
           `INSPECTOR_REPO_DIR does not look like the Inspector repo (missing ${required}): ${local}`,
@@ -55,9 +61,13 @@ function fetchSource(): { dir: string; temporary: boolean } {
         stdio: ['ignore', 'ignore', 'inherit'],
       });
     }
-    execFileSync('git', ['-C', tmp, 'sparse-checkout', 'set', ...SPARSE_PATHS], {
-      stdio: ['ignore', 'ignore', 'inherit'],
-    });
+    // --no-cone: the sparse list mixes directories and file globs, which cone
+    // mode rejects. Patterns are root-anchored.
+    execFileSync(
+      'git',
+      ['-C', tmp, 'sparse-checkout', 'set', '--no-cone', ...SPARSE_PATHS.map(path => `/${path}`)],
+      { stdio: ['ignore', 'ignore', 'inherit'] },
+    );
   } catch (error) {
     // A half-made clone is of no use to a retry; do not leave it in the temp dir.
     rmSync(tmp, { recursive: true, force: true });
@@ -72,6 +82,11 @@ const website = join(source, 'website');
 rmSync(contentDir, { recursive: true, force: true });
 rmSync(publicDir, { recursive: true, force: true });
 cpSync(join(website, 'content'), contentDir, { recursive: true });
+
+// Changelogs: every published package's CHANGELOG.md, one page per package,
+// at the package's path under packages/ (so /changelogs/commands/diff).
+const changelogs = collectChangelogs(join(source, 'packages'), join(contentDir, 'changelogs'));
+
 mkdirSync(publicDir, { recursive: true });
 cpSync(join(website, 'assets'), join(publicDir, 'assets'), { recursive: true });
 
@@ -80,4 +95,4 @@ if (temporary) rmSync(source, { recursive: true, force: true });
 const docsCount = execFileSync('find', [contentDir, '-name', '*.mdx'], { encoding: 'utf8' })
   .trim()
   .split('\n').length;
-console.log(`Inspector content ready: ${docsCount} MDX files`);
+console.log(`Inspector content ready: ${docsCount} MDX files, ${changelogs} changelogs`);

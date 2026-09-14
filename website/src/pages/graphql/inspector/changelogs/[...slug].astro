@@ -1,0 +1,45 @@
+---
+/** One page per package CHANGELOG.md from the Inspector repo. */
+import CodeBlock from '~hive/components/mdx/CodeBlock.astro';
+import Table from '~hive/components/mdx/Table.astro';
+import { getHeadingHtmlBySlug } from '~hive/lib/docs-markdown';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import InspectorDocsLayout from '../../../../inspector/layouts/InspectorDocsLayout.astro';
+import { getInspectorChangelogsNav } from '../../../../inspector/lib/docs-nav';
+import { INSPECTOR_REPO_URL } from '../../../../inspector/lib/site';
+
+type Entry = CollectionEntry<'inspectorChangelogs'>;
+
+export async function getStaticPaths() {
+  const entries = await getCollection('inspectorChangelogs');
+  return entries.map(entry => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props as { entry: Entry };
+const { Content, headings: renderedHeadings } = await render(entry);
+const headingHtmlBySlug = getHeadingHtmlBySlug(entry.body ?? '', renderedHeadings);
+const headings = renderedHeadings.map(heading => ({
+  ...heading,
+  html: headingHtmlBySlug.get(heading.slug) ?? heading.text,
+}));
+const nav = await getInspectorChangelogsNav();
+---
+
+<InspectorDocsLayout
+  currentPath={`/changelogs/${entry.id}`}
+  description={entry.data.description}
+  docsBase="/changelogs"
+  githubUrl={`${INSPECTOR_REPO_URL}/blob/master/packages/${entry.id}/CHANGELOG.md`}
+  headings={headings}
+  longPage={(entry.body?.length ?? 0) > 60_000}
+  navItems={nav.items}
+  navTree={nav.tree}
+  searchSection="Changelogs"
+  section="GraphQL Inspector Changelogs"
+  title={entry.data.title}
+>
+  <!-- Release notes stay out of search: every version would match the docs' terms. -->
+  <div data-pagefind-ignore="all">
+    <Content components={{ pre: CodeBlock, table: Table }} />
+  </div>
+</InspectorDocsLayout>

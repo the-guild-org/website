@@ -20,7 +20,10 @@ import { remarkTocMarkers } from './src/hive/markdown/remark-toc-markers.mjs';
 const codegenContentDir = fileURLToPath(new URL('./src/codegen/content', import.meta.url));
 /** Codegen content collections for relative-link resolution. */
 const codegenLinkOptions = {
-  collections: [{ base: '/plugins', directory: join(codegenContentDir, 'plugins') }],
+  collections: ['plugins', 'changelogs'].map(section => ({
+    base: `/${section}`,
+    directory: join(codegenContentDir, section),
+  })),
   fallback: { base: '/docs', directory: join(codegenContentDir, 'docs') },
 };
 
@@ -38,9 +41,9 @@ const isEnvelopFile = path => typeof path === 'string' && path.includes('/src/en
 const isInspectorFile = path => typeof path === 'string' && path.includes('/src/inspector/');
 
 const inspectorContentDir = fileURLToPath(new URL('./src/inspector/content', import.meta.url));
-/** Inspector content: a single docs section. */
+/** Inspector content: the docs, plus the package changelogs. */
 const inspectorLinkOptions = {
-  collections: [],
+  collections: [{ base: '/changelogs', directory: join(inspectorContentDir, 'changelogs') }],
   fallback: { base: '/docs', directory: join(inspectorContentDir, 'docs') },
 };
 const isProductFile = path => typeof path === 'string' && path.includes('/src/products/');
@@ -71,7 +74,10 @@ const isMeshFile = path => typeof path === 'string' && path.includes('/src/mesh/
 const meshContentDir = fileURLToPath(new URL('./src/mesh/content', import.meta.url));
 /** Mesh content collections for relative-link resolution (v1 is current, v0 under /docs). */
 const meshLinkOptions = {
-  collections: [{ base: '/docs', directory: join(meshContentDir, 'docs') }],
+  collections: ['docs', 'changelogs'].map(section => ({
+    base: `/${section}`,
+    directory: join(meshContentDir, section),
+  })),
   fallback: { base: '/v1', directory: join(meshContentDir, 'v1') },
 };
 

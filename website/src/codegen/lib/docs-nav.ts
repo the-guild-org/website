@@ -19,7 +19,7 @@ function metaMap(modules: Record<string, { default: MetaJson }>, marker: string)
 }
 
 async function build(
-  collection: 'codegenDocs' | 'codegenPlugins',
+  collection: 'codegenChangelogs' | 'codegenDocs' | 'codegenPlugins',
   hrefBase: string,
   metaByDir: Map<string, MetaJson>,
 ): Promise<DocsNav> {
@@ -36,6 +36,7 @@ async function build(
 
 let cachedDocs: DocsNav | undefined;
 let cachedPlugins: DocsNav | undefined;
+let cachedChangelogs: DocsNav | undefined;
 
 export async function getCodegenDocsNav(): Promise<DocsNav> {
   cachedDocs ??= await build('codegenDocs', '/docs', metaMap(docsMetaModules, '/content/docs/'));
@@ -49,4 +50,10 @@ export async function getCodegenPluginsNav(): Promise<DocsNav> {
     metaMap(pluginsMetaModules, '/content/plugins/'),
   );
   return cachedPlugins;
+}
+
+/** One package per page; folders follow the packages/ layout upstream (no meta.json). */
+export async function getCodegenChangelogsNav(): Promise<DocsNav> {
+  cachedChangelogs ??= await build('codegenChangelogs', '/changelogs', new Map());
+  return cachedChangelogs;
 }

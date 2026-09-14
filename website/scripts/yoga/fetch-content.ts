@@ -21,14 +21,14 @@ import {
   existsSync,
   mkdirSync,
   mkdtempSync,
-  readdirSync,
   readFileSync,
   rmSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, relative } from 'node:path';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { collectChangelogs } from '../lib/changelogs.ts';
 
 const YOGA_REPO = 'https://github.com/graphql-hive/graphql-yoga.git';
 const SPARSE_PATHS = [
@@ -96,34 +96,7 @@ writeFileSync(
 
 // Changelogs: every published package's CHANGELOG.md, one page per package,
 // at the package's path under packages/ (so /changelogs/plugins/jwt).
-let changelogs = 0;
-function collectChangelogs(dir: string) {
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (!entry.isDirectory() || entry.name === 'node_modules' || entry.name === 'dist') continue;
-    const packageDir = join(dir, entry.name);
-    const changelog = join(packageDir, 'CHANGELOG.md');
-    const manifest = join(packageDir, 'package.json');
-    if (existsSync(changelog) && existsSync(manifest)) {
-      const { name } = JSON.parse(readFileSync(manifest, 'utf8')) as { name?: string };
-      if (name) {
-        const slug = relative(join(source, 'packages'), packageDir);
-        const body =
-          readFileSync(changelog, 'utf8')
-            .replace(/^# .+\n+/, '')
-            .trim() || 'No published releases yet.';
-        const target = join(contentDir, 'changelogs', `${slug}.md`);
-        mkdirSync(dirname(target), { recursive: true });
-        writeFileSync(
-          target,
-          `---\ntitle: ${JSON.stringify(name)}\ndescription: ${JSON.stringify(`Changelog for ${name}: every release with its changes and the pull requests behind them.`)}\n---\n\n${body.trim()}\n`,
-        );
-        changelogs++;
-      }
-    }
-    collectChangelogs(packageDir);
-  }
-}
-collectChangelogs(join(source, 'packages'));
+const changelogs = collectChangelogs(join(source, 'packages'), join(contentDir, 'changelogs'));
 
 mkdirSync(publicDir, { recursive: true });
 cpSync(join(website, 'assets'), join(publicDir, 'assets'), { recursive: true });

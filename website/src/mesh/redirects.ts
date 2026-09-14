@@ -4,6 +4,9 @@
  * kept as-is.
  */
 export const meshRedirects: Record<string, string> = {
+  // Changelog entry points; compose-cli is the Mesh v1 package (the v0 CLI is under legacy/).
+  '/changelog': '/changelogs/compose-cli',
+  '/changelogs': '/changelogs/compose-cli',
   // Reported in the-guild-org/website#1750, #1721 and #1894.
   '/v1/configuration': '/v1/getting-started',
   '/docs/features/persisted-operations': '/docs/guides/persisted-operations',

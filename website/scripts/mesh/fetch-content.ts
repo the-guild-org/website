@@ -3,8 +3,9 @@
  * is authored in that repo's website/ folder — plain MDX with meta.json
  * ordering for the v1 docs and the frozen v0 docs, the generated
  * config-reference Markdown those pages import, images, and the Hive
- * Gateway install script served from this mount. This script is the only
- * bridge into this site.
+ * Gateway install script served from this mount — and every package's
+ * CHANGELOG.md becomes a changelog page. This script is the only bridge into
+ * this site.
  *
  * Set MESH_REPO_DIR to a local clone to skip the network fetch (useful for
  * development); otherwise a shallow sparse clone of the default branch is
@@ -13,7 +14,7 @@
  * workflow to build a Mesh PR's content.
  *
  * Outputs (all gitignored):
- *   src/mesh/content/{v1,docs}/**
+ *   src/mesh/content/{v1,docs,changelogs}/**
  *   src/mesh/generated/*.generated.md
  *   public/graphql/mesh/assets/** and install-hive-gateway.sh
  */
@@ -31,6 +32,7 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { collectChangelogs } from '../lib/changelogs.ts';
 
 const MESH_REPO = 'https://github.com/ardatan/graphql-mesh.git';
 const SPARSE_PATHS = [
@@ -38,6 +40,8 @@ const SPARSE_PATHS = [
   'website/generated',
   'website/assets',
   'website/install-hive-gateway.sh',
+  'packages/**/CHANGELOG.md',
+  'packages/**/package.json',
 ];
 
 const projectDir = fileURLToPath(new URL('../..', import.meta.url));
@@ -69,7 +73,8 @@ function fetchSource(): string {
       stdio: ['ignore', 'ignore', 'inherit'],
     });
   }
-  // --no-cone: the sparse list includes a single file, which cone mode rejects.
+  // --no-cone: the sparse list mixes directories, a single file and globs,
+  // which cone mode rejects. Patterns are root-anchored.
   execFileSync(
     'git',
     ['-C', tmp, 'sparse-checkout', 'set', '--no-cone', ...SPARSE_PATHS.map(path => `/${path}`)],
@@ -115,6 +120,11 @@ function rewriteGeneratedImports(dir: string) {
 }
 rewriteGeneratedImports(contentDir);
 
+// Changelogs: every published package's CHANGELOG.md, one page per package,
+// at the package's path under packages/ (so /changelogs/plugins/hive; the v0
+// packages sit under legacy/).
+const changelogs = collectChangelogs(join(source, 'packages'), join(contentDir, 'changelogs'));
+
 mkdirSync(publicDir, { recursive: true });
 cpSync(join(website, 'assets'), join(publicDir, 'assets'), { recursive: true });
 cpSync(join(website, 'install-hive-gateway.sh'), join(publicDir, 'install-hive-gateway.sh'));
@@ -125,5 +135,5 @@ const docsCount = execFileSync('find', [contentDir, '-name', '*.mdx'], { encodin
   .trim()
   .split('\n').length;
 console.log(
-  `Mesh content ready: ${docsCount} MDX files, ${rewritten} pages import generated config docs`,
+  `Mesh content ready: ${docsCount} MDX files, ${rewritten} pages import generated config docs, ${changelogs} changelogs`,
 );
