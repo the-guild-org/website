@@ -1,0 +1,67 @@
+---
+title: Consistent Watcher, a Faster Server Preset, and Fixed Windows Support
+authors: eddeee888
+tags: [graphql, graphql-codegen, watch-mode, server-preset, performance]
+date: 2026-09-14
+description:
+  Codegen watch mode is now consistent across file tracking, profiling, plugins and presets,
+  Server Preset v0.19 uses it to cut watch re-runs by up to 80%, and Windows support is improved
+  too.
+---
+
+Watch mode in [GraphQL Code Generator](https://the-guild.dev/graphql/codegen) is now consistent
+across file tracking, profiling, plugins and presets.
+[Server Preset v0.19](https://github.com/eddeee888/graphql-code-generator-plugins/releases/tag/%40eddeee888%2Fgcg-typescript-resolver-files%400.19.0)
+builds on that with internal caching to make watch re-runs up to 80% faster, and Windows support is
+improved too.
+
+## Watch mode is consistent now
+
+Watch mode is the recommended way to work with Codegen in managed workflows like
+[Client Preset](https://the-guild.dev/graphql/codegen/plugins/presets/preset-client) and
+[Server Preset](https://the-guild.dev/graphql/codegen/docs/guides/graphql-server-apollo-yoga-with-server-preset).
+But the base CLI's watch-mode support wasn't consistent across plugins and presets, and profiling
+didn't work on every run.
+
+Recent patch fixed reliability issues, and added improvements allow library authors more flexibility to control the output:
+
+- `overwrite.updateExistingFiles` and `overwrite.removeStaleFiles` let a preset control whether its
+  regenerated files are updated in place or removed as stale
+- `overwrite` set on a preset-based `generates` entry now works
+- `contentComparison` lets plugins and presets choose disk vs. cache comparison when deciding
+  whether to rewrite a file
+- `--profile --watch` now writes a trace after every rebuild, not just the initial run
+
+## Server Preset v0.19: up to 80% faster watch re-runs
+
+With the watcher behaving predictably, we could make Server Preset lean on it.
+[v0.19](https://github.com/eddeee888/graphql-code-generator-plugins/releases/tag/%40eddeee888%2Fgcg-typescript-resolver-files%400.19.0)
+uses the new watch capabilities and adds internal caching of its most expensive work: the check
+that compares resolver types against your mappers, and the schema parsing that every generates
+block used to repeat.
+
+Measured on [Hive Console](https://github.com/graphql-hive/console)'s codebase, on re-runs where
+schema types and mappers don't change, generation time dropped by **up to 80%**.
+
+## Fixed Windows Support
+
+We want Codegen to work in any environment seamlessly. Windows support has been lacking, mainly due
+to differences in how Windows handles file paths.
+
+That's fixed too:
+
+- Watch mode's ignore patterns now correctly use forward slashes, so generated output is ignored
+  instead of being watched and re-triggering builds
+- Loading a schema or documents from a `.js`, `.cjs`, or `.mjs` file no longer crashes with an ESM
+  URL-scheme error
+
+## Upgrading
+
+```sh
+pnpm add -D @graphql-codegen/cli@7.4.1 # Watcher and Windows fixes
+pnpm add -D @eddeee888/gcg-typescript-resolver-files@0.19.0 # Server Preset perf improvements
+```
+
+If watch mode still feels slow or wrong for you, run it with `--profile` and open an issue with the
+trace on [graphql-code-generator](https://github.com/dotansimha/graphql-code-generator/issues) or
+[graphql-code-generator-plugins](https://github.com/eddeee888/graphql-code-generator-plugins/issues).
