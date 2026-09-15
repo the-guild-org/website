@@ -16,6 +16,7 @@ import { remarkBasePath } from './src/hive/markdown/remark-base-path.mjs';
 import { remarkNpm2Yarn } from './src/hive/markdown/remark-npm2yarn.mjs';
 import { remarkRelativeLinks } from './src/hive/markdown/remark-relative-links.mjs';
 import { remarkTocMarkers } from './src/hive/markdown/remark-toc-markers.mjs';
+import { SITE_ORIGIN } from './src/lib/site-origin.ts';
 
 const codegenContentDir = fileURLToPath(new URL('./src/codegen/content', import.meta.url));
 /** Codegen content collections for relative-link resolution. */
@@ -198,7 +199,7 @@ function pagefindDevServer(mount = '/graphql/hive/pagefind') {
 }
 
 export default defineConfig({
-  site: 'https://the-guild.dev',
+  site: SITE_ORIGIN,
   // Prefetch pages on link hover: navigation across the docs feels instant
   // and the fetch is only triggered by intent (no blanket preloading).
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },

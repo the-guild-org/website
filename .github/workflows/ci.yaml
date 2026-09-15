@@ -73,6 +73,14 @@ jobs:
         name: setup env
 
       - name: build website
+        env:
+          # Matches the --branch flag passed to wrangler below, so a preview
+          # build's canonical/OG URLs, sitemaps, and JSON-LD point at the
+          # preview host they're actually served from instead of prod.
+          SITE_URL:
+            ${{ github.event_name == 'pull_request' &&
+            format('https://pr-{0}.guild-dev-website.pages.dev', github.event.pull_request.number)
+            || '' }}
         run: pnpm --filter website build
 
       # A pull request deploys to its own preview branch (pr-<n>); a push to

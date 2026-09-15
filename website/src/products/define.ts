@@ -8,7 +8,9 @@
  * Self-contained (no extensionless src imports): loaded by Astro and by the
  * plain `node` scripts under scripts/products.
  */
-export const SITE_ORIGIN = 'https://the-guild.dev';
+import { SITE_ORIGIN } from '../lib/site-origin.ts';
+
+export { SITE_ORIGIN };
 
 export interface ProductSection {
   /** Mount-relative URL base of the section, e.g. "/docs". */

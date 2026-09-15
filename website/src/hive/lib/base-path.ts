@@ -5,7 +5,9 @@
  * external URLs, anchors, and already-prefixed paths, so it is safe to apply
  * to any href/src value.
  */
-export const SITE_ORIGIN = 'https://the-guild.dev';
+import { SITE_ORIGIN } from '../../lib/site-origin.ts';
+
+export { SITE_ORIGIN };
 export const basePath = '/graphql/hive';
 /** Absolute URL of the Hive site's mount point. */
 export const HIVE_SITE_URL = `${SITE_ORIGIN}${basePath}`;

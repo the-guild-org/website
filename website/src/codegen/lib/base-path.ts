@@ -1,7 +1,9 @@
 // Self-contained (no extensionless src imports): this module is loaded both
 // by Astro and by plain `node` postbuild scripts, which need explicit .ts
 // extensions for relative imports.
-export const SITE_ORIGIN = 'https://the-guild.dev';
+import { SITE_ORIGIN } from '../../lib/site-origin.ts';
+
+export { SITE_ORIGIN };
 export const basePath = '/graphql/codegen';
 export const CODEGEN_SITE_URL = `${SITE_ORIGIN}${basePath}`;
 
