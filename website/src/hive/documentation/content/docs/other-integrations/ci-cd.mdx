@@ -19,6 +19,78 @@ directly with your preferred package manager (for example: `yarn hive ...` or `p
 If you are using a different runtime environment for your project, you should install the
 [Hive CLI binary](/docs/api-reference/cli#installation) and use it directly as a binary (`hive ...`).
 
+## Schema Revision Workflow
+
+For production pipelines, separate schema validation, release preparation, and deployment:
+
+1. Run `hive schema:check` for every pull request.
+2. Run `hive schema:push` during the merge or release flow.
+3. Run `hive schema:publish --revision` when the corresponding service is deployed.
+
+This workflow publishes the exact immutable schema revision prepared by the release flow. It also
+prevents a schema from becoming current in the registry before the service that implements it is
+deployed.
+
+### 1. Check in Pull Requests
+
+```bash
+hive schema:check "path/to/schema.graphql" \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>"
+```
+
+For distributed schemas, include `--service` and, when needed, `--url`.
+
+### 2. Push During Merge or Release
+
+Use a stable, immutable release identifier such as the Git commit SHA:
+
+```bash
+hive schema:push "path/to/schema.graphql" \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>" \
+  --revision "$GIT_COMMIT_SHA"
+```
+
+Pushing uploads the SDL but does not publish a schema version or update the Hive CDN. A revision name
+cannot later be reused with different SDL.
+
+For Apollo Federation and Schema Stitching projects, include the service name:
+
+```bash
+hive schema:push "path/to/schema.graphql" \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>" \
+  --service "<YOUR_SERVICE_NAME>" \
+  --revision "$GIT_COMMIT_SHA"
+```
+
+### 3. Publish During Deployment
+
+Pass the same revision to the deployment job. The job does not need the schema file because Hive uses
+the SDL stored by the push step:
+
+```bash
+hive schema:publish \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>" \
+  --revision "$GIT_COMMIT_SHA"
+```
+
+For a distributed schema, also provide the service name and the deployed service URL:
+
+```bash
+hive schema:publish \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>" \
+  --service "<YOUR_SERVICE_NAME>" \
+  --url "<YOUR_SERVICE_URL>" \
+  --revision "$GIT_COMMIT_SHA"
+```
+
+Use separate tokens with the minimum required permissions for each stage: `Schema check` for pull
+requests, `Schema push` for the merge or release flow, and `Schema publish` for deployment.
+
 ## GitHub Check Suites
 
 If you are using GitHub Actions, you can specify an additional flag to the Hive CLI: `--github`.
@@ -129,31 +201,35 @@ We recommend using a fixed CLI version for your workflows. Please refer to our C
 
 </Callout>
 
-### GitHub Workflow for CD
+### GitHub Workflow for Merge and Deployment
 
-The following workflow will run the publish the latest schema to the schema registry for every push
-to `main` branch.
+The following workflow pushes an immutable schema revision for every change merged into `main`. A
+separate deployment job can then publish that exact revision after deploying the service.
 
 ```yaml title=".github/workflows/cd.yml"
 on:
   push:
     branches: [main]
 jobs:
-  publish:
+  push-schema:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - name: schema publish
+      - name: schema push
         env:
           # If you self-host your hive server:
           HIVE_ENDPOINT: ${{ secrets.HIVE_ENDPOINT }}
         run: |
           curl -sSL https://graphql-hive.com/install.sh | sh
-          hive schema:publish "path/to/schema.graphql" \
+          hive schema:push "path/to/schema.graphql" \
             --registry.accessToken "${{ secrets.HIVE_TOKEN }}" \
             --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>" \
-            --github
+            --revision "${{ github.sha }}"
 ```
+
+During deployment, pass the same commit SHA or release identifier to `hive schema:publish
+--revision`. For distributed schemas, include `--service` in both commands and `--url` when
+publishing.
 
 <Callout type="warning">
 
@@ -168,8 +244,9 @@ By default each project has three targets: `development`, `staging`, and `produc
 utilize these environments (or even add more), to model a multi environment/stage depployment
 process.
 
-For CI, run `hive schema:check`, and for CD, run `hive schema:publish` on the respective target for
-that environment. Each target can be configured to use the usage data from other targets for
+For CI, run `hive schema:check`. After merging, run `hive schema:push` for the respective target and
+publish that revision with `hive schema:publish --revision` during deployment. Each target can be
+configured to use the usage data from other targets for
 [conditional breaking changes](/docs/schema-registry/management/targets#conditional-breaking-changes) based on usage
 data.
 
