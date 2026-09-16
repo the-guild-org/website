@@ -168,6 +168,11 @@ performed to ensure a schema is fully valid:
    version. If [Conditional Breaking Changes](/docs/schema-registry/management/targets#conditional-breaking-changes)
    is activated, an additional phase of check against collected operations is performed.
 
+By default, Hive records an invalid schema version when a Federation publication fails supergraph or
+contract composition. The Hive CDN continues serving the latest valid supergraph. Pass
+`--fail-on-composition-error` to [`hive schema:publish`](/docs/api-reference/cli#fail-on-federation-composition-errors)
+to reject the publication without creating the invalid schema version.
+
 For additional reading:
 
 - [Publishing a schema using Hive CLI](/docs/api-reference/cli#publish-a-schema)

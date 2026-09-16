@@ -1,0 +1,58 @@
+---
+title: Reject Federation Publishes with Composition Errors
+description:
+  Prevent a Federation schema publication from being recorded when it would cause a supergraph composition error.
+date: 2026-09-16
+authors: [laurin]
+---
+
+The Hive CLI can now reject a Federation schema publication when the proposed subgraph causes a
+composition error.
+
+By default, Hive records an invalid schema version when a subgraph does not compose. This keeps a
+complete schema history while the Hive CDN continues serving the latest valid supergraph. Some teams
+instead need the publication to fail without changing schema history, particularly during deployment.
+
+## Reject Invalid Publications
+
+Pass `--fail-on-composition-error` to `hive schema:publish`:
+
+```bash
+hive schema:publish products.graphql \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<ORGANIZATION>/<PROJECT>/<TARGET>" \
+  --service products \
+  --url "https://products.example.com/graphql" \
+  --fail-on-composition-error
+```
+
+Hive composes the proposed subgraph before recording the publication. If the supergraph or one of
+the target's contracts fails to compose, the command exits with an error and Hive does not create the
+invalid schema version.
+
+This option only applies to Federation projects. It is opt-in, so existing publication workflows
+continue to record invalid schema versions unless the flag is provided.
+
+## Fail Deployment on Composition Errors
+
+Use the flag when publishing during deployment to stop the pipeline if the deployed subgraph cannot
+be included in the target's supergraph:
+
+```bash
+hive schema:publish products.graphql \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<ORGANIZATION>/<PROJECT>/<TARGET>" \
+  --service products \
+  --url "$PRODUCTS_GRAPHQL_ENDPOINT" \
+  --fail-on-composition-error
+```
+
+Continue to run `hive schema:check` in pull requests. The publish safeguard protects the deployment
+boundary from composition failures caused by changes that landed after the check or by concurrent
+subgraph releases.
+
+---
+
+- [Hive CLI schema publish documentation](/docs/api-reference/cli#fail-on-federation-composition-errors)
+- [Hive CI/CD schema revision workflow](/docs/other-integrations/ci-cd#schema-revision-workflow)
+- [Publishing schemas with Hive](/docs/schema-registry#publish-a-schema)
