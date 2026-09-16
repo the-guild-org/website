@@ -327,8 +327,6 @@ export const gatewayConfig = defineConfig({
     type: "dev",
     services: [{ name: "products", url: "http://localhost:4001/graphql" }],
     remote: true,
-    /** GraphQL API endpoint of the registry. */
-    registry: "https://app.graphql-hive.com/graphql",
     /** Registry access token with Read permissions on the project and target. */
     token: "<registry access token>",
     /** The target whose schema is composed with the services above. */
@@ -354,7 +352,6 @@ export const gatewayConfig = defineConfig({
 hive-gateway supergraph \
   --dev-service products=http://localhost:4001/graphql \
   --dev-remote \
-  --dev-registry https://app.graphql-hive.com/graphql \
   --dev-registry-token "<registry access token>" \
   --dev-target "<organization>/<project>/<target>"
 ```
@@ -367,8 +364,8 @@ hive-gateway supergraph \
 
 | Option     | CLI flag                       | Environment variable | Description                                                                                                                              |
 | ---------- | ------------------------------ | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `remote`   | `--dev-remote`                 | `DEV_REMOTE`         | Compose through the Hive registry instead of locally. Requires `registry` and `token`.                                                  |
-| `registry` | `--dev-registry <endpoint>`    | `DEV_REGISTRY`       | The registry's GraphQL API endpoint. For Hive Cloud this is `https://app.graphql-hive.com/graphql`.                                     |
+| `remote`   | `--dev-remote`                 | `DEV_REMOTE`         | Compose through the Hive registry instead of locally. Requires `token`.                                                                 |
+| `registry` | `--dev-registry <endpoint>`    | `DEV_REGISTRY`       | The registry's GraphQL API endpoint. Defaults to `https://app.graphql-hive.com/graphql` (Hive Cloud); set it for self-hosted Hive.      |
 | `token`    | `--dev-registry-token <token>` | `DEV_REGISTRY_TOKEN` | The registry access token used for composition.                                                                                         |
 | `target`   | `--dev-target <target>`        | `DEV_TARGET`         | The target to compose against. In the configuration file, `{ byId }` or `{ bySelector: { organizationSlug, projectSlug, targetSlug } }`. |
 
