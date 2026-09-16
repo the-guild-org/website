@@ -1,5 +1,5 @@
 ---
-title: "Hive Gateway: Local Development and Gateway Testing Just Got Easier"
+title: "Hive Gateway: Local Subgraph Development Just Got Easier"
 tags: [platform, graphql, graphql-federation, graphql-hive, hive-gateway]
 authors: [jdolle]
 date: 2026-09-16
@@ -11,33 +11,35 @@ description:
 import { Callout } from "@hive/design-system/hive-components/callout";
 import { Tabs } from "@hive/design-system/tabs";
 
-You are adding a field to the `products` subgraph and wiring it into the checkout page. The
-resolver is a ten line change. Proving that it works is not: the field only means something once
-it is composed into the supergraph and served by the gateway, next to the `reviews`, `inventory`
-and `users` subgraphs that other teams own and that you do not want to run on your laptop.
+Imagine you're adding a field to your subgraph and wiring it into your frontend. The
+resolver may be a ten line change, but verifying it across your stack is not. The subgraph
+needs to be composed into the supergraph and served by the gateway along with the other subgraphs.
 
 Hive Gateway now has a supergraph source built for exactly this loop. Tell the gateway which
-subgraphs are running locally, and it composes them with the rest of your graph and serves the
-result. One process, the real gateway, your change included.
+subgraphs are running locally, and the gateway composes them with the rest of your graph and serves the
+result. No other commands or processes required.
 
 ## The loop today
 
-Federated teams usually end up with one of two setups for local development.
+Federated teams usually end up with one of the following setups for local development:
 
-The first is running everything. Clone every subgraph, start them all, introspect them, compose,
-then start the gateway. It works, but it is heavy, and the copies of the subgraphs you did not touch
-drift away from what is deployed the moment someone else merges.
-
-The second is [`hive dev`](/docs/api-reference/cli#local-subgraph-development). The Hive CLI takes
+- **Run everything**. Clone every subgraph, start them all, introspect them, compose,
+then start the gateway. It works, but it's heavy, and the copies of the subgraphs you did not touch
+drift away from what is deployed the moment changes get pushed.
+- **Use [`hive dev`](/docs/api-reference/cli#local-subgraph-development)**. The Hive CLI takes
 the schema that is published to a target, adds or replaces your local subgraph, composes, and writes
 a `supergraph.graphql` file that a local gateway can watch. This is much lighter, because the
-registry already knows every other subgraph. It is still a second process and a file in between,
-and a second terminal you have to remember to start.
+registry already knows every other subgraph. But it is still a second process you have to remember
+to start, with a file in between.
+- **Rely on a deployed environment**. Subgraphs are valid GraphQL servers on their own, so many
+changes can be tested without a gateway at all. But federation directives like `@key` and
+`@requires` only show their effect once composed, and the frontend cannot be tested against the
+change until it is published.
 
 ## A `dev` supergraph source
 
-The new source folds that second process into the gateway. In your `gateway.config.ts`, or straight
-from the CLI:
+The new source folds the `hive dev` process into the gateway, so testing new features locally
+becomes a single step. Configure it in your `gateway.config.ts` or straight from the CLI.
 
 <Tabs items={['Configuration File', 'CLI']}>
 
@@ -55,7 +57,8 @@ export const gatewayConfig = defineConfig({
       // the subgraph you are working on, running on your machine
       { name: 'products', url: 'http://localhost:4001/graphql' }
     ],
-    // compose through the Hive registry with the rest of the graph
+    // compose through the Hive registry with the rest of the graph.
+    // registry, token and target are required when remote is enabled
     remote: true,
     registry: 'https://app.graphql-hive.com/graphql',
     token: process.env.HIVE_REGISTRY_TOKEN!,
@@ -133,8 +136,8 @@ Use local composition when:
 
 One difference matters more than it looks: the composition engine. Composition is a strict process
 with a lot of rules, and those rules evolve. If every developer composes on their own machine, every
-developer is running their own version of the composer. When the registry composes, the exact same
-engine validates your work locally, on the pull request, and on the way to production. What
+developer is running their own version of the composer. When the registry composes, the same engine
+that validates the pull request and the production deploy validates your work locally. What
 composes on your laptop composes in CI.
 
 Our recommendation is simple: use `remote` whenever you have a registry. Keep local composition for
@@ -145,22 +148,12 @@ offline work and quick experiments.
 The people who feel this the most are not the ones who only own a subgraph. They are the ones who
 change a subgraph *and* the client that consumes it in the same afternoon.
 
-With the dev source, the frontend talks to `http://localhost:4000/graphql` like it always does,
-except the gateway behind it serves your modified graph. Code generation runs against the composed
+With the dev source, the frontend talks to a local gateway serving your modified graph. Code generation can run against the composed
 schema, so the new field shows up in your generated types. The query your UI actually sends goes
-through the real query planner, hits your local subgraph for the part you changed, and hits the
-rest of the graph as published. When you are done, nothing about your workflow changes: you open
+through the real query planner, hits your local subgraph for the replaced service, and hits the
+rest of the graph as published. When you're done, nothing about your workflow changes: you open
 the pull request, `hive schema:check` runs against the same registry, and the same composition
 engine gives the same answer it gave your gateway all afternoon.
-
-A few things fall out of that naturally:
-
-- **Several local subgraphs.** List two or three `--dev-service` entries and they all replace
-  their published counterparts in one composition.
-- **Schema first.** Point a service at an SDL file with `source: 'file'`, compose it with the real
-  graph, and build the client against the result before the resolvers exist.
-- **One terminal.** No separate composition process and no intermediate supergraph file to keep in
-  sync.
 
 <Callout type="info">
   `hive dev` is not going anywhere. If you need a supergraph file on disk, for another gateway, for
@@ -170,15 +163,14 @@ A few things fall out of that naturally:
 
 ## Governance does not stop at the laptop
 
-Hive treats the schema registry as the single source of truth for a graph: schema checks with
+In Hive, the schema registry is the single source of truth for a graph. Schema checks with
 usage-based breaking change detection, contracts, versioned history, promotions and rollbacks all
-hang off it. A local development feature that composed a private, possibly stale copy of the graph
-with a possibly different composer would sit awkwardly next to that.
+build on it. A local development tool that composes possibly stale graphs would contradict that.
 
-The dev source is designed so that it does not. In remote mode the registry does the composing,
-against the schema versions it holds, with the engine it will use for the pull request. The gateway
-only adds the part that is yours: the subgraphs on your machine. The loop gets shorter; the
-guarantees stay where they were.
+The dev source in remote mode means the registry does the composing, using the schema
+versions it holds and the same engine it will use for your pull request. The gateway contributes
+only the subgraphs running on your machine. The loop gets shorter, and the guarantees stay in
+place.
 
 ## Try it
 
@@ -186,5 +178,3 @@ The dev supergraph source is available in Hive Gateway today. The
 [documentation](/docs/gateway/supergraph-proxy-source) covers the configuration options, the CLI
 flags and environment variables, and how each service source resolves its schema.
 
-If you try it on your graph, we would like to hear how it fits your workflow. Open an issue or a
-discussion in the [Hive Gateway repository](https://github.com/graphql-hive/gateway).
