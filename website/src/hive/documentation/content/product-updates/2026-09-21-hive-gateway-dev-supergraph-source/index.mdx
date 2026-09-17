@@ -1,0 +1,56 @@
+---
+title: Compose Local Subgraphs Inside Hive Gateway
+description:
+  The new dev supergraph source lets Hive Gateway compose the subgraphs running on your machine,
+  locally or with the rest of your graph through the Hive registry.
+date: 2026-09-21
+authors: [jdolle]
+---
+
+Hive Gateway can now compose its own supergraph during development. Point the `supergraph` command
+at the subgraphs running on your machine and the gateway resolves their schemas, composes them, and
+serves the result. It recomposes whenever one of the schemas changes, so you can leave it running
+while you work. There is no `hive dev` process to start and no supergraph file to watch.
+
+## Quick Start
+
+Pass one `--dev-service` per subgraph, or configure a `dev` supergraph source in
+`gateway.config.ts`:
+
+```sh
+hive-gateway supergraph \
+  --dev-service products=http://localhost:4001/graphql \
+  --dev-service reviews=http://localhost:4002/graphql
+```
+
+By default each service's schema is fetched through its federation `_service { sdl }` field. Set
+`--dev-service-source <name>=graphql` for services that are not federation aware, or
+`<name>=file` with `--dev-service-schema <name>=./schema.graphql` to read the SDL from disk, which
+lets you compose a schema before a single resolver exists.
+
+## Compose With the Rest of Your Graph
+
+Local composition only includes the services you list. To run only the subgraph you are changing,
+enable remote composition. The gateway sends your local schemas to the Hive registry, which replaces
+the target's subgraph of the same name and composes it with every other subgraph as last published:
+
+```sh
+hive-gateway supergraph \
+  --dev-service products=http://localhost:4001/graphql \
+  --dev-remote \
+  --dev-registry-token "$HIVE_REGISTRY_TOKEN" \
+  --dev-target my-org/my-project/staging
+```
+
+Remote composition uses the same composition engine and project configuration as schema checks and
+publishes, so what composes on your machine composes in CI. We recommend it whenever your graph is
+published to a Hive target. Keep local composition for offline work and quick experiments.
+
+The `dev` source is meant for local development. In deployed environments, keep serving a
+supergraph from the Hive CDN or one of the other supergraph sources.
+
+---
+
+- [Supergraph sources documentation](/docs/gateway/supergraph-proxy-source)
+- [Blog: Local Subgraph Development Just Got Easier](/blog/hive-gateway-local-subgraph-development)
+- [`hive dev` in the Hive CLI](/docs/api-reference/cli#local-subgraph-development)
