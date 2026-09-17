@@ -1,0 +1,51 @@
+---
+/**
+ * A call-to-action button in a landing page hero. `variant` picks the fill
+ * and `tone` names the hero behind it, because the same variant needs
+ * different colors on the dark green hero than on the light blue one: a ghost
+ * button in the light palette has green text that vanishes on the dark hero.
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'a'> {
+  href: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  tone?: 'light' | 'dark';
+}
+
+const { variant = 'primary', tone = 'light', class: className, ...rest } = Astro.props;
+
+const base =
+  'relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap sm:w-fit [&>svg]:size-6';
+
+const fills = {
+  light: {
+    primary:
+      'text-green-1000 bg-primary hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40',
+    secondary:
+      'bg-green-800 text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40',
+    ghost:
+      'text-green-1000 hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40',
+  },
+  dark: {
+    primary:
+      'text-green-1000 bg-primary hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40',
+    secondary:
+      'text-green-1000 bg-green-300 hover:bg-green-200 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-300/40',
+    ghost:
+      'text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white/40',
+  },
+};
+
+// The hairline border drawn over the fill; the light secondary button has none.
+const borders = {
+  light: { primary: 'border-green-800', secondary: null, ghost: 'border-green-800' },
+  dark: { primary: 'border-green-800', secondary: 'border-green-800', ghost: 'border-white/30' },
+};
+const border = borders[tone][variant];
+---
+
+<a class:list={[base, fills[tone][variant], className]} {...rest}>
+  {border && <span class:list={['absolute inset-0 rounded-lg border', border]}></span>}
+  <slot />
+</a>

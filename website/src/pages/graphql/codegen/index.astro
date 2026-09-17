@@ -5,6 +5,7 @@
  */
 import '~hive/styles/global.css';
 import BaseHead from '~hive/components/BaseHead.astro';
+import HeroButton from '~hive/components/landing/HeroButton.astro';
 import ToolsAndLibraries from '~hive/components/landing/ToolsAndLibraries.astro';
 import SiteNavigation from '~hive/components/SiteNavigation.astro';
 import CodegenFooter from '../../../codegen/components/CodegenFooter.astro';
@@ -195,27 +196,19 @@ const checkmark = `<svg fill="none" height="20" viewBox="0 0 20 20" width="20"><
           </li>
         </ul>
         <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
-          <a
-            class="text-green-1000 bg-primary relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40 sm:w-fit"
-            href={withBase('/docs/getting-started')}
-          >
-            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+          <HeroButton href={withBase('/docs/getting-started')} tone="dark">
             Get started
-          </a>
-          <a
-            class="text-green-1000 relative flex items-center justify-center gap-2 rounded-lg bg-green-300 px-6 py-3 leading-6 font-medium text-nowrap hover:bg-green-200 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-300/40 sm:w-fit"
-            href={withBase('/plugins')}
-          >
-            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+          </HeroButton>
+          <HeroButton href={withBase('/plugins')} tone="dark" variant="secondary">
             Browse plugins
-          </a>
-          <a
-            class="relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white/40 sm:w-fit"
+          </HeroButton>
+          <HeroButton
             href={withBase('/changelogs/graphql-codegen-cli')}
+            tone="dark"
+            variant="ghost"
           >
-            <span class="absolute inset-0 rounded-lg border border-white/30"></span>
             Changelog
-          </a>
+          </HeroButton>
         </div>
       </div>
 

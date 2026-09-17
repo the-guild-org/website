@@ -9,6 +9,7 @@ import puzzleIcon from '../../../envelop/assets/icons/puzzle.svg?raw';
 import serverLineIcon from '../../../envelop/assets/icons/server-line.svg?raw';
 import timerLineIcon from '../../../envelop/assets/icons/timer-line.svg?raw';
 import BaseHead from '~hive/components/BaseHead.astro';
+import HeroButton from '~hive/components/landing/HeroButton.astro';
 import ToolsAndLibraries from '~hive/components/landing/ToolsAndLibraries.astro';
 import SiteFooter from '~hive/components/SiteFooter.astro';
 import SiteNavigation from '~hive/components/SiteNavigation.astro';
@@ -185,33 +186,20 @@ const iconBadge =
           </li>
         </ul>
         <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
-          <a
-            class="text-green-1000 bg-primary relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit"
-            href={withBase('/docs')}
-          >
-            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
-            Get started
-          </a>
-          <a
-            class="relative flex items-center justify-center gap-2 rounded-lg bg-green-800 px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit"
-            href={withBase('/plugins')}
-          >
+          <HeroButton href={withBase('/docs')}>Get started</HeroButton>
+          <HeroButton href={withBase('/plugins')} variant="secondary">
             Plugin Hub
-          </a>
-          <a
-            class="relative flex items-center justify-center gap-2 rounded-lg bg-green-800 px-6 py-3 leading-6 font-medium text-nowrap text-white hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit"
+          </HeroButton>
+          <HeroButton
             href="https://the-guild.dev/graphql/yoga-server/changelogs/envelop/core"
+            variant="secondary"
           >
             Changelog
-          </a>
-          <a
-            class="text-green-1000 relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white/40 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800/40 sm:w-fit [&>svg]:size-6"
-            href={`${ENVELOP_REPO_URL}/tree/main/packages/envelop`}
-          >
-            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+          </HeroButton>
+          <HeroButton href={`${ENVELOP_REPO_URL}/tree/main/packages/envelop`} variant="ghost">
             <Fragment set:html={githubIcon} />
             GitHub
-          </a>
+          </HeroButton>
         </div>
       </div>
 
