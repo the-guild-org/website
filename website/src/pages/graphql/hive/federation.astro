@@ -1,5 +1,6 @@
 ---
 import BaseHead from '~hive/components/BaseHead.astro';
+import HeroButton from '~hive/components/landing/HeroButton.astro';
 import SiteFooter from '~hive/components/SiteFooter.astro';
 import SiteNavigation from '~hive/components/SiteNavigation.astro';
 import { withBase } from '~hive/lib/base-path';
@@ -135,23 +136,22 @@ const faqs: [string, string[]][] = [
           gateway.
         </p>
         <div class="relative z-10 flex flex-col justify-center gap-2 px-0.5 sm:flex-row sm:gap-4">
-          <a
-            class="text-green-1000 bg-primary relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40 sm:w-fit"
+          <HeroButton
             href={withBase('/')}
             title="Learn about our Open-Source GraphQL Federation Solution - Hive"
+            tone="dark"
           >
-            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
             Try Hive for Federation
-          </a>
-          <a
-            class="text-green-1000 relative flex items-center justify-center gap-2 rounded-lg bg-green-300 px-6 py-3 leading-6 font-medium text-nowrap hover:bg-green-200 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-300/40 sm:w-fit"
+          </HeroButton>
+          <HeroButton
             data-contact-link
             href="https://the-guild.dev/contact"
             title="Contact our experts to learn more about GraphQL Federation"
+            tone="dark"
+            variant="secondary"
           >
-            <span class="absolute inset-0 rounded-lg border border-green-800"></span>
             Contact an Expert
-          </a>
+          </HeroButton>
         </div>
 
         <div class="pointer-events-none absolute inset-0 overflow-hidden">
