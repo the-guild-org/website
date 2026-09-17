@@ -85,8 +85,14 @@ hive schema:publish \
   --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>" \
   --service "<YOUR_SERVICE_NAME>" \
   --url "<YOUR_SERVICE_URL>" \
+  --fail-on-composition-error \
   --revision "$GIT_COMMIT_SHA"
 ```
+
+For Federation projects, `--fail-on-composition-error` stops the deployment job without recording an
+invalid schema version if the proposed subgraph causes the supergraph or a contract to fail
+composition. This protects the deployment boundary from changes that landed after the pull-request
+check and from concurrent subgraph releases.
 
 Use separate tokens with the minimum required permissions for each stage: `Schema check` for pull
 requests, `Schema push` for the merge or release flow, and `Schema publish` for deployment.
