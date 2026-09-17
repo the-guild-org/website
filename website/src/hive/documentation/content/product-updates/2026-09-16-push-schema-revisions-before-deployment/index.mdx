@@ -1,0 +1,98 @@
+---
+title: Push Schema Revisions Before Deployment
+description:
+  Upload immutable schema revisions after merge and publish the exact revision when the service is
+  deployed.
+date: 2026-09-16
+authors: [laurin]
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+The Hive CLI now lets you push an immutable schema revision to Hive without publishing it
+immediately. This separates registering a release candidate from making it the current schema or service in the
+target environment.
+
+<Callout type="info">
+
+This feature is available in [Hive CLI
+v0.64.0](https://github.com/graphql-hive/console/releases/tag/%40graphql-hive%2Fcli%400.64.0) and
+later.
+
+</Callout>
+
+The recommended workflow is:
+
+1. Check the schema in pull-request CI with `hive schema:check`.
+2. Push an immutable revision as part of your merge or release flow with `hive schema:push`.
+3. Publish that exact revision after the service is deployed with `hive schema:publish`.
+
+## Check Pull Requests
+
+Continue to validate every proposed schema change before it is merged:
+
+```bash
+hive schema:check schema.graphql \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<ORGANIZATION>/<PROJECT>/<TARGET>"
+```
+
+Schema checks detect composition errors and breaking changes without adding a schema revision to the
+registry.
+
+## Push After Merge
+
+Once the change is merged and ready for release, upload the schema under an immutable revision name,
+such as the Git commit SHA:
+
+```bash
+hive schema:push schema.graphql \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<ORGANIZATION>/<PROJECT>/<TARGET>" \
+  --revision "$GIT_COMMIT_SHA"
+```
+
+Pushing stores the revision without publishing it. Reusing a revision name with different schema SDL
+fails, so the revision remains a stable reference to the artifact that passed through your release
+flow.
+
+For a federated or schema-stitching project, also pass the service name when pushing:
+
+```bash
+hive schema:push products.graphql \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<ORGANIZATION>/<PROJECT>/<TARGET>" \
+  --service products \
+  --revision "$GIT_COMMIT_SHA"
+```
+
+## Publish During Deployment
+
+When the service is deployed, publish the previously pushed revision:
+
+```bash
+hive schema:publish \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<ORGANIZATION>/<PROJECT>/<TARGET>" \
+  --revision "$GIT_COMMIT_SHA"
+```
+
+For a distributed schema, provide the same service name and its deployed endpoint:
+
+```bash
+hive schema:publish \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --target "<ORGANIZATION>/<PROJECT>/<TARGET>" \
+  --service products \
+  --url "https://products.example.com/graphql" \
+  --revision "$GIT_COMMIT_SHA"
+```
+
+This ensures that Hive publishes the same schema artifact associated with the release, at the point
+when the corresponding service becomes available.
+
+---
+
+- [Schema revision CI/CD workflow](/docs/other-integrations/ci-cd#schema-revision-workflow)
+- [Hive CLI schema push documentation](/docs/api-reference/cli#push-a-schema-revision)
+- [Hive CLI schema publish documentation](/docs/api-reference/cli#publish-a-schema)

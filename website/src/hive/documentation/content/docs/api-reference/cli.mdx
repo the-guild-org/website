@@ -161,11 +161,50 @@ git config --global user.email "john@doe.org"
 
 ## Usage
 
+### Push a Schema Revision
+
+Use `hive schema:push` to upload an immutable schema revision without publishing it. Push the
+revision during your merge or release flow, then [publish that revision](#publish-a-schema) when the
+corresponding service is deployed.
+
+<Callout  type="info">
+  This CLI command requires an access token with the `Schema push` permission on
+  the specified target. Please refer to our access token [documentation for
+  creating an access token](/docs/schema-registry/management/access-tokens).
+</Callout>
+
+Use an immutable identifier, such as the Git commit SHA, as the revision:
+
+```bash
+hive schema:push schema.graphql \
+  --registry.accessToken "<YOUR_ACCESS_TOKEN>" \
+  --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>" \
+  --revision "<YOUR_REVISION>"
+```
+
+For Apollo Federation and Schema Stitching projects, include the service name:
+
+```bash
+hive schema:push products.graphql \
+  --registry.accessToken "<YOUR_ACCESS_TOKEN>" \
+  --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>" \
+  --service products \
+  --revision "<YOUR_REVISION>"
+```
+
+Revision names are immutable for a service within a project. Pushing different schema SDL with an
+existing revision name fails. Pushing does not add a published schema version or update the schema
+served through the Hive CDN.
+
+**Further reading:**
+
+- [Schema revision CI/CD workflow](/docs/other-integrations/ci-cd#schema-revision-workflow)
+
 ### Publish a Schema
 
 You can use the CLI for publishing schema or services/subgraphs to the schema registry.
 
-<Callout emoji="🔑" type="info">
+<Callout type="info">
   This CLI command requires an access token with the `Schema publish`
   permissions on the specified target. Please refer to our access token
   [documentation for creating an access
@@ -174,8 +213,44 @@ You can use the CLI for publishing schema or services/subgraphs to the schema re
 
 <Callout>
   We recommend publishing the schema from your CI/CD pipeline. You can find more
-  information in out [CI/CD Integration guide](/docs/other-integrations/ci-cd).
+  information in our [CI/CD Integration guide](/docs/other-integrations/ci-cd).
 </Callout>
+
+To publish a schema that was uploaded earlier with `hive schema:push`, omit the schema file and pass
+its revision:
+
+<Tabs items={['Apollo Federation / Schema Stitching', 'Monolithic Schema']}>
+
+<Tabs.Tab>
+
+```bash
+hive schema:publish \
+  --registry.accessToken "<YOUR_ACCESS_TOKEN>" \
+  --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>" \
+  --service reviews \
+  --url http://my-service.com/graphql \
+  --revision "<YOUR_REVISION>"
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+```bash
+hive schema:publish \
+  --registry.accessToken "<YOUR_ACCESS_TOKEN>" \
+  --target "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>" \
+  --revision "<YOUR_REVISION>"
+```
+
+</Tabs.Tab>
+
+</Tabs>
+
+The revision must already exist for the target's project and, for a distributed schema, the specified
+service. Hive publishes the exact SDL stored for that immutable revision.
+
+You can also publish SDL directly from a file:
 
 <Tabs items={['Apollo Federation / Schema Stitching', 'Monolithic Schema']}>
 
@@ -327,7 +402,7 @@ The schema version ID can be obtained from the Hive Console schema history view.
 
 ### Check a Schema
 
-<Callout emoji="🔑" type="info">
+<Callout type="info">
   This CLI command requires an access token with the `Schema Check` permissions
   on the specified target. Please refer to our access token [documentation for
   creating an access token](/docs/schema-registry/management/access-tokens).
@@ -408,7 +483,7 @@ hive schema:check \
   projects.
 </Callout>
 
-<Callout emoji="🔑" type="info">
+<Callout type="info">
   This CLI command requires an access token with the `Delete subgraph`
   permissions on the specified target. Please refer to our [documentation for
   creating access tokens](/docs/schema-registry/management/access-tokens).
@@ -456,7 +531,7 @@ changes. Hive Console CLI helps you to do that with the `hive dev` command.
 
 <summary>Remote mode</summary>
 
-<Callout emoji="🔑" type="info">
+<Callout type="info">
   This CLI command requires an active registry token with **Read** permissions
   to the target and the project, to perform a composition according to your
   project configuration.
