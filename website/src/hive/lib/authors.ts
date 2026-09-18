@@ -246,3 +246,10 @@ export function resolveAuthor(value: string | { name: string }): Author {
   const key = typeof value === 'string' ? value : value.name;
   return authors[key] ?? author(key, key);
 }
+
+/** Every distinct GitHub login above, for scripts/hive/fetch-avatars.ts. */
+export function authorGithubLogins(): string[] {
+  return [...new Set(Object.values(authors).map(entry => entry.github))].sort((a, b) =>
+    a.localeCompare(b),
+  );
+}

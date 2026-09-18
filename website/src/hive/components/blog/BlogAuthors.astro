@@ -1,6 +1,7 @@
 ---
 import { resolveAuthor } from '../../lib/authors';
 import { withBase } from '../../lib/base-path';
+import AuthorAvatar from './AuthorAvatar.astro';
 
 interface Props {
   align?: 'center' | 'start';
@@ -34,12 +35,7 @@ const singleAuthor = resolved.length === 1 ? resolved[0] : undefined;
     ]}
   >
     <a href={withBase(singleAuthor.link)} title={singleAuthor.name}>
-      <img
-        alt={singleAuthor.name}
-        class="size-10 rounded-full"
-        loading="lazy"
-        src={`https://github.com/${singleAuthor.github}.png?size=80`}
-      />
+      <AuthorAvatar author={singleAuthor} class="size-10 rounded-full" size={40} />
     </a>
     <div class="ml-2.5 flex flex-col">
       <a
@@ -82,12 +78,7 @@ const singleAuthor = resolved.length === 1 ? resolved[0] : undefined;
           href={withBase(author.link)}
           title={author.name}
         >
-          <img
-            alt={author.name}
-            class="size-10 rounded-full"
-            loading="lazy"
-            src={`https://github.com/${author.github}.png?size=80`}
-          />
+          <AuthorAvatar author={author} class="size-10 rounded-full" size={40} />
           <span class="ml-2.5 text-sm">{author.name}</span>
         </a>
       ))}

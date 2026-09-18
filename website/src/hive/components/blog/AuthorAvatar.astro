@@ -1,0 +1,45 @@
+---
+/**
+ * An author's picture from src/hive/assets/avatars (see
+ * scripts/hive/fetch-avatars.ts), or an initials badge when none is saved.
+ */
+import { Image } from 'astro:assets';
+import { authorAvatar, authorInitials } from '../../lib/avatars';
+
+interface Props {
+  /** Rendered size in CSS pixels; the image is emitted at 1x and 2x. */
+  size: number;
+  author: { github: string; name: string };
+  /** Defaults to the author's name; pass "" when the name is shown next to it. */
+  alt?: string;
+  class?: string;
+}
+
+const { alt, author, class: className = 'rounded-full', size } = Astro.props;
+const image = authorAvatar(author.github);
+const altText = alt ?? author.name;
+---
+
+{image ? (
+  <Image
+    alt={altText}
+    class={className}
+    densities={[1, 2]}
+    height={size}
+    loading="lazy"
+    src={image}
+    width={size}
+  />
+) : (
+  <span
+    aria-label={altText || undefined}
+    class:list={[
+      'text-green-1000 inline-flex shrink-0 items-center justify-center bg-green-200 font-medium select-none dark:bg-green-800 dark:text-green-100',
+      className,
+    ]}
+    role={altText ? 'img' : undefined}
+    style={`width:${size}px;height:${size}px;font-size:${Math.round(size * 0.4)}px`}
+  >
+    {authorInitials(author.name)}
+  </span>
+)}
