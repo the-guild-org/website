@@ -6,7 +6,7 @@
   "properties": {
     "size": {
       "type": "integer",
-      "minimum": 0
+      "minimum": 1
     },
     "map": {
       "type": "object",
@@ -42,8 +42,9 @@
         "type": "object",
         "properties": {
           "timestamp": {
+            "description": "Unix timestamp in milliseconds",
             "type": "integer",
-            "minimum": 0
+            "minimum": 1000000000000
           },
           "operationMapKey": {
             "type": "string"
@@ -58,11 +59,79 @@
               },
               "duration": {
                 "type": "integer",
-                "minimum": 0
+                "minimum": 0,
+                "maximum": 9223372036854775808
               },
               "errorsTotal": {
                 "type": "integer",
-                "minimum": 0
+                "minimum": 0,
+                "maximum": 65535
+              },
+              "fetches": {
+                "type": ["array", "null"],
+                "items": {
+                  "title": "SubgraphRequest",
+                  "additionalProperties": false,
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9223372036854775808
+                    },
+                    "duration": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9223372036854775808
+                    },
+                    "status": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 599
+                    },
+                    "fields": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/TrackedError"
+                      }
+                    },
+                    "subgraph": {
+                      "type": "string"
+                    },
+                    "paths": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": ["ROOT", "ENTITY"]
+                    }
+                  },
+                  "required": ["start", "duration", "fields", "subgraph", "paths", "type"]
+                }
+              },
+              "gatewayErrors": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/TrackedError"
+                }
               }
             },
             "required": ["ok", "duration", "errorsTotal"]
@@ -105,11 +174,17 @@
         "type": "object",
         "properties": {
           "timestamp": {
+            "description": "Unix timestamp in milliseconds",
             "type": "integer",
-            "minimum": 0
+            "minimum": 1000000000000
           },
           "operationMapKey": {
             "type": "string"
+          },
+          "persistedDocumentHash": {
+            "type": "string",
+            "title": "PersistedDocumentHash",
+            "pattern": "^[a-zA-Z0-9_-]{1,64}~[a-zA-Z0-9._-]{1,64}~([A-Za-z]|[0-9]|_){1,128}$"
           },
           "metadata": {
             "title": "Metadata",
@@ -137,5 +212,21 @@
       }
     }
   },
-  "required": ["size", "map"]
+  "required": ["size", "map"],
+  "definitions": {
+    "TrackedError": {
+      "title": "TrackedError",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "coordinate": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        }
+      },
+      "required": ["coordinate"]
+    }
+  }
 }
