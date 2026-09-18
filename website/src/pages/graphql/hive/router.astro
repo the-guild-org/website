@@ -42,13 +42,20 @@ try {
 } catch {
   // Offline build: the table renders empty and the tile falls back to the last known result.
 }
+// Without live audit data the tile is left out rather than showing a number we cannot back.
 const routerAudit = auditData.find(row => row.name === 'Hive Router');
-const auditPassed = routerAudit
-  ? `${routerAudit.cases.passed}/${routerAudit.cases.passed + routerAudit.cases.failed}`
-  : '100%';
+const auditTile = routerAudit
+  ? [
+      {
+        href: AUDIT_URL,
+        label: 'Federation audit test cases passed',
+        value: `${routerAudit.cases.passed}/${routerAudit.cases.passed + routerAudit.cases.failed}`,
+      },
+    ]
+  : [];
 
 const stats: { href: string; label: string; value: string }[] = [
-  { href: `${AUDIT_URL}`, label: 'Federation audit test cases passed', value: auditPassed },
+  ...auditTile,
   {
     href: BENCHMARK_URL,
     label: 'the throughput of Apollo Router in our open benchmark',
