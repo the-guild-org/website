@@ -19,6 +19,7 @@ import hiveCombinationMarkRaw from '../design-system/logos/hive-combination-mark
 import theGuildRaw from '../design-system/logos/the-guild.svg?raw';
 import { envelopMark } from '../../envelop/lib/site';
 import { inspectorMark } from '../../inspector/lib/site';
+import { conferences, latestConference, sessionCount } from '../../lib/graphqlconf';
 import { productMark } from '../../products/marks';
 import { basePath, withBase } from '../lib/base-path';
 import type { DocsNavNode, DocsNavPage } from '../lib/docs-nav';
@@ -579,7 +580,7 @@ const externalProps = (href: string) =>
             <div class="bg-beige-200 w-px"></div>
             <a
               class={`${navigationLinkClass} group w-[358px]`}
-              href="https://youtube.com/playlist?list=PL43V96KpNj7MKvDbnyOUrRv0k1gCODtjW&si=nOiETn8J21mYA9pm"
+              href="https://the-guild.dev/graphqlconf"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -592,16 +593,17 @@ const externalProps = (href: string) =>
                 alt=""
               />
               <strong class="text-green-1000 mt-6 block text-xl/7 font-medium">
-                GraphQLConf 2025
+                The Guild at GraphQLConf
               </strong>
               <p class="mt-4 text-sm/5 font-medium text-green-800">
-                September 08-10 | Amsterdam, NL
+                Latest: {latestConference.dates} | {latestConference.city}
               </p>
               <p class="mt-2 text-sm/5 font-normal text-green-800">
-                The official GraphQL conference hosted by GraphQL Foundation.
+                {sessionCount} talks, keynotes and workshops at the official GraphQL Foundation
+                conference, {conferences.at(-1)!.year} to {latestConference.year}.
               </p>
               <span class="group-hover:text-green-1000 mt-6 flex items-center gap-2 rounded-lg font-medium text-green-800 transition-colors">
-                Watch The Guild at GraphQLConf 2025 <Fragment set:html={inlineArrow} />
+                Browse every session <Fragment set:html={inlineArrow} />
               </span>
             </a>
           </div>
