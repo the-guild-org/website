@@ -1,13 +1,24 @@
 ---
 import { withBase } from '../../lib/base-path';
 
-interface Props {
-  class?: string;
+export interface AdvancedCard {
+  ctaHref: string;
+  description: string;
+  heading: string;
+  /** Inline SVG markup. */
+  icon: string;
+  /** Extra classes for the card, e.g. a mobile order. */
+  order?: string;
 }
 
-const { class: className } = Astro.props;
+interface Props {
+  cards?: AdvancedCard[];
+  class?: string;
+  description?: string;
+  title?: string;
+}
 
-const cards = [
+const gatewayCards: AdvancedCard[] = [
   {
     ctaHref: '/docs/gateway/deployment/node-frameworks/uwebsockets#subscriptions-with-websockets',
     description:
@@ -41,15 +52,20 @@ const cards = [
     order: '',
   },
 ];
+
+const {
+  cards = gatewayCards,
+  class: className,
+  description = 'Hive Gateway features a set of advanced GraphQL features.',
+  title = "Let's get advanced",
+} = Astro.props;
 ---
 
 <section class:list={['px-4 py-6 sm:py-12 md:px-6 lg:py-16 xl:px-24 xl:pb-24', className]}>
   <h2 class="group text-center text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]">
-    Let's get advanced
+    {title}
   </h2>
-  <p class="mt-4 text-center text-pretty text-green-800">
-    Hive Gateway features a set of advanced GraphQL features.
-  </p>
+  <p class="mt-4 text-center text-pretty text-green-800">{description}</p>
   <div class="nextra-scrollbar overflow-auto max-sm:-m-4 max-sm:p-4">
     <ul class="mt-6 flex gap-6 *:flex *:flex-col *:rounded-3xl max-sm:*:w-80 max-sm:*:shrink-0 sm:grid sm:grid-cols-2 md:mt-8 md:*:p-8 lg:mt-12 xl:mt-16 xl:grid-cols-4">
       {cards.map(card => (

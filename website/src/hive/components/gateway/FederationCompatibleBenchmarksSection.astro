@@ -1,11 +1,15 @@
 ---
 interface Props {
   class?: string;
+  /** Rows already fetched by the page, so it is not fetched twice. */
+  data?: BenchmarkDatum[];
+  /** The gateway whose row is highlighted and named in the lead-in. */
+  product?: string;
 }
 
-const { class: className } = Astro.props;
+const { class: className, data, product = 'Hive Gateway' } = Astro.props;
 
-interface BenchmarkDatum {
+export interface BenchmarkDatum {
   cases: {
     failed: number;
     passed: number;
@@ -17,16 +21,20 @@ interface BenchmarkDatum {
   };
 }
 
-let benchmarkData: BenchmarkDatum[] = [];
-try {
-  const res = await fetch('https://the-guild.dev/graphql/hive/federation-gateway-audit/data.json');
-  if (res.ok) {
-    benchmarkData = await res.json();
+let benchmarkData: BenchmarkDatum[] = data ?? [];
+if (!data) {
+  try {
+    const res = await fetch(
+      'https://the-guild.dev/graphql/hive/federation-gateway-audit/data.json',
+    );
+    if (res.ok) {
+      benchmarkData = await res.json();
+    }
+  } catch {
+    // Build-time fetch of live benchmark data failed (e.g. offline build); render an
+    // empty table rather than failing the whole build.
+    benchmarkData = [];
   }
-} catch {
-  // Build-time fetch of live benchmark data failed (e.g. offline build); render an
-  // empty table rather than failing the whole build.
-  benchmarkData = [];
 }
 ---
 
@@ -43,7 +51,7 @@ try {
   </header>
   <div class="my-6 flex items-start gap-6 max-md:flex-col md:mt-16 md:mb-12">
     <p class="text-2xl/8 text-pretty lg:text-[32px]/10">
-      Learn how Hive Gateway performs against other gateways in&nbsp;terms of correctness and
+      Learn how {product} performs against other gateways in&nbsp;terms of correctness and
       compliance with the Apollo Federation specification
     </p>
     <a
@@ -81,7 +89,7 @@ try {
       <tbody>
         {benchmarkData.map(row => {
           const compatibility = (row.cases.passed / (row.cases.passed + row.cases.failed)) * 100;
-          const highlight = row.name === 'Hive Gateway';
+          const highlight = row.name === product;
           return (
             <tr
               class:list={[
