@@ -29,7 +29,12 @@ const blurId = `eco-pc-blur-${name.toLowerCase().replace(/\s+/g, '-')}`;
       class="relative z-10 flex h-full flex-1 flex-col justify-between p-8 outline-hidden focus-visible:ring-3 focus-visible:outline-hidden"
       href={withBase(href)}
     >
-      <p class="relative z-10 font-medium">{name}</p>
+      <div class="relative z-10">
+        <p class="font-medium">{name}</p>
+        {title && (
+          <p class:list={['mt-2 text-sm', isHive ? 'text-white/80' : 'text-green-800']}>{title}</p>
+        )}
+      </div>
       <div class="relative z-0 mt-8 size-12" set:html={icon} />
       <svg
         class="absolute right-8 bottom-8 z-10"
