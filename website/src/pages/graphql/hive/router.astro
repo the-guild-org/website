@@ -58,7 +58,7 @@ const stats: { href: string; label: string; value: string }[] = [
   ...auditTile,
   {
     href: BENCHMARK_URL,
-    label: 'the throughput of Apollo Router in our open benchmark',
+    label: 'the throughput of Apollo Router',
     value: '~6×',
   },
   { href: BENCHMARK_URL, label: 'p95 latency at 50 concurrent users', value: '~48 ms' },
@@ -67,39 +67,39 @@ const stats: { href: string; label: string; value: string }[] = [
 
 const highlights: { description: string; href: string; title: string }[] = [
   {
-    title: 'Built in Rust, no garbage collector',
+    title: 'Built in Rust, no garbage collection',
     description:
-      'Arena allocation, zero-copy JSON and a parallel execution model keep tail latency flat under load. No GC pauses, no runtime overhead between your clients and your subgraphs.',
+      'Arena allocation, zero-copy JSON and no garbage collector. Latency stays flat under load.',
     href: '/blog/welcome-hive-router',
   },
   {
     title: 'Full Apollo Federation compatibility',
     description:
-      'Point it at your existing supergraph and it just works. Every feature is verified against our open Federation audit before it ships, including @defer, @stream and progressive overrides.',
+      'Point it at your existing supergraph. Every release is checked against our open Federation audit, including @defer, @stream and progressive overrides.',
     href: '/docs/router/compatibility',
   },
   {
     title: 'Observability built in',
     description:
-      'OpenTelemetry traces and metrics to Hive Console, any OTLP backend, Prometheus or Datadog, plus structured logs, health probes and usage reporting to the schema registry.',
+      'OpenTelemetry traces, Prometheus metrics, structured logs and health probes. Send them to Hive Console, Grafana, Datadog or any compatible backend.',
     href: '/docs/router/observability/tracing',
   },
   {
     title: 'Security at the edge of your graph',
     description:
-      'JWT authentication, @authenticated, @requiresScopes and @policy directives, demand control, persisted documents, CSRF and CORS protection, all configured in one YAML file.',
+      'JWT authentication, authorization directives, demand control, persisted documents, CSRF and CORS protection. One YAML file configures all of it.',
     href: '/docs/router/security/jwt-authentication',
   },
   {
     title: 'Federated subscriptions',
     description:
-      'Real-time data over Server-Sent Events, WebSockets or multipart HTTP, negotiated from the Accept header. Entity resolution across subgraphs works for subscription events too.',
+      'Real-time data over Server-Sent Events, WebSockets or multipart HTTP. Entities are resolved across subgraphs for subscription events too.',
     href: '/docs/router/subscriptions',
   },
   {
     title: 'Works with any registry',
     description:
-      'Load the supergraph from a file, the Hive CDN or Apollo GraphOS, and hot-reload it on change. Hive Router runs standalone; Hive Console is optional.',
+      'Load the supergraph from a file, Hive Console or Apollo GraphOS and reload it on change. Hive Console is optional.',
     href: '/docs/router/configuration/supergraph',
   },
 ];
@@ -107,13 +107,13 @@ const highlights: { description: string; href: string; title: string }[] = [
 const quickStart = [
   {
     title: 'Install',
-    copy: 'One command downloads the binary for Linux or macOS. Prefer containers? Pull ghcr.io/graphql-hive/router instead.',
+    copy: 'Downloads the binary for Linux or macOS. For containers, pull ghcr.io/graphql-hive/router.',
     code: 'curl -o- https://raw.githubusercontent.com/graphql-hive/router/main/install.sh | sh',
     lang: 'sh',
   },
   {
     title: 'Point it at your supergraph',
-    copy: 'A file, the Hive CDN or Apollo GraphOS. This is the whole config for a local file.',
+    copy: 'This is the whole config for a local file. Hive Console and Apollo GraphOS work as sources too.',
     code: `supergraph:
   source: file
   path: ./supergraph.graphql`,
@@ -121,7 +121,7 @@ const quickStart = [
   },
   {
     title: 'Run it',
-    copy: 'The router serves your federated graph on port 4000, with a GraphQL IDE at the root.',
+    copy: 'Serves your supergraph on port 4000.',
     code: './hive_router',
     lang: 'sh',
   },
@@ -131,7 +131,7 @@ const advancedCards: AdvancedCard[] = [
   {
     ctaHref: '/docs/router/customizations/plugin-system',
     description:
-      'Hook into every stage of the request lifecycle with plugins written in Rust: HTTP, GraphQL parsing, query planning, execution and subgraph calls.',
+      'Plugins written in Rust and compiled into the router, with hooks into the HTTP, GraphQL, query planning and execution stages.',
     heading: 'Rust Plugin System',
     icon: '<svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="M8.68601 3.99988L11.293 1.39288C11.4805 1.20541 11.7348 1.1001 12 1.1001C12.2652 1.1001 12.5195 1.20541 12.707 1.39288L15.314 3.99988H19C19.2652 3.99988 19.5196 4.10524 19.7071 4.29278C19.8946 4.48031 20 4.73467 20 4.99988V8.68588L22.607 11.2929C22.7945 11.4804 22.8998 11.7347 22.8998 11.9999C22.8998 12.265 22.7945 12.5194 22.607 12.7069L20 15.3139V18.9999C20 19.2651 19.8946 19.5195 19.7071 19.707C19.5196 19.8945 19.2652 19.9999 19 19.9999H15.314L12.707 22.6069C12.5195 22.7944 12.2652 22.8997 12 22.8997C11.7348 22.8997 11.4805 22.7944 11.293 22.6069L8.68601 19.9999H5.00001C4.73479 19.9999 4.48044 19.8945 4.2929 19.707C4.10536 19.5195 4.00001 19.2651 4.00001 18.9999V15.3139L1.39301 12.7069C1.20554 12.5194 1.10022 12.265 1.10022 11.9999C1.10022 11.7347 1.20554 11.4804 1.39301 11.2929L4.00001 8.68588V4.99988C4.00001 4.73467 4.10536 4.48031 4.2929 4.29278C4.48044 4.10524 4.73479 3.99988 5.00001 3.99988H8.68601ZM6.00001 5.99988V9.51488L3.51501 11.9999L6.00001 14.4849V17.9999H9.51501L12 20.4849L14.485 17.9999H18V14.4849L20.485 11.9999L18 9.51488V5.99988H14.485L12 3.51488L9.51501 5.99988H6.00001ZM12 15.9999C10.9391 15.9999 9.92173 15.5785 9.17158 14.8283C8.42143 14.0782 8.00001 13.0608 8.00001 11.9999C8.00001 10.939 8.42143 9.9216 9.17158 9.17146C9.92173 8.42131 10.9391 7.99988 12 7.99988C13.0609 7.99988 14.0783 8.42131 14.8284 9.17146C15.5786 9.9216 16 10.939 16 11.9999C16 13.0608 15.5786 14.0782 14.8284 14.8283C14.0783 15.5785 13.0609 15.9999 12 15.9999ZM12 13.9999C12.5304 13.9999 13.0391 13.7892 13.4142 13.4141C13.7893 13.039 14 12.5303 14 11.9999C14 11.4695 13.7893 10.9607 13.4142 10.5857C13.0391 10.2106 12.5304 9.99988 12 9.99988C11.4696 9.99988 10.9609 10.2106 10.5858 10.5857C10.2107 10.9607 10 11.4695 10 11.9999C10 12.5303 10.2107 13.039 10.5858 13.4141C10.9609 13.7892 11.4696 13.9999 12 13.9999Z"></path></svg>',
     order: 'max-sm:order-10',
@@ -139,21 +139,21 @@ const advancedCards: AdvancedCard[] = [
   {
     ctaHref: '/docs/router/customizations/coprocessors',
     description:
-      'Inspect, mutate or short-circuit requests from a service in any language, at defined stages of the router lifecycle. No Rust required.',
+      'External HTTP services in any language. The router calls them at the same stages, no Rust required.',
     heading: 'Coprocessors',
     icon: '<svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="M12.172 10.9999L7.515 6.34293L8.929 4.92993L15.999 11.9999L8.929 19.0709L7.515 17.6569L12.17 12.9999H3V10.9999H12.172ZM18 18.9999V4.99993H20V18.9999H18Z"></path></svg>',
   },
   {
     ctaHref: '/docs/router/configuration/persisted_documents',
     description:
-      'Allow only pre-registered operations from the Hive CDN, a file or your own storage, and turn arbitrary queries away before they reach the planner.',
+      'Only run operations registered in Hive Console, a file or your own storage. Everything else is rejected before planning.',
     heading: 'Persisted Documents',
     icon: '<svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="M20.083 15.2L21.285 15.921C21.3591 15.9654 21.4205 16.0283 21.4631 16.1035C21.5058 16.1787 21.5282 16.2636 21.5282 16.35C21.5282 16.4365 21.5058 16.5214 21.4631 16.5966C21.4205 16.6718 21.3591 16.7347 21.285 16.779L12.515 22.041C12.3594 22.1345 12.1814 22.1839 12 22.1839C11.8185 22.1839 11.6405 22.1345 11.485 22.041L2.71498 16.779C2.64082 16.7347 2.57944 16.6718 2.53682 16.5966C2.4942 16.5214 2.4718 16.4365 2.4718 16.35C2.4718 16.2636 2.4942 16.1787 2.53682 16.1035C2.57944 16.0283 2.64082 15.9654 2.71498 15.921L3.91698 15.2L12 20.05L20.083 15.2ZM20.083 10.5L21.285 11.221C21.3591 11.2654 21.4205 11.3283 21.4631 11.4035C21.5058 11.4787 21.5282 11.5636 21.5282 11.65C21.5282 11.7365 21.5058 11.8214 21.4631 11.8966C21.4205 11.9718 21.3591 12.0347 21.285 12.079L12 17.649L2.71498 12.079C2.64082 12.0347 2.57944 11.9718 2.53682 11.8966C2.4942 11.8214 2.4718 11.7365 2.4718 11.65C2.4718 11.5636 2.4942 11.4787 2.53682 11.4035C2.57944 11.3283 2.64082 11.2654 2.71498 11.221L3.91698 10.5L12 15.35L20.083 10.5ZM12.514 1.30905L21.285 6.57105C21.3591 6.61544 21.4205 6.6783 21.4631 6.75348C21.5058 6.82867 21.5282 6.91362 21.5282 7.00005C21.5282 7.08647 21.5058 7.17142 21.4631 7.24661C21.4205 7.3218 21.3591 7.38465 21.285 7.42905L12 12.999L2.71498 7.43005C2.64082 7.38565 2.57944 7.3228 2.53682 7.24761C2.4942 7.17242 2.4718 7.08747 2.4718 7.00105C2.4718 6.91462 2.4942 6.82967 2.53682 6.75448C2.57944 6.6793 2.64082 6.61644 2.71498 6.57205L11.485 1.31005C11.6405 1.2166 11.8185 1.16724 12 1.16724C12.1814 1.16724 12.3594 1.2166 12.515 1.31005M12 3.33205L5.88698 7.00005L12 10.668L18.113 7.00005L12 3.33205Z"></path></svg>',
   },
   {
     ctaHref: '/docs/router/security/demand-control',
     description:
-      'Reject operations that exceed a cost, depth or alias budget before executing them, so one expensive query cannot take your subgraphs down.',
+      'Reject operations over a cost, depth or alias budget before they run, so one expensive query cannot take your subgraphs down.',
     heading: 'Demand Control',
     icon: '<svg fill="currentColor" height="24" width="24"><path d="M5.25 7.5a2.25 2.25 0 1 1 3 2.122v4.756a2.251 2.251 0 1 1-1.5 0V9.622A2.25 2.25 0 0 1 5.25 7.5Zm9.22-2.03a.75.75 0 0 1 1.06 0l.97.97.97-.97a.75.75 0 1 1 1.06 1.06l-.97.97.97.97a.75.75 0 0 1-1.06 1.06l-.97-.97-.97.97a.75.75 0 1 1-1.06-1.06l.97-.97-.97-.97a.75.75 0 0 1 0-1.06Zm2.03 5.03a.75.75 0 0 1 .75.75v3.128a2.251 2.251 0 1 1-1.5 0V11.25a.75.75 0 0 1 .75-.75Z"></path></svg>',
   },
@@ -166,31 +166,31 @@ const docsLink = (href: string, text: string) =>
 const faqs: [string, string][] = [
   [
     'Hive Router or Hive Gateway, which one should I pick?',
-    `Both are fully open source and both are supported. Hive Router is written in Rust for teams that want the highest throughput and lowest resource usage from a standalone binary. ${docsLink('/gateway', 'Hive Gateway')} is written in TypeScript for teams that want to run inside a Node.js or serverless runtime, embed it in an existing app, or write plugins in JavaScript. They read the same supergraph and report to the same Hive Console, so you can switch later.`,
+    `Both are open source and actively maintained. Hive Router is written in Rust for high throughput and low resource usage. ${docsLink('/gateway', 'Hive Gateway')} is written in TypeScript and runs on Node.js and other (serverless) JavaScript runtimes. Gateway provides more flexibility for teams that are already familiar with TypeScript. Both can serve a supergraph from a local file or a schema registry, such as Hive Console.`,
   ],
   [
     'Can I replace Apollo Router without changing my subgraphs?',
-    `Yes. Hive Router consumes a standard Apollo Federation supergraph, so you keep your subgraphs and your composition pipeline and only swap the binary. See the ${docsLink('/docs/router/compatibility', 'compatibility overview')} for the directives and features covered, and the ${docsLink('/docs/router/getting-started', 'getting started guide')} to run it in a few minutes.`,
+    `Yes. Hive Router consumes a standard Apollo Federation supergraph, so you keep your subgraphs and your composition pipeline and only swap the binary, while re-using your existing supergraph from a local file or even GraphOS. See the ${docsLink('/docs/router/compatibility', 'compatibility overview')} for the directives and features covered, and the ${docsLink('/docs/router/getting-started', 'getting started guide')}.`,
   ],
   [
     'Does Hive Router support GraphQL subscriptions?',
-    `Yes. Federated subscriptions are built in, over Server-Sent Events, WebSockets or multipart HTTP, with the transport between the router and each subgraph configured independently. ${docsLink('/docs/router/subscriptions', 'Read more.')}`,
+    `Yes. Federated subscriptions are built in, over Server-Sent Events, WebSockets or multipart HTTP. The protocol between the router and each subgraph can be configured individually. ${docsLink('/docs/router/subscriptions', 'Read more.')}`,
   ],
   [
-    'How do I extend it?',
-    `Two ways. ${docsLink('/docs/router/customizations/plugin-system', 'Plugins')} are written in Rust and compiled into the router, with hooks into the HTTP, GraphQL, query planning and execution stages. ${docsLink('/docs/router/customizations/coprocessors', 'Coprocessors')} are external services in any language that the router calls at those same stages.`,
+    'How do I extend the router?',
+    `There are two ways to extend Hive Router. ${docsLink('/docs/router/customizations/plugin-system', 'Plugins')} are written in Rust and compiled into the router. ${docsLink('/docs/router/customizations/coprocessors', 'Coprocessors')} are external HTTP services in any language that the router calls. Both support hooking into the HTTP, GraphQL, query planning and execution stages of a request.`,
   ],
   [
     'How does Hive Router integrate with my monitoring stack?',
-    `It emits OpenTelemetry traces and metrics, which you can send to Hive Console, any OTLP-compatible backend, Prometheus or Datadog, alongside structured logs, health and readiness probes and schema usage reporting. ${docsLink('/docs/router/observability/tracing', 'Read more.')}`,
+    `It emits OpenTelemetry traces and Prometheus metrics, which you can send to Hive Console or any compatible backend, such as Datadog or Grafana, alongside structured logs, health and readiness probes. Furthermore, schema usage metrics can be sent to a schema registry such as Hive Console or GraphOS. ${docsLink('/docs/router/observability/tracing', 'Read more.')}`,
   ],
   [
     'Do I need Hive Console to use Hive Router?',
-    `No. Hive Router runs standalone with a supergraph file or a schema loaded from Apollo GraphOS. Connecting it to Hive Console adds hot-reloading from the Hive CDN, persisted documents, usage reporting and tracing in one place. ${docsLink('/docs/router/configuration/supergraph', 'Read more.')}`,
+    `No. Hive Router is a standalone binary that can load a supergraph file and other sources such as Hive Console or Apollo GraphOS. Using Hive Console is fully optional and provides additional features such as a place to manage your supergraph, publish persisted documents and collect metrics. ${docsLink('/docs/router/configuration/supergraph', 'Read more.')}`,
   ],
   [
     'Are all Hive Router features open source?',
-    `Yes. Hive Router is MIT licensed and every feature, including subscriptions, persisted documents, JWT authentication, authorization directives, demand control, traffic shaping, coprocessors and OpenTelemetry, ships in the same binary with no license tiers. ${docsLink('/docs/router', 'Read more.')}`,
+    `Yes. Hive Router is MIT licensed. Every feature ships in the same binary, with no license tiers. ${docsLink('/docs/router', 'Read more.')}`,
   ],
 ];
 ---
@@ -256,9 +256,8 @@ const faqs: [string, string][] = [
           Hive Router
         </h1>
         <p class="mx-auto w-[560px] max-w-[80%] text-center leading-6 text-green-800">
-          The open-source GraphQL Federation router written in Rust. Serve your supergraph with the
-          throughput of a systems language, full Apollo Federation compatibility and observability
-          built in.
+          The open-source GraphQL Federation router written in Rust. Serve your supergraph with
+          native performance.
         </p>
         <ul class="mx-auto flex list-none gap-x-6 gap-y-2 text-sm font-medium max-md:flex-col">
           {checkmarks.map(text => (
@@ -400,11 +399,11 @@ const faqs: [string, string][] = [
         <div class="relative z-10 lg:grid lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:gap-16">
           <header>
             <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]">
-              From zero to a running supergraph in three commands
+              From zero to a running supergraph in three steps
             </h2>
             <p class="mt-6 text-white/80">
-              No runtime to install and nothing to compile. Bring a supergraph schema, or use our
-              demo one, and the router serves it with a GraphQL IDE on port 4000.
+              No runtime to install, nothing to compile. Bring a supergraph schema and the router
+              serves it on port 4000, with a GraphQL IDE included.
             </p>
             <a
               class="text-green-1000 bg-primary relative mt-8 inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40"
@@ -423,12 +422,42 @@ const faqs: [string, string][] = [
                 <div class="min-w-0 grow">
                   <h3 class="text-xl/7 font-medium">{step.title}</h3>
                   <p class="mt-1 text-sm/6 text-white/80">{step.copy}</p>
-                  <Code
-                    class="mt-3 rounded-xl bg-green-900! p-4 text-sm [&_code]:text-sm"
-                    code={step.code}
-                    lang={step.lang}
-                    theme="github-dark"
-                  />
+                  <div class="relative mt-3">
+                    <Code
+                      class="rounded-xl bg-green-900! p-4 pr-14 text-sm [&_code]:text-sm"
+                      code={step.code}
+                      lang={step.lang}
+                      theme="github-dark"
+                    />
+                    <button
+                      class="hive-focus absolute top-2 right-2 rounded-lg bg-green-900 p-2 text-white/70 shadow-[-12px_0_12px_var(--color-green-900)] transition-colors hover:bg-white/10 hover:text-white data-copied:text-green-300 [&>svg]:size-5 [&[data-copied]>[data-copy-icon]]:hidden [&:not([data-copied])>[data-check-icon]]:hidden"
+                      aria-label="Copy to clipboard"
+                      data-copy-snippet={step.code}
+                      type="button"
+                    >
+                      <svg
+                        data-copy-icon
+                        aria-hidden="true"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                      </svg>
+                      <svg
+                        data-check-icon
+                        aria-hidden="true"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="m20 6-11 11-5-5" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </li>
             ))}
@@ -470,5 +499,18 @@ const faqs: [string, string][] = [
     </main>
 
     <SiteFooter />
+    <script>
+      for (const button of document.querySelectorAll<HTMLButtonElement>('[data-copy-snippet]')) {
+        button.addEventListener('click', async () => {
+          await navigator.clipboard.writeText(button.dataset.copySnippet ?? '');
+          button.dataset.copied = '';
+          button.ariaLabel = 'Copied';
+          window.setTimeout(() => {
+            delete button.dataset.copied;
+            button.ariaLabel = 'Copy to clipboard';
+          }, 1500);
+        });
+      }
+    </script>
   </body>
 </html>
