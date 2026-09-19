@@ -8,6 +8,7 @@ export const GET: APIRoute = async ({ site }) => {
     { path: '/' },
     { path: '/blog' },
     { path: '/logos' },
+    { path: '/graphqlconf' },
     ...posts.map(post => ({
       path: `/blog/${post.id}`,
       lastmod: post.data.updateDate ?? post.data.date,
