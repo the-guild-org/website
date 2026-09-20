@@ -295,7 +295,8 @@ export default defineConfig({
             themes: DOCS_CODE_THEMES,
             transformers: [...rehypeCodeDefaultOptions.transformers, transformerMetaHighlight()],
           }),
-          // The registry products share one code-block setup.
+          // The registry products share one code-block setup, mermaid included.
+          scoped(isProductFile, ...mermaidRehypePlugin),
           scoped(isProductFile, rehypeCode, {
             langs: [...DOCS_CODE_LANGS],
             themes: DOCS_CODE_THEMES,
