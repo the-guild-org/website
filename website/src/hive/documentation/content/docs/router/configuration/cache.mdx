@@ -1,0 +1,125 @@
+---
+title: "cache"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+The `cache` configuration controls the router's in-memory caches for parsing, validation,
+normalization, and query plans. These caches make repeated operations fast, but their memory usage
+grows with the number of *distinct* queries.
+
+Each cache supports a size limit (`max_entries`) and optional time-based expiry
+(`time_to_live`, `time_to_idle`). These settings are independent for each cache, so you can size the
+query-plan cache differently from the parsing cache.
+
+```yaml title="router.config.yaml"
+cache:
+  router:
+    parsing:
+      max_entries: 1000
+      time_to_live: 30m
+      time_to_idle: 5m
+  supergraph:
+    validation:
+      max_entries: 1000
+      time_to_idle: 5m
+    normalization:
+      max_entries: 1000
+      time_to_idle: 5m
+    query_plans:
+      max_entries: 1000
+      time_to_idle: 5m
+```
+
+## Scopes
+
+### `router` - one instance per process
+
+Caches under `cache.router` are shared by everything the router serves.
+
+| Cache     | What it holds |
+| --------- | -------------- |
+| `parsing` | Parsed GraphQL documents, keyed by the incoming query hash. Parsing is schema-independent, so this cache is shared across supergraph variants. |
+
+### `supergraph` - one instance per served variant
+
+Caches under `cache.supergraph` are created per supergraph variant. The configured supergraph
+(`supergraph.source`) gets one set, each plugin-constructed variant gets its own. Memory here is multiplied by the number of live variants.
+
+| Cache           | What it holds |
+| --------------- | -------------- |
+| `validation`    | Validation results for an operation against this supergraph. |
+| `normalization` | Normalized operations, ready to be planned.               |
+| `query_plans`   | Query plans built for this supergraph.                    |
+
+<Callout type="info">
+  Keep `max_entries` identical across `validation`, `normalization`, and `query_plans`, since
+  each distinct operation flows through all three caches. Set `router.parsing.max_entries` to that
+  value multiplied by the number of supergraph variants you serve, because the parsing cache is
+  shared while the supergraph caches are created per variant.
+</Callout>
+
+## Options
+
+Each of the four caches (`router.parsing`, `supergraph.validation`, `supergraph.normalization`,
+`supergraph.query_plans`) accepts the same three fields.
+
+### `max_entries`
+
+- **Type:** `integer`
+- **Default:** `1000`
+
+Maximum number of entries to keep. Once full, the cache evicts entries according to its LRU policy
+to make room.
+
+```yaml title="router.config.yaml"
+cache:
+  supergraph:
+    query_plans:
+      max_entries: 5000
+```
+
+### `time_to_live`
+
+- **Type:** `string` (duration, e.g. `30m`, `1h`, `300s`)
+- **Default:** unset (disabled)
+
+Expires an entry a fixed duration after it was created or last updated, even if it is still hot.
+Disabled by default, preserving the previous LRU-only behavior.
+
+### `time_to_idle`
+
+- **Type:** `string` (duration, e.g. `5m`, `10m`)
+- **Default:** unset (disabled)
+
+Expires an entry after it has not been read or updated for the configured duration. Disabled by default.
+
+When both `time_to_live` and `time_to_idle` are set, whichever fires first evicts the entry.
+
+```yaml title="router.config.yaml"
+cache:
+  supergraph:
+    query_plans:
+      max_entries: 1000
+      time_to_live: 30m
+      time_to_idle: 5m
+```
+
+## Per-variant overrides in plugins
+
+Plugins serving extra supergraph variants inherit `cache.supergraph` by default. Override per
+variant with `SupergraphOptions::cache` - each dimension (`max_entries`, `time_to_live`,
+`time_to_idle`) inherits independently, so touching one never resets the others. Pass `None` to
+explicitly disable an expiry the router config sets.
+
+```rust
+use std::time::Duration;
+use hive_router::plugins::hooks::on_supergraph_load::SupergraphOptions;
+
+let mut options = SupergraphOptions::default();
+options.cache.query_plans.set_max_entries(100);
+options.cache.query_plans.set_time_to_idle(Some(Duration::from_secs(300)));
+options.cache.query_plans.set_time_to_live(None);
+```
+
+Useful helpers: `disable()` turns one cache off for that variant, `inherit()` resets a cache back to the router config.
