@@ -2,6 +2,8 @@
 title: "cache"
 ---
 
+import { Callout } from "@hive/design-system/hive-components/callout";
+
 The `cache` configuration controls the router's in-memory caches for parsing, validation,
 normalization, and query plans. These caches make repeated operations fast, but their memory usage
 grows with the number of *distinct* queries.
@@ -49,6 +51,13 @@ Caches under `cache.supergraph` are created per supergraph variant. The configur
 | `validation`    | Validation results for an operation against this supergraph. |
 | `normalization` | Normalized operations, ready to be planned.               |
 | `query_plans`   | Query plans built for this supergraph.                    |
+
+<Callout type="info">
+  Keep `max_entries` identical across `validation`, `normalization`, and `query_plans`, since
+  each distinct operation flows through all three caches. Set `router.parsing.max_entries` to that
+  value multiplied by the number of supergraph variants you serve, because the parsing cache is
+  shared while the supergraph caches are created per variant.
+</Callout>
 
 ## Options
 
