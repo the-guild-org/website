@@ -84,7 +84,7 @@ when a request finishes. This is the router's access log. It uses the
 | `payload_bytes`         | Size of the response payload in bytes (uncompressed). For streams, this is the total amount of data sent.                                                  |
 | `response_compression`  | Algorithm the client-facing response was compressed with (`gzip`, `deflate`, `br`, or `zstd`). Omitted when the response is sent uncompressed.             |
 | `response_bytes`        | Compressed size, in bytes, actually sent over the wire. Sits next to `payload_bytes` so the two make the achieved compression ratio visible. Omitted when the response is sent uncompressed. |
-| `supergraph_identifier` | Identifier of the supergraph used to serve the request.                                                                                                   |
+| `supergraph_name`       | Name of the supergraph that served the request: `default` for the configured supergraph, or the name a [plugin](/docs/router/supergraph#from-a-custom-plugin) gave its variant. Omitted when the request was rejected before a supergraph was selected. |
 | `duration_ms`           | Total time spent handling the request, in milliseconds. For streams, this is the total time since the request started until stream is stopped/terminated. |
 
 Every line, including the summary, also carries the [correlation fields](#request-correlation)
@@ -112,6 +112,7 @@ Every line, including the summary, also carries the [correlation fields](#reques
   "payload_bytes": 842,
   "response_compression": "gzip",
   "response_bytes": 517,
+  "supergraph_name": "default",
   "duration_ms": 14
 }
 ```
@@ -121,7 +122,7 @@ Every line, including the summary, also carries the [correlation fields](#reques
 <Tabs.Tab>
 
 ```
-2026-07-15T21:23:27.123456Z  INFO router::request: operation_name="GetProduct" operation_type="query" subgraph_requests=2 involved_subgraphs="products,reviews" error_count=0 status_code=200 duration_ms=14 request_id=01J8... trace_id=4bf92f3577b34da6a3ce929d0e0e4736
+2026-07-15T21:23:27.123456Z  INFO router::request: operation_name="GetProduct" operation_type="query" subgraph_requests=2 involved_subgraphs="products,reviews" error_count=0 status_code=200 supergraph_name="default" duration_ms=14 request_id=01J8... trace_id=4bf92f3577b34da6a3ce929d0e0e4736
 ```
 
 </Tabs.Tab>

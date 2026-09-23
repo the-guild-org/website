@@ -171,6 +171,7 @@ use std::sync::Arc;
 use hive_router::plugins::hooks::on_supergraph_load::{Supergraph, SupergraphOptions};
 
 let supergraph = Arc::new(Supergraph::from_sdl(
+    "my-variant",
     include_str!("supergraph.graphql"),
     SupergraphOptions::default(),
 )?);
@@ -179,6 +180,13 @@ let supergraph = Arc::new(Supergraph::from_sdl(
 payload.set_supergraph(supergraph.clone());
 payload.proceed()
 ```
+
+The first argument is the supergraph's name. The configured supergraph is named `default`, and
+plugin-owned variants use the name you give them. The router reports it as `supergraph_name` in the
+[request summary log](/docs/router/observability/logging#access-logs), as `hive.supergraph.name` on
+the `graphql.operation` span, and as the `supergraph.name` label on
+[`http.server.request.duration` and `hive.router.graphql.errors_total`](/docs/router/observability/metrics),
+so you can break down latency and errors per variant.
 
 A selection is request-local. It does not replace the configured supergraph or become a default for
 other requests. The router pins the selected schema, its `SupergraphOptions`, and its router runtime
@@ -222,7 +230,7 @@ options.traffic_shaping.all.forward_operation_name = true;
 options.error_masking.redacted_error_message = "Basic variant error".to_string();
 options.hive_target = Some("organization/project/basic".to_string());
 
-let supergraph = Arc::new(Supergraph::from_sdl(sdl, options)?);
+let supergraph = Arc::new(Supergraph::from_sdl("basic", sdl, options)?);
 ```
 
 See [Selecting a supergraph in `on_http_request`](./customizations/plugin-system/hooks#select-a-supergraph-for-the-request),

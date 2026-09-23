@@ -136,6 +136,7 @@ Allows you to control how the Hive Router does
 | `connect_timeout`      | `string`                             | `5s`                                 | Timeout for connect phase only.                                                                         |
 | `request_timeout`      | `string`                             | `15s`                                | Timeout for the full request.                                                                           |
 | `flush_interval`       | `string`                             | `5s`                                 | Buffer flush interval.                                                                                  |
+| `process_variables`    | `boolean`                            | `false`                              | Report only the input fields present in each request's variables. See [Processing variables](/docs/router/observability/usage_reporting#processing-variables). |
 
 #### sampling
 
@@ -266,7 +267,7 @@ Top-level OpenTelemetry tracing configuration.
 | `max_attributes_per_event` | `integer` | `16`    | Maximum attributes to record per span event.                                                                            |
 | `max_attributes_per_link`  | `integer` | `32`    | Maximum attributes to record per span link.                                                                             |
 | `sampling`                 | `number`  | `1.0`   | Sampling ratio between `0.0` and `1.0`. Can also be set via `TELEMETRY_TRACING_SAMPLING_RATE`. With Datadog, this is the provider-wide catch-all rate. |
-| `parent_based_sampler`     | `boolean` | `false` | Inherit sampling decisions from the parent span with the generic OpenTelemetry provider. Datadog uses its native parent-aware sampler. |
+| `parent_based_sampler`     | `boolean` | `false` | Inherit sampling decisions from the parent span. With Datadog, `false` defers an incoming sampled decision to Datadog's own sampling policy. |
 
 `propagation` - Incoming and outgoing trace context propagation formats.
 
@@ -397,7 +398,9 @@ sampling has a default ceiling of 100 retained traces per second. Datadog contin
 non-retained requests for request, error, and latency statistics, including when `sampling` is
 `0.0`.
 
-`parent_based_sampler` does not configure Datadog. Mixed OTLP, stdout, and Hive processors receive
+`parent_based_sampler: true` makes Datadog honor a sampled remote parent. With `false`, the router
+defers the inherited decision so Datadog applies its configured sampling policy, while trace and
+parent IDs still propagate. Mixed OTLP, stdout, and Hive processors receive
 only sampled spans. `DD_TRACE_ENABLED=false` disables every processor attached to the shared
 Datadog-backed provider; set this exporter's `enabled` field to `false` to disable only Datadog.
 
