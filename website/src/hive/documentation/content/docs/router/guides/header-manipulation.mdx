@@ -192,10 +192,11 @@ this:
    - `immutable` - same rule as `public`.
 5. Restrictions are kept if **any** subgraph sets them: `must-revalidate`, `proxy-revalidate`,
    `must-understand`, and `no-transform`.
-6. A value the router can't fully understand results in `no-store, no-cache`: an unknown
-   directive, a duration without a value or with a non-numeric value (`max-age=abc`), or any other
-   malformed directive. The router can't tell whether an unknown directive was meant to be
-   restrictive, so it treats it as if it was, instead of ignoring that subgraph's value.
+6. An unknown directive, or a duration without a value or with a non-numeric value
+   (`max-age=abc`), results in `no-store, no-cache`. The router can't tell whether an unknown
+   directive was meant to be restrictive, so it treats it as if it was, instead of ignoring that
+   subgraph's value. Flag directives keep working if they carry an argument: `public=1` is merged as
+   `public`, and the argument is ignored.
 
 For example, merging `public, max-age=300, stale-while-revalidate=60` with
 `private, max-age=120, no-transform` produces `private, max-age=120, stale-while-revalidate=60,

@@ -77,7 +77,8 @@ this safe behavior **cannot be turned off**.
 - A `private` or `no-cache` subgraph **always wins** over a `public` one. Mutations and errored
   responses are **never** cached.
 - Durations (`max-age`, `s-maxage`, `stale-while-revalidate`, `stale-if-error`) use the shortest
-  value. Unknown or malformed directives result in `no-store, no-cache`.
+  value. Unknown directives and missing or non-numeric duration values result in
+  `no-store, no-cache`. Arguments on flag directives such as `public=1` are ignored.
 - If you don't propagate `Cache-Control`, the merge is inactive and the header is not forwarded.
 
 This matters because without it, a single mis-configured subgraph can silently cache private data or cache a
