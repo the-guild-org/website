@@ -333,9 +333,21 @@ service-level error rates:
   bare status code as a string, such as `"500"`.
 - Otherwise, the status of `1xx`, `2xx`, and `3xx` responses is left unset.
 
-A response can contain several errors with different codes, so the router does not set a single
-`error.type` on the root or operation span. Each error is recorded as a `graphql.error` span event
-with its own details.
+A response can contain several errors with different codes, so the router does not pick one of
+them as an aggregate `error.type` for the `graphql.operation` span or the root span. The root span's
+`error.type` is set only for HTTP `5xx` responses, as described above. The individual errors are
+recorded on the `graphql.operation` span instead:
+
+- `hive.graphql.error.count` - the number of errors in the response.
+- `hive.graphql.error.codes` - the distinct error codes, sorted and comma-separated, such as
+  `NOT_FOUND,UNAUTHENTICATED`. Omitted when no error carries a code.
+- One span event per error. The event's **name is the error message**, and the event is tagged
+  with `hive.kind: graphql.error`, so filter on that attribute rather than on the event name. Each
+  event also carries `error.message`, `error.type` (the error's `extensions.code`, or `unknown`),
+  and, when known, `hive.error.subgraph_name`, `hive.error.path`, and `hive.error.affected_path`.
+
+Subgraph errors are recorded the same way on the `graphql.subgraph.operation` span of the subgraph
+request that produced them.
 
 ## Subscription errors
 

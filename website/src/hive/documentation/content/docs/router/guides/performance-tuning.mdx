@@ -532,8 +532,8 @@ corresponding `graphql.subgraph.operation` span the router records:
 
 - `hive.graphql.error.count = 1`,
 - `hive.graphql.error.codes` containing `SUBGRAPH_CIRCUIT_BREAKER_REJECTED`,
-- a `graphql.error` span event with `error.type`, `error.message`, and `hive.error.subgraph_name`
-  attributes.
+- a span event tagged `hive.kind: graphql.error` with `error.type`, `error.message`, and
+  `hive.error.subgraph_name` attributes.
 
 This makes failed subgraph hops easy to spot in tracing UIs that highlight error spans, instead of
 looking superficially "ok" because no upstream response was ever produced.
