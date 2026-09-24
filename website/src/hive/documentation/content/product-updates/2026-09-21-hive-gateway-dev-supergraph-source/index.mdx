@@ -38,9 +38,12 @@ the target's subgraph of the same name and composes it with every other subgraph
 hive-gateway supergraph \
   --dev-service products=http://localhost:4001/graphql \
   --dev-remote \
-  --dev-registry-token "$HIVE_REGISTRY_TOKEN" \
-  --dev-target my-org/my-project/staging
+  --hive-target my-org/my-project/staging \
+  --hive-access-token "$HIVE_ACCESS_TOKEN"
 ```
+
+`--hive-target` and `--hive-access-token` are the gateway's standard Hive registry options, so the
+same target and token also enable usage reporting for that target.
 
 Remote composition uses the same composition engine and project configuration as schema checks and
 publishes, so what composes on your machine composes in CI. We recommend it whenever your graph is

@@ -308,9 +308,9 @@ services you are changing.
 
 <Callout type="info">
   Remote composition is performed by the registry with the same composition engine and project
-  configuration used for schema checks and publishes. Like `hive dev --remote`, it requires a
-  registry access token with **Read** permissions on the project and target, and is only available
-  for Apollo Federation projects.
+  configuration used for schema checks and publishes. Like `hive dev --remote`, it requires an
+  access token with the **Compose schema** permission for the project and target, and is only
+  available for Apollo Federation projects.
 </Callout>
 
 <Tabs items={['Configuration File', 'CLI']}>
@@ -352,26 +352,36 @@ export const gatewayConfig = defineConfig({
 hive-gateway supergraph \
   --dev-service products=http://localhost:4001/graphql \
   --dev-remote \
-  --dev-registry-token "<registry access token>" \
-  --dev-target "<organization>/<project>/<target>"
+  --hive-target "<organization>/<project>/<target>" \
+  --hive-access-token "<registry access token>"
 ```
 
-`--dev-target` accepts either the `organization/project/target` slug path or the target's UUID.
+`--hive-target` accepts either the `organization/project/target` slug path or the target's UUID.
 
 </Tabs.Tab>
 
 </Tabs>
 
-| Option     | CLI flag                       | Environment variable | Description                                                                                                                              |
-| ---------- | ------------------------------ | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `remote`   | `--dev-remote`                 | `DEV_REMOTE`         | Compose through the Hive registry instead of locally. Requires `token`.                                                                 |
-| `registry` | `--dev-registry <endpoint>`    | `DEV_REGISTRY`       | The registry's GraphQL API endpoint. Defaults to `https://app.graphql-hive.com/graphql` (Hive Cloud); set it for self-hosted Hive.      |
-| `token`    | `--dev-registry-token <token>` | `DEV_REGISTRY_TOKEN` | The registry access token used for composition.                                                                                         |
-| `target`   | `--dev-target <target>`        | `DEV_TARGET`         | The target to compose against. In the configuration file, `{ byId }` or `{ bySelector: { organizationSlug, projectSlug, targetSlug } }`. |
+| Option     | CLI flag                      | Environment variable | Description                                                                                                                                                                                                                                                    |
+| ---------- | ----------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `remote`   | `--dev-remote`                | `DEV_REMOTE`         | Compose through the Hive registry instead of locally. Requires `token`. As an environment variable, `1`, `true`, `yes` or `on` enable it and any other value, for example `0`, `false` or `off`, disables it, overriding `remote` from the configuration file. |
+| `registry` | `--dev-registry <endpoint>`   | `DEV_REGISTRY`       | The registry's GraphQL API endpoint. Defaults to `https://app.graphql-hive.com/graphql` (Hive Cloud); set it for self-hosted Hive.                                                                                                                             |
+| `token`    | `--hive-access-token <token>` | `HIVE_ACCESS_TOKEN`  | The registry access token used for composition.                                                                                                                                                                                                                |
+| `target`   | `--hive-target <target>`      | `HIVE_TARGET`        | The target to compose against. In the configuration file, `{ byId }` or `{ bySelector: { organizationSlug, projectSlug, targetSlug } }`.                                                                                                                       |
 
 These flags overlay the corresponding options of a `dev` source configured in the configuration
 file, so you can keep the services in the file and pass the registry credentials through the
 environment.
+
+<Callout type="info">
+  `--hive-target` and `--hive-access-token` are the gateway's global Hive registry options, not
+  dev-specific ones. They must be set together, and they also enable
+  [usage reporting](/docs/gateway/usage-reporting) to that target with the same token, so the token
+  needs the usage reporting permission as well or its reports are rejected. Only
+  `--hive-access-token` is used for composition; `--hive-usage-access-token` and
+  `--hive-trace-access-token` are not. To compose remotely without reporting usage, set `token` and
+  `target` in the configuration file and only pass `--dev-remote`.
+</Callout>
 
 **Local or remote composition**
 
@@ -398,9 +408,12 @@ composes in CI.
 **Polling, recomposition and failures**
 
 The gateway resolves every service's schema on each [polling interval](#polling) and recomposes
-only when at least one schema changed, so it can stay running while you edit resolvers and schema
-files. Composition itself is guarded by a circuit breaker, so a composition that keeps failing (for
-example because the registry is unreachable) is not retried on every poll.
+only when a service's schema or `url` changed, or a service was added or removed, so it can stay
+running while you edit resolvers and schema files. The first fetch after the gateway starts always
+composes, even if a persisted cache such as Redis still holds a supergraph from a previous run.
+Composition itself is guarded by a circuit breaker; lower `volumeThreshold` (for example to `1`) if
+repeated failures, such as an unreachable registry, should pause composition for `resetTimeout`
+milliseconds instead of being retried on every poll.
 
 ```ts title="gateway.config.ts"
 import { defineConfig } from "@graphql-hive/gateway";
@@ -424,7 +437,8 @@ export const gatewayConfig = defineConfig({
 
 When composition fails, the error is logged together with the composition errors (local) or the
 registry's response (remote). If a supergraph was already being served, the gateway keeps serving it
-until a later poll composes successfully.
+until a later poll composes successfully. If the first composition after start fails, the gateway
+exits, so start your subgraphs before the gateway.
 
 **Restrictions**
 

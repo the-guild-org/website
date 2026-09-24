@@ -58,10 +58,9 @@ export const gatewayConfig = defineConfig({
       { name: 'products', url: 'http://localhost:4001/graphql' }
     ],
     // compose through the Hive registry with the rest of the graph.
-    // registry, token and target are required when remote is enabled
+    // token is required when remote is enabled; registry defaults to Hive Cloud
     remote: true,
-    registry: 'https://app.graphql-hive.com/graphql',
-    token: process.env.HIVE_REGISTRY_TOKEN!,
+    token: '<registry access token>',
     target: {
       bySelector: {
         organizationSlug: 'my-org',
@@ -83,10 +82,12 @@ export const gatewayConfig = defineConfig({
 hive-gateway supergraph \
   --dev-service products=http://localhost:4001/graphql \
   --dev-remote \
-  --dev-registry https://app.graphql-hive.com/graphql \
-  --dev-registry-token "$HIVE_REGISTRY_TOKEN" \
-  --dev-target my-org/my-project/staging
+  --hive-target my-org/my-project/staging \
+  --hive-access-token "$HIVE_ACCESS_TOKEN"
 ```
+
+`--hive-target` and `--hive-access-token` are the gateway's standard Hive registry options, so the
+same target and token also enable [usage reporting](/docs/gateway/usage-reporting) for that target.
 
 </Tabs.Tab>
 
