@@ -305,12 +305,19 @@ lifecycle.
         "...",
       ],
     },
+    {
+      meaning: "Name of the supergraph that served the request",
+      name: "supergraph.name",
+      notes:
+        'Configured supergraph is "default"; plugin-owned variants use the name passed to Supergraph::from_sdl / from_document. Omitted when the request failed before a supergraph was selected.',
+      typicalValues: ["default", "..."],
+    },
   ]}
   metrics={[
     {
       description:
         "Total count of GraphQL errors encountered during query processing and execution, categorized by error code.",
-      labels: ["code"],
+      labels: ["code", "supergraph.name"],
       name: "hive.router.graphql.errors_total",
       type: "Counter",
       unit: "{error}",
@@ -511,6 +518,13 @@ HTTP server metrics capture inbound client traffic processed by the router.
         'Used by http.server.request.duration, http.server.request.body.size, and http.server.response.body.size. "error" indicates the GraphQL response contains at least one error',
       typicalValues: ["ok", "error"],
     },
+    {
+      meaning: "Name of the supergraph that served the request",
+      name: "supergraph.name",
+      notes:
+        'Configured supergraph is "default"; plugin-owned variants use the name passed to Supergraph::from_sdl / from_document. Omitted when the request failed before a supergraph was selected.',
+      typicalValues: ["default", "..."],
+    },
   ]}
   metrics={[
     {
@@ -526,6 +540,7 @@ HTTP server metrics capture inbound client traffic processed by the router.
         "graphql.operation.name",
         "graphql.operation.type",
         "graphql.response.status",
+        "supergraph.name",
       ],
       name: "http.server.request.duration",
       type: "Histogram",
@@ -574,6 +589,100 @@ HTTP server metrics capture inbound client traffic processed by the router.
       name: "http.server.active_requests",
       type: "UpDownCounter",
       unit: "{request}",
+    },
+  ]}
+/>
+
+### Router overhead
+
+Router overhead metrics split each request's latency into the router's own work and the time spent
+waiting on external services. Use them to tell whether slow requests are caused by the router or by
+what it calls.
+
+The following count as waiting on an external service:
+
+- subgraph requests
+- [coprocessor](/docs/router/customizations/coprocessors) calls
+- [persisted document](/docs/router/security/persisted-documents) fetches from the Hive CDN on a
+  cache miss
+
+Overlapping waits (for example, parallel subgraph requests) are counted once.
+
+Both metrics are recorded only for responses produced in full before they are returned. Streamed
+responses ([subscriptions](/docs/router/subscriptions) and
+[incremental delivery](/docs/router/subscriptions/incremental-delivery)) are skipped, because they
+keep waiting on subgraphs after the response headers are sent.
+
+<Callout type="info">
+  With `explicit` histogram aggregation (the default),
+  `hive.router.request.overhead.duration` uses its own fine-grained bucket
+  boundaries from `100µs` to `1s` (`0.0001`, `0.00025`, `0.0005`, `0.001`,
+  `0.0025`, `0.005`, `0.01`, `0.025`, `0.05`, `0.1`, `0.25`, `0.5`, `1`)
+  instead of the shared `seconds` buckets, since router overhead is typically
+  below a millisecond.
+</Callout>
+
+<MetricsSection
+  labels={[
+    {
+      meaning: "Normalized router path",
+      name: "http.route",
+      typicalValues: ["/graphql"],
+    },
+    {
+      meaning: "GraphQL operation name",
+      name: "graphql.operation.name",
+      notes:
+        "High-cardinality risk: value is client-controlled and can explode without persisted operations.",
+      typicalValues: ["UsersQuery", "IntrospectionQuery", "UNKNOWN"],
+    },
+    {
+      meaning: "GraphQL operation type",
+      name: "graphql.operation.type",
+      notes: "Omitted when unknown",
+      typicalValues: ["query", "mutation", "subscription"],
+    },
+    {
+      meaning: "GraphQL response status for the request",
+      name: "graphql.response.status",
+      notes: '"error" indicates the GraphQL response contains at least one error',
+      typicalValues: ["ok", "error"],
+    },
+    {
+      meaning: "Name of the supergraph that served the request",
+      name: "supergraph.name",
+      notes: "Omitted when the request failed before a supergraph was selected.",
+      typicalValues: ["default", "..."],
+    },
+  ]}
+  metrics={[
+    {
+      description:
+        "Latency the router adds on top of external services: the request duration (http.server.request.duration) minus the time spent waiting on subgraphs, coprocessors, and the Hive CDN. Covers parsing, validation, planning, response merging, and plugins.",
+      labels: [
+        "http.route",
+        "graphql.operation.name",
+        "graphql.operation.type",
+        "graphql.response.status",
+        "supergraph.name",
+      ],
+      name: "hive.router.request.overhead.duration",
+      type: "Histogram",
+      unit: "Seconds",
+    },
+    {
+      description:
+        "Time a request spent waiting on at least one external service. Overlapping waits are counted once.",
+      labels: [
+        "http.route",
+        "graphql.operation.name",
+        "graphql.operation.type",
+        "graphql.response.status",
+        "supergraph.name",
+      ],
+      name: "hive.router.request.external_wait.duration",
+      type: "Histogram",
+      unit: "Seconds",
     },
   ]}
 />
@@ -1169,6 +1278,14 @@ In production, break this metric down by `http.route`, `http.request.method`,
 `http.response.status_code`, and/or `graphql.response.status`, then track p95 and p99 latency per
 route and method. Keep successful and failed responses separated so error-path latency does not get
 hidden by healthy traffic.
+
+When latency rises, compare
+[`hive.router.request.overhead.duration`](#metric-hive-router-request-overhead-duration) with
+[`hive.router.request.external_wait.duration`](#metric-hive-router-request-external-wait-duration)
+to see whether the time is spent inside the router or waiting on subgraphs and coprocessors.
+
+If you serve several [supergraph variants](/docs/router/supergraph#from-a-custom-plugin) from one
+router, break latency and errors down by `supergraph.name` to compare them.
 
 ### Monitor health of your subgraphs
 

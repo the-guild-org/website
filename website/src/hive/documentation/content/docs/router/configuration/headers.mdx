@@ -76,6 +76,8 @@ this safe behavior **cannot be turned off**.
   propagating `Cache-Control` across subgraphs without the restrictive merge is unsafe.
 - A `private` or `no-cache` subgraph **always wins** over a `public` one. Mutations and errored
   responses are **never** cached.
+- Durations (`max-age`, `s-maxage`, `stale-while-revalidate`, `stale-if-error`) use the shortest
+  value. Unknown or malformed directives result in `no-store, no-cache`.
 - If you don't propagate `Cache-Control`, the merge is inactive and the header is not forwarded.
 
 This matters because without it, a single mis-configured subgraph can silently cache private data or cache a

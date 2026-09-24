@@ -161,7 +161,30 @@ Hive Router uses one shared tracer provider. When a Datadog exporter is enabled,
 provider-wide, parent-aware sampling decision. The router maps `collect.sampling` to Datadog's
 catch-all sample rate, overriding `DD_TRACE_SAMPLE_RATE`. More specific `DD_TRACE_SAMPLING_RULES`
 can apply before that rate, and Datadog remote configuration can update native sampling behavior.
-The router's `parent_based_sampler` option only applies to the generic OpenTelemetry provider.
+
+`parent_based_sampler` controls whether Datadog inherits the sampling decision of an incoming
+remote parent:
+
+- `parent_based_sampler: true` - a sampled remote parent (for example, a `traceparent` ending in
+  `-01`) stays sampled, whatever `collect.sampling` says.
+- `parent_based_sampler: false` (default) - the router marks the inherited decision as deferred, so
+  Datadog evaluates the trace with its own sampling policy: `collect.sampling`, Datadog sampling
+  rules, and rate limits.
+
+In both cases the incoming trace ID, parent span ID, and trace state are preserved, so the trace
+stays connected to its parent. For example, with the configuration below, a request with a sampled
+`traceparent` does not have its detailed trace retained, but Datadog still receives its request and
+error statistics:
+
+```yaml title="router.config.yaml"
+telemetry:
+  tracing:
+    collect:
+      sampling: 0.0
+      parent_based_sampler: false
+    exporters:
+      - kind: datadog
+```
 
 When explicit sampling is active, Datadog retains at most 100 detailed traces per second by default.
 Set `DD_TRACE_RATE_LIMIT` to change this ceiling. At high request rates, the retained percentage can
@@ -295,6 +318,24 @@ telemetry:
 
 Most teams should stay on `spec_compliant`. The other modes are primarily useful when migrating
 legacy dashboards that still expect deprecated attributes.
+
+## Span status and GraphQL errors
+
+GraphQL errors are usually returned in an HTTP `200` response. The router still marks these
+requests as failed, so tracing backends such as Datadog count them in operation-level and
+service-level error rates:
+
+- The `graphql.operation` span gets the `Error` status when the response contains at least one
+  GraphQL error.
+- The root `http.server` span gets the `Error` status when the GraphQL response contains errors,
+  even if the HTTP status is `200`.
+- For HTTP `5xx` responses, the root span gets the `Error` status and `error.type` is set to the
+  bare status code as a string, such as `"500"`.
+- Otherwise, the status of `1xx`, `2xx`, and `3xx` responses is left unset.
+
+A response can contain several errors with different codes, so the router does not set a single
+`error.type` on the root or operation span. Each error is recorded as a `graphql.error` span event
+with its own details.
 
 ## Subscription errors
 

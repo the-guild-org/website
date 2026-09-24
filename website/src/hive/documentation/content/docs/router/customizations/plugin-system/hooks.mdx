@@ -251,6 +251,7 @@ impl RouterPlugin for SchemaVariantsPlugin {
         options.hive_target = Some("organization/project/basic".to_string());
 
         let basic = Arc::new(Supergraph::from_sdl(
+            "basic",
             include_str!("basic.supergraph.graphql"),
             options,
         )?);
@@ -272,7 +273,12 @@ impl RouterPlugin for SchemaVariantsPlugin {
 ```
 
 `Supergraph::from_document` accepts an already parsed document when the plugin needs to transform
-its schema first. Both constructors take a complete `SupergraphOptions` value: planner options,
+its schema first. Both constructors take a name as their first argument. The router reports this
+name in [logs](/docs/router/observability/logging#access-logs), [traces](/docs/router/observability/tracing),
+and [metrics](/docs/router/observability/metrics) to show which supergraph served a request. The
+supergraph loaded from `supergraph.source` is always named `default`.
+
+Both constructors also take a complete `SupergraphOptions` value: planner options,
 executor-side traffic shaping, header rules, URL overrides, override labels, demand control,
 subgraph subscription transports, error masking, persisted documents, and the Hive target. A
 plugin-owned variant does not inherit any of these from the router's configured supergraph — fields
@@ -891,8 +897,10 @@ This hook is invoked during the Federation query planning process. At this stage
 already extracted, parsed, and validated the GraphQL operation and is ready to plan how to execute
 it across subgraphs.
 
-This hook gives plugins access to the Router's internal query planning process, allowing them to
-modify the operation being planned or inspect and modify the resulting plan.
+This hook gives plugins read-only access to the Router's query planning process. Plugins can
+inspect the operation being planned and the resulting plan, and short-circuit the request with an
+error, but they cannot replace the plan the Router executes. To change what gets planned, filter
+the operation in [`on_graphql_analysis`](#on_graphql_analysis) instead.
 
 ```rust
 async fn on_query_plan<'exec>(
@@ -906,7 +914,8 @@ async fn on_query_plan<'exec>(
 **Inspect the query plan**
 
 Use `on_end` to access the constructed `QueryPlan` after the planner has completed. This runs after
-operation parsing and validation.
+operation parsing and validation. `end_payload.query_plan()` returns a shared reference, and
+`end_payload.cache_hint` tells you whether the plan came from the query plan cache.
 
 ```rust
 async fn on_query_plan<'exec>(
@@ -914,7 +923,7 @@ async fn on_query_plan<'exec>(
     payload: OnQueryPlanStartHookPayload<'exec>,
 ) -> OnQueryPlanStartHookResult<'exec> {
     payload.on_end(|end_payload| {
-        let query_plan = &end_payload.query_plan;
+        let query_plan = end_payload.query_plan();
 
         end_payload.proceed()
     })
@@ -932,7 +941,7 @@ async fn on_query_plan<'exec>(
     payload: OnQueryPlanStartHookPayload<'exec>,
 ) -> OnQueryPlanStartHookResult<'exec> {
     payload.on_end(|end_payload| {
-        let root_field_count = count_root_fields(&end_payload.query_plan);
+        let root_field_count = count_root_fields(end_payload.query_plan());
         if root_field_count > self.max_root_fields {
             return end_payload.end_with_graphql_error(
                 GraphQLError::from_message_and_code(

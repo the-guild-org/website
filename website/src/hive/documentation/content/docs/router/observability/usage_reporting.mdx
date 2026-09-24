@@ -169,6 +169,36 @@ be reported as "first seen" again.
   keys.
 </Callout>
 
+## Processing variables
+
+By default, when an operation takes an input-object variable, the usage report marks every field of
+that variable's declared input type as used. The router cannot know which fields a client sent
+without looking at the variables.
+
+Set `process_variables: true` to have the router read each request's `variables` payload (before
+coercion) and report only the input fields that are actually present:
+
+```yaml title="router.config.yaml"
+telemetry:
+  hive:
+    usage_reporting:
+      enabled: true
+      process_variables: true
+```
+
+This gives more accurate field-level usage for input types, which in turn makes
+[conditional breaking changes](/docs/schema-registry/management/targets#conditional-breaking-changes)
+more precise, for example when you want to remove an input field that no client sends.
+
+<Callout type="info">
+  Variable values are never sent to Hive Console, in either mode. The router only derives schema
+  coordinates from the shape of the payload (variable names, object keys, nesting, and list
+  lengths).
+</Callout>
+
+Directive arguments, such as `if` in `users @include(if: $flag)`, are not schema coordinates and are
+never reported as field arguments.
+
 ## Configuration reference
 
 See the [telemetry configuration reference](/docs/router/configuration/telemetry#hive) for all
