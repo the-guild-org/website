@@ -1,0 +1,60 @@
+---
+/**
+ * Aligned label/value rows, like a spec sheet. One list item per row as
+ * `Label: value`, or a two-column Markdown table. Bold a row to accent it.
+ */
+import Graph from './Graph.astro';
+import {
+  htmlOf,
+  itemContent,
+  listItems,
+  slotNodes,
+  splitLabel,
+  tableOf,
+  unwrapEmphasis,
+} from './html';
+
+interface Props {
+  class?: string;
+  className?: string;
+  corner?: string;
+  title?: string;
+}
+
+const content = await slotNodes(Astro);
+const table = tableOf(content);
+const rows = table
+  ? table.rows.map(cells => {
+      const { emphasis, nodes } = unwrapEmphasis(cells[0] ?? []);
+      return { accent: emphasis === 'strong', label: htmlOf(nodes), value: htmlOf(cells[1] ?? []) };
+    })
+  : listItems(content).map(item => {
+      const { emphasis, nodes } = unwrapEmphasis(itemContent(item));
+      const { head, tail } = splitLabel(nodes);
+      return { accent: emphasis === 'strong', label: head, value: tail };
+    });
+---
+
+<Graph
+  class={Astro.props.class ?? Astro.props.className}
+  corner={Astro.props.corner}
+  title={Astro.props.title}
+>
+  <dl class="m-0 grid grid-cols-[max-content_minmax(0,1fr)] gap-x-6 gap-y-1.5">
+    {rows.map((row, index) => (
+      <div class="graph-row contents" style={`--i:${index}`}>
+        <dt
+          class:list={['graph-label m-0', row.accent ? 'text-graph-accent' : 'text-graph-muted']}
+          set:html={row.label}
+        />
+        <dd
+          class:list={[
+            'graph-label m-0 min-w-0',
+            row.accent ? 'text-graph-accent' : 'text-fd-foreground',
+          ]}
+          set:html={row.value}
+        />
+      </div>
+    ))}
+  </dl>
+</Graph>

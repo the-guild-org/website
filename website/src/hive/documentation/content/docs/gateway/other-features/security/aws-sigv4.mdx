@@ -5,6 +5,7 @@ searchable: false
 ---
 
 import { Callout } from "@hive/design-system/hive-components/callout";
+import { GraphFlow } from "#mdx-shims/graph";
 
 Hive Gateway allows you to sign subgraph requests with
 [AWS Signature Version 4 (SigV4)](https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-authenticating-requests.html)
@@ -12,19 +13,15 @@ for secure communication between the Gateway and the subgraphs.
 
 ## Signing outgoing requests
 
-```mermaid
-flowchart TD
-    A[Consumer] -->|GraphQL Request| B(Hive Gateway)
-    B --> C[Execution Engine]
-    C -->|Subgraph request| D[AWS Sigv4 Plugin]
-    D --> |Get the credentials| E[Assume Role I AM]
-    E --> F[Sign the request]
-    F --> |HTTP Request| G[Products Subgraph]
-    C -->|Subgraph request| H[AWS Sigv4 Plugin]
-    H --> |Get the credentials| I[Hard-coded configuration]
-    I --> J[Sign the request]
-    J --> |HTTP Request| K[Users Subgraph]
-```
+<GraphFlow title="Signing">
+
+- Consumer → _GraphQL request_ → Hive Gateway → Execution engine
+- Execution engine → _subgraph request_ → **AWS SigV4 plugin** → Assume role (IAM) → Sign the
+  request → _HTTP request_ → Products subgraph
+- Execution engine → _subgraph request_ → **AWS SigV4 plugin** → Hard-coded configuration → Sign the
+  request → _HTTP request_ → Users subgraph
+
+</GraphFlow>
 
 ### How to use?
 

@@ -1,0 +1,54 @@
+---
+/**
+ * Two to four large numbers. One list item per figure as `**value** label`.
+ * `accent` picks the one to highlight (its label, or its 0-based index).
+ */
+import Graph from './Graph.astro';
+import { htmlOf, isElement, itemContent, listItems, slotNodes, textOf } from './html';
+
+interface Props {
+  accent?: number | string;
+  class?: string;
+  className?: string;
+  corner?: string;
+  title?: string;
+}
+
+const items = listItems(await slotNodes(Astro)).map(item => {
+  const content = itemContent(item);
+  const value = content.find(node => isElement(node, 'strong', 'b'));
+  const rest = content.filter(node => node !== value);
+  return {
+    label: htmlOf(rest),
+    value: value && isElement(value) ? htmlOf(value.children) : htmlOf(content),
+  };
+});
+
+const accent = Astro.props.accent;
+const isAccent = (index: number, label: string) =>
+  typeof accent === 'number'
+    ? accent === index
+    : accent !== undefined &&
+      textOf([{ type: 'text', value: label }]).toLowerCase() === String(accent).toLowerCase();
+---
+
+<Graph
+  class={Astro.props.class ?? Astro.props.className}
+  corner={Astro.props.corner}
+  title={Astro.props.title}
+>
+  <dl class="m-0 flex flex-wrap gap-x-10 gap-y-5">
+    {items.map((item, index) => (
+      <div class="graph-row flex min-w-0 flex-col gap-1" style={`--i:${index}`}>
+        <dd
+          class:list={[
+            'graph-label m-0 text-2xl leading-none tabular-nums',
+            isAccent(index, item.label) ? 'text-graph-accent' : 'text-fd-foreground',
+          ]}
+          set:html={item.value}
+        />
+        <dt class="graph-label m-0 text-graph-muted" set:html={item.label} />
+      </div>
+    ))}
+  </dl>
+</Graph>

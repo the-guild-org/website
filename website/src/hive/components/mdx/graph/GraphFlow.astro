@@ -1,0 +1,121 @@
+---
+/**
+ * A process on a dashed arrow. One Markdown list item (or paragraph) per
+ * path, nodes split on `→` (or `->`). Bold the node you are on, italicise a
+ * node to mute it (handy for transition labels).
+ *
+ *     <GraphFlow title="Pipeline">
+ *
+ *     - request → **middleware** → handler
+ *
+ *     </GraphFlow>
+ */
+import Graph from './Graph.astro';
+import {
+  htmlOf,
+  isElement,
+  itemContent,
+  listItems,
+  paragraphs,
+  slotNodes,
+  type HtmlNode,
+} from './html';
+
+interface Props {
+  class?: string;
+  className?: string;
+  corner?: string;
+  title?: string;
+}
+
+type Tone = 'accent' | 'default' | 'muted';
+interface FlowNode {
+  html: string;
+  tone: Tone;
+}
+
+const ARROW = /\s*(?:→|->|—>|=>)\s*/;
+
+function nodesOf(children: HtmlNode[]): FlowNode[] {
+  const nodes: FlowNode[] = [];
+  let buffer = '';
+  const flush = () => {
+    const html = buffer.trim();
+    if (html) nodes.push({ html, tone: 'default' });
+    buffer = '';
+  };
+
+  for (const child of children) {
+    if (child.type === 'text') {
+      const parts = child.value.split(ARROW);
+      parts.forEach((part, index) => {
+        if (index > 0) flush();
+        buffer += part;
+      });
+      continue;
+    }
+    if (isElement(child, 'strong', 'b')) {
+      flush();
+      nodes.push({ html: htmlOf(child.children), tone: 'accent' });
+      continue;
+    }
+    if (isElement(child, 'em', 'i')) {
+      flush();
+      nodes.push({ html: htmlOf(child.children), tone: 'muted' });
+      continue;
+    }
+    if (isElement(child, 'br')) {
+      flush();
+      continue;
+    }
+    buffer += htmlOf(child);
+  }
+  flush();
+  return nodes;
+}
+
+const content = await slotNodes(Astro);
+const items = listItems(content);
+const sources =
+  items.length > 0 ? items.map(itemContent) : paragraphs(content).map(p => p.children);
+const rows = sources.map(nodesOf).filter(row => row.length > 0);
+
+const toneClass: Record<Tone, string> = {
+  accent: 'text-graph-accent',
+  default: 'text-fd-foreground',
+  muted: 'text-graph-muted',
+};
+---
+
+<Graph
+  class={Astro.props.class ?? Astro.props.className}
+  corner={Astro.props.corner}
+  title={Astro.props.title}
+>
+  <div class="flex flex-col gap-6">
+    {rows.map((row, rowIndex) => (
+      <div
+        class="graph-row flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2"
+        style={`--i:${rowIndex}`}
+      >
+        {row.map((node, nodeIndex) => (
+          <div class="flex min-w-0 items-center gap-3">
+            {nodeIndex > 0 && (
+              <span
+                aria-hidden="true"
+                class:list={[
+                  'flex shrink-0 items-center gap-1 whitespace-nowrap',
+                  node.tone === 'accent' ? 'text-graph-accent' : 'text-graph-frame',
+                ]}
+              >
+                <span>- - -</span>
+                <span>▶</span>
+              </span>
+            )}
+            <span class:list={['graph-label', toneClass[node.tone]]} set:html={node.html} />
+          </div>
+        ))}
+      </div>
+    ))}
+  </div>
+</Graph>

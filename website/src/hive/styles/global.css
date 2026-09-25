@@ -69,6 +69,11 @@
 
 @theme {
   --color-blueish-green: #003834;
+  /* Figure colours (see src/hive/components/mdx/graph): one accent, a frame, and two greys. */
+  --color-graph-accent: var(--graph-accent);
+  --color-graph-frame: var(--graph-frame);
+  --color-graph-muted: var(--graph-muted);
+  --color-graph-faint: var(--graph-faint);
   --color-fd-accent: var(--color-beige-300);
   --color-fd-accent-foreground: var(--color-green-1000);
   --color-fd-background: var(--color-white);
@@ -101,6 +106,10 @@
 
 :root {
   color-scheme: light;
+  --graph-accent: var(--color-green-800);
+  --graph-frame: color-mix(in oklab, var(--color-green-1000) 28%, transparent);
+  --graph-muted: var(--color-green-700);
+  --graph-faint: var(--color-beige-400);
   --nextra-bg: 255 255 255;
   --background: var(--color-white);
   --surface: var(--color-beige-100);
@@ -130,6 +139,10 @@
 
 .dark {
   color-scheme: dark;
+  --graph-accent: var(--color-green-300);
+  --graph-frame: var(--color-neutral-600);
+  --graph-muted: var(--color-neutral-400);
+  --graph-faint: var(--color-neutral-800);
   --nextra-bg: 17 17 17;
   --background: #111;
   --surface: var(--color-neutral-900);
@@ -451,4 +464,105 @@ html.dark {
 [data-cv-auto] svg[id^='mermaid-'] {
   content-visibility: auto;
   contain-intrinsic-size: auto 20rem;
+}
+
+/*
+ * Figures: dashed frames drawn with gradients so the dash rhythm matches the
+ * monospace type, plus the fade-up used when a figure scrolls into view.
+ * See src/hive/components/mdx/graph.
+ */
+@utility graph-frame {
+  background-image:
+    repeating-linear-gradient(to right, var(--graph-frame) 0 2px, transparent 2px 7px),
+    repeating-linear-gradient(to bottom, var(--graph-frame) 0 2px, transparent 2px 7px),
+    repeating-linear-gradient(to right, var(--graph-frame) 0 2px, transparent 2px 7px),
+    repeating-linear-gradient(to bottom, var(--graph-frame) 0 2px, transparent 2px 7px);
+  background-repeat: repeat-x, repeat-y, repeat-x, repeat-y;
+  background-position:
+    0 0,
+    100% 0,
+    0 100%,
+    0 0;
+  background-size:
+    100% 1px,
+    1px 100%,
+    100% 1px,
+    1px 100%;
+}
+
+@utility graph-rule {
+  height: 1px;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--graph-frame) 0 2px,
+    transparent 2px 7px
+  );
+}
+
+@utility graph-rule-y {
+  width: 1px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--graph-frame) 0 2px,
+    transparent 2px 7px
+  );
+}
+
+@keyframes graph-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-graph]:not([data-in]) .graph-row {
+    opacity: 0;
+  }
+
+  [data-graph][data-in] .graph-row {
+    animation: graph-fade-up 220ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
+    animation-delay: min(calc(var(--i, 0) * 50ms), 280ms);
+  }
+}
+
+/* The docs prose styles number and indent lists; figures draw their own glyphs. */
+[data-graph] :is(ul, ol) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-graph] li {
+  margin: 0;
+  padding: 0;
+}
+
+[data-graph] li::before,
+[data-graph] li::marker {
+  content: none;
+}
+
+/* Inline code and links inside a figure keep the figure's type. */
+[data-graph] .graph-label code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+}
+
+[data-graph] .graph-label a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--graph-frame);
+  text-underline-offset: 3px;
+}
+
+[data-graph] .graph-label a:hover {
+  text-decoration-color: currentColor;
 }
