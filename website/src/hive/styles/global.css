@@ -519,8 +519,13 @@ html.dark {
   }
 }
 
+/*
+ * Rows are hidden for the fade-up only once the script has taken the figure
+ * under observation (`data-graph-observed`), so without JavaScript nothing is
+ * ever hidden.
+ */
 @media (prefers-reduced-motion: no-preference) {
-  [data-graph]:not([data-in]) .graph-row {
+  [data-graph][data-graph-observed]:not([data-in]) .graph-row {
     opacity: 0;
   }
 
