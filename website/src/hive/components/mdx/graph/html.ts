@@ -107,7 +107,7 @@ export function rawTextOf(nodes: HtmlNode | HtmlNode[] | undefined): string {
   return out;
 }
 
-const escapeHtml = (text: string) =>
+export const escapeHtml = (text: string) =>
   text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 
 /** Serialises inline content back to HTML, keeping code, links and emphasis. */

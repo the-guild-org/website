@@ -20,16 +20,16 @@ const items = listItems(await slotNodes(Astro)).map(item => {
   const rest = content.filter(node => node !== value);
   return {
     label: htmlOf(rest),
+    name: textOf(rest).toLowerCase(),
     value: value && isElement(value) ? htmlOf(value.children) : htmlOf(content),
   };
 });
 
 const accent = Astro.props.accent;
-const isAccent = (index: number, label: string) =>
+const isAccent = (index: number, name: string) =>
   typeof accent === 'number'
     ? accent === index
-    : accent !== undefined &&
-      textOf([{ type: 'text', value: label }]).toLowerCase() === String(accent).toLowerCase();
+    : accent !== undefined && name === String(accent).toLowerCase();
 ---
 
 <Graph
@@ -43,7 +43,7 @@ const isAccent = (index: number, label: string) =>
         <dd
           class:list={[
             'graph-label m-0 text-2xl leading-none tabular-nums',
-            isAccent(index, item.label) ? 'text-graph-accent' : 'text-fd-foreground',
+            isAccent(index, item.name) ? 'text-graph-accent' : 'text-fd-foreground',
           ]}
           set:html={item.value}
         />

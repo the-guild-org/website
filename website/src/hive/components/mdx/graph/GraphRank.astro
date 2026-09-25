@@ -6,7 +6,6 @@
  */
 import Graph from './Graph.astro';
 import {
-  formatNumber,
   itemContent,
   listItems,
   numberOf,
@@ -65,9 +64,8 @@ const barOf = (value: number | undefined) => {
               'graph-label text-right tabular-nums',
               row.accent ? 'text-graph-accent' : 'text-graph-muted',
             ]}
-          >
-            {row.value === undefined ? row.raw : formatNumber(row.value)}
-          </span>
+            set:html={row.raw}
+          />
         </div>
       );
     })}

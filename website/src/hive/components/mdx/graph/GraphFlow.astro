@@ -11,7 +11,15 @@
  *     </GraphFlow>
  */
 import Graph from './Graph.astro';
-import { htmlOf, itemContent, listItems, paragraphs, slotNodes, type HtmlNode } from './html';
+import {
+  escapeHtml,
+  htmlOf,
+  itemContent,
+  listItems,
+  paragraphs,
+  slotNodes,
+  type HtmlNode,
+} from './html';
 
 interface Props {
   class?: string;
@@ -42,7 +50,7 @@ function nodesOf(children: HtmlNode[]): FlowNode[] {
       const parts = child.value.split(ARROW);
       parts.forEach((part, index) => {
         if (index > 0) flush();
-        buffer += part;
+        buffer += escapeHtml(part);
       });
       continue;
     }
