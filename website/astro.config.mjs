@@ -351,6 +351,7 @@ export default defineConfig({
           './src/hive/mdx-shims/comparison.ts',
         ),
         alias('#mdx-shims/steps', './src/hive/mdx-shims/steps.ts'),
+        alias('#mdx-shims/graph', './src/hive/mdx-shims/graph.ts'),
         alias('#mdx-shims/files', './src/hive/mdx-shims/files.ts'),
         alias('#mdx-shims/callout', './src/hive/mdx-shims/callout.ts'),
         alias(

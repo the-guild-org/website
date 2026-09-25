@@ -4,6 +4,7 @@ sidebarTitle: "Introduction"
 ---
 
 import { Callout } from "@hive/design-system/hive-components/callout";
+import { GraphFlow } from "#mdx-shims/graph";
 
 Coprocessors are an external way to customize Hive Router.
 
@@ -34,19 +35,14 @@ before continuing.
 
 The diagram below shows one concrete example using `graphql.analysis`.
 
-```mermaid
-flowchart TB
-    A[Client Request] --> B[GraphQL parsing and validation]
-    B --> C[Stage: `graphql.analysis`]
-    C --> F[Inject active labels for Progressive Override]
-    F --> G[GraphQL execution]
-    G --> H[Client Response]
+<GraphFlow title="Request path">
 
-    CP[Coprocessor Service]
+- Client request → GraphQL parsing and validation → **`graphql.analysis`** → Inject active labels for
+  Progressive Override → GraphQL execution → Client response
+- **`graphql.analysis`** → _HTTP request_ → Coprocessor service → _HTTP response_ → Inject active
+  labels for Progressive Override
 
-    C -- HTTP request --> CP
-    CP -- HTTP response --> F
-```
+</GraphFlow>
 
 For each enabled stage, Hive Router sends a JSON payload and waits for a response.
 
