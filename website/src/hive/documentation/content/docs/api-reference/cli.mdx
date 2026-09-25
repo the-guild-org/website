@@ -1,9 +1,10 @@
 ---
-title: "Hive CLI (Command Line Interface)"
+title: 'Hive CLI (Command Line Interface)'
 ---
 
-import { Callout } from "@hive/design-system/hive-components/callout";
-import { Tabs } from "@hive/design-system/tabs";
+import { Callout } from '@hive/design-system/hive-components/callout'
+import { CLIErrorsSection } from '@hive/design-system/hive-components/cli-errors'
+import { Tabs } from '@hive/design-system/tabs'
 
 ```bash
 hive artifact:fetch --artifact sdl --cdn.endpoint VALUE --cdn.accessToken VALUE
@@ -16,10 +17,6 @@ For more information please refer to the
 
 List of all available CLI commands and their options can be found
 [here](https://github.com/graphql-hive/platform/blob/main/packages/libraries/cli/README.md#commands)
-
-## Errors
-
-import { CLIErrorsSection } from "@hive/design-system/hive-components/cli-errors";
 
 You can perform [schema-registry actions](/docs/schema-registry#actions-on-schemas) on your Hive
 targets schemas using the Hive CLI.
@@ -71,8 +68,8 @@ docker pull ghcr.io/graphql-hive/cli
 If you are running a JavaScript/Node.js project, you can install Hive CLI from the `npm`.
 
 <Callout type="info">
-  We recommend installing Hive CLI as part of your project as `devDependencies`,
-  instead of using a global installation.
+  We recommend installing Hive CLI as part of your project as `devDependencies`, instead of using a
+  global installation.
 </Callout>
 
 ```sh npm2yarn
@@ -167,10 +164,10 @@ Use `hive schema:push` to upload an immutable schema revision without publishing
 revision during your merge or release flow, then [publish that revision](#publish-a-schema) when the
 corresponding service is deployed.
 
-<Callout  type="info">
-  This CLI command requires an access token with the `Schema push` permission on
-  the specified target. Please refer to our access token [documentation for
-  creating an access token](/docs/schema-registry/management/access-tokens).
+<Callout type="info">
+  This CLI command requires an access token with the `Schema push` permission on the specified
+  target. Please refer to our access token [documentation for creating an access
+  token](/docs/schema-registry/management/access-tokens).
 </Callout>
 
 Use an immutable identifier, such as the Git commit SHA, as the revision:
@@ -205,15 +202,14 @@ served through the Hive CDN.
 You can use the CLI for publishing schema or services/subgraphs to the schema registry.
 
 <Callout type="info">
-  This CLI command requires an access token with the `Schema publish`
-  permissions on the specified target. Please refer to our access token
-  [documentation for creating an access
+  This CLI command requires an access token with the `Schema publish` permissions on the specified
+  target. Please refer to our access token [documentation for creating an access
   token](/docs/schema-registry/management/access-tokens).
 </Callout>
 
 <Callout>
-  We recommend publishing the schema from your CI/CD pipeline. You can find more
-  information in our [CI/CD Integration guide](/docs/other-integrations/ci-cd).
+  We recommend publishing the schema from your CI/CD pipeline. You can find more information in our
+  [CI/CD Integration guide](/docs/other-integrations/ci-cd).
 </Callout>
 
 To publish a schema that was uploaded earlier with `hive schema:push`, omit the schema file and pass
@@ -247,8 +243,8 @@ hive schema:publish \
 
 </Tabs>
 
-The revision must already exist for the target's project and, for a distributed schema, the specified
-service. Hive publishes the exact SDL stored for that immutable revision.
+The revision must already exist for the target's project and, for a distributed schema, the
+specified service. Hive publishes the exact SDL stored for that immutable revision.
 
 You can also publish SDL directly from a file:
 
@@ -331,8 +327,8 @@ GitHub repository, you may specify an additional `--github` flag to report the r
 GitHub as Check Suite when running the Hive CLI from within a GitHub action.
 
 <Callout>
-  Check our [CI/CD Integration guide](/docs/other-integrations/ci-cd) for more
-  information and GitHub workflow examples.
+  Check our [CI/CD Integration guide](/docs/other-integrations/ci-cd) for more information and
+  GitHub workflow examples.
 </Callout>
 
 ```sh
@@ -351,11 +347,10 @@ hive schema:publish \
 #### Metadata
 
 <Callout>
-  For most cases, it's recommended to add metadata directly to your schema with
-  the [@meta Link Specification](/docs/api-reference/link-specifications#meta)
-  instead of using `--metadata`. Directives allow you to enhance specific parts
-  of your schema with this important information, which can be especially useful
-  for large projects with multiple owners.
+  For most cases, it's recommended to add metadata directly to your schema with the [@meta Link
+  Specification](/docs/api-reference/link-specifications#meta) instead of using `--metadata`.
+  Directives allow you to enhance specific parts of your schema with this important information,
+  which can be especially useful for large projects with multiple owners.
 </Callout>
 
 You can attach metadata to your schema publication. Metadata files published to Hive must be valid
@@ -392,7 +387,8 @@ hive schema:publish \
 
 ### Promote a Schema
 
-You can use the CLI to promote an existing schema version between targets or roll back a target to a previously published schema version.
+You can use the CLI to promote an existing schema version between targets or roll back a target to a
+previously published schema version.
 
 #### Targets
 
@@ -405,7 +401,8 @@ hive schema:promote \
   --to "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/production"
 ```
 
-Hive Console creates a new schema version in the destination target using the exact same composed supergraph from the source target and updates the CDN state automatically.
+Hive Console creates a new schema version in the destination target using the exact same composed
+supergraph from the source target and updates the CDN state automatically.
 
 #### Specifc Schema Version
 
@@ -418,15 +415,15 @@ hive schema:promote \
   --to "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>"
 ```
 
-This creates a new schema version from the specified historical version and updates the target CDN state accordingly.
-The schema version ID can be obtained from the Hive Console schema history view.
+This creates a new schema version from the specified historical version and updates the target CDN
+state accordingly. The schema version ID can be obtained from the Hive Console schema history view.
 
 ### Check a Schema
 
 <Callout type="info">
-  This CLI command requires an access token with the `Schema Check` permissions
-  on the specified target. Please refer to our access token [documentation for
-  creating an access token](/docs/schema-registry/management/access-tokens).
+  This CLI command requires an access token with the `Schema Check` permissions on the specified
+  target. Please refer to our access token [documentation for creating an access
+  token](/docs/schema-registry/management/access-tokens).
 </Callout>
 
 Checking a GraphQL schema is the form of checking the compatibility of an upcoming schema, compared
@@ -485,8 +482,8 @@ GitHub repository, you may specify an additional `--github` flag to report the r
 GitHub as Check Suite when running the Hive CLI from within a GitHub action.
 
 <Callout>
-  Check our [CI/CD Integration guide](/docs/other-integrations/ci-cd) for more
-  information and GitHub workflow examples.
+  Check our [CI/CD Integration guide](/docs/other-integrations/ci-cd) for more information and
+  GitHub workflow examples.
 </Callout>
 
 ```sh
@@ -500,14 +497,13 @@ hive schema:check \
 ### Delete a Subgraph
 
 <Callout type="info">
-  This action is only available for Schema-Stitching and Apollo Federation
-  projects.
+  This action is only available for Schema-Stitching and Apollo Federation projects.
 </Callout>
 
 <Callout type="info">
-  This CLI command requires an access token with the `Delete subgraph`
-  permissions on the specified target. Please refer to our [documentation for
-  creating access tokens](/docs/schema-registry/management/access-tokens).
+  This CLI command requires an access token with the `Delete subgraph` permissions on the specified
+  target. Please refer to our [documentation for creating access
+  tokens](/docs/schema-registry/management/access-tokens).
 </Callout>
 
 In case you want to compose a schema (or a subgraph in case of Federation), you can do so by using
@@ -544,18 +540,15 @@ hive schema:delete \
 When developing subgraphs locally, you might want to compose a supergraph with your local subgraph
 changes. Hive Console CLI helps you to do that with the `hive dev` command.
 
-<Callout type="info">
-  This action is only available for Apollo Federation projects.
-</Callout>
+<Callout type="info">This action is only available for Apollo Federation projects.</Callout>
 
 <details>
 
 <summary>Remote mode</summary>
 
 <Callout type="info">
-  This CLI command requires an active registry token with **Read** permissions
-  to the target and the project, to perform a composition according to your
-  project configuration.
+  This CLI command requires an active registry token with **Read** permissions to the target and the
+  project, to perform a composition according to your project configuration.
 </Callout>
 
 This mode enables you to replace the subgraph(s) available in the Registry with your local
@@ -746,10 +739,9 @@ Sometimes it is useful to fetch a schema (SDL or Supergraph) from Hive, for exam
 local development. This can be done using the `schema:fetch` command.
 
 <Callout type="info">
-  Don't confuse this with the [high-availability
-  CDN](/docs/schema-registry/high-availability-cdn). This command is used to
-  fetch a schema from the API where the CDN always represents the latest valid
-  schema. `artifact:fetch` is recommended in cases where either could be used.
+  Don't confuse this with the [high-availability CDN](/docs/schema-registry/high-availability-cdn).
+  This command is used to fetch a schema from the API where the CDN always represents the latest
+  valid schema. `artifact:fetch` is recommended in cases where either could be used.
 </Callout>
 
 You can fetch either the latest schema or a schema by the action id (commit sha) that was used for
@@ -806,5 +798,7 @@ You can fetch the GraphQL schema from the CDN using the `artifact:fetch` command
   You can learn how to create a CDN access token in the [High-Availability CDN
   documentation](/docs/schema-registry/high-availability-cdn).
 </Callout>
+
+## Errors
 
 <CLIErrorsSection />
