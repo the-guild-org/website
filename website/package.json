@@ -17,6 +17,7 @@
     "fetch:mesh": "node scripts/mesh/fetch-content.ts",
     "fetch:products": "node scripts/products/fetch-content.ts",
     "fetch:yoga": "node scripts/yoga/fetch-content.ts",
+    "postinstall": "playwright install chromium",
     "postbuild:codegen": "node scripts/codegen/generate-sitemap.ts && node scripts/codegen/generate-redirects.ts && pagefind --site dist/graphql/codegen",
     "postbuild:envelop": "node scripts/envelop/generate-sitemap.ts && node scripts/envelop/generate-redirects.ts && pagefind --site dist/graphql/envelop",
     "postbuild:hive": "node scripts/hive/generate-sitemap.ts && node scripts/hive/generate-redirects.ts && node scripts/hive/generate-headers.ts && pagefind --site dist/graphql/hive",
@@ -26,7 +27,6 @@
     "postbuild:products": "node scripts/products/generate-sitemap.ts && node scripts/products/generate-redirects.ts && node scripts/products/pagefind.ts",
     "postbuild:verify": "node scripts/hive/verify-base-path.ts && node scripts/verify-sitemaps.ts && node scripts/verify-redirects.ts && node scripts/hive/check-seo.ts",
     "postbuild:yoga": "node scripts/yoga/generate-sitemap.ts && node scripts/yoga/generate-redirects.ts && pagefind --site dist/graphql/yoga-server",
-    "postinstall": "playwright install chromium",
     "preview": "astro preview",
     "test": "vitest run src"
   },

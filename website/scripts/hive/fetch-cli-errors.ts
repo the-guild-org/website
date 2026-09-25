@@ -47,7 +47,7 @@ if (localFile) {
   }
   const tarball = Buffer.from(await tarballResponse.arrayBuffer());
 
-  let content: string | null = null;
+  let content: string | null;
   try {
     content = execFileSync('tar', ['-xzOf', '-', 'package/errors.json'], {
       input: tarball,
