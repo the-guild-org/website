@@ -1,20 +1,54 @@
-<aside class="cli-errors">
-  <h2>CLI error reference</h2>
-  <p>
-    CLI errors include the error code and a suggested fix. Run <code>hive help</code> for
-    command-specific usage details.
-  </p>
-  <a href="https://github.com/graphql-hive/console/tree/main/packages/libraries/cli">
-    View the CLI source and current error definitions
-  </a>
-</aside>
+---
+/**
+ * The error reference of the Hive CLI: every error code with a command that
+ * triggers it, what the CLI prints, and the suggested fix. The CLI points at
+ * this section from every error message.
+ */
+import Callout from './Callout.astro';
+import { anchorOf, cliErrors, titleOf } from './cli-errors';
+---
+
+<p>
+  Every error the CLI prints ends with its error code in square brackets, for example
+  <code>[103]</code>. The codes are grouped by command: <code>1xx</code> apply to every command,
+  <code>2xx</code> to <code>schema:check</code>, <code>3xx</code> to <code>schema:publish</code>,
+  <code>4xx</code> to <code>app:create</code>, <code>5xx</code> to <code>artifact:fetch</code>,
+  <code>6xx</code> to <code>dev</code>, and <code>7xx</code> to <code>operations:check</code>. The
+  process exits with <code>1</code> for a failed command, <code>2</code> for a timeout, and
+  <code>3</code> when the input was invalid before the command ran. Set
+  <code>HIVE_NO_ERROR_TIP=1</code> to hide the link to this page in the CLI output.
+</p>
+
+{cliErrors.map(error => {
+  const id = anchorOf(error);
+  return (
+    <>
+      <h3 id={id}>
+        <code>{error.code}</code> {titleOf(error)}
+      </h3>
+      <p>
+        <strong>Example:</strong> <code>{error.example}</code>
+      </p>
+      <Callout type="note">
+        <pre class="cli-error-output">{error.exampleOutput}</pre>
+      </Callout>
+      <p>
+        <strong>Suggested fix:</strong> {error.fix}
+      </p>
+    </>
+  );
+})}
 
 <style>
-  .cli-errors {
-    margin-top: 2rem;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.6rem;
-    background: var(--surface);
+  .cli-error-output {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: inherit;
   }
 </style>
