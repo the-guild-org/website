@@ -11,15 +11,7 @@
  *     </GraphFlow>
  */
 import Graph from './Graph.astro';
-import {
-  htmlOf,
-  isElement,
-  itemContent,
-  listItems,
-  paragraphs,
-  slotNodes,
-  type HtmlNode,
-} from './html';
+import { htmlOf, itemContent, listItems, paragraphs, slotNodes, type HtmlNode } from './html';
 
 interface Props {
   class?: string;
@@ -54,17 +46,18 @@ function nodesOf(children: HtmlNode[]): FlowNode[] {
       });
       continue;
     }
-    if (isElement(child, 'strong', 'b')) {
+    // From here on `child` is an element.
+    if (child.tag === 'strong' || child.tag === 'b') {
       flush();
       nodes.push({ html: htmlOf(child.children), tone: 'accent' });
       continue;
     }
-    if (isElement(child, 'em', 'i')) {
+    if (child.tag === 'em' || child.tag === 'i') {
       flush();
       nodes.push({ html: htmlOf(child.children), tone: 'muted' });
       continue;
     }
-    if (isElement(child, 'br')) {
+    if (child.tag === 'br') {
       flush();
       continue;
     }

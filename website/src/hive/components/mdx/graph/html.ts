@@ -189,9 +189,11 @@ export function paragraphs(nodes: HtmlNode[]): ElementNode[] {
  * wrapping paragraph (loose lists) unwrapped.
  */
 export function itemContent(item: ElementNode): HtmlNode[] {
-  const own = item.children.filter(child => !isElement(child, 'ul', 'ol'));
-  if (own.length === 1 && isElement(own[0], 'p')) return own[0].children;
-  const inline = own.filter(child => !isElement(child, 'p'));
+  // The explicit return type stops TypeScript inferring a `child is TextNode` guard here.
+  const own = item.children.filter((child): boolean => !isElement(child, 'ul', 'ol'));
+  const first = own[0];
+  if (own.length === 1 && isElement(first, 'p')) return first.children;
+  const inline = own.filter((child): boolean => !isElement(child, 'p'));
   const firstParagraph = own.find(child => isElement(child, 'p')) as ElementNode | undefined;
   return firstParagraph && inline.every(child => child.type === 'text' && !child.value.trim())
     ? firstParagraph.children
@@ -247,7 +249,7 @@ export function splitLabel(
 
 export interface TableData {
   align: (string | undefined)[];
-  footer: HtmlNode[][] | undefined;
+  footer: HtmlNode[][][] | undefined;
   headers: HtmlNode[][];
   rows: HtmlNode[][][];
 }
