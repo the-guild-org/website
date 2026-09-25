@@ -1,16 +1,117 @@
-<aside class="cli-errors">
-  <h2>CLI error reference</h2>
-  <p>
-    CLI errors include the error code and a suggested fix. Run <code>hive help</code> for
-    command-specific usage details.
-  </p>
-  <a href="https://github.com/graphql-hive/console/tree/main/packages/libraries/cli">
-    View the CLI source and current error definitions
-  </a>
-</aside>
+---
+import Table from './Table.astro';
+
+interface CliErrorReference {
+  exitCodes: Array<{ code: number; name: string; description: string }>;
+  errors: Array<{
+    code: number;
+    name: string;
+    title: string;
+    category: string;
+    exitCode: number;
+    fix: string;
+    anchor: string;
+  }>;
+}
+
+// Written by scripts/hive/fetch-cli-errors.ts; missing until that script has run.
+const modules = import.meta.glob<{ default: CliErrorReference }>(
+  '../../generated/cli-errors.json',
+  { eager: true },
+);
+const reference = Object.values(modules)[0]?.default ?? null;
+
+/** Splits text into plain and `code` segments. */
+function segments(text: string) {
+  return text
+    .split(/(`[^`]+`)/)
+    .map(part =>
+      part.startsWith('`') && part.endsWith('`')
+        ? { code: true, text: part.slice(1, -1) }
+        : { code: false, text: part },
+    );
+}
+---
+
+{reference && reference.errors.length > 0 ? (
+  <div class="cli-errors">
+    <p>
+      Every error message ends with its error code in brackets, for example <code>[103]</code>, and
+      is printed to stderr. The link printed with an error points to its entry below.
+    </p>
+
+    <h3 id="exit-codes">Exit codes</h3>
+    <Table>
+      <thead>
+        <tr>
+          <th>Exit code</th>
+          <th>Name</th>
+          <th>Meaning</th>
+        </tr>
+      </thead>
+      <tbody>
+        {reference.exitCodes.map(exitCode => (
+          <tr>
+            <td>{exitCode.code}</td>
+            <td>
+              <code>{exitCode.name}</code>
+            </td>
+            <td>{exitCode.description}</td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+
+    <h3 id="error-codes">Error codes</h3>
+    <Table>
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Error</th>
+          <th>Exit code</th>
+          <th>Fix</th>
+        </tr>
+      </thead>
+      <tbody>
+        {reference.errors.map(error => (
+          <tr id={error.anchor}>
+            <td>
+              <a href={`#${error.anchor}`}>{error.code}</a>
+            </td>
+            <td>
+              {segments(error.title).map(part =>
+                part.code ? <code>{part.text}</code> : part.text,
+              )}{' '}
+              (<code>{error.name}</code>)
+            </td>
+            <td>{error.exitCode}</td>
+            <td>
+              {segments(error.fix).map(part => (part.code ? <code>{part.text}</code> : part.text))}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+  </div>
+) : (
+  <aside class="cli-errors-fallback">
+    <h2>CLI error reference</h2>
+    <p>
+      CLI errors include the error code and a suggested fix. Run <code>hive help</code> for
+      command-specific usage details.
+    </p>
+    <a href="https://github.com/graphql-hive/console/tree/main/packages/libraries/cli#errors">
+      View the error codes in the CLI README
+    </a>
+  </aside>
+)}
 
 <style>
-  .cli-errors {
+  .cli-errors tr:target {
+    background: var(--color-neutral-100);
+  }
+
+  .cli-errors-fallback {
     margin-top: 2rem;
     padding: 1rem;
     border: 1px solid var(--border);

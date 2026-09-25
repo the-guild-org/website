@@ -1,25 +1,9 @@
 ---
-title: "Hive CLI (Command Line Interface)"
+title: 'Hive CLI (Command Line Interface)'
 ---
 
 import { Callout } from "@hive/design-system/hive-components/callout";
 import { Tabs } from "@hive/design-system/tabs";
-
-```bash
-hive artifact:fetch --artifact sdl --cdn.endpoint VALUE --cdn.accessToken VALUE
-```
-
-For more information please refer to the
-[CLI readme](https://github.com/graphql-hive/platform/blob/main/packages/libraries/cli/README.md#commands).
-
-## API Reference
-
-List of all available CLI commands and their options can be found
-[here](https://github.com/graphql-hive/platform/blob/main/packages/libraries/cli/README.md#commands)
-
-## Errors
-
-import { CLIErrorsSection } from "@hive/design-system/hive-components/cli-errors";
 
 You can perform [schema-registry actions](/docs/schema-registry#actions-on-schemas) on your Hive
 targets schemas using the Hive CLI.
@@ -247,8 +231,8 @@ hive schema:publish \
 
 </Tabs>
 
-The revision must already exist for the target's project and, for a distributed schema, the specified
-service. Hive publishes the exact SDL stored for that immutable revision.
+The revision must already exist for the target's project and, for a distributed schema, the
+specified service. Hive publishes the exact SDL stored for that immutable revision.
 
 You can also publish SDL directly from a file:
 
@@ -392,7 +376,8 @@ hive schema:publish \
 
 ### Promote a Schema
 
-You can use the CLI to promote an existing schema version between targets or roll back a target to a previously published schema version.
+You can use the CLI to promote an existing schema version between targets or roll back a target to a
+previously published schema version.
 
 #### Targets
 
@@ -405,7 +390,8 @@ hive schema:promote \
   --to "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/production"
 ```
 
-Hive Console creates a new schema version in the destination target using the exact same composed supergraph from the source target and updates the CDN state automatically.
+Hive Console creates a new schema version in the destination target using the exact same composed
+supergraph from the source target and updates the CDN state automatically.
 
 #### Specifc Schema Version
 
@@ -418,8 +404,8 @@ hive schema:promote \
   --to "<YOUR_ORGANIZATION>/<YOUR_PROJECT>/<YOUR_TARGET>"
 ```
 
-This creates a new schema version from the specified historical version and updates the target CDN state accordingly.
-The schema version ID can be obtained from the Hive Console schema history view.
+This creates a new schema version from the specified historical version and updates the target CDN
+state accordingly. The schema version ID can be obtained from the Hive Console schema history view.
 
 ### Check a Schema
 
@@ -806,5 +792,21 @@ You can fetch the GraphQL schema from the CDN using the `artifact:fetch` command
   You can learn how to create a CDN access token in the [High-Availability CDN
   documentation](/docs/schema-registry/high-availability-cdn).
 </Callout>
+
+```bash
+hive artifact:fetch --artifact sdl --cdn.endpoint VALUE --cdn.accessToken VALUE
+```
+
+For more information please refer to the
+[CLI readme](https://github.com/graphql-hive/platform/blob/main/packages/libraries/cli/README.md#commands).
+
+## API Reference
+
+List of all available CLI commands and their options can be found
+[here](https://github.com/graphql-hive/platform/blob/main/packages/libraries/cli/README.md#commands)
+
+## Errors
+
+import { CLIErrorsSection } from "@hive/design-system/hive-components/cli-errors";
 
 <CLIErrorsSection />
