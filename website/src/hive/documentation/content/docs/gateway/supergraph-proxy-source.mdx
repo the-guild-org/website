@@ -9,15 +9,16 @@ Hive Gateway can retrieve a supergraph from a wide range of sources.
 
 This includes:
 
-- Hive Schema Schema Registry
+- Hive Schema Registry
 - Apollo GraphOS / Studio
 - Custom Sources
+- Subgraphs running on your machine, composed by the gateway during development
 
 In addition you can also proxy any GraphQL API, by either introspection or providing a schema file.
 
 ## Supergraph
 
-<Tabs items={['Hive Schema Registry', 'Apollo GraphOS', 'Custom HTTP Source', 'Local File']}>
+<Tabs items={['Hive Schema Registry', 'Apollo GraphOS', 'Custom HTTP Source', 'Local File', 'Local Subgraphs (Dev)']}>
 
 {/* Hive Schema Registry */}
 
@@ -201,6 +202,251 @@ export const gatewayConfig = defineConfig({
 </Tabs.Tab>
 
 </Tabs>
+
+</Tabs.Tab>
+
+{/* Local Subgraphs (Dev) */}
+
+<Tabs.Tab>
+
+During development, Hive Gateway can compose its own supergraph from subgraphs that are running on
+your machine, or whose schema is available as a file, instead of serving a supergraph that was
+composed elsewhere. This is the gateway counterpart of the Hive CLI's
+[`hive dev`](/docs/api-reference/cli#local-subgraph-development) command: the gateway resolves the
+schema of each configured service, composes a supergraph, serves it, and recomposes whenever one of
+the schemas changes. Use it to test changes to one or more subgraphs together with the rest of your
+graph, without running every subgraph locally and without a separate composition process.
+
+<Callout type="info">
+  The `dev` source is intended for local development. In deployed environments, serve a supergraph
+  from one of the other sources on this page.
+</Callout>
+
+Every service needs a `name`, which must match the subgraph's name in the graph, and the `url` the
+gateway routes requests to. The optional `source` controls where the service's schema comes from:
+
+| `source`               | How the schema is obtained                                                                                                                                       |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `federation` (default) | The service's federation `_service { sdl }` field is queried.                                                                                                   |
+| `graphql`              | A standard GraphQL introspection query is sent and the result is printed as SDL. Use this for services that are not federation aware.                            |
+| `file`                 | The SDL file given in `schema` is read from disk. The service is not contacted for its schema, but `url` is still where requests are routed. Requires Node.js. |
+
+<Tabs items={['Configuration File', 'CLI']}>
+
+{/* Configuration File */}
+
+<Tabs.Tab>
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  supergraph: {
+    type: "dev",
+    services: [
+      {
+        name: "products",
+        url: "http://localhost:4001/graphql",
+        /** Optional. Query the federation `_service { sdl }` field. This is the default. */
+        source: "federation",
+      },
+      {
+        name: "reviews",
+        url: "http://localhost:4002/graphql",
+        /** Run a standard GraphQL introspection query instead. */
+        source: "graphql",
+      },
+      {
+        name: "inventory",
+        url: "http://localhost:4003/graphql",
+        /** Read the schema from a local SDL file instead of contacting the url. */
+        source: "file",
+        /** Resolved relative to the gateway's working directory. */
+        schema: "./inventory.graphql",
+      },
+    ],
+  },
+});
+```
+
+</Tabs.Tab>
+
+{/* CLI */}
+
+<Tabs.Tab>
+
+Repeat `--dev-service` once per service. `--dev-service-source` and `--dev-service-schema` are
+optional arguments keyed by the same service name.
+
+```sh
+hive-gateway supergraph \
+  --dev-service products=http://localhost:4001/graphql \
+  --dev-service reviews=http://localhost:4002/graphql \
+  --dev-service-source reviews=graphql \
+  --dev-service inventory=http://localhost:4003/graphql \
+  --dev-service-source inventory=file \
+  --dev-service-schema inventory=./inventory.graphql
+```
+
+When `--dev-service` is given, it defines the services in full and replaces any `services`
+configured in the configuration file.
+
+</Tabs.Tab>
+
+</Tabs>
+
+By default the gateway composes the configured services, and only those, on your machine. To
+compose them together with the rest of your graph, enable remote composition.
+
+**Remote composition through the Hive registry**
+
+With `remote` enabled, the gateway sends the resolved schemas of the configured services to the Hive
+registry, which composes them with the latest composable schema version of the given target. A
+configured service replaces the target's subgraph of the same name, or is added if there is none, and
+every other subgraph is taken from the registry as it was last published. You only need to run the
+services you are changing.
+
+<Callout type="info">
+  Remote composition is performed by the registry with the same composition engine and project
+  configuration used for schema checks and publishes. Like `hive dev --remote`, it requires an
+  access token with the **Compose schema** permission for the project and target, and is only
+  available for Apollo Federation projects.
+</Callout>
+
+<Tabs items={['Configuration File', 'CLI']}>
+
+{/* Configuration File */}
+
+<Tabs.Tab>
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  supergraph: {
+    type: "dev",
+    services: [{ name: "products", url: "http://localhost:4001/graphql" }],
+    remote: true,
+    /** Registry access token with Read permissions on the project and target. */
+    token: "<registry access token>",
+    /** The target whose schema is composed with the services above. */
+    target: {
+      bySelector: {
+        organizationSlug: "<organization>",
+        projectSlug: "<project>",
+        targetSlug: "<target>",
+      },
+    },
+    // The target can also be referenced by its id: target: { byId: "<target id>" }
+  },
+});
+```
+
+</Tabs.Tab>
+
+{/* CLI */}
+
+<Tabs.Tab>
+
+```sh
+hive-gateway supergraph \
+  --dev-service products=http://localhost:4001/graphql \
+  --dev-remote \
+  --hive-target "<organization>/<project>/<target>" \
+  --hive-access-token "<registry access token>"
+```
+
+`--hive-target` accepts either the `organization/project/target` slug path or the target's UUID.
+
+</Tabs.Tab>
+
+</Tabs>
+
+| Option     | CLI flag                      | Environment variable | Description                                                                                                                                                                                                                                                    |
+| ---------- | ----------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `remote`   | `--dev-remote`                | `DEV_REMOTE`         | Compose through the Hive registry instead of locally. Requires `token`. As an environment variable, `1`, `true`, `yes` or `on` enable it and any other value, for example `0`, `false` or `off`, disables it, overriding `remote` from the configuration file. |
+| `registry` | `--dev-registry <endpoint>`   | `DEV_REGISTRY`       | The registry's GraphQL API endpoint. Defaults to `https://app.graphql-hive.com/graphql` (Hive Cloud); set it for self-hosted Hive.                                                                                                                             |
+| `token`    | `--hive-access-token <token>` | `HIVE_ACCESS_TOKEN`  | The registry access token used for composition.                                                                                                                                                                                                                |
+| `target`   | `--hive-target <target>`      | `HIVE_TARGET`        | The target to compose against. In the configuration file, `{ byId }` or `{ bySelector: { organizationSlug, projectSlug, targetSlug } }`.                                                                                                                       |
+
+These flags overlay the corresponding options of a `dev` source configured in the configuration
+file, so you can keep the services in the file and pass the registry credentials through the
+environment.
+
+<Callout type="info">
+  `--hive-target` and `--hive-access-token` are the gateway's global Hive registry options, not
+  dev-specific ones. They must be set together, and they also enable
+  [usage reporting](/docs/gateway/usage-reporting) to that target with the same token, so the token
+  needs the usage reporting permission as well or its reports are rejected. Only
+  `--hive-access-token` is used for composition; `--hive-usage-access-token` and
+  `--hive-trace-access-token` are not. To compose remotely without reporting usage, set `token` and
+  `target` in the configuration file and only pass `--dev-remote`.
+</Callout>
+
+**Local or remote composition**
+
+Use remote composition when:
+
+- your graph is published to a Hive target and the result should match what schema checks and
+  production will see
+- you want to run only the services you are changing, with every other subgraph taken from the
+  registry as last published
+- unrelated subgraphs should always be their latest published versions rather than stale local
+  copies
+
+Use local composition when:
+
+- you are offline or prototyping without a registry
+- every subgraph you need is already running locally
+- you want the fastest possible feedback loop
+
+Local composition uses the composition engine bundled with your gateway version, which can differ
+from the one the registry runs. Remote composition is performed by the registry with the same engine
+that validates your pull requests and publishes to production, so what composes on your machine
+composes in CI.
+
+**Polling, recomposition and failures**
+
+The gateway resolves every service's schema on each [polling interval](#polling) and recomposes
+only when a service's schema or `url` changed, or a service was added or removed, so it can stay
+running while you edit resolvers and schema files. The first fetch after the gateway starts always
+composes, even if a persisted cache such as Redis still holds a supergraph from a previous run.
+Composition itself is guarded by a circuit breaker; lower `volumeThreshold` (for example to `1`) if
+repeated failures, such as an unreachable registry, should pause composition for `resetTimeout`
+milliseconds instead of being retried on every poll.
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  supergraph: {
+    type: "dev",
+    services: [
+      /* ... */
+    ],
+    /** Optional. Thresholds after which composition is paused for `resetTimeout` milliseconds. */
+    circuitBreaker: {
+      errorThresholdPercentage: 50,
+      volumeThreshold: 10,
+      resetTimeout: 30_000,
+    },
+  },
+  pollingInterval: 10_000,
+});
+```
+
+When composition fails, the error is logged together with the composition errors (local) or the
+registry's response (remote). If a supergraph was already being served, the gateway keeps serving it
+until a later poll composes successfully. If the first composition after start fails, the gateway
+exits, so start your subgraphs before the gateway.
+
+**Restrictions**
+
+- The `--dev-*` flags require a `dev` supergraph source, configured either in the configuration file
+  or via `--dev-service`. They cannot be combined with a supergraph path or URL argument,
+  `--hive-cdn-endpoint` or `--apollo-graph-ref`.
+- `source: "file"` reads from the file system and is only available when the gateway runs on
+  Node.js. Services using `federation` or `graphql` work in every runtime.
 
 </Tabs.Tab>
 
