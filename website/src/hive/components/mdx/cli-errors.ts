@@ -5,7 +5,7 @@
  * /docs/api-reference/cli#errors, so keep the codes and anchors stable.
  *
  * The codes are grouped by command: 1xx generic, 2xx schema:check,
- * 3xx schema:publish, 4xx app:create, 5xx artifact:fetch, 6xx dev,
+ * 3xx schema:publish, 4xx app:create, 5xx schema:fetch, 6xx dev,
  * 7xx operations:check.
  */
 export interface CLIError {
@@ -264,8 +264,9 @@ export const cliErrors: CLIError[] = [
     code: '400',
     name: 'PersistedOperationsMalformedError',
     example: 'hive app:create --name ios --version 1.0.0 operations.json',
-    exampleOutput: 'Persisted Operations file "operations.json" is malformed.',
-    fix: 'The operations JSON could not be parsed and validated. Check for and address any syntax errors in this file.',
+    exampleOutput:
+      'Persisted Operations file "operations.json" is malformed. Please make sure it follows either the GraphQL Code Generator, Relay or Apollo Persisted Query Manifest Format.',
+    fix: 'The file could not be parsed as a persisted operations manifest. Check the JSON for syntax errors, and make sure it uses one of the supported formats: the GraphQL Code Generator persisted documents output, a Relay persisted queries file, or an Apollo persisted query manifest.',
   },
   {
     code: '500',

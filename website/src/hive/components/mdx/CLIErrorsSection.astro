@@ -12,7 +12,7 @@ import { anchorOf, cliErrors, titleOf } from './cli-errors';
   Every error the CLI prints ends with its error code in square brackets, for example
   <code>[103]</code>. The codes are grouped by command: <code>1xx</code> apply to every command,
   <code>2xx</code> to <code>schema:check</code>, <code>3xx</code> to <code>schema:publish</code>,
-  <code>4xx</code> to <code>app:create</code>, <code>5xx</code> to <code>artifact:fetch</code>,
+  <code>4xx</code> to <code>app:create</code>, <code>5xx</code> to <code>schema:fetch</code>,
   <code>6xx</code> to <code>dev</code>, and <code>7xx</code> to <code>operations:check</code>. The
   process exits with <code>1</code> for a failed command, <code>2</code> for a timeout, and
   <code>3</code> when the input was invalid before the command ran. Set
@@ -30,7 +30,7 @@ import { anchorOf, cliErrors, titleOf } from './cli-errors';
         <strong>Example:</strong> <code>{error.example}</code>
       </p>
       <Callout type="note">
-        <pre class="cli-error-output">{error.exampleOutput}</pre>
+        <pre class="cli-error-output">{error.exampleOutput}  [{error.code}]</pre>
       </Callout>
       <p>
         <strong>Suggested fix:</strong> {error.fix}
