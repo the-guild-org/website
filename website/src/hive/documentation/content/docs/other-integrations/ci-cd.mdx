@@ -136,9 +136,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: schema check
-        env:
-          # If you self-host your hive server:
-          HIVE_ENDPOINT: ${{ secrets.HIVE_ENDPOINT }}
+        # If you self-host Hive, set your registry's GraphQL endpoint:
+        # env:
+        #   HIVE_REGISTRY: ${{ vars.HIVE_REGISTRY }}
         run: |
           curl -sSL https://graphql-hive.com/install.sh | sh
           hive schema:check "path/to/schema.graphql" \
@@ -180,8 +180,8 @@ jobs:
           fetch-depth: 0
       - name: schema check
         env:
-          # If you self-host your Hive server:
-          # HIVE_ENDPOINT: ${{ secrets.HIVE_ENDPOINT }}
+          # If you self-host Hive, set your registry's GraphQL endpoint:
+          # HIVE_REGISTRY: ${{ vars.HIVE_REGISTRY }}
           MERGE_GROUP_BASE_SHA: ${{ github.event.merge_group.base_sha }}
         run: |
           curl -sSL https://graphql-hive.com/install.sh | sh
@@ -222,9 +222,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: schema push
-        env:
-          # If you self-host your hive server:
-          HIVE_ENDPOINT: ${{ secrets.HIVE_ENDPOINT }}
+        # If you self-host Hive, set your registry's GraphQL endpoint:
+        # env:
+        #   HIVE_REGISTRY: ${{ vars.HIVE_REGISTRY }}
         run: |
           curl -sSL https://graphql-hive.com/install.sh | sh
           hive schema:push "path/to/schema.graphql" \
