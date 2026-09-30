@@ -162,8 +162,9 @@ supergraph:
   source: plugin
 ```
 
-The plugin constructs and retains an `Arc<Supergraph>` once, then selects it per request with
-`set_supergraph`:
+The plugin constructs and retains an `Arc<Supergraph>` once in `on_plugin_init`, then selects it
+per request with `set_supergraph`. Use `payload.router_config()` in the initialization hook to
+inherit the router's supergraph-bound settings:
 
 ```rust
 use std::sync::Arc;
@@ -173,7 +174,7 @@ use hive_router::plugins::hooks::on_supergraph_load::{Supergraph, SupergraphOpti
 let supergraph = Arc::new(Supergraph::from_sdl(
     "my-variant",
     include_str!("supergraph.graphql"),
-    SupergraphOptions::default(),
+    SupergraphOptions::try_from(payload.router_config())?,
 )?);
 
 // later, in on_http_request
@@ -193,6 +194,11 @@ other requests. The router pins the selected schema, its `SupergraphOptions`, an
 together, so validation, introspection, planning, authorization, execution, usage reporting,
 coprocessors, and request deduplication all use the same supergraph instance and configuration
 generation.
+
+Plugin-selected runtimes are retained in a shared FIFO cache, separate from the configured
+supergraph runtime. Its default limit is 10; configure
+[`cache.router.plugin_supergraph_runtimes`](./configuration/cache#plugin_supergraph_runtimes)
+to change the limit or disable runtime caching.
 
 #### Supergraph-bound configuration
 
@@ -219,13 +225,24 @@ Configured supergraphs (loaded from Hive Console, Apollo GraphOS, the file-syste
 derive `SupergraphOptions` automatically from the router's YAML — no configuration changes are
 needed.
 
-A plugin-owned variant must build a complete `SupergraphOptions` value itself; any field left
-at its default does **not** fall back to the router's configured settings.
+Plugins can use `SupergraphOptions::try_from(&HiveRouterConfig)` to inherit all the settings listed
+above, then override individual fields before constructing their supergraph. During `on_plugin_init`,
+`payload.router_config()` provides read-only access to that configuration. The router uses the same
+conversion for its configured supergraph.
+
+The conversion resolves the Hive telemetry target, including any configured expression. It can
+therefore fail and uses `TryFrom` rather than `From`; `?` propagates resolution errors from the
+initialization hook.
+
+Using `SupergraphOptions::default()` instead keeps the defaults for those fields; they do **not**
+automatically fall back to the router configuration. Cache limits are the exception: both approaches
+leave cache overrides unset, so they inherit `cache.supergraph`. Plugins can override individual
+limits through `options.cache`; see [Per-variant cache overrides](./configuration/cache#per-variant-overrides-in-plugins).
 
 ```rust
 use hive_router::plugins::hooks::on_supergraph_load::{Supergraph, SupergraphOptions};
 
-let mut options = SupergraphOptions::default();
+let mut options = SupergraphOptions::try_from(payload.router_config())?;
 options.traffic_shaping.all.forward_operation_name = true;
 options.error_masking.redacted_error_message = "Basic variant error".to_string();
 options.hive_target = Some("organization/project/basic".to_string());
@@ -252,7 +269,11 @@ they selected when the request began. New requests use the newly published super
 Schema-aware validation, normalization, query-plan, and demand-control caches belong to a specific
 supergraph runtime. Replacing one configured supergraph does not clear caches belonging to unrelated
 plugin-selected supergraphs. Old caches remain alive only while requests or streams still use their
-old runtime. The shared parse cache is unaffected because parsing an operation is schema-independent.
+old runtime. Plugin-selected runtimes can also be evicted from the shared
+[runtime cache](./configuration/cache#plugin_supergraph_runtimes); eviction does not retire the
+supergraph or interrupt requests or subscriptions already using that runtime. Selecting it again
+builds a new runtime if it is no longer cached. The shared parse cache is unaffected because parsing
+an operation is schema-independent.
 
 Subscriptions close with `SUBSCRIPTION_SCHEMA_RELOAD` only when their selected supergraph retires.
 Configured replacement retires the previous configured generation. For plugin-selected

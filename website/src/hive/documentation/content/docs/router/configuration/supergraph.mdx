@@ -292,6 +292,14 @@ and the
 [`feature_flags`](https://github.com/graphql-hive/router/tree/main/plugin_examples/feature_flags)
 example for a complete plugin-only setup.
 
+Plugins can inherit the router's graph-bound settings using
+`SupergraphOptions::try_from(payload.router_config())?` during initialization, then override
+individual fields. See [Supergraph-bound configuration](/docs/router/supergraph#supergraph-bound-configuration).
+
+Plugin-selected runtimes use a shared FIFO cache with a default limit of 10. Configure
+[`cache.router.plugin_supergraph_runtimes`](./cache#plugin_supergraph_runtimes) to change that limit
+or set it to `0` to disable runtime caching.
+
 ## Filesystem
 
 The most straightforward way to provide your supergraph schema is as a local file. This works well
