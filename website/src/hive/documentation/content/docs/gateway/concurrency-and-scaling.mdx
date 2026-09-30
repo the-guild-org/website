@@ -6,6 +6,7 @@ description:
 ---
 
 import { Callout } from "@hive/design-system/hive-components/callout";
+import { GraphTree } from "#mdx-shims/graph";
 
 Hive Gateway CLI runs as an HTTP server. Because Node.js is single-threaded, a single gateway
 process can only handle one request at a time at the JavaScript level. Forking lets you run multiple
@@ -22,13 +23,14 @@ the default on all platforms except Windows. This is a deliberate design choice 
 OS, distribution tends to be severely unbalanced; [Node.js's own docs note cases where over 70% of
 all connections ended up in just two processes out of eight](https://nodejs.org/api/cluster.html#how-it-works).
 
-```mermaid
-graph TD
-  Primary["Primary Process (cluster manager, no request work)"]
-  Primary -->|forks| Worker1["Worker 1 (HTTP server)"]
-  Primary -->|forks| Worker2["Worker 2 (HTTP server)"]
-  Primary -->|forks| WorkerN["Worker N (HTTP server)"]
-```
+<GraphTree title="Forking">
+
+- **Primary process — cluster manager, no request work**
+  - Worker 1 — HTTP server
+  - Worker 2 — HTTP server
+  - Worker N — HTTP server
+
+</GraphTree>
 
 Each worker is a completely independent Node.js process with its own full HTTP server. They do not
 share memory - every worker holds its own separate copy of all in-memory data such as

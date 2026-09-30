@@ -1,0 +1,65 @@
+---
+/**
+ * A punch list. Use a Markdown task list: `- [x] done`, `- [ ] open`.
+ */
+import Graph from './Graph.astro';
+import { htmlOf, isElement, itemContent, listItems, slotNodes, type HtmlNode } from './html';
+
+interface Props {
+  class?: string;
+  className?: string;
+  corner?: string;
+  title?: string;
+}
+
+const items = listItems(await slotNodes(Astro)).map(item => {
+  const content = itemContent(item);
+  const checkbox = content.find(node => isElement(node, 'input'));
+  if (checkbox && isElement(checkbox)) {
+    return {
+      done: 'checked' in checkbox.attrs,
+      label: htmlOf(content.filter(node => node !== checkbox)),
+    };
+  }
+  // Task-list syntax that was not turned into a checkbox.
+  const [first, ...rest] = content;
+  if (first?.type === 'text') {
+    const match = first.value.match(/^\s*\[([ xX])\]\s*/);
+    if (match) {
+      const trimmed: HtmlNode = { type: 'text', value: first.value.slice(match[0].length) };
+      return { done: match[1] !== ' ', label: htmlOf([trimmed, ...rest]) };
+    }
+  }
+  return { done: false, label: htmlOf(content) };
+});
+---
+
+<Graph
+  class={Astro.props.class ?? Astro.props.className}
+  corner={Astro.props.corner}
+  title={Astro.props.title}
+>
+  <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
+    {items.map((item, index) => (
+      <li class="graph-row m-0 flex items-baseline gap-3 p-0" style={`--i:${index}`}>
+        <span
+          aria-hidden="true"
+          class:list={[
+            'shrink-0 whitespace-pre',
+            item.done ? 'text-graph-accent' : 'text-graph-muted',
+          ]}
+        >
+          {item.done ? '[x]' : '[ ]'}
+        </span>
+        <span class="sr-only">{item.done ? 'done:' : 'open:'}</span>
+        <span
+          class:list={[
+            'graph-label min-w-0',
+            item.done ? 'text-fd-foreground' : 'text-graph-muted',
+          ]}
+          set:html={item.label}
+        />
+      </li>
+    ))}
+  </ul>
+</Graph>

@@ -3,6 +3,7 @@ title: "Demand Control"
 ---
 
 import { Callout } from "@hive/design-system/hive-components/callout";
+import { GraphTimeline } from "#mdx-shims/graph";
 
 Demand Control protects your federated GraphQL API from expensive operations by estimating their
 computational cost before execution and enforcing configurable budgets. It works at **two
@@ -672,6 +673,15 @@ never appears in a response — it only flags, in your metrics, operations whose
 ## Best practices and patterns
 
 ### 1. Gradual rollout strategy
+
+<GraphTimeline title="Rollout">
+
+- Phase 1: Measurement — both modes on `measure`, collect cost histograms
+- Phase 2: Baseline setting — `max` at the 99th percentile, switch to `enforce`
+- Phase 3: Gradual tightening — lower `max` as clients optimize their queries
+- Phase 4: Enforcement with telemetry — alerts on rejections, keep tuning the cost model
+
+</GraphTimeline>
 
 **Phase 1: Measurement**
 
