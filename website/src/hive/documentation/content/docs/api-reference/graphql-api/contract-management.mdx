@@ -8,7 +8,8 @@ please refer to our [schema contracts documentation](/docs/schema-registry/contr
 
 ## Retrieve a list of all Contracts in Target
 
-Use the `Target.contracts` field for retrieving a list of all contracts within the target.
+Use the `Target.contracts` field for retrieving a list of all existing contracts within the target.
+Deleted contracts are not included.
 
 ```graphql
 query ContractTargets($targetId: ID!) {
@@ -22,35 +23,7 @@ query ContractTargets($targetId: ID!) {
           includeTags
           excludeTags
           removeUnreachableTypesFromPublicApiSchema
-          isDisabled
-        }
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
-    }
-  }
-}
-```
-
-## Retrieve a list of all Active Contracts in Target
-
-Use the `Target.activeContracts` field for retrieving a list of all contracts within the target.
-
-```graphql
-query ActiveContractTargets($targetId: ID!) {
-  target(reference: { byId: $targetId }) {
-    id
-    activeContracts {
-      edges {
-        node {
-          id
-          contractName
-          includeTags
-          excludeTags
-          removeUnreachableTypesFromPublicApiSchema
-          isDisabled
+          viewerCanDeleteContract
         }
       }
       pageInfo {
@@ -76,7 +49,6 @@ mutation CreateContract($input: CreateContractInput!) {
         includeTags
         excludeTags
         removeUnreachableTypesFromPublicApiSchema
-        isDisabled
       }
     }
     error {
@@ -92,23 +64,16 @@ mutation CreateContract($input: CreateContractInput!) {
 }
 ```
 
-## Disable a Contract
+## Delete a Contract
 
-Use the `Mutation.disableContract` field for disabling a contract. **Note:** A disabled contract
-cannot be made active again.
+Use the `Mutation.deleteContract` field for permanently deleting a contract. This removes the
+contract and its CDN artifacts and allows its name to be reused within the target.
 
 ```graphql
-mutation DisableContract($input: DisableContractInput!) {
-  disableContract(input: $input) {
+mutation DeleteContract($input: DeleteContractInput!) {
+  deleteContract(input: $input) {
     ok {
-      disabledContract {
-        id
-        contractName
-        includeTags
-        excludeTags
-        removeUnreachableTypesFromPublicApiSchema
-        isDisabled
-      }
+      deletedContractId
     }
     error {
       message
@@ -116,7 +81,3 @@ mutation DisableContract($input: DisableContractInput!) {
   }
 }
 ```
-
-## Delete a Contract
-
-This is not possible. Instead, disable the contract.
