@@ -93,7 +93,9 @@ fn on_plugin_init(payload: OnPluginInitPayload<Self>) -> OnPluginInitResult<Self
 
 Use `payload.router_config()` for read-only access to the router's fully resolved configuration
 (not just this plugin's own scoped config), so the plugin can adapt its behavior to router-wide
-settings such as the configured GraphQL path or telemetry setup.
+settings such as the configured GraphQL path or telemetry setup. To inherit graph-bound settings
+for a plugin-owned supergraph, use `SupergraphOptions::try_from(payload.router_config())?`, then
+override any fields that differ. See [Selecting a supergraph for the request](#select-a-supergraph-for-the-request).
 
 ```rust
 fn on_plugin_init(payload: OnPluginInitPayload<Self>) -> OnPluginInitResult<Self> {
@@ -245,7 +247,7 @@ impl RouterPlugin for SchemaVariantsPlugin {
     }
 
     fn on_plugin_init(payload: OnPluginInitPayload<Self>) -> OnPluginInitResult<Self> {
-        let mut options = SupergraphOptions::default();
+        let mut options = SupergraphOptions::try_from(payload.router_config())?;
         options.traffic_shaping.all.forward_operation_name = true;
         options.error_masking.redacted_error_message = "Basic variant error".to_string();
         options.hive_target = Some("organization/project/basic".to_string());
@@ -281,11 +283,24 @@ supergraph loaded from `supergraph.source` is always named `default`.
 Both constructors also take a complete `SupergraphOptions` value: planner options,
 executor-side traffic shaping, header rules, URL overrides, override labels, demand control,
 subgraph subscription transports, error masking, persisted documents, and the Hive target. A
-plugin-owned variant does not inherit any of these from the router's configured supergraph — fields
-left at `SupergraphOptions::default()` simply use the defaults. Live router infrastructure (HTTP
-clients, caches, telemetry agents, storage runtimes) is still built by the router and stays out of
-`SupergraphOptions`. See [Supergraph-bound configuration](/docs/router/supergraph#supergraph-bound-configuration)
+plugin-owned variant can inherit these settings with
+`SupergraphOptions::try_from(payload.router_config())?`, as shown above, and override individual
+fields before construction. The conversion resolves the Hive telemetry target, including any
+expression, so it can fail; `?` propagates resolution errors during plugin initialization.
+
+Using `SupergraphOptions::default()` instead uses defaults for those fields, not the router's
+configured values. Both approaches leave cache overrides unset, inheriting the router's
+`cache.supergraph` limits; use `options.cache` for
+[per-variant overrides](/docs/router/configuration/cache#per-variant-overrides-in-plugins).
+Live router infrastructure (HTTP clients, caches, telemetry agents, storage runtimes) is still built
+by the router. See [Supergraph-bound configuration](/docs/router/supergraph#supergraph-bound-configuration)
 for the complete field reference.
+
+The router retains plugin-selected runtimes in a shared FIFO cache. Configure
+[`cache.router.plugin_supergraph_runtimes`](/docs/router/configuration/cache#plugin_supergraph_runtimes)
+to change its default limit of 10 or set it to `0` to build a new runtime on every selection.
+The configured supergraph runtime is separate and does not count toward this limit. Eviction does
+not retire a supergraph or interrupt existing requests or subscriptions.
 
 If a plugin selects a supergraph whose router runtime cannot be constructed, the request fails
 without falling back to the configured supergraph. This prevents a request selected for one schema

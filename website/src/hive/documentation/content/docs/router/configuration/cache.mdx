@@ -5,16 +5,18 @@ title: "cache"
 import { Callout } from "@hive/design-system/hive-components/callout";
 
 The `cache` configuration controls the router's in-memory caches for parsing, validation,
-normalization, and query plans. These caches make repeated operations fast, but their memory usage
-grows with the number of *distinct* queries.
+normalization, and query plans, as well as the shared cache of plugin-selected supergraph runtimes.
+Operation caches make repeated operations fast, but their memory usage grows with the number of
+*distinct* queries.
 
-Each cache supports a size limit (`max_entries`) and optional time-based expiry
+Each operation cache supports a size limit (`max_entries`) and optional time-based expiry
 (`time_to_live`, `time_to_idle`). These settings are independent for each cache, so you can size the
 query-plan cache differently from the parsing cache.
 
 ```yaml title="router.config.yaml"
 cache:
   router:
+    plugin_supergraph_runtimes: 10
     parsing:
       max_entries: 1000
       time_to_live: 30m
@@ -40,6 +42,39 @@ Caches under `cache.router` are shared by everything the router serves.
 | Cache     | What it holds |
 | --------- | -------------- |
 | `parsing` | Parsed GraphQL documents, keyed by the incoming query hash. Parsing is schema-independent, so this cache is shared across supergraph variants. |
+| `plugin_supergraph_runtimes` | Router runtimes for plugin-selected supergraphs, retained in a shared FIFO cache. The configured supergraph runtime is separate. |
+
+### `plugin_supergraph_runtimes`
+
+- **Type:** non-negative `integer`
+- **Default:** `10`
+- **Environment Variable:** `ROUTER_CACHE_PLUGIN_SUPERGRAPH_RUNTIMES`
+
+Maximum number of plugin-selected supergraph runtimes retained under
+`cache.router.plugin_supergraph_runtimes`. When the cache is full, adding a runtime evicts the
+oldest entry (FIFO). Cache hits do not change that order. The configured supergraph runtime does
+not count toward this limit.
+
+```yaml title="router.config.yaml"
+cache:
+  router:
+    plugin_supergraph_runtimes: 20
+```
+
+Set the value to `0` to disable caching for plugin-selected runtimes; each selection then builds a
+new runtime. The environment override takes precedence over the configuration file:
+
+```bash
+ROUTER_CACHE_PLUGIN_SUPERGRAPH_RUNTIMES=0
+```
+
+The cache grows as runtimes are added, so a large limit does not reserve memory at startup. Each
+retained runtime has its own supergraph-scoped operation caches. Eviction does not retire the
+supergraph or interrupt existing requests or subscriptions; those retain their pinned runtime.
+A later selection rebuilds the runtime if it is no longer cached.
+
+This setting is an entry count, not a cache-limits object: `max_entries`, `time_to_live`, and
+`time_to_idle` do not apply to it.
 
 ### `supergraph` - one instance per served variant
 
@@ -111,6 +146,10 @@ Plugins serving extra supergraph variants inherit `cache.supergraph` by default.
 variant with `SupergraphOptions::cache` - each dimension (`max_entries`, `time_to_live`,
 `time_to_idle`) inherits independently, so touching one never resets the others. Pass `None` to
 explicitly disable an expiry the router config sets.
+
+`SupergraphOptions::try_from(payload.router_config())?` also leaves cache overrides unset while
+inheriting the router's other graph-bound settings. See
+[Supergraph-bound configuration](/docs/router/supergraph#supergraph-bound-configuration).
 
 ```rust
 use std::time::Duration;
