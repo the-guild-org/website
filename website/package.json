@@ -27,7 +27,7 @@
     "postbuild:verify": "node scripts/hive/verify-base-path.ts && node scripts/verify-sitemaps.ts && node scripts/verify-redirects.ts && node scripts/hive/check-seo.ts",
     "postbuild:yoga": "node scripts/yoga/generate-sitemap.ts && node scripts/yoga/generate-redirects.ts && pagefind --site dist/graphql/yoga-server",
     "preview": "astro preview",
-    "test": "vitest run src"
+    "test": "vitest run src && sh scripts/hive/install.test.sh"
   },
   "dependencies": {
     "@astrojs/check": "0.9.10",
