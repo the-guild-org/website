@@ -45,7 +45,11 @@
         fi
       }
 
-      trap cleanup 0 1 2 3 15
+      trap cleanup 0
+      trap 'exit 129' 1
+      trap 'exit 130' 2
+      trap 'exit 131' 3
+      trap 'exit 143' 15
 
       unsupported_arch() {
         echoerr "Hive Console CLI does not support $@ at this time."

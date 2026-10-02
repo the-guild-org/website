@@ -16,7 +16,11 @@ cleanup() {
   "$REAL_RM" -rf "$TEST_DIR"
 }
 
-trap cleanup 0 1 2 3 15
+trap cleanup 0
+trap 'exit 129' 1
+trap 'exit 130' 2
+trap 'exit 131' 3
+trap 'exit 143' 15
 
 fail() {
   echo "FAIL: $*" >&2
