@@ -10,8 +10,10 @@ The returned `UnusedSchemaExplorer` type will contain a list of types and their 
 values.
 
 The `SchemaVersion.unusedSchema(period:)` argument specifies the period to look at in order to
-identify whether a schema part is unused. If the argument is omitted a period of the last 30 days is
-used.
+identify whether a schema part is unused. If the argument is omitted, the last 30 days are 
+used, or the organization's usage retention if that is shorter. A period that starts before 
+the organization's usage retention is rejected with the error code `PERIOD_OUTSIDE_RETENTION`.
+
 
 ```graphql title="Example: Retrieve a list of unused schema parts"
 query UnusedSchemaQuery(

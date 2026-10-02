@@ -322,6 +322,13 @@ export CLICKHOUSE_TTL_MINUTELY_MV_TABLES="24 HOUR"
 Numeric day counts are also accepted. When configured, migrations apply the retention changes and
 update each organization's retention limit to the longest configured period.
 
+The organization's retention limit is enforced. In console, date ranges older than the limit cannot
+be selected, and a link to an older range resets to the page's default range. The API rejects usage 
+queries whose period starts before the limit, with the error code `PERIOD_OUTSIDE_RETENTION`. If you 
+have never configured retention, the limit defaults to 7 days per organization, even though ClickHouse 
+keeps data for longer. Set `CLICKHOUSE_TTL_TABLES` and run the migrations to raise the limit to match 
+the data you keep.
+
 ## Production Considerations
 
 The community Compose file is configured for `localhost`. Changing only `HIVE_APP_BASE_URL` is not
