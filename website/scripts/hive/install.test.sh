@@ -100,11 +100,18 @@ case "$URL" in
     printf '%s\n' "$MOCK_STABLE_VERSION" > "$OUTPUT"
     ;;
   */SHA256SUMS)
-    if [ "$MOCK_MANIFEST_MODE" = "missing" ]; then
-      printf '%s  another-archive.tar.gz\n' "$MOCK_EXPECTED_DIGEST" > "$OUTPUT"
-    else
-      printf '%s  %s\n' "$MOCK_EXPECTED_DIGEST" "$MOCK_ARCHIVE_NAME" > "$OUTPUT"
-    fi
+    case "$MOCK_MANIFEST_MODE" in
+      missing)
+        printf '%s  another-archive.tar.gz\n' "$MOCK_EXPECTED_DIGEST" > "$OUTPUT"
+        ;;
+      duplicate)
+        printf '%s  %s\n' "$MOCK_EXPECTED_DIGEST" "$MOCK_ARCHIVE_NAME" > "$OUTPUT"
+        printf '%s  %s\n' "$MOCK_EXPECTED_DIGEST" "$MOCK_ARCHIVE_NAME" >> "$OUTPUT"
+        ;;
+      *)
+        printf '%s  %s\n' "$MOCK_EXPECTED_DIGEST" "$MOCK_ARCHIVE_NAME" > "$OUTPUT"
+        ;;
+    esac
     ;;
   *.tar.gz)
     printf 'mock archive\n' > "$OUTPUT"
@@ -118,6 +125,12 @@ MOCK
 
   cat > "$MOCK_BIN/mkdir" << 'MOCK'
 #!/bin/sh
+case "$(umask)" in
+  0077|077)
+    echo "installer umask leaked into installation" >&2
+    exit 1
+    ;;
+esac
 echo "mkdir $*" >> "$MOCK_LOG"
 MOCK
 
@@ -245,6 +258,18 @@ MOCK_ARCHIVE_NAME='hive-v1.2.3-linux-x64.tar.gz'
 run_installer '1.2.3'
 [ "$STATUS" -ne 0 ] || fail 'missing archive unexpectedly succeeded'
 assert_contains "$OUTPUT" 'Archive hive-v1.2.3-linux-x64.tar.gz is absent from the checksum manifest.'
+assert_not_contains "$(cat "$MOCK_LOG")" 'tar '
+pass
+
+setup_case duplicate-archive sha256sum
+MOCK_STABLE_VERSION='9.8.7'
+MOCK_MANIFEST_MODE='duplicate'
+MOCK_EXPECTED_DIGEST="$DIGEST_A"
+MOCK_ACTUAL_DIGEST="$DIGEST_A"
+MOCK_ARCHIVE_NAME='hive-v1.2.3-linux-x64.tar.gz'
+run_installer '1.2.3'
+[ "$STATUS" -ne 0 ] || fail 'duplicate archive unexpectedly succeeded'
+assert_contains "$OUTPUT" 'Archive hive-v1.2.3-linux-x64.tar.gz appears multiple times in the checksum manifest.'
 assert_not_contains "$(cat "$MOCK_LOG")" 'tar '
 pass
 

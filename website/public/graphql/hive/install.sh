@@ -136,18 +136,27 @@
         echo "Downloading checksum manifest $MANIFEST_URL"
         download_file "$MANIFEST_URL" "$MANIFEST_PATH"
 
-        EXPECTED_CHECKSUM="$(
-          awk -v archive="$ARCHIVE_NAME" '
-            $2 == archive { checksum = $1; matches++ }
-            END {
-              if (matches != 1) exit 1
-              print checksum
-            }
-          ' "$MANIFEST_PATH"
-        )" || {
-          echoerr "Archive $ARCHIVE_NAME is absent from the checksum manifest."
-          exit 1
-        }
+        MATCHING_CHECKSUMS="$(
+          awk -v archive="$ARCHIVE_NAME" '$2 == archive { print $1 }' "$MANIFEST_PATH"
+        )"
+        MATCH_COUNT="$(
+          printf '%s\n' "$MATCHING_CHECKSUMS" |
+            awk 'NF { count++ } END { print count + 0 }'
+        )"
+
+        case "$MATCH_COUNT" in
+          0)
+            echoerr "Archive $ARCHIVE_NAME is absent from the checksum manifest."
+            exit 1
+            ;;
+          1)
+            EXPECTED_CHECKSUM="$MATCHING_CHECKSUMS"
+            ;;
+          *)
+            echoerr "Archive $ARCHIVE_NAME appears multiple times in the checksum manifest."
+            exit 1
+            ;;
+        esac
 
         if [ "$CHECKSUM_TOOL" = "sha256sum" ]; then
           ACTUAL_CHECKSUM="$(sha256sum "$ARCHIVE_PATH" | awk '{ print $1 }')"
@@ -164,8 +173,7 @@
       }
 
       download() {
-        umask 077
-        DOWNLOAD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/hive.XXXXXX")"
+        DOWNLOAD_DIR="$(umask 077 && mktemp -d "${TMPDIR:-/tmp}/hive.XXXXXX")"
 
         resolve_version
 
