@@ -69,6 +69,12 @@ export interface ProductDefinition {
   slug: string;
   /** Product name as written, e.g. "Apollo Angular". */
   name: string;
+  /**
+   * The landing page <title>, for a product whose name alone means something
+   * else in search: Google matched the bare "SOFA" title to furniture queries
+   * (78K impressions in three weeks, two clicks). Defaults to `name`.
+   */
+  title?: string;
   /** Short name shown next to the mark in the header, e.g. "Apollo Angular". */
   shortName: string;
   /** One-line description used in the footer and as the default meta description. */
