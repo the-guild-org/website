@@ -15,7 +15,11 @@ const { scripts } = JSON.parse(
 ) as {
   scripts: Record<string, string>;
 };
-const fetches = Object.keys(scripts).filter(name => name.startsWith('fetch:'));
+// fetch:avatars refreshes committed files by hand (scripts/hive/fetch-avatars.ts):
+// the build must not depend on GitHub avatars being reachable.
+const fetches = Object.keys(scripts).filter(
+  name => name.startsWith('fetch:') && name !== 'fetch:avatars',
+);
 
 const children = fetches.map(name => {
   const label = `[${name.slice('fetch:'.length)}]`;
