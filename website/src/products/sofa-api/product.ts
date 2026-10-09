@@ -5,6 +5,7 @@ import type { ProductDefinition } from '../define';
 export default {
   slug: 'sofa-api',
   name: 'SOFA',
+  title: 'SOFA: Generate REST APIs from your GraphQL schema',
   shortName: 'SOFA',
   description: 'Generate RESTful APIs from your GraphQL server.',
   repo: 'graphql-hive/SOFA',

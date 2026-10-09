@@ -8,6 +8,12 @@
  * redirects to the first product (in PRIORITY order) that actually has that
  * page, and paths no product has stay plain 404s.
  *
+ * The families are the top-level directories those sites served: the docs
+ * and versioned docs of most of them, Codegen's and Envelop's /plugins,
+ * GraphQL ESLint's /rules, the Schema Stitching /handbook, the per-package
+ * /changelogs of Tools, Inspector and Yoga, and Mesh's /examples. Search
+ * Console reported every one of them as a 404 in October 2026.
+ *
  * Rule budget: one wildcard per directory that a single product dominates
  * (its other owners' pages get static rules first, and static rules win),
  * static rules for the rest. Runs after every product's own redirects.
@@ -26,7 +32,32 @@ import {
 
 /** Which product a shared path belongs to; the old root domains, oldest first. */
 const PRIORITY = ['hive', 'codegen', 'yoga-server', 'envelop', 'mesh', 'inspector'];
-const FAMILIES = ['docs', 'tutorial', 'v1', 'v2', 'v3', 'v4', 'v5'];
+const FAMILIES = [
+  'docs',
+  'tutorial',
+  'v1',
+  'v2',
+  'v3',
+  'v4',
+  'v5',
+  'plugins',
+  'rules',
+  'handbook',
+  'changelogs',
+  'examples',
+];
+/**
+ * Version sections a product's old site served that this site no longer
+ * has: a page under one redirects to the current docs page with the same
+ * path, when there is one, and the version root to the docs root. Static
+ * rules only — a wildcard would send the pages that did not survive the
+ * version change into a 404 (SEO-09). A version still served as its own
+ * section (Envelop's /v2 and /v3, Mesh's /v1) is left alone.
+ */
+const RETIRED_VERSIONS: Record<string, string[]> = {
+  'apollo-angular': ['v1', 'v2'],
+  envelop: ['v4'],
+};
 const BY = 'scripts/generate-legacy-root-redirects.ts';
 const LEGACY_BLOCK = 'Legacy root paths of the old product sites';
 const PARTNERS_BLOCK = 'Bare parents of wildcard rules';
@@ -114,6 +145,17 @@ for (const family of FAMILIES) {
     for (const [segment, group] of groups) plan(`${prefix}/${segment}`, group);
   };
   plan('', [...owner.keys()]);
+}
+
+for (const [slug, versions] of Object.entries(RETIRED_VERSIONS)) {
+  if (!served.includes(slug)) continue;
+  const docs = pagesOf(slug, 'docs');
+  for (const version of versions) {
+    if (existsSync(`${DIST}/graphql/${slug}/${version}`)) continue;
+    for (const page of docs) {
+      rules.push(`/graphql/${slug}/${version}${page} /graphql/${slug}/docs${page} 301`);
+    }
+  }
 }
 
 const lines = readRedirectLines();
