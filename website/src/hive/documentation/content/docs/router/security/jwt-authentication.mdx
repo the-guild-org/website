@@ -62,6 +62,29 @@ jwt:
 
 Replace `your-domain.auth0.com` and `https://your-api.com` with your actual values.
 
+## Handling Key Rotation
+
+Identity providers rotate their signing keys from time to time. The router refreshes the JWKS
+every `polling_interval`, so a token signed with a brand-new key can be rejected until the next
+refresh. To accept rotated keys immediately, set `refresh_on_unknown_kid` on the remote provider:
+
+```yaml title="router.config.yaml"
+jwt:
+  jwks_providers:
+    - source: remote
+      url: https://your-domain.auth0.com/.well-known/jwks.json
+      polling_interval: "1h"
+      refresh_on_unknown_kid: "30s" # Re-fetch keys when a token's kid is unknown
+```
+
+When a token carries a `kid` that is not in the cached key set, the router re-fetches the JWKS right
+away and verifies the token against the fresh keys. The value is a cooldown scoped to each remote
+provider: for a given provider, at most one such re-fetch happens per 30 seconds, no matter how many
+unknown `kid`s arrive. If you configure several providers with `refresh_on_unknown_kid`, each of
+them may fetch once per window, because an unknown `kid` is checked against all of their key sets.
+Within that bound, the setting is safe to enable on a public endpoint. See the
+[`refresh_on_unknown_kid` reference](/docs/router/configuration/jwt#jwks_providers) for details.
+
 ## Passing User Info to Subgraphs
 
 Your subgraphs often need to know who the user is to handle authorization or return personalized
