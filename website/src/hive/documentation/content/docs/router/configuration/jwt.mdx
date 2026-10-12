@@ -256,7 +256,9 @@ until the next poll, which with the configuration above could be up to an hour. 
 first token carrying an unknown `kid` triggers an immediate re-fetch of the JWKS, and that token is
 verified against the refreshed keys. Further unknown `kid`s within the next 30 seconds reuse that
 fetch instead of starting another, so a client sending arbitrary `kid` values cannot turn the router
-into a load generator for your identity provider.
+into a load generator for your identity provider. The cooldown is tracked per provider: when
+several remote providers set `refresh_on_unknown_kid`, an unknown `kid` re-fetches each of them,
+and each one is limited by its own value.
 
 ### Local Development with File-based Keys
 

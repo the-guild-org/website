@@ -78,9 +78,11 @@ jwt:
 ```
 
 When a token carries a `kid` that is not in the cached key set, the router re-fetches the JWKS right
-away and verifies the token against the fresh keys. The value is a cooldown: at most one such
-re-fetch happens per 30 seconds, no matter how many unknown `kid`s arrive, so this is safe to enable
-on a public endpoint. See the
+away and verifies the token against the fresh keys. The value is a cooldown scoped to each remote
+provider: for a given provider, at most one such re-fetch happens per 30 seconds, no matter how many
+unknown `kid`s arrive. If you configure several providers with `refresh_on_unknown_kid`, each of
+them may fetch once per window, because an unknown `kid` is checked against all of their key sets.
+Within that bound, the setting is safe to enable on a public endpoint. See the
 [`refresh_on_unknown_kid` reference](/docs/router/configuration/jwt#jwks_providers) for details.
 
 ## Passing User Info to Subgraphs
