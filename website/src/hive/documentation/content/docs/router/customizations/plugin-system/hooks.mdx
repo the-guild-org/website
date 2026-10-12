@@ -779,7 +779,6 @@ async fn on_graphql_validation<'exec>(
 #### Plugin Examples
 
 - [`root_field_limit`](https://github.com/graphql-hive/router/blob/main/plugin_examples/root_field_limit/src/lib.rs#:~:text=fn%20on_graphql_validation)
-- [`one_of`](https://github.com/graphql-hive/router/blob/main/plugin_examples/one_of/src/lib.rs#:~:text=fn%20on_graphql_validation)
 
 ### `on_graphql_analysis`
 
@@ -815,6 +814,19 @@ The `Selection` passed to the visitor is either:
 - `Selection::Field(field)` - exposes `field.field_name`, `field.response_key`, `field.parent_type_name` (the type declaring the field), `field.output_type_name`, and `field.is_non_null`.
 - `Selection::Fragment(fragment)` - an inline fragment, exposing `fragment.type_condition` (e.g. `User` in `... on User`) and `fragment.parent_type_name`.
 
+#### Reading variables
+
+`payload.graphql_params.variables` holds the raw variables exactly as the client sent them. A
+variable the client left out is missing there even when the operation declares a default for it,
+and scalar values have not been coerced yet. To read the values execution will actually use, after
+defaults and input coercion, use the payload's coerced accessors:
+
+- `payload.coerced_variable(name)` - the coerced value of one variable, or `None` if the operation
+  does not define it.
+- `payload.coerced_variables()` - all coerced variables as a map.
+
+Both return [`sonic_rs::Value`](https://docs.rs/sonic-rs/latest/sonic_rs/struct.Value.html)s.
+
 #### Usage Examples
 
 **Deny access to a specific field**
@@ -838,6 +850,40 @@ async fn on_graphql_analysis<'exec>(
         }
         _ => selection.keep(),
     });
+
+    OnGraphqlAnalysisHookResult::Proceed
+}
+```
+
+**Reject a field based on a variable's value**
+
+Combine `filter_operation` with `coerced_variable` to make a per-field decision that depends on the
+operation's inputs. Because the value is read after coercion, a client omitting `$includeDrafts`
+sees the operation's default rather than a missing variable.
+
+```rust
+async fn on_graphql_analysis<'exec>(
+    &'exec self,
+    payload: &mut OnGraphqlAnalysisHookPayload<'exec>,
+) -> OnGraphqlAnalysisHookResult {
+    let include_drafts = payload
+        .coerced_variable("includeDrafts")
+        .and_then(|value| value.as_bool())
+        .unwrap_or(false);
+
+    if include_drafts && !self.user_can_see_drafts(&payload.client_request_details) {
+        payload.filter_operation(|selection| match selection {
+            Selection::Field(field)
+                if field.parent_type_name == "Query" && field.field_name == "posts" =>
+            {
+                selection.reject(GraphQLError::from_message_and_code(
+                    "Only editors can query draft posts",
+                    "FIELD_ACCESS_DENIED",
+                ))
+            }
+            _ => selection.keep(),
+        });
+    }
 
     OnGraphqlAnalysisHookResult::Proceed
 }
@@ -1129,7 +1175,6 @@ async fn on_execute<'exec>(
 
 #### Plugin Examples
 
-- [`one_of`](https://github.com/graphql-hive/router/blob/main/plugin_examples/one_of/src/lib.rs#:~:text=fn%20on_execute)
 - [`response_cache`](https://github.com/graphql-hive/router/blob/main/plugin_examples/response_cache/src/lib.rs#:~:text=fn%20on_execute)
 
 ### `on_subgraph_execute`
@@ -1526,5 +1571,4 @@ fn on_supergraph_reload<'exec>(
 
 #### Plugin Examples
 
-- [`one_of`](https://github.com/graphql-hive/router/blob/main/plugin_examples/one_of/src/lib.rs#:~:text=fn%20on_supergraph_reload)
 - [`response_cache`](https://github.com/graphql-hive/router/blob/main/plugin_examples/response_cache/src/lib.rs#:~:text=fn%20on_supergraph_reload)

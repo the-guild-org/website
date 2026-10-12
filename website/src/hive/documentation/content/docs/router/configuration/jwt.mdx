@@ -35,6 +35,12 @@ Each provider needs:
 - **`polling_interval`**: `string` - (Remote only) How often to refresh the keys (like `"15m"`).
   Default is `"10m"`
 - **`prefetch`**: `boolean` - (Remote only) Whether to fetch keys on startup. Default is `false`
+- **`refresh_on_unknown_kid`**: `string` - (Remote only) Re-fetch the JWKS right away when a token
+  carries a `kid` that is not in the cached key set, so a freshly rotated signing key is accepted
+  without waiting for the next `polling_interval` tick. The value is the minimum time between two
+  such re-fetches (like `"30s"`): concurrent misses share one fetch, and tokens with made-up `kid`s
+  cannot make the router hammer the JWKS endpoint. Must be at least `1s`. Tokens without a `kid`
+  never trigger a re-fetch. Disabled when not set.
 - **`headers`**: `object` - (Remote only) Additional HTTP headers to send with the JWKS request, as
   `name: value` pairs. Useful when the endpoint isn't reachable as a plain public URL: an identity
   provider that selects its tenant from the `Host` header while being addressed internally, or a
@@ -233,6 +239,24 @@ Use `headers` when the JWKS endpoint can't be addressed by a plain public URL, o
 - **JWKS endpoints behind a gateway** that require an API key or other custom header can be reached
   directly, without a proxy in front of the router.
 - **Custom JWKS endpoints** that require an API key or other custom header. 
+
+### Refresh Keys on Rotation
+
+```yaml title="router.config.yaml"
+jwt:
+  jwks_providers:
+    - source: remote
+      url: https://your-domain.auth0.com/.well-known/jwks.json
+      polling_interval: "1h"
+      refresh_on_unknown_kid: "30s"
+```
+
+Without `refresh_on_unknown_kid`, a token signed with a key the provider just rotated in is rejected
+until the next poll, which with the configuration above could be up to an hour. With it set, the
+first token carrying an unknown `kid` triggers an immediate re-fetch of the JWKS, and that token is
+verified against the refreshed keys. Further unknown `kid`s within the next 30 seconds reuse that
+fetch instead of starting another, so a client sending arbitrary `kid` values cannot turn the router
+into a load generator for your identity provider.
 
 ### Local Development with File-based Keys
 
