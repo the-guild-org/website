@@ -3,43 +3,121 @@
  * The error reference of the Hive CLI: every error code with a command that
  * triggers it, what the CLI prints, and the suggested fix. The CLI points at
  * this section from every error message.
+ *
+ * The codes, titles, fixes and anchors are those of the latest released
+ * @graphql-hive/cli: scripts/hive/fetch-cli-errors.ts (`pnpm fetch:hive-cli-errors`)
+ * fetches them with every build. The import below is a static one so that the
+ * site does not compile without them.
  */
+import reference from '../../generated/cli-errors.json';
 import Callout from './Callout.astro';
-import { anchorOf, cliErrors, titleOf } from './cli-errors';
+import { cliErrorExamples } from './cli-error-examples';
+import Table from './Table.astro';
+
+/**
+ * The codes are grouped by hundreds: `1xx` is the category of 100 to 199. Each
+ * group carries the text that follows it in the sentence, as whitespace around
+ * an expression in the template would end up in front of the punctuation.
+ */
+const groups = [
+  ...new Map(reference.errors.map(error => [`${Math.floor(error.code / 100)}xx`, error.category])),
+].map(([range, category], index, all) => ({
+  range,
+  text: ` ${category}${index === all.length - 1 ? '.' : index === all.length - 2 ? ' and ' : ', '}`,
+}));
+
+/**
+ * Anchors that this page had for an error before, by the class name of the
+ * error. They stay so that bookmarks keep working: both errors were listed
+ * under the code 121 until the CLI gave them codes of their own.
+ */
+const formerAnchors: Record<string, string[]> = {
+  InvalidVersionIdError: ['errors-121-invalid-version-id-error'],
+  ConflictingOptionsError: ['errors-121-conflicting-options-error'],
+};
+
+/** Splits text into plain and `code` segments. */
+function segments(text: string) {
+  return text
+    .split(/(`[^`]+`)/)
+    .map(part =>
+      part.startsWith('`') && part.endsWith('`')
+        ? { code: true, text: part.slice(1, -1) }
+        : { code: false, text: part },
+    );
+}
 ---
 
+{/* A line break next to an element renders no space, hence the explicit ones. */}
 <p>
-  Every error the CLI prints ends with its error code in square brackets, for example
-  <code>[103]</code>. The codes are grouped by command: <code>1xx</code> apply to every command,
-  <code>2xx</code> to <code>schema:check</code>, <code>3xx</code> to <code>schema:publish</code>,
-  <code>4xx</code> to <code>app:create</code>, <code>5xx</code> to <code>schema:fetch</code>,
-  <code>6xx</code> to <code>dev</code>, and <code>7xx</code> to <code>operations:check</code>. The
-  process exits with <code>1</code> for a failed command, <code>2</code> for a timeout, and
-  <code>3</code> when the input was invalid before the command ran. Set
-  <code>HIVE_NO_ERROR_TIP=1</code> to hide the link to this page in the CLI output.
+  Every error the CLI prints ends with its error code in square brackets, for example{' '}
+  <code>[103]</code>, and is printed to stderr. The codes are grouped by command:{' '}
+  {groups.map(group => (
+    <Fragment>
+      <code>{group.range}</code>
+      {group.text}
+    </Fragment>
+  ))}{' '}
+  Set <code>HIVE_NO_ERROR_TIP=1</code> to hide the link to this page in the CLI output. The process
+  exits with one of these codes:
 </p>
 
-{cliErrors.map(error => {
-  const id = anchorOf(error);
+<Table>
+  <thead>
+    <tr>
+      <th>Exit code</th>
+      <th>Name</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    {reference.exitCodes.map(exitCode => (
+      <tr>
+        <td>{exitCode.code}</td>
+        <td>
+          <code>{exitCode.name}</code>
+        </td>
+        <td>{exitCode.description}</td>
+      </tr>
+    ))}
+  </tbody>
+</Table>
+
+{reference.errors.map(error => {
+  const example = cliErrorExamples[error.name];
   return (
     <>
-      <h3 id={id}>
-        <code>{error.code}</code> {titleOf(error)}
+      <h3 id={error.anchor}>
+        {formerAnchors[error.name]?.map(id => (
+          <span id={id} class="cli-error-anchor" />
+        ))}
+        <code>{error.code}</code>{' '}
+        {segments(error.title).map(part => (part.code ? <code>{part.text}</code> : part.text))}
       </h3>
+      {example && (
+        <>
+          <p>
+            <strong>Example:</strong> <code>{example.example}</code>
+          </p>
+          <Callout type="note">
+            <pre class="cli-error-output">{example.exampleOutput}  [{error.code}]</pre>
+          </Callout>
+        </>
+      )}
       <p>
-        <strong>Example:</strong> <code>{error.example}</code>
-      </p>
-      <Callout type="note">
-        <pre class="cli-error-output">{error.exampleOutput}  [{error.code}]</pre>
-      </Callout>
-      <p>
-        <strong>Suggested fix:</strong> {error.fix}
+        <strong>Suggested fix:</strong>{' '}
+        {segments(error.fix).map(part => (part.code ? <code>{part.text}</code> : part.text))}
       </p>
     </>
   );
 })}
 
 <style>
+  /* Only headings clear the sticky header on their own. */
+  .cli-error-anchor {
+    scroll-margin-top: calc(var(--header-height) + 2rem);
+  }
+
   .cli-error-output {
     margin: 0;
     padding: 0;
