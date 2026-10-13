@@ -1,6 +1,6 @@
-import { globSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { INSPECTOR_SITE_URL } from '../../src/inspector/lib/base-path.ts';
-import { DIST } from '../lib/build-output.ts';
+import { DIST, sitemapPagePaths } from '../lib/build-output.ts';
 
 const distDirectory = `${DIST}/graphql/inspector`;
 
@@ -8,9 +8,7 @@ const distDirectory = `${DIST}/graphql/inspector`;
 // so dates would only reflect fetch times.
 const pages = [
   { path: '' },
-  ...globSync('**/*.html', { cwd: distDirectory })
-    .filter(file => file !== '404.html')
-    .map(file => ({ path: `/${file.replace(/\/index\.html$/, '').replace(/\.html$/, '')}` })),
+  ...sitemapPagePaths(distDirectory, INSPECTOR_SITE_URL).map(path => ({ path })),
 ].sort((a, b) => a.path.localeCompare(b.path));
 
 const urls = pages

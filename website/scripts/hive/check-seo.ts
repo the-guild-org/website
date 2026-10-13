@@ -338,10 +338,16 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   }
 
   // Reverse sitemap parity: verify-sitemaps proves sitemap URLs have files;
-  // this proves every indexable page is in a sitemap, and no noindex page is.
-  if (noindex && sitemapPaths.has(pagePath)) {
-    issues.push(`${relativePath}: noindex page listed in a sitemap`);
-  } else if (!noindex && !sitemapPaths.has(pagePath)) {
+  // this proves every indexable page is in a sitemap, and no page that is
+  // noindex or canonicalises elsewhere (older majors, syndicated posts) is.
+  const selfCanonical =
+    !canonical || [expectedCanonical, `${expectedCanonical}/`].includes(decodeURI(canonical));
+  const indexable = !noindex && selfCanonical;
+  if (!indexable && sitemapPaths.has(pagePath)) {
+    issues.push(
+      `${relativePath}: listed in a sitemap but ${noindex ? 'noindex' : `canonical is ${canonical}`}`,
+    );
+  } else if (indexable && !sitemapPaths.has(pagePath)) {
     issues.push(`${relativePath}: not listed in any sitemap`);
   }
 }

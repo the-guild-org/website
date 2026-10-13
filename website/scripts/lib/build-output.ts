@@ -4,7 +4,7 @@
  * scripts re-deriving paths, parsing sitemaps and reading _redirects in
  * subtly different ways.
  */
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, globSync, readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { basePath, SITE_ORIGIN } from '../../src/hive/lib/base-path.ts';
 
@@ -37,16 +37,20 @@ const isFile = (path: string) => existsSync(path) && statSync(path).isFile();
  * one is a 404.
  */
 export function resolvesInDist(pathname: string): boolean {
+  return distFileFor(pathname) !== undefined;
+}
+
+/** The dist file Pages serves for an internal path, if any. */
+export function distFileFor(pathname: string): string | undefined {
   const decoded = decodeURI(pathname);
   return [
     `${DIST}${decoded}`,
     `${DIST}${decoded}.html`,
     `${DIST}${decoded}/index.html`,
     ...(decoded === '/' ? [`${DIST}/index.html`] : []),
-  ].some(isFile);
+  ].find(isFile);
 }
 
-/** Every <loc> pathname across the generated sitemaps. */
 /** Every URL path listed in the sitemaps (the hand-wired ones plus any `extra` sitemaps). */
 export function readSitemapPaths(extra: string[] = []): Set<string> {
   const paths = new Set<string>();
@@ -78,4 +82,39 @@ export function readRedirects(): RedirectRule[] {
     if (source && destination) rules.push({ source, destination, status });
   }
   return rules;
+}
+
+/** What a built html page tells crawlers about itself. */
+export function readIndexingSignals(html: string): { canonical?: string; noindex: boolean } {
+  const end = html.search(/<\/head>/i);
+  const head = end === -1 ? html : html.slice(0, end);
+  const robots = head.match(/<meta name="robots" content="([^"]*)"/i)?.[1] ?? '';
+  const link = head.match(/<link[^>]*\brel="canonical"[^>]*>/i)?.[0];
+  const canonical = link?.match(/\bhref="([^"]*)"/)?.[1];
+  return { canonical, noindex: /noindex/i.test(robots) };
+}
+
+/**
+ * Mount-relative paths ("/docs/x") of the pages under `directory` that belong
+ * in a sitemap: built html that is not an error page, not noindex, and
+ * canonical to itself. A sitemap listing a noindex page or a page that
+ * canonicalises elsewhere is what GSC reports as "Excluded by 'noindex' tag"
+ * or "Alternate page with proper canonical tag" for submitted URLs.
+ */
+export function sitemapPagePaths(
+  directory: string,
+  siteUrl: string,
+  skip: string[] = ['404.html'],
+): string[] {
+  return globSync('**/*.html', { cwd: directory })
+    .filter(file => !skip.includes(file))
+    .flatMap(file => {
+      const path = `/${file.replace(/\/index\.html$/, '').replace(/\.html$/, '')}`;
+      const { canonical, noindex } = readIndexingSignals(
+        readFileSync(`${directory}/${file}`, 'utf8'),
+      );
+      if (noindex) return [];
+      if (canonical && decodeURI(canonical) !== `${siteUrl}${path}`) return [];
+      return [path];
+    });
 }

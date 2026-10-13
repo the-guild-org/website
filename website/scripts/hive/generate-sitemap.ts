@@ -1,7 +1,7 @@
 import { spawnSync } from 'node:child_process';
-import { globSync, readFileSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { HIVE_SITE_URL as SITE_URL } from '../../src/hive/lib/base-path.ts';
-import { HIVE_DIST, REPO_ROOT } from '../lib/build-output.ts';
+import { HIVE_DIST, REPO_ROOT, sitemapPagePaths } from '../lib/build-output.ts';
 
 const distDirectory = HIVE_DIST;
 const repoRoot = REPO_ROOT;
@@ -60,20 +60,11 @@ const pages = [
   // File-format output puts the Hive landing page at ../hive.html, one level
   // above the globbed directory — add its root URL explicitly.
   { lastmod: lastModified.get(''), path: '' },
-  ...globSync('**/*.html', { cwd: distDirectory })
-    .filter(file => file !== '404.html')
-    // noindex pages (the blog tag listings) are not for the sitemap.
-    .filter(
-      file =>
-        !/<meta name="robots" content="[^"]*noindex/i.test(
-          readFileSync(`${distDirectory}/${file}`, 'utf8'),
-        ),
-    )
-    .map(file => {
-      // File-format output: page.html serves /page.
-      const path = `/${file.replace(/\/index\.html$/, '').replace(/\.html$/, '')}`;
-      return { lastmod: lastModified.get(path), path };
-    }),
+  // noindex pages (the blog tag listings) are left out by sitemapPagePaths.
+  ...sitemapPagePaths(distDirectory, SITE_URL).map(path => ({
+    lastmod: lastModified.get(path),
+    path,
+  })),
 ].sort((a, b) => a.path.localeCompare(b.path));
 
 const urls = pages

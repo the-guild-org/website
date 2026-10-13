@@ -2,14 +2,18 @@
  * Fails the build if any <loc> in the generated sitemaps does not correspond
  * to a built file, or if the sitemap index does not reference both children —
  * the SEO audit's defect class where 15 sitemap URLs 404'd in production.
+ * Also fails when a listed page is noindex or canonicalises to another URL:
+ * GSC flags submitted URLs like that ("Excluded by 'noindex' tag",
+ * "Alternate page with proper canonical tag") and emails about them.
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { basePath, SITE_ORIGIN } from '../src/hive/lib/base-path.ts';
 import {
   SITEMAPS as BASE_SITEMAPS,
   DIST,
+  distFileFor,
+  readIndexingSignals,
   readSitemapPaths,
-  resolvesInDist,
 } from './lib/build-output.ts';
 import { loadProducts } from './products/registry.ts';
 
@@ -28,8 +32,16 @@ for (const sitemap of SITEMAPS) {
 
 const paths = readSitemapPaths(PRODUCT_SITEMAPS);
 for (const pathname of paths) {
-  if (!resolvesInDist(pathname)) {
+  const file = distFileFor(pathname);
+  if (!file) {
     failures.push(`no dist file serves ${pathname}`);
+    continue;
+  }
+  if (!file.endsWith('.html')) continue;
+  const { canonical, noindex } = readIndexingSignals(readFileSync(file, 'utf8'));
+  if (noindex) failures.push(`${pathname} is listed but noindex`);
+  if (canonical && decodeURI(canonical) !== `${SITE_ORIGIN}${pathname === '/' ? '/' : pathname}`) {
+    failures.push(`${pathname} is listed but canonicalises to ${canonical}`);
   }
 }
 
@@ -47,5 +59,5 @@ if (failures.length > 0) {
 }
 
 console.log(
-  `Sitemaps verified: ${paths.size} URLs all resolve to built files (${basePath} included)`,
+  `Sitemaps verified: ${paths.size} URLs all resolve to indexable, self-canonical built files (${basePath} included)`,
 );
