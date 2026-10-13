@@ -12,6 +12,8 @@ import { basePath, withBase } from '../lib/base-path';
 import { YOGA_FOOTER, YOGA_LOGO, YOGA_SITE } from '../lib/site';
 
 interface Props {
+  /** Absolute canonical URL; older majors point at the current page. */
+  canonical?: string;
   /** Mount-relative path, e.g. "/docs/features/cors". */
   currentPath: string;
   description?: string;
@@ -30,6 +32,7 @@ interface Props {
 }
 
 const {
+  canonical,
   currentPath,
   description,
   docsBase,
@@ -57,6 +60,7 @@ const basedTree = navTree.map(baseNode);
 ---
 
 <DocsLayout
+  canonical={canonical}
   currentPath={withBase(currentPath)}
   description={description}
   docsBase={withBase(docsBase)}

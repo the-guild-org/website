@@ -16,6 +16,8 @@ import type { DocsNavNode, DocsNavPage } from '../lib/docs-nav';
 import { filterToc, type TocHeading } from '../lib/toc';
 
 interface Props {
+  /** Absolute canonical URL, when the page is a copy of another one (older majors). */
+  canonical?: string;
   currentPath: string;
   description?: string;
   /** Mount-relative base of the docs tree; other products pass theirs. */
@@ -41,6 +43,7 @@ interface Props {
 }
 
 const {
+  canonical,
   currentPath,
   description,
   docsBase = '/docs',
@@ -116,6 +119,7 @@ const titleId = title.replaceAll(/[\s.,]+/g, '-').toLowerCase();
     <ThemeInit />
     <BaseHead
       breadcrumbs={jsonLdBreadcrumbs}
+      canonical={canonical}
       description={description ?? title}
       imageAlt={title}
       site={site}

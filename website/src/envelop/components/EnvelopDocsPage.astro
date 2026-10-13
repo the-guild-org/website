@@ -17,10 +17,10 @@ import Tab from '~hive/components/mdx/Tab.astro';
 import Table from '~hive/components/mdx/Table.astro';
 import TabsBase from '~hive/components/mdx/Tabs.astro';
 import { getHeadingHtmlBySlug } from '~hive/lib/docs-markdown';
-import { render } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import type { DocsNav } from '../../docs/nav';
 import EnvelopDocsLayout from '../layouts/EnvelopDocsLayout.astro';
-import { withBase } from '../lib/base-path';
+import { ENVELOP_SITE_URL, withBase } from '../lib/base-path';
 import {
   CURRENT_VERSION,
   ENVELOP_REPO_URL,
@@ -82,6 +82,20 @@ const baseTitle =
 const description = legacyVersion
   ? `Envelop ${legacyVersion} documentation (superseded by ${CURRENT_VERSION}): ${data.description || baseTitle}`
   : data.description || `${baseTitle} — Envelop documentation.`;
+// An older major's page that still exists in the current docs is a near
+// copy of it: canonicalise to the current page so Google stops choosing the
+// old major (GSC "Duplicate, Google chose different canonical than user").
+// Pages that only exist in the old major keep their own canonical.
+const currentSlugs = legacyVersion
+  ? new Set(
+      (await getCollection('envelopDocs')).map(doc =>
+        doc.id.replace(/(^|\/)index$/, '').replace(/\.(md|mdx)$/, ''),
+      ),
+    )
+  : undefined;
+const canonical = currentSlugs?.has(slug)
+  ? `${ENVELOP_SITE_URL}/docs${slug ? `/${slug}` : ''}`
+  : undefined;
 // Each major's migration guide ships with the docs of the major it targets.
 const migrationHref = withBase(
   legacyVersion === 'v2'
@@ -91,6 +105,7 @@ const migrationHref = withBase(
 ---
 
 <EnvelopDocsLayout
+  canonical={canonical}
   currentPath={currentPath}
   description={description}
   docsBase={docsBase}

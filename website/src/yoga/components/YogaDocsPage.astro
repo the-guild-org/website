@@ -17,10 +17,10 @@ import Tab from '~hive/components/mdx/Tab.astro';
 import Table from '~hive/components/mdx/Table.astro';
 import TabsBase from '~hive/components/mdx/Tabs.astro';
 import { getHeadingHtmlBySlug } from '~hive/lib/docs-markdown';
-import { render } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import type { DocsNav } from '../../docs/nav';
 import YogaDocsLayout from '../layouts/YogaDocsLayout.astro';
-import { withBase } from '../lib/base-path';
+import { withBase, YOGA_SITE_URL } from '../lib/base-path';
 import { CURRENT_VERSION, LEGACY_VERSIONS, YOGA_REPO_URL, type LegacyVersion } from '../lib/site';
 import VersionSwitch from './VersionSwitch.astro';
 
@@ -77,6 +77,19 @@ const baseTitle =
 const description = legacyVersion
   ? `GraphQL Yoga ${legacyVersion} documentation (superseded by ${CURRENT_VERSION}): ${data.description || baseTitle}`
   : data.description || `${baseTitle} — GraphQL Yoga documentation.`;
+// An older major's page that still exists in the current docs is a near
+// copy of it: canonicalise to the current page so Google consolidates on it
+// instead of choosing the old major. Pages only the old major has keep their own.
+const currentSlugs = legacyVersion
+  ? new Set(
+      (await getCollection('yogaDocs')).map(doc =>
+        doc.id.replace(/(^|\/)index$/, '').replace(/\.(md|mdx)$/, ''),
+      ),
+    )
+  : undefined;
+const canonical = currentSlugs?.has(slug)
+  ? `${YOGA_SITE_URL}/docs${slug ? `/${slug}` : ''}`
+  : undefined;
 const showVersions = docsBase === '/docs' || legacyVersion !== undefined;
 const migrationHref = legacyVersion
   ? withBase(`/docs/migration/migration-from-yoga-${legacyVersion}`)
@@ -84,6 +97,7 @@ const migrationHref = legacyVersion
 ---
 
 <YogaDocsLayout
+  canonical={canonical}
   currentPath={currentPath}
   description={description}
   docsBase={docsBase}
