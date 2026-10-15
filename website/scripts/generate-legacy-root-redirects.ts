@@ -14,6 +14,16 @@
  * /changelogs of Tools, Inspector and Yoga, and Mesh's /examples. Search
  * Console reported every one of them as a 404 in October 2026.
  *
+ * Two more kinds of rule live here because they need every other rule in
+ * place first:
+ * - Docs categories without a page of their own redirect to their first page.
+ *   The docs breadcrumbs' structured data used to invent URLs for them, and
+ *   Google still recrawls those (GSC 404s, October 2026).
+ * - A legacy root path whose product page moved follows that product's own
+ *   redirect to its final page, e.g. /docs/self-hosting/get-started ->
+ *   /graphql/hive/docs/schema-registry/self-hosting/get-started, instead of
+ *   staying a 404 (a chain would fail verify-redirects).
+ *
  * Rule budget: one wildcard per directory that a single product dominates
  * (its other owners' pages get static rules first, and static rules win),
  * static rules for the rest. Runs after every product's own redirects.
@@ -58,8 +68,40 @@ const RETIRED_VERSIONS: Record<string, string[]> = {
   'apollo-angular': ['v1', 'v2'],
   envelop: ['v4'],
 };
+/** Products whose docs chrome emitted breadcrumb URLs for page-less categories. */
+const CATEGORY_PRODUCTS = ['hive', 'yoga-server', 'envelop', 'mesh', 'codegen', 'inspector'];
+/** Directories under a product mount that hold assets or listings, not docs. */
+const NON_DOCS_DIRECTORIES = new Set([
+  '_astro',
+  'assets',
+  'blog',
+  'blog-assets',
+  'case-studies',
+  'pagefind',
+  'product-updates',
+]);
+/** When a category has several pages, the one most likely to be its landing page. */
+const LANDING_NAMES = [
+  'index',
+  'introduction',
+  'overview',
+  'get-started',
+  'getting-started',
+  'quick-start',
+];
 const BY = 'scripts/generate-legacy-root-redirects.ts';
 const LEGACY_BLOCK = 'Legacy root paths of the old product sites';
+const CATEGORY_BLOCK = 'Docs categories without a page of their own';
+const FETS_BLOCK = 'Root paths of the old feTS site';
+/**
+ * feTS (still served from its own deployment through the router) kept its
+ * docs at the root of its old domain; Google still requests /server/... and
+ * /client/... here, and every page has a home under /openapi/fets.
+ */
+const FETS_RULES = [
+  '/server/* /openapi/fets/server/:splat 301',
+  '/client/* /openapi/fets/client/:splat 301',
+];
 const PARTNERS_BLOCK = 'Bare parents of wildcard rules';
 /** A directory owned by one product gets a wildcard once it has this many pages. */
 const WILDCARD_FROM = 8;
@@ -158,21 +200,93 @@ for (const [slug, versions] of Object.entries(RETIRED_VERSIONS)) {
   }
 }
 
+/** The first page of a page-less directory (absolute dist path), as a public path. */
+function firstPageIn(directory: string): string | undefined {
+  const entries = readdirSync(directory, { withFileTypes: true });
+  const pages = entries
+    .filter(entry => entry.isFile() && entry.name.endsWith('.html') && entry.name !== '404.html')
+    .map(entry => entry.name.slice(0, -'.html'.length))
+    .sort();
+  const landing = LANDING_NAMES.find(name => pages.includes(name)) ?? pages[0];
+  if (landing !== undefined)
+    return publicPath(`${directory.slice(DIST.length + 1)}/${landing}.html`);
+  for (const entry of entries
+    .filter(e => e.isDirectory())
+    .sort((a, b) => a.name.localeCompare(b.name))) {
+    const page = firstPageIn(`${directory}/${entry.name}`);
+    if (page) return page;
+  }
+}
+
+const categoryRules: string[] = [];
+for (const slug of CATEGORY_PRODUCTS.filter(slug => served.includes(slug))) {
+  const visit = (directory: string) => {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      if (!entry.isDirectory() || NON_DOCS_DIRECTORIES.has(entry.name)) continue;
+      const child = `${directory}/${entry.name}`;
+      const path = `/${child.slice(DIST.length + 1)}`;
+      if (!resolvesInDist(path)) {
+        const page = firstPageIn(child);
+        if (page) categoryRules.push(`${encodeURI(path)} ${encodeURI(page)} 301`);
+      }
+      visit(child);
+    }
+  };
+  visit(`${DIST}/graphql/${slug}`);
+}
+
 const lines = readRedirectLines();
 // Strip this generator's own blocks first so a re-run does not treat its
 // previous output as hand-written rules and drop everything as "existing".
 setRuleBlocks(lines, LEGACY_BLOCK, [], BY);
+setRuleBlocks(lines, CATEGORY_BLOCK, [], BY);
+setRuleBlocks(lines, FETS_BLOCK, [], BY);
 setRuleBlocks(lines, PARTNERS_BLOCK, [], BY);
 const existing = new Set(lines.filter(isRule).map(sourceOf));
+const freshCategories = categoryRules.filter(rule => !existing.has(sourceOf(rule)));
+
+// Where a legacy root path's page went. Only Hive's own moves and Envelop's
+// retired v4: the root /docs space served Hive during the base-path bug, and
+// following every product's internal renames would cost ~850 rules for paths
+// that were never served at the root.
+const ROOT_FOLLOWS = /^\/graphql\/hive\//;
+// Retired versions of the products that once owned the root (PRIORITY).
+const retiredRules = Object.entries(RETIRED_VERSIONS)
+  .filter(([slug]) => PRIORITY.includes(slug))
+  .flatMap(([slug, versions]) => versions.map(version => `/graphql/${slug}/${version}/`));
+const ownedRootPaths = new Set(rules.map(sourceOf));
+const familyPattern = new RegExp(`^/graphql/[^/]+(/(?:${FAMILIES.join('|')})(?:/.*)?)$`);
+for (const rule of [...lines.filter(isRule), ...rules, ...freshCategories]) {
+  const [source, destination] = rule.trim().split(/\s+/);
+  if (!source || !destination || /[:#]/.test(destination) || !resolvesInDist(destination)) continue;
+  const follows =
+    ROOT_FOLLOWS.test(source) || retiredRules.some(prefix => source.startsWith(prefix));
+  if (!follows) continue;
+  const rootPath = source.match(familyPattern)?.[1];
+  if (!rootPath || ownedRootPaths.has(rootPath)) continue;
+  // A wildcard into one fixed page stays a wildcard at the root.
+  if (rootPath.includes(':') || (rootPath.includes('*') && !rootPath.endsWith('/*'))) continue;
+  ownedRootPaths.add(rootPath);
+  rules.push(`${rootPath} ${destination} 301`);
+}
+
 // A root path that is a real page here, or already redirected by hand, is left alone.
 const fresh = rules.filter(rule => {
   const source = sourceOf(rule);
   return !existing.has(source) && !resolvesInDist(source);
 });
 setRuleBlocks(lines, LEGACY_BLOCK, fresh, BY);
+setRuleBlocks(lines, CATEGORY_BLOCK, freshCategories, BY);
+setRuleBlocks(
+  lines,
+  FETS_BLOCK,
+  FETS_RULES.filter(rule => !existing.has(sourceOf(rule))),
+  BY,
+);
 setRuleBlocks(lines, PARTNERS_BLOCK, barePartnerRules(lines), BY);
 const { staticCount, dynamicCount } = checkLimits(lines);
 writeRedirectLines(lines);
+console.log(`Docs category redirects: ${freshCategories.length} static`);
 console.log(
   `Legacy root redirects: ${fresh.filter(r => !/[*:]/.test(sourceOf(r))).length} static, ${fresh.filter(r => /[*:]/.test(sourceOf(r))).length} wildcard; _redirects now ${staticCount} static, ${dynamicCount} dynamic`,
 );

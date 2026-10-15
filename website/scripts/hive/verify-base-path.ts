@@ -81,7 +81,9 @@ for (const rule of readRedirects()) {
     !servedMounts.some(
       mount => rule.destination === mount || rule.destination.startsWith(`${mount}/`),
     ) &&
-    !rule.destination.startsWith('/graphql/mesh')
+    !rule.destination.startsWith('/graphql/mesh') &&
+    // feTS is served by its own deployment through the website-router.
+    !rule.destination.startsWith('/openapi/fets/')
   ) {
     report('_redirects', rule.destination);
   }

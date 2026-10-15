@@ -145,6 +145,13 @@ export const routeRules: Record<string, RouteRule> = {
   '/docs/gateway/other-features/router-runtime': redirect(
     '/docs/gateway/other-features/rust-query-planner',
   ),
+  // Renamed with demand control (GSC 404, Oct 2026)
+  '/docs/gateway/other-features/security/cost-limit': redirect(
+    '/docs/gateway/other-features/security/demand-control',
+  ),
+  // The Mesh v1 "serve" docs (now Hive Gateway) kept their features under
+  // /features; Hive Gateway serves them from the gateway root.
+  '/docs/gateway/features/**': redirect('/docs/gateway/:splat'),
 
   // Support pages moved after introducing coprocessors
   '/docs/router/configuration/graphiql': redirect('/docs/router/configuration/laboratory'),
@@ -154,6 +161,15 @@ export const routeRules: Record<string, RouteRule> = {
     '/docs/router/customizations/plugin-system/execution-and-lifecycle',
   ),
   '/docs/router/plugin-system/hooks': redirect('/docs/router/customizations/plugin-system/hooks'),
+  // Earlier names of the same pages, still requested (GSC 404, Oct 2026)
+  '/docs/router/customizations/plugins': redirect('/docs/router/customizations/plugin-system'),
+  '/docs/router/extensibility/plugin_system': redirect('/docs/router/customizations/plugin-system'),
+  '/docs/router/customizations/coprocessors/stage-and-protocol': redirect(
+    '/docs/router/customizations/coprocessors/stages-and-protocol',
+  ),
+  '/docs/router/configuration/usage_reporting': redirect(
+    '/docs/router/observability/usage_reporting',
+  ),
 
   // Typo in old URL (linked from blog posts)
   '/docs/schema-registry/high-availability-resilence': redirect(
