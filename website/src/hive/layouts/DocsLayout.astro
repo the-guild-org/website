@@ -75,19 +75,15 @@ function findBreadcrumbTrail(nodes: DocsNavNode[]): { href?: string; title: stri
 }
 const breadcrumbTrail = findBreadcrumbTrail(navTree) ?? [];
 const breadcrumbs = breadcrumbTrail.map(crumb => crumb.title);
-// Ancestors for the BreadcrumbList structured data, like the old site's.
-// Categories without a page of their own get their URL from the path
-// segments, matching how the old site built breadcrumb items.
-const pathSegments = currentPath
-  .replace(new RegExp(`^${docsBase}/?`), '')
-  .split('/')
-  .filter(Boolean);
+// Ancestors for the BreadcrumbList structured data. Only crumbs that are
+// pages: a category without a page of its own has no URL, and inventing one
+// from the path segments (as the old site did) fed Googlebot hundreds of
+// 404s such as /graphql/mesh/changelogs/legacy and /graphql/yoga-server/v4/features.
 const jsonLdBreadcrumbs = [
   { name: docsLabel, path: docsBase },
-  ...breadcrumbTrail.map((crumb, index) => ({
-    name: crumb.title,
-    path: crumb.href ?? `${docsBase}/${pathSegments.slice(0, index + 1).join('/')}`,
-  })),
+  ...breadcrumbTrail.flatMap(crumb =>
+    crumb.href ? [{ name: crumb.title, path: crumb.href }] : [],
+  ),
 ];
 // Match the old site's title templates: gateway and router docs carry their
 // product name as the suffix, and titles with their own "|" stay untouched.
