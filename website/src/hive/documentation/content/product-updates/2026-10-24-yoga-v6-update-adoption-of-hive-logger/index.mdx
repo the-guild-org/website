@@ -1,9 +1,10 @@
 ---
-title: Yoga Adopts Hive Logger
+title: Yoga Major Update to V6, Adoption of Hive Logger and Updates 
 description:
   GraphQL Yoga v6 now uses Hive Logger, adding structured, per-request logging. This release also
-  drops support for end-of-life Node.js versions and GraphQL versions older than 16.
-date: 2026-10-24
+  drops support for end-of-life Node.js versions and GraphQL versions older than 16. There is also a
+  bump to the GraphQL tools version.
+date: 2026-10-23
 authors: [egoodwinx]
 ---
 GraphQL Yoga v6 replaces its console-based logger with [Hive Logger](https://the-guild.dev/graphql/hive/docs/logger).
@@ -13,6 +14,11 @@ lifecycle out of the box. Yoga v6 requires Node.js 22 or later and GraphQL 16 or
  
 Yoga has gone through some major changes to clean up technical debt that built up over time and to
 improve the overall logging experience.
+
+These changes can be grouped into three large changes:
+* Hive Logger Migration
+* GraphQL + Node Version Updates and Cleanup
+* GraphQL Tools Major Update
 
 ## Hive Logger
  
@@ -100,6 +106,32 @@ the allow-list and will be stripped unless included in it. If you use `allowedHe
 together with `cors` or a plugin that sets response headers, add those header names to the
 allow-list.
 
+## `@graphql-tools` v13 and removed re-exports
+
+Yoga's `@graphql-tools/utils`, `@graphql-tools/schema` and `@graphql-tools/executor` dependencies
+are now on their current major versions (`^13.1.1`, `^11.0.0` and `^4.1.2`). Since Yoga is already
+taking a major version bump for v6, this pulls in the breaking changes from those packages directly
+instead of re-exporting removed helpers for compatibility.
+
+Yoga no longer re-exports the following upstream helpers — import them from their own packages
+instead:
+
+- `createGraphQLError` → `new GraphQLError(message, options)` from `graphql`. To attach Yoga's
+  experimental schema coordinate to an error, use the new `withSchemaCoordinate(error, coordinate)`
+  helper (read it back with `getSchemaCoordinate` from `@graphql-tools/utils`).
+- `mergeSchemas` → `@graphql-tools/schema`
+- `DisposableSymbols` → `@whatwg-node/server`
+- `mapAsyncIterator`, `isPromise`, `mapMaybePromise`, `MaybePromise` → `@whatwg-node/promise-helpers`
+  (`mapMaybePromise` is now named `handleMaybePromise`)
+
+`@envelop/core`'s `utils` export no longer re-exports `mapAsyncIterator` or `isPromise` either —
+import both from `@whatwg-node/promise-helpers`.
+
+As part of the same bump, Yoga now maps the `Accept` header's incremental delivery spec parameter
+onto `@graphql-tools/executor`'s `incrementalSpec` through a lookup table
+(`INCREMENTAL_DELIVERY_SPECS` from `@graphql-tools/utils`), so a future incremental delivery spec no
+longer needs a Yoga-specific `Accept`/`Content-Type` patch.
+
 ## Dropped support for Node.js 18 and 20
  
 Node.js 18 and 20 have reached end of life. Yoga v6 requires Node.js 22 or later, and future releases
@@ -107,7 +139,7 @@ will only support Node.js versions that are still in LTS.
  
 ## Dropped support for GraphQL 14 and 15
  
-The minimum supported version of the `graphql` package is now 16.
+The minimum supported version of the `graphql-js` package is now 16.
  
 ## Migrating to v6
  
@@ -169,6 +201,33 @@ The minimum supported version of the `graphql` package is now 16.
    ```ts
    logging: new Logger({ writers: [new PinoLogWriter(app.log)] });
    ```
+9. If you imported `createGraphQLError`, `mergeSchemas`, `DisposableSymbols`, `mapAsyncIterator`,
+   `isPromise`, `mapMaybePromise` or the `MaybePromise` type from `graphql-yoga`, import them from
+   their upstream packages instead:
+
+   ```diff
+   - import { createGraphQLError } from 'graphql-yoga';
+   + import { GraphQLError } from 'graphql';
+
+   - import { mergeSchemas } from 'graphql-yoga';
+   + import { mergeSchemas } from '@graphql-tools/schema';
+
+   - import { DisposableSymbols } from 'graphql-yoga';
+   + import { DisposableSymbols } from '@whatwg-node/server';
+
+   - import { mapAsyncIterator, isPromise, mapMaybePromise, type MaybePromise } from 'graphql-yoga';
+   + import {
+   +   mapAsyncIterator,
+   +   isPromise,
+   +   handleMaybePromise,
+   +   type MaybePromise,
+   + } from '@whatwg-node/promise-helpers';
+   ```
+
+10. If you use `@envelop/core`'s `mapAsyncIterator` or `isPromise`, import them from
+    `@whatwg-node/promise-helpers` instead.
+11. If you depend on `@graphql-tools/utils`, `@graphql-tools/schema` or `@graphql-tools/executor`
+    directly, update them to `^13.1.1`, `^11.0.0` and `^4.1.2` respectively.
  
 ---
  
@@ -176,3 +235,4 @@ The minimum supported version of the `graphql` package is now 16.
 - [Yoga logging and debugging](https://the-guild.dev/graphql/yoga-server/docs/features/logging-and-debugging)
 - [Pull request #4575: Hive Logger](https://github.com/graphql-hive/graphql-yoga/pull/4575)
 - [Pull request #4574: Node.js and GraphQL version support](https://github.com/graphql-hive/graphql-yoga/pull/4574)
+- [Pull request #4623: Bump `@graphql-tools/*` to majors](https://github.com/graphql-hive/graphql-yoga/pull/4623)
