@@ -1,5 +1,5 @@
 ---
-title: Yoga Major Update to V6, Adoption of Hive Logger and Misc Updates
+title: Yoga Adopts Hive Logger, Supports the Latest defer/stream Spec, and Drops Legacy Node and GraphQL-JS
 description:
   GraphQL Yoga v6 now uses Hive Logger, adding structured, per-request logging. This release also
   drops support for end-of-life Node.js versions and GraphQL versions older than 16. There is also a
@@ -131,6 +131,24 @@ As part of the same bump, Yoga now maps the `Accept` header's incremental delive
 onto `@graphql-tools/executor`'s `incrementalSpec` through a lookup table
 (`INCREMENTAL_DELIVERY_SPECS` from `@graphql-tools/utils`), so a future incremental delivery spec no
 longer needs a Yoga-specific `Accept`/`Content-Type` patch.
+
+### Support for the latest incremental delivery (`defer`/`stream`) spec
+
+Yoga can now speak the current `graphql-js` incremental delivery format (`pending` / `id` /
+`subPath` / `completed` entries), in addition to the legacy one (`path` / `label`). Request it with
+an `incrementalSpec` parameter on the `Accept` header:
+
+```
+Accept: multipart/mixed;incrementalSpec=v0.2
+```
+
+Yoga echoes `incrementalSpec=v0.2` back on the response's `Content-Type` so clients can confirm which
+format they received. A bare `multipart/mixed` Accept header, or one with `deferSpec=20220824`,
+still gets the legacy `v0.1` format, so existing clients are unaffected. An unrecognized `spec`
+parameter value gets a `406 Not Acceptable` instead of a silently mismatched response.
+
+This is Yoga-only for now — Hive Gateway support for `incrementalSpec=v0.2` is coming in a follow-up
+release.
 
 ## Dropped support for Node.js 18 and 20
  
