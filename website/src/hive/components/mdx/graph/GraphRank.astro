@@ -1,0 +1,73 @@
+---
+/**
+ * A sorted list with bar fills — traffic, coverage, anything you would sort
+ * highest first. One list item per row as `label: value`; bold a row to
+ * accent it. Rows keep the order you wrote them in.
+ */
+import Graph from './Graph.astro';
+import {
+  itemContent,
+  listItems,
+  numberOf,
+  slotNodes,
+  splitLabel,
+  textOf,
+  unwrapEmphasis,
+} from './html';
+
+interface Props {
+  class?: string;
+  className?: string;
+  corner?: string;
+  /** Characters in the bar. */
+  ticks?: number;
+  title?: string;
+}
+
+const ticks = Astro.props.ticks ?? 20;
+const rows = listItems(await slotNodes(Astro)).map(item => {
+  const { emphasis, nodes } = unwrapEmphasis(itemContent(item));
+  const { head, tail } = splitLabel(nodes);
+  const value = numberOf(textOf([{ type: 'text', value: tail }]));
+  return { accent: emphasis === 'strong', label: head, raw: tail, value };
+});
+const max = Math.max(0, ...rows.map(row => row.value ?? 0));
+const barOf = (value: number | undefined) => {
+  const fill =
+    value === undefined || max === 0 ? 0 : Math.round((Math.max(0, value) / max) * ticks);
+  return { empty: '-'.repeat(ticks - fill), fill: '='.repeat(fill) };
+};
+---
+
+<Graph
+  class={Astro.props.class ?? Astro.props.className}
+  corner={Astro.props.corner}
+  title={Astro.props.title}
+>
+  <div class="grid grid-cols-[max-content_max-content_max-content] items-baseline gap-x-4 gap-y-1.5">
+    {rows.map((row, index) => {
+      const bar = barOf(row.value);
+      return (
+        <div class="graph-row contents" style={`--i:${index}`}>
+          <span
+            class:list={['graph-label', row.accent ? 'text-graph-accent' : 'text-fd-foreground']}
+            set:html={row.label}
+          />
+          <span aria-hidden="true" class="whitespace-pre">
+            <span class="text-graph-frame">[</span>
+            <span class={row.accent ? 'text-graph-accent' : 'text-fd-foreground'}>{bar.fill}</span>
+            <span class="text-graph-faint">{bar.empty}</span>
+            <span class="text-graph-frame">]</span>
+          </span>
+          <span
+            class:list={[
+              'graph-label text-right tabular-nums',
+              row.accent ? 'text-graph-accent' : 'text-graph-muted',
+            ]}
+            set:html={row.raw}
+          />
+        </div>
+      );
+    })}
+  </div>
+</Graph>
