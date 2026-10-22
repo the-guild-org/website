@@ -31,8 +31,8 @@ export const YOGA_FOOTER = {
 };
 
 /** Current major; older majors keep their docs under /v<n>. */
-export const CURRENT_VERSION = 'v5';
-export const LEGACY_VERSIONS = ['v4', 'v3', 'v2'] as const;
+export const CURRENT_VERSION = 'v6';
+export const LEGACY_VERSIONS = ['v5', 'v4', 'v3', 'v2'] as const;
 export type LegacyVersion = (typeof LEGACY_VERSIONS)[number];
 
 const ancestorLinkClass =
