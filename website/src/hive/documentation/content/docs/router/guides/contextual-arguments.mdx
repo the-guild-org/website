@@ -337,13 +337,28 @@ the contextual fetch for `Transaction` merges into the entity fetch for its ance
 saves a round trip. A contextual fetch is never merged with the fetch producing its context value,
 since the value has to exist before the request is sent.
 
-## Different context values in one request
+## One request for many context values
 
-When entities in a list have ancestors with different context values, they can't share a single
-`_entities` field, because each needs a different argument value. The router groups the entities by
-their context values and sends each group as an aliased `_entities` field in a single request.
+Contextual arguments make entity fetching harder. Entities in a list usually share one `_entities`
+field, but entities whose ancestors hold different context values can't, because each needs a
+different argument value. The straightforward approach is to send one subgraph request per distinct
+value. A list of users in 20 currencies then turns one entity fetch into 20 HTTP requests to the
+same subgraph, and the number grows with your data.
 
-For the `users` example above, with Alice in `USD` and Bob in `EUR`, the subgraph receives:
+Hive Router avoids this. It groups the entities by their context values and sends **all groups in a
+single subgraph request**, each group as its own aliased `_entities` field:
+
+| Distinct context values | One request per value | Hive Router |
+| ----------------------- | --------------------- | ----------- |
+| 1                       | 1 request             | 1 request   |
+| 2                       | 2 requests            | 1 request   |
+| 20                      | 20 requests           | 1 request   |
+
+Fewer requests mean fewer HTTP round trips, less connection pool pressure, and less per-request
+overhead on both the router and the subgraph, which can resolve all groups in one execution.
+
+For the `users` example above, with Alice in `USD` and Bob in `EUR`, the subgraph receives one
+request:
 
 ```graphql
 query (
@@ -379,11 +394,32 @@ query (
 
 The first alias receives only the transactions of `USD` users, the second only the transactions of
 `EUR` users. The router then maps the responses and errors back to the original positions in the
-client response. When all entities share the same context values, the router sends the original,
-non-aliased operation.
+client response, so aliasing is completely invisible to clients. When all entities share the same
+context values, the router sends the original, non-aliased operation.
 
-Deduplication of entity representations takes context values into account. The same transaction
-under a `USD` user and an `EUR` user is resolved once in each group.
+On top of that:
+
+- **It works together with entity batching.** Contextual fetches to the same subgraph from different
+  parts of a query are combined into one batched request, and every context group repeats each
+  batched fetch inside that same request. Instead of multiplying requests, contexts and batching
+  share a single round trip.
+- **Entities are deduplicated per group.** A transaction that appears several times under users
+  with the same currency is sent once. The same transaction under a `USD` user and an `EUR` user is
+  sent once in each group, because the results can differ.
+- **Building the aliased query is cheap.** The query planner compiles each contextual fetch into a
+  template once. At execution time, the router writes the query for any number of groups by copying
+  strings, without parsing, re-planning, or caching a separate query per group count.
+- **Grouping is fast.** Entities under the same ancestor are usually next to each other in the
+  response, so the router reuses the previous entity's group without reading and hashing the
+  context values again. Context values are borrowed from the response instead of copied.
+
+<Callout type="info">
+  Prefer smaller requests, or does your subgraph limit aliases? Use
+  [`max_aliases_per_request`](#limiting-aliases-per-request) to cap how many
+  groups go in one request. Groups that don't fit are sent in additional
+  requests that run in parallel. Setting it to `1` sends one `_entities` field
+  per request.
+</Callout>
 
 ### Limiting aliases per request
 
@@ -404,9 +440,9 @@ traffic_shaping:
       max_aliases_per_request: 5
 ```
 
-With a cap of `5`, a fetch with 12 distinct context value groups is sent as three parallel requests
-with 5, 5 and 2 groups. The option is not set by default, so all groups of a fetch go in one
-request.
+With a cap of `5`, a fetch with 12 distinct context value groups is sent as three requests with 5,
+5 and 2 groups. These requests run in parallel, so splitting doesn't add round trips one after
+another. The option is not set by default, so all groups of a fetch go in one request.
 
 <Callout type="warning">
   If any of your subgraphs limits the number of aliases in an operation, set

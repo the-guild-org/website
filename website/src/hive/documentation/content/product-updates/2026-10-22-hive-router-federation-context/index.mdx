@@ -2,7 +2,8 @@
 title: Contextual Arguments with `@context` and `@fromContext` in Hive Router
 description:
   Hive Router now supports Federation contexts, letting nested fields receive data from their
-  ancestors without exposing it as a public argument.
+  ancestors without exposing it as a public argument, and resolves all distinct context values in a
+  single subgraph request.
 date: 2026-10-22
 authors: [enisdenjo]
 ---
@@ -70,9 +71,17 @@ Alice's transactions are resolved with `code: "USD"`, Bob's with `code: "EUR"`.
 - **Across subgraphs.** The ancestor and the contextual field can live in different subgraphs. The
   query planner merges contextual fetches into other fetches whenever it's safe, saving round
   trips.
-- **One request for many values.** Entities whose ancestors hold different values can't share one
-  `_entities` field. The router groups them by value and sends all groups in a single request
-  through aliases:
+
+## One request, no matter how many values
+
+Contexts come with a performance trap. Entities usually share one `_entities` field, but entities
+whose ancestors hold different context values can't, since each needs a different argument value.
+The straightforward approach is to send one subgraph request per distinct value, so a list of users
+in 20 currencies turns a single entity fetch into 20 HTTP requests, and the count grows with your
+data.
+
+Hive Router groups the entities by their context values and sends **every group in a single
+subgraph request**, each as its own aliased `_entities` field:
 
 ```graphql
 query (
@@ -94,14 +103,49 @@ query (
 }
 ```
 
-The router then maps every entity and error back to its original position in the client response.
+The first alias receives only the transactions of `USD` users, the second only those of `EUR`
+users. The router maps every entity and error back to its original position, so clients never see
+the aliasing.
+
+| Distinct context values | One request per value | Hive Router |
+| ----------------------- | --------------------- | ----------- |
+| 1                       | 1 request             | 1 request   |
+| 2                       | 2 requests            | 1 request   |
+| 20                      | 20 requests           | 1 request   |
+
+This goes further than just aliasing:
+
+- **It combines with entity batching.** Contextual fetches to the same subgraph from different parts
+  of the query share one batched request, with every context group inside it. Contexts and batching
+  together still cost a single round trip.
+- **Entities are deduplicated per group.** Repeated entities with the same context values are sent
+  once.
+- **No per-request overhead.** The query planner compiles each contextual fetch into a template
+  once, and the router writes the aliased query for any number of groups by copying strings, with no
+  parsing or extra caching at execution time.
+- **Fast grouping.** Entities under the same ancestor reuse the previous entity's group without
+  reading and hashing the context values again.
+
+<Callout type="info">
+  Prefer smaller requests, or does your subgraph limit aliases? Use
+  [`max_aliases_per_request`](#capping-aliases-per-request) to cap how many
+  groups go in one request. Groups that don't fit are sent in additional
+  requests that run in parallel. Setting it to `1` sends one `_entities` field
+  per request.
+</Callout>
+
+Combining groups requires nullable contextual arguments. Fetches with a non-null contextual
+argument (like `String!`) send one request per group, all in parallel. See the
+[guide](/docs/router/guides/contextual-arguments#non-null-contextual-arguments-are-not-combined) for
+why.
 
 ## Capping aliases per request
 
 The number of context value groups depends on your data, not on the query. If a subgraph limits
 aliases (for example, with graphql-armor's max-aliases rule), use the new
 [`max_aliases_per_request`](/docs/router/configuration/traffic_shaping#max_aliases_per_request)
-option to split large requests into smaller ones that run in parallel:
+option to split large requests into smaller ones. The split requests run in parallel, so you still
+get a single round trip of latency:
 
 ```yaml title="router.config.yaml"
 traffic_shaping:
