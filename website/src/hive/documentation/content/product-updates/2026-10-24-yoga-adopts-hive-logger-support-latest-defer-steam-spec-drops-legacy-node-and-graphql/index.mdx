@@ -11,7 +11,7 @@ GraphQL Yoga v6 replaces its console-based logger with [Hive Logger](https://the
 
 Every request now gets its own logger tagged with a `requestId`, and Yoga logs more of the request
 lifecycle out of the box. Yoga v6 requires Node.js 22 or later and GraphQL 16 or later.
- 
+
 Yoga has gone through some major changes to clean up technical debt that built up over time and to
 improve the overall logging experience.
 
@@ -21,7 +21,7 @@ These changes can be grouped into three large changes:
 * GraphQL Tools Major Update
 
 ## Hive Logger
- 
+
 Yoga now uses [Hive Logger](https://the-guild.dev/graphql/hive/docs/logger), the same structured logger used across the Hive
 platform. You get log levels, attributes, child loggers, redaction and pluggable writers.
 
@@ -36,9 +36,9 @@ createYoga({
   // ...
 });
 ```
- 
+
 ### Per-request logging with `context.log`
- 
+
 Each request gets a [child logger](https://the-guild.dev/graphql/hive/docs/logger/child-loggers),
 available as `context.log`. It carries the request's `requestId`: Yoga uses a host-assigned id first,
 then the incoming `x-request-id` header if trusted, and otherwise generates one.
@@ -210,16 +210,16 @@ This is Yoga-only for now — Hive Gateway support for `incrementalSpec=v0.2` is
 release.
 
 ## Dropped support for Node.js 18 and 20
- 
+
 Node.js 18 and 20 have reached end of life. Yoga v6 requires Node.js 22 or later, and future releases
 will only support Node.js versions that are still in LTS.
- 
+
 ## Dropped support for GraphQL 14 and 15
- 
+
 The minimum supported version of the `graphql-js` package is now 16.
- 
+
 ## Migrating to v6
- 
+
 1. Upgrade to Node.js 22 or later.
 2. Upgrade `graphql-js` to version 16 or later.
 3. Update `graphql-yoga` and any `@graphql-yoga/*` packages to their latest versions.
@@ -307,9 +307,9 @@ The minimum supported version of the `graphql-js` package is now 16.
     `@whatwg-node/promise-helpers` instead.
 11. If you depend on `@graphql-tools/utils`, `@graphql-tools/schema` or `@graphql-tools/executor`
     directly, update them to `^13.1.1`, `^11.0.0` and `^4.1.2` respectively.
- 
+
 ---
- 
+
 - [Hive Logger documentation](https://the-guild.dev/graphql/hive/docs/logger)
 - [Yoga logging and debugging](https://the-guild.dev/graphql/yoga-server/docs/features/logging-and-debugging)
 - [Pull request #4575: Hive Logger](https://github.com/graphql-hive/graphql-yoga/pull/4575)
