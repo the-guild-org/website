@@ -1,0 +1,129 @@
+---
+title: Contextual Arguments with `@context` and `@fromContext` in Hive Router
+description:
+  Hive Router now supports Federation contexts, letting nested fields receive data from their
+  ancestors without exposing it as a public argument.
+date: 2026-10-22
+authors: [enisdenjo]
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+[Hive Router](/docs/router) now supports the Federation
+[`@context` and `@fromContext`](/docs/router/guides/contextual-arguments) directives. After
+[native composition support](/product-updates/2026-08-31-federation-context), schemas using contexts
+can now be served end to end with Hive.
+
+## The problem
+
+A deeply nested field sometimes needs data from higher up in the response. Take transactions that
+should be shown in their owner's currency:
+
+```graphql
+query {
+  users {
+    transactions {
+      amount
+    }
+  }
+}
+```
+
+The subgraph resolving `amount` needs to know each user's currency. Without contexts, you'd either
+make clients pass the currency as an argument (and repeat it for every user), or carry it through
+entity `@key`s on types that otherwise don't care about it.
+
+## Contexts to the rescue
+
+With contexts, `User` provides a named context, and the `code` argument of `amount` declares that
+its value comes from that context:
+
+```graphql
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.8"
+    import: ["@key", "@context", "@fromContext"]
+  )
+
+type User @key(fields: "id") @context(name: "userContext") {
+  id: ID!
+  currency: String
+  transactions: [Transaction]
+}
+
+type Transaction @key(fields: "id") {
+  id: ID!
+  amount(code: String @fromContext(field: "$userContext { currency }")): Int
+}
+```
+
+The `code` argument is removed from the public API schema. Clients keep querying `amount` as is,
+and the router fills in `code` from the `currency` of the nearest `User` above each transaction.
+Alice's transactions are resolved with `code: "USD"`, Bob's with `code: "EUR"`.
+
+## Highlights
+
+- **Nearest ancestor wins.** In `users { friends { transactions { amount } } }`, each transaction
+  gets its friend's currency, not the outer user's.
+- **Interfaces and unions.** Contexts can be set on abstract types, and selections can use type
+  conditions like `... on User { currency } ... on Organization { currency }`.
+- **Across subgraphs.** The ancestor and the contextual field can live in different subgraphs. The
+  query planner merges contextual fetches into other fetches whenever it's safe, saving round
+  trips.
+- **One request for many values.** Entities whose ancestors hold different values can't share one
+  `_entities` field. The router groups them by value and sends all groups in a single request
+  through aliases:
+
+```graphql
+query (
+  $representations_0: [_Any!]!
+  $representations_1: [_Any!]!
+  $__context_0_0: String
+  $__context_0_1: String
+) {
+  _entities_0: _entities(representations: $representations_0) {
+    ... on Transaction {
+      amount(code: $__context_0_0)
+    }
+  }
+  _entities_1: _entities(representations: $representations_1) {
+    ... on Transaction {
+      amount(code: $__context_0_1)
+    }
+  }
+}
+```
+
+The router then maps every entity and error back to its original position in the client response.
+
+## Capping aliases per request
+
+The number of context value groups depends on your data, not on the query. If a subgraph limits
+aliases (for example, with graphql-armor's max-aliases rule), use the new
+[`max_aliases_per_request`](/docs/router/configuration/traffic_shaping#max_aliases_per_request)
+option to split large requests into smaller ones that run in parallel:
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    max_aliases_per_request: 15
+  subgraphs:
+    accounts:
+      max_aliases_per_request: 5
+```
+
+The same cap also applies to entity batching: `BatchFetch` nodes with more aliases than the cap are
+split into several parallel batches. The option isn't set by default, so nothing changes unless you
+configure it.
+
+<Callout type="warning">
+  If any of your subgraphs limits the number of aliases in an operation, set
+  `max_aliases_per_request` for it. The number of context groups can grow past
+  the subgraph's limit as your data changes.
+</Callout>
+
+---
+
+- [Contextual Arguments guide](/docs/router/guides/contextual-arguments)
+- [`traffic_shaping` configuration reference](/docs/router/configuration/traffic_shaping#max_aliases_per_request)
+- [Federation compatibility](/docs/router/compatibility)
