@@ -69,7 +69,14 @@ export function getHeadingHtmlBySlug(markdown: string, headings: { slug: string;
     if (inFence) continue;
     const match = /^#{1,6}\s+(.*)$/.exec(line);
     if (!match) continue;
-    rawHeadings.push(match[1].replace(/\s*\{#[\w-]+\}\s*$/, '').trim());
+    rawHeadings.push(
+      match[1]
+        .replace(/\s*\{#[\w-]+\}\s*$/, '')
+        // Empty and comment-only MDX expressions render nothing (see
+        // remark-heading-expressions.mjs); keep them out of the TOC too.
+        .replace(/\{\s*(?:\/\*[\s\S]*?\*\/)?\s*\}/g, '')
+        .trim(),
+    );
   }
 
   const htmlBySlug = new Map<string, string>();
