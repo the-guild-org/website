@@ -1,5 +1,10 @@
 import { describe, expect, test } from 'vitest';
-import { getDocsMarkdown, getDocsSlug, type DocsEntry } from './docs-markdown';
+import {
+  getDocsMarkdown,
+  getDocsSlug,
+  getHeadingHtmlBySlug,
+  type DocsEntry,
+} from './docs-markdown';
 
 function docsEntry(overrides: Partial<DocsEntry> = {}) {
   return {
@@ -41,5 +46,26 @@ npm install example
     expect(() => getDocsMarkdown(docsEntry({ body: undefined }))).toThrow(
       'Documentation entry has no Markdown body',
     );
+  });
+});
+
+describe('getHeadingHtmlBySlug', () => {
+  test('drops empty and comment-only MDX expressions but keeps braces in inline code', () => {
+    const markdown = [
+      '## Sharing envelops { }',
+      '',
+      '## Removed{/* eslint-disable-line */}',
+      '',
+      '## Write `{ }`',
+    ].join('\n');
+    const headings = [
+      { slug: 'sharing-envelops', text: 'Sharing envelops' },
+      { slug: 'removed', text: 'Removed' },
+      { slug: 'write', text: 'Write { }' },
+    ];
+    const html = getHeadingHtmlBySlug(markdown, headings);
+    expect(html.get('sharing-envelops')).toBe('Sharing envelops');
+    expect(html.get('removed')).toBe('Removed');
+    expect(html.get('write')).toBe('Write <code>{ }</code>');
   });
 });

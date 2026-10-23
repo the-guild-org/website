@@ -25,6 +25,11 @@ describe('remarkHeadingExpressions', () => {
     expect(run(heading(text('Title '), expression('// note')))).toEqual(heading(text('Title')));
   });
 
+  it('keeps an expression that has renderable text between two comments', () => {
+    const kept = heading(text('Title '), expression("/* before */ 'Visible' /* after */"));
+    expect(run(kept)).toEqual(kept);
+  });
+
   it('keeps expressions that render something', () => {
     const kept = heading(text('Ensure to use '), expression("'Node.js >= 18'"));
     expect(run(kept)).toEqual(kept);

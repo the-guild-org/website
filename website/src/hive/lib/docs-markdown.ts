@@ -58,6 +58,21 @@ function renderHeadingInlineHtml(raw: string) {
  * HTML string per heading straight from the Markdown source, matching
  * headings by position (both walk the document in the same top-level order).
  */
+/**
+ * Empty and comment-only MDX expressions (`{ }`, or a JS comment in braces) render
+ * nothing, so they must not reach the table of contents either (see
+ * remark-heading-expressions.mjs). Inline code is left untouched: braces
+ * inside backticks are content.
+ */
+function stripEmptyExpressions(heading: string): string {
+  return heading
+    .split(/(`+[^`]*`+)/)
+    .map((part, index) =>
+      index % 2 === 1 ? part : part.replace(/\{\s*(?:\/\*(?:[^*]|\*(?!\/))*\*\/)?\s*\}/g, ''),
+    )
+    .join('');
+}
+
 export function getHeadingHtmlBySlug(markdown: string, headings: { slug: string; text: string }[]) {
   const rawHeadings: string[] = [];
   let inFence = false;
@@ -69,14 +84,7 @@ export function getHeadingHtmlBySlug(markdown: string, headings: { slug: string;
     if (inFence) continue;
     const match = /^#{1,6}\s+(.*)$/.exec(line);
     if (!match) continue;
-    rawHeadings.push(
-      match[1]
-        .replace(/\s*\{#[\w-]+\}\s*$/, '')
-        // Empty and comment-only MDX expressions render nothing (see
-        // remark-heading-expressions.mjs); keep them out of the TOC too.
-        .replace(/\{\s*(?:\/\*[\s\S]*?\*\/)?\s*\}/g, '')
-        .trim(),
-    );
+    rawHeadings.push(stripEmptyExpressions(match[1].replace(/\s*\{#[\w-]+\}\s*$/, '')).trim());
   }
 
   const htmlBySlug = new Map<string, string>();

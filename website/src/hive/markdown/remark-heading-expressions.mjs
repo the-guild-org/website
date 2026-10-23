@@ -22,7 +22,8 @@ export function remarkHeadingExpressions() {
   };
 }
 
-const BLOCK_COMMENT = /^\/\*[\s\S]*\*\/$/;
+// One block comment and nothing else: `(?:[^*]|\*(?!\/))*` stops at the first `*/`.
+const BLOCK_COMMENT = /^\/\*(?:[^*]|\*(?!\/))*\*\/$/;
 const LINE_COMMENT = /^\/\/[^\n]*$/;
 
 function isEmptyExpression(node) {
