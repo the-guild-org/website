@@ -4,7 +4,7 @@ description:
   Hive Router now supports Federation contexts, letting nested fields receive data from their
   ancestors without exposing it as a public argument, and resolves all distinct context values in a
   single subgraph request.
-date: 2026-10-22
+date: 2026-10-23
 authors: [enisdenjo]
 ---
 
@@ -62,7 +62,7 @@ The `code` argument is removed from the public API schema. Clients keep querying
 and the router fills in `code` from the `currency` of the nearest `User` above each transaction.
 Alice's transactions are resolved with `code: "USD"`, Bob's with `code: "EUR"`.
 
-## Highlights
+### Highlights
 
 - **Nearest ancestor wins.** In `users { friends { transactions { amount } } }`, each transaction
   gets its friend's currency, not the outer user's.
@@ -138,33 +138,6 @@ Combining groups requires nullable contextual arguments. Fetches with a non-null
 argument (like `String!`) send one request per group, all in parallel. See the
 [guide](/docs/router/guides/contextual-arguments#non-null-contextual-arguments-are-not-combined) for
 why.
-
-## Capping aliases per request
-
-The number of context value groups depends on your data, not on the query. If a subgraph limits
-aliases (for example, with graphql-armor's max-aliases rule), use the new
-[`max_aliases_per_request`](/docs/router/configuration/traffic_shaping#max_aliases_per_request)
-option to split large requests into smaller ones. The split requests run in parallel, so you still
-get a single round trip of latency:
-
-```yaml title="router.config.yaml"
-traffic_shaping:
-  all:
-    max_aliases_per_request: 15
-  subgraphs:
-    accounts:
-      max_aliases_per_request: 5
-```
-
-The same cap also applies to entity batching: `BatchFetch` nodes with more aliases than the cap are
-split into several parallel batches. The option isn't set by default, so nothing changes unless you
-configure it.
-
-<Callout type="warning">
-  If any of your subgraphs limits the number of aliases in an operation, set
-  `max_aliases_per_request` for it. The number of context groups can grow past
-  the subgraph's limit as your data changes.
-</Callout>
 
 ---
 
