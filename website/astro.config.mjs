@@ -13,6 +13,7 @@ import {
 import { rehypeCode, rehypeCodeDefaultOptions } from './src/hive/markdown/rehype-code.mjs';
 import { mermaidRehypePlugin } from './src/hive/markdown/rehype-mermaid-config.mjs';
 import { remarkBasePath } from './src/hive/markdown/remark-base-path.mjs';
+import { remarkHeadingExpressions } from './src/hive/markdown/remark-heading-expressions.mjs';
 import { remarkNpm2Yarn } from './src/hive/markdown/remark-npm2yarn.mjs';
 import { remarkRelativeLinks } from './src/hive/markdown/remark-relative-links.mjs';
 import { remarkTocMarkers } from './src/hive/markdown/remark-toc-markers.mjs';
@@ -227,6 +228,8 @@ export default defineConfig({
     mdx({
       processor: unified({
         remarkPlugins: [
+          // Every MDX file: migrated headings may end in `{ }` or a comment.
+          remarkHeadingExpressions,
           hiveOnly(remarkNpm2Yarn),
           hiveOnly(remarkRelativeLinks),
           hiveOnly(remarkBasePath),

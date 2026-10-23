@@ -340,6 +340,20 @@ for await (const filePath of walk(OUTPUT_DIR)) {
     issues.push(`${relativePath}: ${h1Count} <h1> elements`);
   }
 
+  // Headings and table-of-contents entries must not show MDX leftovers such
+  // as `{ }` or `{/* ... */}` (remark-heading-expressions.mjs strips them from
+  // headings; the TOC text is derived separately in docs-markdown.ts).
+  const headingLike = [
+    ...html.matchAll(/<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>/gi),
+    ...html.matchAll(/<a[^>]*\sdata-toc-anchor="[^"]*"[^>]*>([\s\S]*?)<\/a>/gi),
+  ];
+  for (const [, inner] of headingLike) {
+    const text = inner.replace(/<code[\s\S]*?<\/code>/gi, '').replace(/<[^>]+>/g, '');
+    if (/\{\s*(?:\/\*[\s\S]*?\*\/)?\s*\}/.test(text)) {
+      issues.push(`${relativePath}: heading or TOC entry shows an MDX leftover: ${text.trim()}`);
+    }
+  }
+
   // Every internal link must resolve: to a dist file, a redirect rule, or a
   // path prefix another deployment serves through the router.
   const seenHrefs = new Set<string>();
