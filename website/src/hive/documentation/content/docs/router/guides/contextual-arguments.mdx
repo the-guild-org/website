@@ -1,0 +1,493 @@
+---
+title: "Contextual Arguments"
+sidebarTitle: "@context and @fromContext"
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+Contextual arguments let a field receive data from one of its ancestors in the response, without
+the client ever sending it. A type declares a named context with `@context`, and a field argument
+further down the graph declares where its value comes from with `@fromContext`. Hive Router fills in
+the argument value from the nearest ancestor that sets the matching context.
+
+This solves a common problem in federated schemas: a deeply nested field sometimes depends on data
+that lives higher up in the response. Without contexts, you'd have to either expose that data as a
+public argument the client must repeat, or push it into entity `@key`s so that every type along the
+way carries data it doesn't otherwise need.
+
+Contextual arguments are part of
+[Federation v2.8](https://www.apollographql.com/docs/graphos/schema-design/federated-schemas/reference/directives#context)
+and are supported by both Hive Router and
+[Hive's native composition](/product-updates/2026-08-31-federation-context).
+
+## Defining a context
+
+Import `@context` and `@fromContext` in your subgraph schema:
+
+```graphql title="accounts subgraph"
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.8"
+    import: ["@key", "@context", "@fromContext"]
+  )
+
+type Query {
+  users: [User]
+}
+
+type User @key(fields: "id") @context(name: "userContext") {
+  id: ID!
+  currency: String
+  transactions: [Transaction]
+}
+
+type Transaction @key(fields: "id") {
+  id: ID!
+  amount(code: String @fromContext(field: "$userContext { currency }")): Int
+}
+```
+
+- `@context(name: "userContext")` on `User` makes every `User` object in a response a provider of
+  the `userContext` context.
+- `@fromContext(field: "$userContext { currency }")` on the `code` argument says: "take the
+  `currency` field of the nearest `userContext` provider above me and use it as `code`".
+
+The `code` argument is removed from the public API schema, together with the context directives.
+Clients see only this:
+
+```graphql
+type Transaction {
+  id: ID!
+  amount: Int
+}
+```
+
+## Querying contextual fields
+
+Clients query contextual fields like any other field:
+
+```graphql
+query {
+  users {
+    transactions {
+      amount
+    }
+  }
+}
+```
+
+Given two users, Alice with `currency: "USD"` and Bob with `currency: "EUR"`, the subgraph resolves
+Alice's transactions with `code: "USD"` and Bob's transactions with `code: "EUR"`. Every entity
+gets the value of its own ancestor.
+
+```json
+{
+  "data": {
+    "users": [
+      { "transactions": [{ "amount": 100 }, { "amount": 250 }] },
+      { "transactions": [{ "amount": 90 }] }
+    ]
+  }
+}
+```
+
+## How the router resolves contextual arguments
+
+The router plans a contextual argument similar to a `@requires`, except that the required data
+lives on an ancestor instead of the parent:
+
+1. Fetch the context value (`currency`) together with the ancestor (`User`).
+2. Fetch the contextual field (`amount`) in a separate entity request after that.
+3. For each entity, read the context value from the response and send it as a variable.
+
+This is the query plan for the operation above:
+
+```text
+QueryPlan {
+  Sequence {
+    Fetch(service: "accounts") {
+      {
+        users {
+          __typename
+          currency
+          transactions {
+            __typename
+            id
+          }
+        }
+      }
+    },
+    Flatten(path: "users.@.transactions.@") {
+      Fetch(service: "accounts") {
+        {
+          ... on Transaction {
+            __typename
+            id
+          }
+        } =>
+        ($__context_0:String) {
+          ... on Transaction {
+            amount(code: $__context_0)
+          }
+        }
+      },
+    },
+  },
+}
+```
+
+Even though both fields live in the same subgraph, `amount` is fetched through a second `_entities`
+request. The context value must exist in the response before the router can send it.
+
+<Callout type="info">
+  Because of that second request, the type holding the contextual field (here `Transaction`) must
+  have a `@key` the router can resolve through `_entities` in the subgraph defining the field.
+  Without a resolvable key, the field can't be planned.
+</Callout>
+
+### Context rewrites in the query plan
+
+The second fetch tells the executor where to find the context value relative to each entity. In the
+JSON representation of the query plan, the fetch has `contextVariables` and `contextRewrites`:
+
+```json
+{
+  "kind": "Fetch",
+  "serviceName": "accounts",
+  "operation": "query($representations:[_Any!]!, $__context_0:String){_entities(representations: $representations){...on Transaction{amount(code: $__context_0)}}}",
+  "contextVariables": ["__context_0"],
+  "contextRewrites": [
+    {
+      "path": ["Parent", { "TypenameEquals": ["User"] }, { "Key": "currency" }],
+      "renameKeyTo": "__context_0"
+    }
+  ]
+}
+```
+
+Read the rewrite as: go up one object (`Parent`), check that it's a `User`, read its `currency`, and
+send the value as `$__context_0`.
+
+## The nearest ancestor wins
+
+When the same context is set several times along a path, the value always comes from the closest
+ancestor. Consider users that have friends, who are users too:
+
+```graphql
+type User @key(fields: "id") @context(name: "userContext") {
+  id: ID!
+  currency: String
+  friends: [User]
+  transactions: [Transaction]
+}
+```
+
+```graphql
+query {
+  users {
+    friends {
+      transactions {
+        amount
+      }
+    }
+  }
+}
+```
+
+Each transaction gets the `currency` of the friend it belongs to, not of the outer user.
+
+If the nearest ancestor can't provide the value, the field fails to plan. The router doesn't fall
+back to an ancestor further up. This follows the Federation specification and matches Apollo
+Router's behavior.
+
+## Contexts on interfaces and unions
+
+A context can also be set on an interface or a union. Use type conditions in the selection to read
+fields from the concrete type the ancestor turns out to be:
+
+```graphql
+type Query {
+  owners: [Owner]
+}
+
+union Owner @context(name: "ownerContext") = User | Organization
+
+type User {
+  id: ID!
+  currency: String
+  transactions: [Transaction]
+}
+
+type Organization {
+  id: ID!
+  currency: String
+  transactions: [Transaction]
+}
+
+type Transaction @key(fields: "id") {
+  id: ID!
+  amount(
+    code: String
+      @fromContext(
+        field: "$ownerContext ... on User { currency } ... on Organization { currency }"
+      )
+  ): Int
+}
+```
+
+Only the branch matching the actual type of the ancestor is used. Transactions of a `User` get the
+user's `currency`, and transactions of an `Organization` get the organization's `currency`.
+
+## Contexts across subgraphs
+
+The ancestor providing the context and the contextual field can live in different subgraphs. The
+subgraph defining the contextual field declares the context fields it reads as `@external`:
+
+```graphql title="accounts subgraph"
+type Query {
+  user: User
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  userCurrency: Currency!
+}
+
+type Currency {
+  isoCode: String!
+}
+```
+
+```graphql title="transactions subgraph"
+type User @key(fields: "id") @context(name: "userContext") {
+  id: ID!
+  userCurrency: Currency! @external
+  lastTransaction: Transaction!
+}
+
+type Currency {
+  isoCode: String! @external
+}
+
+type Transaction @key(fields: "id") {
+  id: ID!
+  amountInUserCurrency(
+    currencyCode: String
+      @fromContext(field: "$userContext { userCurrency { isoCode } }")
+  ): Int!
+}
+```
+
+For this query:
+
+```graphql
+query {
+  user {
+    lastTransaction {
+      amountInUserCurrency
+    }
+  }
+}
+```
+
+The router fetches the currency from `accounts`, then resolves `lastTransaction` and the contextual
+field in a single request to `transactions`:
+
+```text
+QueryPlan {
+  Sequence {
+    Fetch(service: "accounts") {
+      {
+        user {
+          __typename
+          id
+          userCurrency {
+            isoCode
+          }
+        }
+      }
+    },
+    Flatten(path: "user") {
+      Fetch(service: "transactions") {
+        {
+          ... on User {
+            __typename
+            id
+          }
+        } =>
+        ($__context_0:String) {
+          ... on User {
+            __typename
+            id
+            lastTransaction {
+              __typename
+              id
+              amountInUserCurrency(currencyCode: $__context_0)
+            }
+          }
+        }
+      },
+    },
+  },
+}
+```
+
+The query planner merges contextual fetches into other fetches whenever it's safe to do so. Here,
+the contextual fetch for `Transaction` merges into the entity fetch for its ancestor `User`, which
+saves a round trip. A contextual fetch is never merged with the fetch producing its context value,
+since the value has to exist before the request is sent.
+
+## One request for many context values
+
+Contextual arguments make entity fetching harder. Entities in a list usually share one `_entities`
+field, but entities whose ancestors hold different context values can't, because each needs a
+different argument value. The straightforward approach is to send one subgraph request per distinct
+value. A list of users in 20 currencies then turns one entity fetch into 20 HTTP requests to the
+same subgraph, and the number grows with your data.
+
+Hive Router avoids this. It groups the entities by their context values and sends **all groups in a
+single subgraph request**, each group as its own aliased `_entities` field:
+
+| Distinct context values | One request per value | Hive Router |
+| ----------------------- | --------------------- | ----------- |
+| 1                       | 1 request             | 1 request   |
+| 2                       | 2 requests            | 1 request   |
+| 20                      | 20 requests           | 1 request   |
+
+Fewer requests mean fewer HTTP round trips, less connection pool pressure, and less per-request
+overhead on both the router and the subgraph, which can resolve all groups in one execution.
+
+For the `users` example above, with Alice in `USD` and Bob in `EUR`, the subgraph receives one
+request:
+
+```graphql
+query (
+  $representations_0: [_Any!]!
+  $representations_1: [_Any!]!
+  $__context_0_0: String
+  $__context_0_1: String
+) {
+  _entities_0: _entities(representations: $representations_0) {
+    ... on Transaction {
+      amount(code: $__context_0_0)
+    }
+  }
+  _entities_1: _entities(representations: $representations_1) {
+    ... on Transaction {
+      amount(code: $__context_0_1)
+    }
+  }
+}
+```
+
+```json
+{
+  "representations_0": [
+    { "__typename": "Transaction", "id": "t1" },
+    { "__typename": "Transaction", "id": "t2" }
+  ],
+  "representations_1": [{ "__typename": "Transaction", "id": "t3" }],
+  "__context_0_0": "USD",
+  "__context_0_1": "EUR"
+}
+```
+
+The first alias receives only the transactions of `USD` users, the second only the transactions of
+`EUR` users. The router then maps the responses and errors back to the original positions in the
+client response, so aliasing is completely invisible to clients. When all entities share the same
+context values, the router sends the original, non-aliased operation.
+
+On top of that:
+
+- **It works together with entity batching.** Contextual fetches to the same subgraph from different
+  parts of a query are combined into one batched request, and every context group repeats each
+  batched fetch inside that same request. Instead of multiplying requests, contexts and batching
+  share a single round trip.
+- **Entities are deduplicated per group.** A transaction that appears several times under users
+  with the same currency is sent once. The same transaction under a `USD` user and an `EUR` user is
+  sent once in each group, because the results can differ.
+- **Building the aliased query is cheap.** The query planner compiles each contextual fetch into a
+  template once. At execution time, the router writes the query for any number of groups by copying
+  strings, without parsing, re-planning, or caching a separate query per group count.
+- **Grouping is fast.** Entities under the same ancestor are usually next to each other in the
+  response, so the router reuses the previous entity's group without reading and hashing the
+  context values again. Context values are borrowed from the response instead of copied.
+
+<Callout type="info">
+  Prefer smaller requests, or does your subgraph limit aliases? Use
+  [`max_aliases_per_request`](#limiting-aliases-per-request) to cap how many
+  groups go in one request. Groups that don't fit are sent in additional
+  requests that run in parallel. Setting it to `1` sends one `_entities` field
+  per request.
+</Callout>
+
+### Limiting aliases per request
+
+The number of groups depends on the response data, not on the query. A list with 50 users in 50
+different currencies produces 50 aliased `_entities` fields. Subgraphs that limit aliases in an
+operation (for example, with graphql-armor's max-aliases rule) can start rejecting these requests
+when the data changes.
+
+Use [`traffic_shaping.max_aliases_per_request`](/docs/router/configuration/traffic_shaping#max_aliases_per_request)
+to cap how many aliased `_entities` fields the router puts in a single subgraph request:
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    max_aliases_per_request: 15
+  subgraphs:
+    accounts:
+      max_aliases_per_request: 5
+```
+
+With a cap of `5`, a fetch with 12 distinct context value groups is sent as three requests with 5,
+5 and 2 groups. These requests run in parallel, so splitting doesn't add round trips one after
+another. The option is not set by default, so all groups of a fetch go in one request.
+
+<Callout type="warning">
+  If any of your subgraphs limits the number of aliases in an operation, set
+  `max_aliases_per_request` for it at or below that limit, even if your
+  operations look small. The number of context groups grows with the variety of
+  your data.
+</Callout>
+
+## Behavior details
+
+### Missing values are sent as `null`
+
+If the ancestor's context field is missing or `null`, or a `null` sits anywhere along the selection
+path, the router sends `null` for the argument. Whether that's valid depends on the argument type in
+your subgraph schema. Apollo Router behaves the same.
+
+### Non-null contextual arguments are not combined
+
+Fetches with a non-null contextual argument (for example `code: String!`) are never combined into
+one request with other groups or fetches. Each context value group is sent as its own request, and
+all of them run in parallel.
+
+Combining requests sometimes requires the router to send `null` for a context variable that a
+particular part of the request doesn't use. A non-null variable would make the whole request fail
+variable coercion. Keeping these fetches separate also prevents one group with a missing value from
+failing unrelated groups.
+
+Prefer nullable contextual arguments when you expect many distinct context values, so the router
+can combine them into fewer requests.
+
+### Mutations
+
+A mutation root field whose result contains contextual fields finishes resolving them before the
+next mutation root field runs, preserving the sequential execution order of mutations.
+
+### Contextual fields inside `@requires`
+
+A `@requires` selection can include a contextual field, as long as the context is set within the
+required selection itself. For example, if `Plan.discount` requires `offer { value }`, then
+`Offer.value` can read a context set by `Plan`. The router fetches the context, then `value`, then
+`discount`.
+
+If a contextual field selected by `@requires` (or by another `@fromContext` selection) needs a
+context set above the starting point of that selection, planning fails with:
+
+```text
+@fromContext on a field selected by @requires or another @fromContext selection is not supported
+```
