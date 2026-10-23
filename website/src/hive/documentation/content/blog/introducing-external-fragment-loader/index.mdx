@@ -1,0 +1,24 @@
+---
+title: Introducing @graphql-tools/external-fragment-loader
+authors: ikusakov2
+tags: [graphql, graphql-tools, graphql-codegen, fragments]
+date: 2026-10-16
+description:
+  Resolve missing GraphQL fragments across package dependencies with the new GraphQL Tools external
+  fragment loader, without maintaining lists of fragment files.
+---
+
+We're excited to introduce
+[`@graphql-tools/external-fragment-loader`](https://www.npmjs.com/package/@graphql-tools/external-fragment-loader),
+a new package in [GraphQL Tools](https://the-guild.dev/graphql/tools) that makes sharing GraphQL
+fragments across packages easier!
+
+The loader resolves missing GraphQL fragments by following direct and transitive dependencies in
+`package.json`. It loads only the external fragments your package needs, so you no longer have to
+maintain lists of fragment files by hand.
+
+We originally built it for
+[GraphQL Code Generator](https://github.com/dotansimha/graphql-code-generator). Now we're exploring
+integrations with [GraphQL ESLint](https://github.com/graphql-hive/graphql-eslint) and
+[Apollo's persisted query manifest generator](https://github.com/apollographql/apollo-utils/tree/main/packages/generate-persisted-query-manifest)
+to bring the same fragment resolution to more GraphQL workflows.
