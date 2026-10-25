@@ -20,6 +20,13 @@ Contextual arguments are part of
 and are supported by both Hive Router and
 [Hive's native composition](/product-updates/2026-08-31-federation-context).
 
+<Callout type="warning">
+  Hive Router executes contextual arguments from version 0.3.6. Hive Gateway composes
+  and serves a supergraph that uses them, but doesn't fill the argument yet: the
+  subgraph receives no value, and nothing in the response says so. Serve schemas
+  that use `@fromContext` with Hive Router.
+</Callout>
+
 ## Defining a context
 
 Import `@context` and `@fromContext` in your subgraph schema:
@@ -61,6 +68,30 @@ type Transaction {
   amount: Int
 }
 ```
+
+## Rules composition enforces
+
+Composition checks contextual arguments before the router ever sees them. Each rule below is
+enforced by Hive's composition, with the error it reports:
+
+| Rule | Error when broken |
+| --- | --- |
+| The argument is nullable, even when the selected field is non-null. | `CONTEXT_INVALID_SELECTION` |
+| The argument has no default value. | `CONTEXT_NOT_SET` |
+| Every path to the field passes through a type that sets the context. | `SATISFIABILITY_ERROR`, "could not find a match for required context" |
+| `@context` and `@fromContext` are in the same subgraph. | `CONTEXT_NOT_SET`, "is never set" |
+| The type that declares the contextual field has a resolvable `@key` in that subgraph. | `CONTEXT_NO_RESOLVABLE_KEY` |
+| A selection on a union context uses type conditions. | `CONTEXT_INVALID_SELECTION` |
+| The field doesn't implement an interface field. | `CONTEXT_NOT_SET` |
+
+The first rule surprises most people. Composition types every context selection as nullable,
+because the value can still be `null` at run time: a `null` anywhere along the selection, or an
+ancestor whose fetch failed. So `code: String!` is refused even when `currency` is `String!`.
+Handle `null` in the resolver.
+
+The fields a selection reads don't have to belong to the subgraph that sets the context.
+Declare them `@external` there, and the router fetches them first. See
+[contexts across subgraphs](#contexts-across-subgraphs).
 
 ## Querying contextual fields
 
@@ -138,6 +169,10 @@ QueryPlan {
 
 Even though both fields live in the same subgraph, `amount` is fetched through a second `_entities`
 request. The context value must exist in the response before the router can send it.
+
+To see the plan for your own operation, set `query_planner.allow_expose: true` in the router
+configuration and send the request with a `hive-expose-query-plan: true` header. The plan is
+returned under `extensions.queryPlan`. Use it in development only.
 
 <Callout type="info">
   Because of that second request, the type holding the contextual field (here `Transaction`) must
@@ -456,22 +491,22 @@ another. The option is not set by default, so all groups of a fetch go in one re
 ### Missing values are sent as `null`
 
 If the ancestor's context field is missing or `null`, or a `null` sits anywhere along the selection
-path, the router sends `null` for the argument. Whether that's valid depends on the argument type in
-your subgraph schema. Apollo Router behaves the same.
+path, the router sends an explicit `null` for the argument. The variable is always present in the
+subgraph request, so the resolver sees `null` rather than an absent argument. Composition only
+accepts nullable contextual arguments, so this is always a valid value.
 
 ### Non-null contextual arguments are not combined
 
-Fetches with a non-null contextual argument (for example `code: String!`) are never combined into
-one request with other groups or fetches. Each context value group is sent as its own request, and
-all of them run in parallel.
+Composition refuses a non-null contextual argument, so a supergraph composed by Hive or Apollo
+never contains one. The router still handles a supergraph that does, for example one written by
+hand: fetches with a non-null contextual argument (`code: String!`) are never combined into one
+request with other groups or fetches, and each context value group is sent as its own request, in
+parallel.
 
 Combining requests sometimes requires the router to send `null` for a context variable that a
 particular part of the request doesn't use. A non-null variable would make the whole request fail
 variable coercion. Keeping these fetches separate also prevents one group with a missing value from
 failing unrelated groups.
-
-Prefer nullable contextual arguments when you expect many distinct context values, so the router
-can combine them into fewer requests.
 
 ### Mutations
 
@@ -491,3 +526,40 @@ context set above the starting point of that selection, planning fails with:
 ```text
 @fromContext on a field selected by @requires or another @fromContext selection is not supported
 ```
+
+## Performance considerations
+
+- **A contextual field costs a second entity fetch.** The context value has to be in the
+  response before the request that uses it is sent, even when both fields live in the same
+  subgraph. Across subgraphs, the planner merges the contextual fetch into the entity fetch for
+  its ancestor where it's safe.
+- **The number of aliases grows with your data, not your query.** Each distinct context value
+  is one aliased `_entities` field. A list of 200 users in 200 currencies is one request with
+  200 aliases. Set [`max_aliases_per_request`](#limiting-aliases-per-request) for every
+  subgraph that limits aliases.
+- **An entity is resolved once per group.** The same entity under two ancestors with different
+  values is resolved twice, once in each group, because the results can differ.
+- **The request count only grows past the cap.** With no cap, every group goes in one request.
+  With a cap, groups that don't fit go in additional requests that run in parallel. A cap of `1`
+  sends one request per distinct value.
+- **Client variables can prevent aliasing.** If a client variable that reaches the contextual
+  fetch is named like a generated one, such as `representations_1` or `__context_0_1`, the router
+  falls back to one request per group. The answer is unchanged.
+
+## Checklist
+
+Use this list when you write or review a schema with contextual arguments, by hand or with an
+AI agent:
+
+1. Declare the contextual argument nullable, with no default value.
+2. Make sure every path to the field passes through a type that sets the context.
+3. Give the type that declares the contextual field a resolvable `@key` in the same subgraph.
+4. Put `@context` and `@fromContext` in the same subgraph. Read fields that another subgraph
+   owns by declaring them `@external` on the context type.
+5. Use type conditions when the context is set on a union.
+6. Expect the nearest ancestor's value. The router never falls back to an ancestor further up.
+7. Handle `null` in the resolver.
+8. Serve the supergraph with Hive Router 0.3.6 or later, not Hive Gateway.
+9. Set `max_aliases_per_request` for subgraphs that limit aliases.
+10. Test a list whose entities have ancestors with different context values, not only a single
+    entity. That's the case that needs more than one `_entities` field.
