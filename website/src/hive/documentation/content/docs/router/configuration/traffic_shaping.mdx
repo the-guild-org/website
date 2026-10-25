@@ -301,7 +301,8 @@ traffic_shaping:
 ## Outbound Options
 
 The following options (`allow_only_http2`, `circuit_breaker`, `compression`, `dedupe_enabled`,
-`forward_operation_name`, `pool_idle_timeout`, `request_timeout`, `tls`, and `websocket`) can be set
+`forward_operation_name`, `max_aliases_per_request`, `pool_idle_timeout`, `request_timeout`, `tls`,
+and `websocket`) can be set
 globally for all subgraphs or overridden on a per-subgraph basis by nesting them under the
 subgraph's name within the `traffic_shaping` map.
 
@@ -605,6 +606,49 @@ traffic_shaping:
   The forwarded name is generated at execution time rather than during query
   planning. This keeps query plans anonymous so they can be cached and shared
   across instances, without leaking client operation names between them.
+</Callout>
+
+### `max_aliases_per_request`
+
+- **Type:** `integer`
+- **Default:** not set (no limit)
+
+The maximum number of aliased `_entities` fields the router puts in a single entity request to a
+subgraph. A per-subgraph value takes precedence over the value set under `all`.
+
+The router aliases `_entities` fields in two cases:
+
+- **Entity batching.** Entity fetches to the same subgraph that run in parallel are batched into a
+  single request, with one alias per distinct fetch (`_e0`, `_e1`, ...). Batches with more aliases
+  than the limit are split into several batches that run in parallel.
+- **[Contextual arguments](/docs/router/guides/contextual-arguments).** Entities whose ancestors
+  hold different `@fromContext` values can't share one `_entities` field, so the field is repeated
+  once per distinct group of values (`_entities_0`, `_entities_1`, ...). Groups that don't fit in
+  the limit are sent in additional requests that run in parallel. In a batched fetch, every group
+  repeats all batch aliases, so each request carries `limit / batch aliases` groups, at least one.
+
+For example, with a limit of `5`, a fetch with 12 distinct context value groups is sent as three
+requests carrying 5, 5 and 2 groups.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    max_aliases_per_request: 15
+  subgraphs:
+    reviews:
+      max_aliases_per_request: 5
+```
+
+Higher values reduce the number of requests at the cost of larger query payloads. Aliases written in
+the client's own query are not counted. A value of `1` (or `0`) sends one `_entities` field per
+request.
+
+<Callout type="warning">
+  Subgraphs often limit the number of aliases in an operation (for example,
+  graphql-armor's max-aliases rule). Set this option at or below that limit for
+  such subgraphs, even if your operations look small. The number of contextual
+  argument groups depends on the response data, so it can grow past the
+  subgraph's limit at any time.
 </Callout>
 
 ### `pool_idle_timeout`
