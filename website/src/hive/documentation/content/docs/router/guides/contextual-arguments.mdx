@@ -20,13 +20,6 @@ Contextual arguments are part of
 and are supported by both Hive Router and
 [Hive's native composition](/product-updates/2026-08-31-federation-context).
 
-<Callout type="warning">
-  Hive Router executes contextual arguments from version 0.3.6. Hive Gateway composes
-  and serves a supergraph that uses them, but doesn't fill the argument yet: the
-  subgraph receives no value, and nothing in the response says so. Serve schemas
-  that use `@fromContext` with Hive Router.
-</Callout>
-
 ## Defining a context
 
 Import `@context` and `@fromContext` in your subgraph schema:
@@ -559,7 +552,7 @@ AI agent:
 5. Use type conditions when the context is set on a union.
 6. Expect the nearest ancestor's value. The router never falls back to an ancestor further up.
 7. Handle `null` in the resolver.
-8. Serve the supergraph with Hive Router 0.3.6 or later, not Hive Gateway.
+8. Serve the supergraph with Hive Router 0.3.6 or later.
 9. Set `max_aliases_per_request` for subgraphs that limit aliases.
 10. Test a list whose entities have ancestors with different context values, not only a single
     entity. That's the case that needs more than one `_entities` field.
