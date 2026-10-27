@@ -128,16 +128,16 @@ This goes further than just aliasing:
 
 <Callout type="info">
   Prefer smaller requests, or does your subgraph limit aliases? Use
-  [`max_aliases_per_request`](#capping-aliases-per-request) to cap how many
+  [`max_aliases_per_request`](/docs/router/guides/contextual-arguments#limiting-aliases-per-request) to cap how many
   groups go in one request. Groups that don't fit are sent in additional
   requests that run in parallel. Setting it to `1` sends one `_entities` field
   per request.
 </Callout>
 
-Combining groups requires nullable contextual arguments. Fetches with a non-null contextual
-argument (like `String!`) send one request per group, all in parallel. See the
-[guide](/docs/router/guides/contextual-arguments#non-null-contextual-arguments-are-not-combined) for
-why.
+Composition only accepts nullable contextual arguments, so a supergraph composed by Hive or Apollo
+never has a non-null one. The
+[guide](/docs/router/guides/contextual-arguments#rules-composition-enforces) lists the rules
+composition enforces, including why.
 
 ---
 
