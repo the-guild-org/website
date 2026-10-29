@@ -1,0 +1,36 @@
+---
+title: Anonymize Supergraphs and Operations with Hive Router
+description:
+  The new `hive_router anonymize` command replaces every name and value in a supergraph and its
+  operations with keyed hashes, so you can share them without revealing your schema.
+date: 2026-10-29
+authors: [kamil]
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+[Hive Router](/docs/router) `v0.3.8` adds an `anonymize` command, so you can share a supergraph and its
+operations, in a bug report or with support, without revealing your schema.
+
+```bash
+hive_router anonymize keygen > anon.key
+hive_router anonymize supergraph --key-file anon.key supergraph.graphql > anonymous.graphql
+hive_router anonymize operation --key-file anon.key operation.graphql > anonymous-operation.graphql
+```
+
+Every type, field, argument, enum value, subgraph name, string and number is replaced with a hash,
+and descriptions are removed. The output is still a valid supergraph that the router plans the same
+way, just with names like `T_3f9a…` and `f_81c2…` instead of `User` and `email`.
+
+<Callout type="info">
+  Hit a bug or a slow query plan? Anonymize the supergraph and the operation,
+  and attach them to an issue in the [Hive Router
+  repository](https://github.com/graphql-hive/router/issues). We get a working
+  reproduction, and none of your sensitive or internal information leaves your
+  hands (keep the key to yourself!)
+</Callout>
+
+---
+
+- [Pull request](https://github.com/graphql-hive/router/pull/1780)
+- [Hive Router 0.3.8 release notes](https://github.com/graphql-hive/router/releases/tag/hive-router%2Fv0.3.8)
