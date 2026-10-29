@@ -118,6 +118,28 @@ const themeCSS = `
     fill: var(--mermaid-cluster-fill);
     stroke: var(--mermaid-node-stroke);
   }
+  .eventWrapper {
+    filter: none;
+  }
+  .timeline-node rect, .timeline-node path {
+    fill: var(--mermaid-node-fill);
+  }
+  .timeline-node.section--1 rect, .timeline-node.section--1 path {
+    fill: var(--mermaid-cluster-fill);
+  }
+  .timeline-node text {
+    fill: var(--mermaid-fg);
+  }
+  .timeline-node line {
+    stroke: var(--mermaid-node-stroke);
+  }
+  .lineWrapper line {
+    stroke: var(--mermaid-arrow);
+  }
+  marker[id$="-arrowhead"] path {
+    fill: var(--mermaid-arrow);
+    stroke: var(--mermaid-arrow);
+  }
 `;
 
 export const mermaidRehypePlugin = [
