@@ -5,6 +5,7 @@ title: "App Deployment (Persisted Operations)"
 import { Callout } from "@hive/design-system/hive-components/callout";
 import { Image } from "@hive/design-system/image";
 import { Tabs } from "@hive/design-system/tabs";
+import { GraphFlow } from "#mdx-shims/graph";
 
 App Deployments let you publish the GraphQL operations used by each version of your application as
 Persisted Documents. Hive validates these operations against your schema,
@@ -130,13 +131,11 @@ Making better decisions about:
 - Which team or developer is responsible for a specific operation and needs to be contacted for
   Schema change decisions
 
-```mermaid
-flowchart LR
-    A["Hive CLI"]
-    B["Hive Registry / CDN"]
-    A-- "Publish App
-Deployment" -->B
-```
+<GraphFlow title="Publish">
+
+- Hive CLI → _publish app deployment_ → Hive Registry / CDN
+
+</GraphFlow>
 
 Furthermore, it allows you to leverage persisted documents (also knows as trusted documents or
 persisted queries) on your GraphQL Gateway or server, which provides the following benefits:
@@ -144,20 +143,15 @@ persisted queries) on your GraphQL Gateway or server, which provides the followi
 - Reduce payload size of your GraphQL requests (reduce client bandwidth usage)
 - Secure your GraphQL API by only allowing operations that are known and trusted by your Gateway
 
-```mermaid
-flowchart LR
-    C["GraphQL API or Gateway
-(Hive Gateway, GraphQL Yoga, Apollo Server, Apollo Router)"]
-    B["Hive CDN"]
-    D["App"]
+<GraphFlow title="Persisted documents">
 
-    B-- "Load persisted
- documents" -->C
-    C-- "Report persisted
- document usage" -->B
-    D-- "Send persisted
- document request" -->C
-```
+- App → _sends a persisted document request_ → GraphQL API or gateway
+- GraphQL API or gateway → _loads persisted documents_ → Hive CDN
+- GraphQL API or gateway → _reports persisted document usage_ → Hive CDN
+
+</GraphFlow>
+
+The GraphQL API or gateway can be Hive Gateway, GraphQL Yoga, Apollo Server, or Apollo Router.
 
 ## Extracting Persisted Documents
 

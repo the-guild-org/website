@@ -1,0 +1,72 @@
+---
+/**
+ * A nested list drawn with branch glyphs: files, org charts, process trees.
+ * Write `label — meta` to add a muted note after a node; bold a node to
+ * accent it.
+ */
+import Graph from './Graph.astro';
+import {
+  childElements,
+  itemContent,
+  listItems,
+  nestedList,
+  slotNodes,
+  splitLabel,
+  unwrapEmphasis,
+  type ElementNode,
+} from './html';
+
+interface Props {
+  class?: string;
+  className?: string;
+  corner?: string;
+  title?: string;
+}
+
+interface Line {
+  accent: boolean;
+  label: string;
+  meta: string;
+  prefix: string;
+}
+
+function linesOf(items: ElementNode[], ancestors: boolean[]): Line[] {
+  return items.flatMap((item, index) => {
+    const last = index === items.length - 1;
+    const { emphasis, nodes } = unwrapEmphasis(itemContent(item));
+    const { head, tail } = splitLabel(nodes, [' — ', ' – ']);
+    const prefix =
+      ancestors.map(ancestorLast => (ancestorLast ? '   ' : '│  ')).join('') +
+      (ancestors.length > 0 ? (last ? '└─ ' : '├─ ') : '');
+    const nested = nestedList(item);
+    return [
+      { accent: emphasis === 'strong', label: head, meta: tail, prefix },
+      ...(nested ? linesOf(childElements(nested, 'li'), [...ancestors, last]) : []),
+    ];
+  });
+}
+
+const roots = listItems(await slotNodes(Astro));
+const lines = linesOf(roots, []);
+---
+
+<Graph
+  class={Astro.props.class ?? Astro.props.className}
+  corner={Astro.props.corner}
+  title={Astro.props.title}
+>
+  <div class="flex flex-col gap-1 leading-5">
+    {lines.map((line, index) => (
+      <div class="graph-row flex min-w-0 items-baseline whitespace-nowrap" style={`--i:${index}`}>
+        <span aria-hidden="true" class="shrink-0 whitespace-pre text-graph-frame">
+          {line.prefix}
+        </span>
+        <span
+          class:list={['graph-label', line.accent ? 'text-graph-accent' : 'text-fd-foreground']}
+          set:html={line.label}
+        />
+        {line.meta && <span class="graph-label ml-4 text-graph-muted" set:html={line.meta} />}
+      </div>
+    ))}
+  </div>
+</Graph>

@@ -1,0 +1,105 @@
+---
+/**
+ * Two or more options side by side. Give it a Markdown table whose first
+ * column names the row; `✓`/`✔`/`✅`/`yes` render as a check, `–`/`✘`/`❌`/`no`
+ * as a dash, anything else as text. `accent` names the column to highlight.
+ */
+import Graph from './Graph.astro';
+import { htmlOf, slotNodes, tableOf, textOf } from './html';
+
+interface Props {
+  accent?: string;
+  class?: string;
+  className?: string;
+  corner?: string;
+  title?: string;
+}
+
+const YES = new Set(['✓', '✔', '✅', '✔️', 'yes', 'true', 'y']);
+const NO = new Set(['–', '-', '—', '✘', '✗', '❌', '×', 'no', 'false', 'n', '']);
+
+const table = tableOf(await slotNodes(Astro));
+const columns = table ? table.headers.slice(1).map(htmlOf) : [];
+const columnNames = table ? table.headers.slice(1).map(nodes => textOf(nodes).toLowerCase()) : [];
+const rows = table
+  ? table.rows.map(cells => ({
+      label: htmlOf(cells[0] ?? []),
+      values: columns.map((_, index) => {
+        const nodes = cells[index + 1] ?? [];
+        const text = textOf(nodes).toLowerCase();
+        if (YES.has(text)) return { kind: 'yes' as const, html: '✓' };
+        if (NO.has(text)) return { kind: 'no' as const, html: '–' };
+        return { kind: 'text' as const, html: htmlOf(nodes) };
+      }),
+    }))
+  : [];
+
+const accent = Astro.props.accent?.toLowerCase();
+const isAccent = (column: number) => accent !== undefined && columnNames[column] === accent;
+const columnTone = (column: number) =>
+  accent === undefined
+    ? 'text-fd-foreground'
+    : isAccent(column)
+      ? 'text-graph-accent'
+      : 'text-graph-muted';
+---
+
+<Graph
+  class={Astro.props.class ?? Astro.props.className}
+  corner={Astro.props.corner}
+  title={Astro.props.title}
+>
+  <table class="m-0 w-auto border-collapse">
+    <thead>
+      <tr>
+        <th class="p-0 pr-6 pb-2 text-left font-normal">
+          <span class="sr-only">Feature</span>
+        </th>
+        {columns.map((column, index) => (
+          <th
+            class:list={[
+              'p-0 pb-2 pl-4 text-right font-normal whitespace-nowrap',
+              columnTone(index),
+            ]}
+            set:html={column}
+          />
+        ))}
+      </tr>
+      <tr aria-hidden="true">
+        <td class="p-0 pb-2" colspan={columns.length + 1}>
+          <span class="graph-rule block w-full" />
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row, index) => (
+        <tr class="graph-row" style={`--i:${index}`}>
+          <th
+            class="graph-label p-0 py-0.5 pr-6 text-left font-normal whitespace-nowrap text-fd-foreground"
+            scope="row"
+            set:html={row.label}
+          />
+          {row.values.map((value, column) => (
+            <td
+              class:list={[
+                'graph-label p-0 py-0.5 pl-4 text-right tabular-nums whitespace-nowrap',
+                value.kind === 'yes'
+                  ? isAccent(column) || accent === undefined
+                    ? 'text-graph-accent'
+                    : 'text-graph-muted'
+                  : value.kind === 'no'
+                    ? 'text-graph-muted'
+                    : columnTone(column),
+              ]}
+            >
+              <span class="sr-only">
+                {value.kind === 'yes' ? 'yes' : value.kind === 'no' ? 'no' : ''}
+              </span>
+              <span aria-hidden={value.kind !== 'text'} set:html={value.html} />
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</Graph>
