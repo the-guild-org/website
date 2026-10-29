@@ -305,7 +305,13 @@ plugins:
     #  0.0 = 0% chance of being sent
     #  1.0 = 100% chance of being sent.
     #  Default: 1.0
-    # sample_rate: "0.5",
+    # sample_rate: 0.5
+    #
+    #  Report the first operation seen for each unique key, regardless of `sample_rate`.
+    #  Later operations with the same key follow `sample_rate`.
+    # at_least_once:
+    #   key: [operation_name, operation_body]
+    #   max_distinct_keys: 100000
     #
     #  A list of operations (by name) to be ignored by Hive.
     # exclude: ["IntrospectionQuery", "MeQuery"],
@@ -346,8 +352,73 @@ plugins:
       expression: '.request.headers."graphql-client-name" == "my-internal-tool"'
 ```
 
+Expressions can also read the operation type from `.request.operation.type` (`"query"`,
+`"mutation"` or `"subscription"`):
+
+```yaml title="router.yaml"
+plugins:
+  hive.usage:
+    exclude:
+      expression: '.request.operation.type == "subscription"'
+```
+
 For more details about the Hive Router expression syntax and available request fields used by this
 configuration, see [Expressions](/docs/router/configuration/expressions).
+
+### Sampling
+
+By default, every operation is reported. To reduce the volume of usage reports, set `sample_rate` to
+a value between `0.0` (nothing is reported) and `1.0` (everything is reported).
+
+```yaml title="router.yaml"
+plugins:
+  hive.usage:
+    sample_rate: 0.1 # report 10% of operations
+```
+
+Sampling is decided for each report, so with `@defer` or subscriptions every response chunk is
+sampled on its own, rather than the request as a whole.
+
+#### At-least-once sampling
+
+A low `sample_rate` reduces volume, but it can completely miss operations that are rarely executed.
+With `at_least_once`, the **first** operation for each unique key is always reported, and later
+operations with the same key follow `sample_rate`. This keeps your report volume low while making
+sure every distinct operation is visible in Hive Console at least once.
+
+```yaml title="router.yaml"
+plugins:
+  hive.usage:
+    sample_rate: 0.1 # report 10% of operations
+    at_least_once:
+      key: # the combination of operation name and body makes an operation unique
+        - operation_name
+        - operation_body
+      max_distinct_keys: 12000 # how many keys to track in memory
+```
+
+The `key` defines what makes an operation unique. It accepts one value or a list of:
+
+- `operation_name` - the name of the GraphQL operation
+- `operation_type` - the operation type (`query`, `mutation`, `subscription`)
+- `operation_body` - the operation body
+
+When you provide multiple values, they are combined into a single key.
+
+Keys are tracked in memory (~16 bytes per key), up to `max_distinct_keys` (default `100000`). When
+the limit is reached, older keys are evicted, so a previously seen operation may be reported as
+"first seen" again.
+
+<Callout type="info">
+  Exclusion runs **before** sampling. Operations matched by `exclude` are
+  dropped immediately and never count toward sampling or the at-least-once seen
+  keys.
+</Callout>
+
+<Callout>
+  `at_least_once` requires plugin version `3.3.0` or later (see [Version
+  Structure](#version-structure)).
+</Callout>
 
 ## Persisted Documents (App Deployments)
 
