@@ -17,7 +17,12 @@ function fakeHead() {
 function runSnippet(snippet: string) {
   const script = snippet.replace(/^<script>|<\/script>$/g, '');
   const created: { src?: string; async?: boolean }[] = [];
-  const window: Record<string, unknown> = {};
+  let idleCallback: (() => void) | undefined;
+  const window: Record<string, unknown> = {
+    requestIdleCallback: (cb: () => void) => {
+      idleCallback = cb;
+    },
+  };
   const document = {
     createElement: () => {
       const el: { src?: string; async?: boolean } = {};
@@ -26,8 +31,12 @@ function runSnippet(snippet: string) {
     },
     head: { appendChild: () => {} },
   };
-  vm.runInNewContext(script, { window, document });
-  return { created, window: window as { $crisp: unknown[]; CRISP_WEBSITE_ID: string } };
+  vm.runInNewContext(script, { window, document, requestIdleCallback: window.requestIdleCallback });
+  return {
+    created,
+    idle: () => idleCallback?.(),
+    window: window as { $crisp: unknown[]; CRISP_WEBSITE_ID: string },
+  };
 }
 
 test('web analytics beacon is injected only when a token is configured', () => {
@@ -54,25 +63,17 @@ test('crisp is only injected for routes that opt in', () => {
   equal(head.appended.length, 1);
 });
 
-test('crisp script is not fetched until the chat is asked to do something', () => {
-  const { created, window } = runSnippet(crispSnippet('site-id', ['guild-website']));
+test('crisp snippet sets the site id, the segments and loads the widget when idle', () => {
+  const { created, window, idle } = runSnippet(crispSnippet('site-id', ['guild-website']));
   equal(window.CRISP_WEBSITE_ID, 'site-id');
-  equal(created.length, 0, 'nothing loads on page load');
-
-  // The queue keeps working like the array Crisp expects.
-  window.$crisp.push(['set', 'user:email', ['a@b.c']]);
-  equal(created.length, 0, 'settings do not load the widget either');
-
-  window.$crisp.push(['do', 'chat:open']);
-  equal(created.length, 1, 'a command loads the widget');
-  equal(created[0].src, 'https://client.crisp.chat/l.js');
-  ok(created[0].async);
-
-  window.$crisp.push(['do', 'chat:open']);
-  equal(created.length, 1, 'the widget is loaded once');
-
   const queued = window.$crisp as unknown[][];
+  equal(queued.length, 1);
   equal(queued[0][0], 'set');
   equal(queued[0][1], 'session:segments');
-  equal(queued.length, 4);
+  equal(created.length, 0, 'the script waits for an idle callback');
+
+  idle();
+  equal(created.length, 1);
+  equal(created[0].src, 'https://client.crisp.chat/l.js');
+  ok(created[0].async);
 });

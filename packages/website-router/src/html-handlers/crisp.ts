@@ -1,11 +1,9 @@
 import type { RewriteRecord } from '../config';
 
 /**
- * Crisp chat, loaded on demand. The page gets only the `$crisp` command
- * queue; the widget script (and the cookies it keeps for the conversation)
- * is fetched the first time something asks the chat to act, which is what
- * the site's "Contact us" links do with `$crisp.push(['do', 'chat:open'])`.
- * Until then no Crisp code runs and nothing is stored in the browser.
+ * Crisp chat. Loaded on every opted-in page once the browser is idle, so the
+ * chat bubble is visible everywhere; the `$crisp` command queue works before
+ * the script arrives, which is what the site's "Contact us" links rely on.
  */
 export class CrispHandler implements HTMLRewriterElementContentHandlers {
   constructor(
@@ -24,29 +22,22 @@ export class CrispHandler implements HTMLRewriterElementContentHandlers {
 /** The inline script; exported so the tests can run it against a fake window. */
 export function crispSnippet(websiteId: string, segments: string[]): string {
   return `<script>
+  window.$crisp = [];
+  window.CRISP_WEBSITE_ID = ${JSON.stringify(websiteId)};
+  ${segments.length > 0 ? `window.$crisp.push(['set', 'session:segments', [${JSON.stringify(segments)}]]);` : ''}
+  // Chat is not critical-path: load it when the browser is idle.
   (function () {
-    var queue = [];
-    ${segments.length > 0 ? `queue.push(['set', 'session:segments', [${JSON.stringify(segments)}]]);` : ''}
-    var loaded = false;
     var load = function () {
-      if (loaded) return;
-      loaded = true;
       var s = document.createElement('script');
       s.src = 'https://client.crisp.chat/l.js';
       s.async = true;
       document.head.appendChild(s);
     };
-    // Crisp reads window.$crisp as a plain array once l.js runs; until then
-    // a 'do' command (open the chat, send a message…) is what fetches it.
-    queue.push = function () {
-      var result = Array.prototype.push.apply(this, arguments);
-      for (var i = 0; i < arguments.length; i++) {
-        if (arguments[i] && arguments[i][0] === 'do') load();
-      }
-      return result;
-    };
-    window.$crisp = queue;
-    window.CRISP_WEBSITE_ID = ${JSON.stringify(websiteId)};
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(load, { timeout: 5000 });
+    } else {
+      setTimeout(load, 3000);
+    }
   })();
 </script>`;
 }
