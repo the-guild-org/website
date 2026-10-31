@@ -10,6 +10,8 @@ import SiteNavigation from '../components/SiteNavigation.astro';
 import ThemeInit from '../components/ThemeInit.astro';
 import TocAsideContent from '../components/TocAsideContent.astro';
 import TocPopoverContent from '../components/TocPopoverContent.astro';
+import { resolveAuthor } from '../lib/authors';
+import { SITE_ORIGIN } from '../lib/base-path';
 import type { BlogPost } from '../lib/get-blog-posts';
 import { filterToc, type TocHeading } from '../lib/toc';
 
@@ -43,6 +45,25 @@ const {
 const tableOfContents = filterToc(headings);
 // Titles that carry their own "|" branding are kept as-is, like the old site.
 const pageTitle = title.includes('|') ? title : `${title} | Hive`;
+// Article structured data, as the root blog has: without it search engines
+// and AI search tools only see a BreadcrumbList for every Hive post.
+const pageUrl = new URL(Astro.url.pathname.replace(/\.html$/, ''), SITE_ORIGIN).href;
+const absolute = (path?: string) => (path ? new URL(path, SITE_ORIGIN).href : undefined);
+const postJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  datePublished: date,
+  author: authors.map(name => {
+    const author = resolveAuthor(name);
+    return { '@type': 'Person', name: author.name, url: author.link };
+  }),
+  publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+  ...(absolute(socialImage ?? image) && { image: absolute(socialImage ?? image) }),
+  keywords: tags,
+  mainEntityOfPage: canonical ?? pageUrl,
+});
 ---
 
 <!doctype html>
@@ -59,6 +80,7 @@ const pageTitle = title.includes('|') ? title : `${title} | Hive`;
       title={pageTitle}
       type="article"
     />
+    <script is:inline type="application/ld+json" set:html={postJsonLd} />
     <ThemeInit />
     <link
       rel="alternate"

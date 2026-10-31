@@ -233,7 +233,11 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   if (relativePath === 'index.html' && !jsonldTypes.includes('Organization')) {
     issues.push(`${relativePath}: missing Organization JSON-LD`);
   }
-  if (/^blog\/[^/]+\.html$/.test(relativePath) && !jsonldTypes.includes('BlogPosting')) {
+  if (
+    /^(?:graphql\/hive\/)?blog\/[^/]+\.html$/.test(relativePath) &&
+    !/^graphql\/hive\/blog\/(?:index|feed)/.test(relativePath) &&
+    !jsonldTypes.includes('BlogPosting')
+  ) {
     issues.push(`${relativePath}: missing BlogPosting JSON-LD`);
   }
 
