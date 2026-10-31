@@ -8,6 +8,7 @@
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { basePath, SITE_ORIGIN } from '../src/hive/lib/base-path.ts';
+import { ROUTER_SERVED_PAGES } from '../src/lib/router-pages.ts';
 import {
   SITEMAPS as BASE_SITEMAPS,
   DIST,
@@ -32,6 +33,8 @@ for (const sitemap of SITEMAPS) {
 
 const paths = readSitemapPaths(PRODUCT_SITEMAPS);
 for (const pathname of paths) {
+  // Served by another deployment through the router: not in this build.
+  if (ROUTER_SERVED_PAGES.includes(pathname)) continue;
   const file = distFileFor(pathname);
   if (!file) {
     failures.push(`no dist file serves ${pathname}`);

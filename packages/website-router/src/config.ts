@@ -43,9 +43,9 @@ export const jsonConfig = {
       crisp: { segments: ['hive-website'] },
       sitemap: false,
     },
+    // Permanent: Hive Gateway's docs are its home (a 302 kept the old URL alive).
     '/graphql/gateway': {
       redirect: 'https://the-guild.dev/graphql/hive/docs/gateway',
-      status: 302,
     },
     '/openapi/fets': {
       rewrite: 'fets-3ku.pages.dev',
