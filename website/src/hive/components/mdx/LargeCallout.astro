@@ -13,7 +13,8 @@ interface Props {
 const { className, cta, heading, icon, variant, ...props } = Astro.props as Props;
 const ctaNode = cta as { props?: Record<string, unknown> } | undefined;
 const ctaProps = ctaNode?.props ?? {};
-const ctaHref = typeof ctaProps.href === 'string' ? ctaProps.href : 'https://the-guild.dev/contact';
+const ctaHref =
+  typeof ctaProps.href === 'string' ? ctaProps.href : 'https://the-guild.dev/#talk-to-an-engineer';
 const ctaVariant = typeof ctaProps.variant === 'string' ? ctaProps.variant : 'secondary-inverted';
 const textContent = (node: unknown): string => {
   if (typeof node === 'string' || typeof node === 'number') return String(node);
@@ -30,7 +31,8 @@ const ctaClasses: Record<string, string> = {
   tertiary:
     'bg-transparent text-green-1000 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800',
 };
-const external = ctaHref.startsWith('http') && ctaHref !== 'https://the-guild.dev/contact';
+const external =
+  ctaHref.startsWith('http') && ctaHref !== 'https://the-guild.dev/#talk-to-an-engineer';
 ---
 
 <article
@@ -64,12 +66,15 @@ const external = ctaHref.startsWith('http') && ctaHref !== 'https://the-guild.de
   {cta && (
     <a
       class:list={[
-        ctaHref !== 'https://the-guild.dev/contact' && 'outline-hidden focus-visible:ring-3',
+        ctaHref !== 'https://the-guild.dev/#talk-to-an-engineer' &&
+          'outline-hidden focus-visible:ring-3',
         'text-green-1000 relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline sm:w-fit dark:text-neutral-200 [&:hover>:first-child]:-inset-px [&:hover>:first-child]:rounded-[9px]',
         ctaClasses[ctaVariant],
       ]}
       href={withBase(ctaHref)}
-      data-case-study-contact={ctaHref === 'https://the-guild.dev/contact' ? '' : undefined}
+      data-case-study-contact={
+        ctaHref === 'https://the-guild.dev/#talk-to-an-engineer' ? '' : undefined
+      }
       rel={external ? 'noreferrer' : undefined}
       target={external ? '_blank' : undefined}
     >

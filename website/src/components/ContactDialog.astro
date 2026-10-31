@@ -144,18 +144,23 @@ import Path from './Path.astro';
     });
   }
 
-  // /contact redirects to /#talk-to-an-engineer (see public/_redirects),
-  // which matches no element so the page stays at the top with the dialog
-  // open. #contact is handled the same way: browsers permanently cached the
-  // first deploy's 301 to it, and it is the contact section's id — so the
-  // anchor scroll is undone and the hash cleaned. In-page openers call
-  // preventDefault, so none of this fires for in-page clicks.
-  if (location.hash === '#talk-to-an-engineer' || location.hash === '#contact') {
+  // Contact links across the site point at /#talk-to-an-engineer (and the
+  // old /contact redirects there, see public/_redirects), which matches no
+  // element so the page stays at the top with the dialog open. #contact is
+  // handled the same way: browsers permanently cached the first deploy's 301
+  // to it, and it is the contact section's id — so the anchor scroll is
+  // undone and the hash cleaned. In-page openers call preventDefault, so none
+  // of this fires for in-page clicks; a plain link to the hash from this page
+  // only changes the hash, hence the hashchange listener.
+  function openFromHash() {
+    if (location.hash !== '#talk-to-an-engineer' && location.hash !== '#contact') return;
     history.replaceState(null, '', location.pathname + location.search);
     openDialog();
     window.scrollTo(0, 0);
     requestAnimationFrame(() => window.scrollTo(0, 0));
   }
+  openFromHash();
+  window.addEventListener('hashchange', openFromHash);
 
   for (const closer of dialog.querySelectorAll('[data-contact-close]')) {
     closer.addEventListener('click', () => dialog.close());
