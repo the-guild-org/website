@@ -6,7 +6,7 @@ import { handleFavicon, shouldHandleFavicon } from './favicon/handler';
 import { FaviconHandler } from './favicon/transformer';
 import { handleFeed, shouldHandleFeed } from './feed/handler';
 import { CrispHandler } from './html-handlers/crisp';
-import { GoogleAnalyticsHandler } from './html-handlers/ga';
+import { WebAnalyticsHandler } from './html-handlers/web-analytics';
 import { handleRobotsTxt, shouldHandleRobotsTxt } from './robots/handler';
 import {
   canonicalizeUrl,
@@ -21,7 +21,6 @@ const {
   publicDomain,
   mappings,
   crispWebsiteId,
-  gaTrackingId,
   clientToWorkerMaxAge,
   cfFetchCacheTtl,
   cacheStorageId,
@@ -36,30 +35,34 @@ function isRedirectRecord(record: WebsiteRecord): record is RedirectRecord {
   return 'redirect' in record;
 }
 
-const manipulateResponse: ManipulateResponseFn = async (record, rawResponse) => {
-  let result = rawResponse;
+function createManipulateResponse(env: Env): ManipulateResponseFn {
+  return async (record, rawResponse) => {
+    let result = rawResponse;
 
-  if (result?.headers?.get('content-type')?.startsWith('text/html')) {
-    result = new HTMLRewriter()
-      .on('head', new FaviconHandler())
-      .on('head', new CrispHandler(crispWebsiteId, record))
-      .on('head', new GoogleAnalyticsHandler(gaTrackingId))
-      .transform(result);
-  }
+    if (result?.headers?.get('content-type')?.startsWith('text/html')) {
+      result = new HTMLRewriter()
+        .on('head', new FaviconHandler())
+        .on('head', new CrispHandler(crispWebsiteId, record))
+        .on('head', new WebAnalyticsHandler(env.CF_WEB_ANALYTICS_TOKEN))
+        .transform(result);
+    }
 
-  // Modify response and add client side caching headers
-  result = new Response(result.body, result);
-  result.headers.append('Cache-Control', `s-maxage=${clientToWorkerMaxAge}`);
+    // Modify response and add client side caching headers
+    result = new Response(result.body, result);
+    result.headers.append('Cache-Control', `s-maxage=${clientToWorkerMaxAge}`);
 
-  return result;
-};
+    return result;
+  };
+}
 
 async function handleEvent(
   request: Request,
+  env: Env,
   sentry: Toucan,
   waitUntil: (promise: Promise<unknown>) => void,
 ): Promise<Response> {
   const parsedUrl = new URL(request.url);
+  const manipulateResponse = createManipulateResponse(env);
 
   // Old build bugs leaked route templates into public URLs; Google recrawls
   // ~250 of them (SEO audit, SEO-03). 410 tells it they are gone for good -
@@ -211,7 +214,7 @@ export default {
   async fetch(request: Request, env: Env, context: EventContext<Env, any, any>): Promise<Response> {
     const sentry = createSentry(request, context, env.SENTRY_DSN);
 
-    return handleEvent(request, sentry, promise => context.waitUntil(promise))
+    return handleEvent(request, env, sentry, promise => context.waitUntil(promise))
       .then(resultResponse => {
         sentry.addBreadcrumb({
           type: 'debug',
