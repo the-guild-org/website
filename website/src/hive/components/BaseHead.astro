@@ -5,7 +5,7 @@
  * preloads, and the page title. Included by every page's <head>.
  */
 import type { ImageMetadata } from 'astro';
-import { basePath, SITE_ORIGIN, HIVE_SITE_URL as SITE_URL, withBase } from '../lib/base-path';
+import { absoluteImageUrl, basePath, HIVE_SITE_URL as SITE_URL, withBase } from '../lib/base-path';
 import FontPreloads from './FontPreloads.astro';
 import defaultImage from '../documentation/src/routes/opengraph-image.png';
 
@@ -71,15 +71,7 @@ const currentPath = stripBase(Astro.url.pathname)
   .replace(/\.html$/, '')
   .replace(/\/$/, '');
 const canonicalUrl = canonical ?? `${siteUrl}${currentPath}`;
-// Bundled assets are emitted at the shared /_astro root of the unified
-// site, so they join with the origin; anything else is a Hive-relative
-// path and joins with the mounted site URL.
-const imagePath = stripBase(typeof image === 'string' ? image : image.src);
-const imageUrl = /^https?:\/\//.test(imagePath)
-  ? imagePath
-  : imagePath.startsWith('/_astro/')
-    ? `${SITE_ORIGIN}${imagePath}`
-    : `${siteUrl}/${imagePath.replace(/^\//, '')}`;
+const imageUrl = absoluteImageUrl(typeof image === 'string' ? image : image.src, site);
 const imageWidth = typeof image === 'string' ? undefined : image.width;
 const imageHeight = typeof image === 'string' ? undefined : image.height;
 

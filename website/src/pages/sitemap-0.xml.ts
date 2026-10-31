@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { ROUTER_SITEMAP_PAGES } from '../lib/router-pages';
 
 export const GET: APIRoute = async ({ site }) => {
   const posts = await getCollection('blog');
@@ -9,6 +10,8 @@ export const GET: APIRoute = async ({ site }) => {
     { path: '/blog' },
     { path: '/logos' },
     { path: '/graphqlconf' },
+    // Hive's federation benchmark and compatibility audit, served by their own deployments.
+    ...ROUTER_SITEMAP_PAGES.map(path => ({ path })),
     ...posts.map(post => ({
       path: `/blog/${post.id}`,
       lastmod: post.data.updateDate ?? post.data.date,

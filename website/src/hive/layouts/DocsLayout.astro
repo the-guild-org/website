@@ -1,5 +1,5 @@
 ---
-import { basePath, withBase } from '../lib/base-path';
+import { basePath, HIVE_SITE_URL, SITE_ORIGIN, withBase } from '../lib/base-path';
 import '../styles/global.css';
 import BaseHead from '../components/BaseHead.astro';
 import CopyMarkdown from '../components/CopyMarkdown.astro';
@@ -95,6 +95,21 @@ const section =
       ? 'Hive Router'
       : 'Hive');
 const pageTitle = title.includes('|') ? title : `${title} | ${section}`;
+// Article structured data for every docs page (all products share this
+// layout): a docs page otherwise only carries a BreadcrumbList, which is what
+// site audits report as "Article page missing Article schema".
+const articleJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: title,
+  description: description ?? title,
+  url:
+    canonical ??
+    new URL(Astro.url.pathname.replace(/\.html$/, '').replace(/(.)\/$/, '$1'), SITE_ORIGIN).href,
+  inLanguage: 'en',
+  isPartOf: { '@type': 'WebSite', name: site?.name ?? 'Hive', url: site?.url ?? HIVE_SITE_URL },
+  publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+});
 // Search metadata: each docs page is tagged with its product section so the
 // search modal can badge results and default to the section being browsed.
 const searchSection =
@@ -121,6 +136,7 @@ const titleId = title.replaceAll(/[\s.,]+/g, '-').toLowerCase();
       site={site}
       title={pageTitle}
     />
+    <script is:inline type="application/ld+json" set:html={articleJsonLd} />
     <link href={`${searchBase}/pagefind/pagefind-component-ui.css`} rel="stylesheet" />
     <script
       is:inline

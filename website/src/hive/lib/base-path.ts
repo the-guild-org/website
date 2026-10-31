@@ -24,3 +24,22 @@ export function withBase(path: string | undefined): string | undefined {
   if (path === '/') return basePath;
   return `${basePath}${path}`;
 }
+
+/**
+ * Absolute URL of a page image, the one way og:image and structured data
+ * resolve it: absolute URLs stay, bundled assets (/_astro/...) are emitted at
+ * the shared root of the unified site, and anything else is relative to the
+ * site's mount, with or without the mount prefix already on it.
+ */
+export function absoluteImageUrl(
+  path: string,
+  site: { mountPath: string; url: string } = { mountPath: basePath, url: HIVE_SITE_URL },
+): string {
+  if (/^https?:\/\//.test(path)) return path;
+  const mountRelative =
+    site.mountPath && (path === site.mountPath || path.startsWith(`${site.mountPath}/`))
+      ? path.slice(site.mountPath.length)
+      : path;
+  if (mountRelative.startsWith('/_astro/')) return `${SITE_ORIGIN}${mountRelative}`;
+  return `${site.url}/${mountRelative.replace(/^\//, '')}`;
+}

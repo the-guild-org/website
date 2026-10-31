@@ -10,6 +10,7 @@ import { existsSync } from 'node:fs';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { SITE_ORIGIN as SITE } from '../../src/hive/lib/base-path.ts';
+import { ROUTER_SERVED_PAGES } from '../../src/lib/router-pages.ts';
 import {
   DIST,
   publicPath,
@@ -54,11 +55,7 @@ const NOINDEX_ALLOWED = /^graphql\/hive\/blog\/tag\//;
 const FROZEN_CONTENT = /^graphql\/(?:(?:yoga-server|envelop)\/v\d(?:\/|\.html$)|mesh\/docs\/)/;
 
 // Paths the website-router rewrites to other targets at the edge.
-const ROUTER_HANDLED_PATHS = new Set([
-  '/graphql/hive/federation-gateway-performance',
-  '/graphql/hive/federation-gateway-audit',
-  '/graphql/hive/federation-playground',
-]);
+const ROUTER_HANDLED_PATHS = new Set(ROUTER_SERVED_PAGES);
 
 // Path prefixes served by other deployments through the website-router —
 // links to them cannot resolve inside this dist.
@@ -233,7 +230,13 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   if (relativePath === 'index.html' && !jsonldTypes.includes('Organization')) {
     issues.push(`${relativePath}: missing Organization JSON-LD`);
   }
-  if (/^blog\/[^/]+\.html$/.test(relativePath) && !jsonldTypes.includes('BlogPosting')) {
+  // Posts may live at nested slugs; the tag listings are the only non-post
+  // pages under the Hive blog directory.
+  const isBlogPost =
+    /^(?:graphql\/hive\/)?blog\/.+\.html$/.test(relativePath) &&
+    !relativePath.startsWith('graphql/hive/blog/tag/') &&
+    !/^(?:graphql\/hive\/)?blog\/(?:index|feed)\.html$/.test(relativePath);
+  if (isBlogPost && !jsonldTypes.includes('BlogPosting')) {
     issues.push(`${relativePath}: missing BlogPosting JSON-LD`);
   }
 
