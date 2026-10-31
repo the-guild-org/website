@@ -230,11 +230,13 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   if (relativePath === 'index.html' && !jsonldTypes.includes('Organization')) {
     issues.push(`${relativePath}: missing Organization JSON-LD`);
   }
-  if (
-    /^(?:graphql\/hive\/)?blog\/[^/]+\.html$/.test(relativePath) &&
-    !/^graphql\/hive\/blog\/(?:index|feed)/.test(relativePath) &&
-    !jsonldTypes.includes('BlogPosting')
-  ) {
+  // Posts may live at nested slugs; the tag listings are the only non-post
+  // pages under the Hive blog directory.
+  const isBlogPost =
+    /^(?:graphql\/hive\/)?blog\/.+\.html$/.test(relativePath) &&
+    !relativePath.startsWith('graphql/hive/blog/tag/') &&
+    !/^(?:graphql\/hive\/)?blog\/(?:index|feed)\.html$/.test(relativePath);
+  if (isBlogPost && !jsonldTypes.includes('BlogPosting')) {
     issues.push(`${relativePath}: missing BlogPosting JSON-LD`);
   }
 

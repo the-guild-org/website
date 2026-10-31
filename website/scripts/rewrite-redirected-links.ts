@@ -98,13 +98,17 @@ for (const file of globSync('**/*.html', { cwd: DIST })) {
     if (!relativeHref.startsWith('/') || relativeHref.startsWith('//')) return whole;
     const [, rawPath = '', query = '', hash = ''] =
       relativeHref.match(/^([^?#]*)(\?[^#]*)?(#.*)?$/) ?? [];
-    let path: string;
+    // The path stays percent-encoded, like the _redirects sources it is
+    // matched against; resolvesInDist decodes it once. A link that cannot be
+    // decoded or looked up is left as it is.
+    const path = rawPath.length > 1 ? rawPath.replace(/\/$/, '') : rawPath;
+    let destination: string | null;
     try {
-      path = decodeURI(rawPath.length > 1 ? rawPath.replace(/\/$/, '') : rawPath);
+      decodeURI(path);
+      destination = finalDestination(path);
     } catch {
       return whole;
     }
-    const destination = finalDestination(path);
     if (!destination) return whole;
     rewritten++;
     if (/^https?:\/\//.test(destination)) return `${start}${destination}${end}`;
