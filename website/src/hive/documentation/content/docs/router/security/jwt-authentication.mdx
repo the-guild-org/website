@@ -2,6 +2,8 @@
 title: "JWT Authentication"
 ---
 
+import { Callout } from "@hive/design-system/hive-components/callout";
+
 Most production GraphQL APIs need to authenticate requests, and JWT tokens are one of the most
 common ways to do this. Hive Router has built-in JWT support that can validate tokens and protect
 your entire federated graph.
@@ -24,6 +26,12 @@ When a request comes in with JWT authentication enabled, here's what happens:
 5. **Forward claims (optional):** The router can pass user information from the token to your
    subgraphs
 
+<Callout type="warning">
+  JWT authentication is off by default. Set `jwt.enabled: true`, as every example on this page
+  does. Without it the router ignores the rest of the `jwt` block and authenticates no request,
+  and it doesn't report an error.
+</Callout>
+
 ## Common Setup: Auth0, Okta, or Similar
 
 This is the most typical setup - you're using a hosted identity provider that exposes a JWKS
@@ -37,6 +45,7 @@ endpoint.
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   # Reject requests without valid tokens
   require_authentication: true
 
@@ -70,6 +79,7 @@ refresh. To accept rotated keys immediately, set `refresh_on_unknown_kid` on the
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   jwks_providers:
     - source: remote
       url: https://your-domain.auth0.com/.well-known/jwks.json
@@ -101,6 +111,7 @@ data. The router can extract this information from the JWT and pass it along.
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   require_authentication: true
   jwks_providers:
     - source: remote
@@ -137,6 +148,7 @@ Sometimes you want to allow both authenticated and anonymous requests. Set
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   require_authentication: false # Allow anonymous requests
   jwks_providers:
     - source: remote
@@ -157,6 +169,7 @@ can configure it to check multiple places:
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   require_authentication: true
   jwks_providers:
     - source: remote
@@ -185,6 +198,7 @@ For development, you might want to use a local JWKS file instead of hitting a re
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   require_authentication: false # More flexible for dev
   jwks_providers:
     - source: file
