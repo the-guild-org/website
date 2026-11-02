@@ -527,14 +527,16 @@ context set above the starting point of that selection, planning fails with:
   subgraph. Across subgraphs, the planner merges the contextual fetch into the entity fetch for
   its ancestor where it's safe.
 - **The number of aliases grows with your data, not your query.** Each distinct context value
-  is one aliased `_entities` field. A list of 200 users in 200 currencies is one request with
-  200 aliases. Set [`max_aliases_per_request`](#limiting-aliases-per-request) for every
+  is one aliased `_entities` field per fetch. A list of 200 users in 200 currencies is one
+  request with 200 aliases. If entity batching combines several fetches into that request,
+  every group repeats each fetch's alias, so three batched fetches make 600. Set [`max_aliases_per_request`](#limiting-aliases-per-request) for every
   subgraph that limits aliases.
 - **An entity is resolved once per group.** The same entity under two ancestors with different
   values is resolved twice, once in each group, because the results can differ.
-- **The request count only grows past the cap.** With no cap, every group goes in one request.
-  With a cap, groups that don't fit go in additional requests that run in parallel. A cap of `1`
-  sends one request per distinct value.
+- **The request count only grows past the cap.** With no cap, every group of a fetch that can be
+  combined goes in one request. With a cap, groups that don't fit go in additional requests that
+  run in parallel. A cap of `1` sends one request per distinct value. Two cases always send one
+  request per group: non-null contextual arguments, and the variable-name collision below.
 - **Client variables can prevent aliasing.** If a client variable that reaches the contextual
   fetch is named like a generated one, such as `representations_1` or `__context_0_1`, the router
   falls back to one request per group. The answer is unchanged.
