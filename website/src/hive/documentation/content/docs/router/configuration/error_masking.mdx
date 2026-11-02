@@ -110,13 +110,14 @@ The list of `extensions` keys the `mode` operates on. Only **root-level** keys a
 
 The router's well-known extension keys are:
 
-| Key            | Description                                           |
-| :------------- | :---------------------------------------------------- |
-| `code`         | The error code (for example `SUBREQUEST_HTTP_ERROR`). |
-| `service`      | The subgraph the error originated from.               |
-| `affectedPath` | The response path affected by the error.              |
+| Key            | Description                                                                     |
+| :------------- | :------------------------------------------------------------------------------ |
+| `code`         | The error code (for example `SUBREQUEST_HTTP_ERROR`).                           |
+| `service`      | The subgraph the error originated from.                                         |
+| `affectedPath` | The response path affected by the error.                                        |
+| `http`         | The subgraph's HTTP status, as `{ "status": 500 }`, on `SUBREQUEST_HTTP_ERROR`. |
 
-Any other key a subgraph puts under `extensions` (for example `http`) is matched by its exact name.
+Any other key a subgraph puts under `extensions` is matched by its exact name.
 
 ### `subgraphs`
 
