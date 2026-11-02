@@ -11,6 +11,16 @@ For practical examples and common setups, see
 
 ## Basic Options
 
+### `enabled`
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+Turns JWT authentication on. It is off unless set to `true`, even when the rest of the `jwt` block
+is configured. While it is off, the router doesn't read or validate tokens, so
+`require_authentication` rejects nothing and the [`@authenticated` and `@requiresScopes`
+directives](/docs/router/security/authorization) see every request as anonymous.
+
 ### `require_authentication`
 
 - **Type:** `boolean`
@@ -98,6 +108,7 @@ such as Microsoft Entra ID, which issues app roles under a `roles` claim:
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   jwks_providers:
     - source: remote
       url: https://login.microsoftonline.com/common/discovery/v2.0/keys
@@ -128,6 +139,7 @@ services access user information from the token.
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   require_authentication: true
   jwks_providers:
     - source: remote
@@ -143,6 +155,7 @@ jwt:
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   require_authentication: false
   jwks_providers:
     - source: remote
@@ -164,6 +177,7 @@ jwt:
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   require_authentication: true
   jwks_providers:
     - source: remote
@@ -192,6 +206,7 @@ With this setup, your subgraphs receive the JWT claims like this:
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   require_authentication: true
   jwks_providers:
     - source: remote
@@ -222,6 +237,7 @@ With this setup, your subgraphs only receive the listed claims, even if the JWT 
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   jwks_providers:
     - source: remote
       url: http://idp.identity.svc.cluster.local/oauth/v2/keys
@@ -244,6 +260,7 @@ Use `headers` when the JWKS endpoint can't be addressed by a plain public URL, o
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   jwks_providers:
     - source: remote
       url: https://your-domain.auth0.com/.well-known/jwks.json
@@ -264,6 +281,7 @@ and each one is limited by its own value.
 
 ```yaml title="router.config.yaml"
 jwt:
+  enabled: true
   require_authentication: false
   jwks_providers:
     - source: file
