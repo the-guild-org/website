@@ -177,6 +177,12 @@ Available properties in `include`:
 | `body`    |   ✅    | I think you know already, HTTP request's body |
 | `context` |   ✅    | Serialized request context                    |
 
+With `body` included, the router reads the client's request body before this stage runs, before
+[`request_timeout`](/docs/router/configuration/traffic_shaping#routerrequest_timeout) starts. That
+read is bounded by
+[`body_read_timeout`](/docs/router/configuration/traffic_shaping#routerbody_read_timeout) and
+[`max_request_body_size`](/docs/router/configuration/limits#max_request_body_size).
+
 ### `graphql.request`
 
 Runs after the router recognizes GraphQL request data and extracts the GraphQL payload from either body or query params.
