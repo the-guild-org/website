@@ -1,0 +1,79 @@
+---
+/**
+ * A dated list. One list item per event as `Date: what happened`. Items are
+ * done by default; bold the one happening now, italicise the ones still ahead.
+ *
+ *     <GraphTimeline title="Rollout">
+ *
+ *     - Week 1: measure
+ *     - **Week 2: enforce**
+ *     - *Week 3: tighten*
+ *
+ *     </GraphTimeline>
+ */
+import Graph from './Graph.astro';
+import { itemContent, listItems, slotNodes, splitLabel, unwrapEmphasis } from './html';
+
+interface Props {
+  class?: string;
+  className?: string;
+  corner?: string;
+  title?: string;
+}
+
+type State = 'done' | 'next' | 'now';
+
+const rows = listItems(await slotNodes(Astro)).map(item => {
+  const { emphasis, nodes } = unwrapEmphasis(itemContent(item));
+  const state: State = emphasis === 'strong' ? 'now' : emphasis === 'em' ? 'next' : 'done';
+  const { head, tail } = splitLabel(nodes);
+  return tail ? { date: head, label: tail, state } : { date: '', label: head, state };
+});
+
+const glyph: Record<State, string> = { done: '●', next: '○', now: '●' };
+const glyphClass: Record<State, string> = {
+  done: 'text-fd-foreground',
+  next: 'text-graph-muted',
+  now: 'text-graph-accent',
+};
+---
+
+<Graph
+  class={Astro.props.class ?? Astro.props.className}
+  corner={Astro.props.corner}
+  title={Astro.props.title}
+>
+  <ol class="m-0 flex list-none flex-col p-0">
+    {rows.map((row, index) => (
+      <li class="graph-row m-0 p-0" style={`--i:${index}`}>
+        <div class="flex items-baseline gap-3">
+          <span aria-hidden="true" class:list={['w-3 shrink-0 text-center', glyphClass[row.state]]}>
+            {glyph[row.state]}
+          </span>
+          {row.date && (
+            <span class="graph-label shrink-0 text-graph-muted tabular-nums" set:html={row.date} />
+          )}
+          <span
+            class:list={[
+              'graph-label min-w-0',
+              row.state === 'now'
+                ? 'text-graph-accent'
+                : row.state === 'next'
+                  ? 'text-graph-muted'
+                  : 'text-fd-foreground',
+            ]}
+            set:html={row.label}
+          />
+          <span class="sr-only">
+            {row.state === 'now' ? '(current)' : row.state === 'next' ? '(upcoming)' : ''}
+          </span>
+        </div>
+        {index < rows.length - 1 && (
+          <span aria-hidden="true" class="block w-3 text-center leading-5 text-graph-frame">
+            │
+          </span>
+        )}
+      </li>
+    ))}
+  </ol>
+</Graph>

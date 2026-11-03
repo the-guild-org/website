@@ -45,6 +45,53 @@ Posts live in [`website/src/content/blog/`](./website/src/content/blog) as MDX f
 The blog index also pulls in the [Hive blog](https://the-guild.dev/graphql/hive/blog) feed at build
 time, and a snapshot of the Stellate blog from `website/src/lib/stellate-blog.json`.
 
+## Figures in the Docs
+
+The Hive docs have a set of typed figures for the diagrams prose usually needs: a request path, a
+rollout timeline, a feature comparison, a spec sheet, a tree, a few big numbers. They live in
+`website/src/hive/components/mdx/graph` and are imported in MDX from `#mdx-shims/graph`. The look
+follows [mdxcn](https://www.mdxcn.dev): a dashed monospace frame with `+` corners, the title drawn
+as `[ TITLE ]`, one accent colour, and glyphs instead of SVG.
+
+Every figure takes plain Markdown as its children, so the source stays readable on GitHub and in the
+`.md` twin of each docs page. Bold marks the node or row to accent (or the step happening now),
+italics mute it (or mark the step still ahead):
+
+```mdx
+import { GraphFlow, GraphTimeline } from '#mdx-shims/graph'
+
+<GraphFlow title="Request path">
+
+- Client → **`graphql.analysis`** → _HTTP request_ → Coprocessor → Client
+
+</GraphFlow>
+
+<GraphTimeline title="Rollout">
+
+- Phase 1: measure
+- **Phase 2: enforce**
+- _Phase 3: tighten_
+
+</GraphTimeline>
+```
+
+| Component       | Children                                                | Use it for                              |
+| --------------- | ------------------------------------------------------- | --------------------------------------- |
+| `GraphFlow`     | One list item per path, nodes split on `→`              | Pipelines, request paths, state changes |
+| `GraphTimeline` | List items as `Date: label`                             | Dated or phased sequences               |
+| `GraphSpec`     | List items as `Label: value`, or a two-column table     | Defaults, limits, a spec sheet          |
+| `GraphCompare`  | A table; `✓`/`✘` cells become checks and dashes         | Options side by side                    |
+| `GraphTree`     | A nested list, `label — meta` for notes                 | Files, processes, org charts            |
+| `GraphStat`     | List items as `**value** label`                         | Two to four headline numbers            |
+| `GraphRank`     | List items as `label: number`                           | Anything sorted highest first           |
+| `GraphDiff`     | List items as `label: ±value`, a bold total after `---` | What was added, removed, kept           |
+| `GraphCheck`    | A task list                                             | Punch lists                             |
+| `Terminal`      | A fenced code block, `$` lines are commands             | A command and its output                |
+| `Graph`         | Anything                                                | The bare frame                          |
+
+Keep titles to one or two words, prefer one figure per section, and keep mermaid for diagrams with
+branches or loops that a list cannot express.
+
 ## Linting and Formatting
 
 ```sh

@@ -5,6 +5,7 @@ searchable: false
 ---
 
 import { Callout } from "@hive/design-system/hive-components/callout";
+import { GraphFlow } from "#mdx-shims/graph";
 
 Compression is a technique used to reduce the size of the data that is being transferred between the
 server and the client. This is done by compressing the data before sending it and then decompressing
@@ -21,15 +22,12 @@ client supports.
 Hive Gateway is capable of handling compressions in the following directions. We can selectively
 enable or disable compression in each direction.
 
-```mermaid
-graph TD
-    client --> gateway
-    gateway --> subgraphA
-    subgraphA --> gateway
-    gateway --> subgraphB
-    subgraphB --> gateway
-    gateway --> client
-```
+<GraphFlow title="Directions">
+
+- Client → Gateway → Subgraphs
+- Subgraphs → Gateway → Client
+
+</GraphFlow>
 
 <Callout>
   <b>Caution!</b>
@@ -47,15 +45,12 @@ supports using the `Accept-Encoding` header. Then the gateway can compress the r
 specified algorithm before sending it back to the client with the `Content-Encoding` header, so that
 the client can decompress it.
 
-```mermaid
-graph TD
-  Client --> AddAcceptEncodingHeader
-  AddAcceptEncodingHeader --> Gateway
-  Gateway --> GWCompressor
-  GWCompressor --> AddContentEncodingHeader
-  AddContentEncodingHeader --> ClientDecompressor
-  ClientDecompressor --> Client
-```
+<GraphFlow title="Gateway to client">
+
+- Client → _adds `Accept-Encoding`_ → Gateway → **compresses** → _adds `Content-Encoding`_ → Client →
+  decompresses
+
+</GraphFlow>
 
 In the following example, we say that the client supports the `gzip` algorithm for compression. Then
 the gateway compresses the response using the `gzip` algorithm before sending it back to the client.
@@ -90,14 +85,11 @@ When the client sends a request to the gateway, it can compress the request usin
 algorithm before sending it to the gateway. Then the gateway can decompress the request before
 processing it.
 
-```mermaid
-graph TD
-  Client --> ClientCompressor
-  ClientCompressor --> AddContentEncodingHeader
-  AddContentEncodingHeader --> GatewayDecompressor
-  GatewayDecompressor --> Gateway
-  Gateway --> Client
-```
+<GraphFlow title="Client to gateway">
+
+- Client → **compresses** → _adds `Content-Encoding`_ → Gateway → decompresses
+
+</GraphFlow>
 
 In the following example, we compress the request using the `gzip` algorithm before sending it to
 the gateway. Then the gateway decompresses the request before processing it.
@@ -160,15 +152,12 @@ sending it to the client.
 It has the same principle as the previous example, but here the gateway is acting like a client
 against a subgraph.
 
-```mermaid
-graph TD
-  Gateway --> AddAcceptEncodingHeader
-  AddAcceptEncodingHeader --> Subgraph
-  Subgraph --> SubgraphCompressor
-  SubgraphCompressor --> AddContentEncodingHeader
-  AddContentEncodingHeader --> GatewayDecompressor
-  GatewayDecompressor --> Gateway
-```
+<GraphFlow title="Subgraph to gateway">
+
+- Gateway → _adds `Accept-Encoding`_ → Subgraph → **compresses** → _adds `Content-Encoding`_ →
+  Gateway → decompresses
+
+</GraphFlow>
 
 <Callout>
   You don't need to configure anything on the gateway side for this feature.
@@ -212,13 +201,11 @@ When the gateway sends a request to the subgraph, it can compress the request us
 algorithm before sending it to the subgraph. Then the subgraph can decompress the request before
 processing it.
 
-```mermaid
-graph TD
-  Gateway --> GatewayCompressor
-  GatewayCompressor --> SubgraphDecompressor
-  SubgraphDecompressor --> Subgraph
-  Subgraph --> Gateway
-```
+<GraphFlow title="Gateway to subgraph">
+
+- Gateway → **compresses** → Subgraph → decompresses
+
+</GraphFlow>
 
 In this case, gateway will always send a compressed request to the defined subgraphs with
 `Content-Encoding` header.

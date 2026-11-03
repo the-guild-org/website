@@ -3,6 +3,7 @@ title: "Stages and Protocol"
 ---
 
 import { Callout } from "@hive/design-system/hive-components/callout";
+import { GraphFlow } from "#mdx-shims/graph";
 
 This page describes how Hive Router and a coprocessor service communicate.
 
@@ -115,52 +116,15 @@ Depending on `include` settings, payloads may also contain fields like `headers`
 
 The following diagram describes the execution order and available stages.
 
-```mermaid
-flowchart TB
-    A[Client Request]
-    SRReq[Stage: router.request]
-    B[Read GraphQL request]
-    C[Parse and validate GraphQL]
-    SGReq[Stage: graphql.request]
-    D[auth, JWT, policy, progressive labels]
-    SGA[Stage: graphql.analysis]
-    E[Plan GraphQL operation]
-    F[Execute query plan]
-    SGRes[Stage: graphql.response]
-    G[Build HTTP response]
-    SRRes[Stage: router.response]
-    M[Client Response]
+<GraphFlow title="Stages">
 
-    CP[Coprocessor Service]
+- Client request → **`router.request`** → Read GraphQL request → Parse and validate GraphQL →
+  **`graphql.request`** → auth, JWT, policy, progressive labels → **`graphql.analysis`** → Plan
+  GraphQL operation → Execute query plan → **`graphql.response`** → Build HTTP response →
+  **`router.response`** → Client response
+- Each stage → _HTTP request_ → Coprocessor service → _HTTP response_ → back to the same stage
 
-    A --> SRReq
-    SRReq --> B
-    B --> C
-    C --> SGReq
-    SGReq --> D
-    D --> SGA
-    SGA --> E
-    E --> F
-    F --> SGRes
-    SGRes --> G
-    G --> SRRes
-    SRRes --> M
-
-    SRReq -- HTTP request --> CP
-    CP -- HTTP response --> SRReq
-
-    SGReq -- HTTP request --> CP
-    CP -- HTTP response --> SGReq
-
-    SGA -- HTTP request --> CP
-    CP -- HTTP response --> SGA
-
-    SGRes -- HTTP request --> CP
-    CP -- HTTP response --> SGRes
-
-    SRRes -- HTTP request --> CP
-    CP -- HTTP response --> SRRes
-```
+</GraphFlow>
 
 ### `router.request`
 

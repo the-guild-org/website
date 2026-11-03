@@ -1,0 +1,91 @@
+---
+/**
+ * The frame every figure in this folder shares: a dashed border with `+`
+ * corners, the title drawn as `[ TITLE ]` on the top edge, monospace type and
+ * one accent colour. Wrap anything in it to give it the same look.
+ */
+interface Props {
+  class?: string;
+  className?: string;
+  corner?: string;
+  /** Extra classes for the body, e.g. to switch it to a grid. */
+  bodyClass?: string;
+  title?: string;
+}
+
+const { bodyClass, class: className, className: reactClassName, corner = '+', title } = Astro.props;
+const captionId = title ? `graph-${Math.random().toString(36).slice(2, 8)}` : undefined;
+const cornerClass =
+  'graph-corner pointer-events-none absolute z-10 flex size-4 select-none items-center justify-center bg-(--background) text-sm leading-none text-graph-frame';
+---
+
+<figure
+  aria-labelledby={captionId}
+  class:list={[
+    'graph-frame not-prose relative my-6 w-full min-w-0 font-mono text-sm text-fd-foreground',
+    className,
+    reactClassName,
+  ]}
+  data-graph
+>
+  {title && (
+    <figcaption
+      class="absolute top-0 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-(--background) px-2.5 tracking-wide whitespace-nowrap uppercase"
+      id={captionId}
+    >
+      <span class="text-graph-accent">[ {title} ]</span>
+    </figcaption>
+  )}
+  <span
+    aria-hidden="true"
+    class:list={[cornerClass, 'top-0 left-0 -translate-x-1/2 -translate-y-1/2']}
+  >
+    {corner}
+  </span>
+  <span
+    aria-hidden="true"
+    class:list={[cornerClass, 'top-0 right-0 translate-x-1/2 -translate-y-1/2']}
+  >
+    {corner}
+  </span>
+  <span
+    aria-hidden="true"
+    class:list={[cornerClass, 'bottom-0 left-0 -translate-x-1/2 translate-y-1/2']}
+  >
+    {corner}
+  </span>
+  <span
+    aria-hidden="true"
+    class:list={[cornerClass, 'right-0 bottom-0 translate-x-1/2 translate-y-1/2']}
+  >
+    {corner}
+  </span>
+  <div class:list={['graph-body min-w-0 overflow-x-auto px-5 py-6 sm:px-8 sm:py-7', bodyClass]}>
+    <slot />
+  </div>
+</figure>
+
+<script>
+  // Rows fade up once the figure scrolls into view (transform and opacity
+  // only, 220ms). The CSS falls back to no motion when the user prefers
+  // reduced motion, or when IntersectionObserver is unavailable.
+  const figures = document.querySelectorAll<HTMLElement>('[data-graph]:not([data-graph-observed])');
+  if (figures.length > 0 && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      entries => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.setAttribute('data-in', '');
+          observer.unobserve(entry.target);
+        }
+      },
+      { rootMargin: '0px 0px -15% 0px', threshold: 0 },
+    );
+    for (const figure of figures) {
+      figure.setAttribute('data-graph-observed', '');
+      observer.observe(figure);
+    }
+  } else {
+    for (const figure of figures) figure.setAttribute('data-in', '');
+  }
+</script>

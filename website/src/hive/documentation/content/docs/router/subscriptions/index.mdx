@@ -7,6 +7,7 @@ import { CallToAction } from "@hive/design-system/call-to-action";
 import { Callout } from "@hive/design-system/hive-components/callout";
 
 import { ArrowIcon } from "../../../../src/components/arrow-icon.tsx";
+import { GraphFlow } from "#mdx-shims/graph";
 
 GraphQL subscriptions enable your clients to receive real-time data. This is essential for applications that need live updates - like notifications, live chat, stock tickers, collaborative editing, or IoT dashboards.
 
@@ -250,9 +251,11 @@ subscriptions:
 
 These two buffers sit at different points in the subscription pipeline:
 
-```
-subgraph → [subgraph_buffer_capacity] → entity resolution → [broadcast_capacity] → clients
-```
+<GraphFlow title="Buffers">
+
+- Subgraph → **`subgraph_buffer_capacity`** → Entity resolution → **`broadcast_capacity`** → Clients
+
+</GraphFlow>
 
 `subgraph_buffer_capacity` protects the subgraph: it decouples event ingestion from processing so the subgraph never stalls waiting for the router. Events are dropped here when the router's processing pipeline cannot keep up.
 
