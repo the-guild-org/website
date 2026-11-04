@@ -120,6 +120,11 @@ const authors: Record<string, Author> = {
     link: 'https://github.com/XiNiHa',
     name: 'Iha Shin',
   },
+  ikusakov2: {
+    github: 'ikusakov2',
+    link: 'https://github.com/ikusakov2',
+    name: 'Igor Kusakov',
+  },
   jason: {
     github: 'jasonkuhrt',
     link: 'https://github.com/jasonkuhrt',
