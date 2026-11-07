@@ -70,9 +70,11 @@ If you never set `emitLegacyCommonJSImports: false`, there's nothing to change.
 ### `config.generates` is now handled correctly as an array
 
 `generates` values were previously typed as `ConfiguredOutput | ConfiguredPlugin[]`, but the array
-form always threw at runtime. Arrays are now handled correctly as `ConfiguredOutput[]`, though only
-the first element is used today - running plugins sequentially for a single output is planned for an
-upcoming release.
+form always threw at runtime. They're now typed as `ConfiguredOutput | ConfiguredOutput[]`, so a
+plugin-name array such as `['typescript-operations']` no longer type-checks and still throws
+`Invalid Codegen Configuration` - use `{ plugins: ['typescript-operations'] }` instead. For an
+array of output objects, only the first element is used today - running them sequentially for a
+single output is planned for an upcoming release.
 
 ### Plugin API changes
 
