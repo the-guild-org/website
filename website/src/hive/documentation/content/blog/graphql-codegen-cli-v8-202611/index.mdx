@@ -82,7 +82,8 @@ A few changes affect custom plugin authors:
 
 - `validate` now receives `{ outputFile, allPlugins, pluginContext }` as its fourth argument, matching
   the `plugin` function signature, instead of separate positional arguments.
-- `generate()` is typed as `Promise<FileOutput[] | void>` instead of collapsing to `any`.
+- `generate()` is typed as `Promise<FileOutput[] | void>` instead of collapsing to `any`, so
+  narrow the result with `Array.isArray(result)` before indexing it.
 - `plugin-helpers` removes `isOutputConfigArray`, `isConfiguredOutput`, and `normalizeImportExtension`,
   and `normalizeOutputParam` now always returns `ConfiguredOutput[]`.
 - The `schema-ast` plugin's `commentDescriptions` option is removed - it has had no effect since
