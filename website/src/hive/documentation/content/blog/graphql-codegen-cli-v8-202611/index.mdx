@@ -21,7 +21,7 @@ available, bumping minimum supported versions and removing deprecated options an
 Feel free to reach out with ideas or feedback: [X](https://x.com/eddeee888), [LinkedIn](https://www.linkedin.com/in/eddeee888/), [GraphQL Discord](https://discord.com/channels/625400653321076807/631489733750423599)
 </Callout>
 
-## Why `v8`?
+## What's in v8?
 
 Most of this release is housekeeping: dropping old Node.js and `graphql` versions we no longer test
 against, picking up the latest `@graphql-tools` and `graphql-config` majors, and removing options and
@@ -43,18 +43,11 @@ All `@graphql-tools/*` dependencies move together and now require `@graphql-tool
 `graphql-config` is updated to v6. If you have custom loaders, plugins, or `graphql-config`
 extensions, make sure they're compatible with these versions.
 
-<Callout>
-  `code-file-loader@9` extracts documents marked with `#graphql` by default, so you may see new
-  documents picked up that weren't before. Set `pluckConfig: { gqlHashComment: '' }` to keep the
-  previous behaviour.
-</Callout>
-
 ### `emitLegacyCommonJSImports` is replaced by `importExtension`
 
 The `emitLegacyCommonJSImports` config option and `--emit-legacy-common-js-imports` CLI flag are
-removed across the CLI, `plugin-helpers`, `visitor-plugin-common`, `gql-tag-operations`,
-`typescript-operations`, `client-preset`, and `graphql-modules-preset`. `importExtension` (or
-`--import-extension`) is now the only way to control the extension of relative imports:
+removed. `importExtension` (or `--import-extension`) is now the only way to control the extension of
+relative imports:
 
 ```diff title="codegen.ts"
  const config: CodegenConfig = {
@@ -69,12 +62,9 @@ If you never set `emitLegacyCommonJSImports: false`, there's nothing to change.
 
 ### `config.generates` is now handled correctly as an array
 
-`generates` values were previously typed as `ConfiguredOutput | ConfiguredPlugin[]`, but the array
-form always threw at runtime. They're now typed as `ConfiguredOutput | ConfiguredOutput[]`, so a
-plugin-name array such as `['typescript-operations']` no longer type-checks and still throws
-`Invalid Codegen Configuration` - use `{ plugins: ['typescript-operations'] }` instead. For an
-array of output objects, only the first element is used today - running them sequentially for a
-single output is planned for an upcoming release.
+The previous typing suggested an array could be used for a `generates` output, but it always failed
+at runtime. Now, it handles the first element gracefully. In the future, it will handle elements
+sequentially - see [issue #10943](https://github.com/dotansimha/graphql-code-generator/issues/10943).
 
 ### Plugin API changes
 
