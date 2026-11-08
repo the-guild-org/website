@@ -93,8 +93,8 @@ function safeDecode(path: string): string {
   }
 }
 
-/** Our own site, written with or without www and https. */
-const SITE_HOST = /^(?:https?:)?\/\/(?:www\.)?the-guild\.dev(?=[/?#]|$)/i;
+/** Our own site, written with or without www, https or a default port. */
+const SITE_HOST = /^(?:https?:)?\/\/(?:www\.)?the-guild\.dev(?::(?:443|80))?(?=[/?#]|$)/i;
 const ANY_SCHEME = /^[a-z][a-z\d+.-]*:/i;
 
 const counts = { redirect: 0, host: 0, slash: 0 };

@@ -51,13 +51,16 @@ export function compactPath(d) {
   }
   const arity = { C: 6, L: 2, M: 2 };
   const out = [];
+  // The pen position, and where the current subpath started (Z returns there).
   let current;
+  let subpathStart;
   let command;
   let index = 0;
   while (index < tokens.length) {
     if (/^[a-z]$/i.test(tokens[index])) command = tokens[index++];
     if (command === 'Z') {
       out.push('Z');
+      current = subpathStart;
       continue;
     }
     if (!command || !(command in arity)) return d.replace(LONG_DECIMAL, round);
@@ -67,8 +70,14 @@ export function compactPath(d) {
     const points = [];
     for (let k = 0; k < values.length; k += 2) points.push(`${values[k]} ${values[k + 1]}`);
     if (command === 'M') {
-      if (points[0] === current && out.length > 0) continue;
-      out.push(`M${points[0]}`);
+      // A moveto may be dropped only when it changes neither the pen nor the
+      // point a later Z closes to.
+      if (out.length === 0 || points[0] !== current || points[0] !== subpathStart) {
+        out.push(`M${points[0]}`);
+      }
+      subpathStart = points[0];
+      // Further coordinate pairs after a moveto are implicit linetos.
+      command = 'L';
     } else {
       if (points.every(point => point === current)) continue;
       out.push(`${command}${points.join(' ')}`);

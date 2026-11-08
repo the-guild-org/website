@@ -241,6 +241,11 @@ for await (const filePath of walk(OUTPUT_DIR)) {
   if (isBlogPost && !jsonldTypes.includes('BlogPosting')) {
     issues.push(`${relativePath}: missing BlogPosting JSON-LD`);
   }
+  // Docs pages declare Article alongside TechArticle: Google's Article
+  // documentation and site audits do not recognise TechArticle on its own.
+  if (jsonldTypes.includes('TechArticle') && !jsonldTypes.includes('Article')) {
+    issues.push(`${relativePath}: TechArticle JSON-LD without Article`);
+  }
 
   const title = parsed['title'];
   const description = parsed['description'];
