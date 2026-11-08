@@ -18,7 +18,9 @@ const SRCSET_PATTERN = /\ssrcset="([^"]+)"/g;
 function isUnprefixed(url: string) {
   if (!url.startsWith('/') || url.startsWith('//')) return false;
   if (url.startsWith('/_astro/')) return false;
-  return url !== base && !url.startsWith(`${base}/`);
+  // `/graphql/hive#section` and `/graphql/hive?x` are the mount itself.
+  const path = url.replace(/[?#].*$/, '');
+  return path !== base && !path.startsWith(`${base}/`);
 }
 
 const offenders = new Map<string, Set<string>>();

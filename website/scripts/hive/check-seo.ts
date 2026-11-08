@@ -142,6 +142,8 @@ function parseHead(html: string): ParsedHead | null {
       const data = JSON.parse(match[2] ?? '');
       const type = data?.['@type'];
       if (typeof type === 'string') jsonldTypes.push(type);
+      // A node may declare several types, e.g. ['Article', 'TechArticle'].
+      if (Array.isArray(type)) jsonldTypes.push(...type.filter(t => typeof t === 'string'));
       if (type === 'BreadcrumbList') {
         for (const item of data.itemListElement ?? []) {
           if (typeof item?.item === 'string') breadcrumbUrls.push(item.item);
@@ -238,6 +240,11 @@ for await (const filePath of walk(OUTPUT_DIR)) {
     !/^(?:graphql\/hive\/)?blog\/(?:index|feed)\.html$/.test(relativePath);
   if (isBlogPost && !jsonldTypes.includes('BlogPosting')) {
     issues.push(`${relativePath}: missing BlogPosting JSON-LD`);
+  }
+  // Docs pages declare Article alongside TechArticle: Google's Article
+  // documentation and site audits do not recognise TechArticle on its own.
+  if (jsonldTypes.includes('TechArticle') && !jsonldTypes.includes('Article')) {
+    issues.push(`${relativePath}: TechArticle JSON-LD without Article`);
   }
 
   const title = parsed['title'];

@@ -97,10 +97,12 @@ const section =
 const pageTitle = title.includes('|') ? title : `${title} | ${section}`;
 // Article structured data for every docs page (all products share this
 // layout): a docs page otherwise only carries a BreadcrumbList, which is what
-// site audits report as "Article page missing Article schema".
+// site audits report as "Article page missing Article schema". Both types:
+// TechArticle is the precise one, but Google's Article documentation and
+// Ahrefs only recognise Article, NewsArticle and BlogPosting.
 const articleJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
-  '@type': 'TechArticle',
+  '@type': ['Article', 'TechArticle'],
   headline: title,
   description: description ?? title,
   url:

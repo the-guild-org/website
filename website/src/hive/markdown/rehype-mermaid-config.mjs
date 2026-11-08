@@ -1,4 +1,5 @@
 import rehypeMermaid from 'rehype-mermaid';
+import { withCompactSvg } from './rehype-compact-mermaid.mjs';
 
 const themeCSS = `
   .node rect, .node circle, .node ellipse, .node polygon, .node path {
@@ -121,7 +122,8 @@ const themeCSS = `
 `;
 
 export const mermaidRehypePlugin = [
-  rehypeMermaid,
+  // Compacted: raw Mermaid SVG carries full float precision (see the plugin).
+  withCompactSvg(rehypeMermaid),
   {
     mermaidConfig: {
       flowchart: {
