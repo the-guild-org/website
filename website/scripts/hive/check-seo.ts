@@ -142,6 +142,8 @@ function parseHead(html: string): ParsedHead | null {
       const data = JSON.parse(match[2] ?? '');
       const type = data?.['@type'];
       if (typeof type === 'string') jsonldTypes.push(type);
+      // A node may declare several types, e.g. ['Article', 'TechArticle'].
+      if (Array.isArray(type)) jsonldTypes.push(...type.filter(t => typeof t === 'string'));
       if (type === 'BreadcrumbList') {
         for (const item of data.itemListElement ?? []) {
           if (typeof item?.item === 'string') breadcrumbUrls.push(item.item);
