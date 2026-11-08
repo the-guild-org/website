@@ -10,11 +10,16 @@
  * A link is rewritten only when following the rules (up to five hops) ends on
  * a page in this build or on another site; a path that is itself a page is
  * never touched. The fragment of the original link wins over the rule's.
+ * Relative links are resolved against the page like a browser does (the
+ * November crawl found docs linking `usage` or `di/introduction` from a page
+ * whose URL has no trailing slash), and www, http and trailing-slash forms of
+ * our own URLs, which each cost a redirect hop, are made canonical.
  * Runs after every generate-redirects step and before the verify steps.
  */
 import { globSync, readFileSync, writeFileSync } from 'node:fs';
 import { SITE_ORIGIN } from '../src/hive/lib/base-path.ts';
-import { DIST, readRedirects, resolvesInDist } from './lib/build-output.ts';
+import { ROUTER_SERVED_PAGES } from '../src/lib/router-pages.ts';
+import { DIST, publicPath, readRedirects, resolvesInDist } from './lib/build-output.ts';
 
 const rules = readRedirects();
 const exact = new Map(
@@ -88,33 +93,65 @@ function safeDecode(path: string): string {
   }
 }
 
-let rewritten = 0;
+/** Our own site, written with or without www and https. */
+const SITE_HOST = /^(?:https?:)?\/\/(?:www\.)?the-guild\.dev(?=[/?#]|$)/i;
+const ANY_SCHEME = /^[a-z][a-z\d+.-]*:/i;
+
+const counts = { redirect: 0, host: 0, slash: 0 };
+
+/**
+ * The href a link should have, or null to keep it. Links are resolved the
+ * way a browser resolves them on `pageUrl`: relative ones against the page,
+ * www and http forms of this site as internal. A link that reaches a page
+ * through a redirect points at that page; one that only needs its trailing
+ * slash dropped or its host made canonical gets that. Links that already
+ * work, and links to other sites, are left as they are.
+ */
+function rewriteHref(href: string, pageUrl: string): string | null {
+  if (href.startsWith('#')) return null;
+  const onSiteHost = SITE_HOST.test(href);
+  if (!onSiteHost && (ANY_SCHEME.test(href) || href.startsWith('//'))) return null;
+  const absolute = onSiteHost;
+  const canonicalHost = href.startsWith(`${SITE_ORIGIN}/`) || href === SITE_ORIGIN;
+  let url: URL;
+  try {
+    url = new URL(href, pageUrl);
+  } catch {
+    return null;
+  }
+  const rawPath = url.pathname;
+  const hadTrailingSlash = rawPath.length > 1 && rawPath.endsWith('/');
+  // The path stays percent-encoded, like the _redirects sources it is
+  // matched against; resolvesInDist decodes it once. A link that cannot be
+  // decoded or looked up is left as it is.
+  const path = hadTrailingSlash ? rawPath.replace(/\/+$/, '') : rawPath;
+  let destination: string | null;
+  try {
+    decodeURI(path);
+    destination = finalDestination(path);
+    if (!destination && (hadTrailingSlash || (onSiteHost && !canonicalHost))) {
+      if (!resolvesInDist(path) && !ROUTER_SERVED_PAGES.includes(path)) return null;
+      counts[hadTrailingSlash ? 'slash' : 'host']++;
+      return `${absolute ? SITE_ORIGIN : ''}${path}${url.search}${url.hash}`;
+    }
+  } catch {
+    return null;
+  }
+  if (!destination) return null;
+  counts.redirect++;
+  if (/^https?:\/\//.test(destination)) return destination;
+  const [destinationPath = '', destinationHash] = destination.split('#');
+  const fragment = url.hash || (destinationHash !== undefined ? `#${destinationHash}` : '');
+  return `${absolute ? SITE_ORIGIN : ''}${encodeURI(safeDecode(destinationPath))}${url.search}${fragment}`;
+}
+
 let pages = 0;
 for (const file of globSync('**/*.html', { cwd: DIST })) {
   const html = readFileSync(`${DIST}/${file}`, 'utf8');
+  const pageUrl = `${SITE_ORIGIN}${publicPath(file)}`;
   const next = html.replace(/(<a\b[^>]*?\shref=")([^"]+)(")/g, (whole, start, href, end) => {
-    const absolute = href.startsWith(`${SITE_ORIGIN}/`) || href === SITE_ORIGIN;
-    const relativeHref = absolute ? href.slice(SITE_ORIGIN.length) || '/' : href;
-    if (!relativeHref.startsWith('/') || relativeHref.startsWith('//')) return whole;
-    const [, rawPath = '', query = '', hash = ''] =
-      relativeHref.match(/^([^?#]*)(\?[^#]*)?(#.*)?$/) ?? [];
-    // The path stays percent-encoded, like the _redirects sources it is
-    // matched against; resolvesInDist decodes it once. A link that cannot be
-    // decoded or looked up is left as it is.
-    const path = rawPath.length > 1 ? rawPath.replace(/\/$/, '') : rawPath;
-    let destination: string | null;
-    try {
-      decodeURI(path);
-      destination = finalDestination(path);
-    } catch {
-      return whole;
-    }
-    if (!destination) return whole;
-    rewritten++;
-    if (/^https?:\/\//.test(destination)) return `${start}${destination}${end}`;
-    const [destinationPath = '', destinationHash] = destination.split('#');
-    const fragment = hash || (destinationHash !== undefined ? `#${destinationHash}` : '');
-    return `${start}${absolute ? SITE_ORIGIN : ''}${encodeURI(safeDecode(destinationPath))}${query}${fragment}${end}`;
+    const rewritten = rewriteHref(href, pageUrl);
+    return rewritten === null ? whole : `${start}${rewritten}${end}`;
   });
   if (next !== html) {
     pages++;
@@ -122,4 +159,7 @@ for (const file of globSync('**/*.html', { cwd: DIST })) {
   }
 }
 
-console.log(`Pointed ${rewritten} links on ${pages} pages straight at their final page`);
+console.log(
+  `Rewrote links on ${pages} pages: ${counts.redirect} pointed past a redirect, ` +
+    `${counts.slash} without a trailing slash, ${counts.host} to https://the-guild.dev`,
+);
