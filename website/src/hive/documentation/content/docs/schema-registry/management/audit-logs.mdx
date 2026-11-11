@@ -2,16 +2,79 @@
 title: Audit Logs
 ---
 
+import { Callout } from "@hive/design-system/hive-components/callout";
+import { Step, Steps } from "#mdx-shims/steps";
+
 Each organization has an audit log in which user actions are recorded. Actions recorded by the audit
 log are retained for one year.
 
-The audit logs provides a detailed record of activities and transactions for accountability,
+The audit log provides a detailed record of activities and transactions for accountability,
 security, compliance and troubleshooting.
+
+You can get the audit log out of Hive Console in two ways:
+
+- [Export it as a CSV file](#export-the-audit-log) from the organization settings, for one-off
+  reviews.
+- [Poll the audit log API](#ingest-the-audit-log-into-a-siem) to continuously ingest events into a
+  SIEM (Splunk, Microsoft Sentinel, Elastic, Datadog, …) or any other system.
 
 ## Export the Audit Log
 
 Within the organization settings, users with sufficient permissions can perform an audit log export.
-Exporting the audit log requires select a start and end date.
+Exporting the audit log requires selecting a start and end date.
 
-After the audit log export is completed and email with a link to the CSV document is sent to the
-users email address.
+After the audit log export is completed, an email with a link to the CSV document is sent to the
+user's email address.
+
+## Ingest the Audit Log into a SIEM
+
+The [audit log API](/docs/api-reference/audit-log-api) is a single HTTP endpoint that returns an
+organization's audit log events, oldest first, as JSON. Point your SIEM's HTTP pull input (or your
+own script) at it, and it reads on from where it left off using a cursor.
+
+<Steps>
+<Step>
+#### Create an Organization Access Token
+
+Open your organization **Settings**, go to **Access Tokens** and
+[create a new organization access token](./access-tokens#create-an-access-token). Under **Audit
+Log**, grant the **Describe audit log** (`auditLog:describe`) permission. The token needs no other
+permissions.
+
+<Callout type="info">
+  The audit log API only accepts organization access tokens. Project and personal access tokens
+  can't be granted `auditLog:describe`.
+</Callout>
+
+</Step>
+<Step>
+#### Read the First Page
+
+Send the token as a bearer token:
+
+```bash
+curl -H "Authorization: Bearer $HIVE_ACCESS_TOKEN" \
+  "https://api.graphql-hive.com/audit-log/v1/events?limit=100"
+```
+
+Without a `cursor` or `since` parameter, reading starts at the beginning of the retention period
+(one year ago).
+
+</Step>
+<Step>
+#### Keep Reading with the Cursor
+
+Every response contains a `nextCursor`. Store it, and pass it as `cursor` on the next request. While
+`hasMore` is `true`, request the next page immediately. Once `hasMore` is `false`, you've caught up:
+wait a little (e.g. one minute) and poll again with the same cursor.
+
+```bash
+curl -H "Authorization: Bearer $HIVE_ACCESS_TOKEN" \
+  "https://api.graphql-hive.com/audit-log/v1/events?cursor=$NEXT_CURSOR&limit=100"
+```
+
+</Step>
+</Steps>
+
+For all query parameters, pagination, the event format, error codes and rate limits, see the
+[Audit Log API reference](/docs/api-reference/audit-log-api).
