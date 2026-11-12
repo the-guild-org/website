@@ -75,6 +75,8 @@ Client WebSocket support is configured at the root level under `websocket` - it 
 
 Each WebSocket connection from a client is long-lived and can carry multiple GraphQL operations. For every operation sent over the connection - including single-shot operations like queries and mutations - the router creates a **synthetic HTTP request**. This means every operation goes through the full [plugin system](/docs/router/customizations/plugin-system) exactly as if it were a regular HTTP request. Authorization, header manipulation, rate limiting, and all other plugins apply uniformly regardless of whether the client connected over HTTP or WebSocket.
 
+The WebSocket upgrade request itself is a regular HTTP request. It goes through the [`on_http_request`](/docs/router/customizations/plugin-system/hooks#on_http_request) plugin hook and the [`router.request`](/docs/router/customizations/coprocessors/stages-and-protocol#routerrequest) coprocessor stage once per connection, and the request context they set is shared by all operations on that connection. Because the connection is served inside the upgrade request, that request finishes only when the socket closes, see [`on_http_request`](/docs/router/customizations/plugin-system/hooks#on_http_request) for what that means for its `on_end` callback.
+
 Because operations are processed as synthetic HTTP requests, they share the same fingerprint space as regular HTTP requests. A query sent over WebSocket can deduplicate with the same query sent over HTTP, and a WebSocket subscription can deduplicate with the same subscription started over SSE (when the `Accept` header is excluded from the fingerprint). See [Inbound Deduplication](/docs/router/guides/performance-tuning#inbound-deduplication) for details.
 
 ### Configuration
@@ -86,6 +88,7 @@ websocket:
   headers:
     source: connection
     persist: false
+    upgrade: []
 ```
 
 #### TLS and `wss://`
@@ -135,7 +138,7 @@ WebSocket connections don't carry HTTP headers beyond the initial upgrade handsh
 
 - **`both`** - Headers are accepted from both the `connection_init` payload and each operation's extensions. Headers from operation extensions take precedence over those from `connection_init` when both are present. This is useful when the connection-level token needs to be overridable per-operation.
 
-- **`none`** - No headers are accepted from inside the WebSocket connection. Use this when you don't need to pass any auth or context headers through WebSocket messages.
+- **`none`** - No headers are accepted from inside the WebSocket connection. Use this when you don't need to pass any auth or context headers through WebSocket messages. Headers listed in [`headers.upgrade`](#headersupgrade) are still taken from the upgrade request.
 
 #### `headers.persist`
 
@@ -156,6 +159,26 @@ websocket:
     source: both
     persist: true
 ```
+
+The persisted headers only ever hold what the client sent. Headers listed in [`headers.upgrade`](#headersupgrade) are never persisted, they are always taken from the upgrade request.
+
+#### `headers.upgrade`
+
+The headers of an operation come from the client, either from the `connection_init` payload or from the operation extensions. Headers set by trusted infrastructure on the HTTP upgrade request, like the `X-Real-IP` header set by a reverse proxy, are not part of them.
+
+The `upgrade` option lists the headers taken from the upgrade request and added to every operation on the connection. Defaults to an empty list.
+
+```yaml
+websocket:
+  enabled: true
+  headers:
+    upgrade:
+      - x-real-ip
+```
+
+- The listed headers are taken only from the upgrade request. Values with the same name sent by the client in the `connection_init` payload or in the operation extensions are discarded, regardless of the `source` setting, so the client cannot spoof them. A listed header missing from the upgrade request is missing from the operation too.
+- They are read once per connection, after the [`router.request`](/docs/router/customizations/coprocessors/stages-and-protocol#routerrequest) coprocessor stage ran on the upgrade request, so a coprocessor can set or normalize them there.
+- They are visible to plugins, coprocessor stages, [JWT authentication](/docs/router/security/jwt-authentication) and [expressions](/docs/router/configuration/expressions), and respect the [header propagation](/docs/router/configuration/headers) rules, just like the headers of a regular HTTP request.
 
 ### graphql-ws
 
