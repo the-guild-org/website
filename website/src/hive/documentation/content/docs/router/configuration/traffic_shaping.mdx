@@ -736,8 +736,8 @@ configures the `product` subgraph to have a different timeout for requests origi
 
 Controls whether WebSocket-enabled subgraphs (configured under
 [`subscriptions.websocket`](/docs/router/configuration/subscriptions#websocket)) reuse pooled
-connections and whether queries and mutations can also be sent over WebSocket instead of always
-using HTTP.
+connections, whether queries and mutations can also be sent over WebSocket instead of always
+using HTTP, and whether messages are compressed.
 
 For a walkthrough of the resulting routing behavior, see [Connection reuse and execution mode](/docs/router/subscriptions/websockets#connection-reuse-and-execution-mode).
 
@@ -748,12 +748,14 @@ traffic_shaping:
     websocket:
       reuse_connections: true
       execute_mode: reuse_existing
+      permessage_deflate: true
   subgraphs:
     payments:
       pool_idle_timeout: 5s
       websocket:
         reuse_connections: false
         execute_mode: websocket
+        permessage_deflate: false
 ```
 
 #### `websocket.reuse_connections`
@@ -789,6 +791,23 @@ without retrying over HTTP - this avoids executing a mutation twice after an unc
 
 Pooled WebSocket connections use the effective `pool_idle_timeout` for the same subgraph and close after being idle for that duration. Active
 operations keep the connection open regardless of the timeout.
+
+#### `websocket.permessage_deflate`
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+Offers the [`permessage-deflate`](https://datatracker.ietf.org/doc/html/rfc7692) extension when
+connecting to WebSocket-enabled subgraphs. When the subgraph accepts the offer, messages are
+compressed in both directions. A subgraph that does not support the extension declines the offer and
+the connection continues uncompressed. When omitted in a per-subgraph override, the value falls back
+to the one in `all`.
+
+Compression trades CPU and memory for bandwidth. Each compressed connection allocates its own
+compressor and decompressor, which use about 420KiB together.
+
+To accept the extension from clients connecting to the router, see
+[`websocket.permessage_deflate`](/docs/router/subscriptions/websockets#permessage_deflate).
 
 #### Connection fingerprint
 
