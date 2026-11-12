@@ -134,6 +134,7 @@ impl BackgroundTask for MyBackgroundTask {
 
     async fn run(&self, token: CancellationToken) {
         // Check token.is_cancelled() to handle graceful shutdown
+        // Use tokio timers (`hive_router::tokio::time::sleep`), the future must be `Send`
     }
 }
 
@@ -185,6 +186,15 @@ request continues.
   (for example, rejecting requests without an `Authorization` header) will
   therefore also fail your probes unless it checks
   `payload.router_http_request.path()` first.
+</Callout>
+
+<Callout type="info">
+  For [WebSocket](/docs/router/subscriptions/websockets) connections, this
+  hook runs once on the HTTP upgrade request. The router serves the whole
+  connection inside that request, so it finishes only when the socket closes.
+  The `on_end` callback runs after the connection closed, and changes it makes
+  to the response are never sent because the handshake was already answered.
+  Logic that has to run at the handshake belongs in the hook itself.
 </Callout>
 
 #### Usage Examples

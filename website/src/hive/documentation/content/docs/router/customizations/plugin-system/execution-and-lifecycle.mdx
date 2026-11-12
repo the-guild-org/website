@@ -3,6 +3,8 @@ title: "Plugin Execution and Lifecycle"
 sidebarTitle: "Execution and Lifecycle"
 ---
 
+import { Callout } from "@hive/design-system/hive-components/callout";
+
 ## Control Flow
 
 ### Short-Circuit Responses
@@ -144,6 +146,12 @@ Router core runtime to register and manage the lifecycle of your background task
 Background tasks can be registered during the
 [`on_plugin_init` hook](/docs/router/customizations/plugin-system/hooks#on_plugin_init). Here is a simple example
 of a background task that runs periodically:
+
+<Callout type="info">
+  The future returned by `run` must be `Send`. Wait with `tokio` timers (`tokio::time::sleep`,
+  `tokio::time::interval`), not with `ntex::time`, because ntex timers belong to the thread that
+  created them and their futures are not `Send`.
+</Callout>
 
 ```rust
 use hive_router::background_tasks::BackgroundTask;

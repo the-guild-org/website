@@ -164,7 +164,7 @@ impl RouterPlugin for MyPlugin {
     ) -> OnHttpRequestHookFuture<'req> {
         Box::pin(async move {
             // For the sake of the demo, this plugin only stores the paths for all requests
-            self.state.lock().unwrap().push(payload.request.uri().path().to_string());
+            self.state.lock().unwrap().push(payload.router_http_request.path().to_string());
 
             payload.proceed()
         })
