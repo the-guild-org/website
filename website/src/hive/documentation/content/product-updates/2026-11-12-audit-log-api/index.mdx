@@ -25,14 +25,19 @@ curl -H "Authorization: Bearer $HIVE_ACCESS_TOKEN" \
 - **Cursor-based pagination**: every response returns a `nextCursor`. Store it, pass it back on the
   next request, and you'll only receive events you haven't seen yet. A `Link: rel="next"` header is
   included too, for clients that follow links.
-- **No gaps**: events are returned oldest first, so you never miss an event. Delivery is
-  at-least-once; deduplicate on the event `id`.
 - **Stable, versioned events**: every event uses a versioned JSON envelope with the event type, the
   actor (user, organization access token or system), its IP address and user agent, and
   event-specific metadata.
-- **Filtering and backfill**: use `eventTypes` to only fetch the events you care about (e.g.
-  `USER_SIGNED_IN,USER_SIGN_IN_FAILED`), and `since` to choose how far back a new integration
-  starts. Without it, you get the full year of retained history.
+- **Filtering and backfill**: use the `eventTypes` query parameter to only fetch the events you
+  care about, and the `since` query parameter to choose how far back a new integration starts.
+  Without `since`, you get the full year of retained history.
+
+For example, to only fetch sign-in events since November 1st:
+
+```bash
+curl -H "Authorization: Bearer $HIVE_ACCESS_TOKEN" \
+  "https://api.graphql-hive.com/audit-log/v1/events?eventTypes=USER_SIGNED_IN,USER_SIGN_IN_FAILED&since=2026-11-01T00:00:00Z"
+```
 
 ## Get Started
 
