@@ -46,7 +46,7 @@ curl -H "Authorization: Bearer $HIVE_ACCESS_TOKEN" \
    **Describe audit log** (`auditLog:describe`) permission.
 2. Point your SIEM's HTTP pull input (or your own script) at
    `https://api.graphql-hive.com/audit-log/v1/events` and send the token as a bearer token.
-3. Poll every minute, following `nextCursor`.
+3. Fetch from the endpoint, following `nextCursor` to retrieve latest events (until caught up; then poll every minute).
 
 ---
 
