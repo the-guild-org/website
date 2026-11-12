@@ -133,6 +133,34 @@ using your preferred method.
 
 import orgInviteLinkImage from "./org-invite-link.png";
 
+#### Email delivery status
+
+The **Invitations** tab has an **Email status** column with the most recent attempt to email each
+invitation:
+
+| Status                           | Meaning                                                                                                                  |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **No delivery record**           | No attempt has been recorded yet, or the delivery history could not be read.                                             |
+| **Sent**                         | The mail provider accepted the email. Hover to see when.                                                                 |
+| **Failed (attempt _n_ of _m_)**  | The provider refused the email. Hover to see its answer, and whether Hive will try again or has stopped retrying.         |
+
+import invitationsStatusImage from "./invitations-email-status.png";
+
+<Image
+  alt="The invitations table with the Email status column"
+  className="mt-6 rounded-lg drop-shadow-md"
+  src={invitationsStatusImage}
+/>
+
+The status belongs to the invitation: inviting the same address again creates a new invitation, and
+the column shows the new invitation's attempts. When an email cannot be delivered, hover the status
+to see an explanation. You can also use the **Copy invitation link** from the row menu (`...`) to
+copy and share the link directly.
+
+Every email Hive sends for the organization, invitations included, is listed under the
+organization's **Settings** → **Email Deliveries**; see
+[Delivery Tracking](/docs/schema-registry/management/projects#email-deliveries).
+
 ### Assigning Roles to Members
 
 The actions a member can perform within the organization are specified by the assigned role. By
