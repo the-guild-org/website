@@ -56,7 +56,8 @@ const caseStudyJsonLd = JSON.stringify({
       : publisher,
   publisher,
   mainEntityOfPage: canonical ?? pageUrl,
-});
+  // A "</script" or "<!--" in the content would end the script element early.
+}).replace(/</g, '\\u003c');
 ---
 
 <!doctype html>
