@@ -5,7 +5,12 @@ import { test } from 'node:test';
 import { shouldHandleFavicon } from './favicon/handler';
 import { shouldHandleFeed } from './feed/handler';
 import { shouldHandleRobotsTxt } from './robots/handler';
-import { buildUpstreamUrl, canonicalizeUrl, isLeakedRouteTemplate } from './routing';
+import {
+  buildUpstreamUrl,
+  canonicalizeUrl,
+  isLeakedRouteTemplate,
+  markdownTwinCanonical,
+} from './routing';
 
 test('preserveSearch keeps the original query string', () => {
   const upstreamUrl = buildUpstreamUrl({
@@ -68,4 +73,19 @@ test('special-route predicates anchor on path segments', () => {
   equal(shouldHandleFavicon(new URL('https://x.dev/my-favicon.ico')), false);
   equal(shouldHandleFeed(new URL('https://x.dev/graphql/codegen/feed')), true);
   equal(shouldHandleFeed(new URL('https://x.dev/myfeed')), false);
+});
+
+test('Markdown twins point at their HTML page', () => {
+  const md = 'text/markdown; charset=utf-8';
+  equal(
+    markdownTwinCanonical('https://the-guild.dev/graphql/scalars/docs/usage.md', md),
+    'https://the-guild.dev/graphql/scalars/docs/usage',
+  );
+  equal(
+    markdownTwinCanonical('https://the-guild.dev/graphql/hive/docs.md?ref=x', 'Text/Markdown'),
+    'https://the-guild.dev/graphql/hive/docs',
+  );
+  equal(markdownTwinCanonical('https://the-guild.dev/graphql/hive/llms.txt', md), null);
+  equal(markdownTwinCanonical('https://the-guild.dev/a.md', 'text/html; charset=utf-8'), null);
+  equal(markdownTwinCanonical('https://the-guild.dev/a.md', null), null);
 });

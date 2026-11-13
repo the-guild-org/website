@@ -96,7 +96,11 @@ export function redirect(sentry: Toucan, from: string, url: string, code = 301) 
   });
 }
 
-export type ManipulateResponseFn = (record: RewriteRecord, response: Response) => Promise<Response>;
+export type ManipulateResponseFn = (
+  record: RewriteRecord,
+  response: Response,
+  requestUrl?: string,
+) => Promise<Response>;
 
 export function buildUpstreamUrl(options: {
   request: Request;
@@ -220,7 +224,7 @@ export async function handleRewrite(options: {
       });
     }
 
-    response = await options.manipulateResponse(options.record, freshResponse);
+    response = await options.manipulateResponse(options.record, freshResponse, options.request.url);
 
     if (options.request.method === 'GET') {
       // Populate the cache in the background - the response does not wait.
@@ -237,6 +241,26 @@ export async function handleRewrite(options: {
  */
 export function isLeakedRouteTemplate(pathname: string) {
   return pathname.includes('/_landing/') || /(^|\/)\$(\/|$)/.test(pathname);
+}
+
+/**
+ * Docs pages have Markdown twins (`<page>.md`) for LLMs. Google crawls them as
+ * separate thin pages; a canonical Link header marks each one as a copy of its
+ * HTML page without excluding it from anything. Returns the HTML page's URL,
+ * or null when the response is not a Markdown twin.
+ */
+export function markdownTwinCanonical(
+  requestUrl: string,
+  contentType: string | null | undefined,
+): string | null {
+  if (!contentType?.toLowerCase().startsWith('text/markdown')) {
+    return null;
+  }
+  const url = new URL(requestUrl);
+  if (!url.pathname.endsWith('.md')) {
+    return null;
+  }
+  return `${url.origin}${url.pathname.slice(0, -'.md'.length)}`;
 }
 
 /**

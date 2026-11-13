@@ -13,6 +13,7 @@ import {
   handleRewrite,
   isLeakedRouteTemplate,
   ManipulateResponseFn,
+  markdownTwinCanonical,
   redirect,
 } from './routing';
 import { handleSitemap, shouldHandleSitemap } from './sitemap/handler';
@@ -36,7 +37,7 @@ function isRedirectRecord(record: WebsiteRecord): record is RedirectRecord {
 }
 
 function createManipulateResponse(env: Env): ManipulateResponseFn {
-  return async (record, rawResponse) => {
+  return async (record, rawResponse, requestUrl) => {
     let result = rawResponse;
 
     if (result?.headers?.get('content-type')?.startsWith('text/html')) {
@@ -50,6 +51,14 @@ function createManipulateResponse(env: Env): ManipulateResponseFn {
     // Modify response and add client side caching headers
     result = new Response(result.body, result);
     result.headers.append('Cache-Control', `s-maxage=${clientToWorkerMaxAge}`);
+
+    const canonical =
+      requestUrl && result.ok
+        ? markdownTwinCanonical(requestUrl, result.headers.get('content-type'))
+        : null;
+    if (canonical) {
+      result.headers.append('Link', `<${canonical}>; rel="canonical"`);
+    }
 
     return result;
   };
