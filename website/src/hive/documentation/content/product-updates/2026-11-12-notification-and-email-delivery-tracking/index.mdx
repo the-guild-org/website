@@ -7,12 +7,26 @@ date: 2026-11-12
 authors: [jdolle]
 ---
 
+{/* The docs share these screenshots (byte-identical copies under docs/schema-registry/management).
+    Markdown images would make Astro optimize them to webp and delete the PNG the docs link to, so
+    this page uses <Image> like the 2026-01-28 new-laboratory update. */}
+
+import { Image } from "@hive/design-system/image";
+
+import channelFailingImage from "./alert-channel-failing.png";
+import channelPageImage from "./alert-channel-page.png";
+import emailDeliveriesImage from "./email-deliveries.png";
+import invitationsStatusImage from "./invitations-email-status.png";
+
 Hive sends a lot on your behalf: schema change notifications and metric alerts to Slack, Microsoft
 Teams, Discord and webhooks, and emails for invitations, ownership transfers, audit log exports and
 usage limits. Until now, a delivery that failed was invisible. Starting today, every attempt is
 recorded and shown in Hive Console, together with the answer the destination gave.
 
-![Alert channel page with delivery stats, a chart over time, the channel's health and the delivery log](./alert-channel-page.png)
+<Image
+  alt="Alert channel page with delivery stats, a chart over time, the channel's health and the delivery log"
+  src={channelPageImage}
+/>
 
 ## Why it matters
 
@@ -48,7 +62,10 @@ Each channel now has a health status: **Healthy**, **Failing** when its ten most
 all failed, or **No data**. After an hour of failing, the channel page shows a warning with the last
 response.
 
-![A channel that has been failing for more than a day, with the warning and the last response](./alert-channel-failing.png)
+<Image
+  alt="A channel that has been failing for more than a day, with the warning and the last response"
+  src={channelFailingImage}
+/>
 
 After 48 hours of failing, Hive pauses the channel so a dead destination does not keep absorbing
 notifications. The page says when and why, and an **Enable channel** button brings it back once the
@@ -63,7 +80,10 @@ provider's answer and the retry count. Members see the kinds of email of the fea
 manage, so someone who can invite members sees invitations, and someone who can export audit logs
 sees the export emails.
 
-![The Email Deliveries section of the organization settings](./email-deliveries.png)
+<Image
+  alt="The Email Deliveries section of the organization settings"
+  src={emailDeliveriesImage}
+/>
 
 Hive retries an email up to five times when the provider is rate limited or unavailable, and stops
 at once when the provider refuses the recipient, because an inactive address will not become active
@@ -76,7 +96,10 @@ the email, **Failed (attempt n of m)** with the provider's answer and whether Hi
 or **No delivery record** before the first attempt. If an email cannot be delivered, copy the
 invitation link from the row menu and share it directly.
 
-![The invitations table with the Email status column](./invitations-email-status.png)
+<Image
+  alt="The invitations table with the Email status column"
+  src={invitationsStatusImage}
+/>
 
 ## Get started
 
