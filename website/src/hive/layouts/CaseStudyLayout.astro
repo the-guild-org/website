@@ -1,5 +1,5 @@
 ---
-import { withBase } from '../lib/base-path';
+import { SITE_ORIGIN, withBase } from '../lib/base-path';
 import '../styles/global.css';
 import BaseHead from '../components/BaseHead.astro';
 import CaseStudyCard from '../components/case-studies/CaseStudyCard.astro';
@@ -26,14 +26,38 @@ interface Story {
 interface Props {
   authors: Author[];
   canonical?: string;
+  date: string;
   excerpt: string;
   otherStories: Story[];
   slug: string;
   title: string;
 }
 
-const { authors, canonical, excerpt, otherStories, slug, title } = Astro.props;
+const { authors, canonical, date, excerpt, otherStories, slug, title } = Astro.props;
 const pageTitle = `${title} | Hive`;
+// Article structured data: without it search engines and AI search tools
+// only see a BreadcrumbList for a case study.
+const pageUrl = new URL(Astro.url.pathname.replace(/\.html$/, ''), SITE_ORIGIN).href;
+const publisher = { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' };
+const caseStudyJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description: excerpt,
+  datePublished: date,
+  // Most case studies carry no byline; The Guild wrote those.
+  author:
+    authors.length > 0
+      ? authors.map(author => ({
+          '@type': 'Person',
+          name: author.name,
+          ...(author.position && { jobTitle: author.position }),
+        }))
+      : publisher,
+  publisher,
+  mainEntityOfPage: canonical ?? pageUrl,
+  // A "</script" or "<!--" in the content would end the script element early.
+}).replace(/</g, '\\u003c');
 ---
 
 <!doctype html>
@@ -49,6 +73,7 @@ const pageTitle = `${title} | Hive`;
       title={pageTitle}
       type="article"
     />
+    <script is:inline type="application/ld+json" set:html={caseStudyJsonLd} />
     <ThemeInit />
   </head>
   <body class="min-h-screen antialiased">

@@ -59,6 +59,7 @@ const otherStories = (await getCollection('caseStudies'))
 <CaseStudyLayout
   authors={data.authors ?? []}
   canonical={data.canonical}
+  date={data.date instanceof Date ? data.date.toISOString().slice(0, 10) : String(data.date)}
   excerpt={data.excerpt}
   otherStories={otherStories}
   slug={slug(entry.id)}

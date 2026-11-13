@@ -91,6 +91,33 @@ jobs:
           pnpm exec wrangler pages deploy website/dist --project-name=guild-dev-website $BRANCH_FLAG
           echo "alias=$(jq -r 'select(.type == "pages-deploy-detailed") | .alias' "$WRANGLER_OUTPUT_FILE_PATH")" >> "$GITHUB_OUTPUT"
 
+      # After a production deploy, tell IndexNow (Bing and the AI search tools
+      # built on it) which pages changed. The previous deploy's page
+      # fingerprints live in the cache; it is saved only after a successful
+      # submission, so a failed one is retried by the next deploy. Never
+      # fails the job: the site is already deployed at this point.
+      - name: restore indexnow manifest
+        if: github.event_name != 'pull_request'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: website/.cache/indexnow
+          key: indexnow-manifest-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            indexnow-manifest-
+
+      - name: submit changed pages to indexnow
+        id: indexnow
+        if: github.event_name != 'pull_request'
+        continue-on-error: true
+        run: pnpm --filter website exec node scripts/indexnow.ts
+
+      - name: save indexnow manifest
+        if: github.event_name != 'pull_request' && steps.indexnow.outcome == 'success'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: website/.cache/indexnow
+          key: indexnow-manifest-${{ github.run_id }}-${{ github.run_attempt }}
+
       # One comment per pull request, updated on every push (the marker finds it).
       - name: comment the preview url on the pull request
         if: github.event_name == 'pull_request'
