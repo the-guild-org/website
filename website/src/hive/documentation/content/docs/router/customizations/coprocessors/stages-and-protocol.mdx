@@ -167,6 +167,10 @@ flowchart TB
 Runs when the inbound HTTP request enters Hive Router.
 Use this stage for early traffic checks such as auth header checks and fast request rejection.
 
+For [WebSocket](/docs/router/subscriptions/websockets) connections, this stage runs once on the HTTP upgrade request.
+The request context is shared by all operations on that connection, so context entries set by this stage on the upgrade request are visible to the per-operation stages (`graphql.request`, `graphql.analysis` and `graphql.response`) of every operation on the connection.
+Headers listed in [`websocket.headers.upgrade`](/docs/router/subscriptions/websockets#headersupgrade) are read after this stage ran, so it can set or normalize them.
+
 Available properties in `include`:
 
 | Property  | Mutable | Description                                   |
