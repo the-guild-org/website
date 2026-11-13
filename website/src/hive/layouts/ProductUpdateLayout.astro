@@ -1,5 +1,5 @@
 ---
-import { withBase } from '../lib/base-path';
+import { SITE_ORIGIN, withBase } from '../lib/base-path';
 import '../styles/global.css';
 import BaseHead from '../components/BaseHead.astro';
 import BlogAuthors from '../components/blog/BlogAuthors.astro';
@@ -28,6 +28,22 @@ const authorIds = authors.map(author =>
 const tableOfContents = filterToc(headings, 2, 3);
 const pageTitle = `${title} | Hive`;
 const titleId = title.replaceAll(/[\s.,]+/g, '-').toLowerCase();
+// Article structured data, as the Hive blog posts have: without it search
+// engines and AI search tools only see a BreadcrumbList for every update.
+const pageUrl = new URL(Astro.url.pathname.replace(/\.html$/, ''), SITE_ORIGIN).href;
+const updateJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  datePublished: date,
+  author: authors.map(value => {
+    const author = resolveAuthor(value);
+    return { '@type': 'Person', name: author.name, url: author.link };
+  }),
+  publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+  mainEntityOfPage: canonical ?? pageUrl,
+});
 ---
 
 <!doctype html>
@@ -44,6 +60,7 @@ const titleId = title.replaceAll(/[\s.,]+/g, '-').toLowerCase();
       title={pageTitle}
       type="article"
     />
+    <script is:inline type="application/ld+json" set:html={updateJsonLd} />
     <link
       rel="alternate"
       type="application/rss+xml"
