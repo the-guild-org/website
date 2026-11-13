@@ -96,11 +96,7 @@ export function redirect(sentry: Toucan, from: string, url: string, code = 301) 
   });
 }
 
-export type ManipulateResponseFn = (
-  record: RewriteRecord,
-  response: Response,
-  requestUrl?: string,
-) => Promise<Response>;
+export type ManipulateResponseFn = (record: RewriteRecord, response: Response) => Promise<Response>;
 
 export function buildUpstreamUrl(options: {
   request: Request;
@@ -128,6 +124,8 @@ export async function handleRewrite(options: {
   match: string | null;
   publicDomain: string;
   waitUntil: (promise: Promise<unknown>) => void;
+  /** Set on the lower-case retry: the page really lives at the lower-case path. */
+  servedLowercase?: boolean;
 }): Promise<Response> {
   const url = buildUpstreamUrl(options).toString();
   const cacheKey = new Request(url, options.request);
@@ -209,6 +207,7 @@ export async function handleRewrite(options: {
         return await handleRewrite({
           ...options,
           upstreamPath: asLower,
+          servedLowercase: true,
         });
       }
 
@@ -224,7 +223,7 @@ export async function handleRewrite(options: {
       });
     }
 
-    response = await options.manipulateResponse(options.record, freshResponse, options.request.url);
+    response = await options.manipulateResponse(options.record, freshResponse);
 
     if (options.request.method === 'GET') {
       // Populate the cache in the background - the response does not wait.
@@ -232,7 +231,8 @@ export async function handleRewrite(options: {
     }
   }
 
-  return response;
+  // Request-dependent, so it is added after the cache lookup and never stored.
+  return withMarkdownCanonical(response, options.request.url, options.servedLowercase);
 }
 
 /**
@@ -261,6 +261,33 @@ export function markdownTwinCanonical(
     return null;
   }
   return `${url.origin}${url.pathname.slice(0, -'.md'.length)}`;
+}
+
+/**
+ * Adds the canonical Link header to a successful Markdown twin response.
+ * `servedLowercase` means the upstream only had the lower-case path, so the
+ * canonical uses it too.
+ */
+export function withMarkdownCanonical(
+  response: Response,
+  requestUrl: string,
+  servedLowercase = false,
+): Response {
+  if (!response.ok) {
+    return response;
+  }
+  const canonical = markdownTwinCanonical(requestUrl, response.headers.get('content-type'));
+  if (!canonical) {
+    return response;
+  }
+  const url = new URL(canonical);
+  if (servedLowercase) {
+    url.pathname = url.pathname.toLowerCase();
+  }
+  // Cached responses have immutable headers.
+  const result = new Response(response.body, response);
+  result.headers.append('Link', `<${url}>; rel="canonical"`);
+  return result;
 }
 
 /**

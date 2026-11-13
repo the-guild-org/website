@@ -10,6 +10,7 @@ import {
   canonicalizeUrl,
   isLeakedRouteTemplate,
   markdownTwinCanonical,
+  withMarkdownCanonical,
 } from './routing';
 
 test('preserveSearch keeps the original query string', () => {
@@ -88,4 +89,25 @@ test('Markdown twins point at their HTML page', () => {
   equal(markdownTwinCanonical('https://the-guild.dev/graphql/hive/llms.txt', md), null);
   equal(markdownTwinCanonical('https://the-guild.dev/a.md', 'text/html; charset=utf-8'), null);
   equal(markdownTwinCanonical('https://the-guild.dev/a.md', null), null);
+});
+
+test('the canonical header is added per request, not to the shared response', () => {
+  const md = { 'content-type': 'text/markdown; charset=utf-8' };
+  const cached = new Response('# Usage', { headers: md });
+
+  const lower = withMarkdownCanonical(cached, 'https://the-guild.dev/docs/usage.md');
+  equal(lower.headers.get('link'), '<https://the-guild.dev/docs/usage>; rel="canonical"');
+  equal(cached.headers.get('link'), null);
+
+  const retried = withMarkdownCanonical(
+    new Response('# Usage', { headers: md }),
+    'https://the-guild.dev/Docs/usage.md',
+    true,
+  );
+  equal(retried.headers.get('link'), '<https://the-guild.dev/docs/usage>; rel="canonical"');
+
+  const notFound = new Response('', { status: 404, headers: md });
+  equal(withMarkdownCanonical(notFound, 'https://the-guild.dev/a.md'), notFound);
+  const html = new Response('', { headers: { 'content-type': 'text/html' } });
+  equal(withMarkdownCanonical(html, 'https://the-guild.dev/a.md'), html);
 });
