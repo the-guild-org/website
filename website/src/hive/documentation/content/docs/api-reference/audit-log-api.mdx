@@ -1,0 +1,194 @@
+---
+title: Audit Log API
+description:
+  HTTP API for ingesting an organization's audit log into a SIEM or any other system.
+---
+
+The audit log API returns an organization's [audit log](/docs/schema-registry/management/audit-logs)
+events, oldest first, as JSON. A client polls it on an interval and reads on from where it left off
+using a cursor. This is the shape most SIEM HTTP pull inputs (Splunk, Microsoft Sentinel, Elastic,
+Datadog, …) expect.
+
+For a step-by-step setup, see
+[Ingest the Audit Log into a SIEM](/docs/schema-registry/management/audit-logs#ingest-the-audit-log-into-a-siem).
+
+## Endpoint
+
+```
+GET https://api.graphql-hive.com/audit-log/v1/events
+```
+
+## Authentication
+
+Send an [organization access token](/docs/schema-registry/management/access-tokens) with the
+**Describe audit log** (`auditLog:describe`) permission as a bearer token:
+
+```
+Authorization: Bearer <access token>
+```
+
+Project and personal access tokens can't be granted `auditLog:describe` and are rejected.
+
+## Query Parameters
+
+| Parameter    | Description                                                                                                                                                                                          |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cursor`     | The `nextCursor` of a previous response. Reading continues right after the last event of that response. Takes precedence over `since`.                                                              |
+| `since`      | ISO 8601 date-time (e.g. `2026-01-01T00:00:00Z`) to start reading from, inclusive. Use it for the first request of a new integration when you don't need the full year of history.                    |
+| `limit`      | Maximum number of events per page, between `1` and `1000`. Defaults to `100`.                                                                                                                         |
+| `eventTypes` | Comma-separated list of [event types](#event-types) to return, e.g. `USER_SIGNED_IN,USER_SIGN_IN_FAILED`. Returns all event types when omitted. Keep the same filter for every request of a cursor. |
+
+## Response
+
+A successful request returns status `200` with a page of events:
+
+```json
+{
+  "events": [
+    {
+      "version": 1,
+      "id": "9f5e3a1c-4d6b-4b9e-8f0a-2c7d1e6b5a43",
+      "timestamp": "2026-11-02T10:00:00Z",
+      "eventType": "USER_INVITED",
+      "organization": { "id": "4f2a5c0e-1b3d-4e6f-9a8b-7c6d5e4f3a2b" },
+      "actor": {
+        "type": "user",
+        "user": { "id": "0d4c3b2a-1f0e-4d9c-8b7a-6f5e4d3c2b1a", "email": "admin@example.com" },
+        "accessToken": null,
+        "ipAddress": "203.0.113.42",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+      },
+      "metadata": {
+        "inviteeEmail": "new-member@example.com",
+        "roleId": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+      }
+    }
+  ],
+  "nextCursor": "eyJ2IjoxLCJ0aW1lc3RhbXAiOjE3OTM2MTM2MDAsImlkIjoiOWY1ZTNhMWMtNGQ2Yi00YjllLThmMGEtMmM3ZDFlNmI1YTQzIn0",
+  "hasMore": false,
+  "cursorExpired": false
+}
+```
+
+| Field           | Description                                                                                                                                       |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `events`        | Events after the requested position, oldest first, ordered by timestamp, then id.                                                               |
+| `nextCursor`    | Opaque cursor to pass as `cursor` on the next request. Present on every page, including empty ones, so you can always store it.                 |
+| `hasMore`       | Whether more events are available right now. When `false`, poll again later with `nextCursor`.                                                   |
+| `cursorExpired` | `true` when the requested cursor was older than the retention period. Events right after the cursor may have been deleted and are then missing. |
+
+### Event Fields
+
+| Field                       | Description                                                                                                                                                           |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `version`                   | Envelope version, currently `1`. Backwards-incompatible changes to the event shape introduce a new version.                                                           |
+| `id`                        | Stable, unique id of the event. Use it to deduplicate.                                                                                                                |
+| `timestamp`                 | When the event happened, ISO 8601 in UTC with second precision.                                                                                                       |
+| `eventType`                 | The [event type](#event-types).                                                                                                                                       |
+| `organization.id`           | The organization the event belongs to.                                                                                                                                |
+| `actor.type`                | `user` or `organizationAccessToken` when the event was caused by one; `system` when there was no authenticated actor (a background job, or a failed sign in attempt). |
+| `actor.user`                | `id` and `email` of the user that caused the event; `null` unless `actor.type` is `user`.                                                                             |
+| `actor.accessToken`         | `id` and `firstCharacters` of the organization access token that caused the event; `null` unless `actor.type` is `organizationAccessToken`.                         |
+| `actor.ipAddress`           | IP address of the client that caused the event, or `null` when unknown.                                                                                               |
+| `actor.userAgent`           | User agent of the client that caused the event, or `null` when unknown.                                                                                               |
+| `metadata`                  | Event-type specific details, such as the affected project, target or role.                                                                                            |
+
+New fields may be added to the event over time without changing `version`, so make sure your parser
+ignores fields it doesn't know.
+
+## Pagination
+
+Events are paginated with an opaque cursor. Without a `cursor` or `since` parameter, the first
+request starts at the beginning of the retention period (one year ago):
+
+```
+GET https://api.graphql-hive.com/audit-log/v1/events?limit=1000
+```
+
+To start at a specific point in time instead, for example when you don't need the full year of
+history, pass `since`:
+
+```
+GET https://api.graphql-hive.com/audit-log/v1/events?since=2026-11-01T00:00:00Z&limit=1000
+```
+
+Every response contains a `nextCursor`. Pass it as `cursor` to get the next page:
+
+```
+GET https://api.graphql-hive.com/audit-log/v1/events?cursor=eyJ2IjoxLCJ0aW1lc3RhbXAiOjE3OTM2MTM2MDAsImlkIjoiOWY1ZTNhMWMtNGQ2Yi00YjllLThmMGEtMmM3ZDFlNmI1YTQzIn0&limit=1000
+```
+
+While `hasMore` is `true`, request the next page right away. Once `hasMore` is `false`, you've caught
+up: store the `nextCursor` and poll again later (e.g. every minute) with it. The cursor is returned
+on every page, including empty ones, so you can always persist the latest one.
+
+When `hasMore` is `true`, the response also carries a `Link` header with the URL of the next page,
+for clients that follow links instead of reading the cursor from the body:
+
+```
+Link: </audit-log/v1/events?cursor=eyJ2IjoxLCJ0aW1lc3RhbXAiOjE3OTM2MTM2MDAsImlkIjoiOWY1ZTNhMWMtNGQ2Yi00YjllLThmMGEtMmM3ZDFlNmI1YTQzIn0&limit=1000>; rel="next"
+```
+
+Keep the same `eventTypes` filter for every request of a cursor.
+
+## Delivery Guarantees
+
+- **Ordering**: events are returned oldest first, ordered by timestamp, then by id.
+- **At-least-once**: in rare cases (e.g. a retried request) the same event can be returned more than
+  once. Deduplicate on the event `id`.
+- **Retention**: events are kept for one year. If your integration was offline for longer than that,
+  the response reports `cursorExpired: true` and continues with the oldest event that's still
+  available.
+
+## Errors
+
+Every non-`2xx` response has the same body:
+
+```json
+{
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "The access token is missing the 'auditLog:describe' permission."
+  }
+}
+```
+
+| Status | Code                | What to do                                                                                     |
+| ------ | ------------------- | ---------------------------------------------------------------------------------------------- |
+| `400`  | `INVALID_PARAMETER` | A query parameter is invalid (e.g. `limit` out of range, unknown event type). Fix the request. |
+| `400`  | `INVALID_CURSOR`    | The cursor isn't one returned by the API. Use the `nextCursor` of a previous response.         |
+| `401`  | `UNAUTHENTICATED`   | The token is missing or invalid, or isn't an organization access token.                        |
+| `403`  | `FORBIDDEN`         | The token lacks the `auditLog:describe` permission.                                           |
+| `429`  | `RATE_LIMITED`      | Too many requests. Wait for the number of seconds in the `Retry-After` header and retry.      |
+| `500`  | `INTERNAL_ERROR`    | Something went wrong on our side. Retry the request with the same cursor.                      |
+
+## Rate Limits
+
+Requests are limited to **60 per minute per organization**, shared by all access tokens of the
+organization. Polling once a minute and paging with `limit=1000` while catching up stays well within
+this budget.
+
+## Event Types
+
+The `eventTypes` parameter accepts the following values. New event types are added over time, so
+treat `eventType` as an open string rather than a fixed list.
+
+For example, to only fetch sign in events:
+
+```
+GET https://api.graphql-hive.com/audit-log/v1/events?eventTypes=USER_SIGNED_IN,USER_SIGN_IN_FAILED
+```
+
+| Category          | Event types                                                                                                                                                                                                                                                 |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Users & sign in   | `USER_INVITED`, `USER_JOINED`, `USER_REMOVED`, `USER_SIGNED_IN`, `USER_SIGN_IN_FAILED`, `USER_SETTINGS_UPDATED`                                                                                                                                             |
+| SCIM provisioning | `SCIM_USER_CREATED`, `SCIM_USER_UPDATED`, `SCIM_GROUP_CREATED`, `SCIM_GROUP_UPDATED`, `SCIM_GROUP_DELETED`                                                                                                                                                  |
+| Organization      | `ORGANIZATION_SLUG_UPDATED`, `ORGANIZATION_POLICY_UPDATED`, `ORGANIZATION_PLAN_UPDATED`, `ORGANIZATION_TRANSFERRED`, `ORGANIZATION_TRANSFERRED_REQUEST`, `ORGANIZATION_UPDATED_INTEGRATION`                                                                 |
+| Access tokens     | `ORGANIZATION_ACCESS_TOKEN_CREATED`, `ORGANIZATION_ACCESS_TOKEN_DELETED`                                                                                                                                                                                    |
+| SSO               | `OIDC_INTEGRATION_CREATED`, `OIDC_INTEGRATION_UPDATED`, `OIDC_INTEGRATION_DELETED`                                                                                                                                                                          |
+| Roles             | `ROLE_CREATED`, `ROLE_UPDATED`, `ROLE_DELETED`, `ROLE_ASSIGNED`                                                                                                                                                                                             |
+| Projects          | `PROJECT_CREATED`, `PROJECT_SLUG_UPDATED`, `PROJECT_POLICY_UPDATED`, `PROJECT_DELETED`                                                                                                                                                                      |
+| Targets           | `TARGET_CREATED`, `TARGET_SLUG_UPDATED`, `TARGET_GRAPHQL_ENDPOINT_URL_UPDATED`, `TARGET_SCHEMA_COMPOSITION_UPDATED`, `TARGET_CDN_ACCESS_TOKEN_CREATED`, `TARGET_CDN_ACCESS_TOKEN_DELETED`, `TARGET_TOKEN_CREATED`, `TARGET_TOKEN_DELETED`, `TARGET_DELETED` |
+| Laboratory        | `COLLECTION_CREATED`, `COLLECTION_UPDATED`, `COLLECTION_DELETED`, `OPERATION_IN_DOCUMENT_COLLECTION_CREATED`, `OPERATION_IN_DOCUMENT_COLLECTION_UPDATED`, `OPERATION_IN_DOCUMENT_COLLECTION_DELETED`, `PREFLIGHT_SCRIPT_CHANGED`                            |
+| Saved filters     | `SAVED_FILTER_CREATED`, `SAVED_FILTER_UPDATED`, `SAVED_FILTER_DELETED`                                                                                                                                                                                      |
+| Billing & support | `SUBSCRIPTION_CREATED`, `SUBSCRIPTION_UPDATED`, `SUBSCRIPTION_CANCELED`, `SUPPORT_TICKET_CREATED`, `SUPPORT_TICKET_UPDATED`                                                                                                                                 |
