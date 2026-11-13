@@ -124,6 +124,8 @@ export async function handleRewrite(options: {
   match: string | null;
   publicDomain: string;
   waitUntil: (promise: Promise<unknown>) => void;
+  /** Set on the lower-case retry: the page really lives at the lower-case path. */
+  servedLowercase?: boolean;
 }): Promise<Response> {
   const url = buildUpstreamUrl(options).toString();
   const cacheKey = new Request(url, options.request);
@@ -205,6 +207,7 @@ export async function handleRewrite(options: {
         return await handleRewrite({
           ...options,
           upstreamPath: asLower,
+          servedLowercase: true,
         });
       }
 
@@ -228,7 +231,8 @@ export async function handleRewrite(options: {
     }
   }
 
-  return response;
+  // Request-dependent, so it is added after the cache lookup and never stored.
+  return withMarkdownCanonical(response, options.request.url, options.servedLowercase);
 }
 
 /**
@@ -237,6 +241,53 @@ export async function handleRewrite(options: {
  */
 export function isLeakedRouteTemplate(pathname: string) {
   return pathname.includes('/_landing/') || /(^|\/)\$(\/|$)/.test(pathname);
+}
+
+/**
+ * Docs pages have Markdown twins (`<page>.md`) for LLMs. Google crawls them as
+ * separate thin pages; a canonical Link header marks each one as a copy of its
+ * HTML page without excluding it from anything. Returns the HTML page's URL,
+ * or null when the response is not a Markdown twin.
+ */
+export function markdownTwinCanonical(
+  requestUrl: string,
+  contentType: string | null | undefined,
+): string | null {
+  if (!contentType?.toLowerCase().startsWith('text/markdown')) {
+    return null;
+  }
+  const url = new URL(requestUrl);
+  if (!url.pathname.endsWith('.md')) {
+    return null;
+  }
+  return `${url.origin}${url.pathname.slice(0, -'.md'.length)}`;
+}
+
+/**
+ * Adds the canonical Link header to a successful Markdown twin response.
+ * `servedLowercase` means the upstream only had the lower-case path, so the
+ * canonical uses it too.
+ */
+export function withMarkdownCanonical(
+  response: Response,
+  requestUrl: string,
+  servedLowercase = false,
+): Response {
+  if (!response.ok) {
+    return response;
+  }
+  const canonical = markdownTwinCanonical(requestUrl, response.headers.get('content-type'));
+  if (!canonical) {
+    return response;
+  }
+  const url = new URL(canonical);
+  if (servedLowercase) {
+    url.pathname = url.pathname.toLowerCase();
+  }
+  // Cached responses have immutable headers.
+  const result = new Response(response.body, response);
+  result.headers.append('Link', `<${url}>; rel="canonical"`);
+  return result;
 }
 
 /**
