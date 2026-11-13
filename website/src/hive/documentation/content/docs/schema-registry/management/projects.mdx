@@ -12,6 +12,12 @@ import msteamsFormImage from "./project-msteams-alert.png";
 import slackAlertFormImage from "./project-slack-alert.png";
 import projectImage from "./project.png";
 
+import channelHeadersImage from "./alert-channel-delivery-headers.png";
+import channelPageImage from "./alert-channel-page.png";
+import channelPausedImage from "./alert-channel-paused-by-hive.png";
+import channelsListImage from "./alert-channels-list.png";
+import emailDeliveriesImage from "./email-deliveries.png";
+
 A Hive **project** represents a GraphQL API project running a GraphQL schema, created under an
 organization.
 
@@ -116,6 +122,9 @@ then you need to create an **Alert** that will be triggered when a specific cond
 Hive.
 
 From the **Alerts** tab of your project, you can create and manage your **Alert Channels**.
+
+Clicking a channel opens its page, with the channel's delivery health and the most recent attempts
+to deliver notifications to it. See [Delivery Tracking](#delivery-tracking).
 
 At the moment, Hive supports the following transports to ship your alerts and notifications:
 
@@ -266,3 +275,131 @@ type SchemaChangedNotificationPayload = {
   initial: boolean;
 };
 ```
+
+### Delivery Tracking
+
+Hive records every attempt it makes to deliver a notification to an
+[alert channel](#alert-channels) and every email it sends
+on behalf of an organization, and shows the outcome in Hive Console: on a page for each alert
+channel, in the **Email Deliveries** section of the organization settings, and
+[next to each pending invitation](/docs/schema-registry/management/members-roles-permissions#email-delivery-status)
+on the organization's **Members** page.
+
+Notifications and emails are delivered by a background worker after the request that caused them
+has returned, so there is no response in which Hive could report a failure. They also depend on
+configuration outside Hive that can be invalidated without anyone touching Hive: a revoked Slack
+token or an archived channel, a deleted Teams or Discord webhook, a decommissioned or timing-out
+endpoint, an address the mail provider refuses. Without tracking, these failures are silent.
+
+Hive tracks the schema change notifications, metric alerts and channel confirmations sent to every
+channel type, and the invitation, ownership transfer, audit log export and usage limit emails sent
+for an organization. Message bodies, payloads, links and codes are never stored. Records are kept
+for 75 days, and the pages described below show the last 72 hours.
+
+#### Alert channel deliveries
+
+Open the **Alerts** page of a project and click a channel. Viewing a channel requires the
+`alert:modify` permission, like managing one.
+
+<Image
+  alt="Alert channel page with delivery stats, a chart over time, the channel's health and the delivery log"
+  className="mt-6 rounded-lg drop-shadow-md"
+  src={channelPageImage}
+/>
+
+The page shows:
+
+- **Total calls**, **Failed** (with the failure rate), **Last success** and **Last failure** for
+  the last 72 hours.
+- **Deliveries over time**: total calls and errors per interval.
+- **Channel details**: the status, type, destination and id, the **Channel status** switch, and
+  the **Edit channel** and **Delete channel** actions.
+- **The delivery log**: recent attempts, with the time, event, target, status, duration and
+  attempt number.
+
+The **Status** column shows the destination's own answer, such as `200 OK` or `404 Not Found`, or
+`Timed out` when it did not answer in time.
+
+Expand a row to see what Hive sent to identify the call: the headers and other important metadata
+associated with the delivery. The request and response payloads are not included, to prevent
+leaking sensitive information.
+
+<Image
+  alt="A delivery log row expanded to show the headers Hive sent"
+  className="mt-6 rounded-lg drop-shadow-md"
+  src={channelHeadersImage}
+/>
+
+Failed deliveries are retried with increasing delays, and the delivery log shows the attempt number
+of each row. Retried deliveries carry the same `Idempotency-Key` header, so make your webhook
+handler idempotent (see [Metric Alerts](/docs/schema-registry/metric-alerts#webhook-payload)).
+
+#### Channel health
+
+The **Status** row of the channel details summarizes the recent attempts:
+
+| Status      | Meaning                                                                                 |
+| ----------- | --------------------------------------------------------------------------------------- |
+| **Healthy** | Attempts have been recorded, and the ten most recent ones are not all failures.         |
+| **Failing** | The ten most recent attempts all failed. The row shows since when.                      |
+| **No data** | No attempt has been recorded since the channel was created or last enabled.             |
+| **Paused**  | The channel is paused and receives no notifications.                                    |
+
+Health counts the attempts made since the channel was created or last enabled, so enabling a paused
+channel starts it afresh. The delivery log keeps every attempt regardless.
+
+If a channel has been failing for 48 hours, Hive pauses it and no further notifications are sent
+to it. Fix the destination, or use **Edit channel** to rename the channel or point it at a new
+destination without recreating it (the type cannot change), then click **Enable channel**.
+
+<Image
+  alt="A channel paused by Hive after failing for 48 hours, with the Enable channel button"
+  className="mt-6 rounded-lg drop-shadow-md"
+  src={channelPausedImage}
+/>
+
+You can also pause a channel yourself by toggling **Channel status** in the channel details. Pausing
+keeps the channel's alerts and metric alert rules in place, but stops these notifications from
+sending.
+
+<Image
+  alt="The Alerts page of a project with a paused channel"
+  className="mt-6 rounded-lg drop-shadow-md"
+  src={channelsListImage}
+/>
+
+#### Email deliveries
+
+Open the organization's **Settings** and choose **Email Deliveries**.
+
+<Image
+  alt="The Email Deliveries section of the organization settings"
+  className="mt-6 rounded-lg drop-shadow-md"
+  src={emailDeliveriesImage}
+/>
+
+The section shows the emails Hive sent for the organization in the last 72 hours: how many the mail
+provider accepted or refused, when it last did either, **Emails over time**, and a log of each
+attempt with the recipient, the provider's answer, the duration and the attempt number. Expanding an
+attempt shows the metadata recorded for it.
+
+Each member sees the kinds of email of the features they may manage. When that leaves a kind out,
+the section says which kinds it shows.
+
+| Email                                    | Who sees it                      |
+| ---------------------------------------- | -------------------------------- |
+| Invitations                              | Members with `member:modify`     |
+| Audit log exports                        | Members with `auditLog:export`   |
+| Usage limit warning and exceeded notices | Members with `billing:describe`  |
+| Ownership transfers                      | The organization owner           |
+
+<Callout type="info">
+  An accepted email can still land in a spam folder, so ask the recipient to
+  check there if it has not arrived.
+</Callout>
+
+<Callout type="info">
+  On self-hosted Hive, the `workflows` service records its deliveries only when
+  its ClickHouse connection is configured (`CLICKHOUSE=1`); see the
+  [self-hosting guide](/docs/schema-registry/self-hosting/get-started).
+</Callout>
