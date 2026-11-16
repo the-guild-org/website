@@ -336,6 +336,9 @@ which uses `supergraph.source: plugin` and caches variants by normalized `x-feat
 
 Use `on_end` with `map_response` to attach custom headers to every outgoing HTTP response.
 
+If the header value depends on the execution result, set it in
+[`on_execute`](#on_execute) instead, so that deduplicated requests receive it too.
+
 ```rust
 fn on_http_request<'req>(
     &'req self,
@@ -1090,6 +1093,67 @@ async fn on_execute<'exec>(
     })
 }
 ```
+
+**Set a client response header**
+
+Use `on_end` to set client response headers that depend on the execution result, for example a
+`Cache-Control` policy derived from schema directives, with `no-store` when a subgraph errored.
+
+```rust
+use hive_router::http::{HeaderName, HeaderValue};
+
+async fn on_execute<'exec>(
+    &'exec self,
+    payload: OnExecuteStartHookPayload<'exec>,
+) -> OnExecuteStartHookResult<'exec> {
+    payload.on_end(|mut end_payload| {
+        let policy = if end_payload.errors.is_empty() {
+            "public, max-age=60"
+        } else {
+            "no-store"
+        };
+        end_payload.insert_response_header(
+            HeaderName::from_static("cache-control"),
+            HeaderValue::from_static(policy),
+        );
+        end_payload.proceed()
+    })
+}
+```
+
+The end payload exposes four methods for the client response headers the router collected during
+execution, including the ones set by [header rules](/docs/router/configuration/headers) and the
+[merged `Cache-Control`](/docs/router/guides/header-manipulation#restrictive-cache-control-merging):
+
+- `insert_response_header(name, value)` replaces any value already set for the header.
+- `append_response_header(name, value)` adds a value and keeps the existing ones. Values are joined
+  with a comma, except for headers that must never be joined (like `set-cookie`), which are sent as
+  separate header fields.
+- `get_response_header(&name)` returns the values currently set for the header, for example the
+  merged `Cache-Control` from your subgraphs, so you can tighten it instead of overwriting it.
+- `remove_response_header(&name)` removes the header and returns its values.
+
+Hop-by-hop headers and `content-type` are owned by the router and ignored by these methods.
+
+Headers set here are part of the execution result. With
+[inbound request deduplication](/docs/router/configuration/traffic_shaping#routerdedupe) enabled, deduplicated
+requests receive the same headers even though they never run `on_execute` themselves. Headers set
+with [`map_response`](#on_http_request) in `on_http_request` are applied per request, and
+deduplicated requests don't have the execution result to compute them from.
+
+<Callout type="warning">
+
+Every deduplicated request receives the headers set here. Don't set per-user headers (like a
+session `set-cookie`) in this hook, unless the dedupe fingerprint includes whatever distinguishes
+users, for example with
+[`traffic_shaping.router.dedupe.headers`](/docs/router/configuration/traffic_shaping#routerdedupeheaders)
+or a [custom dedupe partition](#on_http_request).
+
+</Callout>
+
+A plugin can make `Cache-Control` stricter, but never cacheable for unsafe responses. When the
+operation is a mutation, or the response has GraphQL errors (including errors added in `on_end`),
+the router replaces any `Cache-Control` set here with `no-store, no-cache, must-revalidate`.
 
 **Capture the operation for usage reporting**
 

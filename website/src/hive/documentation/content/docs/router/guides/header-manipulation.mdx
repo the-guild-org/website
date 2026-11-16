@@ -209,6 +209,10 @@ subgraphs returned when any of the following is true:
 - A subgraph response contained a GraphQL-level error (a non-empty `errors` array).
 - The operation is a mutation.
 
+This also applies to a `Cache-Control` set by a plugin in
+[`on_execute`](/docs/router/customizations/plugin-system/hooks#on_execute), so a plugin can make the
+policy stricter, but can't make a mutation or a response with errors cacheable.
+
 Finally, the `Cache-Control` header is **removed entirely** when no subgraph sent a valid
 `Cache-Control` value - for example non-UTF-8 bytes, or an empty or whitespace-only string that
 parses to nothing.
