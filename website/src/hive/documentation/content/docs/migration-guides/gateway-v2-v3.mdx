@@ -1,0 +1,448 @@
+---
+title: Migrating Hive Gateway from v2 to v3
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+This document guides you through the process of migrating your Hive Gateway from version 2 to
+version 3. It outlines the key changes, potential breaking points, and provides step-by-step
+instructions to ensure a smooth transition.
+
+v3 is built on [GraphQL Yoga v6](/product-updates/2026-10-24-yoga-adopts-hive-logger-support-latest-defer-steam-spec-drops-legacy-node-and-graphql)
+and the latest major versions of GraphQL Tools. Most of the breaking changes are removals of
+deprecated APIs. The most significant changes are:
+
+- [Drop Support for Node v20](#drop-support-for-node-v20)
+- [Drop Support for GraphQL v15](#drop-support-for-graphql-v15)
+- [Request ID](#request-id)
+- [Request Summary Logs](#request-summary-logs)
+- [Request Body Size Limit](#request-body-size-limit)
+- [Removed Delegation Plan Hooks](#removed-delegation-plan-hooks)
+- [Removed Legacy Logger](#removed-legacy-logger)
+- [Removed Deprecated Options](#removed-deprecated-options)
+- [Removed Upstream Helpers](#removed-upstream-helpers)
+- [GraphQL Tools Stitching](#graphql-tools-stitching)
+
+## Drop Support for Node v20
+
+Node v20 has reached its end of life (as of 30 Apr 2026), and Hive Gateway v3, with its
+dependencies, no longer supports it. The minimum Node version required to run Hive Gateway is now
+Node v22.15.0.
+
+The following packages have been updated to their latest versions, which require Node v22.15.0 or
+higher:
+
+- `@graphql-hive/gateway`
+- `@graphql-hive/gateway-runtime`
+- `@graphql-hive/gateway-testing`
+- `@graphql-hive/router-runtime`
+- `@graphql-hive/importer`
+- `@graphql-hive/logger`
+- `@graphql-hive/nestjs`
+- `@graphql-hive/pubsub`
+- `@graphql-hive/signal`
+- `@graphql-hive/plugin-aws-sigv4`
+- `@graphql-hive/plugin-deduplicate-request`
+- `@graphql-hive/plugin-mcp`
+- `@graphql-hive/plugin-opentelemetry`
+- `@graphql-mesh/fusion-runtime`
+- `@graphql-mesh/hmac-upstream-signature`
+- `@graphql-mesh/plugin-jwt-auth`
+- `@graphql-mesh/plugin-prometheus`
+- `@graphql-mesh/transport-common`
+- `@graphql-mesh/transport-http`
+- `@graphql-mesh/transport-http-callback`
+- `@graphql-mesh/transport-ws`
+- `@graphql-tools/batch-delegate`
+- `@graphql-tools/batch-execute`
+- `@graphql-tools/delegate`
+- `@graphql-tools/executor-common`
+- `@graphql-tools/executor-graphql-ws`
+- `@graphql-tools/executor-http`
+- `@graphql-tools/federation`
+- `@graphql-tools/stitch`
+- `@graphql-tools/stitching-directives`
+- `@graphql-tools/wrap`
+
+## Drop Support for GraphQL v15
+
+Hive Gateway v3 supports only GraphQL v16 and v17. The `graphql` peer dependency of all Hive Gateway
+packages is now `^16.9.0 || ^17.0.0`.
+
+If your project depends on `graphql` directly, upgrade it:
+
+```sh npm2yarn
+npm i graphql@^16.9.0
+```
+
+`@graphql-tools/stitch` no longer reads legacy `#` comment descriptions from type definitions,
+because the `commentDescriptions` option was removed in GraphQL v16. Use string descriptions instead:
+
+```diff
+type Query {
+- # The current user
++ "The current user"
+  me: User
+}
+```
+
+## Request ID
+
+Hive Gateway uses the request ID handling of GraphQL Yoga. The request ID is resolved in the
+following order:
+
+1. The ID your server framework already assigned to the request (for example Fastify's
+   `request.id`)
+1. The incoming `x-request-id` header
+1. A newly generated UUID
+
+In v2, the incoming `x-request-id` header always took precedence. The request ID is still set on the
+`x-request-id` header of the response and forwarded to subgraph requests.
+
+If Hive Gateway is directly reachable by clients, rather than only through a proxy that sets the
+header itself, we recommend disabling trusting the incoming header so that clients cannot choose
+their own request IDs:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
++ requestId: {
++   trustHeader: false,
++ },
+});
+```
+
+<Callout type="info">
+  Read more about the request ID in the [Logging and Error Handling
+  documentation](/docs/gateway/logging-and-error-handling#request-id).
+</Callout>
+
+## Request Summary Logs
+
+Once a request has been processed, Hive Gateway logs a single `info` level line summarizing it,
+including the operation, the response status, the number of GraphQL errors and the request duration:
+
+```
+2025-04-10T14:00:00.000Z INF Request processed
+  requestId: "0b1dce69-5eb0-4d7b-97d8-1337535a620e"
+  method: "POST"
+  path: "/graphql"
+  operationName: "MyQuery"
+  operationType: "query"
+  status: 200
+  errorCount: 0
+  durationMs: 12
+```
+
+Since `info` is the default log level, you will see one such line for every request. If you do not
+want them, set the log level to `warn` or higher:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
++ logging: 'warn',
+});
+```
+
+## Request Body Size Limit
+
+The request body size limit of 25 MB is configurable with the `maxRequestBodySize` option. Set a
+different limit in bytes, or `false` to disable it:
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  maxRequestBodySize: 5_000_000, // 5 MB
+});
+```
+
+Enforcing the limit streams request bodies through a byte counter, which makes body parsing
+asynchronous even for in-memory bodies. If you use the runtime programmatically and relied on
+`gateway.fetch()` returning a `Response` synchronously, you have to await the result:
+
+```diff title="index.ts"
+import { createGatewayRuntime } from '@graphql-hive/gateway-runtime';
+
+const gateway = createGatewayRuntime({ supergraph });
+
+- const response = gateway.fetch('http://localhost/graphql', {
++ const response = await gateway.fetch('http://localhost/graphql', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify({ query: '{ hello }' }),
+});
+```
+
+Disabling the limit removes this asynchronous step, but it does not guarantee a synchronous response
+if plugins, resolvers or subgraph requests are asynchronous. Only disable the limit if an
+appropriate request body limit is enforced elsewhere.
+
+<Callout type="info">
+  Read more about the limit in the [Security
+  documentation](/docs/gateway/other-features/security#request-body-size-limit-enabled-by-default).
+</Callout>
+
+## Removed Delegation Plan Hooks
+
+The `onDelegationPlan` and `onDelegationStageExecute` plugin hooks have been removed, together with
+their `onDelegationPlanDone` and `onDelegationStageExecuteDone` counterparts. These hooks prevented
+the JavaScript Query Planner from caching delegation plans, were rarely used, and were never
+supported by the [Rust Query Planner](/docs/gateway/other-features/rust-query-planner).
+
+Remove the hooks from your plugins:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
+  plugins: () => [
+    {
+-     onDelegationPlan({ typeName, log }) {
+-       log.debug({ typeName }, 'Creating delegation plan');
+-     },
+-     onDelegationStageExecute({ subgraph, log }) {
+-       log.debug({ subgraph }, 'Executing delegation stage');
+-     },
++     onSubgraphExecute({ subgraphName, log }) {
++       log.debug({ subgraphName }, 'Executing on subgraph');
++     },
+    },
+  ],
+});
+```
+
+If you used the hooks for monitoring, use [`onSubgraphExecute`](/docs/gateway/other-features/custom-plugins#onsubgraphexecute),
+the [OpenTelemetry integration](/docs/gateway/monitoring-tracing) or the
+[logging](/docs/gateway/logging-and-error-handling) instead.
+
+## Removed Legacy Logger
+
+The deprecated `logger` property has been removed in favour of the
+[Hive Logger](/docs/logger) available as `log`.
+
+### Transport Context
+
+If you have implemented a custom transport, use `log` from the transport context:
+
+```diff title="letter-transport.ts"
+import type { Transport } from '@graphql-mesh/transport-common';
+import { letterExecutor } from './my-letter-executor';
+
+export default {
+  getSubgraphExecutor(payload) {
+-   payload.logger.info('Creating letter executor...');
++   payload.log.info('Creating letter executor...');
+    return letterExecutor(payload);
+  },
+} satisfies Transport;
+```
+
+### `onFetch` Hook
+
+The `onFetch` hook payload no longer has the `logger` property. Use the logger from the context:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
+  plugins: () => [
+    {
+-     onFetch({ logger }) {
+-       logger.info('Fetching data...');
++     onFetch({ context }) {
++       context.log.info('Fetching data...');
+      },
+    },
+  ],
+});
+```
+
+### Yoga Logger
+
+GraphQL Yoga v6 uses the Hive Logger too. If your plugins use the Yoga logger, rename `yoga.logger`
+to `yoga.log`:
+
+```diff
+const myPlugin = {
+  onYogaInit({ yoga }) {
+-   yoga.logger.info('Plugin initialized');
++   yoga.log.info('Plugin initialized');
+  },
+};
+```
+
+## Removed Deprecated Options
+
+### Persisted Documents `allowArbitraryOperations`
+
+Use `allowArbitraryDocuments` instead:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
+  persistedDocuments: {
+    type: 'hive',
+    endpoint: '<cdn_endpoint>',
+    token: '<cdn_access_token>',
+-   allowArbitraryOperations: true,
++   allowArbitraryDocuments: true,
+  },
+});
+```
+
+### Rate Limiting Rules Array
+
+Passing an array of rules directly to `rateLimiting` is no longer supported. Pass the rules to the
+`config` option instead:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
+- rateLimiting: [
+-   {
+-     type: 'Query',
+-     field: 'searchProducts',
+-     max: 10,
+-     ttl: 60000,
+-     identifier: '{context.headers.authorization}',
+-   },
+- ],
++ rateLimiting: {
++   config: [
++     {
++       type: 'Query',
++       field: 'searchProducts',
++       max: 10,
++       ttl: 60000,
++       identifier: '{context.headers.authorization}',
++     },
++   ],
++ },
+});
+```
+
+<Callout type="info">
+  Read more in the [Rate Limiting
+  documentation](/docs/gateway/other-features/security/rate-limiting).
+</Callout>
+
+### Usage Reporting `clientInfo` Object
+
+The `clientInfo` usage reporting option no longer accepts an object. Pass a function that receives
+the GraphQL context and returns the client info, or `null`:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
+  reporting: {
+    type: 'hive',
+    token: '<token>',
+    target: '<target>',
+    usage: {
+-     clientInfo: {
+-       name: 'my-client',
+-       version: '1.0.0',
+-     },
++     clientInfo: () => ({
++       name: 'my-client',
++       version: '1.0.0',
++     }),
+    },
+  },
+});
+```
+
+### Hive Usage Reporting CLI Options
+
+The `--hive-registry-token` and `--hive-usage-target` CLI options, and their
+`HIVE_REGISTRY_TOKEN` and `HIVE_USAGE_TARGET` environment variables, have been removed. Use
+`--hive-target` with `--hive-access-token` instead, or the usage and tracing specific
+`--hive-usage-access-token` and `--hive-trace-access-token` options:
+
+```diff
+hive-gateway supergraph \
+  http://cdn.graphql-hive.com/<path>/supergraph \
+  --hive-cdn-key "<hive_cdn_access_key>" \
+- --hive-usage-target "<hive_usage_target>" \
+- --hive-registry-token "<hive_registry_token>"
++ --hive-target "<hive_usage_target>" \
++ --hive-access-token "<hive_access_token>"
+```
+
+The `--hive-target` CLI option and `HIVE_TARGET` environment variable take precedence over the
+`target` from the configuration file.
+
+## Removed Upstream Helpers
+
+Hive Gateway v3 uses GraphQL Yoga v6 and the latest major versions of GraphQL Tools and
+`@whatwg-node`, which no longer export a number of helpers. If your plugins, transports or other
+custom code use them, replace them as follows:
+
+| Removed                                           | Replacement                                                                              |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `createGraphQLError`                              | `new GraphQLError(...)` from `graphql`                                                   |
+| `YogaLogger`, `createLogger` and `yoga.logger`    | `Logger` and `yoga.log`                                                                  |
+| `crypto` from `@whatwg-node/fetch`                | The platform global `crypto`                                                             |
+| `mapMaybePromise`, `isPromise` and `MaybePromise` | `handleMaybePromise`, `isPromise` and `MaybePromise` from `@whatwg-node/promise-helpers` |
+| `createDeferred` and `createDeferredPromise`      | `Promise.withResolvers()`                                                                |
+
+```diff
+- import { createGraphQLError, mapMaybePromise } from '@graphql-tools/utils';
++ import { GraphQLError } from 'graphql';
++ import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+
+- throw createGraphQLError('Unauthorized', { extensions: { code: 'UNAUTHORIZED' } });
++ throw new GraphQLError('Unauthorized', { extensions: { code: 'UNAUTHORIZED' } });
+```
+
+## GraphQL Tools Stitching
+
+The following changes affect you only if you use the GraphQL Tools packages directly, for example
+to build a stitched schema programmatically.
+
+### Removed `isolateComputedFieldsTransformer`
+
+Computed and `@requires` fields stay on a single subschema instead of on cloned subschemas, and the
+defaults of `stitchSchemas` already defer them. Remove the transformer from your configuration:
+
+```diff
+- import { isolateComputedFieldsTransformer, stitchSchemas } from '@graphql-tools/stitch';
++ import { stitchSchemas } from '@graphql-tools/stitch';
+
+stitchSchemas({
+  subschemas,
+- subschemaConfigTransforms: [isolateComputedFieldsTransformer],
+});
+```
+
+Multiple merged type `entryPoints` are kept on one subschema too, instead of cloning a subschema per
+entry point. If you already use `entryPoints`, no change is required.
+
+### Removed `stitchingDirectivesTypeDefs`
+
+Use `allStitchingDirectivesTypeDefs` from `@graphql-tools/stitching-directives` instead:
+
+```diff
+- import { stitchingDirectivesTypeDefs } from '@graphql-tools/stitching-directives';
++ import { allStitchingDirectivesTypeDefs } from '@graphql-tools/stitching-directives';
+```
+
+### Removed `disposable` Option from `buildHTTPExecutor`
+
+Executors built with `buildHTTPExecutor` from `@graphql-tools/executor-http` are always disposable.
+Remove the `disposable` option:
+
+```diff
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+
+const executor = buildHTTPExecutor({
+  endpoint: 'http://localhost:4001/graphql',
+- disposable: true,
+});
+```
