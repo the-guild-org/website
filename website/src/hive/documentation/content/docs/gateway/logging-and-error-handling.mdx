@@ -75,10 +75,6 @@ export const gatewayConfig = defineConfig({
 -         log.info('Executing...');
 +         context.log.info('Executing...');
         },
-        onDelegationPlan(context) {
--         log.info('Creating delegation plan...');
-+         context.log.info('Creating delegation plan...');
-        },
         onSubgraphExecute(context) {
 -         log.info('Executing on subgraph...');
 +         context.log.info('Executing on subgraph...');
@@ -102,9 +98,6 @@ Will log with the necessary metadata for increased observability, like this:
 ```
 2025-04-10T14:00:00.000Z INF Executing...
   requestId: "0b1dce69-5eb0-4d7b-97d8-1337535a620e"
-2025-04-10T14:00:00.000Z INF Creating delegation plan...
-  requestId: "0b1dce69-5eb0-4d7b-97d8-1337535a620e"
-  subgraph: "accounts"
 2025-04-10T14:00:00.000Z INF Executing on subgraph...
   requestId: "0b1dce69-5eb0-4d7b-97d8-1337535a620e"
   subgraph: "accounts"

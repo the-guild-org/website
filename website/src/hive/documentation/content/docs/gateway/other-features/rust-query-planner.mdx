@@ -143,7 +143,7 @@ The following table provides a comprehensive comparison between the two query pl
 | EDFS                         | ✅         | ✅                    | Event-Driven Federated Subscriptions are supported                                                      |
 | Subscriptions                | ✅         | ✅                    | Populates fields from other subgraphs after resolving the subscription                                  |
 | Schema extensions            | ✅         | ⚠️ Limited support    | Schema-level modifications may be limited because hive router does not use an executable schema         |
-| Custom plugins               | ✅         | ⚠️ No stitching hooks | All plugins, except those using [stitching hooks](#no-javascript-query-planner-plugin-hooks), will work |
+| Custom plugins               | ✅         | ✅                    | All plugins will work                                                                                   |
 | Envelop plugins              | ✅         | ✅                    | All of envelop plugins will work                                                                        |
 | Yoga plugins                 | ✅         | ✅                    | All of Yoga plugins will work                                                                           |
 | Gateway plugins              | ✅         | ✅                    | All gateway plugins will work                                                                           |
@@ -164,16 +164,6 @@ The following table provides a comprehensive comparison between the two query pl
 | Persisted documents          | ✅         | ✅                    | Operation allow-listing and security                                                                    |
 | Request plugins              | ✅         | ✅                    | Request-level processing and modification                                                               |
 | Response plugins             | ✅         | ✅                    | Response-level processing and modification                                                              |
-
-## No JavaScript Query Planner Plugin Hooks
-
-All plugin hooks will work with the Rust Query Planner except for those specific to stitching that
-will never work because the runtime is different (Rust Query Planner vs. JavaScript Query Planner).
-
-Those hooks are only the following two hooks:
-
-- [`onDelegationPlan`](/docs/gateway/other-features/custom-plugins#ondelegationplan)
-- [`onDelegationStageExecute`](/docs/gateway/other-features/custom-plugins#ondelegationstageexecute)
 
 ## Federation Specification Compliance
 
