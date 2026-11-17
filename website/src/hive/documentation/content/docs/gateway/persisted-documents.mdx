@@ -322,11 +322,11 @@ requests.
 Sometimes it is handy to allow non-persisted operations aside from the persisted ones. E.g. you want
 to allow developers to execute arbitrary GraphQL operations on your production server.
 
-This can be achieved using the `allowArbitraryOperations` option.
+This can be achieved using the `allowArbitraryDocuments` option.
 
 ```ts title="Allow arbitrary GraphQL operations"
 {
-  allowArbitraryOperations: (request) =>
+  allowArbitraryDocuments: (request) =>
     request.headers.get("x-allow-arbitrary-operations") === "true";
 }
 ```

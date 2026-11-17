@@ -28,8 +28,8 @@ Hive Gateway supports two complementary approaches:
 
 ## Programmatic Configuration
 
-Use `rateLimiting` with an array of rules to configure per-field limits directly in
-`gateway.config.ts`. Each rule targets a specific GraphQL type and field.
+Use the `config` option of `rateLimiting` with an array of rules to configure per-field limits
+directly in `gateway.config.ts`. Each rule targets a specific GraphQL type and field.
 
 Each rule requires `type`, `field`, `max`, `ttl`, and exactly one of `identifier`, `identifyFn`, or `identityArgs` to determine how callers are identified.
 
@@ -48,15 +48,17 @@ For most cases you only need to specify the field limits:
 import { defineConfig } from "@graphql-hive/gateway";
 
 export const gatewayConfig = defineConfig({
-  rateLimiting: [
-    {
-      type: "Query",
-      field: "searchProducts",
-      max: 10,
-      ttl: 60000, // 60 seconds in milliseconds
-      identifier: "{context.headers.authorization}",
-    },
-  ],
+  rateLimiting: {
+    config: [
+      {
+        type: "Query",
+        field: "searchProducts",
+        max: 10,
+        ttl: 60000, // 60 seconds in milliseconds
+        identifier: "{context.headers.authorization}",
+      },
+    ],
+  },
 });
 ```
 
@@ -68,15 +70,17 @@ Use `identifier: "{args.*}"` to create a separate rate limit bucket per unique a
 import { defineConfig } from "@graphql-hive/gateway";
 
 export const gatewayConfig = defineConfig({
-  rateLimiting: [
-    {
-      type: "Query",
-      field: "getProduct",
-      max: 10,
-      ttl: 60000,
-      identifier: "{args.id}", // one bucket per unique product ID
-    },
-  ],
+  rateLimiting: {
+    config: [
+      {
+        type: "Query",
+        field: "getProduct",
+        max: 10,
+        ttl: 60000,
+        identifier: "{args.id}", // one bucket per unique product ID
+      },
+    ],
+  },
 });
 ```
 
@@ -86,15 +90,17 @@ Use `identityArgs` when you need to key on multiple arguments or use dot-notatio
 import { defineConfig } from "@graphql-hive/gateway";
 
 export const gatewayConfig = defineConfig({
-  rateLimiting: [
-    {
-      type: "Mutation",
-      field: "createOrder",
-      max: 5,
-      ttl: 60000,
-      identityArgs: ["input.userId"], // nested path via dot notation
-    },
-  ],
+  rateLimiting: {
+    config: [
+      {
+        type: "Mutation",
+        field: "createOrder",
+        max: 5,
+        ttl: 60000,
+        identityArgs: ["input.userId"], // nested path via dot notation
+      },
+    ],
+  },
 });
 ```
 
@@ -104,15 +110,17 @@ Use `identifyFn` when the identity key requires logic that a template string can
 import { defineConfig } from "@graphql-hive/gateway";
 
 export const gatewayConfig = defineConfig({
-  rateLimiting: [
-    {
-      type: "Query",
-      field: "getProduct",
-      max: 10,
-      ttl: 60000,
-      identifyFn: (ctx, args) => `${ctx.ip}:${args.id}`,
-    },
-  ],
+  rateLimiting: {
+    config: [
+      {
+        type: "Query",
+        field: "getProduct",
+        max: 10,
+        ttl: 60000,
+        identifyFn: (ctx, args) => `${ctx.ip}:${args.id}`,
+      },
+    ],
+  },
 });
 ```
 
@@ -126,22 +134,24 @@ catch-all rule:
 import { defineConfig } from "@graphql-hive/gateway";
 
 export const gatewayConfig = defineConfig({
-  rateLimiting: [
-    {
-      type: "Query",
-      field: "!(getProduct)",
-      max: 10,
-      ttl: 1000,
-      identifier: "{context.headers.authorization}",
-    },
-    {
-      type: "Query",
-      field: "getProduct",
-      max: 5,
-      ttl: 1000,
-      identifier: "{context.headers.authorization}",
-    },
-  ],
+  rateLimiting: {
+    config: [
+      {
+        type: "Query",
+        field: "!(getProduct)",
+        max: 10,
+        ttl: 1000,
+        identifier: "{context.headers.authorization}",
+      },
+      {
+        type: "Query",
+        field: "getProduct",
+        max: 5,
+        ttl: 1000,
+        identifier: "{context.headers.authorization}",
+      },
+    ],
+  },
 });
 ```
 
@@ -151,29 +161,31 @@ To exclude multiple fields from the catch-all, list them separated by `|`:
 import { defineConfig } from "@graphql-hive/gateway";
 
 export const gatewayConfig = defineConfig({
-  rateLimiting: [
-    {
-      type: "Query",
-      field: "!(getProduct|me)",
-      max: 10,
-      ttl: 1000,
-      identifier: "{context.headers.authorization}",
-    },
-    {
-      type: "Query",
-      field: "getProduct",
-      max: 5,
-      ttl: 1000,
-      identifier: "{context.headers.authorization}",
-    },
-    {
-      type: "Query",
-      field: "me",
-      max: 3,
-      ttl: 1000,
-      identifier: "{context.headers.authorization}",
-    },
-  ],
+  rateLimiting: {
+    config: [
+      {
+        type: "Query",
+        field: "!(getProduct|me)",
+        max: 10,
+        ttl: 1000,
+        identifier: "{context.headers.authorization}",
+      },
+      {
+        type: "Query",
+        field: "getProduct",
+        max: 5,
+        ttl: 1000,
+        identifier: "{context.headers.authorization}",
+      },
+      {
+        type: "Query",
+        field: "me",
+        max: 3,
+        ttl: 1000,
+        identifier: "{context.headers.authorization}",
+      },
+    ],
+  },
 });
 ```
 
@@ -304,15 +316,17 @@ export const gatewayConfig = defineConfig({
     type: "redis",
     url: "redis://localhost:6379",
   },
-  rateLimiting: [
-    {
-      type: "Query",
-      field: "searchProducts",
-      max: 10,
-      ttl: 60000,
-      identifier: "{context.headers.authorization}",
-    },
-  ],
+  rateLimiting: {
+    config: [
+      {
+        type: "Query",
+        field: "searchProducts",
+        max: 10,
+        ttl: 60000,
+        identifier: "{context.headers.authorization}",
+      },
+    ],
+  },
 });
 ```
 
