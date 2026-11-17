@@ -46,17 +46,19 @@ gets its own aliased `_entities` field. A list of users in 20 currencies still c
 
 ## Request Correlation and Summaries
 
-Hive Gateway uses the request ID handling of Yoga v6. A request ID your server framework already
-assigned to the request, like Fastify's `request.id`, is preferred over the incoming `x-request-id`
-header, so the gateway logs agree with the logs of your framework. If the gateway is directly
-reachable by clients, you can stop trusting the incoming header:
+Hive Gateway uses the
+[request ID handling of Yoga v6](/product-updates/2026-10-24-yoga-adopts-hive-logger-support-latest-defer-steam-spec-drops-legacy-node-and-graphql#smarter-request-id-correlation).
+A request ID your server framework already assigned to the request, like Fastify's `request.id`, is
+used first, so the gateway logs agree with the logs of your framework. The incoming `x-request-id`
+header is not trusted by default, so clients cannot choose their own request IDs. If the gateway is
+reachable only through a proxy that sets the header itself, you can trust it:
 
 ```ts title="gateway.config.ts"
 import { defineConfig } from "@graphql-hive/gateway";
 
 export const gatewayConfig = defineConfig({
   requestId: {
-    trustHeader: false,
+    trustHeader: true,
   },
 });
 ```
@@ -89,7 +91,9 @@ throughput** for in-process stitching.
 
 ## Latest Incremental Delivery Spec
 
-Clients can request the current `graphql-js` incremental delivery format for `@defer` and `@stream`
+Following
+[Yoga v6](/product-updates/2026-10-24-yoga-adopts-hive-logger-support-latest-defer-steam-spec-drops-legacy-node-and-graphql#support-for-the-latest-incremental-delivery-deferstream-spec),
+clients can request the current `graphql-js` incremental delivery format for `@defer` and `@stream`
 (using `pending`, `id`, `subPath` and `completed`) with an `incrementalSpec` parameter on the
 `Accept` header:
 
@@ -138,4 +142,7 @@ Read the [migration guide](/docs/migration-guides/gateway-v2-v3) for all the det
 - [Rust Query Planner documentation](/docs/gateway/other-features/rust-query-planner#contextual-arguments)
 - [Defer and Stream documentation](/docs/gateway/defer-stream)
 - [Logging documentation](/docs/gateway/logging-and-error-handling#request-id)
+- [Product update: Yoga v6](/product-updates/2026-10-24-yoga-adopts-hive-logger-support-latest-defer-steam-spec-drops-legacy-node-and-graphql)
+- [Yoga v5 to v6 migration guide](https://the-guild.dev/graphql/yoga-server/docs/migration/migration-from-yoga-v5)
 - [Pull request #2670: Hive Gateway v3](https://github.com/graphql-hive/gateway/pull/2670)
+- [Pull request #2703: Support `@context` and `@fromContext` with Rust QP](https://github.com/graphql-hive/gateway/pull/2703)
