@@ -150,6 +150,19 @@ the flexibility of the graph and the ability to choose what fields to query.
 [Configuring the `rateLimiting` option](/docs/gateway/other-features/security/rate-limiting) can be
 used to limit access to resources by field level.
 
+## Request Body Size Limit (enabled by default)
+
+Hive Gateway limits the size of incoming HTTP request bodies to 25 MB (25,000,000 bytes). Requests
+whose body exceeds the limit are rejected with the HTTP status code
+[`413` (Payload Too Large)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/413). The
+limit is checked against the `Content-Length` header and is also enforced while the body is read,
+so requests without a `Content-Length` header, such as chunked requests, are limited too. Requests
+with an invalid `Content-Length` header are rejected with `400` (Bad Request).
+
+The limit applies to all request bodies parsed by the gateway, including JSON, GraphQL,
+URL-encoded and multipart requests. It is not configurable through the gateway configuration. If
+you need a stricter limit, enforce it in a reverse proxy or load balancer in front of the gateway.
+
 ## Prevent unwanted HTTP requests
 
 ### CORS (Cross-Origin Resource Sharing) (enabled by default)

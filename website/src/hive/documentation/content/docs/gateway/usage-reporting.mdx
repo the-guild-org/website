@@ -101,6 +101,24 @@ If you want to control the usage reporting to the Hive Console like `selfHosting
 please look at the Hive Client documentation to learn more about other options.
 [See more in Hive Client reference](/docs/api-reference/client#configuration)
 
+## Graph Version Attribution
+
+When the gateway loads its supergraph, or its schema in proxy mode, from the Hive CDN and usage
+reporting to Hive is configured with `reporting`, the reported usage is automatically attributed to
+the graph version the gateway is serving. No additional configuration is needed.
+
+- The graph ID and graph version ID that the Hive CDN provides together with the fetched schema are
+  sent with the usage reports of queries, mutations and subscriptions executed against that schema.
+- When polling the CDN returns a new graph version, operations executed afterwards are reported with
+  the new graph version, even if the schema itself did not change.
+- Supergraphs and schemas loaded from other sources, such as local files, custom URLs or functions,
+  Apollo GraphOS, local subgraph composition or proxy introspection, carry no graph version
+  information, so their usage is reported without it. The same applies if the CDN response does not
+  include the graph version information.
+- When the gateway starts with a supergraph restored from a [cache](/docs/gateway/other-features/performance#redis),
+  only the schema is restored. Usage is reported without graph version information until the
+  gateway successfully fetches the supergraph from the Hive CDN again, for example on the next poll.
+
 ## Subgraph Field Level Metrics
 
 <Callout type="info">This feature is currently experimental.</Callout>
