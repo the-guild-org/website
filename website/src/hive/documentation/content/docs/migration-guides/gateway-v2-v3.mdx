@@ -10,7 +10,9 @@ instructions to ensure a smooth transition.
 
 v3 is built on [GraphQL Yoga v6](/product-updates/2026-10-24-yoga-adopts-hive-logger-support-latest-defer-steam-spec-drops-legacy-node-and-graphql)
 and the latest major versions of GraphQL Tools. Most of the breaking changes are removals of
-deprecated APIs. The most significant changes are:
+deprecated APIs. If you use GraphQL Yoga APIs in your plugins, also check the
+[Yoga v5 to v6 migration guide](https://the-guild.dev/graphql/yoga-server/docs/migration/migration-from-yoga-v5).
+The most significant changes are:
 
 - [Drop Support for Node v20](#drop-support-for-node-v20)
 - [Drop Support for GraphQL v15](#drop-support-for-graphql-v15)
@@ -88,27 +90,23 @@ type Query {
 
 ## Request ID
 
-Hive Gateway uses the request ID handling of GraphQL Yoga. The request ID is resolved in the
-following order:
-
-1. The ID your server framework already assigned to the request (for example Fastify's
-   `request.id`)
-1. The incoming `x-request-id` header
-1. A newly generated UUID
-
-In v2, the incoming `x-request-id` header always took precedence. The request ID is still set on the
+Hive Gateway uses the request ID handling of
+[GraphQL Yoga](https://the-guild.dev/graphql/yoga-server/docs/features/logging-and-debugging#configuring-the-request-id).
+The request ID is the ID your server framework already assigned to the request (for example
+Fastify's `request.id`), and otherwise a newly generated UUID. It is still set on the
 `x-request-id` header of the response and forwarded to subgraph requests.
 
-If Hive Gateway is directly reachable by clients, rather than only through a proxy that sets the
-header itself, we recommend disabling trusting the incoming header so that clients cannot choose
-their own request IDs:
+The incoming `x-request-id` header is no longer trusted by default, so that clients reaching Hive
+Gateway directly cannot choose their own request IDs. In v2, the incoming header always took
+precedence. If Hive Gateway is reachable only through a proxy or another gateway that sets the
+header itself, trust the header to keep using the request ID of the proxy:
 
 ```diff title="gateway.config.ts"
 import { defineConfig } from '@graphql-hive/gateway';
 
 export const gatewayConfig = defineConfig({
 + requestId: {
-+   trustHeader: false,
++   trustHeader: true,
 + },
 });
 ```
@@ -382,7 +380,8 @@ The `--hive-target` CLI option and `HIVE_TARGET` environment variable take prece
 
 Hive Gateway v3 uses GraphQL Yoga v6 and the latest major versions of GraphQL Tools and
 `@whatwg-node`, which no longer export a number of helpers. If your plugins, transports or other
-custom code use them, replace them as follows:
+custom code use them, replace them as follows (see also the
+[Yoga v5 to v6 migration guide](https://the-guild.dev/graphql/yoga-server/docs/migration/migration-from-yoga-v5#10-removed-re-exports-from-graphql-tools)):
 
 | Removed                                           | Replacement                                                                              |
 | ------------------------------------------------- | ---------------------------------------------------------------------------------------- |
