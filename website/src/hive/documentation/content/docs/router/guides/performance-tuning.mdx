@@ -4,6 +4,7 @@ title: "Performance Tuning & Traffic Shaping"
 
 import { Callout } from "@hive/design-system/hive-components/callout";
 import { Tabs } from "@hive/design-system/tabs";
+import { GraphFlow } from "#mdx-shims/graph";
 
 Hive Router is built for performance right out of the box, but every production setup is different.
 Tuning the router's traffic management settings to match your specific workload and subgraph
@@ -289,18 +290,17 @@ The circuit breaker has three states:
 | **Open**      | Every request is rejected immediately with `SUBGRAPH_CIRCUIT_BREAKER_REJECTED`. No traffic reaches the subgraph.                                                                                               |
 | **Half-open** | After `reset_timeout`, probe requests are allowed through and recorded in a rolling sample of the last `half_open_attempts` outcomes. Once that sample is full, the breaker re-closes or re-opens (see below). |
 
-```mermaid
-stateDiagram-v2
-  state "Closed" as closed
-  state "Open" as open
-  state "Half-open" as halfOpen
+<GraphFlow title="Circuit breaker">
 
-  [*] --> closed
-  closed --> open: rolling error rate over the last<br/>volume_threshold calls<br/>≥ error_threshold
-  open --> halfOpen: reset_timeout elapsed
-  halfOpen --> closed: probe error rate over the last<br/>half_open_attempts probes<br/>< error_threshold
-  halfOpen --> open: probe error rate over the last<br/>half_open_attempts probes<br/>≥ error_threshold
-```
+- **Closed** → _rolling error rate over the last `volume_threshold` calls ≥ `error_threshold`_ →
+  Open
+- **Open** → _`reset_timeout` elapsed_ → Half-open
+- **Half-open** → _probe error rate over the last `half_open_attempts` probes < `error_threshold`_ →
+  Closed
+- **Half-open** → _probe error rate over the last `half_open_attempts` probes ≥ `error_threshold`_ →
+  Open
+
+</GraphFlow>
 
 #### State transition logic
 

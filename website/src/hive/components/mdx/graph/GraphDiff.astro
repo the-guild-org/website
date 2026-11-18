@@ -1,0 +1,98 @@
+---
+/**
+ * What was added, removed or kept. One list item per row as `label: value`;
+ * a value starting with `+` or `-` marks the row as added or removed. A
+ * bold paragraph after a `---` rule becomes the total line.
+ *
+ *     <GraphDiff title="Bundle">
+ *
+ *     - vendor: 84 kb
+ *     - app: +31 kb
+ *     - sourcemaps: -12 kb
+ *
+ *     ---
+ *
+ *     **shipped: 103 kb**
+ *
+ *     </GraphDiff>
+ */
+import Graph from './Graph.astro';
+import {
+  allListItems,
+  itemContent,
+  paragraphs,
+  slotNodes,
+  splitLabel,
+  textOf,
+  unwrapEmphasis,
+} from './html';
+
+interface Props {
+  class?: string;
+  className?: string;
+  corner?: string;
+  title?: string;
+}
+
+type Sign = 'added' | 'kept' | 'removed';
+
+const content = await slotNodes(Astro);
+const rows = allListItems(content).map(item => {
+  const { head, tail } = splitLabel(itemContent(item));
+  const text = textOf([{ type: 'text', value: tail }]);
+  const sign: Sign = text.startsWith('+')
+    ? 'added'
+    : text.startsWith('-') || text.startsWith('−')
+      ? 'removed'
+      : 'kept';
+  return { label: head, sign, value: sign === 'kept' ? tail : tail.replace(/^[+\-−]\s*/, '') };
+});
+const footerSource = paragraphs(content).find(
+  p => unwrapEmphasis(p.children).emphasis === 'strong',
+);
+const footer = footerSource ? splitLabel(unwrapEmphasis(footerSource.children).nodes) : undefined;
+
+const glyph: Record<Sign, string> = { added: '+', kept: ' ', removed: '-' };
+const tone: Record<Sign, string> = {
+  added: 'text-graph-accent',
+  kept: 'text-fd-foreground',
+  removed: 'text-graph-muted',
+};
+---
+
+<Graph
+  class={Astro.props.class ?? Astro.props.className}
+  corner={Astro.props.corner}
+  title={Astro.props.title}
+>
+  <div class="grid grid-cols-[1ch_max-content_max-content] items-baseline gap-x-3 gap-y-1.5">
+    {rows.map((row, index) => (
+      <div class="graph-row contents" style={`--i:${index}`}>
+        <span aria-hidden="true" class:list={['whitespace-pre', tone[row.sign]]}>
+          {glyph[row.sign]}
+        </span>
+        <span class="sr-only">
+          {row.sign === 'added' ? 'added' : row.sign === 'removed' ? 'removed' : ''}
+        </span>
+        <span class:list={['graph-label', tone[row.sign]]} set:html={row.label} />
+        <span
+          class:list={['graph-label text-right tabular-nums', tone[row.sign]]}
+          set:html={row.value}
+        />
+      </div>
+    ))}
+    {footer && (
+      <>
+        <span aria-hidden="true" class="graph-rule col-span-3 my-1 block w-full" />
+        <span aria-hidden="true" class="whitespace-pre">
+          {' '}
+        </span>
+        <span class="graph-label text-fd-foreground" set:html={footer.head} />
+        <span
+          class="graph-label text-right tabular-nums text-fd-foreground"
+          set:html={footer.tail}
+        />
+      </>
+    )}
+  </div>
+</Graph>

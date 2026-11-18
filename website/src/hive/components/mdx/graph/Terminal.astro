@@ -1,0 +1,38 @@
+---
+/**
+ * A command and what it printed. Put a fenced code block inside; lines that
+ * start with the prompt (`$` by default) are commands, the rest is output.
+ */
+import Graph from './Graph.astro';
+import { findFirst, rawTextOf, slotNodes } from './html';
+
+interface Props {
+  class?: string;
+  className?: string;
+  corner?: string;
+  prompt?: string;
+  title?: string;
+}
+
+const { prompt = '$', title = 'shell' } = Astro.props;
+const content = await slotNodes(Astro);
+const code = findFirst(content, 'code') ?? findFirst(content, 'pre');
+const text = (code ? rawTextOf(code) : rawTextOf(content)).replace(/\s+$/, '');
+const lines = text.split('\n').map(line => {
+  const trimmed = line.trimStart();
+  if (trimmed.startsWith(`${prompt} `) || trimmed === prompt) {
+    return { command: trimmed.slice(prompt.length).trimStart(), kind: 'command' as const };
+  }
+  return { kind: 'output' as const, text: line };
+});
+---
+
+<Graph class={Astro.props.class ?? Astro.props.className} corner={Astro.props.corner} title={title}>
+  <pre class="m-0 overflow-x-auto bg-transparent p-0 leading-6 whitespace-pre"><code class="bg-transparent p-0 text-inherit">{lines.map((line, index) =>
+    line.kind === 'command' ? (
+      <span class="graph-row block" style={`--i:${index}`}><span aria-hidden="true" class="text-graph-accent">{prompt} </span><span class="text-fd-foreground">{line.command}</span></span>
+    ) : (
+      <span class="graph-row block text-graph-muted" style={`--i:${index}`}>{line.text || ' '}</span>
+    ),
+  )}</code></pre>
+</Graph>
