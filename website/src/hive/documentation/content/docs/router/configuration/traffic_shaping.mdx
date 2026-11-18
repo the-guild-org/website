@@ -148,8 +148,11 @@ to `0` disables the limit entirely.
 - **Default:** `60s`
 
 Maximum time the router will spend handling a single incoming client request, in duration string
-format (e.g. `60s` for 60 seconds, `1m` for 1 minute). The clock starts the moment the request is received and covers the entire pipeline — HTTP body recieving, parsing, validation, query planning, and execution —
-until a response is sent back to the client.
+format (e.g. `60s` for 60 seconds, `1m` for 1 minute). The clock starts once the request headers
+are received, and covers the entire pipeline — receiving the body, parsing, validation, query
+planning, and execution — until a response is sent back to the client. The time spent waiting for
+the headers is bounded separately by [`header_read_timeout`](#routerheader_read_timeout), see
+[how the inbound timeouts add up](#how-the-inbound-timeouts-add-up).
 
 If a request exceeds this duration, it is aborted and the client receives a `504 Gateway Timeout` response with a `GATEWAY_TIMEOUT` error.
 
@@ -160,6 +163,86 @@ traffic_shaping:
 ```
 
 > This is distinct from the outbound [`request_timeout`](#request_timeout), which bounds how long the router waits for an individual subgraph response.
+
+### `router.header_read_timeout`
+
+- **Type:** `string`
+- **Default:** `10s`
+
+How long the router waits for a client to send the complete request headers, in duration string
+format (e.g. `10s`, `1m`). When exceeded, the client receives a `408 Request Timeout` response with
+an empty body, and the connection is closed.
+
+This bounds clients that open a connection and send the headers slowly, or not at all, so they
+cannot hold sockets and memory indefinitely. The value is rounded up to whole seconds. Setting it
+to `0s` disables it.
+
+It runs before [`request_timeout`](#routerrequest_timeout) starts, so a request can take up to
+`header_read_timeout` + `request_timeout` in total.
+
+```yaml
+traffic_shaping:
+  router:
+    header_read_timeout: 10s
+```
+
+### `router.body_read_timeout`
+
+- **Type:** `string`
+- **Default:** `10s`
+
+How long the router waits to receive the complete request body, from the moment it starts reading
+it, in duration string format (e.g. `10s`, `1m`). When exceeded, the request is rejected with a
+`408 Request Timeout` response with a `PAYLOAD_READ_TIMEOUT` error, and the connection is closed.
+
+This bounds clients that send the headers and then send the body slowly, or not at all, so they
+cannot hold sockets and memory until `request_timeout`. Raise it if your clients upload large
+bodies over slow connections. Setting it to `0s` disables it.
+
+It runs within [`request_timeout`](#routerrequest_timeout), so it only takes effect when it is
+shorter. The exception is the coprocessor
+[`router.request`](/docs/router/customizations/coprocessors/stages-and-protocol#routerrequest) stage
+with `include.body` enabled, which reads the body before `request_timeout` starts.
+
+```yaml
+traffic_shaping:
+  router:
+    body_read_timeout: 10s
+```
+
+```json title="Response"
+{
+  "errors": [
+    {
+      "message": "Request body was not received in time",
+      "extensions": { "code": "PAYLOAD_READ_TIMEOUT" }
+    }
+  ]
+}
+```
+
+### How the inbound timeouts add up
+
+Each incoming request goes through `header_read_timeout` first, then `request_timeout`, which
+includes `body_read_timeout`. The timelines below show the worst case, where each phase uses its
+full budget. In practice, the headers and body usually arrive within milliseconds.
+
+With the default values, a request can take up to 70 seconds (`10s` + `60s`):
+
+```mermaid
+timeline
+    section header_read_timeout 10s
+        0s – 10s : Receive the request headers : Not complete → 408 and the connection is closed
+    section request_timeout 60s
+        10s – 20s : body_read_timeout 10s : Receive the request body : Not complete → 408 PAYLOAD_READ_TIMEOUT
+        20s – 70s : Parse, validate, plan and execute : No response → 504 GATEWAY_TIMEOUT
+```
+
+`header_read_timeout` adds to the total, because `request_timeout` only starts once the headers are received.
+
+When sizing the timeouts of a proxy or load balancer in front of the router, or the
+[`shutdown_timeout`](/docs/router/configuration/http#shutdown_timeout), use the sum of
+`header_read_timeout` and `request_timeout`.
 
 ### `router.keep_alive`
 
