@@ -2,8 +2,8 @@
 title: Hive Gateway v3
 description:
   Hive Gateway v3 runs on GraphQL Yoga v6, supports `@context` and `@fromContext` with the Rust
-  Query Planner, speaks the latest defer/stream spec, plans faster with the JavaScript Query Planner
-  and drops Node.js 20 and GraphQL-JS 15.
+  Query Planner, speaks the latest defer/stream spec, plans faster with the JavaScript Query Planner,
+  supports GraphQL-JS 17 and drops Node.js 20 and GraphQL-JS 15.
 date: 2026-11-18
 authors: [enisdenjo]
 ---
@@ -120,6 +120,18 @@ export const gatewayConfig = defineConfig({
 });
 ```
 
+## GraphQL-JS 17 Support
+
+Hive Gateway and the stitching, wrapping and federation packages work with GraphQL-JS 17 alongside
+16. The `graphql` peer dependency accepts both versions, so projects that install the packages
+themselves keep the GraphQL version they already use.
+
+The Docker images and the standalone binary come with `graphql@17.1.0`, so plugins, additional
+resolvers, transforms and hooks loaded by the gateway configuration run against GraphQL-JS 17. Code
+that only uses the gateway APIs needs no changes. If your custom code uses GraphQL internals
+directly, check the
+[migration guide](/docs/migration-guides/gateway-v2-v3#graphql-v17-in-docker-images-and-binary).
+
 ## Dropped Node.js 20 and GraphQL-JS 15
 
 Node.js 20 has reached its end of life. Hive Gateway v3 requires Node.js 22.15 or later, and
@@ -149,3 +161,4 @@ Read the [migration guide](/docs/migration-guides/gateway-v2-v3) for all the det
 - [Yoga v5 to v6 migration guide](https://the-guild.dev/graphql/yoga-server/docs/migration/migration-from-yoga-v5)
 - [Pull request #2670: Hive Gateway v3](https://github.com/graphql-hive/gateway/pull/2670)
 - [Pull request #2703: Support `@context` and `@fromContext` with Rust QP](https://github.com/graphql-hive/gateway/pull/2703)
+- [Pull request #2763: Support GraphQL v17](https://github.com/graphql-hive/gateway/pull/2763)
