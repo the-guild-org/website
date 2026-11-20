@@ -1,0 +1,174 @@
+---
+title: Hive Gateway v3
+description:
+  Hive Gateway v3 runs on GraphQL Yoga v6, supports `@context` and `@fromContext` with the Rust
+  Query Planner, speaks the latest defer/stream spec, plans faster with the JavaScript Query Planner,
+  supports GraphQL-JS 17, upgrades to OpenTelemetry JS SDK 3 and drops Node.js 20 and GraphQL-JS 15.
+date: 2026-11-18
+authors: [enisdenjo]
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+[Hive Gateway](/docs/gateway) v3 is out! It is built on
+[GraphQL Yoga v6](/product-updates/2026-10-24-yoga-adopts-hive-logger-support-latest-defer-steam-spec-drops-legacy-node-and-graphql)
+and the latest major versions of GraphQL Tools, brings Federation contexts to the Rust Query Planner,
+and cleans up APIs that have been deprecated throughout v2.
+
+<Callout type="info">
+  Most of the breaking changes are removals of deprecated APIs. Follow the
+  [migration guide](/docs/migration-guides/gateway-v2-v3) to upgrade from v2.
+</Callout>
+
+## Contextual Arguments with the Rust Query Planner
+
+The [Rust Query Planner](/docs/gateway/other-features/rust-query-planner) supports the Federation
+`@context` and `@fromContext` directives, just like [Hive Router](/product-updates/2026-10-23-hive-router-federation-context).
+Nested fields can receive data from their ancestors without exposing it as a public argument:
+
+```graphql
+type User @key(fields: "id") @context(name: "userContext") {
+  id: ID!
+  currency: String
+  transactions: [Transaction]
+}
+
+type Transaction @key(fields: "id") {
+  id: ID!
+  amount(code: String @fromContext(field: "$userContext { currency }")): Int
+}
+```
+
+Clients keep querying `amount` as is, and Hive Gateway fills in `code` from the `currency` of the
+nearest `User` above each transaction. Entities whose ancestors hold different context values are
+grouped by those values, and all groups are sent in a **single subgraph request** where every group
+gets its own aliased `_entities` field. A list of users in 20 currencies still costs one round trip.
+
+## Request Correlation and Summaries
+
+Hive Gateway uses the
+[request ID handling of Yoga v6](/product-updates/2026-10-24-yoga-adopts-hive-logger-support-latest-defer-steam-spec-drops-legacy-node-and-graphql#smarter-request-id-correlation).
+A request ID your server framework already assigned to the request, like Fastify's `request.id`, is
+used first, so the gateway logs agree with the logs of your framework. The incoming `x-request-id`
+header is not trusted by default, so clients cannot choose their own request IDs. If the gateway is
+reachable only through a proxy that sets the header itself, you can trust it:
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  requestId: {
+    trustHeader: true,
+  },
+});
+```
+
+Every processed request is also summarized in a single `info` level log line with the operation,
+the response status, the number of GraphQL errors and the request duration:
+
+```
+2026-11-18T10:00:00.000Z INF Request processed
+  requestId: "0b1dce69-5eb0-4d7b-97d8-1337535a620e"
+  method: "POST"
+  path: "/graphql"
+  operationName: "MyQuery"
+  operationType: "query"
+  status: 200
+  errorCount: 0
+  durationMs: 12
+```
+
+## Faster JavaScript Query Planner
+
+The JavaScript Query Planner no longer clones subgraphs for every group of computed or `@requires`
+fields and for every merged type entry point. A subgraph is registered once, merges that used to be
+split across clones are planned as one stage, and delegation plans are cached, also for types with
+`@requires` fields.
+
+On our [federation benchmark](https://github.com/graphql-hive/gateway/tree/main/bench/federation),
+this resulted in about **7% higher throughput** for Hive Gateway over HTTP, and in about **11% higher
+throughput** for in-process stitching.
+
+This is only the beginning. We have significantly more performance improvements lined up, but we
+are saving them for upcoming releases to avoid overcrowding v3.
+
+## Latest Incremental Delivery Spec
+
+Following
+[Yoga v6](/product-updates/2026-10-24-yoga-adopts-hive-logger-support-latest-defer-steam-spec-drops-legacy-node-and-graphql#support-for-the-latest-incremental-delivery-deferstream-spec),
+clients can request the current `graphql-js` incremental delivery format for `@defer` and `@stream`
+(using `pending`, `id`, `subPath` and `completed`) with an `incrementalSpec` parameter on the
+`Accept` header:
+
+```
+Accept: multipart/mixed;incrementalSpec=v0.2
+```
+
+The format is echoed back on the `Content-Type` header of the response. Clients sending a bare
+`multipart/mixed` or `deferSpec=20220824` keep receiving the legacy format, so existing clients are
+unaffected.
+
+## Configurable Request Body Size Limit
+
+The 25 MB request body size limit can be changed with the `maxRequestBodySize` option:
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  maxRequestBodySize: 5_000_000, // 5 MB
+});
+```
+
+## GraphQL-JS 17 Support
+
+Hive Gateway and the stitching, wrapping and federation packages work with GraphQL-JS 17 alongside
+16. The `graphql` peer dependency accepts both versions, so projects that install the packages
+themselves keep the GraphQL version they already use.
+
+The Docker images and the standalone binary come with `graphql@17.1.0`, so plugins, additional
+resolvers, transforms and hooks loaded by the gateway configuration run against GraphQL-JS 17. Code
+that only uses the gateway APIs needs no changes. If your custom code uses GraphQL internals
+directly, check the
+[migration guide](/docs/migration-guides/gateway-v2-v3#graphql-v17-in-docker-images-and-binary).
+
+## OpenTelemetry JS SDK 3
+
+Hive Gateway and the OpenTelemetry plugin use OpenTelemetry JS SDK 3 and `@opentelemetry/api` 1.10.
+The CLI options are unchanged, but custom OpenTelemetry setups have to use SDK 3 packages too.
+`@opentelemetry/sdk-trace` replaces `@opentelemetry/sdk-trace-base`, the Logs API is part of
+`@opentelemetry/api`, and the Jaeger exporter and propagator are gone in favour of OTLP and W3C Trace
+Context. Check the [migration guide](/docs/migration-guides/gateway-v2-v3#opentelemetry-js-sdk-3)
+for the details.
+
+## Dropped Node.js 20 and GraphQL-JS 15
+
+Node.js 20 has reached its end of life. Hive Gateway v3 requires Node.js 22.15 or later, and
+GraphQL-JS 16 or 17.
+
+## Removed Deprecated APIs
+
+The following deprecated APIs have been removed:
+
+- The `onDelegationPlan` and `onDelegationStageExecute` plugin hooks
+- The `logger` property of the transport context and the `onFetch` hook, in favour of `log`
+- The `allowArbitraryOperations` persisted documents option, in favour of `allowArbitraryDocuments`
+- Passing an array to the `rateLimiting` option, in favour of `rateLimiting: { config: [...] }`
+- Passing an object to the `clientInfo` usage reporting option, in favour of a function
+- The `--hive-registry-token` and `--hive-usage-target` CLI options, in favour of `--hive-target`
+  and `--hive-access-token`
+
+Read the [migration guide](/docs/migration-guides/gateway-v2-v3) for all the details.
+
+---
+
+- [Migration guide from v2 to v3](/docs/migration-guides/gateway-v2-v3)
+- [Rust Query Planner documentation](/docs/gateway/other-features/rust-query-planner#contextual-arguments)
+- [Defer and Stream documentation](/docs/gateway/defer-stream)
+- [Logging documentation](/docs/gateway/logging-and-error-handling#request-id)
+- [Product update: Yoga v6](/product-updates/2026-10-24-yoga-adopts-hive-logger-support-latest-defer-steam-spec-drops-legacy-node-and-graphql)
+- [Yoga v5 to v6 migration guide](https://the-guild.dev/graphql/yoga-server/docs/migration/migration-from-yoga-v5)
+- [Pull request #2670: Hive Gateway v3](https://github.com/graphql-hive/gateway/pull/2670)
+- [Pull request #2703: Support `@context` and `@fromContext` with Rust QP](https://github.com/graphql-hive/gateway/pull/2703)
+- [Pull request #2763: Support GraphQL v17](https://github.com/graphql-hive/gateway/pull/2763)
+- [Pull request #2765: Upgrade OpenTelemetry to v3](https://github.com/graphql-hive/gateway/pull/2765)

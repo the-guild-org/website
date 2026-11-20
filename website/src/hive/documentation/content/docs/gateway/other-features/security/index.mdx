@@ -160,8 +160,30 @@ so requests without a `Content-Length` header, such as chunked requests, are lim
 with an invalid `Content-Length` header are rejected with `400` (Bad Request).
 
 The limit applies to all request bodies parsed by the gateway, including JSON, GraphQL,
-URL-encoded and multipart requests. It is not configurable through the gateway configuration. If
-you need a stricter limit, enforce it in a reverse proxy or load balancer in front of the gateway.
+URL-encoded and multipart requests.
+
+Use the `maxRequestBodySize` option to set a different limit in bytes, or `false` to disable it:
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  maxRequestBodySize: 5_000_000, // 5 MB
+});
+```
+
+<Callout type="warning">
+  Only disable the limit if an appropriate request body limit is enforced
+  elsewhere, for example in a reverse proxy or load balancer in front of the
+  gateway.
+</Callout>
+
+Enforcing the limit streams the request body through a byte counter, which makes body parsing
+asynchronous even for in-memory bodies. When using
+[the runtime programmatically](/docs/gateway/deployment/runtimes/nodejs#hive-gateway-runtime-advanced-only),
+`gateway.fetch()` therefore always resolves asynchronously and the result has to be awaited.
+Disabling the limit removes this particular asynchronous step, but it does not guarantee a
+synchronous response if plugins, resolvers or subgraph requests are asynchronous.
 
 ## Prevent unwanted HTTP requests
 

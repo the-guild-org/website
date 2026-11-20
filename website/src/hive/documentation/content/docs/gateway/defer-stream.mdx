@@ -25,7 +25,7 @@ working group.
 
 <Callout>
   Stream and Defer are **experimental** features and not yet stable. The
-  implementation can and will change. Furthermore, there is no yet a stable
+  implementation can and will change. Furthermore, there is no stable
   specification for the incremental delivery protocol.
 </Callout>
 
@@ -62,4 +62,27 @@ items are available.
 query StreamAlphabet {
   alphabet @stream
 }
+```
+
+## Incremental Delivery Formats
+
+Since there is no stable specification for incremental delivery yet, different clients expect
+different response formats. Hive Gateway supports two of them and picks one based on the `Accept`
+header of the client request:
+
+| `Accept` header                                                | Format                                                                                    |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `multipart/mixed;incrementalSpec=v0.2`                         | `v0.2`, the current `graphql-js` format using `pending`, `id`, `subPath` and `completed`  |
+| `multipart/mixed;deferSpec=20220824` or bare `multipart/mixed` | `v0.1`, the legacy format using `path` and `label`                                        |
+
+The chosen format is echoed back in the `Content-Type` header of the response, so clients can
+confirm which format they received. An unsupported value of the `incrementalSpec` or `deferSpec`
+parameter is rejected with the HTTP status code `406` (Not Acceptable).
+
+```http title="Requesting the v0.2 format"
+POST /graphql HTTP/1.1
+Accept: multipart/mixed;incrementalSpec=v0.2
+Content-Type: application/json
+
+{"query":"query SlowAndFastFieldWithDefer { ... on Query @defer { slowField } fastField }"}
 ```

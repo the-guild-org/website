@@ -122,6 +122,41 @@ export const gatewayConfig = defineConfig({
 });
 ```
 
+## Contextual Arguments
+
+The Rust Query Planner supports the Federation `@context` and `@fromContext` directives. A field
+argument annotated with `@fromContext` is removed from the public API schema, and its value is
+filled in from the nearest ancestor in the response that sets the matching `@context`.
+
+```graphql
+type User @key(fields: "id") @context(name: "userContext") {
+  id: ID!
+  currency: String
+  transactions: [Transaction]
+}
+
+type Transaction @key(fields: "id") {
+  id: ID!
+  amount(code: String @fromContext(field: "$userContext { currency }")): Int
+}
+```
+
+For every entity, Hive Gateway reads the context values from its ancestors and sends them to the
+subgraph as variables. A value that cannot be read is sent as `null`. Entities whose ancestors hold
+different values are grouped by those values, and all groups are sent in a single subgraph request
+where every group gets its own aliased `_entities` field. Contextual arguments that are non-null are
+fetched with one request per group instead.
+
+<Callout type="warning">
+  All context groups of a fetch are sent in a single request because the number
+  of aliases per request cannot be limited. Subgraphs that cap the number of
+  aliases per operation can reject fetches with many distinct context values.
+</Callout>
+
+The [Contextual Arguments guide of Hive Router](/docs/router/guides/contextual-arguments) explains
+the directives, the rules composition enforces and how contextual arguments are resolved in more
+detail.
+
 ## Compared to JavaScript Query Planner
 
 Hive Gateway uses the [JavaScript Query Planner](https://the-guild.dev/graphql/stitching) by
@@ -139,11 +174,12 @@ The following table provides a comprehensive comparison between the two query pl
 | Additional resolvers         | ✅         | ❌                    | Additional type resolvers not supported                                                                 |
 | Schema transforms            | ✅         | ✅                    | Schema transformation pipeline is available in router runtime                                           |
 | Progressive Override         | ✅         | ✅                    | Apollo Federation's `@override` directive with labels is supported                                      |
+| Contextual arguments         | ❌         | ✅                    | Apollo Federation's `@context` and `@fromContext` directives are supported                              |
 | Rate limiting                | ✅         | ✅                    | Field-level and global rate limiting is supported                                                       |
 | EDFS                         | ✅         | ✅                    | Event-Driven Federated Subscriptions are supported                                                      |
 | Subscriptions                | ✅         | ✅                    | Populates fields from other subgraphs after resolving the subscription                                  |
 | Schema extensions            | ✅         | ⚠️ Limited support    | Schema-level modifications may be limited because hive router does not use an executable schema         |
-| Custom plugins               | ✅         | ⚠️ No stitching hooks | All plugins, except those using [stitching hooks](#no-javascript-query-planner-plugin-hooks), will work |
+| Custom plugins               | ✅         | ✅                    | All plugins will work                                                                                   |
 | Envelop plugins              | ✅         | ✅                    | All of envelop plugins will work                                                                        |
 | Yoga plugins                 | ✅         | ✅                    | All of Yoga plugins will work                                                                           |
 | Gateway plugins              | ✅         | ✅                    | All gateway plugins will work                                                                           |
@@ -164,16 +200,6 @@ The following table provides a comprehensive comparison between the two query pl
 | Persisted documents          | ✅         | ✅                    | Operation allow-listing and security                                                                    |
 | Request plugins              | ✅         | ✅                    | Request-level processing and modification                                                               |
 | Response plugins             | ✅         | ✅                    | Response-level processing and modification                                                              |
-
-## No JavaScript Query Planner Plugin Hooks
-
-All plugin hooks will work with the Rust Query Planner except for those specific to stitching that
-will never work because the runtime is different (Rust Query Planner vs. JavaScript Query Planner).
-
-Those hooks are only the following two hooks:
-
-- [`onDelegationPlan`](/docs/gateway/other-features/custom-plugins#ondelegationplan)
-- [`onDelegationStageExecute`](/docs/gateway/other-features/custom-plugins#ondelegationstageexecute)
 
 ## Federation Specification Compliance
 
