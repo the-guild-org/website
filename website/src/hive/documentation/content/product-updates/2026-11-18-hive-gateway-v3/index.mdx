@@ -3,7 +3,7 @@ title: Hive Gateway v3
 description:
   Hive Gateway v3 runs on GraphQL Yoga v6, supports `@context` and `@fromContext` with the Rust
   Query Planner, speaks the latest defer/stream spec, plans faster with the JavaScript Query Planner,
-  supports GraphQL-JS 17 and drops Node.js 20 and GraphQL-JS 15.
+  supports GraphQL-JS 17, upgrades to OpenTelemetry JS SDK 3 and drops Node.js 20 and GraphQL-JS 15.
 date: 2026-11-18
 authors: [enisdenjo]
 ---
@@ -132,6 +132,15 @@ that only uses the gateway APIs needs no changes. If your custom code uses Graph
 directly, check the
 [migration guide](/docs/migration-guides/gateway-v2-v3#graphql-v17-in-docker-images-and-binary).
 
+## OpenTelemetry JS SDK 3
+
+Hive Gateway and the OpenTelemetry plugin use OpenTelemetry JS SDK 3 and `@opentelemetry/api` 1.10.
+The CLI options are unchanged, but custom OpenTelemetry setups have to use SDK 3 packages too.
+`@opentelemetry/sdk-trace` replaces `@opentelemetry/sdk-trace-base`, the Logs API is part of
+`@opentelemetry/api`, and the Jaeger exporter and propagator are gone in favour of OTLP and W3C Trace
+Context. Check the [migration guide](/docs/migration-guides/gateway-v2-v3#opentelemetry-js-sdk-3)
+for the details.
+
 ## Dropped Node.js 20 and GraphQL-JS 15
 
 Node.js 20 has reached its end of life. Hive Gateway v3 requires Node.js 22.15 or later, and
@@ -162,3 +171,4 @@ Read the [migration guide](/docs/migration-guides/gateway-v2-v3) for all the det
 - [Pull request #2670: Hive Gateway v3](https://github.com/graphql-hive/gateway/pull/2670)
 - [Pull request #2703: Support `@context` and `@fromContext` with Rust QP](https://github.com/graphql-hive/gateway/pull/2703)
 - [Pull request #2763: Support GraphQL v17](https://github.com/graphql-hive/gateway/pull/2763)
+- [Pull request #2765: Upgrade OpenTelemetry to v3](https://github.com/graphql-hive/gateway/pull/2765)
