@@ -24,6 +24,7 @@ The most significant changes are:
 - [Removed Legacy Logger](#removed-legacy-logger)
 - [Removed Deprecated Options](#removed-deprecated-options)
 - [Removed Upstream Helpers](#removed-upstream-helpers)
+- [OpenTelemetry JS SDK 3](#opentelemetry-js-sdk-3)
 - [GraphQL Tools Stitching](#graphql-tools-stitching)
 
 ## Drop Support for Node v20
@@ -419,6 +420,118 @@ custom code use them, replace them as follows (see also the
 - throw createGraphQLError('Unauthorized', { extensions: { code: 'UNAUTHORIZED' } });
 + throw new GraphQLError('Unauthorized', { extensions: { code: 'UNAUTHORIZED' } });
 ```
+
+## OpenTelemetry JS SDK 3
+
+Hive Gateway and `@graphql-hive/plugin-opentelemetry` use OpenTelemetry JS SDK 3 (the stable
+packages at 3.x, the experimental packages like `@opentelemetry/sdk-node` at 0.301.x) and
+`@opentelemetry/api` 1.10. SDK 2 packages can't be used together with `@opentelemetry/api` 1.10, so
+custom code using OpenTelemetry packages has to upgrade to SDK 3 too. The
+[OpenTelemetry JS 3.x migration guide](https://github.com/open-telemetry/opentelemetry-js/blob/main/doc/3.x/migration-guide.md)
+describes all changes, the ones affecting Hive Gateway are listed below.
+
+The CLI options are unchanged. The Docker images and the binary bundle `@opentelemetry/sdk-trace`
+instead of `@opentelemetry/sdk-trace-base`, and don't bundle `@opentelemetry/api-logs` and
+`@opentelemetry/propagator-jaeger` anymore.
+
+### Jaeger Exporter and Propagator
+
+`@opentelemetry/exporter-jaeger` and `@opentelemetry/propagator-jaeger` were removed by
+OpenTelemetry. Jaeger receives OTLP natively, so export to it with the OTLP exporters, for example
+with the `--opentelemetry` CLI option:
+
+```sh
+hive-gateway supergraph --opentelemetry "http://jaeger:4318/v1/traces"
+```
+
+The gateway propagates the W3C Trace Context and Baggage headers by default. Services that send or
+expect the `uber-trace-id` header have to switch to W3C Trace Context for their traces to be
+correlated with the gateway's. `OTEL_PROPAGATORS=jaeger` is not accepted by `NodeSDK` anymore, use
+`OTEL_PROPAGATORS=tracecontext` instead.
+
+### `@opentelemetry/sdk-trace` Replaces `@opentelemetry/sdk-trace-base`
+
+Import the samplers, processors and exporters from `@opentelemetry/sdk-trace`.
+`BasicTracerProvider` is called `TracerProvider`, and the span processors take the exporter as an
+option:
+
+```diff title="telemetry.ts"
+- import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
++ import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace';
+
+openTelemetrySetup({
+  contextManager: new AsyncLocalStorageContextManager(),
+  traces: {
+    processors: [
+-     new SimpleSpanProcessor(new OTLPTraceExporter()),
++     new SimpleSpanProcessor({ exporter: new OTLPTraceExporter() }),
+    ],
+  },
+});
+```
+
+The `BufferConfig` type of the `traces.batching` option is exported from
+`@graphql-hive/gateway/opentelemetry/setup` and `@graphql-hive/plugin-opentelemetry/setup`.
+
+### Removed `generalLimits` Option
+
+The `generalLimits` option of `openTelemetrySetup` has been removed. Set the limits in
+`traces.spanLimits` instead:
+
+```diff title="telemetry.ts"
+openTelemetrySetup({
+  contextManager: new AsyncLocalStorageContextManager(),
+- generalLimits: { attributeCountLimit: 64 },
+  traces: {
+    exporter: new OTLPTraceExporter(),
++   spanLimits: { attributeCountLimit: 64 },
+  },
+});
+```
+
+### Batching and Limits Environment Variables
+
+`openTelemetrySetup`, `hiveTracingSetup` and the `--opentelemetry` CLI option don't read the
+`OTEL_BSP_*` environment variables and the attribute, span, event and link limit environment
+variables (like `OTEL_ATTRIBUTE_COUNT_LIMIT` or `OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT`) anymore.
+Use the `traces.batching` and `traces.spanLimits` options instead, or set up the SDK with `NodeSDK`,
+which still reads them.
+
+### Logs API
+
+`@opentelemetry/api-logs` was removed by OpenTelemetry. Import the Logs API from
+`@opentelemetry/api`, or from `@graphql-hive/gateway/opentelemetry/api`:
+
+```diff
+- import { logs, SeverityNumber } from '@opentelemetry/api-logs';
++ import { logs, SeverityNumber } from '@opentelemetry/api';
+```
+
+### Bundled `@opentelemetry/sdk-node`
+
+The `@opentelemetry/sdk-node` bundled in the Docker images and the binary exports only `NodeSDK`,
+`startNodeSdk` and the configuration types. It has no default export and no namespaces (`api`,
+`contextBase`, `core`, `logs`, `metrics`, `node`, `resources` and `tracing`). Import from the
+packages directly, they are bundled too:
+
+```diff title="telemetry.ts"
+- import { NodeSDK, resources, tracing } from '@opentelemetry/sdk-node';
++ import { resourceFromAttributes } from '@opentelemetry/resources';
++ import { NodeSDK } from '@opentelemetry/sdk-node';
++ import { BatchSpanProcessor } from '@opentelemetry/sdk-trace';
+
+new NodeSDK({
+- resource: resources.resourceFromAttributes({ 'service.name': 'my-gateway' }),
+- spanProcessors: [new tracing.BatchSpanProcessor(exporter)],
++ resource: resourceFromAttributes({ 'service.name': 'my-gateway' }),
++ spanProcessors: [new BatchSpanProcessor({ exporter })],
+}).start();
+```
+
+The bundled `@opentelemetry/context-async-hooks` exports only `AsyncLocalStorageContextManager`,
+`AsyncHooksContextManager` was removed by OpenTelemetry. Imports of files inside OpenTelemetry
+packages (like `@opentelemetry/core/build/src/...`) don't resolve anymore, import from the package
+name instead.
 
 ## GraphQL Tools Stitching
 
