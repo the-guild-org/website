@@ -150,6 +150,10 @@ infrastructure.
 The most commonly used otel packages are available when using Hive Gateway with CLI. Please switch
 to programmatic usage if you need more packages.
 
+Hive Gateway uses OpenTelemetry JS SDK 3 and `@opentelemetry/api` 1.10, custom code using
+OpenTelemetry packages has to use SDK 3 packages too. Import from the package names only, imports of
+files inside a package (like `@opentelemetry/core/build/src/...`) don't resolve.
+
 Please refer to [`opentelemetry-js` documentation](https://opentelemetry.io/docs/languages/js/) for
 more details about OpenTelemetry setup and API.
 
@@ -250,9 +254,14 @@ The most commonly used otel packages are available when using Hive Gateway with 
 can follow official `@opentelemetry/sdk-node` documentation for your setup. Please switch to
 programmatic usage if you need more packages.
 
+The bundled `@opentelemetry/sdk-node` exports `NodeSDK`, `startNodeSdk` and the configuration
+types, without a default export or namespaces like `resources` or `tracing`. Import from the
+packages directly instead, like `@opentelemetry/resources` or `@opentelemetry/sdk-trace`, they are
+bundled too.
+
 ```ts title="telemetry.ts"
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { NodeSDK, resources, tracing } from "@opentelemetry/sdk-node";
+import { NodeSDK } from "@opentelemetry/sdk-node";
 
 new NodeSDK({
   // All configuration is optional. OTEL rely on env variables or sensible default value.
@@ -333,10 +342,11 @@ openTelemetrySetup({
 <Tabs.Tab>
 
 ```ts title="telemetry.ts"
-import { NodeSDK, resources } from "@opentelemetry/sdk-node";
+import { resourceFromAttributes } from "@opentelemetry/resources";
+import { NodeSDK } from "@opentelemetry/sdk-node";
 
 new NodeSDK({
-  resource: resources.resourceFromAttributes({
+  resource: resourceFromAttributes({
     "service.name": "my-service",
     "service.version": "1.0.0",
   }),
@@ -380,10 +390,11 @@ openTelemetrySetup({
 <Tabs.Tab>
 
 ```ts title="telemetry.ts"
-import { NodeSDK, resources } from "@opentelemetry/sdk-node";
+import { resourceFromAttributes } from "@opentelemetry/resources";
+import { NodeSDK } from "@opentelemetry/sdk-node";
 
 new NodeSDK({
-  resource: resources.resourceFromAttributes({
+  resource: resourceFromAttributes({
     "service.name": "my-service",
     "service.version": "1.0.0",
   }),
@@ -503,7 +514,7 @@ programmatic usage to install a non-official exporter.
 A simple exporter that writes the spans to the `stdout` of the process. It is mostly used for
 debugging purpose.
 
-[See official documentation for more details](https://open-telemetry.github.io/opentelemetry-js/classes/_opentelemetry_sdk-trace-base.ConsoleSpanExporter.html).
+[See official documentation for more details](https://github.com/open-telemetry/opentelemetry-js/tree/main/packages/sdk-trace).
 
 <Tabs items={[<div key="gateway">Hive Gateway <code>openTelemetrySetup()</code> (recommended)</div>, <div key="otel">OpenTelemetry <code>NodeSDK</code></div>]}>
 
@@ -522,12 +533,16 @@ openTelemetrySetup({
 <Tabs.Tab>
 
 ```ts title="telemetry.ts"
-import { NodeSDK, tracing } from "@opentelemetry/sdk-node";
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import {
+  ConsoleSpanExporter,
+  SimpleSpanProcessor,
+} from "@opentelemetry/sdk-trace";
 
 new NodeSDK({
   // Use `spanProcessors` instead of `traceExporter` to avoid the default batching configuration
   spanProcessors: [
-    new tracing.SimpleSpanProcessor(new tracing.ConsoleSpanExporter()),
+    new SimpleSpanProcessor({ exporter: new ConsoleSpanExporter() }),
   ],
 }).start();
 ```
@@ -640,6 +655,12 @@ npm i @opentelemetry/exporter-trace-otlp-http
 Your Jaeger instance needs to have OTLP ingestion enabled, so verify that you have the
 `COLLECTOR_OTLP_ENABLED=true` environment variable set, and that ports `4317` and `4318` are
 accessible.
+
+With the CLI, point the `--opentelemetry` option to Jaeger's OTLP HTTP endpoint:
+
+```bash
+hive-gateway supergraph --opentelemetry "http://<jaeger-endpoint>:4318/v1/traces"
+```
 
 <Tabs items={[<div key="gateway">Hive Gateway <code>openTelemetrySetup()</code> (recommended)</div>, <div key="otel">OpenTelemetry <code>NodeSDK</code></div>]}>
 
@@ -897,8 +918,13 @@ with Hive Gateway CLI. To use other non-official propagators, please switch to m
 You will also have to pick a Context Manager. It will be responsible to keep track of the current
 OpenTelemetry Context at any point of program. We recommend using the official
 `AsyncLocalStorageContextManager` from `@opentelemetry/context-async-hooks` when `AsyncLocalStorage`
-API is available. In other cases, you can either try `@opentelemetry/context-zone`, or pass `null`
-to not use any context manager.
+API is available, it is the only context manager the package exports. In other cases, you can
+either try `@opentelemetry/context-zone`, or pass `null` to not use any context manager.
+
+OpenTelemetry deprecated the Jaeger propagator (`uber-trace-id` header) in favour of W3C Trace
+Context and it is not available. Services that send or expect the `uber-trace-id` header have to
+switch to W3C Trace Context for their traces to be correlated with the gateway's. When using
+`NodeSDK`, set `OTEL_PROPAGATORS` to `tracecontext` instead of `jaeger`.
 
 If no Context Manager compatible with async is registered, automatic parenting of custom spans will
 not work. You will have to retrieve the current OpenTelemetry context from the GraphQL context, or
@@ -996,21 +1022,20 @@ openTelemetrySetup({
 <Tabs.Tab>
 
 ```ts title="telemetry.ts"
-import { NodeSDK, tracing } from '@opentelemetry/sdk-node'
+import { NodeSDK } from '@opentelemetry/sdk-node'
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace'
 
 const exporter = ...
 
 new NodeSDK({
   spanProcessors: [
-    new tracing.BatchSpanProcessor(
+    new BatchSpanProcessor({
       exporter,
-      {
-        exportTimeoutMillis: 30_000, // Default to 30_000ms
-        maxExportBatchSize: 512, // Default to 512 spans
-        maxQueueSize: 2048, // Default to 2048 spans
-        scheduledDelayMillis: 5_000, // Default to 5_000ms
-      },
-    ),
+      exportTimeoutMillis: 30_000, // Default to 30_000ms
+      maxExportBatchSize: 512, // Default to 512 spans
+      maxQueueSize: 2048, // Default to 2048 spans
+      scheduledDelayMillis: 5_000, // Default to 5_000ms
+    }),
   ],
 }).start()
 ```
@@ -1018,6 +1043,14 @@ new NodeSDK({
 </Tabs.Tab>
 
 </Tabs>
+
+`openTelemetrySetup()`, `hiveTracingSetup()` and the `--opentelemetry` CLI option don't read the
+`OTEL_BSP_*` environment variables (`OTEL_BSP_SCHEDULE_DELAY`, `OTEL_BSP_EXPORT_TIMEOUT`,
+`OTEL_BSP_MAX_QUEUE_SIZE` and `OTEL_BSP_MAX_EXPORT_BATCH_SIZE`). Use the `traces.batching` option
+instead, or set up the SDK with `NodeSDK`, which reads them.
+
+The type of the `traces.batching` options object, `BufferConfig`, is exported from
+`@graphql-hive/gateway/opentelemetry/setup` and `@graphql-hive/plugin-opentelemetry/setup`.
 
 You can learn more about the batching options in the
 [Picking the right span processor](https://opentelemetry.io/docs/languages/js/instrumentation/#picking-the-right-span-processor)
@@ -1045,7 +1078,7 @@ rate which will be used to setup a Parent + TraceID Ratio strategy.
 ```ts title="telemetry.ts"
 import { openTelemetrySetup } from "@graphql-hive/gateway/opentelemetry/setup";
 import { JaegerRemoteSampler } from "@opentelemetry/sampler-jaeger-remote";
-import { AlwaysOnSampler } from "@opentelemetry/sdk-trace-base";
+import { AlwaysOnSampler } from "@opentelemetry/sdk-trace";
 
 openTelemetrySetup({
   // Use Parent + TraceID Ratio strategy
@@ -1067,7 +1100,12 @@ openTelemetrySetup({
 
 ```ts title="telemetry.ts"
 import { JaegerRemoteSampler } from "@opentelemetry/sampler-jaeger-remote";
-import { NodeSDK, tracing } from "@opentelemetry/sdk-node";
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import {
+  AlwaysOnSampler,
+  ParentBasedSampler,
+  TraceIdRatioBasedSampler,
+} from "@opentelemetry/sdk-trace";
 
 new NodeSDK({
   // Use Parent + TraceID Ratio strategy
@@ -1079,7 +1117,7 @@ new NodeSDK({
   sampler: new JaegerRemoteSampler({
     endpoint: "http://your-jaeger-agent:14268/api/sampling",
     serviceName: "your-service-name",
-    initialSampler: new tracing.AlwaysOnSampler(),
+    initialSampler: new AlwaysOnSampler(),
     poolingInterval: 60000, // 60 seconds
   }),
 }).start();
@@ -1102,11 +1140,10 @@ both cardinality and amount of data the OpenTelemetry SDK will be allowed to gen
 import { openTelemetrySetup } from "@graphql-hive/gateway/opentelemetry/setup";
 
 openTelemetrySetup({
-  generalLimits: {
-    //...
-  },
   traces: {
     spanLimits: {
+      attributeCountLimit: 128,
+      attributeValueLengthLimit: 1024,
       //...
     },
   },
@@ -1121,10 +1158,9 @@ openTelemetrySetup({
 import { NodeSDK } from "@opentelemetry/sdk-node";
 
 new NodeSDK({
-  generalLimits: {
-    //...
-  },
   spanLimits: {
+    attributeCountLimit: 128,
+    attributeValueLengthLimit: 1024,
     //...
   },
 }).start();
@@ -1133,6 +1169,11 @@ new NodeSDK({
 </Tabs.Tab>
 
 </Tabs>
+
+`openTelemetrySetup()`, `hiveTracingSetup()` and the `--opentelemetry` CLI option don't read the
+attribute, span, event and link limit environment variables (like `OTEL_ATTRIBUTE_COUNT_LIMIT` or
+`OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT`). Use the `traces.spanLimits` option instead, or set up the
+SDK with `NodeSDK`, which reads them.
 
 ### Configuration
 
@@ -2713,12 +2754,16 @@ openTelemetrySetup({
 <Tabs.Tab>
 
 ```ts title="telemetry.ts"
-import { NodeSDK, tracing } from "@opentelemetry/sdk-node";
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import {
+  ConsoleSpanExporter,
+  SimpleSpanProcessor,
+} from "@opentelemetry/sdk-trace";
 
 new NodeSDK({
   // Use `spanProcessors` instead of `traceExporter` to avoid the default batching configuration
   spanProcessors: [
-    new tracing.SimpleSpanProcessor(new tracing.ConsoleSpanExporter()),
+    new SimpleSpanProcessor({ exporter: new ConsoleSpanExporter() }),
   ],
 }).start();
 ```

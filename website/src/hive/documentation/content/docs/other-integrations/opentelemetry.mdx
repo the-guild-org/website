@@ -79,23 +79,24 @@ Do not call `hiveTracingSetup` or register a second provider in this case. Add
 `HiveTracingSpanProcessor` to your existing SDK configuration before starting the provider:
 
 ```sh npm2yarn
-npm i @opentelemetry/exporter-trace-otlp-http @opentelemetry/sdk-node
+npm i @opentelemetry/exporter-trace-otlp-http @opentelemetry/sdk-node @opentelemetry/sdk-trace
 ```
 
 ```ts title="telemetry.ts"
 import { HiveTracingSpanProcessor } from "@graphql-hive/plugin-opentelemetry/setup";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { NodeSDK, tracing } from "@opentelemetry/sdk-node";
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace";
 
 const sdk = new NodeSDK({
   // Keep your existing resource, instrumentations, and other SDK options here.
   spanProcessors: [
     // Your existing backend. This exporter can also use the standard OTEL_EXPORTER_* variables.
-    new tracing.BatchSpanProcessor(
-      new OTLPTraceExporter({
+    new BatchSpanProcessor({
+      exporter: new OTLPTraceExporter({
         url: process.env["EXISTING_OTLP_TRACES_ENDPOINT"],
       }),
-    ),
+    }),
     // HiveTracingSpanProcessor batches and exports a copy of each Hive trace to Hive Console.
     new HiveTracingSpanProcessor({
       endpoint:
