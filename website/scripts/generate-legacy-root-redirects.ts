@@ -94,13 +94,12 @@ const LEGACY_BLOCK = 'Legacy root paths of the old product sites';
 const CATEGORY_BLOCK = 'Docs categories without a page of their own';
 const FETS_BLOCK = 'Root paths of the old feTS site';
 /**
- * feTS (still served from its own deployment through the router) kept its
- * docs at the root of its old domain; Google still requests /server/... and
- * /client/... here, and every page has a home under /openapi/fets.
+ * feTS kept its docs at the root of its old domain; Google still requests
+ * /server/... and /client/... here, and every page lives on at fets.dev.
  */
 const FETS_RULES = [
-  '/server/* /openapi/fets/server/:splat 301',
-  '/client/* /openapi/fets/client/:splat 301',
+  '/server/* https://fets.dev/server/:splat 301',
+  '/client/* https://fets.dev/client/:splat 301',
 ];
 const PARTNERS_BLOCK = 'Bare parents of wildcard rules';
 /** A directory owned by one product gets a wildcard once it has this many pages. */

@@ -73,7 +73,6 @@ const EXTERNAL_DEPLOYMENT_PREFIXES = [
   '/graphql/stitching',
   '/graphql/ws',
   '/graphql/sse',
-  '/openapi/fets',
   '/heltin',
 ].filter(prefix => !registryMounts.has(prefix));
 
