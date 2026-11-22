@@ -1,0 +1,680 @@
+---
+/**
+ * The GraphQL federation gateway performance benchmark. The numbers come from
+ * graphql-hive/graphql-gateways-benchmark (fetched by
+ * scripts/hive/fetch-gateway-reports.ts); the text and charts live here. The
+ * figures quoted in the analysis are computed from the same samples, so they
+ * follow new results; the comparisons in the prose are editorial and need a
+ * look whenever the benchmark publishes new results.
+ */
+import BaseHead from '~hive/components/BaseHead.astro';
+import BenchmarkChart from '~hive/components/gateway-reports/BenchmarkChart.astro';
+import GatewayName from '~hive/components/gateway-reports/GatewayName.astro';
+import SiteFooter from '~hive/components/SiteFooter.astro';
+import SiteNavigation from '~hive/components/SiteNavigation.astro';
+import { withBase } from '~hive/lib/base-path';
+import {
+  auditScore,
+  BENCHMARK_GATEWAYS,
+  summarizeBenchmark,
+  type BenchmarkSample,
+  type BenchmarkScenario,
+  type BenchmarkSummary,
+} from '~hive/lib/gateway-reports';
+import {
+  AUDIT_PATH,
+  auditResults,
+  BENCHMARK_REPOSITORY,
+  benchmarkSamples,
+} from '~hive/lib/gateway-reports-data';
+import '~hive/styles/global.css';
+import ogImage from '~hive/assets/gateway-reports/performance-og.png';
+
+const title = 'GraphQL Federation Gateways Performance Benchmark | Hive';
+const description =
+  'Transparent methodology, reproducible setup, and detailed findings for GraphQL federation routers. Compare RPS, latency stability, CPU/MEM footprint, and reliability.';
+
+const summaries = {
+  constant: summarizeBenchmark(benchmarkSamples.constant),
+  stress: summarizeBenchmark(benchmarkSamples.stress),
+};
+/** Summaries by gateway id, for the figures quoted in the analysis. */
+const byId = (rows: BenchmarkSummary[]) =>
+  Object.fromEntries(rows.map(row => [row.gateway.id, row])) as Record<string, BenchmarkSummary>;
+const stress = byId(summaries.stress);
+const constant = byId(summaries.constant);
+const figures = { constant, stress };
+
+const round = (value: number, step = 1) => Math.round(value / step) * step;
+const num = (value: number, step = 1) => round(value, step).toLocaleString('en-US');
+const percent = (value: number) => (value === 100 ? '100%' : `${value.toFixed(2)}%`);
+
+const auditScores = new Map(auditResults.map(result => [result.name, auditScore(result)]));
+
+const scenarios: Array<{
+  id: BenchmarkScenario;
+  label: string;
+  short: string;
+  /** Which RPS figure the summary table shows: the ceiling, or the steady state. */
+  rps: 'medianRps' | 'peakRps';
+  rpsLabel: string;
+}> = [
+  {
+    id: 'stress',
+    label: 'Stress test',
+    rps: 'peakRps',
+    rpsLabel: 'Peak RPS',
+    short:
+      'Simulates high traffic and measures performance under load. Useful for identifying bottlenecks and scalability issues.',
+  },
+  {
+    id: 'constant',
+    label: 'Low and constant traffic',
+    rps: 'medianRps',
+    rpsLabel: 'Median RPS',
+    short:
+      'Simulates constant traffic with low load. Helpful to measure baseline efficiency, not the breaking point.',
+  },
+];
+
+const metrics: Array<{
+  id: string;
+  pick: (sample: BenchmarkSample) => number;
+  title: string;
+  unit: string;
+  /** The success rate is drawn from its lowest value up, not from zero. */
+  fromLowest?: boolean;
+}> = [
+  { id: 'rps', pick: sample => sample.rps, title: 'Throughput (RPS) over time', unit: 'RPS' },
+  { id: 'latency', pick: sample => sample.p95, title: 'Latency (p95) over time', unit: 'ms' },
+  { id: 'cpu', pick: sample => sample.cpu, title: 'CPU utilization', unit: '% CPU' },
+  { id: 'mem', pick: sample => sample.memory, title: 'Memory utilization', unit: 'MB' },
+  {
+    fromLowest: true,
+    id: 'reliability',
+    pick: sample => sample.success,
+    title: 'Success and failure rate',
+    unit: '% successful',
+  },
+];
+
+function chartsFor(scenario: BenchmarkScenario, metric: (typeof metrics)[number]) {
+  const samples = benchmarkSamples[scenario];
+  const all = BENCHMARK_GATEWAYS.flatMap(({ id }) => samples.get(id)!);
+  const values = all.map(metric.pick);
+  const lowest = Math.min(...values);
+  return {
+    charts: BENCHMARK_GATEWAYS.map(gateway => ({
+      gateway,
+      values: samples.get(gateway.id)!.map(metric.pick),
+      vus: samples.get(gateway.id)!.map(sample => sample.vus),
+    })),
+    max: metric.fromLowest ? 100 : Math.max(...values) * 1.1,
+    min: metric.fromLowest ? Math.min(lowest, 99.5) - 0.5 : 0,
+    vusMax: Math.max(...all.map(sample => sample.vus)) * 1.1,
+  };
+}
+
+const cell =
+  'border border-(--border) p-3 text-right tabular-nums last:border-r-0 in-[tbody]:border-b-0';
+const headCell =
+  'border border-(--border) p-3 text-right font-medium whitespace-nowrap last:border-r-0 in-[thead]:border-t-0';
+const link = 'hive-focus underline underline-offset-2';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <BaseHead
+      description={description}
+      image={ogImage}
+      imageAlt="GraphQL Federation Gateways Performance Benchmark: a comparison of RPS, latency stability, CPU/MEM footprint, and reliability of GraphQL federation routers"
+      title={title}
+      type="article"
+    />
+    <script is:inline>
+      // Pick the scenario before the first paint; old links use #/constant.
+      document.documentElement.dataset.scenario = location.hash.includes('constant')
+        ? 'constant'
+        : 'stress';
+    </script>
+    <style is:global>
+      html[data-scenario='stress'] [data-scenario-panel='constant'],
+      html[data-scenario='constant'] [data-scenario-panel='stress'] {
+        display: none;
+      }
+      html[data-scenario='stress'] [data-scenario-tab='stress'],
+      html[data-scenario='constant'] [data-scenario-tab='constant'] {
+        border-color: var(--color-green-800);
+        background-color: var(--color-beige-100);
+      }
+    </style>
+  </head>
+  <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
+    <SiteNavigation />
+    <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
+      <header class="bg-beige-100 mx-4 rounded-3xl px-4 py-10 text-center md:mx-6 md:px-6 lg:py-20">
+        <h1 class="mx-auto max-w-3xl text-4xl leading-[1.2] tracking-[-0.56px] text-balance md:text-[56px] md:leading-[1.14286]">
+          GraphQL Federation Gateways Performance Benchmark
+        </h1>
+        <div class="mx-auto mt-6 max-w-3xl space-y-2 text-lg text-balance text-green-800">
+          <p>
+            We pushed the leading GraphQL Federation Gateways to their breaking points in a fair,
+            transparent, and reproducible benchmark.
+          </p>
+          <p>
+            Our analysis goes beyond simple throughput to measure true reliability and resource
+            efficiency under intense, real-world load. Use our{' '}
+            <a class={link} href={BENCHMARK_REPOSITORY}>
+              open-source data
+            </a>{' '}
+            to make a confident architectural choice.
+          </p>
+          <p>
+            Correctness matters as much as speed: see the{' '}
+            <a class={link} href={withBase(AUDIT_PATH)}>
+              Apollo Federation compatibility audit
+            </a>{' '}
+            of the same gateways.
+          </p>
+        </div>
+      </header>
+
+      <div class="mx-auto max-w-6xl px-4 py-10 md:px-6 lg:py-16">
+        <nav aria-label="Test scenario" class="grid gap-3 md:grid-cols-2">
+          {scenarios.map(scenario => (
+            <a
+              class="hive-focus border-beige-400 block rounded-2xl border p-6"
+              data-scenario-tab={scenario.id}
+              href={`#/${scenario.id}`}
+            >
+              <span class="block font-medium">{scenario.label}</span>
+              <span class="mt-1 block text-sm text-green-800">{scenario.short}</span>
+            </a>
+          ))}
+        </nav>
+
+        {scenarios.map(scenario => (
+          <section
+            aria-labelledby={`${scenario.id}-title`}
+            class="mt-10"
+            data-scenario-panel={scenario.id}
+          >
+            <h2 class="text-3xl leading-[1.2] md:text-4xl" id={`${scenario.id}-title`}>
+              {scenario.label}
+            </h2>
+            {scenario.id === 'stress' ? (
+              <p class="mt-4 text-green-800">
+                This benchmark measured speed, efficiency, and, most critically, reliability under a
+                high-concurrency stress test. The summary below highlights two distinct classes of
+                behavior: gateways that remain 100% reliable under pressure and those that begin to
+                shed load.
+              </p>
+            ) : (
+              <p class="mt-4 text-green-800">
+                This benchmark holds traffic steady at <strong>50 virtual users</strong> to measure{' '}
+                <strong>baseline efficiency</strong>, not the breaking point. We track throughput,
+                p95 latency, CPU, memory, and reliability with warm caches and no saturation to
+                reveal per-request overhead in everyday traffic.
+              </p>
+            )}
+
+            <div class="hive-focus nextra-scrollbar border-beige-400 [&_:is(td,th)]:border-beige-400 mt-6 overflow-x-auto rounded-2xl border [--border:var(--color-green-200)]">
+              <table class="w-full text-sm">
+                <caption class="sr-only">{scenario.label}: summary per gateway</caption>
+                <thead class="bg-beige-100">
+                  <tr>
+                    <th class={`${headCell} text-left! border-l-0`} scope="col">
+                      Gateway
+                    </th>
+                    <th class={headCell} scope="col">
+                      <a class={link} href={`#${scenario.id}-rps`}>
+                        {scenario.rpsLabel}
+                      </a>
+                    </th>
+                    <th class={headCell} scope="col">
+                      <a class={link} href={`#${scenario.id}-latency`}>
+                        p95 (median)
+                      </a>
+                    </th>
+                    <th class={headCell} scope="col">
+                      <a class={link} href={`#${scenario.id}-latency`}>
+                        p95 (max)
+                      </a>
+                    </th>
+                    <th class={headCell} scope="col">
+                      <a class={link} href={`#${scenario.id}-cpu`}>
+                        CPU (max)
+                      </a>
+                    </th>
+                    <th class={headCell} scope="col">
+                      <a class={link} href={`#${scenario.id}-mem`}>
+                        Memory (max)
+                      </a>
+                    </th>
+                    <th class={headCell} scope="col">
+                      RPS per core
+                    </th>
+                    <th class={headCell} scope="col">
+                      <a class={link} href={`#${scenario.id}-reliability`}>
+                        Reliability
+                      </a>
+                    </th>
+                    <th class={headCell} scope="col">
+                      <a class={link} href={withBase(AUDIT_PATH)}>
+                        Compatibility
+                      </a>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {summaries[scenario.id].map(row => {
+                    const rps = row[scenario.rps];
+                    const compatibility = auditScores.get(row.gateway.name);
+                    return (
+                      <tr>
+                        <th class={`${cell} text-left! border-l-0 font-normal`} scope="row">
+                          <a class="hive-focus hover:underline" href={row.gateway.website}>
+                            <GatewayName id={row.gateway.id} />
+                          </a>
+                        </th>
+                        <td class={cell}>{num(rps)} req/s</td>
+                        <td class={cell}>{num(row.medianP95)} ms</td>
+                        <td class={cell}>{num(row.maxP95)} ms</td>
+                        <td class={cell}>{num(row.maxCpu)}%</td>
+                        <td class={cell}>{num(row.maxMemory)} MB</td>
+                        <td class={cell}>{num(rps / (row.maxCpu / 100))} req/s</td>
+                        <td class={cell}>{percent(row.minSuccess)}</td>
+                        <td class={cell}>
+                          {compatibility === undefined ? '–' : `${compatibility.toFixed(2)}%`}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p class="mt-3 text-xs text-green-800">
+              Figures are computed from the monitor's samples over the measurement phase. RPS per
+              core divides the {scenario.rpsLabel.toLowerCase()} by the highest CPU usage.
+              Reliability is the lowest share of successful requests in any sample (requests with
+              GraphQL errors count as failed). Compatibility is the gateway's pass rate in the
+              Apollo Federation audit.
+            </p>
+
+            <div class="mt-6 rounded-2xl bg-beige-100 p-6 text-sm text-green-800">
+              <h3 class="text-lg font-medium text-green-1000">Load generation</h3>
+              {scenario.id === 'stress' ? (
+                <p class="mt-2">
+                  k6 ramps traffic according to predefined stress patterns to a{' '}
+                  <strong>target of 500 VUs</strong> over <strong>60 seconds</strong> to simulate
+                  heavy usage.
+                </p>
+              ) : (
+                <p class="mt-2">
+                  k6 sends traffic of <strong>50 VUs</strong> over <strong>60 seconds</strong> to
+                  simulate constant and low load.
+                </p>
+              )}
+              <p class="mt-2">
+                See{' '}
+                <a class={link} href="#environment">
+                  the environment and methodology
+                </a>{' '}
+                for the shared setup.
+              </p>
+            </div>
+
+            {metrics.map(metric => {
+              const { charts, max, min, vusMax } = chartsFor(scenario.id, metric);
+              const id = `${scenario.id}-${metric.id}`;
+              return (
+                <section aria-labelledby={id} class="border-beige-400 mt-10 rounded-2xl border p-6">
+                  <h3 class="text-2xl" id={id}>
+                    {metric.title}
+                  </h3>
+                  <div class="mt-2 space-y-1 text-green-800">
+                    {metric.id === 'rps' && (
+                      <p>
+                        Requests Per Second (RPS) is the raw measure of a gateway's processing
+                        power. It answers the fundamental question: "How much traffic can this
+                        gateway handle?" A higher RPS on the same hardware translates directly to a
+                        lower cost per request.
+                      </p>
+                    )}
+                    {metric.id === 'latency' && (
+                      <p>
+                        95th percentile latency shows the "worst-case" response time for 95% of your
+                        users. It is a critical indicator of user experience and system consistency.
+                        A low, flat line is ideal, as it signifies a responsive system even as load
+                        increases.
+                      </p>
+                    )}
+                    {metric.id === 'cpu' && (
+                      <p>
+                        CPU usage reveals the computational cost of a gateway's performance. While
+                        higher throughput often requires more CPU, the key metric for architects is
+                        efficiency: how much performance is delivered per CPU core consumed.
+                      </p>
+                    )}
+                    {metric.id === 'mem' && (
+                      <p>
+                        Low and stable memory usage is critical for reducing infrastructure costs,
+                        especially in containerized environments like Kubernetes where memory is a
+                        primary scheduling resource.
+                      </p>
+                    )}
+                    {metric.id === 'reliability' && (
+                      <p>
+                        This metric tracks the share of successful requests (requests with GraphQL
+                        errors count as failed) over time and is the ultimate indicator of
+                        reliability. When a system is pushed past its breaking point, this chart
+                        shows how gracefully it fails.
+                      </p>
+                    )}
+                  </div>
+                  <div class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+                    {charts.map(chart => (
+                      <BenchmarkChart
+                        color={chart.gateway.color}
+                        max={max}
+                        min={min}
+                        name={chart.gateway.name}
+                        unit={metric.unit}
+                        values={chart.values}
+                        vus={chart.vus}
+                        vusMax={vusMax}
+                      />
+                    ))}
+                  </div>
+                  <p class="mt-2 text-xs text-green-800">
+                    The colored line is the {metric.unit} of each sample; the dashed gray line is
+                    the number of virtual users on its own scale.
+                  </p>
+                  <div class="mt-6 space-y-3 text-sm text-green-800 [&_strong]:text-green-1000">
+                    {scenario.id === 'stress' && metric.id === 'rps' && (
+                      <Fragment>
+                        <p>
+                          This chart shows the throughput each gateway achieved as virtual users
+                          increased, with the line flattening at the gateway's maximum capacity.
+                        </p>
+                        <p>
+                          <GatewayName id="hive-router" /> reaches a maximum throughput of{' '}
+                          <strong>~{num(stress['hive-router']!.peakRps, 10)} RPS</strong>,
+                          demonstrating the highest capacity under stress.
+                        </p>
+                        <p>
+                          <GatewayName id="grafbase" /> follows at{' '}
+                          <strong>~{num(stress.grafbase!.peakRps, 10)} RPS</strong>, and{' '}
+                          <GatewayName id="cosmo" /> peaks at{' '}
+                          <strong>~{num(stress.cosmo!.peakRps, 10)} RPS</strong>.{' '}
+                          <GatewayName id="apollo-router" /> saturates at a much lower rate (~
+                          {num(stress['apollo-router']!.peakRps, 10)} RPS) under the same
+                          conditions.
+                        </p>
+                        <p>
+                          It's important to correlate this flattening of the curve with the other
+                          metrics, as for some gateways, this saturation point is also where they
+                          begin to sacrifice reliability.
+                        </p>
+                      </Fragment>
+                    )}
+                    {scenario.id === 'constant' && metric.id === 'rps' && (
+                      <Fragment>
+                        <p>
+                          This chart shows the throughput each gateway sustained under a constant,
+                          low load of 50 virtual users.
+                        </p>
+                        <p>
+                          <GatewayName id="hive-router" /> sustains a steady throughput of{' '}
+                          <strong>~{num(constant['hive-router']!.medianRps, 10)} RPS</strong>,
+                          indicating very low per-request overhead at everyday traffic levels.
+                        </p>
+                        <p>
+                          <GatewayName id="grafbase" /> sits around{' '}
+                          <strong>~{num(constant.grafbase!.medianRps, 10)} RPS</strong>, while{' '}
+                          <GatewayName id="cosmo" /> holds around{' '}
+                          <strong>~{num(constant.cosmo!.medianRps, 10)} RPS</strong>.{' '}
+                          <GatewayName id="apollo-router" /> settles near{' '}
+                          <strong>~{num(constant['apollo-router']!.medianRps, 10)} RPS</strong>,
+                          implying a higher baseline cost per request on the same hardware.
+                        </p>
+                        <p>
+                          At this traffic level, the goal is stability rather than capacity.
+                          Correlate the flatness of the lines with p95 latency, CPU, memory, and
+                          reliability to confirm there's no hidden jitter or overhead.
+                        </p>
+                      </Fragment>
+                    )}
+                    {scenario.id === 'stress' && metric.id === 'latency' && (
+                      <Fragment>
+                        <p>
+                          The latency chart shows how each gateway's responsiveness changes as the
+                          number of virtual users (the gray dashed line) ramps up.
+                        </p>
+                        <p>
+                          <GatewayName id="hive-router" /> maintains the lowest p95 latency (median
+                          ~{num(stress['hive-router']!.medianP95)} ms) while handling a
+                          significantly higher request volume. This demonstrates a highly efficient
+                          architecture that resists performance degradation under load.
+                        </p>
+                        <p>
+                          <GatewayName id="grafbase" /> and <GatewayName id="cosmo" /> exhibit a
+                          stable latency profile, though at a lower throughput. In contrast,{' '}
+                          <GatewayName id="apollo-router" /> shows latency climbing steeply with the
+                          load, up to ~{num(stress['apollo-router']!.maxP95, 10)} ms, suggesting its
+                          architecture struggles to maintain responsiveness under the same
+                          high-concurrency stress.
+                        </p>
+                        <p>
+                          For architects, a gateway that keeps latency low under pressure is crucial
+                          for preventing cascading delays and ensuring a reliable quality of
+                          service.
+                        </p>
+                      </Fragment>
+                    )}
+                    {scenario.id === 'constant' && metric.id === 'latency' && (
+                      <Fragment>
+                        <p>
+                          <GatewayName id="hive-router" /> maintains the lowest steady-state p95
+                          (median ~{num(constant['hive-router']!.medianP95)} ms) with a flat
+                          profile, indicating very low per-request overhead at everyday traffic
+                          levels.
+                        </p>
+                        <p>
+                          <GatewayName id="grafbase" /> (~{num(constant.grafbase!.medianP95)} ms)
+                          and <GatewayName id="cosmo" /> (~{num(constant.cosmo!.medianP95)} ms) both
+                          stabilize quickly with flat curves. <GatewayName id="apollo-router" />{' '}
+                          settles at a noticeably higher p95 baseline (~
+                          {num(constant['apollo-router']!.medianP95)} ms). While stable, the higher
+                          floor implies a greater cost per request during calm traffic.
+                        </p>
+                        <p>
+                          At this traffic level, <strong>the key signal is consistency</strong>: a
+                          flat line with a low baseline. Use these steady-state latencies alongside
+                          RPS to compare real-world efficiency and the headroom each gateway
+                          preserves for future spikes.
+                        </p>
+                      </Fragment>
+                    )}
+                    {metric.id === 'cpu' && (
+                      <Fragment>
+                        <p>
+                          Analyzing CPU usage alongside memory tells a story about architectural
+                          efficiency.
+                        </p>
+                        {scenario.id === 'stress' ? (
+                          <p>
+                            <GatewayName id="hive-router" /> peaks around{' '}
+                            <strong>{num(stress['hive-router']!.maxCpu, 5)}%</strong> CPU and{' '}
+                            <GatewayName id="grafbase" /> around{' '}
+                            <strong>{num(stress.grafbase!.maxCpu, 5)}%</strong> while delivering the
+                            highest throughput, an efficient processing model that minimizes
+                            computational overhead. <GatewayName id="cosmo" /> climbs to ~
+                            {num(stress.cosmo!.maxCpu, 5)}% and <GatewayName id="apollo-router" />{' '}
+                            to ~{num(stress['apollo-router']!.maxCpu, 5)}% at a fraction of that
+                            throughput.
+                          </p>
+                        ) : (
+                          <p>
+                            <GatewayName id="hive-router" /> holds a flat profile at up to ~
+                            {num(constant['hive-router']!.maxCpu, 5)}% CPU while delivering{' '}
+                            <strong>the highest RPS</strong>, indicating strong performance per
+                            core. <GatewayName id="grafbase" /> runs at up to ~
+                            {num(constant.grafbase!.maxCpu, 5)}%, <GatewayName id="cosmo" /> at ~
+                            {num(constant.cosmo!.maxCpu, 5)}%, and{' '}
+                            <GatewayName id="apollo-router" /> at ~
+                            {num(constant['apollo-router']!.maxCpu, 5)}%.
+                          </p>
+                        )}
+                        <p>
+                          For organizations focused on optimizing cloud spend, a lower CPU footprint
+                          per request is a critical factor: combine these CPU levels with the RPS to
+                          compare how much work each gateway delivers for every percent of CPU
+                          consumed.
+                        </p>
+                      </Fragment>
+                    )}
+                    {metric.id === 'mem' && (
+                      <Fragment>
+                        <p>
+                          This metric often reveals fundamental differences in a gateway's
+                          underlying language and runtime.
+                        </p>
+                        <p>
+                          At{' '}
+                          <strong>~{num(figures[scenario.id]['hive-router']!.maxMemory)} MB</strong>{' '}
+                          of peak memory, <GatewayName id="hive-router" /> is the most
+                          memory-efficient gateway; its low footprint, due to its Rust-based
+                          architecture, makes it cost-effective to run.
+                        </p>
+                        <p>
+                          <GatewayName id="grafbase" /> is also lean at ~
+                          {num(figures[scenario.id].grafbase!.maxMemory)} MB.{' '}
+                          <GatewayName id="cosmo" /> peaks around ~
+                          {num(figures[scenario.id].cosmo!.maxMemory)} MB, while{' '}
+                          <GatewayName id="apollo-router" /> grows to ~
+                          {num(figures[scenario.id]['apollo-router']!.maxMemory)} MB.
+                        </p>
+                      </Fragment>
+                    )}
+                    {scenario.id === 'stress' && metric.id === 'reliability' && (
+                      <Fragment>
+                        <p>
+                          This is perhaps the most critical differentiator revealed by the stress
+                          test. While all gateways are stable under moderate load, their behavior
+                          can diverge at their performance ceiling.
+                        </p>
+                        <p>
+                          {summaries.stress
+                            .filter(row => row.minSuccess === 100)
+                            .map((row, index, all) => (
+                              <Fragment>
+                                {index > 0 && (index === all.length - 1 ? ' and ' : ', ')}
+                                <GatewayName id={row.gateway.id} />
+                              </Fragment>
+                            ))}{' '}
+                          maintained a <strong>100% success rate</strong> throughout the entire
+                          test, even when fully saturated: they handled overload by increasing
+                          latency, but never dropped a request.
+                          {summaries.stress
+                            .filter(row => row.minSuccess < 100)
+                            .map(row => (
+                              <Fragment>
+                                {' '}
+                                <GatewayName id={row.gateway.id} /> dipped below 100% (to{' '}
+                                {percent(row.minSuccess)}) at peak load.
+                              </Fragment>
+                            ))}
+                        </p>
+                        <p>
+                          For an architect, this is a crucial finding. A gateway that maintains a
+                          100% success rate under duress provides a predictable foundation, while a
+                          gateway that begins to drop requests can introduce unpredictability and
+                          require additional downstream error handling and retry logic.
+                        </p>
+                      </Fragment>
+                    )}
+                    {scenario.id === 'constant' && metric.id === 'reliability' && (
+                      <p>
+                        {summaries.constant.every(row => row.minSuccess === 100)
+                          ? 'All lines sit flat at 100%, indicating stable operation with no dropped requests. At this traffic level, reliability is not the differentiator: every gateway passes.'
+                          : 'At this traffic level, a gateway that drops requests stands out immediately: under a calm, constant load every request should succeed.'}
+                      </p>
+                    )}
+                  </div>
+                </section>
+              );
+            })}
+          </section>
+        ))}
+
+        <section
+          aria-labelledby="environment"
+          class="bg-beige-100 mt-12 rounded-2xl p-6 text-green-800"
+        >
+          <h2 class="text-3xl leading-[1.2] text-green-1000" id="environment">
+            Environment and methodology
+          </h2>
+          <p class="mt-4">
+            Azure's <strong>Standard D4s v4</strong> VM: <strong>4 vCPUs</strong>,{' '}
+            <strong>16 GiB memory</strong>, <strong>Linux (Ubuntu 24.04)</strong>, ensuring
+            consistency and reproducibility of results. Every gateway runs the same supergraph of
+            four subgraphs and the same heavy query.
+          </p>
+          <h3 class="mt-6 text-lg font-medium text-green-1000">Phase 1: warm-up</h3>
+          <ul class="mt-2 list-disc space-y-1 pl-6">
+            <li>
+              Generate a preliminary load with <strong>k6</strong> for <strong>15 seconds</strong>.
+            </li>
+            <li>
+              Allows the gateway to begin handling GraphQL requests, perform initial setup (e.g.{' '}
+              <i>cache warming</i>), and stabilize under a moderate load.
+            </li>
+          </ul>
+          <h3 class="mt-6 text-lg font-medium text-green-1000">Phase 2: measurement</h3>
+          <ul class="mt-2 list-disc space-y-1 pl-6">
+            <li>
+              <strong>Load generation:</strong> k6 ramps to 500 VUs over 60 seconds in the stress
+              test, and holds 50 VUs for 60 seconds in the constant-traffic test.
+            </li>
+            <li>
+              <strong>Performance monitoring:</strong> a dedicated monitoring script samples key
+              performance metrics every <strong>0.2 seconds</strong>.
+            </li>
+            <li>
+              <strong>CPU limiting / isolation:</strong> the gateway is restricted to a designated
+              set of CPU cores (<strong>3 cores</strong>), effectively isolating its processing. The
+              load generator (<strong>k6</strong>) is restricted to <strong>1 CPU core</strong> to
+              minimize interference between components.
+            </li>
+          </ul>
+          <p class="mt-6">
+            The benchmark, the gateway configurations, and the raw results are open source in{' '}
+            <a class={link} href={BENCHMARK_REPOSITORY}>
+              graphql-hive/graphql-gateways-benchmark
+            </a>
+            , including the gateway versions measured and how to reproduce the runs.
+          </p>
+        </section>
+      </div>
+    </main>
+    <SiteFooter />
+    <script is:inline>
+      // The scenario tabs keep the #/stress and #/constant hashes of the old page.
+      addEventListener('hashchange', () => {
+        if (location.hash === '#/stress' || location.hash === '#/constant') {
+          document.documentElement.dataset.scenario = location.hash.slice(2);
+        } else {
+          // A metric anchor (#constant-rps) switches to its scenario.
+          const scenario = location.hash.slice(1).split('-')[0];
+          if (scenario === 'stress' || scenario === 'constant') {
+            document.documentElement.dataset.scenario = scenario;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

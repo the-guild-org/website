@@ -1,0 +1,84 @@
+---
+/**
+ * One gateway's samples of one metric over the benchmark run, drawn at build
+ * time as an SVG line chart, with the virtual users (load) as a dashed line on
+ * a second scale. All charts of a metric share their scales, so the four
+ * gateways compare at a glance.
+ */
+interface Props {
+  color: string;
+  /** Upper bound of the metric scale, shared by the metric's charts. */
+  max: number;
+  /** Lower bound of the metric scale; the success rate starts near 100. */
+  min?: number;
+  name: string;
+  unit: string;
+  values: number[];
+  vus: number[];
+  vusMax: number;
+}
+
+const { color, max, min = 0, name, unit, values, vus, vusMax } = Astro.props;
+
+const WIDTH = 320;
+const HEIGHT = 160;
+const PAD = { bottom: 8, left: 44, right: 8, top: 8 };
+const plotWidth = WIDTH - PAD.left - PAD.right;
+const plotHeight = HEIGHT - PAD.top - PAD.bottom;
+
+const x = (index: number, count: number) =>
+  PAD.left + (count > 1 ? (index / (count - 1)) * plotWidth : 0);
+const y = (value: number, low: number, high: number) =>
+  PAD.top +
+  plotHeight -
+  ((Math.min(Math.max(value, low), high) - low) / (high - low || 1)) * plotHeight;
+const path = (series: number[], low: number, high: number) =>
+  series
+    .map(
+      (value, index) =>
+        `${index === 0 ? 'M' : 'L'}${x(index, series.length).toFixed(1)},${y(value, low, high).toFixed(1)}`,
+    )
+    .join('');
+
+const format = (value: number) =>
+  value >= 100 ? Math.round(value).toLocaleString('en-US') : value.toFixed(value >= 10 ? 0 : 1);
+const ticks = [min, (min + max) / 2, max];
+
+const peak = Math.max(...values);
+const label = `${name}: ${unit} over the run, peaking at ${format(peak)} ${unit}, against up to ${Math.max(...vus)} virtual users.`;
+---
+
+<figure class="min-w-0">
+  <figcaption class="pb-1 text-center text-sm text-green-800">{name}</figcaption>
+  <svg aria-label={label} class="h-auto w-full" role="img" viewBox={`0 0 ${WIDTH} ${HEIGHT}`}>
+    {ticks.map(tick => (
+      <g>
+        <line
+          stroke="currentColor"
+          class="text-beige-400"
+          x1={PAD.left}
+          x2={WIDTH - PAD.right}
+          y1={y(tick, min, max)}
+          y2={y(tick, min, max)}
+        />
+        <text
+          class="fill-green-800 text-[10px]"
+          dominant-baseline="middle"
+          text-anchor="end"
+          x={PAD.left - 4}
+          y={y(tick, min, max)}
+        >
+          {format(tick)}
+        </text>
+      </g>
+    ))}
+    <path
+      d={path(vus, 0, vusMax)}
+      fill="none"
+      stroke="#9ca3af"
+      stroke-dasharray="6 4"
+      stroke-width="1.5"
+    />
+    <path d={path(values, min, max)} fill="none" stroke={color} stroke-width="2" />
+  </svg>
+</figure>

@@ -1,0 +1,217 @@
+---
+/**
+ * The Apollo Federation compatibility audit of GraphQL gateways. The results
+ * come from graphql-hive/federation-gateway-audit (website/data.json, fetched
+ * by scripts/hive/fetch-gateway-reports.ts); the text lives here.
+ */
+import BaseHead from '~hive/components/BaseHead.astro';
+import AuditResultsTable from '~hive/components/gateway-reports/AuditResultsTable.astro';
+import SiteFooter from '~hive/components/SiteFooter.astro';
+import SiteNavigation from '~hive/components/SiteNavigation.astro';
+import { withBase } from '~hive/lib/base-path';
+import { AUDIT_REPOSITORY, auditResults, BENCHMARK_PATH } from '~hive/lib/gateway-reports-data';
+import '~hive/styles/global.css';
+import ogImage from '~hive/assets/gateway-reports/audit-og.png';
+
+const title = 'Apollo Federation Compatibility Audit of GraphQL Gateways | Hive';
+const description =
+  'Audit of various GraphQL Gateways that support acting as an Apollo Federation Gateway. Check their compatibility with Apollo Federation and read detailed test reports.';
+
+// Every gateway runs the same test suites.
+const { cases, suites } = auditResults[0]!;
+const alphabetical = [...auditResults].sort((a, b) => a.name.localeCompare(b.name));
+
+const link = 'hive-focus underline underline-offset-2';
+const heading = 'group mt-10 scroll-mt-24 text-2xl text-green-1000';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <BaseHead
+      description={description}
+      image={ogImage}
+      imageAlt="Apollo Federation Compatibility Audit: GraphQL Gateway Implementations"
+      title={title}
+      type="article"
+    />
+  </head>
+  <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
+    <SiteNavigation />
+    <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
+      <header class="bg-beige-100 mx-4 rounded-3xl px-4 py-10 text-center md:mx-6 md:px-6 lg:py-20">
+        <h1 class="mx-auto max-w-3xl text-4xl leading-[1.2] tracking-[-0.56px] text-balance md:text-[56px] md:leading-[1.14286]">
+          Federation-Compatible Gateway Implementations
+        </h1>
+        <div class="mx-auto mt-6 max-w-3xl space-y-2 text-lg text-balance text-green-800">
+          <p>
+            The following GraphQL Gateways support acting as an{' '}
+            <strong>Apollo Federation Gateway</strong>. Their support is tracked in The Guild's
+            open-source{' '}
+            <a class={link} href={AUDIT_REPOSITORY}>
+              gateway compatibility audit
+            </a>
+            .
+          </p>
+          <p>
+            <a class={link} href="#methodology">
+              Read about our methodology
+            </a>{' '}
+            and why we created this audit. We've also{' '}
+            <a class={link} href={withBase(BENCHMARK_PATH)}>
+              benchmarked the performance
+            </a>{' '}
+            of the gateways.
+          </p>
+        </div>
+      </header>
+
+      <div class="mx-auto max-w-6xl px-4 py-10 md:px-6 lg:py-16">
+        <h2 class="text-3xl leading-[1.2] md:text-4xl">Results</h2>
+        <p class="mt-4 mb-6 text-green-800">
+          {`${auditResults.length} gateways, each run against ${cases.total} test cases in ${suites.total} test suites.`}{' '}
+          Compatibility is the share of test cases a gateway passes.
+        </p>
+        <AuditResultsTable details rows={auditResults} />
+
+        <article class="bg-beige-100 mt-12 rounded-2xl p-6 text-green-800 md:p-10 [&_code]:text-sm [&_code]:text-green-1000 [&_p]:mt-4 [&_strong]:text-green-1000">
+          <h2
+            class="scroll-mt-24 text-3xl leading-[1.2] text-green-1000 md:text-4xl"
+            id="manifesto"
+          >
+            Methodology and purpose of this audit
+          </h2>
+          <p class="text-lg">
+            Advancing the GraphQL ecosystem by introducing an open-source audit for Apollo
+            Federation Gateways.
+          </p>
+          <p>
+            At{' '}
+            <a class={link} href="https://the-guild.dev">
+              The Guild
+            </a>
+            , we are committed to advancing the GraphQL ecosystem through collaboration and
+            open-sourcing knowledge and solutions. We decided to audit various GraphQL Gateways that
+            support acting as an Apollo Federation Gateway. Unlike existing benchmarks that
+            primarily focus on performance aspects,{' '}
+            <strong>
+              our audit measures the correctness and compliance of these gateways with the Apollo
+              Federation specification.
+            </strong>{' '}
+            This audit is fully open-source, and we are excited to share our methodology, findings,
+            and detailed test results.
+          </p>
+
+          <h3 class={heading} id="why">
+            Why we built the audit
+          </h3>
+          <p>
+            We built this audit for two main reasons. First, as maintainers of{' '}
+            <a class={link} href={withBase('/docs/gateway')}>
+              Hive Gateway
+            </a>{' '}
+            (our Gateway for GraphQL Federation, previously known as GraphQL Mesh), in order to be
+            fully compatible with the Apollo Federation specification, we needed a set of tests
+            covering a wide range of aspects of Apollo Federation.{' '}
+            <strong>
+              Instead of building something solely for ourselves, we aimed to develop something
+              beneficial for the entire community.
+            </strong>
+          </p>
+          <p>
+            Second, we observed an opportunity to improve the testing and compliance of many GraphQL
+            gateways with the Apollo Federation spec.{' '}
+            <strong>
+              By openly sharing our audit, we aim to help the entire community improve their
+              implementations and achieve higher compatibility.
+            </strong>
+          </p>
+
+          <h3 class={heading} id="methodology">
+            Audit methodology
+          </h3>
+          <p>
+            Our audit checks how well each gateway works with the Apollo Federation specification.{' '}
+            <strong>
+              We designed {cases.total} test cases, grouped into {suites.total} test suites, to
+              cover a wide range of scenarios.
+            </strong>{' '}
+            These test cases were crafted based on our experience with Apollo Federation and the
+            feedback received from users of GraphQL Mesh (now{' '}
+            <a class={link} href={withBase('/docs/gateway')}>
+              Hive Gateway
+            </a>
+            ) and{' '}
+            <a class={link} href={withBase('/')}>
+              GraphQL Hive
+            </a>
+            .
+          </p>
+          <p>Audited GraphQL Gateways (in alphabetical order):</p>
+          <ul class="mt-2 list-disc space-y-1 pl-6">
+            {alphabetical.map(result => (
+              <li>
+                {result.website ? (
+                  <a class={link} href={result.website}>
+                    {result.name}
+                  </a>
+                ) : (
+                  result.name
+                )}
+              </li>
+            ))}
+          </ul>
+          <p>The testing process involves:</p>
+          <ol class="mt-2 list-decimal space-y-1 pl-6">
+            <li>
+              <strong>Setup:</strong> each gateway is set up with the necessary configurations to
+              support Apollo Federation.
+            </li>
+            <li>
+              <strong>Subgraphs:</strong> each test suite contains a set of subgraphs that are
+              started alongside a gateway. These subgraphs are GraphQL APIs serving data over HTTP.
+            </li>
+            <li>
+              <strong>Execution of test cases:</strong> the test cases are run sequentially against
+              each gateway. These tests cover various aspects of the Apollo Federation
+              specification, including error handling.
+            </li>
+            <li>
+              <strong>Result analysis:</strong> after running the tests, we analyze the results to
+              produce a compatibility score (percentage of the total number of test cases passed).
+            </li>
+          </ol>
+          <p>
+            The audit is conducted in a controlled environment to ensure consistency and fairness.
+            We run the tests on the latest version of each gateway, and we update the audit
+            regularly to reflect changes and improvements.
+          </p>
+          <p>
+            The audit is fully open-source, and we encourage the community to{' '}
+            <a class={link} href={AUDIT_REPOSITORY}>
+              contribute
+            </a>{' '}
+            by adding new test cases, improving existing ones, or suggesting new features.
+          </p>
+          <p>
+            Our tests cover a comprehensive range of directives, including{' '}
+            <code>@interfaceObject</code>, <code>@key</code>, <code>@external</code>,{' '}
+            <code>@provides</code>, <code>@requires</code>, <code>@extends</code>,{' '}
+            <code>@inaccessible</code>, <code>@shareable</code>, <code>@composeDirective</code>, and{' '}
+            <code>@override</code>.
+          </p>
+          <p>
+            However, due to limitations of the Enterprise license of Apollo Router, we are currently
+            unable to test the <code>@authenticated</code>, <code>@policy</code>,{' '}
+            <code>@requiresScopes</code>, and <code>@override(label:)</code> directives. We plan to
+            include these directives in our tests as soon as we have access to the Enterprise
+            license.
+          </p>
+        </article>
+      </div>
+    </main>
+    <SiteFooter />
+  </body>
+</html>

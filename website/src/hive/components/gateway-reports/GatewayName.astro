@@ -1,0 +1,15 @@
+---
+/** A benchmarked gateway's name in its chart color, for the analysis text. */
+import { BENCHMARK_GATEWAYS } from '~hive/lib/gateway-reports';
+
+interface Props {
+  id: string;
+}
+
+const gateway = BENCHMARK_GATEWAYS.find(({ id }) => id === Astro.props.id);
+if (!gateway) throw new Error(`Unknown benchmark gateway: ${Astro.props.id}`);
+---
+
+<strong class="font-semibold" style={{ color: gateway.color }}>
+  {gateway.name}
+</strong>

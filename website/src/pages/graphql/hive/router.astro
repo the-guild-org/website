@@ -9,7 +9,6 @@
 import BaseHead from '~hive/components/BaseHead.astro';
 import ExploreMainProductCards from '~hive/components/ExploreMainProductCards.astro';
 import FrequentlyAskedQuestions from '~hive/components/FrequentlyAskedQuestions.astro';
-import { type BenchmarkDatum } from '~hive/components/gateway/FederationCompatibleBenchmarksSection.astro';
 import LetsGetAdvancedSection, {
   type AdvancedCard,
 } from '~hive/components/gateway/LetsGetAdvancedSection.astro';
@@ -18,6 +17,7 @@ import HeroButton from '~hive/components/landing/HeroButton.astro';
 import SiteFooter from '~hive/components/SiteFooter.astro';
 import SiteNavigation from '~hive/components/SiteNavigation.astro';
 import { withBase } from '~hive/lib/base-path';
+import { auditResults } from '~hive/lib/gateway-reports-data';
 import '~hive/styles/global.css';
 import checkIconRaw from '~hive/design-system/icons/check.svg?raw';
 import hiveRouterIconRaw from '~hive/design-system/icons/hive-router.svg?raw';
@@ -38,15 +38,7 @@ const checkmarks = [
 ];
 
 // The audit results feed the stat tile and the compatibility banner further down.
-let auditData: BenchmarkDatum[] = [];
-try {
-  const res = await fetch(`${AUDIT_URL}/data.json`);
-  if (res.ok) auditData = await res.json();
-} catch {
-  // Offline build: the tile and the banner's score are left out rather than showing a number
-  // we cannot back.
-}
-const routerAudit = auditData.find(row => row.name === 'Hive Router');
+const routerAudit = auditResults.find(row => row.name === 'Hive Router');
 const audit = routerAudit && {
   cases: routerAudit.cases.passed + routerAudit.cases.failed,
   suites: routerAudit.suites.passed + routerAudit.suites.failed,
