@@ -2,8 +2,9 @@
  * Build-time SEO sweep over every rendered page in dist. Fails the build on:
  * missing head tags, placeholder or duplicate titles/descriptions, canonicals
  * that don't match the page's public URL (or og:url), relative social images,
- * stray noindex, missing <html lang>, h1 count != 1, internal links that
- * resolve to nothing, and indexable pages missing from the sitemaps.
+ * stray noindex, missing <html lang>, images without alt, h1 count != 1,
+ * internal links that resolve to nothing, and indexable pages missing from
+ * the sitemaps.
  * Title/description length problems are reported as warnings only.
  */
 import { existsSync } from 'node:fs';
@@ -343,6 +344,14 @@ for await (const filePath of walk(OUTPUT_DIR)) {
 
   if (!/<html[^>]*\slang=/i.test(html)) {
     issues.push(`${relativePath}: <html> has no lang attribute`);
+  }
+
+  // Screen readers and image search need it; an empty alt marks decoration.
+  const imagesWithoutAlt = (html.match(/<img\b[^>]*>/gi) ?? []).filter(
+    tag => !/\salt(?:[\s=/>])/i.test(tag),
+  );
+  if (imagesWithoutAlt.length > 0) {
+    issues.push(`${relativePath}: ${imagesWithoutAlt.length} <img> without an alt attribute`);
   }
 
   const h1Count = (html.match(/<h1[\s>]/gi) ?? []).length;
