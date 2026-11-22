@@ -26,16 +26,6 @@ export const jsonConfig = {
       redirect: 'https://github.com/maticzav/graphql-shield',
       status: 302,
     },
-    '/graphql/hive/federation-gateway-audit': {
-      rewrite: 'federation-gateway-compatibility.pages.dev',
-      crisp: { segments: ['hive-website'] },
-      sitemap: false,
-    },
-    '/graphql/hive/federation-gateway-performance': {
-      rewrite: 'federation-gateway-benchmark.pages.dev',
-      crisp: { segments: ['hive-website'] },
-      sitemap: false,
-    },
     '/graphql/hive/federation-playground': {
       rewrite: 'federation-playground.pages.dev',
       crisp: { segments: ['hive-website'] },
