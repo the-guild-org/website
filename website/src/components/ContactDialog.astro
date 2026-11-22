@@ -151,24 +151,37 @@ import Path from './Path.astro';
   // The Turnstile script is loaded on the first open rather than on every page
   // view. Its token is single-use, so the widget is reset after each submit.
   let turnstileLoading: Promise<Turnstile> | undefined;
+  let turnstileScript: HTMLScriptElement | undefined;
   let widgetId: string | undefined;
   let tokenWaiters: Array<(token: string) => void> = [];
 
   function loadTurnstile() {
-    turnstileLoading ??= new Promise<Turnstile>((resolve, reject) => {
+    if (turnstileWindow.turnstile) return Promise.resolve(turnstileWindow.turnstile);
+    if (turnstileLoading) return turnstileLoading;
+    const script = document.createElement('script');
+    turnstileScript = script;
+    turnstileLoading = new Promise<Turnstile>((resolve, reject) => {
       turnstileWindow.onTurnstileLoad = () => resolve(turnstileWindow.turnstile!);
-      const script = document.createElement('script');
-      script.src =
-        'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad';
-      script.async = true;
       script.onerror = () => {
-        script.remove();
-        turnstileLoading = undefined;
+        abandonTurnstileLoad(script);
         reject(new Error('Turnstile failed to load'));
       };
-      document.head.append(script);
     });
+    script.src =
+      'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad';
+    script.async = true;
+    document.head.append(script);
     return turnstileLoading;
+  }
+
+  // Drops a failed or stalled load so the next attempt injects a fresh script.
+  // Only the current attempt's script may clear the shared state, so a late
+  // error from an abandoned script cannot reset a newer attempt.
+  function abandonTurnstileLoad(script: HTMLScriptElement) {
+    script.remove();
+    if (turnstileScript !== script) return;
+    turnstileScript = undefined;
+    turnstileLoading = undefined;
   }
 
   async function renderTurnstile() {
@@ -194,22 +207,44 @@ import Path from './Path.astro';
   }
 
   // Resolves with the current token, waiting for the widget when the visitor
-  // submits before it has finished (or while it shows a challenge).
+  // submits before it has finished (or while it shows a challenge). The
+  // deadline covers loading the script as well: a load that misses it is
+  // abandoned and throws (the generic error shows, and the next submit
+  // retries), while a widget still without a token resolves '' (the captcha
+  // message shows).
   async function getTurnstileToken(timeoutMs = 15_000): Promise<string> {
-    const turnstile = await renderTurnstile();
-    const token = turnstile.getResponse(widgetId!);
-    if (token) return token;
-    return new Promise(resolve => {
-      const waiter = (value: string) => {
-        clearTimeout(timer);
-        resolve(value);
-      };
-      const timer = setTimeout(() => {
-        tokenWaiters = tokenWaiters.filter(w => w !== waiter);
-        resolve('');
-      }, timeoutMs);
-      tokenWaiters.push(waiter);
+    const timedOut = Symbol('timed out');
+    let waiter: ((token: string) => void) | undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    const acquire = (async () => {
+      const turnstile = await renderTurnstile();
+      const token = turnstile.getResponse(widgetId!);
+      if (token) return token;
+      return new Promise<string>(resolve => {
+        waiter = resolve;
+        tokenWaiters.push(resolve);
+      });
+    })();
+    // A load error after the deadline has already won must not go unhandled.
+    acquire.catch(() => {});
+    const deadline = new Promise<typeof timedOut>(resolve => {
+      timer = setTimeout(() => resolve(timedOut), timeoutMs);
     });
+
+    try {
+      const result = await Promise.race([acquire, deadline]);
+      if (result !== timedOut) return result;
+    } finally {
+      clearTimeout(timer);
+      tokenWaiters = tokenWaiters.filter(w => w !== waiter);
+    }
+
+    if (widgetId === undefined) {
+      if (turnstileScript) abandonTurnstileLoad(turnstileScript);
+      throw new Error('Turnstile did not load in time');
+    }
+    return '';
   }
 
   function openDialog() {
