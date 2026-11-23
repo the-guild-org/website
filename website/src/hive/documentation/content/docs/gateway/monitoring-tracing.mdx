@@ -1054,9 +1054,10 @@ new NodeSDK({
 `openTelemetrySetup()`, `hiveTracingSetup()` and the `--opentelemetry` CLI option don't read the
 `OTEL_BSP_*` environment variables (`OTEL_BSP_SCHEDULE_DELAY`, `OTEL_BSP_EXPORT_TIMEOUT`,
 `OTEL_BSP_MAX_QUEUE_SIZE` and `OTEL_BSP_MAX_EXPORT_BATCH_SIZE`). Use the `traces.batching` option
-instead, or set up the SDK with `NodeSDK`, which reads them.
+of `openTelemetrySetup()` or the top-level `batching` option of `hiveTracingSetup()` instead, or set
+up the SDK with `NodeSDK`, which reads them.
 
-The type of the `traces.batching` options object, `BufferConfig`, is exported from
+The type of the batching options object, `BufferConfig`, is exported from
 `@graphql-hive/gateway/opentelemetry/setup` and `@graphql-hive/plugin-opentelemetry/setup`.
 
 You can learn more about the batching options in the
@@ -1179,8 +1180,9 @@ new NodeSDK({
 
 `openTelemetrySetup()`, `hiveTracingSetup()` and the `--opentelemetry` CLI option don't read the
 attribute, span, event and link limit environment variables (like `OTEL_ATTRIBUTE_COUNT_LIMIT` or
-`OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT`). Use the `traces.spanLimits` option instead, or set up the
-SDK with `NodeSDK`, which reads them.
+`OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT`). Use the `traces.spanLimits` option of
+`openTelemetrySetup()` or the top-level `spanLimits` option of `hiveTracingSetup()` instead, or set
+up the SDK with `NodeSDK`, which reads them.
 
 ### Configuration
 
