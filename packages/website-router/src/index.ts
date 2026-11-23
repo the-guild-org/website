@@ -14,6 +14,7 @@ import {
   isLeakedRouteTemplate,
   ManipulateResponseFn,
   redirect,
+  redirectTarget,
 } from './routing';
 import { handleSitemap, shouldHandleSitemap } from './sitemap/handler';
 
@@ -184,7 +185,12 @@ async function handleEvent(
     }
 
     if (isRedirectRecord(record)) {
-      return redirect(sentry, request.url, record.redirect, record.status || 301);
+      return redirect(
+        sentry,
+        request.url,
+        redirectTarget(record, parsedUrl, match),
+        record.status || 301,
+      );
     }
   }
 

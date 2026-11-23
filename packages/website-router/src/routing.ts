@@ -1,5 +1,5 @@
 import { Toucan } from 'toucan-js';
-import type { RewriteRecord } from './config';
+import type { RedirectRecord, RewriteRecord } from './config';
 import { shouldSkipErrorReporting } from './error-handling/error-reporting';
 
 async function handleErrorResponse(options: {
@@ -74,6 +74,13 @@ async function handleErrorResponse(options: {
   }
 
   return options.response;
+}
+
+/** Where a redirect record sends a request that matched `match`. */
+export function redirectTarget(record: RedirectRecord, url: URL, match: string): string {
+  if (!record.preservePath) return record.redirect;
+  const rest = url.pathname.slice(match.length) || '/';
+  return `${record.redirect.replace(/\/$/, '')}${rest}${url.search}`;
 }
 
 export function redirect(sentry: Toucan, from: string, url: string, code = 301) {

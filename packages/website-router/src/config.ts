@@ -4,7 +4,12 @@ export type RewriteRecord = {
   crisp?: { segments: string[] };
   sitemap?: boolean;
 };
-export type RedirectRecord = { redirect: string; status?: number };
+export type RedirectRecord = {
+  redirect: string;
+  status?: number;
+  /** Append the rest of the request path (and its query) to the target. */
+  preservePath?: boolean;
+};
 export type WebsiteRecord = RewriteRecord | RedirectRecord;
 
 export const jsonConfig = {
@@ -45,13 +50,11 @@ export const jsonConfig = {
     '/graphql/gateway': {
       redirect: 'https://the-guild.dev/graphql/hive/docs/gateway',
     },
+    // feTS lives on its own domain, with the same paths. Serving a copy here
+    // gave search engines two sites with the same pages.
     '/openapi/fets': {
-      rewrite: 'fets-3ku.pages.dev',
-      crisp: {
-        segments: ['fets'],
-      },
-      // Its sitemap lists fets.dev URLs, which this domain's index cannot vouch for.
-      sitemap: false,
+      redirect: 'https://fets.dev',
+      preservePath: true,
     },
     '/heltin': {
       rewrite: 'heltin.pages.dev',
@@ -83,7 +86,7 @@ export const jsonConfig = {
       status: 302,
     },
     '/fets': {
-      redirect: 'https://the-guild.dev/openapi/fets',
+      redirect: 'https://fets.dev',
       status: 302,
     },
     '/chat': {

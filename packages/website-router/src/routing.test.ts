@@ -10,8 +10,28 @@ import {
   canonicalizeUrl,
   isLeakedRouteTemplate,
   markdownTwinCanonical,
+  redirectTarget,
   withMarkdownCanonical,
 } from './routing';
+
+test('preservePath redirects keep the rest of the path and the query', () => {
+  const record = { redirect: 'https://fets.dev', preservePath: true };
+  const target = (url: string) => redirectTarget(record, new URL(url), '/openapi/fets');
+
+  equal(target('https://the-guild.dev/openapi/fets'), 'https://fets.dev/');
+  equal(
+    target('https://the-guild.dev/openapi/fets/server/quick-start?x=1'),
+    'https://fets.dev/server/quick-start?x=1',
+  );
+  equal(
+    redirectTarget(
+      { redirect: 'https://the-guild.dev' },
+      new URL('https://the-guild.dev/about-us/x'),
+      '/about-us',
+    ),
+    'https://the-guild.dev',
+  );
+});
 
 test('preserveSearch keeps the original query string', () => {
   const upstreamUrl = buildUpstreamUrl({
