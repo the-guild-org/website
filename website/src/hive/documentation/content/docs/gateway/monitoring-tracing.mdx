@@ -259,6 +259,13 @@ types, without a default export or namespaces like `resources` or `tracing`. Imp
 packages directly instead, like `@opentelemetry/resources` or `@opentelemetry/sdk-trace`, they are
 bundled too.
 
+With programmatic usage, these packages are not bundled. Install the ones you import directly, the
+examples on this page use:
+
+```sh npm2yarn
+npm i @opentelemetry/sdk-trace @opentelemetry/resources
+```
+
 ```ts title="telemetry.ts"
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { NodeSDK } from "@opentelemetry/sdk-node";
