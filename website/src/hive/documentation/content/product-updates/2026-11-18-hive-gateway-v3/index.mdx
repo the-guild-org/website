@@ -121,6 +121,14 @@ export const gatewayConfig = defineConfig({
 });
 ```
 
+## Execution and Upstream Cancellation by Default
+
+[Execution cancellation](/docs/gateway/other-features/performance/execution-cancellation) and
+[upstream cancellation](/docs/gateway/other-features/performance/upstream-cancellation) are enabled
+by default. When a client disconnects or aborts the request, Hive Gateway stops executing the
+operation and aborts the in-flight subgraph requests, saving resources on both the gateway and the
+subgraphs. You can opt out with `executionCancellation: false` and `upstreamCancellation: false`.
+
 ## GraphQL-JS 17 Support
 
 Hive Gateway and the stitching, wrapping and federation packages work with GraphQL-JS 17 alongside

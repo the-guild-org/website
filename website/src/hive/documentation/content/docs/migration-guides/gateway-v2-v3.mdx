@@ -20,6 +20,7 @@ The most significant changes are:
 - [Request ID](#request-id)
 - [Request Summary Logs](#request-summary-logs)
 - [Request Body Size Limit](#request-body-size-limit)
+- [Execution and Upstream Cancellation Enabled by Default](#execution-and-upstream-cancellation-enabled-by-default)
 - [Removed Delegation Plan Hooks](#removed-delegation-plan-hooks)
 - [Removed Legacy Logger](#removed-legacy-logger)
 - [Removed Deprecated Options](#removed-deprecated-options)
@@ -203,6 +204,31 @@ appropriate request body limit is enforced elsewhere.
 <Callout type="info">
   Read more about the limit in the [Security
   documentation](/docs/gateway/other-features/security#request-body-size-limit-enabled-by-default).
+</Callout>
+
+## Execution and Upstream Cancellation Enabled by Default
+
+The `executionCancellation` and `upstreamCancellation` options are enabled by default. When the
+client disconnects or aborts the request, Hive Gateway stops executing the operation and aborts the
+in-flight requests to the subgraphs, instead of doing work whose results would never be delivered.
+
+If you rely on operations and upstream requests running to completion after the client went away
+(for example, mutations with side effects that must finish), disable them:
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  executionCancellation: false,
+  upstreamCancellation: false,
+});
+```
+
+<Callout type="info">
+  Read more about [Execution
+  Cancellation](/docs/gateway/other-features/performance/execution-cancellation)
+  and [Upstream
+  Cancellation](/docs/gateway/other-features/performance/upstream-cancellation).
 </Callout>
 
 ## Removed Delegation Plan Hooks

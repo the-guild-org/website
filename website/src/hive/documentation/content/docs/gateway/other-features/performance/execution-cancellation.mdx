@@ -15,19 +15,22 @@ cancellation.
 
 So any extra calls to the services can be stopped and the resources can be saved.
 
-## Enable Execution Cancellation
+## Execution Cancellation Is Enabled by Default
+
+Execution cancellation is enabled by default, so you immediately benefit from it without making any
+other adjustments within your GraphQL schema implementation.
+
+## Disable Execution Cancellation
+
+If you want to keep executing operations even after the client went away, you can disable it:
 
 ```ts title="gateway.config.ts"
 import { defineConfig } from "@graphql-hive/gateway";
 
 export const gatewayConfig = defineConfig({
-  executionCancellation: true,
+  executionCancellation: false,
 });
 ```
-
-That is all you need to do to enable execution cancellation in your Hive Gateway. Theoretically, you
-can enable this and immediately benefit from it without making any other adjustments within your
-GraphQL schema implementation.
 
 If you want to understand how it works and how you can adjust your resolvers to properly cancel
 pending promises (e.g. database reads or HTTP requests), you can continue with the next section.
