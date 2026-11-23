@@ -24,6 +24,7 @@ The most significant changes are:
 - [Removed Legacy Logger](#removed-legacy-logger)
 - [Removed Deprecated Options](#removed-deprecated-options)
 - [Removed Upstream Helpers](#removed-upstream-helpers)
+- [NestJS 12](#nestjs-12)
 - [OpenTelemetry JS SDK 3](#opentelemetry-js-sdk-3)
 - [GraphQL Tools Stitching](#graphql-tools-stitching)
 
@@ -420,6 +421,41 @@ custom code use them, replace them as follows (see also the
 - throw createGraphQLError('Unauthorized', { extensions: { code: 'UNAUTHORIZED' } });
 + throw new GraphQLError('Unauthorized', { extensions: { code: 'UNAUTHORIZED' } });
 ```
+
+## NestJS 12
+
+`@graphql-hive/nestjs` supports NestJS 12 and drops NestJS 10 and 11. Its peer dependencies are now
+`@nestjs/common@^12`, `@nestjs/graphql@^14` and `graphql@^16.11.0 || ^17.0.0` (the range
+`@nestjs/graphql` 14 requires). Upgrade NestJS and `@nestjs/graphql`:
+
+```sh npm2yarn
+npm i @nestjs/common@^12 @nestjs/core@^12 @nestjs/graphql@^14
+```
+
+`HiveGatewayDriver` also works with the new `@nestjs/platform-node` HTTP adapter, alongside Express
+and Fastify. Its `NodeRequest` and `NodeResponse` are available as `req` and `res` in the GraphQL
+context.
+
+`@nestjs/graphql` 14 removed `subscriptions-transport-ws`, so the driver no longer configures it.
+`installSubscriptionHandlers: true` already registered `graphql-ws`, and still does. If you
+configured `subscriptions-transport-ws` explicitly, use `graphql-ws` instead and move your clients to
+the `graphql-transport-ws` protocol:
+
+```diff title="app.module.ts"
+GraphQLModule.forRoot<HiveGatewayDriverConfig>({
+  driver: HiveGatewayDriver,
+  supergraph: './supergraph.graphql',
+  subscriptions: {
+-   'subscriptions-transport-ws': true,
++   'graphql-ws': true,
+  },
+}),
+```
+
+<Callout type="info">
+  Read more in the [NestJS
+  documentation](/docs/gateway/deployment/node-frameworks/nestjs).
+</Callout>
 
 ## OpenTelemetry JS SDK 3
 

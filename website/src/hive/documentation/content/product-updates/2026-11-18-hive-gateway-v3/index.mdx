@@ -3,7 +3,8 @@ title: Hive Gateway v3
 description:
   Hive Gateway v3 runs on GraphQL Yoga v6, supports `@context` and `@fromContext` with the Rust
   Query Planner, speaks the latest defer/stream spec, plans faster with the JavaScript Query Planner,
-  supports GraphQL-JS 17, upgrades to OpenTelemetry JS SDK 3 and drops Node.js 20 and GraphQL-JS 15.
+  supports GraphQL-JS 17, upgrades to OpenTelemetry JS SDK 3, supports NestJS 12 and drops Node.js 20
+  and GraphQL-JS 15.
 date: 2026-11-18
 authors: [enisdenjo]
 ---
@@ -141,6 +142,17 @@ The CLI options are unchanged, but custom OpenTelemetry setups have to use SDK 3
 Context. Check the [migration guide](/docs/migration-guides/gateway-v2-v3#opentelemetry-js-sdk-3)
 for the details.
 
+## NestJS 12 and `@nestjs/platform-node`
+
+The [NestJS driver](/docs/gateway/deployment/node-frameworks/nestjs) supports NestJS 12 and
+`@nestjs/graphql` 14, and works with the new `@nestjs/platform-node` HTTP adapter alongside Express
+and Fastify. NestJS 10 and 11 are no longer supported. Since `@nestjs/graphql` 14 removed
+`subscriptions-transport-ws`, subscriptions over WebSockets use `graphql-ws`. Check the
+[migration guide](/docs/migration-guides/gateway-v2-v3#nestjs-12) for the details.
+
+Thank you to [Jeff Fairley](https://github.com/jfairley) for the work on the NestJS 12 and
+`@nestjs/platform-node` support.
+
 ## Dropped Node.js 20 and GraphQL-JS 15
 
 Node.js 20 has reached its end of life. Hive Gateway v3 requires Node.js 22.15 or later, and
@@ -171,4 +183,5 @@ Read the [migration guide](/docs/migration-guides/gateway-v2-v3) for all the det
 - [Pull request #2670: Hive Gateway v3](https://github.com/graphql-hive/gateway/pull/2670)
 - [Pull request #2703: Support `@context` and `@fromContext` with Rust QP](https://github.com/graphql-hive/gateway/pull/2703)
 - [Pull request #2763: Support GraphQL v17](https://github.com/graphql-hive/gateway/pull/2763)
+- [Pull request #2764: Support `@nestjs/platform-node` and NestJS 12](https://github.com/graphql-hive/gateway/pull/2764)
 - [Pull request #2765: Upgrade OpenTelemetry to v3](https://github.com/graphql-hive/gateway/pull/2765)
