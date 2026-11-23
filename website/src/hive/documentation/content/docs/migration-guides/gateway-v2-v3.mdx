@@ -452,11 +452,14 @@ custom code use them, replace them as follows (see also the
 
 `@graphql-hive/nestjs` supports NestJS 12 and drops NestJS 10 and 11. Its peer dependencies are now
 `@nestjs/common@^12`, `@nestjs/graphql@^14` and `graphql@^16.11.0 || ^17.0.0` (the range
-`@nestjs/graphql` 14 requires). Upgrade NestJS and `@nestjs/graphql`:
+`@nestjs/graphql` 14 requires). Upgrade NestJS, its HTTP adapter and `@nestjs/graphql`:
 
 ```sh npm2yarn
-npm i @nestjs/common@^12 @nestjs/core@^12 @nestjs/graphql@^14
+npm i @nestjs/common@^12 @nestjs/core@^12 @nestjs/platform-express@^12 @nestjs/graphql@^14
 ```
+
+If you use the Fastify adapter, upgrade `@nestjs/platform-fastify@^12` instead of
+`@nestjs/platform-express`.
 
 `HiveGatewayDriver` also works with the new `@nestjs/platform-node` HTTP adapter, alongside Express
 and Fastify. Its `NodeRequest` and `NodeResponse` are available as `req` and `res` in the GraphQL
