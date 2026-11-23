@@ -44,6 +44,7 @@ Clients keep querying `amount` as is, and Hive Gateway fills in `code` from the 
 nearest `User` above each transaction. Entities whose ancestors hold different context values are
 grouped by those values, and all groups are sent in a **single subgraph request** where every group
 gets its own aliased `_entities` field. A list of users in 20 currencies still costs one round trip.
+This applies to nullable contextual arguments, non-null ones are fetched with one request per group.
 
 ## Request Correlation and Summaries
 
