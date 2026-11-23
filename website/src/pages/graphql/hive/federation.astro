@@ -3,7 +3,7 @@ import BaseHead from '~hive/components/BaseHead.astro';
 import HeroButton from '~hive/components/landing/HeroButton.astro';
 import SiteFooter from '~hive/components/SiteFooter.astro';
 import SiteNavigation from '~hive/components/SiteNavigation.astro';
-import { withBase } from '~hive/lib/base-path';
+import { absoluteImageUrl, withBase } from '~hive/lib/base-path';
 import '~hive/styles/global.css';
 import federationDiagram from '~hive/documentation/src/routes/_landing/_light-only/federation/federation-diagram.png';
 import ogImage from '~hive/documentation/src/routes/_landing/_light-only/federation/opengraph-image.png';
@@ -49,6 +49,21 @@ const faqs: [string, string[]][] = [
     ],
   ],
 ];
+
+const description =
+  'Discover what GraphQL Federation is, how it unifies multiple APIs into a Supergraph, its core benefits, and the building blocks like subgraphs, schema composition and gateway.';
+// The page is an explainer: Article structured data lets search engines and
+// AI search tools treat it as one, beside the breadcrumb trail.
+const articleJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'What is GraphQL Federation?',
+  description,
+  image: absoluteImageUrl(ogImage.src),
+  author: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+  publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+  mainEntityOfPage: 'https://the-guild.dev/graphql/hive/federation',
+}).replace(/</g, '\\u003c');
 ---
 
 <!doctype html>
@@ -57,11 +72,12 @@ const faqs: [string, string[]][] = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <BaseHead
-      description="Discover what GraphQL Federation is, how it unifies multiple APIs into a Supergraph, its core benefits, and the building blocks like subgraphs, schema composition and gateway."
+      description={description}
       image={ogImage}
       imageAlt="GraphQL Federation with Hive"
       title="What is GraphQL Federation? | Hive"
     />
+    <script is:inline type="application/ld+json" set:html={articleJsonLd} />
   </head>
   <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
     <SiteNavigation />
