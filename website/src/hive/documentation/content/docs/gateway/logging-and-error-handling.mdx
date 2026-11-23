@@ -116,7 +116,9 @@ The request ID is set on the `x-request-id` header of the response and is forwar
 
 The incoming `x-request-id` header is not trusted by default, so that clients reaching Hive Gateway
 directly cannot choose their own request IDs. If Hive Gateway is reachable only through a proxy or
-another gateway that sets the header itself, trust the header to keep the request ID of the proxy:
+another gateway that sets the header itself, trust the header to keep the request ID of the proxy.
+An ID assigned by your server framework still takes precedence over the trusted header, so if your
+framework assigns one, configure it to use the proxy's ID as well:
 
 ```ts title="gateway.config.ts"
 import { defineConfig } from "@graphql-hive/gateway";
