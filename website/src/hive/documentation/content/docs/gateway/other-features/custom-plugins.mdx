@@ -240,10 +240,6 @@ stateDiagram-v2
   onFetchDone: <a href="#onfetchdone">onFetchDone</a>
   onExecutionResult: <a href="#onexecutionresult">onExecutionResult</a>
   onResultProcess: <a href="#onresultprocess">onResultProcess</a>
-  onDelegationPlan: <a href="#ondelegationplan">onDelegationPlan</a>
-  onDelegationPlanDone: <a href="#ondelegationplandone">onDelegationPlanDone</a>
-  onDelegationStageExecute: <a href="#ondelegationstageexecute">onDelegationStageExecute</a>
-  onDelegationStageExecuteDone: <a href="#ondelegationstageexecutedone">onDelegationStageExecuteDone</a>
   onSubgraphExecute: <a href="#onsubgraphexecute">onSubgraphExecute</a>
   onSubgraphExecuteDone: <a href="#onsubgraphexecutedone">onSubgraphExecuteDone</a>
 
@@ -260,24 +256,17 @@ stateDiagram-v2
 
   [*] --> onRequest
 
-  state is_plan_cached <<choice>>
-  onExecute --> is_plan_cached
-  onSubscribe --> is_plan_cached
-  is_plan_cached --> onDelegationPlan: Plan is not cached
-  is_plan_cached --> onDelegationStageExecute: Plan is cached
+  onExecute --> onSubgraphExecute
+  onSubscribe --> onSubgraphExecute
 
-  note left of onDelegationPlan: For each nested selection set of the query
-  onDelegationPlan --> onDelegationPlanDone
-  onDelegationPlanDone --> onDelegationStageExecute
-  onDelegationStageExecute --> onSubgraphExecute
+  note left of onSubgraphExecute: For each subgraph request of the query plan
   onSubgraphExecute --> onFetch
   onFetch --> onFetchDone
   onFetchDone --> onSubgraphExecuteDone
 
   state is_plan_finished <<choice>>
-  onSubgraphExecuteDone --> onDelegationStageExecuteDone
-  onDelegationStageExecuteDone --> is_plan_finished
-  is_plan_finished --> onDelegationStageExecute: Plan execution not finished
+  onSubgraphExecuteDone --> is_plan_finished
+  is_plan_finished --> onSubgraphExecute: Plan execution not finished
 
   state end_of_execution <<choice>>
 
@@ -660,80 +649,6 @@ This hook is called at when the `AsyncIterable` has ended, just before notifying
 There is no payload provided for this hook. It is advised to use the payload of `onExecuteDone` or
 `onSubscriptionResult` to have access to the GraphQL context or other data related to the request.
 
-#### `onDelegationPlan`
-
-Called each time a delegation plan is calculated for a query. It is called for each nested selection
-set level of the query.
-
-This hook is not called for each queries, because the plan is cached. This means it will be called
-only the first time a query document is encountered since the last schema change.
-
-This hook has a before and after stage. You can return a function to hook into the after stage (see
-[`onDelegationPlanDone`](#ondelegationplandone)).
-
-This hook is mostly used for monitoring and tracing purposes.
-
-| Field Name                 | Description                                                                                                                  |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `supergraph`               | The GraphQL schema of the supergraph.                                                                                        |
-| `subgraph`                 | The name of the subgraph.                                                                                                    |
-| `sourceSubschema`          | The schema of the subgraph.                                                                                                  |
-| `typeName`                 | The name of the type being planned.                                                                                          |
-| `variables`                | The variables provided in the client request.                                                                                |
-| `fragments`                | The fragments provided in the client request.                                                                                |
-| `fieldNodes`               | The field nodes of selection set being planned.                                                                              |
-| `context`                  | The GraphQL context object.                                                                                                  |
-| `requestId`                | A unique ID identifying the client request. This is used to correlate downstream and upstream requests across services.      |
-| `log`                      | The [Hive Logger](/docs/logger) instance for the specific request that includes the details of the request and the response. |
-| `info`                     | The `GraphQLResolveInfo` object of the client query.                                                                         |
-| `delegationPlanBuilder`    | The delegation plan builder.                                                                                                 |
-| `setDelegationPlanBuilder` | Function to replace the current delegation plan builder.                                                                     |
-
-##### `onDelegationPlanDone`
-
-Called when a delegation plan has been calculated.
-
-This hook is mostly used for monitoring and tracing purpose.
-
-| Payload Field       | Description                                                                 |
-| ------------------- | --------------------------------------------------------------------------- |
-| `delegationPlan`    | The delegation plan calculated.                                             |
-| `setDelegationPlan` | Function to replace the current delegation plan with a new delegation plan. |
-
-#### `onDelegationStageExecute`
-
-Called when a delegation plan stage is executed. This can be called multiple times for a query if it
-requires multiple stages to be fully resolved.
-
-This hooks has a before and after stage. You can return a function to hook into the after stage (see
-[`onDelegationStageExecuteDone`](#ondelegationstageexecutedone)).
-
-| Payload Field  | Description                                                                                                                  |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `object`       | The object being resolved.                                                                                                   |
-| `context`      | The GraphQL context object.                                                                                                  |
-| `info`         | The `GraphQLResolveInfo` object.                                                                                             |
-| `subgraph`     | The name of the subgraph.                                                                                                    |
-| `subschema`    | The schema of the current subgraph.                                                                                          |
-| `selectionSet` | The selection set node that will be queried.                                                                                 |
-| `key`          | The key for the entity being resolved.                                                                                       |
-| `type`         | The type of the entity being resolved.                                                                                       |
-| `typeName`     | The name of the type being resolved.                                                                                         |
-| `resolver`     | The resolver function for the merged type.                                                                                   |
-| `setResolver`  | Function to set a new resolver for the merged type.                                                                          |
-| `requestId`    | A unique ID identifying the client request. This is used to correlate downstream and upstream requests across services.      |
-| `log`          | The [Hive Logger](/docs/logger) instance for the specific request that includes the details of the request and the response. |
-
-##### `onDelegationStageExecuteDone`
-
-Called when the delegation plan has been executed and all subgraph queries have been done for the
-current stage.
-
-| Field Name  | Description                             |
-| ----------- | --------------------------------------- |
-| `result`    | The result of the delegation execution. |
-| `setResult` | Function to replace the result.         |
-
 #### `onSubgraphExecute`
 
 This hook is invoked for ANY request that is sent to the subgraph.
@@ -744,7 +659,7 @@ This hook is invoked for ANY request that is sent to the subgraph.
 - Add a custom auth header
 - Monitor the subgraph request
 
-You can see [Prometheus plugin](/docs/gateway/authorization-authentication) for an example of how to
+You can see [Prometheus plugin](/docs/gateway/monitoring-tracing#prometheus-metrics) for an example of how to
 use this hook.
 
 | Payload Field         | Description                                                                                                                  |

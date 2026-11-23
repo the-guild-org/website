@@ -75,10 +75,6 @@ export const gatewayConfig = defineConfig({
 -         log.info('Executing...');
 +         context.log.info('Executing...');
         },
-        onDelegationPlan(context) {
--         log.info('Creating delegation plan...');
-+         context.log.info('Creating delegation plan...');
-        },
         onSubgraphExecute(context) {
 -         log.info('Executing on subgraph...');
 +         context.log.info('Executing on subgraph...');
@@ -102,15 +98,62 @@ Will log with the necessary metadata for increased observability, like this:
 ```
 2025-04-10T14:00:00.000Z INF Executing...
   requestId: "0b1dce69-5eb0-4d7b-97d8-1337535a620e"
-2025-04-10T14:00:00.000Z INF Creating delegation plan...
-  requestId: "0b1dce69-5eb0-4d7b-97d8-1337535a620e"
-  subgraph: "accounts"
 2025-04-10T14:00:00.000Z INF Executing on subgraph...
   requestId: "0b1dce69-5eb0-4d7b-97d8-1337535a620e"
   subgraph: "accounts"
 2025-04-10T14:00:00.000Z INF Fetching data...
   requestId: "0b1dce69-5eb0-4d7b-97d8-1337535a620e"
 ```
+
+### Request ID
+
+Every request gets a request ID that is attached as the `requestId` attribute to the logger in the
+context. Hive Gateway uses the ID your server framework already assigned to the request (for
+example Fastify's `request.id`), and otherwise generates a new UUID.
+
+The request ID is set on the `x-request-id` header of the response and is forwarded in the
+`x-request-id` header of every subgraph request, so logs can be correlated across services.
+
+The incoming `x-request-id` header is not trusted by default, so that clients reaching Hive Gateway
+directly cannot choose their own request IDs. If Hive Gateway is reachable only through a proxy or
+another gateway that sets the header itself, trust the header to keep the request ID of the proxy.
+An ID assigned by your server framework still takes precedence over the trusted header, so if your
+framework assigns one, configure it to use the proxy's ID as well:
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  requestId: {
+    trustHeader: true,
+  },
+});
+```
+
+The `requestId` option also allows you to change the header name with `headerName`, provide your
+own ID generator with `generateRequestId`, or disable the request ID altogether by setting it to
+`false`. Hive Gateway uses the request ID handling of GraphQL Yoga, read more about it in the
+[Yoga documentation](https://the-guild.dev/graphql/yoga-server/docs/features/logging-and-debugging#configuring-the-request-id).
+
+### Request Summary
+
+Once a request has been processed, Hive Gateway logs a single `info` level line summarizing it. The
+summary contains the HTTP method, path, operation name and type (or the number of operations of a
+batched request), the response status, the number of GraphQL errors and the request duration.
+
+```
+2025-04-10T14:00:00.000Z INF Request processed
+  requestId: "0b1dce69-5eb0-4d7b-97d8-1337535a620e"
+  method: "POST"
+  path: "/graphql"
+  operationName: "MyQuery"
+  operationType: "query"
+  status: 200
+  errorCount: 0
+  durationMs: 12
+```
+
+Set the [log level](#log-levels) to `warn` or higher to stop logging the request summaries.
 
 ### Log Levels
 
@@ -150,7 +193,7 @@ export const gatewayConfig = defineConfig({
 <Tabs.Tab>
 
 ```ts title="index.ts"
-import { createGatewayRuntime } from "@graphql-hive/runtime-gateway";
+import { createGatewayRuntime } from "@graphql-hive/gateway-runtime";
 
 export const gateway = createGatewayRuntime({
   logging: "debug",

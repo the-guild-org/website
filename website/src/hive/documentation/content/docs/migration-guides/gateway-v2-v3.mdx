@@ -1,0 +1,645 @@
+---
+title: Migrating Hive Gateway from v2 to v3
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+This document guides you through the process of migrating your Hive Gateway from version 2 to
+version 3. It outlines the key changes, potential breaking points, and provides step-by-step
+instructions to ensure a smooth transition.
+
+v3 is built on [GraphQL Yoga v6](/product-updates/2026-10-24-yoga-adopts-hive-logger-support-latest-defer-steam-spec-drops-legacy-node-and-graphql)
+and the latest major versions of GraphQL Tools. Most of the breaking changes are removals of
+deprecated APIs. If you use GraphQL Yoga APIs in your plugins, also check the
+[Yoga v5 to v6 migration guide](https://the-guild.dev/graphql/yoga-server/docs/migration/migration-from-yoga-v5).
+The most significant changes are:
+
+- [Drop Support for Node v20](#drop-support-for-node-v20)
+- [Drop Support for GraphQL v15](#drop-support-for-graphql-v15)
+- [GraphQL v17 in Docker Images and Binary](#graphql-v17-in-docker-images-and-binary)
+- [Request ID](#request-id)
+- [Request Summary Logs](#request-summary-logs)
+- [Request Body Size Limit](#request-body-size-limit)
+- [Execution and Upstream Cancellation Enabled by Default](#execution-and-upstream-cancellation-enabled-by-default)
+- [Removed Delegation Plan Hooks](#removed-delegation-plan-hooks)
+- [Removed Legacy Logger](#removed-legacy-logger)
+- [Removed Deprecated Options](#removed-deprecated-options)
+- [Removed Upstream Helpers](#removed-upstream-helpers)
+- [NestJS 12](#nestjs-12)
+- [OpenTelemetry JS SDK 3](#opentelemetry-js-sdk-3)
+- [GraphQL Tools Stitching](#graphql-tools-stitching)
+
+## Drop Support for Node v20
+
+Node v20 has reached its end of life (as of 30 Apr 2026), and Hive Gateway v3, with its
+dependencies, no longer supports it. The minimum Node version required to run Hive Gateway is now
+Node v22.15.0.
+
+The following packages have been updated to their latest versions, which require Node v22.15.0 or
+higher:
+
+- `@graphql-hive/gateway`
+- `@graphql-hive/gateway-runtime`
+- `@graphql-hive/gateway-testing`
+- `@graphql-hive/router-runtime`
+- `@graphql-hive/importer`
+- `@graphql-hive/logger`
+- `@graphql-hive/nestjs`
+- `@graphql-hive/pubsub`
+- `@graphql-hive/signal`
+- `@graphql-hive/plugin-aws-sigv4`
+- `@graphql-hive/plugin-deduplicate-request`
+- `@graphql-hive/plugin-mcp`
+- `@graphql-hive/plugin-opentelemetry`
+- `@graphql-mesh/fusion-runtime`
+- `@graphql-mesh/hmac-upstream-signature`
+- `@graphql-mesh/plugin-jwt-auth`
+- `@graphql-mesh/plugin-prometheus`
+- `@graphql-mesh/transport-common`
+- `@graphql-mesh/transport-http`
+- `@graphql-mesh/transport-http-callback`
+- `@graphql-mesh/transport-ws`
+- `@graphql-tools/batch-delegate`
+- `@graphql-tools/batch-execute`
+- `@graphql-tools/delegate`
+- `@graphql-tools/executor-common`
+- `@graphql-tools/executor-graphql-ws`
+- `@graphql-tools/executor-http`
+- `@graphql-tools/federation`
+- `@graphql-tools/stitch`
+- `@graphql-tools/stitching-directives`
+- `@graphql-tools/wrap`
+
+## Drop Support for GraphQL v15
+
+Hive Gateway v3 supports only GraphQL v16 and v17. The `graphql` peer dependency of all Hive Gateway
+packages is now `^16.9.0 || ^17.0.0`.
+
+If your project depends on `graphql` directly, upgrade it:
+
+```sh npm2yarn
+npm i graphql@^16.9.0
+```
+
+`@graphql-tools/stitch` no longer reads legacy `#` comment descriptions from type definitions,
+because the `commentDescriptions` option was removed in GraphQL v16. Use string descriptions instead:
+
+```diff
+type Query {
+- # The current user
++ "The current user"
+  me: User
+}
+```
+
+## GraphQL v17 in Docker Images and Binary
+
+The Hive Gateway Docker images and the standalone binary come with `graphql@17.1.0`, so plugins,
+additional resolvers, transforms and hooks loaded by the gateway configuration run against GraphQL
+v17. If you install the packages yourself, you keep the GraphQL version you already use.
+
+Code that only uses the gateway APIs needs no changes. If your code reads `info.variableValues`, it
+is an object of `{ sources, coerced }` instead of a flat map of variables. Use
+`getCoercedVariableValues` from `@graphql-tools/delegate` to support both versions:
+
+```ts
+import { getCoercedVariableValues } from "@graphql-tools/delegate";
+
+const variables = getCoercedVariableValues(info.variableValues);
+```
+
+For other uses of GraphQL internals, see the
+[GraphQL.js v16 to v17 upgrade guide](https://www.graphql-js.org/upgrade-guides/v16-v17/).
+
+## Request ID
+
+Hive Gateway uses the request ID handling of
+[GraphQL Yoga](https://the-guild.dev/graphql/yoga-server/docs/features/logging-and-debugging#configuring-the-request-id).
+The request ID is the ID your server framework already assigned to the request (for example
+Fastify's `request.id`), and otherwise a newly generated UUID. It is still set on the
+`x-request-id` header of the response and forwarded to subgraph requests.
+
+The incoming `x-request-id` header is no longer trusted by default, so that clients reaching Hive
+Gateway directly cannot choose their own request IDs. In v2, the incoming header always took
+precedence. If Hive Gateway is reachable only through a proxy or another gateway that sets the
+header itself, trust the header to keep using the request ID of the proxy:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
++ requestId: {
++   trustHeader: true,
++ },
+});
+```
+
+<Callout type="info">
+  Read more about the request ID in the [Logging and Error Handling
+  documentation](/docs/gateway/logging-and-error-handling#request-id).
+</Callout>
+
+## Request Summary Logs
+
+Once a request has been processed, Hive Gateway logs a single `info` level line summarizing it,
+including the operation, the response status, the number of GraphQL errors and the request duration:
+
+```
+2025-04-10T14:00:00.000Z INF Request processed
+  requestId: "0b1dce69-5eb0-4d7b-97d8-1337535a620e"
+  method: "POST"
+  path: "/graphql"
+  operationName: "MyQuery"
+  operationType: "query"
+  status: 200
+  errorCount: 0
+  durationMs: 12
+```
+
+Since `info` is the default log level, you will see one such line for every request. If you do not
+want them, set the log level to `warn` or higher:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
++ logging: 'warn',
+});
+```
+
+## Request Body Size Limit
+
+The request body size limit of 25 MB is configurable with the `maxRequestBodySize` option. Set a
+different limit in bytes, or `false` to disable it:
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  maxRequestBodySize: 5_000_000, // 5 MB
+});
+```
+
+Enforcing the limit streams request bodies through a byte counter, which makes body parsing
+asynchronous even for in-memory bodies. If you use the runtime programmatically and relied on
+`gateway.fetch()` returning a `Response` synchronously, you have to await the result:
+
+```diff title="index.ts"
+import { createGatewayRuntime } from '@graphql-hive/gateway-runtime';
+
+const gateway = createGatewayRuntime({ supergraph });
+
+- const response = gateway.fetch('http://localhost/graphql', {
++ const response = await gateway.fetch('http://localhost/graphql', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify({ query: '{ hello }' }),
+});
+```
+
+Disabling the limit removes this asynchronous step, but it does not guarantee a synchronous response
+if plugins, resolvers or subgraph requests are asynchronous. Only disable the limit if an
+appropriate request body limit is enforced elsewhere.
+
+<Callout type="info">
+  Read more about the limit in the [Security
+  documentation](/docs/gateway/other-features/security#request-body-size-limit-enabled-by-default).
+</Callout>
+
+## Execution and Upstream Cancellation Enabled by Default
+
+The `executionCancellation` and `upstreamCancellation` options are enabled by default. When the
+client disconnects or aborts the request, Hive Gateway stops executing the operation and aborts the
+in-flight requests to the subgraphs, instead of doing work whose results would never be delivered.
+
+If you rely on operations and upstream requests running to completion after the client went away
+(for example, mutations with side effects that must finish), disable them:
+
+```ts title="gateway.config.ts"
+import { defineConfig } from "@graphql-hive/gateway";
+
+export const gatewayConfig = defineConfig({
+  executionCancellation: false,
+  upstreamCancellation: false,
+});
+```
+
+<Callout type="info">
+  Read more about [Execution
+  Cancellation](/docs/gateway/other-features/performance/execution-cancellation)
+  and [Upstream
+  Cancellation](/docs/gateway/other-features/performance/upstream-cancellation).
+</Callout>
+
+## Removed Delegation Plan Hooks
+
+The `onDelegationPlan` and `onDelegationStageExecute` plugin hooks have been removed, together with
+their `onDelegationPlanDone` and `onDelegationStageExecuteDone` counterparts. These hooks prevented
+the JavaScript Query Planner from caching delegation plans, were rarely used, and were never
+supported by the [Rust Query Planner](/docs/gateway/other-features/rust-query-planner).
+
+Remove the hooks from your plugins:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
+  plugins: () => [
+    {
+-     onDelegationPlan({ typeName, log }) {
+-       log.debug({ typeName }, 'Creating delegation plan');
+-     },
+-     onDelegationStageExecute({ subgraph, log }) {
+-       log.debug({ subgraph }, 'Executing delegation stage');
+-     },
++     onSubgraphExecute({ subgraphName, log }) {
++       log.debug({ subgraphName }, 'Executing on subgraph');
++     },
+    },
+  ],
+});
+```
+
+If you used the hooks for monitoring, use [`onSubgraphExecute`](/docs/gateway/other-features/custom-plugins#onsubgraphexecute),
+the [OpenTelemetry integration](/docs/gateway/monitoring-tracing) or the
+[logging](/docs/gateway/logging-and-error-handling) instead.
+
+## Removed Legacy Logger
+
+The deprecated `logger` property has been removed in favour of the
+[Hive Logger](/docs/logger) available as `log`.
+
+### Transport Context
+
+If you have implemented a custom transport, use `log` from the transport context:
+
+```diff title="letter-transport.ts"
+import type { Transport } from '@graphql-mesh/transport-common';
+import { letterExecutor } from './my-letter-executor';
+
+export default {
+  getSubgraphExecutor(payload) {
+-   payload.logger.info('Creating letter executor...');
++   payload.log.info('Creating letter executor...');
+    return letterExecutor(payload);
+  },
+} satisfies Transport;
+```
+
+### `onFetch` Hook
+
+The `onFetch` hook payload no longer has the `logger` property. Use the logger from the context:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
+  plugins: () => [
+    {
+-     onFetch({ logger }) {
+-       logger.info('Fetching data...');
++     onFetch({ context }) {
++       context.log.info('Fetching data...');
+      },
+    },
+  ],
+});
+```
+
+### Yoga Logger
+
+GraphQL Yoga v6 uses the Hive Logger too. If your plugins use the Yoga logger, rename `yoga.logger`
+to `yoga.log`:
+
+```diff
+const myPlugin = {
+  onYogaInit({ yoga }) {
+-   yoga.logger.info('Plugin initialized');
++   yoga.log.info('Plugin initialized');
+  },
+};
+```
+
+## Removed Deprecated Options
+
+### Persisted Documents `allowArbitraryOperations`
+
+Use `allowArbitraryDocuments` instead:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
+  persistedDocuments: {
+    type: 'hive',
+    endpoint: '<cdn_endpoint>',
+    token: '<cdn_access_token>',
+-   allowArbitraryOperations: true,
++   allowArbitraryDocuments: true,
+  },
+});
+```
+
+### Rate Limiting Rules Array
+
+Passing an array of rules directly to `rateLimiting` is no longer supported. Pass the rules to the
+`config` option instead:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
+- rateLimiting: [
+-   {
+-     type: 'Query',
+-     field: 'searchProducts',
+-     max: 10,
+-     ttl: 60000,
+-     identifier: '{context.headers.authorization}',
+-   },
+- ],
++ rateLimiting: {
++   config: [
++     {
++       type: 'Query',
++       field: 'searchProducts',
++       max: 10,
++       ttl: 60000,
++       identifier: '{context.headers.authorization}',
++     },
++   ],
++ },
+});
+```
+
+<Callout type="info">
+  Read more in the [Rate Limiting
+  documentation](/docs/gateway/other-features/security/rate-limiting).
+</Callout>
+
+### Usage Reporting `clientInfo` Object
+
+The `clientInfo` usage reporting option no longer accepts an object. Pass a function that receives
+the GraphQL context and returns the client info, or `null`:
+
+```diff title="gateway.config.ts"
+import { defineConfig } from '@graphql-hive/gateway';
+
+export const gatewayConfig = defineConfig({
+  reporting: {
+    type: 'hive',
+    token: '<token>',
+    target: '<target>',
+    usage: {
+-     clientInfo: {
+-       name: 'my-client',
+-       version: '1.0.0',
+-     },
++     clientInfo: () => ({
++       name: 'my-client',
++       version: '1.0.0',
++     }),
+    },
+  },
+});
+```
+
+### Hive Usage Reporting CLI Options
+
+The `--hive-registry-token` and `--hive-usage-target` CLI options, and their
+`HIVE_REGISTRY_TOKEN` and `HIVE_USAGE_TARGET` environment variables, have been removed. Use
+`--hive-target` with `--hive-access-token` instead, or the usage and tracing specific
+`--hive-usage-access-token` and `--hive-trace-access-token` options:
+
+```diff
+hive-gateway supergraph \
+  http://cdn.graphql-hive.com/<path>/supergraph \
+  --hive-cdn-key "<hive_cdn_access_key>" \
+- --hive-usage-target "<hive_usage_target>" \
+- --hive-registry-token "<hive_registry_token>"
++ --hive-target "<hive_usage_target>" \
++ --hive-access-token "<hive_access_token>"
+```
+
+The `--hive-target` CLI option and `HIVE_TARGET` environment variable take precedence over the
+`target` from the configuration file.
+
+## Removed Upstream Helpers
+
+Hive Gateway v3 uses GraphQL Yoga v6 and the latest major versions of GraphQL Tools and
+`@whatwg-node`, which no longer export a number of helpers. If your plugins, transports or other
+custom code use them, replace them as follows (see also the
+[Yoga v5 to v6 migration guide](https://the-guild.dev/graphql/yoga-server/docs/migration/migration-from-yoga-v5#10-removed-re-exports-from-graphql-tools)):
+
+| Removed                                           | Replacement                                                                              |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `createGraphQLError`                              | `new GraphQLError(...)` from `graphql`                                                   |
+| `YogaLogger`, `createLogger` and `yoga.logger`    | `Logger` and `yoga.log`                                                                  |
+| `crypto` from `@whatwg-node/fetch`                | The platform global `crypto`                                                             |
+| `mapMaybePromise`, `isPromise` and `MaybePromise` | `handleMaybePromise`, `isPromise` and `MaybePromise` from `@whatwg-node/promise-helpers` |
+| `createDeferred` and `createDeferredPromise`      | `Promise.withResolvers()`                                                                |
+
+```diff
+- import { createGraphQLError, mapMaybePromise } from '@graphql-tools/utils';
++ import { GraphQLError } from 'graphql';
++ import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+
+- throw createGraphQLError('Unauthorized', { extensions: { code: 'UNAUTHORIZED' } });
++ throw new GraphQLError('Unauthorized', { extensions: { code: 'UNAUTHORIZED' } });
+```
+
+## NestJS 12
+
+`@graphql-hive/nestjs` supports NestJS 12 and drops NestJS 10 and 11. Its peer dependencies are now
+`@nestjs/common@^12`, `@nestjs/graphql@^14` and `graphql@^16.11.0 || ^17.0.0` (the range
+`@nestjs/graphql` 14 requires). Upgrade NestJS, its HTTP adapter and `@nestjs/graphql`:
+
+```sh npm2yarn
+npm i @nestjs/common@^12 @nestjs/core@^12 @nestjs/platform-express@^12 @nestjs/graphql@^14
+```
+
+If you use the Fastify adapter, upgrade `@nestjs/platform-fastify@^12` instead of
+`@nestjs/platform-express`.
+
+`HiveGatewayDriver` also works with the new `@nestjs/platform-node` HTTP adapter, alongside Express
+and Fastify. Its `NodeRequest` and `NodeResponse` are available as `req` and `res` in the GraphQL
+context.
+
+`@nestjs/graphql` 14 removed `subscriptions-transport-ws`, so the driver no longer configures it.
+`installSubscriptionHandlers: true` already registered `graphql-ws`, and still does. If you
+configured `subscriptions-transport-ws` explicitly, use `graphql-ws` instead and move your clients to
+the `graphql-transport-ws` protocol:
+
+```diff title="app.module.ts"
+GraphQLModule.forRoot<HiveGatewayDriverConfig>({
+  driver: HiveGatewayDriver,
+  supergraph: './supergraph.graphql',
+  subscriptions: {
+-   'subscriptions-transport-ws': true,
++   'graphql-ws': true,
+  },
+}),
+```
+
+<Callout type="info">
+  Read more in the [NestJS
+  documentation](/docs/gateway/deployment/node-frameworks/nestjs).
+</Callout>
+
+## OpenTelemetry JS SDK 3
+
+Hive Gateway and `@graphql-hive/plugin-opentelemetry` use OpenTelemetry JS SDK 3 (the stable
+packages at 3.x, the experimental packages like `@opentelemetry/sdk-node` at 0.301.x) and
+`@opentelemetry/api` 1.10. SDK 2 packages can't be used together with `@opentelemetry/api` 1.10, so
+custom code using OpenTelemetry packages has to upgrade to SDK 3 too. The
+[OpenTelemetry JS 3.x migration guide](https://github.com/open-telemetry/opentelemetry-js/blob/main/doc/3.x/migration-guide.md)
+describes all changes, the ones affecting Hive Gateway are listed below.
+
+The CLI options are unchanged. The Docker images and the binary bundle `@opentelemetry/sdk-trace`
+instead of `@opentelemetry/sdk-trace-base`, and don't bundle `@opentelemetry/api-logs` and
+`@opentelemetry/propagator-jaeger` anymore.
+
+### Jaeger Exporter and Propagator
+
+`@opentelemetry/exporter-jaeger` and `@opentelemetry/propagator-jaeger` were removed by
+OpenTelemetry. Jaeger receives OTLP natively, so export to it with the OTLP exporters, for example
+with the `--opentelemetry` CLI option:
+
+```sh
+hive-gateway supergraph --opentelemetry "http://jaeger:4318/v1/traces"
+```
+
+The gateway propagates the W3C Trace Context and Baggage headers by default. Services that send or
+expect the `uber-trace-id` header have to switch to W3C Trace Context for their traces to be
+correlated with the gateway's. `OTEL_PROPAGATORS=jaeger` is not accepted by `NodeSDK` anymore, use
+`OTEL_PROPAGATORS=tracecontext` instead.
+
+### `@opentelemetry/sdk-trace` Replaces `@opentelemetry/sdk-trace-base`
+
+Import the samplers, processors and exporters from `@opentelemetry/sdk-trace`.
+`BasicTracerProvider` is called `TracerProvider`, and the span processors take the exporter as an
+option:
+
+```diff title="telemetry.ts"
+- import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
++ import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace';
+
+openTelemetrySetup({
+  contextManager: new AsyncLocalStorageContextManager(),
+  traces: {
+    processors: [
+-     new SimpleSpanProcessor(new OTLPTraceExporter()),
++     new SimpleSpanProcessor({ exporter: new OTLPTraceExporter() }),
+    ],
+  },
+});
+```
+
+The `BufferConfig` type of the `traces.batching` option is exported from
+`@graphql-hive/gateway/opentelemetry/setup` and `@graphql-hive/plugin-opentelemetry/setup`.
+
+### Removed `generalLimits` Option
+
+The `generalLimits` option of `openTelemetrySetup` has been removed. Set the limits in
+`traces.spanLimits` instead:
+
+```diff title="telemetry.ts"
+openTelemetrySetup({
+  contextManager: new AsyncLocalStorageContextManager(),
+- generalLimits: { attributeCountLimit: 64 },
+  traces: {
+    exporter: new OTLPTraceExporter(),
++   spanLimits: { attributeCountLimit: 64 },
+  },
+});
+```
+
+### Batching and Limits Environment Variables
+
+`openTelemetrySetup`, `hiveTracingSetup` and the `--opentelemetry` CLI option don't read the
+`OTEL_BSP_*` environment variables and the attribute, span, event and link limit environment
+variables (like `OTEL_ATTRIBUTE_COUNT_LIMIT` or `OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT`) anymore.
+Use the `traces.batching` and `traces.spanLimits` options instead, or set up the SDK with `NodeSDK`,
+which still reads them.
+
+### Logs API
+
+`@opentelemetry/api-logs` was removed by OpenTelemetry. Import the Logs API from
+`@opentelemetry/api`, or from `@graphql-hive/gateway/opentelemetry/api`:
+
+```diff
+- import { logs, SeverityNumber } from '@opentelemetry/api-logs';
++ import { logs, SeverityNumber } from '@opentelemetry/api';
+```
+
+### Bundled `@opentelemetry/sdk-node`
+
+The `@opentelemetry/sdk-node` bundled in the Docker images and the binary exports only `NodeSDK`,
+`startNodeSdk` and the configuration types. It has no default export and no namespaces (`api`,
+`contextBase`, `core`, `logs`, `metrics`, `node`, `resources` and `tracing`). Import from the
+packages directly, they are bundled too:
+
+```diff title="telemetry.ts"
+- import { NodeSDK, resources, tracing } from '@opentelemetry/sdk-node';
++ import { resourceFromAttributes } from '@opentelemetry/resources';
++ import { NodeSDK } from '@opentelemetry/sdk-node';
++ import { BatchSpanProcessor } from '@opentelemetry/sdk-trace';
+
+new NodeSDK({
+- resource: resources.resourceFromAttributes({ 'service.name': 'my-gateway' }),
+- spanProcessors: [new tracing.BatchSpanProcessor(exporter)],
++ resource: resourceFromAttributes({ 'service.name': 'my-gateway' }),
++ spanProcessors: [new BatchSpanProcessor({ exporter })],
+}).start();
+```
+
+The bundled `@opentelemetry/context-async-hooks` exports only `AsyncLocalStorageContextManager`,
+`AsyncHooksContextManager` was removed by OpenTelemetry. Imports of files inside OpenTelemetry
+packages (like `@opentelemetry/core/build/src/...`) don't resolve anymore, import from the package
+name instead.
+
+## GraphQL Tools Stitching
+
+The following changes affect you only if you use the GraphQL Tools packages directly, for example
+to build a stitched schema programmatically.
+
+### Removed `isolateComputedFieldsTransformer`
+
+Computed and `@requires` fields stay on a single subschema instead of on cloned subschemas, and the
+defaults of `stitchSchemas` already defer them. Remove the transformer from your configuration:
+
+```diff
+- import { isolateComputedFieldsTransformer, stitchSchemas } from '@graphql-tools/stitch';
++ import { stitchSchemas } from '@graphql-tools/stitch';
+
+stitchSchemas({
+  subschemas,
+- subschemaConfigTransforms: [isolateComputedFieldsTransformer],
+});
+```
+
+Multiple merged type `entryPoints` are kept on one subschema too, instead of cloning a subschema per
+entry point. If you already use `entryPoints`, no change is required.
+
+### Removed `stitchingDirectivesTypeDefs`
+
+Use `allStitchingDirectivesTypeDefs` from `@graphql-tools/stitching-directives` instead:
+
+```diff
+- import { stitchingDirectivesTypeDefs } from '@graphql-tools/stitching-directives';
++ import { allStitchingDirectivesTypeDefs } from '@graphql-tools/stitching-directives';
+```
+
+### Removed `disposable` Option from `buildHTTPExecutor`
+
+Executors built with `buildHTTPExecutor` from `@graphql-tools/executor-http` are always disposable.
+Remove the `disposable` option:
+
+```diff
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+
+const executor = buildHTTPExecutor({
+  endpoint: 'http://localhost:4001/graphql',
+- disposable: true,
+});
+```

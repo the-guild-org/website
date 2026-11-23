@@ -112,7 +112,8 @@ services:
     # environment:
     #   HIVE_CDN_ENDPOINT: <secret>
     #   HIVE_CDN_KEY: <secret>
-    #   HIVE_REGISTRY_TOKEN: <secret>
+    #   HIVE_TARGET: <target>
+    #   HIVE_ACCESS_TOKEN: <secret>
     volumes:
       - ./gateway.config.ts:/gateway/gateway.config.ts
 ```
@@ -124,6 +125,10 @@ docker compose up
 ```
 
 ## Extend Docker Image
+
+The Docker image comes with `graphql@17.1.0`, so plugins and other custom code loaded by the gateway
+configuration run against GraphQL v17. If your code uses GraphQL internals directly, check the
+[migration guide](/docs/migration-guides/gateway-v2-v3#graphql-v17-in-docker-images-and-binary).
 
 ### Install Plugin
 
