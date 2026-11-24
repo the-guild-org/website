@@ -234,19 +234,21 @@ const allHighlights = Object.values(highlights).flat();
             </h2>
             <p class="basis-full leading-6 text-green-800">{tab.description}</p>
           </header>
-          <dl class="grid grid-cols-2 gap-4 md:gap-12">
+          <ul class="grid list-none grid-cols-2 gap-4 md:gap-12">
             {highlights[tab.title].map(highlight => (
-              <a
-                class="hover:bg-beige-100 -m-2 block rounded-lg p-2 md:-m-4 md:rounded-xl md:p-4"
-                data-highlight-hover={highlight.title}
-                href={withBase(highlight.link)}
-                title={`Learn more about ${highlight.title}`}
-              >
-                <dt class="text-green-1000 font-medium">{highlight.title}</dt>
-                <dd class="mt-2 text-sm/5 text-green-800">{highlight.description}</dd>
-              </a>
+              <li>
+                <a
+                  class="hover:bg-beige-100 -m-2 block rounded-lg p-2 md:-m-4 md:rounded-xl md:p-4"
+                  data-highlight-hover={highlight.title}
+                  href={withBase(highlight.link)}
+                  title={`Learn more about ${highlight.title}`}
+                >
+                  <h3 class="text-green-1000 font-medium">{highlight.title}</h3>
+                  <p class="mt-2 text-sm/5 text-green-800">{highlight.description}</p>
+                </a>
+              </li>
             ))}
-          </dl>
+          </ul>
           <a
             class="text-green-1000 bg-primary relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-green-800 hover:text-white focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 sm:w-fit"
             href={withBase(tab.documentationLink)}
