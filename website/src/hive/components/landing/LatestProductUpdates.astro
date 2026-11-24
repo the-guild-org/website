@@ -1,0 +1,95 @@
+---
+/**
+ * The newest product updates for one product, read from the productUpdates
+ * collection at build time. A landing page that includes it lists what shipped
+ * without anyone editing the page.
+ */
+import { getCollection } from 'astro:content';
+import { withBase } from '../../lib/base-path';
+
+interface Props {
+  class?: string;
+  /** How many updates to list. */
+  count?: number;
+  description: string;
+  /** Leaves out updates whose slug matches, e.g. the other products' on the Console list. */
+  exclude?: RegExp;
+  heading?: string;
+  /** Selects updates by slug, e.g. /hive-router/. Every update when omitted. */
+  match?: RegExp;
+}
+
+const {
+  class: className,
+  count = 6,
+  description,
+  exclude,
+  heading = 'Recently shipped',
+  match,
+} = Astro.props;
+
+const dateString = (value: unknown) =>
+  value instanceof Date ? value.toISOString().slice(0, 10) : String(value);
+
+const updates = (await getCollection('productUpdates'))
+  .map(entry => ({
+    date: dateString(entry.data.date),
+    slug: entry.id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, ''),
+    title: entry.data.title,
+  }))
+  .filter(update => (!match || match.test(update.slug)) && !exclude?.test(update.slug))
+  .sort((a, b) => b.date.localeCompare(a.date))
+  .slice(0, count);
+
+const dateFormat = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  timeZone: 'UTC',
+  year: 'numeric',
+});
+
+/** Titles are Markdown-ish: `@policy` in backticks becomes inline code. */
+const titleParts = (title: string) =>
+  title.split('`').map((text, index) => ({ code: index % 2 === 1, text }));
+---
+
+{updates.length > 0 && (
+  <section class:list={['px-4 py-6 sm:py-12 md:px-6 lg:py-24 xl:px-[120px]', className]}>
+    <header class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+      <div>
+        <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]">
+          {heading}
+        </h2>
+        <p class="mt-4 text-green-800">{description}</p>
+      </div>
+      <a
+        class="hive-focus text-green-1000 -mx-1 inline-flex items-center gap-2 rounded-sm px-1 font-medium hover:text-blue-700"
+        href={withBase('/product-updates')}
+      >
+        All product updates
+        <svg class="size-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
+        </svg>
+      </a>
+    </header>
+    <ol class="mt-8 grid list-none gap-4 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3 lg:gap-6">
+      {updates.map(update => (
+        <li>
+          <a
+            class="hive-focus bg-beige-100 hover:bg-beige-200 flex h-full flex-col rounded-2xl p-6 transition-colors"
+            href={withBase(`/product-updates/${update.slug}`)}
+          >
+            <time class="text-sm/5 text-green-800" datetime={update.date}>
+              {dateFormat.format(new Date(`${update.date}T00:00:00Z`))}
+            </time>
+            <span class="text-green-1000 mt-3 text-xl leading-[1.4] font-medium text-pretty">
+              {titleParts(update.title).map(part =>
+                part.code ? <code class="font-mono text-[0.9em]">{part.text}</code> : part.text,
+              )}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}

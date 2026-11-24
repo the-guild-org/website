@@ -3,8 +3,9 @@
  * Hive Router landing page: the blue hero leading with the performance claim,
  * the numbers from the open benchmark and audit, why-Rust highlights, a
  * copy-paste quick start, a compact federation-compatibility banner pointing
- * at the live audit, the extensibility cards, and the shared ecosystem, FAQ
- * and closing sections.
+ * at the live audit, the extensibility cards, the index of every feature, the
+ * newest router product updates, and the shared ecosystem, FAQ and closing
+ * sections.
  */
 import BaseHead from '~hive/components/BaseHead.astro';
 import ExploreMainProductCards from '~hive/components/ExploreMainProductCards.astro';
@@ -14,7 +15,9 @@ import LetsGetAdvancedSection, {
   type AdvancedCard,
 } from '~hive/components/gateway/LetsGetAdvancedSection.astro';
 import GetYourAPIGameRightList from '~hive/components/GetYourAPIGameRightList.astro';
+import FeatureIndex, { type FeatureGroup } from '~hive/components/landing/FeatureIndex.astro';
 import HeroButton from '~hive/components/landing/HeroButton.astro';
+import LatestProductUpdates from '~hive/components/landing/LatestProductUpdates.astro';
 import SiteFooter from '~hive/components/SiteFooter.astro';
 import SiteNavigation from '~hive/components/SiteNavigation.astro';
 import { withBase } from '~hive/lib/base-path';
@@ -88,32 +91,32 @@ const highlights: { description: string; href: string; title: string }[] = [
   {
     title: 'Full Apollo Federation compatibility',
     description:
-      'Point it at your existing supergraph. Every release is checked against our open Federation audit, and features up to progressive @override are supported.',
+      'Point it at your existing supergraph. Federation v2.0 through v2.9 is covered, including @interfaceObject, progressive @override, @context and @fromContext, and every release is checked against our open Federation audit.',
     href: '/docs/router/compatibility',
   },
   {
     title: 'Observability built in',
     description:
-      'OpenTelemetry traces, Prometheus metrics, structured logs and health probes. Send them to Hive Console, Grafana, Datadog or any compatible backend.',
+      'OpenTelemetry traces, OTLP and Prometheus metrics, a native Datadog tracer, one structured log line per request and health probes. Send them to Hive Console, Grafana, Datadog or any OTLP backend.',
     href: '/docs/router/observability/tracing',
   },
   {
     title: 'Security at the edge of your graph',
     description:
-      'JWT authentication, authorization directives, demand control, persisted documents, CSRF and CORS protection. One YAML file configures all of it.',
+      'JWT authentication, @authenticated, @requiresScopes and @policy, demand control, persisted documents, TLS and mutual TLS, subgraph error masking, CSRF and CORS protection. One YAML file configures all of it.',
     href: '/docs/router/security/jwt-authentication',
   },
   {
     title: 'Federated subscriptions',
     description:
-      'Real-time data over Server-Sent Events, WebSockets or multipart HTTP. Entities are resolved across subgraphs for subscription events too.',
+      'Real-time data over Server-Sent Events, WebSockets or multipart HTTP, with HTTP callbacks and multiplexed WebSockets towards subgraphs. Entities are resolved across subgraphs for subscription events too.',
     href: '/docs/router/subscriptions',
   },
   {
     title: 'Works with any registry',
     description:
-      'Load the supergraph from a file, Hive Console or Apollo GraphOS and reload it on change. Hive Console is optional.',
-    href: '/docs/router/configuration/supergraph',
+      'Load the supergraph from a file, an S3-compatible bucket, Hive Console or Apollo GraphOS and reload it on change. Hive Console is optional.',
+    href: '/docs/router/supergraph',
   },
 ];
 
@@ -172,6 +175,126 @@ const advancedCards: AdvancedCard[] = [
   },
 ];
 
+// Every capability by name, linked to its docs page. Keep it in step with the router docs
+// sidebar: a feature that ships gets a line here.
+const featureGroups: FeatureGroup[] = [
+  {
+    title: 'Federation',
+    items: [
+      { href: '/docs/router/compatibility', label: 'Apollo Federation v2 compatibility' },
+      { href: '/docs/router/configuration/override_labels', label: 'Progressive @override' },
+      {
+        href: '/docs/router/guides/contextual-arguments',
+        label: 'Contextual arguments with @context and @fromContext',
+      },
+      {
+        href: '/docs/router/supergraph',
+        label: 'Supergraph from Hive Console, Apollo GraphOS, a file or S3',
+      },
+      {
+        href: '/docs/router/observability/usage_reporting',
+        label: 'Usage reporting to Hive Console',
+      },
+      { href: '/docs/router/configuration/laboratory', label: 'Built-in GraphQL IDE' },
+    ],
+  },
+  {
+    title: 'Security',
+    items: [
+      { href: '/docs/router/security/jwt-authentication', label: 'JWT authentication' },
+      {
+        href: '/docs/router/security/authorization',
+        label: 'Authorization with @authenticated and @requiresScopes',
+      },
+      { href: '/docs/router/security/policy', label: 'Custom authorization policies with @policy' },
+      {
+        href: '/docs/router/security/demand-control',
+        label: 'Demand control with @cost and @listSize',
+      },
+      {
+        href: '/docs/router/security/operation-complexity',
+        label: 'Depth, token and alias limits',
+      },
+      { href: '/docs/router/security/persisted-documents', label: 'Persisted documents' },
+      { href: '/docs/router/security/tls', label: 'TLS and mutual TLS' },
+      { href: '/docs/router/security/error-masking', label: 'Subgraph error masking' },
+      { href: '/docs/router/security/cors', label: 'CORS' },
+      { href: '/docs/router/security/csrf', label: 'CSRF prevention' },
+      { href: '/docs/router/security/introspection', label: 'Introspection control' },
+    ],
+  },
+  {
+    title: 'Traffic and reliability',
+    items: [
+      { href: '/docs/router/guides/performance-tuning#circuit-breaker', label: 'Circuit breakers' },
+      {
+        href: '/docs/router/guides/performance-tuning#request-deduplication',
+        label: 'Request deduplication',
+      },
+      {
+        href: '/docs/router/configuration/traffic_shaping',
+        label: 'Timeouts, connection pools, compression and HTTP/2',
+      },
+      { href: '/docs/router/guides/dynamic-subgraph-routing', label: 'Dynamic subgraph routing' },
+      {
+        href: '/docs/router/guides/header-manipulation',
+        label: 'Header propagation and rewriting',
+      },
+      {
+        href: '/docs/router/configuration/response_extensions',
+        label: 'Subgraph response extensions',
+      },
+    ],
+  },
+  {
+    title: 'Real-time',
+    items: [
+      { href: '/docs/router/subscriptions', label: 'Federated subscriptions' },
+      { href: '/docs/router/subscriptions/sse', label: 'Server-Sent Events' },
+      {
+        href: '/docs/router/subscriptions/websockets',
+        label: 'WebSockets with connection multiplexing',
+      },
+      { href: '/docs/router/subscriptions/multipart-http', label: 'Multipart HTTP' },
+      {
+        href: '/docs/router/subscriptions/incremental-delivery',
+        label: 'Incremental Delivery over HTTP',
+      },
+      { href: '/docs/router/subscriptions/http-callback', label: 'HTTP callbacks' },
+    ],
+  },
+  {
+    title: 'Observability',
+    items: [
+      { href: '/docs/router/observability/tracing', label: 'OpenTelemetry tracing' },
+      {
+        href: '/docs/router/observability/tracing#send-traces-through-native-datadog-tracing',
+        label: 'Native Datadog tracing',
+      },
+      { href: '/docs/router/observability/metrics', label: 'OTLP and Prometheus metrics' },
+      { href: '/docs/router/observability/logging', label: 'Structured logs and access log' },
+      { href: '/docs/router/observability/probes', label: 'Health and readiness probes' },
+    ],
+  },
+  {
+    title: 'Extensibility and operations',
+    items: [
+      { href: '/docs/router/customizations/plugin-system', label: 'Rust plugin system' },
+      { href: '/docs/router/customizations/coprocessors', label: 'Coprocessors in any language' },
+      { href: '/docs/router/configuration/expressions', label: 'Expressions in configuration' },
+      { href: '/docs/router/configuration/storages', label: 'S3-compatible storage backends' },
+      {
+        href: '/docs/router/configuration/environment-variables',
+        label: 'Configuration through environment variables',
+      },
+      {
+        href: '/product-updates/2026-10-29-hive-router-anonymize-command',
+        label: 'Anonymize a supergraph for bug reports',
+      },
+    ],
+  },
+];
+
 // The FAQ component prefixes site-relative hrefs itself, so these stay unprefixed.
 const docsLink = (href: string, text: string) =>
   `<a class="hive-focus underline decoration-blue-500 underline-offset-2" href="${href}">${text}</a>`;
@@ -182,12 +305,20 @@ const faqs: [string, string][] = [
     `Both are open source and actively maintained. Hive Router is written in Rust for high throughput and low resource usage. ${docsLink('/gateway', 'Hive Gateway')} is written in TypeScript and runs on Node.js and other (serverless) JavaScript runtimes. Gateway provides more flexibility for teams that are already familiar with TypeScript. Both can serve a supergraph from a local file or a schema registry, such as Hive Console.`,
   ],
   [
+    'How does Hive Router compare to Apollo Router?',
+    `Both are Federation routers written in Rust, and both serve the same supergraph schema. Apollo Router is distributed under the Elastic License 2.0. Hive Router is MIT licensed and ships every feature in the open-source binary: subscriptions, persisted documents, authorization directives, demand control, coprocessors and telemetry need no license key, no account and no paid plan. In our ${docsLink(BENCHMARK_URL, 'open gateway benchmark')} it has the highest throughput and the lowest latency and memory use of the gateways tested, and it passes every test case of the ${docsLink(AUDIT_URL, 'Federation audit')}. Both are open for you to rerun.`,
+  ],
+  [
     'Can I replace Apollo Router without changing my subgraphs?',
     `Yes. Hive Router consumes a standard Apollo Federation supergraph, so you keep your subgraphs and your composition pipeline and only swap the binary, while re-using your existing supergraph from a local file or even GraphOS. See the ${docsLink('/docs/router/compatibility', 'compatibility overview')} for the directives and features covered, and the ${docsLink('/docs/router/getting-started', 'getting started guide')}.`,
   ],
   [
+    'Which Apollo Federation versions and directives does Hive Router support?',
+    `Federation v2, from v2.0 through v2.9. That covers @key, @requires, @provides, @shareable, @interfaceObject, @composeDirective, @authenticated, @requiresScopes, @policy, progressive @override, @context and @fromContext, and @cost and @listSize. Federation v1 supergraphs are not supported: compose your subgraphs with Federation v2, or use ${docsLink('/gateway', 'Hive Gateway')}, which serves both. Apollo Connectors and @cacheTag are not supported yet. ${docsLink('/docs/router/compatibility', 'See the compatibility table.')}`,
+  ],
+  [
     'Does Hive Router support GraphQL subscriptions?',
-    `Yes. Federated subscriptions are built in, over Server-Sent Events, WebSockets or multipart HTTP. The protocol between the router and each subgraph can be configured individually. ${docsLink('/docs/router/subscriptions', 'Read more.')}`,
+    `Yes. Federated subscriptions are built in. Clients connect over Server-Sent Events, WebSockets, multipart HTTP or Incremental Delivery over HTTP, and the router talks to each subgraph over the protocol you choose for it, including HTTP callbacks and multiplexed WebSockets. ${docsLink('/docs/router/subscriptions', 'Read more.')}`,
   ],
   [
     'How do I extend the router?',
@@ -195,11 +326,15 @@ const faqs: [string, string][] = [
   ],
   [
     'How does Hive Router integrate with my monitoring stack?',
-    `It emits OpenTelemetry traces and Prometheus metrics, which you can send to Hive Console or any compatible backend, such as Datadog or Grafana, alongside structured logs, health and readiness probes. Furthermore, schema usage metrics can be sent to a schema registry such as Hive Console or GraphOS. ${docsLink('/docs/router/observability/tracing', 'Read more.')}`,
+    `It emits OpenTelemetry traces and metrics over OTLP, exposes a Prometheus scrape endpoint and has a native Datadog tracer, alongside structured logs with one summary line per request, and health and readiness probes. Send them to Hive Console, Grafana, Datadog or any OTLP backend. Schema usage reports go to Hive Console, where they drive breaking change detection based on real traffic. ${docsLink('/docs/router/observability/tracing', 'Read more.')}`,
   ],
   [
     'Do I need Hive Console to use Hive Router?',
-    `No. Hive Router is a standalone binary that can load a supergraph file and other sources such as Hive Console or Apollo GraphOS. Using Hive Console is fully optional and provides additional features such as a place to manage your supergraph, publish persisted documents and collect metrics. ${docsLink('/docs/router/configuration/supergraph', 'Read more.')}`,
+    `No. Hive Router is a standalone binary that can load a supergraph from a file, an S3-compatible bucket, Hive Console or Apollo GraphOS. Using Hive Console is fully optional and provides additional features such as a place to manage your supergraph, publish persisted documents and collect metrics. ${docsLink('/docs/router/supergraph', 'Read more.')}`,
+  ],
+  [
+    'Can I use the Hive Router query planner from Node.js?',
+    `Yes. ${docsLink('/gateway', 'Hive Gateway')} can run the same Rust query planner as a native addon on Node.js, Bun and Deno, so you keep TypeScript plugins and still get the faster planner. ${docsLink('/docs/gateway/other-features/rust-query-planner', 'Read more.')}`,
   ],
   [
     'Are all Hive Router features open source?',
@@ -214,9 +349,27 @@ const faqs: [string, string][] = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <BaseHead
-      description="Hive Router is the most performant GraphQL Federation router in the ecosystem: open source, written in Rust, a drop-in replacement for Apollo Router, first on every metric in the open gateway benchmark and 100% compatible in the Federation audit."
-      title="Hive Router | Hive"
+      description="Hive Router is an open-source GraphQL Federation router written in Rust: MIT licensed, a drop-in alternative to Apollo Router and first in the open gateway benchmark."
+      title="Hive Router | Open-Source GraphQL Federation Router in Rust"
     />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'Hive Router',
+        description:
+          'Open-source GraphQL Federation router written in Rust, a drop-in alternative to Apollo Router.',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Linux, macOS, Docker',
+        url: 'https://the-guild.dev/graphql/hive/router',
+        license: 'https://opensource.org/licenses/MIT',
+        sameAs: [REPO_URL],
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+      })}
+    ></script>
   </head>
   <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
     <SiteNavigation />
@@ -555,6 +708,16 @@ const faqs: [string, string][] = [
         cards={advancedCards}
         description="Extend the router with your own code and decide how traffic moves through it."
         title="Make it yours"
+      />
+      <FeatureIndex
+        description="No enterprise edition and no feature flags behind a license key. This is the whole list, and all of it is in the binary you download."
+        groups={featureGroups}
+        heading="Everything in one open-source binary"
+      />
+      <LatestProductUpdates
+        class="lg:pt-0!"
+        description="What the router team released most recently."
+        match={/hive-router/}
       />
       <ExploreMainProductCards class="max-lg:mx-4 max-lg:my-8" />
       <FrequentlyAskedQuestions faqs={faqs} class="mx-4 md:mx-6" />

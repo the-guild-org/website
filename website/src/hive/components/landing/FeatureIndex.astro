@@ -1,0 +1,51 @@
+---
+/**
+ * A grouped index of a product's features, each one a link into the docs. It
+ * gives a landing page one place that names every capability, which is what
+ * someone comparing products scans for, and it links the docs pages with the
+ * words people search by.
+ */
+import { withBase } from '../../lib/base-path';
+
+export interface FeatureGroup {
+  items: { href: string; label: string }[];
+  title: string;
+}
+
+interface Props {
+  class?: string;
+  description: string;
+  groups: FeatureGroup[];
+  heading: string;
+}
+
+const { class: className, description, groups, heading } = Astro.props;
+---
+
+<section class:list={['px-4 py-6 sm:py-12 md:px-6 lg:py-24 xl:px-[120px]', className]}>
+  <header class="md:text-center md:text-balance">
+    <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]">
+      {heading}
+    </h2>
+    <p class="mt-4 text-green-800">{description}</p>
+  </header>
+  <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3 lg:gap-6">
+    {groups.map(group => (
+      <div class="border-beige-400 rounded-2xl border p-6">
+        <h3 class="text-green-1000 text-xl leading-[1.4] font-medium">{group.title}</h3>
+        <ul class="mt-4 flex list-none flex-col gap-2 text-sm/6">
+          {group.items.map(item => (
+            <li>
+              <a
+                class="hive-focus decoration-beige-400 hover:text-green-1000 -mx-1 rounded-sm px-1 text-green-800 underline underline-offset-2 hover:decoration-blue-500"
+                href={withBase(item.href)}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</section>

@@ -1,0 +1,143 @@
+---
+title: Open Source Alternative to Apollo Router
+description:
+  Hive Router is an MIT-licensed GraphQL Federation router in Rust and an alternative to Apollo
+  Router. See what maps to what and how to try it side by side.
+---
+
+import { Callout } from "@hive/design-system/hive-components/callout";
+
+[Hive Router](/docs/router) is an **open-source alternative to Apollo Router**. Both are GraphQL
+Federation routers written in Rust, and both serve the same supergraph schema, so switching does
+not touch your subgraphs or your composition pipeline.
+
+## Why Teams Switch
+
+- **MIT license.** Hive Router is [MIT licensed](https://github.com/graphql-hive/router). Apollo
+  Router is distributed under the
+  [Elastic License 2.0](https://github.com/apollographql/router/blob/dev/LICENSE).
+- **Every feature is in the open-source binary.** Subscriptions, JWT authentication, authorization
+  directives, persisted documents, demand control, coprocessors and telemetry work without a license
+  key, an account or a connection to a vendor's cloud.
+- **Performance you can verify.** The
+  [Federation Gateway Performance benchmark](https://the-guild.dev/graphql/hive/federation-gateway-performance)
+  compares Hive Router with Apollo Router and other gateways under the same load. The benchmark is
+  open source, so you can rerun it on your own hardware.
+- **Compatibility you can verify.** The
+  [Federation Gateway Audit](https://the-guild.dev/graphql/hive/federation-gateway-audit) runs one
+  test suite against every gateway and publishes the results live. Hive Router passes every test
+  case.
+- **Any registry.** Hive Router loads the supergraph from
+  [Hive Console](/docs/schema-registry), Apollo GraphOS, a file or an S3-compatible bucket.
+
+## What Maps to What
+
+| In Apollo Router                          | In Hive Router                                                                                                                                         |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `router.yaml`                             | [`router.config.yaml`](/docs/router/configuration) and [environment variables](/docs/router/configuration/environment-variables)                       |
+| Supergraph from GraphOS Uplink or a file  | [Supergraph sources](/docs/router/supergraph): Hive Console, Apollo GraphOS, a file, S3-compatible storage                                             |
+| Rhai scripts                              | [Expressions](/docs/router/configuration/expressions) in configuration                                                                                 |
+| Native Rust plugins                       | [Rust plugin system](/docs/router/customizations/plugin-system)                                                                                        |
+| External coprocessors                     | [Coprocessors](/docs/router/customizations/coprocessors)                                                                                               |
+| JWT authentication                        | [JWT authentication](/docs/router/security/jwt-authentication)                                                                                         |
+| `@authenticated`, `@requiresScopes`       | [Authorization directives](/docs/router/security/authorization)                                                                                        |
+| `@policy`                                 | [Custom authorization policies](/docs/router/security/policy)                                                                                          |
+| Persisted queries and safelisting         | [Persisted documents](/docs/router/security/persisted-documents), with [app deployments](/docs/schema-registry/app-deployments) in Hive Console        |
+| Demand control                            | [Demand control](/docs/router/security/demand-control) with `@cost` and `@listSize`                                                                    |
+| Operation limits                          | [Operation complexity limits](/docs/router/security/operation-complexity)                                                                              |
+| Subscriptions                             | [Subscriptions](/docs/router/subscriptions) over SSE, WebSockets, multipart HTTP and [HTTP callbacks](/docs/router/subscriptions/http-callback)        |
+| Traffic shaping                           | [Traffic shaping](/docs/router/configuration/traffic_shaping): deduplication, timeouts, compression, [circuit breakers](/docs/router/guides/performance-tuning#circuit-breaker) |
+| Header propagation                        | [Header manipulation](/docs/router/guides/header-manipulation)                                                                                         |
+| Subgraph URL overrides                    | [Dynamic subgraph routing](/docs/router/guides/dynamic-subgraph-routing)                                                                               |
+| Progressive `@override`                   | [Override labels](/docs/router/configuration/override_labels)                                                                                          |
+| `@context` and `@fromContext`             | [Contextual arguments](/docs/router/guides/contextual-arguments)                                                                                       |
+| OpenTelemetry, Prometheus, Datadog        | [Tracing](/docs/router/observability/tracing), [metrics](/docs/router/observability/metrics), [logging](/docs/router/observability/logging)            |
+| Health checks                             | [Health and readiness probes](/docs/router/observability/probes)                                                                                       |
+| TLS                                       | [TLS and mutual TLS](/docs/router/security/tls)                                                                                                        |
+| CORS and CSRF prevention                  | [CORS](/docs/router/security/cors) and [CSRF prevention](/docs/router/security/csrf)                                                                   |
+| Usage reporting to GraphOS                | [Usage reporting to Hive Console](/docs/router/observability/usage_reporting)                                                                          |
+
+The configuration files are not compatible with each other. The concepts are close, so most settings
+have a direct counterpart in the [configuration reference](/docs/router/configuration).
+
+<Callout title="Not supported yet" type="warning">
+  Hive Router serves Federation v2 supergraphs, up to v2.9. It does not serve Federation v1
+  supergraphs, Apollo Connectors, `@cacheTag` response caching or `@defer`. If you need Federation
+  v1, response caching or `@defer` today, [Hive Gateway](/docs/gateway) supports them. See the
+  [compatibility table](/docs/router/compatibility).
+</Callout>
+
+## Try It Next to Apollo Router
+
+You can run Hive Router against the supergraph you already publish to Apollo GraphOS, without
+changing how you publish schemas.
+
+### 1. Install
+
+```sh
+curl -o- https://raw.githubusercontent.com/graphql-hive/router/main/install.sh | sh
+```
+
+Or pull the Docker image, `ghcr.io/graphql-hive/router`.
+
+### 2. Point it at your supergraph
+
+Use the graph ref and an API key of the graph you already have:
+
+```yaml title="router.config.yaml"
+supergraph:
+  source: apollo_graphos
+  graph_ref: my-graph@production
+  key: service:my-graph:xxxxxxxxxx
+```
+
+Or load the supergraph file your pipeline already produces:
+
+```yaml title="router.config.yaml"
+supergraph:
+  source: file
+  path: ./supergraph.graphql
+```
+
+### 3. Run it and compare
+
+```sh
+./hive_router
+```
+
+The router serves your supergraph on port `4000`. Send it the operations your clients send today and
+compare responses, latency and resource usage with your current router. When you are ready, move the
+settings you rely on across with the table above, starting with
+[header rules](/docs/router/guides/header-manipulation),
+[authentication](/docs/router/security/jwt-authentication) and
+[telemetry](/docs/router/observability/tracing).
+
+## Moving the Registry Too
+
+Hive Router does not need Hive Console. If you also want an open-source schema registry with schema
+checks, usage insights and persisted documents, see
+[Hive as an alternative to Apollo GraphOS](/docs/use-cases/apollo-graphos).
+
+## Frequently Asked Questions
+
+### Do I need to change my subgraphs?
+
+No. Hive Router consumes a standard Apollo Federation v2 supergraph. Your subgraphs and your
+composition step stay as they are.
+
+### Can I keep publishing schemas to Apollo GraphOS?
+
+Yes. Set `supergraph.source` to `apollo_graphos` and Hive Router polls the same Uplink endpoint that
+Apollo Router uses. See [supergraph sources](/docs/router/supergraph#from-apollo-graphos).
+
+### How do I port Rhai scripts and plugins?
+
+Header rules, routing decisions and feature flags that are written as Rhai scripts usually become
+[expressions](/docs/router/configuration/expressions) in the configuration file. Logic that needs
+code moves to a [Rust plugin](/docs/router/customizations/plugin-system) compiled into the router,
+or to a [coprocessor](/docs/router/customizations/coprocessors) in any language.
+
+### Is there a TypeScript option?
+
+Yes. [Hive Gateway](/docs/gateway) is written in TypeScript and can run the Hive Router query
+planner as a native addon. See [Hive Router or Hive Gateway](/docs#hive-router-or-hive-gateway).
