@@ -38,13 +38,28 @@ If the planning phase for a query takes longer than this specified duration, the
 cancelled, and an error is returned to the client. The value should be a string representing a
 duration, for example, `"5s"` or `"500ms"`.
 
+### `arguments_to_variables`
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+Rewrites hard-coded field argument values in planned subgraph operations into variables. For example,
+`{ user(id: "1") { name } }` is sent to the subgraph as an operation with an `id` variable.
+Operations that differ only in argument values can then share a query-plan cache entry, reducing
+cache churn when clients issue similar queries with many different values.
+
+The subgraph receives these values as variables rather than inline literals. Custom scalars are
+therefore parsed with the subgraph's `parseValue` instead of `parseLiteral`. Set this option to
+`false` if a subgraph's custom scalar handles those differently.
+
 ## Example
 
-This example configuration enables the query plan exposure for debugging and sets a stricter timeout
-of 5 seconds.
+This example configuration enables query plan exposure for debugging, sets a stricter timeout, and
+keeps argument values inline when sent to subgraphs.
 
 ```yaml title="router.config.yaml"
 query_planner:
   allow_expose: true
   timeout: "5s"
+  arguments_to_variables: false
 ```

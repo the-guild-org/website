@@ -18,7 +18,7 @@ configurations that can be set in the router's configuration file (`router.confi
 | `LABORATORY_ENABLED`              | `true` / `false`                                     | [`laboratory.enabled`](./laboratory#enabled)                              |
 | `PORT`                            | `number` (port number)                               | [`http.port`](./http#port)                                                |
 | `HOST`                            | `string` (host name or IP address)                   | [`http.host`](./http#host)                                                |
-| `ROUTER_HTTP_WORKERS`             | `number` (worker thread count)                       | [`http.workers`](./http#workers)                                          |
+| `ROUTER_HTTP_WORKERS`             | positive `number`, `cpuset`, or `container`          | [`http.workers`](./http#workers)                                          |
 | `ROUTER_HTTP_SHUTDOWN_TIMEOUT`    | `string` (human-readable, for example: `90s`)        | [`http.shutdown_timeout`](./http#shutdown_timeout)                        |
 | `ROUTER_HTTP_KEEP_ALIVE`          | `string` (human-readable, for example: `80s`)        | [`traffic_shaping.router.keep_alive`](./traffic_shaping#routerkeep_alive) |
 | `ROUTER_CACHE_PLUGIN_SUPERGRAPH_RUNTIMES` | non-negative `integer` (`0` disables caching) | [`cache.router.plugin_supergraph_runtimes`](./cache#plugin_supergraph_runtimes) |
@@ -33,6 +33,7 @@ configurations that can be set in the router's configuration file (`router.confi
 | `WEBSOCKET_ENABLED`               | `true` / `false`                                     | [`websocket.enabled`](../subscriptions/websockets#enabled)                |
 | `TELEMETRY_TRACING_SAMPLING_RATE` | `number` (between `0.0` and `1.0`)                   | [`telemetry.tracing.collect.sampling`](./telemetry#tracing)               |
 | `DISABLE_SUBGRAPH_ERROR_MASKING`  | `true` / `false`                                     | [`error_masking.enabled`](./error_masking#enabled)                        |
+| `ROUTER_DISABLE_INT_VALUE_RANGE_VALIDATION` | `true` / `1` enables - any other value disables | [`validation.disable_int_value_range_validation`](./validation#disable_int_value_range_validation) |
 
 > In cases where a configuration file (`router.config.yaml`) is used with environment variables at
 > the same time, environment variables will only override the specific configuration values.
