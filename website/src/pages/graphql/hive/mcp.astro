@@ -1,0 +1,694 @@
+---
+/**
+ * Hive Gateway MCP server landing page: the blue hero with the claim, how a
+ * tool call travels from an agent to the subgraphs, a copy-paste quick start,
+ * what the plugin does, the index of every documented feature, and the shared
+ * ecosystem, FAQ and closing sections.
+ *
+ * Every statement here comes from the docs under /docs/gateway/mcp. The plugin
+ * is in beta, and the page says so in the hero, under the diagram and in the
+ * FAQ: keep those until the docs drop their beta callout.
+ */
+import BaseHead from '~hive/components/BaseHead.astro';
+import ExploreMainProductCards from '~hive/components/ExploreMainProductCards.astro';
+import FrequentlyAskedQuestions from '~hive/components/FrequentlyAskedQuestions.astro';
+import { ADVANCED_ICONS } from '~hive/components/gateway/advanced-icons';
+import LetsGetAdvancedSection, {
+  type AdvancedCard,
+} from '~hive/components/gateway/LetsGetAdvancedSection.astro';
+import GetYourAPIGameRightList from '~hive/components/GetYourAPIGameRightList.astro';
+import FeatureIndex, { type FeatureGroup } from '~hive/components/landing/FeatureIndex.astro';
+import HeroButton from '~hive/components/landing/HeroButton.astro';
+import SiteFooter from '~hive/components/SiteFooter.astro';
+import SiteNavigation from '~hive/components/SiteNavigation.astro';
+import { withBase } from '~hive/lib/base-path';
+import '~hive/styles/global.css';
+import checkIconRaw from '~hive/design-system/icons/check.svg?raw';
+import hiveGatewayIconRaw from '~hive/design-system/icons/hive-gateway.svg?raw';
+import { Code } from 'astro:components';
+
+const withAttrs = (svg: string, attrs: string) => svg.replace('<svg', `<svg ${attrs}`);
+const gatewayMark = (attrs: string) =>
+  withAttrs(hiveGatewayIconRaw, attrs).replace('fill="currentColor"', '');
+
+const DOCS = '/docs/gateway/mcp';
+const EXAMPLES_URL =
+  'https://github.com/graphql-hive/gateway/tree/main/packages/plugins/mcp/examples';
+
+const checkmarks = ['You choose the operations', 'Typed input and output schemas', 'MIT licensed'];
+
+const flow: { detail: string; edge?: string; name: string }[] = [
+  {
+    name: 'AI agent',
+    detail: 'An IDE assistant, an agent framework or the MCP Inspector',
+    edge: 'MCP (JSON-RPC)',
+  },
+  {
+    name: 'Hive Gateway',
+    detail: 'The /mcp endpoint, next to your GraphQL endpoint',
+    edge: 'GraphQL',
+  },
+  { name: 'Your subgraphs', detail: 'The services behind your supergraph' },
+];
+
+const howItWorks: { description: string; title: string }[] = [
+  {
+    title: 'You pick the operations',
+    description:
+      'A tool is one GraphQL operation, exposed to agents under a name of your choice. Write it inline in the gateway config, keep it in a .graphql file, or mark it with the @mcpTool directive.',
+  },
+  {
+    title: 'The gateway derives the schemas',
+    description:
+      "The tool's input schema comes from the operation's variables and its output schema from the selection set, so agents know what to send and what to expect.",
+  },
+  {
+    title: 'Agents list and call the tools',
+    description:
+      'The gateway loads the schema, validates the arguments, runs the operation against your subgraphs and formats the response. You only define which operations become tools.',
+  },
+];
+
+const quickStart = [
+  {
+    title: 'Install the plugin',
+    copy: 'It runs on the JavaScript distributions of Hive Gateway: the hive-gateway CLI with a gateway.config.ts, or the gateway runtime package.',
+    code: 'npm i @graphql-hive/plugin-mcp',
+    lang: 'sh',
+  },
+  {
+    title: 'Choose the operations to expose',
+    copy: 'In gateway.config.ts. The simplest tool is an inline query. Then start the gateway as usual, for example with hive-gateway supergraph.',
+    code: `import { defineConfig } from '@graphql-hive/gateway'
+import { useMCP, type MCPConfig } from '@graphql-hive/plugin-mcp'
+
+const mcp: MCPConfig = {
+  name: 'my-api',
+  tools: [
+    {
+      name: 'get_users',
+      source: {
+        type: 'inline',
+        query: \`query ($limit: Int) { users(limit: $limit) { id name } }\`
+      }
+    }
+  ]
+}
+
+export const gatewayConfig = defineConfig({
+  plugins: ctx => [useMCP(ctx, mcp)]
+})`,
+    lang: 'ts',
+  },
+  {
+    title: 'List the tools',
+    copy: 'MCP speaks JSON-RPC over HTTP, so curl is enough to check the server.',
+    code: `curl http://localhost:4000/mcp \\
+  -H "Content-Type: application/json" \\
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'`,
+    lang: 'sh',
+  },
+] as const;
+
+const highlights: { description: string; href: string; title: string }[] = [
+  {
+    title: 'Three ways to define a tool',
+    description:
+      'Inline queries in the configuration, named operations from .graphql files, or the @mcpTool directive on the operation itself. The configuration is plain data, so it can also live in a YAML or JSON file.',
+    href: `${DOCS}/tools#tool-sources`,
+  },
+  {
+    title: 'Shape what agents see',
+    description:
+      'Rename a variable with an alias, give it a description, examples and a default, and narrow the response to a nested value with output.path. The advertised output schema is narrowed to match.',
+    href: `${DOCS}/tools#input-schema`,
+  },
+  {
+    title: 'Values agents never set',
+    description:
+      'A tenant or user id belongs to your authentication layer, not to the agent. @mcpHeader hides the variable from the input schema and fills it from a request header on every call.',
+    href: `${DOCS}/tools#values-from-http-headers`,
+  },
+  {
+    title: 'Hooks around every call',
+    description:
+      'preprocess runs before the GraphQL execution and can short-circuit with its own result. postprocess receives the GraphQL result and returns what the agent gets.',
+    href: `${DOCS}/tools#hooks`,
+  },
+  {
+    title: 'Resources next to your tools',
+    description:
+      'Serve documents agents read for context, such as an API guide or a schema, as static resources or as resource templates with a URI pattern and a handler.',
+    href: `${DOCS}/resources`,
+  },
+  {
+    title: 'Descriptions you can iterate on',
+    description:
+      'An agent reads the description of a tool to decide when to call it. Description providers resolve descriptions at runtime from Langfuse or your own service, so you refine them without changing the gateway configuration.',
+    href: `${DOCS}/description-providers`,
+  },
+];
+
+const advancedCards: AdvancedCard[] = [
+  {
+    ctaHref: `${DOCS}/resources#dynamic-operations-loader`,
+    description:
+      'Fetch the operations behind your tools for every MCP request from a CDN, an object store or a persisted-documents service. The source can vary by tenant or any other request data.',
+    heading: 'Dynamic Operations Loader',
+    icon: ADVANCED_ICONS.layers,
+  },
+  {
+    ctaHref: `${DOCS}/resources#load-persisted-documents-from-hive`,
+    description:
+      'createHiveLoader resolves an app deployment manifest from the Hive CDN and hands its persisted GraphQL documents to the plugin as one operations source.',
+    heading: 'Persisted Documents from Hive',
+    icon: ADVANCED_ICONS.arrow,
+  },
+  {
+    ctaHref: `${DOCS}/tools#annotations-and-task-support`,
+    description:
+      'Tell clients whether a tool is read-only, destructive or idempotent, and declare task support for long-running operations.',
+    heading: 'Annotations and Task Support',
+    icon: ADVANCED_ICONS.cog,
+  },
+  {
+    ctaHref: `${DOCS}/description-providers#labels-and-versions`,
+    description:
+      'Select the Langfuse prompt variant per environment, preview another one with the promptLabel query parameter on the MCP endpoint, or pin a version.',
+    heading: 'Prompt Labels and Versions',
+    icon: ADVANCED_ICONS.branch,
+  },
+];
+
+// Every documented capability by name, linked to its docs section. Keep it in step with the
+// pages under /docs/gateway/mcp: a feature that ships gets a line here.
+const featureGroups: FeatureGroup[] = [
+  {
+    title: 'Getting started',
+    items: [
+      { href: `${DOCS}#installation`, label: 'Installation' },
+      { href: `${DOCS}#quick-start`, label: 'Quick start for the CLI and the runtime' },
+      { href: `${DOCS}#try-it-out`, label: 'Try it out with curl' },
+      { href: `${DOCS}/configuration`, label: 'Configuration reference' },
+      { href: EXAMPLES_URL, label: 'Runnable examples on GitHub' },
+    ],
+  },
+  {
+    title: 'Defining tools',
+    items: [
+      { href: `${DOCS}/tools#inline-queries`, label: 'Inline queries' },
+      {
+        href: `${DOCS}/tools#named-operations-from-files`,
+        label: 'Named operations from .graphql files',
+      },
+      { href: `${DOCS}/tools#directives-in-operation-files`, label: 'The @mcpTool directive' },
+      { href: `${DOCS}#define-tools-in-yaml-or-json`, label: 'Tools in YAML or JSON' },
+      {
+        href: `${DOCS}/tools#annotations-and-task-support`,
+        label: 'Tool annotations, titles and icons',
+      },
+    ],
+  },
+  {
+    title: 'Input',
+    items: [
+      {
+        href: `${DOCS}/tools#aliases-descriptions-examples-and-defaults`,
+        label: 'Aliases, descriptions, examples and defaults',
+      },
+      {
+        href: `${DOCS}/tools#field-descriptions-from-directives`,
+        label: 'Field descriptions with @mcpDescription',
+      },
+      {
+        href: `${DOCS}/tools#values-from-http-headers`,
+        label: 'Values from HTTP headers with @mcpHeader',
+      },
+      { href: `${DOCS}/tools#preprocess`, label: 'Preprocess hook' },
+    ],
+  },
+  {
+    title: 'Output',
+    items: [
+      {
+        href: `${DOCS}/tools#extract-part-of-the-response`,
+        label: 'Extract part of the response with output.path',
+      },
+      {
+        href: `${DOCS}/tools#output-schema-and-annotations`,
+        label: 'Output schema control and content annotations',
+      },
+      { href: `${DOCS}/tools#postprocess`, label: 'Postprocess hook' },
+    ],
+  },
+  {
+    title: 'Resources and operations',
+    items: [
+      { href: `${DOCS}/resources#static-resources`, label: 'Static resources' },
+      { href: `${DOCS}/resources#resource-templates`, label: 'Resource templates' },
+      { href: `${DOCS}/resources#dynamic-operations-loader`, label: 'Dynamic operations loader' },
+      {
+        href: `${DOCS}/resources#load-persisted-documents-from-hive`,
+        label: 'Persisted documents from Hive',
+      },
+    ],
+  },
+  {
+    title: 'Description providers',
+    items: [
+      { href: `${DOCS}/description-providers#langfuse`, label: 'Langfuse' },
+      { href: `${DOCS}/description-providers#custom-providers`, label: 'Custom providers' },
+      { href: `${DOCS}/description-providers#labels-and-versions`, label: 'Labels and versions' },
+      {
+        href: `${DOCS}/description-providers#where-descriptions-come-from`,
+        label: 'Where descriptions come from',
+      },
+    ],
+  },
+];
+
+// The FAQ component prefixes site-relative hrefs itself, so these stay unprefixed.
+const docsLink = (href: string, text: string) =>
+  `<a class="hive-focus underline decoration-blue-500 underline-offset-2" href="${href}">${text}</a>`;
+const code = (text: string) => `<code class="font-mono text-green-1000">${text}</code>`;
+
+const faqs: [string, string][] = [
+  [
+    'What is a GraphQL MCP server?',
+    `The Model Context Protocol (MCP) is the standard AI agents use to discover and call external tools. A GraphQL MCP server offers GraphQL operations as those tools. With the ${code('@graphql-hive/plugin-mcp')} plugin, Hive Gateway becomes an MCP server: you pick the GraphQL operations you want to expose, and each one becomes a tool that agents can list and execute, with typed input and output schemas derived from your supergraph. ${docsLink(DOCS, 'Read more.')}`,
+  ],
+  [
+    'Is the Hive Gateway MCP server stable?',
+    `It is in beta. The configuration and behavior of the MCP plugin may change between releases as the protocol and the plugin evolve, and the docs are updated alongside it. ${docsLink(DOCS, 'Read the docs.')}`,
+  ],
+  [
+    'Which GraphQL operations do agents get?',
+    `The ones you define as tools. A tool is one GraphQL operation exposed under a name of your choice: an inline query in the configuration, a named operation from a ${code('.graphql')} file, or an operation carrying the ${code('@mcpTool')} directive. All operations must be named; anonymous operations are not supported. ${docsLink(`${DOCS}/tools`, 'Read more.')}`,
+  ],
+  [
+    'Which MCP clients can connect?',
+    `Point any MCP client, such as an IDE assistant, an agent framework or the MCP Inspector, at the MCP endpoint. It is served at ${code('/mcp')} next to your GraphQL endpoint, and the ${code('path')} option changes it. MCP speaks JSON-RPC over HTTP, so ${code('curl')} is enough to check the server. ${docsLink(`${DOCS}#try-it-out`, 'Read more.')}`,
+  ],
+  [
+    'Which parts of the Model Context Protocol does it implement?',
+    `The plugin implements the ${code('initialize')}, ${code('tools/list')}, ${code('tools/call')}, ${code('resources/list')}, ${code('resources/read')} and ${code('resources/templates/list')} methods. It advertises MCP protocol version 2025-11-25 by default, which the ${code('protocolVersion')} option overrides. ${docsLink(`${DOCS}/configuration`, 'See the configuration reference.')}`,
+  ],
+  [
+    'Which Hive Gateway distributions does the plugin run on?',
+    `The JavaScript distributions: the ${code('hive-gateway')} CLI with a ${code('gateway.config.ts')}, or the ${code('@graphql-hive/gateway-runtime')} package. ${docsLink(`${DOCS}#quick-start`, 'See the quick start for both.')}`,
+  ],
+  [
+    'How do I pass a tenant or user id without letting the agent set it?',
+    `Use the ${code('@mcpHeader')} directive on the variable. It hides the variable from the input schema and fills it from the named request header on every call. If the header is missing, the tool call returns an error. To transform the value or fall back to a default, hide the variable and set it in a ${code('preprocess')} hook. ${docsLink(`${DOCS}/tools#values-from-http-headers`, 'Read more.')}`,
+  ],
+  [
+    'Can I change a tool description without redeploying the gateway?',
+    `Yes. Description providers resolve tool and field descriptions at runtime from Langfuse or a custom provider. Descriptions are resolved when tools are listed, so an edited Langfuse prompt takes effect on the next ${code('tools/list')}. If Langfuse is unreachable, tools keep their fallback descriptions. ${docsLink(`${DOCS}/description-providers`, 'Read more.')}`,
+  ],
+  [
+    'Can tools come from persisted documents in Hive?',
+    `Yes. ${code('createHiveLoader')} resolves an app deployment manifest from the Hive CDN, fetches every persisted GraphQL document in it and returns them as one operations source. Operations carrying ${code('@mcpTool')} are registered as tools, and the others are available to tools declared in the configuration. ${docsLink(`${DOCS}/resources#load-persisted-documents-from-hive`, 'Read more.')}`,
+  ],
+  [
+    'Is the MCP plugin open source?',
+    `Yes. The plugin is part of the ${docsLink('https://github.com/graphql-hive/gateway', 'Hive Gateway repository')} and is MIT licensed, like ${docsLink('/gateway', 'Hive Gateway')} itself. It is published on npm as ${code('@graphql-hive/plugin-mcp')}.`,
+  ],
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <BaseHead
+      description="Hive Gateway's MCP plugin turns your API into a GraphQL MCP server: the operations you choose become typed tools and resources for AI agents. In beta."
+      title="GraphQL MCP Server for AI Agents | Hive Gateway"
+    />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'Hive Gateway MCP Server',
+        alternateName: '@graphql-hive/plugin-mcp',
+        description:
+          'GraphQL MCP server for Hive Gateway, in beta. Exposes the GraphQL operations you choose to AI agents as typed MCP tools and resources.',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Node.js',
+        url: 'https://the-guild.dev/graphql/hive/mcp',
+        license: 'https://opensource.org/licenses/MIT',
+        sameAs: ['https://github.com/graphql-hive/gateway/tree/main/packages/plugins/mcp'],
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+      })}
+    ></script>
+  </head>
+  <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
+    <SiteNavigation />
+    <main class="text-green-1000 light mx-auto max-w-360 overflow-hidden">
+      <!-- Hero -->
+      <div class="text-green-1000 relative isolate mx-4 flex max-w-360 flex-col items-center justify-center gap-6 overflow-hidden rounded-3xl bg-blue-400 px-4 py-6 max-sm:mt-2 sm:py-12 sm:pb-28! md:mx-6 md:gap-8 lg:py-24 lg:pb-[168px]!">
+        <div class="relative">
+          <Fragment
+            set:html={gatewayMark(
+              `class="absolute inset-1/2 size-1/2 -translate-1/2" fill="url(#mcp-logo-blue)" stroke="url(#mcp-logo-white)"`,
+            )}
+          />
+          <svg fill="none" height="96" viewBox="0 0 96 96" width="96">
+            <rect fill="url(#mcp-logo-green)" height="96" rx="24" width="96"></rect>
+            <rect
+              height="95"
+              rx="23.5"
+              stroke="url(#mcp-logo-white-box)"
+              width="95"
+              x="0.5"
+              y="0.5"
+            ></rect>
+          </svg>
+          <svg class="size-0" viewBox="0 0 52 53">
+            <linearGradient
+              gradientUnits="userSpaceOnUse"
+              id="mcp-logo-blue"
+              x1="0"
+              x2="52"
+              y1="0.5"
+              y2="52.5"
+            >
+              <stop stop-color="#A7D5CA"></stop>
+              <stop offset="1" stop-color="#86B6C1"></stop>
+            </linearGradient>
+            <linearGradient
+              gradientUnits="userSpaceOnUse"
+              id="mcp-logo-white"
+              x1="0"
+              x2="52"
+              y1="0.5"
+              y2="52.5"
+            >
+              <stop stop-color="white" stop-opacity="0.5"></stop>
+              <stop offset="1" stop-color="white" stop-opacity="0.2"></stop>
+            </linearGradient>
+          </svg>
+        </div>
+        <p class="text-green-1000 -mb-2 flex items-center justify-center gap-2 text-center text-sm font-medium tracking-wide uppercase md:-mb-4">
+          Hive Gateway MCP Server
+          <span class="rounded-full border border-green-800 px-2 py-0.5 text-xs leading-4">
+            Beta
+          </span>
+        </p>
+        <h1 class="group mx-auto max-w-4xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]">
+          Turn your GraphQL API into an MCP server
+        </h1>
+        <p class="mx-auto w-[640px] max-w-[80%] text-center leading-6 text-green-800">
+          Hive Gateway exposes the GraphQL operations you choose to AI agents as typed MCP tools and
+          resources. You pick the operations, and the gateway derives their input and output schemas
+          from your supergraph.
+        </p>
+        <ul class="mx-auto flex list-none gap-x-6 gap-y-2 text-sm font-medium max-md:flex-col">
+          {checkmarks.map(text => (
+            <li class="flex items-center gap-2">
+              <Fragment set:html={withAttrs(checkIconRaw, `class="text-green-800"`)} />
+              {text}
+            </li>
+          ))}
+        </ul>
+        <div class="flex w-full justify-center gap-2 px-0.5 max-sm:flex-col sm:gap-4">
+          <HeroButton href={withBase(DOCS)}>Get started</HeroButton>
+          <HeroButton href={withBase(`${DOCS}/configuration`)} variant="secondary">
+            Configuration reference
+          </HeroButton>
+          <HeroButton href={EXAMPLES_URL} rel="noreferrer" target="_blank" variant="ghost">
+            Examples on GitHub
+          </HeroButton>
+        </div>
+
+        <!-- Hero decoration -->
+        <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <Fragment
+            set:html={gatewayMark(
+              `class="absolute left-[-268px] top-[-8px] size-[520px] fill-[url(#mcp-hero-gradient)] max-lg:hidden"`,
+            )}
+          />
+          <Fragment
+            set:html={gatewayMark(
+              `class="absolute right-[-144px] top-[-64px] size-[320px] fill-[url(#mcp-hero-gradient-mobile)] md:bottom-[-64px] md:right-[-268px] md:top-auto md:size-[520px] md:fill-[url(#mcp-hero-gradient)] lg:bottom-[-8px]"`,
+            )}
+          />
+          <svg
+            class="pointer-events-none -z-50 size-0"
+            height="296"
+            viewBox="0 0 192 296"
+            width="192"
+          >
+            <defs>
+              <linearGradient gradientTransform="rotate(139)" id="mcp-hero-gradient">
+                <stop offset="11.66%" stop-color="rgba(255, 255, 255, 0.1)"></stop>
+                <stop offset="74.87%" stop-color="rgba(255, 255, 255, 0.3)"></stop>
+              </linearGradient>
+              <linearGradient
+                gradientUnits="userSpaceOnUse"
+                id="mcp-hero-gradient-mobile"
+                x1="35.3488"
+                x2="224.372"
+                y1="15.0697"
+                y2="229.023"
+              >
+                <stop stop-color="white" stop-opacity="0.2"></stop>
+                <stop offset="80%" stop-color="white"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <svg class="size-0" viewBox="0 0 96 96">
+          <defs>
+            <linearGradient id="mcp-logo-green" x1="0%" x2="100%" y1="0%" y2="100%">
+              <stop stop-color="#3B736A"></stop>
+              <stop offset="1" stop-color="#15433C"></stop>
+            </linearGradient>
+            <linearGradient id="mcp-logo-white-box" x1="0%" x2="100%" y1="0%" y2="100%">
+              <stop stop-color="#fff" stop-opacity="0.8"></stop>
+              <stop offset="1" stop-color="#fff" stop-opacity="0.4"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <!-- How it works -->
+      <section class="border-beige-400 relative mx-auto mt-6 w-312 max-w-full rounded-3xl bg-white px-4 sm:mt-[-72px] sm:max-w-[calc(100%-4rem)] sm:border sm:p-6 md:p-10">
+        <h2 class="group text-3xl leading-[1.2] tracking-[-0.48px] md:text-center md:text-4xl">
+          How it works
+        </h2>
+        <div class="mt-6 flex flex-col gap-2 md:mt-8 lg:flex-row lg:items-stretch lg:gap-3">
+          {flow.map(node => (
+            <>
+              <div class="flex flex-col justify-center rounded-2xl bg-blue-100 p-5 lg:flex-1 lg:text-center">
+                <strong class="text-green-1000 text-xl leading-[1.4] font-medium">
+                  {node.name}
+                </strong>
+                <span class="mt-1 text-sm/5 text-green-800">{node.detail}</span>
+              </div>
+              {node.edge && (
+                <div class="flex items-center justify-center gap-2 text-xs font-medium text-nowrap text-green-800 lg:flex-col lg:gap-1">
+                  <span>{node.edge}</span>
+                  <svg
+                    aria-hidden="true"
+                    class="size-5 max-lg:rotate-90"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
+                  </svg>
+                </div>
+              )}
+            </>
+          ))}
+        </div>
+        <ol class="mt-8 grid list-none gap-6 lg:grid-cols-3 lg:gap-8">
+          {howItWorks.map((step, i) => (
+            <li class="flex gap-4">
+              <span class="bg-beige-100 flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-medium">
+                {i + 1}
+              </span>
+              <div>
+                <h3 class="text-green-1000 text-lg/8 font-medium">{step.title}</h3>
+                <p class="mt-1 text-sm/6 text-green-800">{step.description}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p class="border-beige-400 mt-8 border-t pt-4 text-sm/6 text-green-800">
+          <strong class="text-green-1000 font-medium">The MCP plugin is in beta.</strong> Its
+          configuration and behavior may change between releases as the protocol and the plugin
+          evolve.{' '}
+          <a
+            class="hive-focus underline decoration-blue-500 underline-offset-2"
+            href={withBase(DOCS)}
+          >
+            The docs
+          </a>{' '}
+          are updated alongside it.
+        </p>
+      </section>
+
+      <!-- What it does -->
+      <section class="px-4 py-6 sm:py-12 md:px-6 lg:py-24 xl:px-[120px]">
+        <header class="md:text-center md:text-balance">
+          <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]">
+            A GraphQL MCP server you control
+          </h2>
+          <p class="mt-4 text-green-800">
+            Decide which operations agents can call, what each tool looks like to them and where its
+            description comes from.
+          </p>
+        </header>
+        <dl class="mt-8 grid gap-4 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3 lg:gap-6">
+          {highlights.map(item => (
+            <a
+              class="hive-focus bg-beige-100 hover:bg-beige-200 group flex flex-col rounded-2xl border border-transparent p-6 transition-colors"
+              href={withBase(item.href)}
+            >
+              <dt class="text-green-1000 text-xl leading-[1.4] font-medium">{item.title}</dt>
+              <dd class="mt-3 text-sm/6 text-green-800">{item.description}</dd>
+              <dd class="text-green-1000 mt-auto flex items-center gap-2 pt-4 text-sm font-medium">
+                Learn more
+                <svg
+                  class="size-5 transition-transform group-hover:translate-x-1"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="m15.755 11.1-4.828-4.828L12.2 5l7 7-7 7-1.273-1.272 4.828-4.828H4.8v-1.8h10.955Z" />
+                </svg>
+              </dd>
+            </a>
+          ))}
+        </dl>
+      </section>
+
+      <!-- Quick start -->
+      <section class="bg-green-1000 relative isolate mx-4 overflow-hidden rounded-3xl px-4 py-6 text-white md:mx-6 md:px-8 md:py-16 xl:p-24">
+        <div class="relative z-10 lg:grid lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:gap-16">
+          <header>
+            <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]">
+              From a GraphQL operation to an MCP tool in three steps
+            </h2>
+            <p class="mt-6 text-white/80">
+              Add the plugin to the gateway you already run. Then point any MCP client, such as an
+              IDE assistant, an agent framework or the MCP Inspector, at http://localhost:4000/mcp.
+            </p>
+            <a
+              class="text-green-1000 bg-primary relative mt-8 inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40"
+              href={withBase(DOCS)}
+            >
+              <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+              Full MCP guide
+            </a>
+          </header>
+          <ol class="mt-8 flex list-none flex-col gap-6 lg:mt-0">
+            {quickStart.map((step, i) => (
+              <li class="flex gap-4">
+                <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-medium">
+                  {i + 1}
+                </span>
+                <div class="min-w-0 grow">
+                  <h3 class="text-xl/7 font-medium">{step.title}</h3>
+                  <p class="mt-1 text-sm/6 text-white/80">{step.copy}</p>
+                  <div class="relative mt-3">
+                    <Code
+                      class="rounded-xl bg-green-900! p-4 pr-14 text-sm [&_code]:text-sm"
+                      code={step.code}
+                      lang={step.lang}
+                      theme="github-dark"
+                    />
+                    <button
+                      class="hive-focus absolute top-2 right-2 rounded-lg bg-green-900 p-2 text-white/70 shadow-[-12px_0_12px_var(--color-green-900)] transition-colors hover:bg-white/10 hover:text-white data-copied:text-green-300 [&>svg]:size-5 [&[data-copied]>[data-copy-icon]]:hidden [&:not([data-copied])>[data-check-icon]]:hidden"
+                      aria-label="Copy to clipboard"
+                      data-copy-snippet={step.code}
+                      type="button"
+                    >
+                      <svg
+                        data-copy-icon
+                        aria-hidden="true"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                      </svg>
+                      <svg
+                        data-check-icon
+                        aria-hidden="true"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="m20 6-11 11-5-5" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <div class="pointer-events-none absolute inset-0 overflow-hidden max-lg:hidden">
+          <Fragment
+            set:html={gatewayMark(
+              `class="absolute left-[-160px] bottom-[-160px] size-[560px] fill-none stroke-[url(#mcp-quickstart-stroke)]" stroke-width="0.4"`,
+            )}
+          />
+          <svg class="size-0">
+            <defs>
+              <linearGradient
+                gradientUnits="userSpaceOnUse"
+                id="mcp-quickstart-stroke"
+                x1="0"
+                x2="52"
+                y1="0"
+                y2="53"
+              >
+                <stop stop-color="#fff" stop-opacity=".1"></stop>
+                <stop offset="1" stop-color="#fff" stop-opacity=".5"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </section>
+
+      <LetsGetAdvancedSection
+        cards={advancedCards}
+        description="Load operations at runtime, describe how each tool behaves and manage descriptions per environment."
+        title="Beyond the first tool"
+      />
+      <FeatureIndex
+        class="lg:pt-0!"
+        description="Everything the MCP plugin documents today, linked to the page that explains it."
+        groups={featureGroups}
+        heading="Every MCP feature, by name"
+      />
+      <ExploreMainProductCards class="max-lg:mx-4 max-lg:my-8" />
+      <FrequentlyAskedQuestions faqs={faqs} class="mx-4 md:mx-6" />
+      <GetYourAPIGameRightList class="mx-4 sm:mb-6 md:mx-6" />
+    </main>
+
+    <SiteFooter />
+    <script>
+      for (const button of document.querySelectorAll<HTMLButtonElement>('[data-copy-snippet]')) {
+        button.addEventListener('click', async () => {
+          await navigator.clipboard.writeText(button.dataset.copySnippet ?? '');
+          button.dataset.copied = '';
+          button.ariaLabel = 'Copied';
+          window.setTimeout(() => {
+            delete button.dataset.copied;
+            button.ariaLabel = 'Copy to clipboard';
+          }, 1500);
+        });
+      }
+    </script>
+  </body>
+</html>
