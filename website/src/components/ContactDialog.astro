@@ -2,9 +2,10 @@
 import Path from './Path.astro';
 
 // Same backend as the current Guild website's Get in Touch form:
-// POST https://utils.the-guild.dev/api/contact-us { name, email, notes }
+// POST https://utils.the-guild.dev/api/contact-us { name, email, notes, turnstileToken }
 // (packages/website-helper-worker). CORS is limited to the-guild.dev origins,
-// so submissions only succeed on the production domain.
+// and the Turnstile site key to its hostnames, so submissions only succeed on
+// the production domain.
 ---
 
 <dialog
@@ -73,6 +74,8 @@ import Path from './Path.astro';
             ></textarea>
           </label>
         </div>
+        <!-- Cloudflare Turnstile; shown only while Cloudflare asks for an interaction -->
+        <div data-contact-turnstile hidden class="mt-5"></div>
         <p data-contact-error hidden class="mt-4 font-mono text-sm text-[var(--amber)]">
           Something went wrong. Please try again, or email us at{' '}
           <a
@@ -85,6 +88,9 @@ import Path from './Path.astro';
         </p>
         <p data-contact-invalid hidden class="mt-4 font-mono text-sm text-[var(--amber)]">
           Please fill in all fields with a valid email.
+        </p>
+        <p data-contact-captcha hidden class="mt-4 font-mono text-sm text-[var(--amber)]">
+          We couldn't verify you're human. Please complete the check above and try again.
         </p>
         <div class="mt-6 flex flex-wrap items-center gap-2.5">
           <button
@@ -120,6 +126,18 @@ import Path from './Path.astro';
 </dialog>
 
 <script>
+  type Turnstile = {
+    render(container: HTMLElement, options: Record<string, unknown>): string;
+    getResponse(widgetId: string): string | undefined;
+    reset(widgetId: string): void;
+  };
+
+  const TURNSTILE_SITE_KEY = '0x4AAAAAAB-9vuIUJrCPlFK3';
+  const turnstileWindow = window as typeof window & {
+    turnstile?: Turnstile;
+    onTurnstileLoad?: () => void;
+  };
+
   const dialog = document.querySelector<HTMLDialogElement>('#contact-dialog')!;
   const form = dialog.querySelector<HTMLFormElement>('[data-contact-form]')!;
   const formView = dialog.querySelector<HTMLElement>('[data-contact-form-view]')!;
@@ -127,13 +145,117 @@ import Path from './Path.astro';
   const errorMessage = dialog.querySelector<HTMLElement>('[data-contact-error]')!;
   const invalidMessage = dialog.querySelector<HTMLElement>('[data-contact-invalid]')!;
   const submitButton = dialog.querySelector<HTMLButtonElement>('[data-contact-submit]')!;
+  const captchaMessage = dialog.querySelector<HTMLElement>('[data-contact-captcha]')!;
+  const turnstileContainer = dialog.querySelector<HTMLElement>('[data-contact-turnstile]')!;
+
+  // The Turnstile script is loaded on the first open rather than on every page
+  // view. Its token is single-use, so the widget is reset after each submit.
+  let turnstileLoading: Promise<Turnstile> | undefined;
+  let turnstileScript: HTMLScriptElement | undefined;
+  let widgetId: string | undefined;
+  let tokenWaiters: Array<(token: string) => void> = [];
+
+  function loadTurnstile() {
+    if (turnstileWindow.turnstile) return Promise.resolve(turnstileWindow.turnstile);
+    if (turnstileLoading) return turnstileLoading;
+    const script = document.createElement('script');
+    turnstileScript = script;
+    turnstileLoading = new Promise<Turnstile>((resolve, reject) => {
+      turnstileWindow.onTurnstileLoad = () => resolve(turnstileWindow.turnstile!);
+      script.onerror = () => {
+        abandonTurnstileLoad(script);
+        reject(new Error('Turnstile failed to load'));
+      };
+    });
+    script.src =
+      'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad';
+    script.async = true;
+    document.head.append(script);
+    return turnstileLoading;
+  }
+
+  // Drops a failed or stalled load so the next attempt injects a fresh script.
+  // Only the current attempt's script may clear the shared state, so a late
+  // error from an abandoned script cannot reset a newer attempt.
+  function abandonTurnstileLoad(script: HTMLScriptElement) {
+    script.remove();
+    if (turnstileScript !== script) return;
+    turnstileScript = undefined;
+    turnstileLoading = undefined;
+  }
+
+  async function renderTurnstile() {
+    const turnstile = await loadTurnstile();
+    widgetId ??= turnstile.render(turnstileContainer, {
+      sitekey: TURNSTILE_SITE_KEY,
+      action: 'contact',
+      appearance: 'interaction-only',
+      theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
+      'before-interactive-callback'() {
+        turnstileContainer.hidden = false;
+      },
+      'after-interactive-callback'() {
+        turnstileContainer.hidden = true;
+      },
+      callback(token: string) {
+        captchaMessage.hidden = true;
+        for (const resolve of tokenWaiters) resolve(token);
+        tokenWaiters = [];
+      },
+    });
+    return turnstile;
+  }
+
+  // Resolves with the current token, waiting for the widget when the visitor
+  // submits before it has finished (or while it shows a challenge). The
+  // deadline covers loading the script as well: a load that misses it is
+  // abandoned and throws (the generic error shows, and the next submit
+  // retries), while a widget still without a token resolves '' (the captcha
+  // message shows).
+  async function getTurnstileToken(timeoutMs = 15_000): Promise<string> {
+    const timedOut = Symbol('timed out');
+    let waiter: ((token: string) => void) | undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    const acquire = (async () => {
+      const turnstile = await renderTurnstile();
+      const token = turnstile.getResponse(widgetId!);
+      if (token) return token;
+      return new Promise<string>(resolve => {
+        waiter = resolve;
+        tokenWaiters.push(resolve);
+      });
+    })();
+    // A load error after the deadline has already won must not go unhandled.
+    acquire.catch(() => {});
+    const deadline = new Promise<typeof timedOut>(resolve => {
+      timer = setTimeout(() => resolve(timedOut), timeoutMs);
+    });
+
+    try {
+      const result = await Promise.race([acquire, deadline]);
+      if (result !== timedOut) return result;
+    } finally {
+      clearTimeout(timer);
+      tokenWaiters = tokenWaiters.filter(w => w !== waiter);
+    }
+
+    if (widgetId === undefined) {
+      if (turnstileScript) abandonTurnstileLoad(turnstileScript);
+      throw new Error('Turnstile did not load in time');
+    }
+    return '';
+  }
 
   function openDialog() {
     formView.hidden = false;
     successView.hidden = true;
     errorMessage.hidden = true;
     invalidMessage.hidden = true;
+    captchaMessage.hidden = true;
     dialog.showModal();
+    // A load failure surfaces on submit, where getTurnstileToken retries it.
+    renderTurnstile().catch(() => {});
     dialog.querySelector<HTMLInputElement>('input[name="name"]')?.focus();
   }
 
@@ -175,6 +297,7 @@ import Path from './Path.astro';
     event.preventDefault();
     errorMessage.hidden = true;
     invalidMessage.hidden = true;
+    captchaMessage.hidden = true;
 
     if (!form.checkValidity()) {
       invalidMessage.hidden = false;
@@ -186,6 +309,11 @@ import Path from './Path.astro';
     submitButton.textContent = 'sending…';
 
     try {
+      const turnstileToken = await getTurnstileToken();
+      if (!turnstileToken) {
+        captchaMessage.hidden = false;
+        return;
+      }
       const response = await fetch('https://utils.the-guild.dev/api/contact-us', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -193,8 +321,13 @@ import Path from './Path.astro';
           name: data.get('name'),
           email: data.get('email'),
           notes: data.get('notes'),
+          turnstileToken,
         }),
       });
+      if (response.status === 403) {
+        captchaMessage.hidden = false;
+        return;
+      }
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       form.reset();
       formView.hidden = true;
@@ -202,6 +335,7 @@ import Path from './Path.astro';
     } catch {
       errorMessage.hidden = false;
     } finally {
+      if (widgetId !== undefined) turnstileWindow.turnstile?.reset(widgetId);
       submitButton.disabled = false;
       submitButton.textContent = 'send message';
     }

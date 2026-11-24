@@ -53,6 +53,7 @@ export default {
           request,
           body,
           crisp,
+          turnstileSecret: env.TURNSTILE_SECRET_KEY,
         });
       }
 
