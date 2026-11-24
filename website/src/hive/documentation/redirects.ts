@@ -177,6 +177,10 @@ export const routeRules: Record<string, RouteRule> = {
   ),
 
   // Product updates
+  // keep shared gateway v3 links working at the publication date's URL.
+  '/product-updates/2026-11-18-hive-gateway-v3': redirect(
+    '/product-updates/2026-11-24-hive-gateway-v3',
+  ),
   '/product-updates/2024-01-25-schema-contracts-for-federation': redirect(
     '/product-updates/2024-02-06-schema-contracts-for-federation',
   ),
