@@ -135,15 +135,35 @@ Not sure which? See [Hive Router or Hive Gateway](/docs#hive-router-or-hive-gate
 
 Turn on usage reporting in [Hive Router](/docs/router/observability/usage_reporting),
 [Hive Gateway](/docs/gateway/usage-reporting) or the
-[Apollo Router plugin](/docs/other-integrations/apollo-router). Once Hive sees your traffic, schema
-checks stop flagging changes that no client depends on. See
+[Apollo Router plugin](/docs/other-integrations/apollo-router).
+
+Then enable **Conditional Breaking Changes** in the target's settings and choose the traffic
+threshold and time window. From then on, schema checks stop flagging changes that no client depends
+on. See
 [conditional breaking changes](/docs/schema-registry/management/targets#conditional-breaking-changes).
 
 ### 5. Move persisted queries
 
 If your clients already generate an Apollo persisted query manifest, publish it as an
 [app deployment](/docs/schema-registry/app-deployments). The Hive CLI reads the Apollo manifest
-format directly and keeps the operation IDs, so shipped clients keep working.
+format directly and keeps the operation IDs, so clients keep sending the same hashes.
+
+A hash alone does not say which app deployment it belongs to. Hive Router finds the deployment from
+the client name and version, so point its
+[client identification headers](/docs/router/security/persisted-documents) at the ones Apollo Client
+already sends:
+
+```yaml title="router.config.yaml"
+telemetry:
+  client_identification:
+    name_header: apollographql-client-name
+    version_header: apollographql-client-version
+```
+
+The name and version a client sends must match the `--name` and `--version` of the app deployment.
+Clients that do not send these headers need them added, or need to send the full
+`appName~appVersion~documentId` ID. With Hive Gateway, see its
+[persisted documents guide](/docs/gateway/persisted-documents).
 
 <Callout type="info">
   Planning a migration and want a second pair of eyes?
