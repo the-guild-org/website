@@ -1,16 +1,19 @@
 ---
 import { withBase } from '../../lib/base-path';
-// The screenshots in this folder share one canvas per tab, one UI scale, one app header and one
-// position for the navigation bar, so switching highlights does not make the picture jump. A new
-// one has to match: 2906x1298 for Schema Registry, 2450x1116 for Observability, navigation border
-// at y=260. A highlight without a matching screenshot reuses the closest one.
+// The app screenshots in this folder are all captured the same way, so switching highlights does
+// not make the picture jump: the top-left 820x541 CSS pixels of the Hive Console page at 2x
+// (1640x1082), scrolled to the top, with the app header and navigation bar in view.
 import registryAppDeploymentsImage from '../../documentation/src/components/landing-page-feature-tabs/app-deployments.webp';
 import auditImage from '../../documentation/src/components/landing-page-feature-tabs/audit.png';
 import observabilityClientsImage from '../../documentation/src/components/landing-page-feature-tabs/clients.webp';
 import registryExplorerImage from '../../documentation/src/components/landing-page-feature-tabs/explorer.webp';
+import observabilityMetricAlertsImage from '../../documentation/src/components/landing-page-feature-tabs/metric-alerts.webp';
 import observabilityOperationsImage from '../../documentation/src/components/landing-page-feature-tabs/operations.webp';
 import observabilityOverallImage from '../../documentation/src/components/landing-page-feature-tabs/overall.webp';
+import registryPromotionsImage from '../../documentation/src/components/landing-page-feature-tabs/promotions-and-rollbacks.webp';
+import observabilitySavedViewsImage from '../../documentation/src/components/landing-page-feature-tabs/saved-insights-views.webp';
 import registrySchemaChecksImage from '../../documentation/src/components/landing-page-feature-tabs/schema-checks.webp';
+import observabilityTracesImage from '../../documentation/src/components/landing-page-feature-tabs/traces.webp';
 import registryVersionControlSystemImage from '../../documentation/src/components/landing-page-feature-tabs/version-control-system.webp';
 
 interface Props {
@@ -57,7 +60,7 @@ const highlights = {
     {
       description:
         'Promote a composed supergraph from staging to production, or roll back to an earlier version, with one command.',
-      image: registryVersionControlSystemImage,
+      image: registryPromotionsImage,
       link: '/docs/schema-registry#promote-and-rollback-schema-versions',
       title: 'Promotions and Rollbacks',
     },
@@ -84,21 +87,21 @@ const highlights = {
     {
       description:
         'Get notified in Slack, MS Teams or a webhook when traffic, error rate or latency crosses a threshold.',
-      image: observabilityOverallImage,
+      image: observabilityMetricAlertsImage,
       link: '/docs/schema-registry/metric-alerts',
       title: 'Metric Alerts',
     },
     {
       description:
         'Follow one request through the gateway and your subgraphs with OpenTelemetry traces sent to Hive Console.',
-      image: observabilityOperationsImage,
+      image: observabilityTracesImage,
       link: '/docs/other-integrations/opentelemetry',
       title: 'Distributed Tracing',
     },
     {
       description:
         'Narrow insights down to a client and its versions, then save the view and share it with your team.',
-      image: observabilityClientsImage,
+      image: observabilitySavedViewsImage,
       link: '/docs/schema-registry/usage-reporting',
       title: 'Saved Insights Views',
     },
