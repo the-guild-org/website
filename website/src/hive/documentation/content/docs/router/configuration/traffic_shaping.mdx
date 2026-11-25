@@ -17,9 +17,73 @@ these settings, see the [Performance Tuning & Traffic Shaping Guide](/docs/route
 - **Type:** `integer`
 - **Default:** `100`
 
-Limits the maximum number of concurrent HTTP connections the router will open to a single subgraph
-host. This acts as a safeguard to prevent overwhelming a subgraph with too many simultaneous
-requests.
+Limits how many requests the router sends at once to a single subgraph host. This acts as a
+safeguard to prevent overwhelming a subgraph with too many simultaneous requests. It also caps how
+many idle connections the router keeps in the pool for each host.
+
+When the limit is reached, further requests wait for a free slot. The wait counts toward the
+subgraph's [`request_timeout`](#request_timeout), and a request that can't get a slot in time fails
+with the `SUBGRAPH_REQUEST_SLOT_TIMEOUT` error code, while the router still returns data from other
+subgraphs. These requests never reach the subgraph, so the [circuit breaker](#circuit_breaker)
+ignores them. Use the `hive.router.subgraph.requests.pending` and
+`hive.router.subgraph.request.slot_wait.duration`
+[metrics](/docs/router/observability/metrics#http-client) to see how often requests wait.
+
+Set it to `0` to remove the limit. Requests then never wait for a slot, and the pool of idle
+connections has no size limit; [`pool_idle_timeout`](#pool_idle_timeout) still closes unused
+connections.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  max_connections_per_host: 0
+```
+
+## `http_client_mode`
+
+- **Type:** `string`
+- **Default:** `shared`
+
+Controls how the router's [HTTP workers](/docs/router/configuration/http#workers) share HTTP clients
+and connection pools to subgraphs.
+
+- `shared` — one client for all workers. A connection opened by one worker can serve requests from
+  any other, so fewer connections stay open, but a subgraph response often has to wake up another
+  thread. This is the default.
+- `per_worker` — one client per worker, so a subgraph request stays on the worker that handles the
+  incoming request. It uses less CPU per request (about 9.5% less in our benchmark), but each
+  worker keeps its own idle connections, so more connections can stay open.
+  [`max_connections_per_host`](#max_connections_per_host) still caps the requests in flight.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  http_client_mode: per_worker
+```
+
+## `entity_reuse`
+
+- **Type:** `boolean`
+- **Default:** `false`
+- **Environment Variable:** `ROUTER_TRAFFIC_SHAPING_ENTITY_REUSE`
+
+Copies entities that are already in the response instead of asking a subgraph for them again. An
+entity fetch often asks for entities that an earlier fetch already put in the response. With entity
+reuse enabled, the fetch copies those into place and leaves them out of the request. When it has
+every entity, the subgraph isn't called at all.
+
+A fetch copies only from the fetches it waits for. It may also wait for an earlier fetch to the same
+subgraph that asked for the same fields, when that gives it something to copy. Entities are never
+copied:
+
+- once the request has an error,
+- in mutations,
+- for fields a subgraph only resolves through `@provides`,
+- for entities whose representation has a missing or `null` field,
+- in fetches with `@fromContext` arguments, or input or output rewrites.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  entity_reuse: true
+```
 
 ## Inbound Options
 
@@ -300,7 +364,8 @@ traffic_shaping:
 
 ## Outbound Options
 
-The following options (`allow_only_http2`, `circuit_breaker`, `compression`, `dedupe_enabled`,
+The following options (`allow_only_http2`, `automatic_persisted_queries`, `circuit_breaker`,
+`compression`, `dedupe_enabled`,
 `forward_operation_name`, `max_aliases_per_request`, `pool_idle_timeout`, `request_timeout`, `tls`,
 and `websocket`) can be set
 globally for all subgraphs or overridden on a per-subgraph basis by nesting them under the
@@ -338,6 +403,43 @@ traffic_shaping:
   all:
     allow_only_http2: true
 ```
+
+### `automatic_persisted_queries`
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+Sends subgraph requests as Automatic Persisted Queries (APQ): only the SHA-256 hash of the query is
+sent, in `extensions.persistedQuery`.
+
+- When a subgraph doesn't know the hash yet (`PERSISTED_QUERY_NOT_FOUND`), the router sends the
+  request again with the query, so the subgraph can store it.
+- When a subgraph answers with `PERSISTED_QUERY_NOT_SUPPORTED`, or fails the hash-only request but
+  answers the same query sent in full (a server without APQ support), the router sends the full
+  query and stops using APQ for that subgraph for 5 minutes, then tries again.
+- A hash-only request that fails for another reason (for example, auth or overload) is sent once
+  more as a plain query. If that fails too, APQ stays enabled.
+- Mutations are only retried on `PERSISTED_QUERY_NOT_FOUND` and `PERSISTED_QUERY_NOT_SUPPORTED`,
+  since an error doesn't prove that a mutation didn't run. Disable APQ for a subgraph without APQ
+  support that only receives mutations.
+
+Only queries and mutations sent over HTTP use APQ; subscriptions don't.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    automatic_persisted_queries: true
+  subgraphs:
+    reviews:
+      automatic_persisted_queries: false
+```
+
+<Callout type="info">
+  A [plugin](/docs/router/customizations/plugin-system/hooks) that changes the
+  query should do it in `on_subgraph_execute`, so the hash covers the changed
+  query. A plugin that rewrites the request body in `on_subgraph_http_request`
+  needs APQ disabled for that subgraph.
+</Callout>
 
 ### `circuit_breaker`
 
@@ -670,6 +772,58 @@ traffic_shaping:
       pool_idle_timeout: 90s
 ```
 
+### `max_connection_age`
+
+- **Type:** `string`
+- **Default:** disabled
+
+How long a subgraph HTTP connection is reused before it's replaced. Busy connections never go idle,
+so [`pool_idle_timeout`](#pool_idle_timeout) never closes them and they keep sending traffic to the
+same subgraph instance. Behind a load balancer such as a Kubernetes Service, that can keep traffic
+on a failing pod.
+
+With this set, a connection is retired at roughly this age (up to 10% earlier, so connections don't
+all reconnect at once). The age is checked when a request on the connection gets its response. From
+then on, the connection takes no new requests; requests already on it finish normally, and the next
+request opens a new connection, resolving DNS again. Applies to HTTP only, not WebSockets. `0s` is
+not accepted.
+
+This option can only be set under `traffic_shaping.all`.
+
+### `tcp_keepalive`
+
+- **Type:** `string` \| `null`
+- **Default:** `30s`
+
+How long a subgraph connection can sit idle before the operating system sends TCP keepalive probes.
+They repeat at the same interval, and 3 unanswered probes close the connection, so a vanished host is
+noticed in about 2 minutes. The operating system answers the probes, so they don't detect a hung
+subgraph process; use [`http2_keep_alive_interval`](#http2_keep_alive_interval) for that.
+
+Must be at least `1s`, in whole seconds. Set it to `null` to disable TCP keepalive.
+
+This option can only be set under `traffic_shaping.all`.
+
+### `http2_keep_alive_interval`
+
+- **Type:** `string`
+- **Default:** disabled
+
+How often to send HTTP/2 pings on subgraph connections, including idle ones. A ping that isn't
+answered within 20 seconds closes the connection and fails its requests. The subgraph process itself
+has to answer, so this also detects a hung subgraph. Applies to HTTP/2 connections only. `0s` is not
+accepted.
+
+This option can only be set under `traffic_shaping.all`.
+
+```yaml title="router.config.yaml"
+traffic_shaping:
+  all:
+    max_connection_age: 30s
+    tcp_keepalive: 30s
+    http2_keep_alive_interval: 10s
+```
+
 ### `request_timeout`
 
 - **Default:** `30s`
@@ -677,6 +831,13 @@ traffic_shaping:
 Request timeout in duration string format (e.g. `30s` for 30 seconds, `1m` for 1 minute). This
 setting specifies the maximum time the router will wait for a response from a subgraph before timing
 out the request. By default, the router will wait up to 30 seconds for a subgraph to respond.
+
+The timeout covers the whole subgraph request: waiting for a
+[`max_connections_per_host`](#max_connections_per_host) slot (`SUBGRAPH_REQUEST_SLOT_TIMEOUT`),
+receiving the response headers, and reading the response body (`SUBGRAPH_REQUEST_TIMEOUT`). A
+deduplicated request waiting on an identical in-flight request also gives up at its own timeout.
+Over HTTP/2, the router stops reusing a connection after a request on it times out; requests already
+on it finish, and new requests open a fresh connection.
 
 The value for `request_timeout` must be a valid duration string or a VRL expression that evaluates
 to a duration string.
