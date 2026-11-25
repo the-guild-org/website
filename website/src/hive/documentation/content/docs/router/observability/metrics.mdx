@@ -762,6 +762,13 @@ HTTP client metrics capture outbound requests the router makes to subgraphs.
         'Set to "ok" when the parsed subgraph response has no GraphQL errors. Set to "error" when the subgraph response includes GraphQL errors or when transport/deserialization fails.',
       typicalValues: ["ok", "error"],
     },
+    {
+      meaning: "How a wait for a max_connections_per_host slot ended",
+      name: "result",
+      notes:
+        'acquired = got a slot and was sent; timeout = request_timeout ran out (SUBGRAPH_REQUEST_SLOT_TIMEOUT); cancelled = the router-level request_timeout fired while waiting',
+      typicalValues: ["acquired", "timeout", "cancelled"],
+    },
   ]}
   metrics={[
     {
@@ -832,6 +839,22 @@ HTTP client metrics capture outbound requests the router makes to subgraphs.
       name: "http.client.active_requests",
       type: "UpDownCounter",
       unit: "{request}",
+    },
+    {
+      description:
+        "Subgraph requests currently waiting for a max_connections_per_host slot. Subgraphs served from the same host share the limit, so add up their series to see the host's queue. A value that stays above 0 means the subgraph is slow or max_connections_per_host is too low.",
+      labels: ["subgraph.name", "server.address", "server.port"],
+      name: "hive.router.subgraph.requests.pending",
+      type: "UpDownCounter",
+      unit: "{request}",
+    },
+    {
+      description:
+        "How long subgraph requests waited for a max_connections_per_host slot, recorded when the wait ends. Requests that find a free slot are not recorded. Long acquired waits, or any timeout waits, mean the subgraph is slow or max_connections_per_host is too low.",
+      labels: ["subgraph.name", "server.address", "server.port", "result"],
+      name: "hive.router.subgraph.request.slot_wait.duration",
+      type: "Histogram",
+      unit: "Seconds",
     },
   ]}
 />

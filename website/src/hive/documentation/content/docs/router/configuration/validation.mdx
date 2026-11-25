@@ -1,0 +1,43 @@
+---
+title: "validation"
+---
+
+The `validation` configuration block controls selected GraphQL input validation rules. Both options
+default to `false`, preserving the standard validation behavior.
+
+## Options
+
+### `disable_unknown_input_fields_validation`
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+Accept input object variables that contain fields not defined by the input type. Unknown fields are
+forwarded to subgraphs unchanged; all other validation remains enforced, including required fields,
+type checks, and `@oneOf` constraints. Unknown fields do not count toward the one-field requirement
+of `@oneOf`.
+
+This option only affects input object variables. Input values written inline in the GraphQL operation
+are still validated. It can be useful when clients send back objects received from the API, including
+an extra `__typename` field.
+
+```yaml title="router.config.yaml"
+validation:
+  disable_unknown_input_fields_validation: true
+```
+
+### `disable_int_value_range_validation`
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+Accept GraphQL `Int` values outside the signed 32-bit range instead of rejecting them. This applies
+to both variable values and values written inline in the operation.
+
+```yaml title="router.config.yaml"
+validation:
+  disable_int_value_range_validation: true
+```
+
+The `ROUTER_DISABLE_INT_VALUE_RANGE_VALIDATION` environment variable can also set this option. When
+present, it takes precedence over the value in the configuration file.

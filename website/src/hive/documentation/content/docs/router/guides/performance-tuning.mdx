@@ -18,10 +18,17 @@ For a quick reference of the configuration syntax, see the
 ## Understanding Connection Limits
 
 The most important setting for both performance and stability is `max_connections_per_host`. This
-controls how many concurrent HTTP connections the router will open to each subgraph host (like
+controls how many requests the router sends at once to each subgraph host (like
 `products.api.example.com`).
 
 - **Default Value:** `100`
+- **`0`** removes the limit entirely
+
+When the limit is reached, requests wait for a free slot. The wait counts toward the subgraph's
+[`request_timeout`](/docs/router/configuration/traffic_shaping#request_timeout), and a request that
+can't get a slot in time fails with `SUBGRAPH_REQUEST_SLOT_TIMEOUT`. The other subgraphs' data is
+still returned, and the circuit breaker ignores these requests since they never reached the
+subgraph.
 
 ### Finding the Sweet Spot
 
@@ -49,9 +56,31 @@ Start with the default and adjust based on your observations:
 
 1. **Monitor subgraph performance** under normal and peak load
 2. **Watch for connection pool exhaustion** in your subgraph logs
-3. **Look for queuing in router metrics** - if requests are waiting for connections, you might need
-   to increase the limit
+3. **Look for queuing in router metrics** - `hive.router.subgraph.requests.pending` shows requests
+   waiting for a slot right now, and `hive.router.subgraph.request.slot_wait.duration` shows how
+   long they waited (its `result` label is `timeout` when the wait ran out). A pending count that
+   stays above `0`, or any `SUBGRAPH_REQUEST_SLOT_TIMEOUT` errors, mean the subgraph is slow or the
+   limit is too low. See the [metrics reference](/docs/router/observability/metrics#http-client).
 4. **Load test gradually** - increase the limit incrementally and measure the impact
+
+## HTTP Client per Worker
+
+Each [HTTP worker](/docs/router/configuration/http#workers) runs its own single-threaded runtime. By
+default (`http_client_mode: shared`), all workers share one HTTP client and connection pool to
+subgraphs, so a connection opened on one worker is picked up by requests on others, and a subgraph
+response often has to wake up another thread.
+
+```yaml
+traffic_shaping:
+  http_client_mode: per_worker
+```
+
+With `per_worker`, each worker gets its own client, so a request stays on its worker from start to
+end. In our benchmark, the router used about 9.5% less CPU per request.
+
+**The trade-off:** each worker keeps its own idle connections, so more connections to each subgraph
+can stay open. `max_connections_per_host` still caps the requests in flight. Prefer `per_worker` when router CPU matters and your subgraphs can comfortably
+handle the extra open connections.
 
 ## Managing Idle Connections
 
@@ -86,6 +115,55 @@ how aggressively the router reuses existing connections versus closing them to f
   firewall timeouts in your stack
 - **Monitor connection errors:** If you see connection failures, your timeout might be longer than
   network device timeouts
+
+## Replacing and Detecting Dead Connections
+
+`pool_idle_timeout` only closes connections that sit unused. Busy connections never go idle, and a
+connection to a host that vanished or hung can look open until a request fails on it. Three
+settings under `traffic_shaping.all` handle this:
+
+```yaml
+traffic_shaping:
+  all:
+    max_connection_age: 30s
+    tcp_keepalive: 30s # default
+    http2_keep_alive_interval: 10s
+```
+
+- **`max_connection_age`** (disabled by default) retires a connection at roughly this age, so the
+  next request opens a new one and resolves DNS again. Use it behind a load balancer such as a
+  Kubernetes Service, where long-lived busy connections otherwise keep traffic pinned to the same
+  pods, including failing ones, and don't spread to new ones after scaling up.
+- **`tcp_keepalive`** (`30s` by default) sends TCP keepalive probes on idle connections, so a host
+  that disappeared is noticed in about 2 minutes. The operating system answers the probes, so they
+  don't detect a hung subgraph process.
+- **`http2_keep_alive_interval`** (disabled by default) sends HTTP/2 pings and closes a connection
+  whose ping isn't answered within 20 seconds. The subgraph process has to answer, so this also
+  catches a hung subgraph. HTTP/2 only.
+
+The router also stops reusing an HTTP/2 connection once a request on it times out, so new requests
+don't keep landing on a stuck instance.
+
+See the [`traffic_shaping` reference](/docs/router/configuration/traffic_shaping#max_connection_age)
+for details.
+
+## Entity Reuse
+
+In federated queries, an entity fetch often asks a subgraph for entities that an earlier fetch
+already put in the response. With entity reuse, the router copies those entities into place instead
+of requesting them again, and skips the subgraph call entirely when every entity is already
+present. This reduces both subgraph load and request latency.
+
+- **Default:** `false` (opt-in)
+
+```yaml
+traffic_shaping:
+  entity_reuse: true
+```
+
+It can also be enabled with the `ROUTER_TRAFFIC_SHAPING_ENTITY_REUSE=true` environment variable. See
+the [`entity_reuse` reference](/docs/router/configuration/traffic_shaping#entity_reuse) for the
+cases where entities are not copied.
 
 ## Request Deduplication
 
@@ -352,6 +430,8 @@ Concretely, a request is recorded as a **failure** in any of the following cases
 - HTTP responses with a status code that is **not** in `error_status_codes`. These are treated as
   successes from the breaker's perspective, regardless of the response body. In particular, a
   `200 OK` carrying GraphQL errors in the body is not inspected.
+- Requests that timed out waiting for a `max_connections_per_host` slot
+  (`SUBGRAPH_REQUEST_SLOT_TIMEOUT`), since they never reached the subgraph.
 - Client-initiated cancellations. If the caller drops the connection or cancels the request before
   the subgraph response arrives, the in-flight call is dropped without recording a success or a
   failure. This avoids tripping the breaker during traffic surges where many clients abort early.

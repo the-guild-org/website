@@ -32,15 +32,23 @@ port you will need to expose.
 
 ### `workers`
 
-- **Type:** `integer`
-- **Default:** Number of physical CPU cores
+- **Type:** `integer` \| `cpuset` \| `container`
+- **Default:** `cpuset`
 - **Environment Variable:** `ROUTER_HTTP_WORKERS`
 
-The `workers` property controls the number of HTTP server worker threads.
+The `workers` property controls the number of HTTP server worker threads. Set it to:
 
-In containerized environments (for example, Kubernetes), the number of physical CPU cores reported
-by the host can be higher than the CPU limit assigned to your container. Set `workers` to match your
-container CPU limit to avoid oversubscribed worker threads.
+- `cpuset` — one worker per logical CPU in the process's CPU affinity mask. On Linux, this follows
+  the cgroup cpuset, but does not account for a CPU quota such as a Kubernetes CPU limit. This is
+  the default.
+- `container` — like `cpuset`, but also capped by the container's cgroup CPU quota, rounded down
+  with a minimum of one worker. For example, a `1500m` CPU limit results in one worker. If no CPU
+  limit is set, this behaves like `cpuset`.
+- A positive integer — use that explicit number of workers.
+
+In containers, use `container` or an explicit count when the CPU quota is lower than the number of
+CPUs in the affinity mask, to avoid oversubscribing worker threads. `ROUTER_HTTP_WORKERS` accepts
+the same values and overrides this setting.
 
 ### `graphql_endpoint`
 
@@ -86,14 +94,14 @@ traffic_shaping:
 
 ## Example
 
-This example configures the router to listen only on the localhost interface on port `8080`, use `4`
-HTTP workers, and expose GraphQL on path `/my_graphql_router`, so it will accept GraphQL requests on
-`http://127.0.0.1:8080/my_graphql_router`.
+This example configures the router to listen only on the localhost interface on port `8080`, use
+`container`-aware worker sizing, and expose GraphQL on path `/my_graphql_router`, so it will accept
+GraphQL requests on `http://127.0.0.1:8080/my_graphql_router`.
 
 ```yaml title="router.config.yaml"
 http:
   host: "127.0.0.1"
   port: 8080
-  workers: 4
+  workers: container
   graphql_endpoint: /my_graphql_router
 ```
