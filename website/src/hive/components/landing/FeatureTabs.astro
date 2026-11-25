@@ -1,14 +1,16 @@
 ---
 import { withBase } from '../../lib/base-path';
-import appDeploymentsImage from '../../documentation/content/docs/schema-registry/detail-app.png';
-import metricAlertsImage from '../../documentation/content/docs/schema-registry/metric-alerts-detail.png';
-import insightsFiltersImage from '../../documentation/content/product-updates/2026-02-26-insights-filters/target-insights.png';
-import schemaHistoryImage from '../../documentation/content/product-updates/2026-06-01-schema-version-promotions-and-rollbacks/new-schema-history-view.webp';
+// The screenshots in this folder share one canvas per tab, one UI scale and one position for the
+// app's navigation bar, so switching highlights does not make the picture jump. A new one has to
+// match: 2906x1298 for Schema Registry, 2450x1116 for Observability, navigation border at y=260.
+import registryAppDeploymentsImage from '../../documentation/src/components/landing-page-feature-tabs/app-deployments.webp';
 import auditImage from '../../documentation/src/components/landing-page-feature-tabs/audit.png';
 import observabilityClientsImage from '../../documentation/src/components/landing-page-feature-tabs/clients.webp';
 import registryExplorerImage from '../../documentation/src/components/landing-page-feature-tabs/explorer.webp';
+import observabilityMetricAlertsImage from '../../documentation/src/components/landing-page-feature-tabs/metric-alerts.webp';
 import observabilityOperationsImage from '../../documentation/src/components/landing-page-feature-tabs/operations.webp';
 import observabilityOverallImage from '../../documentation/src/components/landing-page-feature-tabs/overall.webp';
+import registryPromotionsImage from '../../documentation/src/components/landing-page-feature-tabs/promotions-and-rollbacks.webp';
 import registrySchemaChecksImage from '../../documentation/src/components/landing-page-feature-tabs/schema-checks.webp';
 import registryVersionControlSystemImage from '../../documentation/src/components/landing-page-feature-tabs/version-control-system.webp';
 
@@ -49,14 +51,14 @@ const highlights = {
     {
       description:
         'Publish persisted documents per app version and see which shipped clients a schema change would break.',
-      image: appDeploymentsImage,
+      image: registryAppDeploymentsImage,
       link: '/docs/schema-registry/app-deployments',
       title: 'App Deployments',
     },
     {
       description:
         'Promote a composed supergraph from staging to production, or roll back to an earlier version, with one command.',
-      image: schemaHistoryImage,
+      image: registryPromotionsImage,
       link: '/docs/schema-registry#promote-and-rollback-schema-versions',
       title: 'Promotions and Rollbacks',
     },
@@ -83,7 +85,7 @@ const highlights = {
     {
       description:
         'Get notified in Slack, MS Teams or a webhook when traffic, error rate or latency crosses a threshold.',
-      image: metricAlertsImage,
+      image: observabilityMetricAlertsImage,
       link: '/docs/schema-registry/metric-alerts',
       title: 'Metric Alerts',
     },
@@ -97,7 +99,7 @@ const highlights = {
     {
       description:
         'Narrow insights down to a client and its versions, then save the view and share it with your team.',
-      image: insightsFiltersImage,
+      image: observabilityClientsImage,
       link: '/docs/schema-registry/usage-reporting',
       title: 'Saved Insights Views',
     },
