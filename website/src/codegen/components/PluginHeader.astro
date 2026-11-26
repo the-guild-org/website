@@ -121,3 +121,26 @@ const bodyHtml = bodyMarkdown ? await renderMarkdown(bodyMarkdown) : undefined;
 )}
 
 {bodyHtml && <div class="plugin-api-docs" set:html={bodyHtml} />}
+
+<style>
+  .plugin-api-docs :global(pre.astro-code) {
+    margin: 1rem 0;
+    padding: 0.875rem 1rem;
+    overflow-x: auto;
+    border: 1px solid var(--color-fd-border);
+    border-radius: 0.75rem;
+    background: var(--color-fd-card);
+    font-size: 0.8125rem;
+    line-height: 1.42857;
+  }
+
+  .plugin-api-docs :global(pre.astro-code),
+  .plugin-api-docs :global(pre.astro-code span) {
+    color: var(--shiki-light);
+  }
+
+  :global(.dark) .plugin-api-docs :global(pre.astro-code),
+  :global(.dark) .plugin-api-docs :global(pre.astro-code span) {
+    color: var(--shiki-dark);
+  }
+</style>

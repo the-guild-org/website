@@ -8,7 +8,8 @@ import { createMarkdownProcessor } from '@astrojs/markdown-remark';
 
 const processorPromise = createMarkdownProcessor({
   syntaxHighlight: 'shiki',
-  shikiConfig: { themes: { dark: 'github-dark', light: 'github-light' } },
+  // Colors are emitted as --shiki-light / --shiki-dark only; PluginHeader.astro picks one per theme.
+  shikiConfig: { defaultColor: false, themes: { dark: 'github-dark', light: 'github-light' } },
 });
 
 export async function renderMarkdown(markdown: string): Promise<string> {
