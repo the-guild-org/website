@@ -1,6 +1,9 @@
 ---
-title: Introduction
-description: The Hive schema registry - publish, validate and evolve your GraphQL schemas safely.
+title: "Hive Console: GraphQL Schema Registry"
+sidebarTitle: Introduction
+description:
+  Hive Console is an open-source GraphQL schema registry with schema checks, usage insights, alerts
+  and persisted documents. Publish and evolve schemas safely.
 ---
 
 import { Callout } from "@hive/design-system/hive-components/callout";
@@ -18,7 +21,43 @@ and make the necessary modifications to your schema in a timely manner.
 > [federated GraphQL APIs](/federation), as it ensures consistent schema management and type
 > definitions.
 
-However, it is important to note that determining what constitutes a breaking change can be a
+## What Hive Console Includes
+
+Hive Console is more than the registry. The same place holds everything around your schema:
+
+- **Schema registry** - [publish](#publish-a-schema), [check](#check-a-schema) and compose schemas,
+  with a full [history](#schema-history-and-changelog) and
+  [promotions and rollbacks](#promote-and-rollback-schema-versions) between environments
+- **[Schema Explorer](/docs/schema-registry/explorer)** - browse types and fields with their usage
+  and owning subgraphs
+- **[Usage reporting and insights](/docs/schema-registry/usage-reporting)** - which clients run which
+  operations, and how they perform
+- **[Metric alerts](/docs/schema-registry/metric-alerts)** - notifications when traffic, error rate
+  or latency crosses a threshold
+- **[Tracing](/docs/other-integrations/opentelemetry)** - OpenTelemetry traces from your gateway and
+  subgraphs
+- **[App deployments](/docs/schema-registry/app-deployments)** - persisted documents per app
+  version, included in breaking change detection
+- **[Schema contracts](/docs/schema-registry/contracts)** and
+  **[schema policies](/docs/schema-registry/schema-policy)** - filtered variants of your graph, and
+  lint rules for schema design
+- **[Laboratory](/docs/new-laboratory)** - a GraphQL IDE with collections, environments and
+  preflight scripts
+- **[High-availability CDN](/docs/schema-registry/high-availability-cdn)** - delivers the supergraph
+  and persisted documents to your gateway
+- **Organization management** - [SSO](/docs/schema-registry/management/sso-oidc-provider),
+  [SCIM](/docs/schema-registry/management/scim-provisioning),
+  [roles and permissions](/docs/schema-registry/management/members-roles-permissions),
+  [access tokens](/docs/schema-registry/management/access-tokens) and
+  [audit logs](/docs/schema-registry/management/audit-logs)
+
+Hive Console is available as [Hive Cloud](https://app.graphql-hive.com) and as an identical,
+MIT-licensed [self-hosted](/docs/schema-registry/self-hosting/get-started) version. Coming from
+Apollo GraphOS? See [what maps to what](/docs/use-cases/apollo-graphos).
+
+## Preventing Breaking Changes
+
+Determining what constitutes a breaking change can be a
 complex task. It requires a thorough understanding of your GraphQL API, consumers and real-world
 traffic patterns. Hive provides a set of tools to help you with this task.
 
@@ -40,8 +79,8 @@ type Query {
 type Post {
   id: ID!
   title: String!
-  content: String! # [!code --]
-  description: String! # [!code ++]
+  content: String!
+  description: String! # [!code --]
 }
 ```
 

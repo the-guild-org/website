@@ -1,9 +1,26 @@
 ---
+import { withBase } from '../../lib/base-path';
+
 interface Props {
   class?: string;
 }
 
 const { class: className } = Astro.props;
+
+const targets: [string, string][] = [
+  ['Docker', '/docs/gateway/deployment/docker'],
+  ['Node.js', '/docs/gateway/deployment/runtimes/nodejs'],
+  ['Bun', '/docs/gateway/deployment/runtimes/bun'],
+  ['Deno', '/docs/gateway/deployment/runtimes/deno'],
+  ['AWS Lambda', '/docs/gateway/deployment/serverless/aws-lambda'],
+  ['Cloudflare Workers', '/docs/gateway/deployment/serverless/cloudflare-workers'],
+  ['Azure Functions', '/docs/gateway/deployment/serverless/azure-functions'],
+  ['Google Cloud', '/docs/gateway/deployment/serverless/google-cloud-platform'],
+  ['NestJS', '/docs/gateway/deployment/node-frameworks/nestjs'],
+  ['Next.js', '/docs/gateway/deployment/node-frameworks/nextjs'],
+  ['Fastify', '/docs/gateway/deployment/node-frameworks/fastify'],
+  ['Express', '/docs/gateway/deployment/node-frameworks/express'],
+];
 ---
 
 <section
@@ -14,21 +31,33 @@ const { class: className } = Astro.props;
 >
   <div class="lg:w-[630px]">
     <h2 class="group text-4xl leading-[1.2] tracking-[-0.48px] md:text-5xl md:leading-[1.16667]">
-      Cloud Native Nature
+      Runs wherever JavaScript runs
     </h2>
     <p class="mt-6 text-white/80">
-      As modern teams expect their tools to work seamlessly in serverless environments, Hive Gateway
-      is highly versatile and cloud-ready.
+      A standalone binary, a Docker image or a package inside the server you already have. The same
+      gateway and the same configuration, from a long-running container to a function at the edge.
     </p>
     <div class="mt-8 flex gap-2 max-sm:flex-col max-sm:border-t max-sm:border-green-700 max-sm:pt-4 sm:mt-12 sm:gap-12">
       <strong class="block basis-1/2 font-medium md:text-xl/7">
         Cloud-Native & Serverless Support
       </strong>
       <p class="basis-1/2 text-white/80">
-        Optimized for deployment in modern cloud and serverless environments such as AWS Lambda and
-        Cloudflare Workers, demonstrating high scalability and flexibility.
+        Deploys to serverless and edge platforms such as AWS Lambda, Cloudflare Workers, Azure
+        Functions and Google Cloud, and embeds in Node.js frameworks including NestJS 12.
       </p>
     </div>
+    <ul class="relative z-10 mt-8 flex list-none flex-wrap gap-2">
+      {targets.map(([label, href]) => (
+        <li>
+          <a
+            class="block rounded-lg border border-white/20 px-3 py-1.5 text-sm text-white/80 transition-colors hover:border-white/60 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white/40"
+            href={withBase(href)}
+          >
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
   </div>
   <div class="pointer-events-none absolute inset-0 overflow-hidden max-lg:hidden">
     <svg

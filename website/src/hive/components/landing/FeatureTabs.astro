@@ -1,11 +1,20 @@
 ---
 import { withBase } from '../../lib/base-path';
+// The app screenshots in this folder share one framing, so switching highlights does not make the
+// picture jump: Hive Console laid out 1792px wide, the top 1792x800 of the page, saved at 2322x1036
+// with the header and navigation bar in view. The card shows the left part of each image.
+import registryAppDeploymentsImage from '../../documentation/src/components/landing-page-feature-tabs/app-deployments.webp';
 import auditImage from '../../documentation/src/components/landing-page-feature-tabs/audit.png';
 import observabilityClientsImage from '../../documentation/src/components/landing-page-feature-tabs/clients.webp';
+import registryCompositionErrorsImage from '../../documentation/src/components/landing-page-feature-tabs/composition-errors.webp';
 import registryExplorerImage from '../../documentation/src/components/landing-page-feature-tabs/explorer.webp';
+import observabilityMetricAlertsImage from '../../documentation/src/components/landing-page-feature-tabs/metric-alerts.webp';
 import observabilityOperationsImage from '../../documentation/src/components/landing-page-feature-tabs/operations.webp';
 import observabilityOverallImage from '../../documentation/src/components/landing-page-feature-tabs/overall.webp';
+import registryPromotionsImage from '../../documentation/src/components/landing-page-feature-tabs/promotions-and-rollbacks.webp';
+import observabilitySavedViewsImage from '../../documentation/src/components/landing-page-feature-tabs/saved-insights-views.webp';
 import registrySchemaChecksImage from '../../documentation/src/components/landing-page-feature-tabs/schema-checks.webp';
+import observabilityTracesImage from '../../documentation/src/components/landing-page-feature-tabs/traces.webp';
 import registryVersionControlSystemImage from '../../documentation/src/components/landing-page-feature-tabs/version-control-system.webp';
 
 interface Props {
@@ -20,69 +29,112 @@ const highlights = {
       description:
         'Track schema modifications across multiple environments from development to production.',
       image: registryVersionControlSystemImage,
+      link: '/docs/schema-registry#schema-history-and-changelog',
       title: 'Version Control System',
     },
     {
       description:
-        'Identify and breaking changes before they reach production. Evolve your API with confidence.',
+        'Identify breaking changes before they reach production, judged against the operations your clients really send.',
       image: registrySchemaChecksImage,
+      link: '/docs/schema-registry#check-a-schema',
       title: 'Schema Checks',
     },
     {
       description: 'Avoid runtime errors by validating compatibility of all your subgraphs.',
-      image: registrySchemaChecksImage,
+      image: registryCompositionErrorsImage,
+      link: '/docs/schema-registry/get-started/apollo-federation',
       title: 'Composition Error Prevention',
     },
     {
       description: 'Navigate through your GraphQL schema and check ownership and usage of types.',
       image: registryExplorerImage,
+      link: '/docs/schema-registry/explorer',
       title: 'Schema Explorer',
+    },
+    {
+      description:
+        'Publish persisted documents per app version and see which shipped clients a schema change would break.',
+      image: registryAppDeploymentsImage,
+      link: '/docs/schema-registry/app-deployments',
+      title: 'App Deployments',
+    },
+    {
+      description:
+        'Promote a composed supergraph from staging to production, or roll back to an earlier version, with one command.',
+      image: registryPromotionsImage,
+      link: '/docs/schema-registry#promote-and-rollback-schema-versions',
+      title: 'Promotions and Rollbacks',
     },
   ],
   'GraphQL Observability': [
     {
       description: 'Track GraphQL requests to see how API is utilized and by what applications.',
       image: observabilityClientsImage,
+      link: '/docs/schema-registry/usage-reporting',
       title: 'GraphQL consumers',
     },
     {
       description: 'Observe and analyze performance of your GraphQL API.',
       image: observabilityOverallImage,
+      link: '/docs/schema-registry/usage-reporting',
       title: 'Overall performance',
     },
     {
       description: 'Identify slow GraphQL operations to pinpoint performance bottlenecks.',
       image: observabilityOperationsImage,
+      link: '/docs/schema-registry/usage-reporting',
       title: 'Query performance',
     },
+    {
+      description:
+        'Get notified in Slack, MS Teams or a webhook when traffic, error rate or latency crosses a threshold.',
+      image: observabilityMetricAlertsImage,
+      link: '/docs/schema-registry/metric-alerts',
+      title: 'Metric Alerts',
+    },
+    {
+      description:
+        'Follow one request through the gateway and your subgraphs with OpenTelemetry traces sent to Hive Console.',
+      image: observabilityTracesImage,
+      link: '/docs/other-integrations/opentelemetry',
+      title: 'Distributed Tracing',
+    },
+    {
+      description:
+        'Narrow insights down to a client and its versions, then save the view and share it with your team.',
+      image: observabilitySavedViewsImage,
+      link: '/docs/schema-registry/usage-reporting',
+      title: 'Saved Insights Views',
+    },
   ],
-  'GraphQL Gateway': [
+  'Gateway and Router': [
     {
       description:
-        'Best in class support for Apollo Federation. Scores 100% in the Federation audit.',
+        'Written in Rust. The highest throughput and lowest latency in our open gateway benchmark, and every test passed in the Federation audit.',
       image: auditImage,
-      link: 'https://the-guild.dev/graphql/hive/federation-gateway-audit',
-      title: 'Federation v1 and v2',
-    },
-    {
-      description: 'Contribute data from subgraphs to a GraphQL subscription seamlessly.',
-      image: auditImage,
-      link: '/docs/gateway/subscriptions',
-      title: 'Real-time features',
+      link: '/router',
+      title: 'Hive Router',
     },
     {
       description:
-        'Access control with role-based access control (RBAC), JSON Web Tokens (JWT) and Persisted Operations.',
+        'Written in TypeScript. Federation v1 and v2 on Node.js, Bun, Deno and serverless runtimes, extended with plugins.',
       image: auditImage,
-      link: '/docs/gateway/authorization-authentication',
+      link: '/gateway',
+      title: 'Hive Gateway',
+    },
+    {
+      description:
+        'JWT authentication, @authenticated, @requiresScopes and @policy, persisted documents and demand control in both runtimes.',
+      image: auditImage,
+      link: '/docs/router/security/authorization',
       title: 'Security and Compliance',
     },
     {
       description:
-        'Out-of-the-box support for OpenTelemetry and Prometheus metrics to fit your observability stack.',
+        'Federated subscriptions, plus OpenTelemetry traces and Prometheus metrics that fit your observability stack.',
       image: auditImage,
-      link: '/docs/gateway/monitoring-tracing',
-      title: 'OTEL & Prometheus',
+      link: '/docs/router/subscriptions',
+      title: 'Real-time and OpenTelemetry',
     },
   ],
 } as const;
@@ -95,14 +147,15 @@ const tabs = [
     title: 'Schema Registry',
   },
   {
-    description: 'Insights into API usage and user experience metrics.',
+    description: 'Insights into API usage and user experience metrics, with alerts and traces.',
     documentationLink: '/docs/schema-registry/usage-reporting',
     title: 'GraphQL Observability',
   },
   {
-    description: 'Entry point to your distributed data graph.',
-    documentationLink: '/docs/gateway',
-    title: 'GraphQL Gateway',
+    description:
+      'Two open-source entry points to your federated graph. Pick the runtime that fits your team.',
+    documentationLink: '/docs#hive-router-or-hive-gateway',
+    title: 'Gateway and Router',
   },
 ] as const;
 
@@ -137,7 +190,7 @@ const allHighlights = Object.values(highlights).flat();
             <path d="M11.1 19.2v-6.3H9.3v-2.7h5.4v2.7h-1.8v6.3h4.5V21H6.6v-1.8h4.5Zm-.9-16V2.1h3.6v1.1a8.102 8.102 0 0 1 2.694 14.64l-1-1.497a6.3 6.3 0 1 0-6.99 0l-.998 1.497A8.103 8.103 0 0 1 10.2 3.2Z" />
           </svg>
         )}
-        {tab.title === 'GraphQL Gateway' && (
+        {tab.title === 'Gateway and Router' && (
           <svg
             fill="currentColor"
             height="24"
@@ -186,29 +239,21 @@ const allHighlights = Object.values(highlights).flat();
             </h2>
             <p class="basis-full leading-6 text-green-800">{tab.description}</p>
           </header>
-          <dl class="grid grid-cols-2 gap-4 md:gap-12">
-            {highlights[tab.title].map(highlight =>
-              'link' in highlight && highlight.link ? (
+          <ul class="grid list-none grid-cols-2 gap-4 md:gap-12">
+            {highlights[tab.title].map(highlight => (
+              <li>
                 <a
                   class="hover:bg-beige-100 -m-2 block rounded-lg p-2 md:-m-4 md:rounded-xl md:p-4"
                   data-highlight-hover={highlight.title}
                   href={withBase(highlight.link)}
                   title={`Learn more about ${highlight.title}`}
                 >
-                  <dt class="text-green-1000 font-medium">{highlight.title}</dt>
-                  <dd class="mt-2 text-sm/5 text-green-800">{highlight.description}</dd>
+                  <h3 class="text-green-1000 font-medium">{highlight.title}</h3>
+                  <p class="mt-2 text-sm/5 text-green-800">{highlight.description}</p>
                 </a>
-              ) : (
-                <div
-                  class="hover:bg-beige-100 -m-2 rounded-lg p-2 md:-m-4 md:rounded-xl md:p-4"
-                  data-highlight-hover={highlight.title}
-                >
-                  <dt class="text-green-1000 font-medium">{highlight.title}</dt>
-                  <dd class="mt-2 text-sm/5 text-green-800">{highlight.description}</dd>
-                </div>
-              ),
-            )}
-          </dl>
+              </li>
+            ))}
+          </ul>
           <a
             class="text-green-1000 bg-primary relative flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-green-800 hover:text-white focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-green-800 sm:w-fit"
             href={withBase(tab.documentationLink)}

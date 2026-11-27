@@ -43,10 +43,11 @@ if (!data) {
 >
   <header class="md:text-center md:text-balance">
     <h2 class="group text-4xl leading-[1.2] tracking-[-0.56px] md:text-[56px] md:leading-[1.14286]">
-      Federation-Compatible Gateway Benchmarks
+      Apollo Federation compatibility, tested in the open
     </h2>
     <p class="mt-4 mb-6 text-green-800 md:mb-16">
-      See the results of our open-source audit for Apollo Federation Gateways.
+      Live results of our open-source audit, which runs the same test suite against every Apollo
+      Federation gateway and router.
     </p>
   </header>
   <div class="my-6 flex items-start gap-6 max-md:flex-col md:mt-16 md:mb-12">
@@ -89,7 +90,8 @@ if (!data) {
       <tbody>
         {benchmarkData.map(row => {
           const compatibility = (row.cases.passed / (row.cases.passed + row.cases.failed)) * 100;
-          const highlight = row.name === product;
+          // Variants of the product, e.g. "Hive Gateway (Rust QP)", are highlighted with it.
+          const highlight = row.name === product || row.name.startsWith(`${product} (`);
           return (
             <tr
               class:list={[

@@ -11,6 +11,14 @@ const { class: className } = Astro.props;
 
 const defaultFaqs = [
   [
+    'What is Hive?',
+    'Hive is an open-source platform for GraphQL federation. Hive Console is the schema registry and observability layer: schema checks, composition, usage insights, metric alerts, tracing and persisted documents. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="/router">Hive Router</a> (Rust) and <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="/gateway">Hive Gateway</a> (TypeScript) serve the supergraph to your clients. Everything is MIT licensed, and you can use each part on its own.',
+  ],
+  [
+    'How is Hive different from Apollo GraphOS?',
+    'Hive covers the same ground, a schema registry, schema checks, usage insights, contracts, persisted documents and a federation router, and all of it is open source under the MIT license, including the registry itself. You can self-host the identical software for free, there is no per-seat pricing, and single sign-on, SCIM, RBAC and audit logs are on every plan. Hive also works with Apollo Router and Apollo Gateway, so you can adopt it one piece at a time. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="/docs/use-cases/apollo-graphos">Read the comparison and migration guide.</a>',
+  ],
+  [
     'What does "no vendor lock-in" mean?',
     "We value your flexibility and independent decision-making. That means we'll never try to lock you out in our ecosystem and we'll continuously add support for other tools and solutions, so that you decide what your stack should look like!",
   ],
@@ -24,11 +32,15 @@ const defaultFaqs = [
   ],
   [
     'Are you SOC-2 Type II compliant?',
-    'Hive Platfrom is fully SOC-2 Type II compliant. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="https://security.graphql-hive.com/" target="_blank" rel="noreferrer">Read more in the Trust Center.</a>',
+    'Hive Platform is fully SOC-2 Type II compliant. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="https://security.graphql-hive.com/" target="_blank" rel="noreferrer">Read more in the Trust Center.</a>',
   ],
   [
     'Do you have a GraphQL Gateway?',
-    'Of course, we do! It is called Hive Gateway (previously known as GraphQL Mesh) that supports Apollo Federation and has been battle-tested by our clients for a few years now. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="/docs/gateway">Read more in our documentation.</a>',
+    'Two of them. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="/router">Hive Router</a> is written in Rust and built for the highest throughput and lowest resource usage. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="/gateway">Hive Gateway</a> is written in TypeScript, runs on Node.js, Bun, Deno and serverless platforms, and is extended with plugins. Both serve Apollo Federation supergraphs and both are MIT licensed. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="/docs#hive-router-or-hive-gateway">See which one fits you.</a>',
+  ],
+  [
+    'Do I have to switch my gateway to use Hive Console?',
+    'No. Hive Console works with Hive Router and Hive Gateway, and also with Apollo Router, Apollo Gateway, Apollo Server, GraphQL Yoga and other servers through our clients and plugins. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="/docs/other-integrations">See the integrations.</a>',
   ],
 ] as const;
 
