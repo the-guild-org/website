@@ -8,6 +8,7 @@ import GatewayFeatureTabs from '~hive/components/gateway/GatewayFeatureTabs.astr
 import LetsGetAdvancedSection from '~hive/components/gateway/LetsGetAdvancedSection.astro';
 import OrchestrateYourWay from '~hive/components/gateway/OrchestrateYourWay.astro';
 import GetYourAPIGameRightList from '~hive/components/GetYourAPIGameRightList.astro';
+import LatestProductUpdates from '~hive/components/landing/LatestProductUpdates.astro';
 import SiteFooter from '~hive/components/SiteFooter.astro';
 import SiteNavigation from '~hive/components/SiteNavigation.astro';
 import { withBase } from '~hive/lib/base-path';
@@ -17,12 +18,27 @@ import hiveGatewayIconRaw from '~hive/design-system/icons/hive-gateway.svg?raw';
 
 const withAttrs = (svg: string, attrs: string) => svg.replace('<svg', `<svg ${attrs}`);
 
-const checkmarks = ['Fully open source', 'No vendor lock-in', 'Can be self-hosted!'];
+const checkmarks = [
+  'MIT licensed, no license tiers',
+  'Apollo Federation v1 and v2',
+  'Runs anywhere JavaScript runs',
+];
+
+const docsLink = (href: string, text: string) =>
+  `<a class="hive-focus underline decoration-blue-500 underline-offset-2" href="${href}">${text}</a>`;
 
 const faqs: [string, string][] = [
   [
-    'What do I need to do migrating from another Federation gateway?',
-    'Hive Gateway is a drop-in replacement for gateways alike! Start the gateway using your existing <code class="font-mono text-green-1000">supergraph.graphql</code> and you\'re off. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="https://the-guild.dev/graphql/hive/docs/gateway/supergraph-proxy-source#supergraph">Read more.</a>',
+    'Hive Gateway or Hive Router, which one should I pick?',
+    `Both are open source, MIT licensed and actively maintained, and both serve a supergraph from a file or a schema registry such as Hive Console. Pick Hive Gateway when you want to extend the gateway in TypeScript, run on serverless or edge runtimes, serve Federation v1, proxy a non-federated GraphQL API, or need response caching, rate limiting, @defer and @stream or an MCP server. Pick ${docsLink('/router', 'Hive Router')} when raw throughput and memory use on dedicated infrastructure matter most. You can also have both: Hive Gateway can run the ${docsLink('/docs/gateway/other-features/rust-query-planner', 'Rust query planner from Hive Router')}.`,
+  ],
+  [
+    'What do I need to do when migrating from Apollo Gateway, Apollo Router or another Federation gateway?',
+    `Nothing changes in your subgraphs. Hive Gateway serves a standard Apollo Federation supergraph, v1 or v2: start it with your existing <code class="font-mono text-green-1000">supergraph.graphql</code>, or point it at Hive Console or Apollo GraphOS, and move your gateway settings into <code class="font-mono text-green-1000">gateway.config.ts</code>. ${docsLink('/docs/gateway/supergraph-proxy-source', 'Read more.')}`,
+  ],
+  [
+    'What is new in Hive Gateway v3?',
+    `Hive Gateway v3 runs on GraphQL Yoga v6 and GraphQL-JS 17, supports @context and @fromContext with the Rust query planner, speaks the latest @defer and @stream format, plans faster with the JavaScript query planner, cancels execution and upstream requests by default when a client disconnects, and moves to OpenTelemetry JS SDK 3 and NestJS 12. ${docsLink('/product-updates/2026-11-24-hive-gateway-v3', 'Read the announcement')} or the ${docsLink('/docs/migration-guides/gateway-v2-v3', 'migration guide from v2')}.`,
   ],
   [
     'Can I run Hive Gateway on the edge?',
@@ -30,7 +46,11 @@ const faqs: [string, string][] = [
   ],
   [
     'Does Hive Gateway support subscriptions?',
-    'Of course! Hive Gateway fully supports federated subscriptions and behaves just like Federation GraphQL subscriptions in Apollo Router. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="https://the-guild.dev/graphql/hive/docs/gateway/subscriptions">Read more.</a>',
+    `Yes. Federated subscriptions work over WebSockets, Server-Sent Events and HTTP callbacks, with a different protocol per subgraph if you need it. Event-driven federated subscriptions (EDFS) let a message broker such as NATS, Kafka or Redis feed subscriptions without a subscription server in your subgraphs. ${docsLink('/docs/gateway/subscriptions', 'Read more.')}`,
+  ],
+  [
+    'Can AI agents use my GraphQL API through Hive Gateway?',
+    `Yes. With the MCP plugin, currently in beta, Hive Gateway is a Model Context Protocol server: you choose the GraphQL operations to expose and each one becomes a typed tool that agents can list and call, with the gateway's authentication and limits in front of it. ${docsLink('/mcp', 'See the MCP server page')} or ${docsLink('/docs/gateway/mcp', 'read the docs')}.`,
   ],
   [
     'How does Hive Gateway integrate with tracing tools?',
@@ -42,7 +62,7 @@ const faqs: [string, string][] = [
   ],
   [
     "Can I optimize Hive Gateway's performance for large-scale applications?",
-    'The gateway is designed from ground up with performance in mind, capable of handling even the largest of application loads. Using techniques like request caching and deduplication, query batching, HTTP compression and more - you\'re able to tune Hive Gateway exactly to your needs. <a class="hive-focus underline decoration-blue-500 underline-offset-2" href="https://the-guild.dev/graphql/hive/docs/gateway/other-features/performance">Read more.</a>',
+    `Yes. Response caching, request deduplication and batching, HTTP compression, connection pooling and cancellation of abandoned requests are all built in, and the optional ${docsLink('/docs/gateway/other-features/rust-query-planner', 'Rust query planner')} plans up to 3x faster per core. ${docsLink('/docs/gateway/other-features/performance', 'Read more.')}`,
   ],
   [
     'Are all Hive Gateway features open source?',
@@ -57,9 +77,27 @@ const faqs: [string, string][] = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <BaseHead
-      description="Unify and accelerate your data graph with Hive Gateway, which seamlessly integrates with Apollo Federation."
-      title="Hive Gateway | Hive"
+      description="Hive Gateway is an open-source, MIT-licensed GraphQL gateway for Apollo Federation v1 and v2 or any GraphQL API. Runs on Node.js, Bun, Deno and serverless."
+      title="Hive Gateway | Open-Source GraphQL Gateway for Federation"
     />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'Hive Gateway',
+        description:
+          'Open-source GraphQL gateway for Apollo Federation v1 and v2 and any GraphQL API, written in TypeScript.',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Linux, macOS, Docker, Node.js, Bun, Deno',
+        url: 'https://the-guild.dev/graphql/hive/gateway',
+        license: 'https://opensource.org/licenses/MIT',
+        sameAs: ['https://github.com/graphql-hive/gateway'],
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@type': 'Organization', name: 'The Guild', url: 'https://the-guild.dev/' },
+      })}
+    ></script>
   </head>
   <body class="text-green-1000 bg-white font-sans [color-scheme:light]">
     <SiteNavigation />
@@ -110,12 +148,16 @@ const faqs: [string, string][] = [
             </linearGradient>
           </svg>
         </div>
-        <h1 class="group mx-auto max-w-3xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]">
+        <p class="text-green-1000 -mb-2 text-center text-sm font-medium tracking-wide uppercase md:-mb-4">
           Hive Gateway
+        </p>
+        <h1 class="group mx-auto max-w-4xl text-center text-4xl leading-[1.2] tracking-[-0.64px] text-balance md:text-[4rem] md:leading-[1.1875]">
+          The open-source GraphQL gateway for Federation and any API
         </h1>
-        <p class="mx-auto w-[512px] max-w-[80%] text-center leading-6 text-green-800">
-          Unify and accelerate your data graph across diverse services with Hive Gateway, which
-          seamlessly integrates with Apollo Federation.
+        <p class="mx-auto w-[640px] max-w-[80%] text-center leading-6 text-green-800">
+          Written in TypeScript and extended with plugins. Serves Apollo Federation supergraphs or
+          proxies any GraphQL API, on Node.js, Bun, Deno and serverless runtimes, with an optional
+          Rust query planner.
         </p>
         <ul class="mx-auto flex list-none gap-x-6 gap-y-2 text-sm font-medium max-md:flex-col">
           {checkmarks.map(text => (
@@ -203,6 +245,11 @@ const faqs: [string, string][] = [
       <FederationCompatibleBenchmarksSection />
       <LetsGetAdvancedSection />
       <CloudNativeSection class="mx-4 mt-6 md:mx-6" />
+      <LatestProductUpdates
+        count={3}
+        description="What the gateway team released most recently."
+        match={/gateway/}
+      />
       <ExploreMainProductCards class="max-lg:mx-4 max-lg:my-8" />
       <FrequentlyAskedQuestions faqs={faqs} class="mx-4 md:mx-6" />
       <GetYourAPIGameRightList class="mx-4 sm:mb-6 md:mx-6" />

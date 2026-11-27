@@ -1,6 +1,9 @@
 ---
-title: "Introduction"
-description: Hive Router - a high-performance GraphQL federation router written in Rust.
+title: "Hive Router: GraphQL Federation Router in Rust"
+sidebarTitle: Introduction
+description:
+  Hive Router is an open-source, MIT-licensed GraphQL Federation router written in Rust, with
+  subscriptions, security, traffic shaping and OpenTelemetry built in.
 ---
 
 Hive Router is a high-performance [GraphQL Federation](/federation) router built with Rust. It
@@ -27,6 +30,10 @@ production traffic without breaking a sweat. Here's what makes Hive Router a sol
 Want to learn more about why we built this? Check out our
 [introductory blog post](/blog/welcome-hive-router).
 
+Coming from Apollo Router? See
+[Hive Router as an alternative to Apollo Router](/docs/use-cases/apollo-router) for a feature map
+and the steps to try it next to your current router.
+
 ## Performance Benchmarks
 
 We've put Hive Router through its paces against other federation gateways to see how it performs
@@ -39,6 +46,12 @@ See the full results and testing methodology:
 
 Hive Router works with the standard GraphQL Federation specification. We run comprehensive tests to
 make sure it plays nicely with the rest of the federation ecosystem.
+
+It serves Federation v2 supergraphs, from v2.0 through v2.9, including `@interfaceObject`,
+[progressive `@override`](/docs/router/configuration/override_labels),
+[`@context` and `@fromContext`](/docs/router/guides/contextual-arguments) and
+[`@cost` and `@listSize`](/docs/router/security/demand-control). The
+[compatibility table](/docs/router/compatibility) lists every feature and its status.
 
 Check out our compliance testing:
 **[Federation Gateway Audit](https://the-guild.dev/graphql/hive/federation-gateway-audit)**.
@@ -74,7 +87,47 @@ Federated entity resolution works the same way it does for queries - when a subs
 arrives, the router queries any additional subgraphs needed to resolve entity fields and delivers
 the complete result to the client.
 
+The router can also receive events from subgraphs through
+[HTTP callbacks](/docs/router/subscriptions/http-callback), and subscriptions to the same subgraph
+share [multiplexed WebSocket connections](/docs/router/subscriptions/websockets).
+
 Learn more: **[Subscriptions](/docs/router/subscriptions)**.
+
+## Security
+
+The router is the edge of your graph, so the controls that protect it are built in and configured in
+the same YAML file:
+
+- [JWT authentication](/docs/router/security/jwt-authentication), and authorization in the schema
+  with [`@authenticated` and `@requiresScopes`](/docs/router/security/authorization)
+- [Custom authorization policies](/docs/router/security/policy) with `@policy`, decided by a
+  coprocessor
+- [Demand control](/docs/router/security/demand-control) to reject operations that cost too much,
+  and [operation complexity limits](/docs/router/security/operation-complexity) for depth, tokens
+  and aliases
+- [Persisted documents](/docs/router/security/persisted-documents), including
+  [app deployments](/docs/schema-registry/app-deployments) from Hive Console
+- [TLS and mutual TLS](/docs/router/security/tls) towards clients and towards subgraphs
+- [Subgraph error masking](/docs/router/security/error-masking), so internal details do not reach
+  clients
+- [CORS](/docs/router/security/cors), [CSRF prevention](/docs/router/security/csrf) and
+  [introspection control](/docs/router/security/introspection)
+
+## Traffic Shaping and Reliability
+
+Hive Router decides how requests move between clients and subgraphs:
+
+- [Circuit breakers](/docs/router/guides/performance-tuning#circuit-breaker) stop sending requests
+  to a subgraph that is failing
+- [Request deduplication](/docs/router/guides/performance-tuning#request-deduplication), timeouts,
+  connection pools, compression and HTTP/2 are tuned per subgraph in
+  [traffic shaping](/docs/router/configuration/traffic_shaping)
+- [Dynamic subgraph routing](/docs/router/guides/dynamic-subgraph-routing) sends a request to a
+  different subgraph instance per tenant, region or feature flag
+- [Header rules](/docs/router/guides/header-manipulation) propagate, add, remove and rewrite headers
+  in both directions
+- The supergraph and persisted documents can be loaded from
+  [S3-compatible object storage](/docs/router/configuration/storages)
 
 ## Observability
 
@@ -85,11 +138,18 @@ Hive Router supports tracing and metrics. Tracing helps you follow one request a
 subgraphs, so you can find where a request is slow or fails. Metrics help you monitor traffic, error
 rate, latency, cache behavior, and supergraph reloads over time.
 
-You can send tracing and metrics data to Hive Console, to OTLP-compatible backends, or to Prometheus
-(via a scrape endpoint). This lets you use the monitoring tools your team already has.
+You can send tracing and metrics data to Hive Console, to OTLP-compatible backends, to Datadog
+through its [native tracer](/docs/router/observability/tracing#send-traces-through-native-datadog-tracing),
+or to Prometheus (via a scrape endpoint). This lets you use the monitoring tools your team already
+has.
 
-Learn more: **[OpenTelemetry Tracing](/docs/router/observability/tracing)** and
-**[OpenTelemetry Metrics](/docs/router/observability/metrics)**.
+[Logs](/docs/router/observability/logging) are structured, with one summary line per request at the
+default level. [Usage reporting](/docs/router/observability/usage_reporting) sends schema usage to
+Hive Console, where it drives breaking change detection based on real traffic.
+
+Learn more: **[OpenTelemetry Tracing](/docs/router/observability/tracing)**,
+**[OpenTelemetry Metrics](/docs/router/observability/metrics)** and
+**[Logging](/docs/router/observability/logging)**.
 
 ## Getting Started
 

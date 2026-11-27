@@ -15,23 +15,27 @@ const tabs = [
     highlights: [
       {
         description:
-          'Equip your teams with comprehensive tools for monitoring API health, performance, and usage patterns, crucial for maintaining operational excellence.',
-        title: 'Open Telemetry & Prometheus Integration',
+          'Traces on OpenTelemetry JS SDK 3 and Prometheus metrics, with StatsD and Sentry plugins. Send traces to Hive Console or any OTLP backend.',
+        href: '/docs/gateway/monitoring-tracing',
+        title: 'OpenTelemetry & Prometheus Integration',
       },
       {
         description:
-          'Enhances response times and reduces load on backend services by intelligently caching frequent requests.',
+          'The query planner of Hive Router as a native addon: up to 3x faster planning per core on Node.js, Bun and Deno.',
+        href: '/docs/gateway/other-features/rust-query-planner',
+        title: 'Rust Query Planner',
+      },
+      {
+        description:
+          'Cache whole responses in memory or in Redis, scoped per session, and invalidate them when a mutation changes an entity.',
+        href: '/docs/gateway/other-features/performance/response-caching',
         title: 'Response Caching',
       },
       {
         description:
-          'Protects your API from overload and abuse, ensuring consistent and reliable service performance.',
-        title: 'Rate Limiting',
-      },
-      {
-        description:
-          'Navigate and analyze the connections within your GraphQL schema using Schema Explorer.',
-        title: 'Schema Explorer',
+          'Retries with backoff and timeouts per subgraph, request deduplication, and cancellation of work for clients that went away.',
+        href: '/docs/gateway/other-features/upstream-reliability',
+        title: 'Upstream Reliability',
       },
     ],
     title: 'Observability & Performance Monitoring',
@@ -42,23 +46,27 @@ const tabs = [
     highlights: [
       {
         description:
-          'Provides secure user identification and role-based access control, crucial for protecting sensitive data and operations.',
+          'Verify JSON Web Tokens at the gateway and forward the token or its claims to your subgraphs.',
+        href: '/docs/gateway/authorization-authentication',
         title: 'JWT Authentication & Authorization',
       },
       {
         description:
-          'Allows only pre-registered GraphQL operations to be executed, safeguarding against arbitrary and potentially harmful requests.',
-        title: 'Persisted Operations',
-      },
-      {
-        description:
-          'Prevents unauthorized access with powerful, centralized policies at the gateway level, reducing the risk of security breaches.',
+          'Field and type level rules with the Federation directives @authenticated, @requiresScopes and @policy.',
+        href: '/docs/gateway/authorization-authentication#granular-protection-using-auth-directives-authenticated-requiresscopes-and-policy',
         title: 'Fine-grained Access Control',
       },
       {
         description:
-          'Shields against common web security vulnerabilities, securing your applications from unauthorized inter-domain interactions.',
-        title: 'CORS and CSRF Prevention',
+          'Run only the operations your apps were built with, served from Hive Console app deployments or your own store.',
+        href: '/docs/gateway/persisted-documents',
+        title: 'Persisted Documents',
+      },
+      {
+        description:
+          'Rate limiting, demand control, depth, alias and token limits, CSRF prevention, and HMAC or AWS SigV4 signing of subgraph requests.',
+        href: '/docs/gateway/other-features/security',
+        title: 'Rate Limiting & Hardening',
       },
     ],
     title: 'Security & Access Control',
@@ -137,10 +145,14 @@ const tabs = [
           </header>
           <dl class="grid grid-cols-2 gap-4 md:gap-12">
             {tab.highlights.map(highlight => (
-              <div class="hover:bg-beige-100 -m-2 rounded-lg p-2 md:-m-4 md:rounded-xl md:p-4">
+              <a
+                class="hive-focus hover:bg-beige-100 -m-2 block rounded-lg p-2 md:-m-4 md:rounded-xl md:p-4"
+                href={withBase(highlight.href)}
+                title={`Learn more about ${highlight.title}`}
+              >
                 <dt class="text-green-1000 font-medium">{highlight.title}</dt>
                 <dd class="mt-2 text-sm/5 text-green-800">{highlight.description}</dd>
-              </div>
+              </a>
             ))}
           </dl>
           <a

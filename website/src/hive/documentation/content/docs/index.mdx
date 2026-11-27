@@ -1,5 +1,8 @@
 ---
 title: Introduction to Hive
+description:
+  Hive is an open-source, MIT-licensed GraphQL federation platform - Hive Console (schema registry
+  and observability), Hive Router (Rust) and Hive Gateway (TypeScript).
 ---
 
 import { Card, Cards } from "@hive/design-system/hive-components/card";
@@ -8,22 +11,46 @@ import { Card, Cards } from "@hive/design-system/hive-components/card";
 your GraphQL projects. Hive is fully compatible with [**GraphQL Federation**](/federation),
 monolithic, or [**Schema Stitching**](https://the-guild.dev/graphql/stitching) projects.
 
-Our best in class tools give what you need so that you can gain insights, make decisions, and evolve
-your GraphQL API with confidence.
+It has three parts, and you can adopt each one on its own:
 
-- Track the evolution of your GraphQL schema
-- Analytics and Observability on how your GraphQL API is being used
-- Prevent schema changes that break clients based on real-world traffic
-- Notify teams with alerts and notifications
-- Enforce schema design best practices
-- Secure your GraphQL API with the Hive Gateway
+- [**Hive Console**](/docs/schema-registry) - the schema registry and observability layer.
+- [**Hive Router**](/docs/router) - a GraphQL Federation router written in Rust.
+- [**Hive Gateway**](/docs/gateway) - a GraphQL gateway written in TypeScript.
+
+Together they give you what you need to gain insights, make decisions, and evolve your GraphQL API
+with confidence:
+
+- Track the evolution of your GraphQL schema, and
+  [promote or roll back](/docs/schema-registry#promote-and-rollback-schema-versions) versions
+  between environments
+- Prevent schema changes that break clients, based on
+  [real-world traffic](/docs/schema-registry/management/targets#conditional-breaking-changes) and on
+  the [persisted documents of your shipped apps](/docs/schema-registry/app-deployments)
+- Analytics and observability on how your GraphQL API is being used, with
+  [usage insights](/docs/schema-registry/usage-reporting) and
+  [OpenTelemetry traces](/docs/other-integrations/opentelemetry)
+- Get notified with [metric alerts](/docs/schema-registry/metric-alerts) when traffic, error rate or
+  latency crosses a threshold
+- Enforce schema design best practices with [schema policies](/docs/schema-registry/schema-policy),
+  and publish filtered variants of your graph with [contracts](/docs/schema-registry/contracts)
+- Serve and secure your GraphQL API with [Hive Router](/docs/router) or
+  [Hive Gateway](/docs/gateway)
+- Manage access with [SSO](/docs/schema-registry/management/sso-oidc-provider),
+  [SCIM](/docs/schema-registry/management/scim-provisioning),
+  [role-based permissions](/docs/schema-registry/management/members-roles-permissions) and
+  [audit logs](/docs/schema-registry/management/audit-logs)
+
+Coming from Apollo? See [Hive as an alternative to Apollo GraphOS](/docs/use-cases/apollo-graphos)
+and [Hive Router as an alternative to Apollo Router](/docs/use-cases/apollo-router).
 
 ## Hive Console
 
-Hive Console is our [schema registry](/docs/schema-registry). To get started with Hive Console, you
-can choose between using our hosted version or opt to self-host if your company does not allow cloud
-solutions. For most cases, the hosted solution is significantly simpler and very affordable. See
-[Pricing](/pricing) for details.
+Hive Console is our [schema registry](/docs/schema-registry) and the home of your usage insights,
+alerts, traces and [Laboratory](/docs/new-laboratory). To get started with Hive Console, you can
+choose between using our hosted version or opt to self-host if your company does not allow cloud
+solutions. The self-hosted version is the same software, with no feature held back. For most cases,
+the hosted solution is significantly simpler and very affordable. See [Pricing](/pricing) for
+details.
 
 <Cards>
   <Card
@@ -52,27 +79,52 @@ solutions. For most cases, the hosted solution is significantly simpler and very
   />
 </Cards>
 
+## Hive Router
+
+Hive Router is a high-performance, open-source GraphQL Federation router written in Rust. It acts as
+the central entry point for all incoming GraphQL requests, efficiently planning and executing them
+across your distributed subgraph services. It runs as a Docker image or a single binary with a YAML
+configuration file, and is extended with [Rust plugins](/docs/router/customizations/plugin-system)
+or [coprocessors](/docs/router/customizations/coprocessors) in any language.
+
+<Cards>
+  <Card href="/docs/router" title="Get Started" />
+</Cards>
+
 ## Hive Gateway
 
-Hive Gateway is a GraphQL router that can act as a GraphQL Federation gateway, a subgraph, or a
-proxy gateway -- making it suitable for any GraphQL API. It can be ran as a Docker image, binary, or
-JavaScript package with minimal configuration, or
+Hive Gateway is a GraphQL gateway written in TypeScript that can act as a GraphQL Federation
+gateway, a subgraph, or a proxy gateway -- making it suitable for any GraphQL API. It can be ran as
+a Docker image, binary, or JavaScript package with minimal configuration, or
 [customized](/docs/gateway/other-features/custom-plugins) to meet your needs.
 
 <Cards>
   <Card href="/docs/gateway" title="Get Started" />
 </Cards>
 
-## Hive Router
+## Hive Router or Hive Gateway?
 
-Hive Router is a high-performance, open-source GraphQL Federation router written in Rust. It acts as
-the central entry point for all incoming GraphQL requests, efficiently planning and executing them
-across your distributed subgraph services. It can be ran as a Docker image or binary with minimal
-configuration.
+Both are MIT licensed, both serve a supergraph from a file or from a schema registry such as Hive
+Console, and both report usage to Hive Console. They differ in where they run and how you extend
+them.
 
-<Cards>
-  <Card href="/docs/router" title="Get Started" />
-</Cards>
+|                           | Hive Router                                                             | Hive Gateway                                                                       |
+| ------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Written in                | Rust                                                                    | TypeScript                                                                         |
+| Runs as                   | Binary or Docker image                                                  | Binary, Docker image, or a package on Node.js, Bun, Deno and serverless platforms  |
+| Configured with           | YAML                                                                    | TypeScript (`gateway.config.ts`) or CLI flags                                      |
+| Extended with             | Rust plugins, coprocessors in any language                              | TypeScript plugins                                                                 |
+| Federation                | [v2](/docs/router/compatibility)                                        | v1 and v2                                                                          |
+| Non-federated GraphQL API | No                                                                      | Yes, as a [proxy](/docs/gateway/supergraph-proxy-source)                           |
+| Subscriptions             | [Yes](/docs/router/subscriptions)                                       | [Yes](/docs/gateway/subscriptions), including event-driven subscriptions           |
+| `@defer` and `@stream` | Not yet | [Yes](/docs/gateway/defer-stream) |
+| Response caching | Not yet | [Yes](/docs/gateway/other-features/performance/response-caching) |
+| Rate limiting | Through a [coprocessor](/docs/router/customizations/coprocessors) or plugin | [Yes](/docs/gateway/other-features/security/rate-limiting) |
+| MCP server for AI agents  | No                                                                      | [Yes, in beta](/docs/gateway/mcp)                                                  |
+| Best for                  | The highest throughput and lowest memory use on dedicated infrastructure | Teams that extend the gateway in TypeScript, or run on serverless and edge runtimes |
+
+Hive Gateway can also run the query planner of Hive Router as a native addon. See the
+[Rust Query Planner](/docs/gateway/other-features/rust-query-planner).
 
 ## Hive Logger
 
