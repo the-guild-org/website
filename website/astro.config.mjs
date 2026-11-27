@@ -361,6 +361,7 @@ export default defineConfig({
           './src/hive/mdx-shims/metrics-section.ts',
         ),
         alias('#components/large-callout', './src/hive/mdx-shims/large-callout.ts'),
+        alias('#components/call-to-action-teaser', './src/hive/mdx-shims/call-to-action-teaser.ts'),
         alias('#components/lede', './src/hive/mdx-shims/lede.ts'),
         alias('#components/small-avatar', './src/hive/mdx-shims/small-avatar.ts'),
         alias('@/components/deployment-changelog', './src/hive/mdx-shims/changelog.ts'),

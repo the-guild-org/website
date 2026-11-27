@@ -1,0 +1,120 @@
+---
+import { withBase } from '../../lib/base-path';
+
+/**
+ * Call to action teaser for blog posts. Styled after the "Get Started Today!" section of the
+ * Hive landing page.
+ *
+ * <CallToActionTeaser heading="..." cta="..." href="...">Body text</CallToActionTeaser>
+ *
+ * `href` defaults to Hive Console; internal paths such as `/router` are prefixed with the site base.
+ */
+interface Props {
+  /** Extra classes for the section, e.g. margins. */
+  class?: string;
+  cta?: string;
+  heading?: string;
+  href?: string;
+}
+
+const {
+  class: className,
+  cta = 'Get started with Hive Console',
+  heading = 'Get Started Today!',
+  href = 'https://app.graphql-hive.com/',
+} = Astro.props;
+---
+
+<section
+  class:list={[
+    'not-prose bg-blueish-green relative my-12 overflow-hidden rounded-3xl p-8 text-center sm:p-12',
+    className,
+  ]}
+>
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
+    <svg
+      class="absolute -top-20 -left-20 size-50 rotate-180"
+      preserveAspectRatio="xMidYMid meet"
+      viewBox="0 0 432 432"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z"
+        fill="none"
+        stroke="url(#cta-teaser-arch-b)"
+      ></path>
+    </svg>
+    <svg
+      class="absolute -right-20 -bottom-20 size-50"
+      preserveAspectRatio="xMidYMid meet"
+      viewBox="0 0 432 432"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M.75 431v.25h90.24V160.868c0-38.596 31.282-69.878 69.878-69.878H431.25V.75H191.864a47.017 47.017 0 0 0-33.23 13.771l-68.07 68.071-7.972 7.971-68.07 68.071A47.018 47.018 0 0 0 .75 191.864V431Z"
+        fill="none"
+        stroke="url(#cta-teaser-arch-b)"
+      ></path>
+    </svg>
+    <svg class="absolute -z-10 size-0">
+      <defs>
+        <linearGradient
+          gradientUnits="userSpaceOnUse"
+          id="cta-teaser-arch-b"
+          x1="1"
+          x2="431"
+          y1="1"
+          y2="431"
+        >
+          <stop stop-color="#fff" stop-opacity=".05"></stop>
+          <stop offset="1" stop-color="#fff" stop-opacity=".2"></stop>
+        </linearGradient>
+      </defs>
+    </svg>
+    <svg
+      class="firefox-highlight-fix absolute -top-16 -left-1 size-150 -scale-x-100 overflow-visible"
+      fill="#86B6C1"
+      height="674"
+      viewBox="0 0 895 674"
+      width="895"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g filter="url(#cta-teaser-highlight-blur)">
+        <path d="M350 280.534C350 296.208 356.24 311.261 367.33 322.351L453.447 408.468L463.532 418.553L549.649 504.67C560.739 515.76 575.792 522 591.466 522L894 522L894 408.468L552.251 408.468C503.249 408.468 463.532 368.751 463.532 319.749L463.532 -22L350 -22L350 280.534Z"></path>
+      </g>
+      <defs>
+        <filter
+          color-interpolation-filters="sRGB"
+          filterUnits="userSpaceOnUse"
+          height="1244"
+          id="cta-teaser-highlight-blur"
+          width="1244"
+          x="-3.05176e-05"
+          y="-372"
+        >
+          <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
+          <feBlend
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            mode="normal"
+            result="shape"
+          ></feBlend>
+          <feGaussianBlur result="effect1_foregroundBlur" stdDeviation="175"></feGaussianBlur>
+        </filter>
+      </defs>
+    </svg>
+  </div>
+  <h3 class="group relative text-3xl leading-[1.2] tracking-[-0.48px] text-white md:text-4xl">
+    {heading}
+  </h3>
+  <div class="relative mx-auto mt-4 max-w-2xl text-white/80 [&_a]:text-white [&_a]:underline [&_a]:underline-offset-2 [&>p]:m-0">
+    <slot>Start with a free Hobby plan or try our Pro plan with a 30&nbsp;days trial period.</slot>
+  </div>
+  <a
+    class="text-green-1000 bg-primary relative mx-auto mt-8 flex items-center justify-center gap-2 rounded-lg px-6 py-3 leading-6 font-medium text-nowrap hover:bg-white focus-visible:outline-4 focus-visible:outline-offset-0 focus-visible:outline-white/40 sm:w-fit"
+    href={withBase(href)}
+  >
+    <span class="absolute inset-0 rounded-lg border border-green-800"></span>
+    {cta}
+  </a>
+</section>
