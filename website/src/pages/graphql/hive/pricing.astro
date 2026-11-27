@@ -78,6 +78,13 @@ const comparisonSections: Section[] = [
         feature: link('/docs/api-reference/graphql-api', 'GraphQL Management API'),
         values: ['yes', 'yes', 'yes'],
       },
+      {
+        feature: link(
+          '/docs/schema-registry/management/access-tokens',
+          'Organization, project and personal access tokens',
+        ),
+        values: ['yes', 'yes', 'yes'],
+      },
     ],
     title: 'Organization and Team',
   },
@@ -109,6 +116,13 @@ const comparisonSections: Section[] = [
         values: ['Unlimited', 'Unlimited', 'Unlimited'],
       },
       {
+        feature: link(
+          '/docs/schema-registry#approve-breaking-schema-changes',
+          'Approval workflow for breaking and dangerous changes',
+        ),
+        values: ['yes', 'yes', 'yes'],
+      },
+      {
         feature: link('/docs/schema-registry/contracts', 'Schema Contracts'),
         values: ['Unlimited', 'Unlimited', 'Unlimited'],
       },
@@ -118,6 +132,13 @@ const comparisonSections: Section[] = [
       },
       {
         feature: link('/docs/schema-registry/app-deployments', 'Manage Persisted Documents'),
+        values: ['yes', 'yes', 'yes'],
+      },
+      {
+        feature: link(
+          '/docs/schema-registry#schema-history-and-changelog',
+          'Schema history, changelog and diffs',
+        ),
         values: ['yes', 'yes', 'yes'],
       },
     ],
@@ -371,6 +392,13 @@ const comparisonSections: Section[] = [
       },
       { feature: '99.95% uptime for usage/analytics', values: ['no', 'no', 'yes'] },
       { feature: '99.95% uptime for dashboard', values: ['no', 'no', 'yes'] },
+      {
+        feature: link(
+          '/docs/schema-registry/high-availability-cdn#cdn-mirrors',
+          'Secondary CDN mirror for failover',
+        ),
+        values: ['yes', 'yes', 'yes'],
+      },
     ],
     title: 'Availability',
   },
@@ -403,6 +431,10 @@ const comparisonSections: Section[] = [
       },
       {
         feature: link('/docs/schema-registry/management/audit-logs', 'Audit logs'),
+        values: ['yes', 'yes', 'yes'],
+      },
+      {
+        feature: link('/docs/api-reference/audit-log-api', 'Audit log API for SIEM ingestion'),
         values: ['yes', 'yes', 'yes'],
       },
     ],
@@ -870,7 +902,7 @@ const smallCtaVariant = {
                       <svg fill="currentColor" height="16" viewBox="0 0 16 16" width="16">
                         <path d="M7.17194 7.88538L12.4046 2.65271L13.3473 3.59538L12.4046 4.53871L14.0539 6.18804L13.1113 7.13138L11.4613 5.48138L10.5186 6.42404L11.9326 7.83804L10.9899 8.78138L9.57594 7.36671L8.11461 8.82804C8.56757 9.5174 8.74897 10.3502 8.62376 11.1655C8.49854 11.9808 8.0756 12.7207 7.43665 13.2424C6.7977 13.764 5.98808 14.0304 5.16422 13.9899C4.34036 13.9495 3.56072 13.6051 2.97594 13.0234C2.39077 12.4394 2.04348 11.6588 2.0015 10.8332C1.95951 10.0076 2.22583 9.19579 2.74875 8.55548C3.27166 7.91517 4.01386 7.49203 4.83123 7.36819C5.64861 7.24436 6.48283 7.42869 7.17194 7.88538ZM6.74727 12.0807C6.94149 11.897 7.0969 11.6762 7.20433 11.4315C7.31176 11.1867 7.36902 10.9228 7.37274 10.6555C7.37646 10.3882 7.32655 10.1229 7.22597 9.87522C7.12539 9.62753 6.97618 9.40253 6.78715 9.2135C6.59812 9.02448 6.37312 8.87526 6.12544 8.77468C5.87775 8.6741 5.61242 8.62419 5.34512 8.62791C5.07782 8.63163 4.81398 8.68889 4.5692 8.79632C4.32441 8.90375 4.10364 9.05917 3.91994 9.25338C3.55563 9.63058 3.35404 10.1358 3.35859 10.6602C3.36315 11.1846 3.57349 11.6862 3.9443 12.057C4.31512 12.4278 4.81675 12.6382 5.34114 12.6427C5.86553 12.6473 6.37074 12.4457 6.74794 12.0814"></path>
                       </svg>
-                      SSO
+                      SSO and User Provisioning
                     </strong>
                     <span class="mt-2 flex gap-2 leading-6">
                       <svg
@@ -882,7 +914,19 @@ const smallCtaVariant = {
                       >
                         <path d="M6.66674 10.1134L12.7947 3.98602L13.7374 4.92869L6.66674 11.9994L2.42407 7.75669L3.36674 6.81402L6.66674 10.1134Z"></path>
                       </svg>
-                      Single sign-on via Open ID provider
+                      Single sign-on via OpenID Connect
+                    </span>
+                    <span class="mt-2 flex gap-2 leading-6">
+                      <svg
+                        fill="currentColor"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        width="16"
+                        class="my-1 size-4 text-green-600"
+                      >
+                        <path d="M6.66674 10.1134L12.7947 3.98602L13.7374 4.92869L6.66674 11.9994L2.42407 7.75669L3.36674 6.81402L6.66674 10.1134Z"></path>
+                      </svg>
+                      SCIM user and group provisioning
                     </span>
                   </li>
                 </ul>
@@ -1210,7 +1254,7 @@ const smallCtaVariant = {
                       <svg fill="currentColor" height="16" viewBox="0 0 16 16" width="16">
                         <path d="M7.17194 7.88538L12.4046 2.65271L13.3473 3.59538L12.4046 4.53871L14.0539 6.18804L13.1113 7.13138L11.4613 5.48138L10.5186 6.42404L11.9326 7.83804L10.9899 8.78138L9.57594 7.36671L8.11461 8.82804C8.56757 9.5174 8.74897 10.3502 8.62376 11.1655C8.49854 11.9808 8.0756 12.7207 7.43665 13.2424C6.7977 13.764 5.98808 14.0304 5.16422 13.9899C4.34036 13.9495 3.56072 13.6051 2.97594 13.0234C2.39077 12.4394 2.04348 11.6588 2.0015 10.8332C1.95951 10.0076 2.22583 9.19579 2.74875 8.55548C3.27166 7.91517 4.01386 7.49203 4.83123 7.36819C5.64861 7.24436 6.48283 7.42869 7.17194 7.88538ZM6.74727 12.0807C6.94149 11.897 7.0969 11.6762 7.20433 11.4315C7.31176 11.1867 7.36902 10.9228 7.37274 10.6555C7.37646 10.3882 7.32655 10.1229 7.22597 9.87522C7.12539 9.62753 6.97618 9.40253 6.78715 9.2135C6.59812 9.02448 6.37312 8.87526 6.12544 8.77468C5.87775 8.6741 5.61242 8.62419 5.34512 8.62791C5.07782 8.63163 4.81398 8.68889 4.5692 8.79632C4.32441 8.90375 4.10364 9.05917 3.91994 9.25338C3.55563 9.63058 3.35404 10.1358 3.35859 10.6602C3.36315 11.1846 3.57349 11.6862 3.9443 12.057C4.31512 12.4278 4.81675 12.6382 5.34114 12.6427C5.86553 12.6473 6.37074 12.4457 6.74794 12.0814"></path>
                       </svg>
-                      SSO
+                      SSO and User Provisioning
                     </strong>
                     <span class="mt-2 flex gap-2 leading-6">
                       <svg
@@ -1222,7 +1266,19 @@ const smallCtaVariant = {
                       >
                         <path d="M6.66674 10.1134L12.7947 3.98602L13.7374 4.92869L6.66674 11.9994L2.42407 7.75669L3.36674 6.81402L6.66674 10.1134Z"></path>
                       </svg>
-                      Single sign-on via Open ID provider
+                      Single sign-on via OpenID Connect
+                    </span>
+                    <span class="mt-2 flex gap-2 leading-6">
+                      <svg
+                        fill="currentColor"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        width="16"
+                        class="my-1 size-4 text-green-600"
+                      >
+                        <path d="M6.66674 10.1134L12.7947 3.98602L13.7374 4.92869L6.66674 11.9994L2.42407 7.75669L3.36674 6.81402L6.66674 10.1134Z"></path>
+                      </svg>
+                      SCIM user and group provisioning
                     </span>
                   </li>
                 </ul>
@@ -1589,7 +1645,7 @@ const smallCtaVariant = {
                       <svg fill="currentColor" height="16" viewBox="0 0 16 16" width="16">
                         <path d="M7.17194 7.88538L12.4046 2.65271L13.3473 3.59538L12.4046 4.53871L14.0539 6.18804L13.1113 7.13138L11.4613 5.48138L10.5186 6.42404L11.9326 7.83804L10.9899 8.78138L9.57594 7.36671L8.11461 8.82804C8.56757 9.5174 8.74897 10.3502 8.62376 11.1655C8.49854 11.9808 8.0756 12.7207 7.43665 13.2424C6.7977 13.764 5.98808 14.0304 5.16422 13.9899C4.34036 13.9495 3.56072 13.6051 2.97594 13.0234C2.39077 12.4394 2.04348 11.6588 2.0015 10.8332C1.95951 10.0076 2.22583 9.19579 2.74875 8.55548C3.27166 7.91517 4.01386 7.49203 4.83123 7.36819C5.64861 7.24436 6.48283 7.42869 7.17194 7.88538ZM6.74727 12.0807C6.94149 11.897 7.0969 11.6762 7.20433 11.4315C7.31176 11.1867 7.36902 10.9228 7.37274 10.6555C7.37646 10.3882 7.32655 10.1229 7.22597 9.87522C7.12539 9.62753 6.97618 9.40253 6.78715 9.2135C6.59812 9.02448 6.37312 8.87526 6.12544 8.77468C5.87775 8.6741 5.61242 8.62419 5.34512 8.62791C5.07782 8.63163 4.81398 8.68889 4.5692 8.79632C4.32441 8.90375 4.10364 9.05917 3.91994 9.25338C3.55563 9.63058 3.35404 10.1358 3.35859 10.6602C3.36315 11.1846 3.57349 11.6862 3.9443 12.057C4.31512 12.4278 4.81675 12.6382 5.34114 12.6427C5.86553 12.6473 6.37074 12.4457 6.74794 12.0814"></path>
                       </svg>
-                      SSO
+                      SSO and User Provisioning
                     </strong>
                     <span class="mt-2 flex gap-2 leading-6">
                       <svg
@@ -1601,7 +1657,19 @@ const smallCtaVariant = {
                       >
                         <path d="M6.66674 10.1134L12.7947 3.98602L13.7374 4.92869L6.66674 11.9994L2.42407 7.75669L3.36674 6.81402L6.66674 10.1134Z"></path>
                       </svg>
-                      Single sign-on via Open ID provider
+                      Single sign-on via OpenID Connect
+                    </span>
+                    <span class="mt-2 flex gap-2 leading-6">
+                      <svg
+                        fill="currentColor"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        width="16"
+                        class="my-1 size-4 text-green-600"
+                      >
+                        <path d="M6.66674 10.1134L12.7947 3.98602L13.7374 4.92869L6.66674 11.9994L2.42407 7.75669L3.36674 6.81402L6.66674 10.1134Z"></path>
+                      </svg>
+                      SCIM user and group provisioning
                     </span>
                   </li>
                   <li class="border-beige-200 flex flex-col px-1 py-2 text-sm text-[#4F6C6A] not-last:border-b">
