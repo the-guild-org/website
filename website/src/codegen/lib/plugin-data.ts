@@ -1,10 +1,8 @@
 /**
  * Data access for the plugin pages: the registry and npm metadata produced
  * by scripts/codegen/{fetch-content,fetch-npm-info}.ts, plus the Config API
- * Reference markdown regenerated from the committed config.schema.json
- * (usage examples are stripped from that schema upstream, so the reference
- * carries types/defaults/descriptions — the prose in each page carries the
- * examples).
+ * Reference markdown rendered from config.schema.json (types, defaults,
+ * descriptions and, where the schema provides them, usage examples).
  */
 import configSchema from '../../../public/graphql/codegen/config.schema.json';
 import configDocsMap from '../generated/config-docs-map.json';
@@ -61,6 +59,7 @@ export function getPluginNpmInfo(key: string): PluginNpmInfo | undefined {
 interface SchemaProperty {
   default?: unknown;
   description?: string;
+  exampleMarkdown?: string;
   items?: { type?: unknown };
   type?: unknown;
 }
@@ -102,6 +101,23 @@ export function getConfigReferenceMarkdown(key: string): string | undefined {
       lines.push(`default: \`${JSON.stringify(property.default)}\``);
     }
     if (property.description) lines.push('', property.description);
+    if (property.exampleMarkdown) {
+      // A code block loses one leading space per line only when every line has it (JSDoc indent),
+      // and example headings drop below the option heading:
+      // '```ts\n const a = {\n   b: 1,\n };\n```' -> '```ts\nconst a = {\n  b: 1,\n};\n```'
+      // '```ts\nconst a = {\n  b: 1,\n};\n```' -> unchanged
+      // '## Usage:' -> '##### Usage:'
+      const example = property.exampleMarkdown
+        .replace(/^(```[^\n]*\n)([\s\S]*?\n)(?=```)/gm, (block, fence: string, code: string) => {
+          const codeLines = code.split('\n');
+          if (!codeLines.every(line => line === '' || line.startsWith(' '))) {
+            return block;
+          }
+          return fence + codeLines.map(line => line.slice(1)).join('\n');
+        })
+        .replace(/^## /gm, '##### ');
+      lines.push('', '#### Usage Examples', '', example);
+    }
     return lines.join('\n');
   });
   return `## Config API Reference\n\n${sections.join('\n\n')}`;
