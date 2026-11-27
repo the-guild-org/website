@@ -76,17 +76,19 @@ The interesting part is that all of this work is pointless. **A schema version n
 it has been published.** Everything we derive from it could be computed once and reused by every
 request and every API instance.
 
+So far, every request walked through the full pipeline:
+
 ```mermaid
 flowchart LR
-  subgraph Before["Before: every request"]
-    direction LR
-    A[Load SDL] --> B[Parse] --> C[buildASTSchema] --> D[Walk supergraph] --> E[Resolve]
-  end
-  subgraph After["After: once per schema version"]
-    direction LR
-    F[Build] --> G[Encode] --> H[Compress] --> I[(Redis)]
-  end
-  I --> J[API memory] --> K[Read in place]
+  A[Load SDL] --> B[Parse] --> C[buildASTSchema] --> D[Walk supergraph] --> E[Resolve]
+```
+
+What we wanted instead is to do the expensive part once per schema version, keep the result in
+Redis, and have each API instance load it into memory once and read from it for every request:
+
+```mermaid
+flowchart LR
+  F[Build] --> G[Encode] --> H[Compress] --> I[(Redis)] -.-> J[API memory] --> K[Read in place]
 ```
 
 ## What we tried first
