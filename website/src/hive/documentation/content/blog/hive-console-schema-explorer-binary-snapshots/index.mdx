@@ -179,7 +179,8 @@ However, it moved the problem rather than solving it.
   wanted to avoid with the `GraphQLSchema`.
 - **Lots of repetition.** Every coordinate repeats its full name in the keys and in the child lists,
   every field repeats its `ownedBy` array, and type references such as `[Post!]!` are strings that
-  have to be parsed again when they are read.
+  have to be parsed again when they are read. As a result, the JSON snapshot took up even more space
+  than the SDL it was derived from, so we ended up storing and transferring more data than before.
 
 ### What we actually needed
 
