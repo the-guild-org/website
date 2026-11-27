@@ -334,6 +334,15 @@ The insights page and the unused schema need to find a specific
 `Query.user.id`. For this the snapshot contains an open-addressing hash table, using FNV-1a and
 linear probing, that maps a coordinate to a "handle" (the entity kind plus its row index).
 
+<Callout type="info">
+  `Query.user.id` is not the official notation for an argument, which would be
+  `Query.user(id:)`. It is the internal format Hive Console already uses for
+  storing usage data in ClickHouse. Every segment is separated by a dot, so
+  everything below a type or field shares a common prefix. Compared to the
+  official format, that makes it a lot easier to build partial indexes and to
+  query, e.g. all coordinates of `Query.user.*` are a simple prefix match.
+</Callout>
+
 ```ts title="FNV-1a and open addressing over an Int32Array"
 /** FNV-1a over UTF-16 code units of `value[start, end)`. */
 function fnv1a(value: string, start: number, end: number) {
