@@ -537,8 +537,7 @@ new pods start with an empty memory cache and fill it again from Redis as schema
 requested, instead of building every snapshot again.
 
 The snapshot sizes are also reassuring. The median snapshot is about 1.9 MiB and the 95th percentile
-about 4.1 MiB, with the largest at 15.4 MiB. With the current limit, roughly a thousand typical
-schema versions fit into the memory of a single pod.
+about 4.1 MiB, with the largest at 15.4 MiB. This helps us estimating on when we would need to adjust cache sizes as our traffic grows.
 
 The dashboard is part of the Hive Console repository, so if you are self-hosting, you can use it to
 tune the cache for your own schemas as well.
