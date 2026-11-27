@@ -473,6 +473,56 @@ As a bonus, since the API no longer needs the SDL for any of these pages, it als
 the (potentially huge) composite and supergraph SDL from PostgreSQL unless a GraphQL operation
 actually selects `sdl` or `supergraph`.
 
+## Keeping an eye on it
+
+A cache that is too small quietly turns back into the slow path we just removed. Every schema
+version that is evicted from memory and requested again has to be loaded from Redis, or even rebuilt.
+So we did not want to guess the cache size, we wanted to see whether it is right.
+
+That is why we built observability into the cache and the snapshot builds from the start. Every
+request records where its snapshot came from (memory, a load already in progress, Redis, or a fresh
+build), and the cache reports its memory usage, evictions and the size of the snapshots it stores.
+All of this ends up in a dedicated Grafana dashboard.
+
+![Schema explorer dashboard in Grafana](./schema-explorer-dashboard.png)
+
+The panels at the top are the ones we look at first:
+
+- **Hit rate:** the share of requests served from memory or by joining a load that is already in
+  progress.
+- **Snapshots built:** how often a snapshot was neither in memory nor in Redis and had to be built
+  by the workflows service.
+- **Evictions:** snapshots dropped from memory to stay within the size limit.
+- **Misses a bigger cache avoids:** the share of misses for schema versions that the same instance
+  evicted within the hour before. This is the one that tells us whether the cache is too small.
+- **Fullest cache:** the memory used by the fullest instance's cache, relative to its limit.
+
+A hit rate of 62% might look low at first, but the other panels tell the full story. There are no
+evictions, no misses a bigger cache would have avoided, and the fullest cache is at 12% of its
+limit. The misses come from schema versions that an instance sees for the first time, not from a
+cache that is too small. Making the cache bigger would not change anything here.
+
+If that changes, e.g. because more customers with very large supergraphs start using these pages,
+the dashboard will show it as evictions and misses after eviction, and we can raise the limit
+
+Further down, the dashboard also breaks down the miss cost (Redis loads vs. builds), the age of
+evicted snapshots, the memory and snapshot count per API pod, the snapshot sizes, and the queue time
+and duration of the builds in the workflows service.
+
+![Memory, snapshot count and snapshot size panels of the schema explorer dashboard](./schema-explorer-dashboard-memory.png)
+
+These panels show the cache over about a day. Each API pod holds up to around 60 schema versions in
+memory, using at most 123 MiB of its 512 MiB limit. The drop to zero in the evening is a deployment:
+new pods start with an empty memory cache and fill it again from Redis as schema versions are
+requested, instead of building every snapshot again.
+
+The snapshot sizes are also reassuring. The median snapshot is about 1.9 MiB and the 95th percentile
+about 4.1 MiB, with the largest at 15.4 MiB. With the current limit, roughly a thousand typical
+schema versions fit into the memory of a single pod.
+
+The dashboard is part of the Hive Console repository, so if you are self-hosting, you can use it to
+tune the cache for your own schemas as well.
+
 ## The Results
 
 We measured everything on two supergraphs of about 20 MB each:
