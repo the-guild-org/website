@@ -15,10 +15,28 @@ As we are building Hive Console, our GraphQL schema registry, our users keep pub
 bigger schemas. A federated supergraph with a few hundred subgraphs and tens of thousands of types
 is no longer an exception.
 
-In this post we will talk about how the schema explorer, the unused schema, the deprecated schema
-and the schema coordinate insights pages of Hive Console went from taking seconds and hundreds of
-megabytes of memory per request to a few milliseconds, by turning every schema version into a
-single binary buffer that we read in place.
+The bigger a schema gets, the harder it becomes to understand it, and the more important the tools
+are that help you do so. In Hive Console, a few features are built exactly for that:
+
+- **Schema explorer:** browse every type and field of a schema version, see how often each one is
+  used and, for federated projects, which subgraph owns it. It is the place to answer "what does our
+  graph actually look like?" without digging through dozens of subgraph repositories.
+- **Unused schema:** shows the parts of the schema that no client has requested within a given
+  period. This is what teams use to find fields that can be removed safely, and keep a growing schema
+  from turning into a graveyard.
+- **Deprecated schema:** lists everything that is deprecated, together with its usage, so teams can
+  see whether clients have migrated away from a field before removing it.
+- **Schema coordinate insights:** for a single type or field, shows which clients and operations use
+  it and which subgraphs own it. It answers "who will I break if I change this?" and "which team do
+  I need to talk to?".
+
+These are the pages people open while planning a breaking change, cleaning up their schema, or
+investigating an incident. If they take seconds to load (or time out) for the largest schemas,
+people simply stop using them, exactly where they would help the most.
+
+In this post we will talk about how these pages of Hive Console went from taking seconds and
+hundreds of megabytes of memory per request to a few milliseconds, by turning every schema version
+into a single binary buffer that we read in place.
 
 ## The Problem
 
