@@ -34,6 +34,9 @@ These are the pages people open while planning a breaking change, cleaning up th
 investigating an incident. If they take seconds to load (or time out) for the largest schemas,
 people simply stop using them, exactly where they would help the most.
 
+And that is what happened. Users with large federated graphs complained to us about the long loading
+times of these pages.
+
 In this post we will talk about how these pages of Hive Console went from taking seconds and
 hundreds of megabytes of memory per request to a few milliseconds, by turning every schema version
 into a single binary buffer that we read in place.
@@ -535,6 +538,10 @@ We believe that a flat, low-level representation of the schema (and possibly of 
 make things like validation and execution in graphql.js significantly faster and lighter on memory.
 This is something we might want to explore in the future, and we are already actively applying these
 ideas in [Hive Router](/docs/router).
+
+With the schema now served from the snapshot in a few milliseconds, the biggest bottleneck of these
+pages has moved. Most of the remaining time is spent loading the usage and analytics data from
+ClickHouse, which we are going to improve soon as well.
 
 The schema explorer is only one part of this story. Our existing customers keep growing their
 federation setups, and we are onboarding new users with very large supergraphs, which puts the rest
