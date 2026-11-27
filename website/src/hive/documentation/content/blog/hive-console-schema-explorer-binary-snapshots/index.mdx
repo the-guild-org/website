@@ -11,6 +11,8 @@ description:
 
 import { Callout } from "@hive/design-system/hive-components/callout";
 
+import { CallToActionTeaser } from "#components/call-to-action-teaser";
+
 As we are building Hive Console, our GraphQL schema registry, our users keep publishing bigger and
 bigger schemas. A federated supergraph with a few hundred subgraphs and tens of thousands of types
 is no longer an exception.
@@ -476,6 +478,12 @@ As a bonus, since the API no longer needs the SDL for any of these pages, it als
 the (potentially huge) composite and supergraph SDL from PostgreSQL unless a GraphQL operation
 actually selects `sdl` or `supergraph`.
 
+This also brings us one step closer to something we want to do in the future: moving the SDLs out
+of PostgreSQL and into a blob storage such as S3 (or any S3-compatible alternative for self-hosted
+setups). Large SDL documents do not really belong in a relational database, and with fewer and fewer
+code paths that need them on every request, reading them from a blob storage when they are actually
+needed becomes a lot more realistic.
+
 ## Keeping an eye on it
 
 A cache that is too small quietly turns back into the slow path we just removed. Every schema
@@ -528,11 +536,34 @@ tune the cache for your own schemas as well.
 
 ## The Results
 
-We measured everything on two supergraphs of about 20 MB each:
+For every page, we measured the work the Hive Console API does to produce the schema part of the
+response, which is exactly the part this project changed:
+
+- **Before:** parsing the composite SDL and the supergraph, building the `GraphQLSchema`, walking
+  the supergraph for subgraph ownership, and transforming the requested types (or filtering the AST
+  for the unused and deprecated schema). This is the code as it was before the change, run as is.
+- **After:** reading the same data from a snapshot that is already in the API's memory.
+
+We also measured how much JavaScript heap a single request holds while it runs, and how large a
+snapshot is in memory and in Redis.
+
+Each request type corresponds to what a page of Hive Console asks for:
+
+- **Explorer page:** the page query plus the type filter, which are two separate GraphQL operations.
+- **Type page:** a single type with all of its fields and arguments.
+- **Unused schema:** once with usage data in which 90% of the types are fully used, and once where a
+  random 50% of all schema coordinates are used. The more is unused, the more types have to be
+  returned.
+- **Deprecated schema:** all types that contain something deprecated.
+- **Insights:** the owning subgraphs of a single schema coordinate.
+
+We ran all of this on two supergraphs of about 20 MB each:
 
 - **schema.org:** generated from the schema.org vocabulary. 125k schema coordinates, real
   descriptions, interfaces, unions, enums, input types, deprecations and 20 subgraphs.
 - **Synthetic:** 389k schema coordinates and 20k types.
+
+Here is how long each request took:
 
 | Request                                | schema.org: before → after | Faster    | Synthetic: before → after | Faster    |
 | -------------------------------------- | -------------------------- | --------- | ------------------------- | --------- |
@@ -543,6 +574,8 @@ We measured everything on two supergraphs of about 20 MB each:
 | Deprecated schema                      | 0.96 s → 23 ms             | ~42x      | 2.03 s → 47 ms            | ~44x      |
 | Insights: owners of one coordinate     | 0.48 s → < 0.1 ms          | > 1,000x  | 0.98 s → < 0.1 ms         | > 1,000x  |
 
+And this is the memory side of it, per request and per cached snapshot:
+
 | Memory                                    | schema.org     | Synthetic      |
 | ----------------------------------------- | -------------- | -------------- |
 | Heap held by one explorer request, before | 248 MB         | 683 MB         |
@@ -551,10 +584,13 @@ We measured everything on two supergraphs of about 20 MB each:
 | Snapshot in Redis (zstd)                  | 1.0 MB         | 3.9 MB         |
 
 <Callout type="info">
-  The numbers were measured on a single machine, as medians of 3–7 runs, with
-  the snapshot already in memory. The "before" numbers exclude loading the SDL
-  from PostgreSQL. ClickHouse queries and GraphQL execution are the same on both
-  sides and are excluded too.
+  The numbers were measured on a single machine, as medians of 3–7 runs. The
+  "before" numbers exclude loading the SDL from PostgreSQL, so the real
+  difference was even bigger. Loading the usage data from ClickHouse and the
+  GraphQL execution itself are the same on both sides and are excluded too. On
+  the "after" side, building a snapshot (1.5 s for schema.org, 3.4 s for the
+  synthetic schema, once per schema version) and the first load from Redis on a
+  new API instance (about 15 ms and 53 ms) are not included.
 </Callout>
 
 ## What we take on
@@ -570,6 +606,12 @@ Of course, this does not come for free.
   implementation.
 - **A build per schema version.** That is a few seconds of CPU time, but it now happens in the
   workflows service, once, and not on the request path of the API.
+
+<CallToActionTeaser heading="Running a large federated graph?">
+  Hive Console helps you explore your schema, see which fields are used and by
+  whom, and evolve your graph without breaking your clients. Start with a free
+  Hobby plan or try our Pro plan with a 30&nbsp;days trial period.
+</CallToActionTeaser>
 
 ## Conclusion
 
@@ -607,3 +649,15 @@ code and pull requests on GitHub:
 
 - https://github.com/graphql-hive/console/pull/8987
 - https://github.com/graphql-hive/console/pull/9001
+
+<CallToActionTeaser
+  cta="Learn more about Hive Router"
+  heading="Looking for the fastest federation router out there?"
+  href="/router"
+>
+  Hive Router is our open-source GraphQL Federation router written in Rust, and
+  it [outperforms every other federation gateway in our open
+  benchmarks](https://the-guild.dev/graphql/hive/federation-gateway-performance). Built
+  from the ground up for throughput and low memory usage, with the same kind of
+  ideas as this post.
+</CallToActionTeaser>
